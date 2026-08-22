@@ -1,0 +1,50 @@
+name: Test Story Rotation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Compile Python modules
+        run: python -m compileall -q main.py src
+      - name: Test story clustering and source rotation
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "src")
+          from semantic_dedup import deduplicate_semantically
+          from editorial import enrich_items, select_editorial
+
+          items = [
+              {"title": "OpenAI launches new reasoning model", "summary": "AI reasoning model", "category": "ai", "source": "Source A", "content_type": "official", "source_tier": 1, "official": True, "published": ""},
+              {"title": "OpenAI unveils its new reasoning model", "summary": "same AI model story", "category": "ai", "source": "Source B", "content_type": "news", "source_tier": 2, "official": False, "published": ""},
+              {"title": "Stanford releases new AI agent benchmark", "summary": "agent benchmark", "category": "ai", "source": "Source C", "content_type": "research", "source_tier": 1, "official": True, "published": ""},
+          ]
+          for item in items:
+              item["_ai_link"] = True
+          enriched = enrich_items(
+              items,
+              {"Sam Altman": 10},
+              source_history=[{"ts": 0, "source": "Source A"}],
+              policy={"rotation_days": 7, "technical_depth_penalty": 3},
+          )
+          enriched.sort(key=lambda x: x["editorial_score"], reverse=True)
+          kept = deduplicate_semantically(enriched, [], threshold=0.45)
+          selected = select_editorial(kept, max_posts=3, max_per_source=2, max_per_type=2)
+          assert len(selected) == 2, selected
+          assert {x["source"] for x in selected} == {"Source A", "Source C"}, selected
+          print("STORY_ROTATION_OK")
+          PY

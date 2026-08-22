@@ -1,0 +1,21 @@
+# Evidence hierarchy for Pioneer / deep analysis.
+# Social media is a trigger, not a preferred evidence source.
+evidence_weights:
+  full_paper: 1.00
+  journal: 1.00
+  full_transcript: 0.95
+  technical_report: 0.90
+  whitepaper: 0.90
+  open_letter: 0.85
+  university_talk: 0.82
+  conference_talk: 0.80
+  long_form_article: 0.72
+  reputable_interview: 0.68
+  news_report: 0.45
+  social_post: 0.20
+priority_sources:
+  - {name: "Lex Fridman Podcast", weight: 0.95, reason: "deep multidisciplinary interviews with transcripts"}
+  - {name: "Dwarkesh Patel", weight: 0.95, reason: "long-form frontier AI conversations and essays"}
+  - {name: "No Priors Podcast", weight: 0.90, reason: "frontier AI research and builder conversations"}
+  - {name: "Sean Carroll's Mindscape", weight: 0.88, reason: "mind, physics, philosophy and science"}
+  - {name: "Anthropic Interpretability", weight: 1.00, reason: "frontier mechanistic interpretability research"}

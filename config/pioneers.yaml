@@ -1,0 +1,43 @@
+# Human Intelligence / Pioneer Radar registry.
+# Scores are editorial priors, not measures of scientific truth.
+people:
+  - {name: "Elon Musk", category: ai_architect, priority: 100, technology_impact: 10, scientific_authority: 6, future_vision: 9, public_influence: 10, trend_score: 10, audience_score: 10}
+  - {name: "Sam Altman", category: ai_architect, priority: 100, technology_impact: 10, scientific_authority: 7, future_vision: 9, public_influence: 10, trend_score: 10, audience_score: 10}
+  - {name: "Demis Hassabis", category: ai_architect, priority: 98, technology_impact: 10, scientific_authority: 10, future_vision: 9, public_influence: 9, trend_score: 10, audience_score: 9}
+  - {name: "Dario Amodei", category: ai_architect, priority: 97, technology_impact: 10, scientific_authority: 8, future_vision: 9, public_influence: 9, trend_score: 10, audience_score: 9}
+  - {name: "Jensen Huang", category: ai_architect, priority: 96, technology_impact: 10, scientific_authority: 7, future_vision: 9, public_influence: 10, trend_score: 10, audience_score: 10}
+  - {name: "Ilya Sutskever", category: ai_architect, priority: 95, technology_impact: 10, scientific_authority: 10, future_vision: 9, public_influence: 8, trend_score: 9, audience_score: 8}
+  - {name: "Mustafa Suleyman", category: ai_architect, priority: 92, technology_impact: 9, scientific_authority: 7, future_vision: 9, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Andrew Ng", category: ai_scientist, priority: 94, technology_impact: 9, scientific_authority: 10, future_vision: 8, public_influence: 10, trend_score: 9, audience_score: 10}
+  - {name: "Yann LeCun", category: ai_scientist, priority: 94, technology_impact: 9, scientific_authority: 10, future_vision: 9, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Geoffrey Hinton", category: ai_scientist, priority: 94, technology_impact: 10, scientific_authority: 10, future_vision: 9, public_influence: 10, trend_score: 10, audience_score: 10}
+  - {name: "Yoshua Bengio", category: ai_scientist, priority: 92, technology_impact: 9, scientific_authority: 10, future_vision: 9, public_influence: 8, trend_score: 9, audience_score: 8}
+  - {name: "Fei-Fei Li", category: ai_scientist, priority: 91, technology_impact: 9, scientific_authority: 10, future_vision: 8, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Nick Bostrom", category: future_civilization, priority: 96, technology_impact: 8, scientific_authority: 10, future_vision: 10, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Yuval Noah Harari", category: public_intellectual, priority: 96, technology_impact: 7, scientific_authority: 7, future_vision: 10, public_influence: 10, trend_score: 10, audience_score: 10}
+  - {name: "David Chalmers", category: mind_consciousness, priority: 95, technology_impact: 7, scientific_authority: 10, future_vision: 10, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Anil Seth", category: mind_consciousness, priority: 94, technology_impact: 8, scientific_authority: 10, future_vision: 9, public_influence: 9, trend_score: 10, audience_score: 9}
+  - {name: "Christof Koch", category: mind_consciousness, priority: 91, technology_impact: 7, scientific_authority: 10, future_vision: 9, public_influence: 8, trend_score: 8, audience_score: 8}
+  - {name: "Giulio Tononi", category: mind_consciousness, priority: 90, technology_impact: 7, scientific_authority: 10, future_vision: 9, public_influence: 7, trend_score: 8, audience_score: 7}
+  - {name: "Michael Graziano", category: mind_consciousness, priority: 86, technology_impact: 7, scientific_authority: 9, future_vision: 9, public_influence: 7, trend_score: 8, audience_score: 7}
+  - {name: "Susan Schneider", category: mind_consciousness, priority: 87, technology_impact: 7, scientific_authority: 9, future_vision: 9, public_influence: 7, trend_score: 8, audience_score: 7}
+  - {name: "Thomas Metzinger", category: mind_consciousness, priority: 87, technology_impact: 7, scientific_authority: 9, future_vision: 9, public_influence: 7, trend_score: 8, audience_score: 7}
+  - {name: "Max Tegmark", category: future_civilization, priority: 92, technology_impact: 8, scientific_authority: 9, future_vision: 10, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Ray Kurzweil", category: future_civilization, priority: 90, technology_impact: 8, scientific_authority: 7, future_vision: 10, public_influence: 10, trend_score: 9, audience_score: 10}
+  - {name: "Kevin Kelly", category: future_civilization, priority: 86, technology_impact: 7, scientific_authority: 7, future_vision: 10, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Robin Hanson", category: future_civilization, priority: 84, technology_impact: 7, scientific_authority: 8, future_vision: 10, public_influence: 7, trend_score: 8, audience_score: 7}
+  - {name: "Toby Ord", category: existential_risk, priority: 85, technology_impact: 7, scientific_authority: 9, future_vision: 10, public_influence: 7, trend_score: 8, audience_score: 7}
+  - {name: "Stuart Russell", category: ai_safety, priority: 92, technology_impact: 8, scientific_authority: 10, future_vision: 10, public_influence: 8, trend_score: 9, audience_score: 8}
+  - {name: "Kate Crawford", category: ai_society, priority: 86, technology_impact: 7, scientific_authority: 9, future_vision: 9, public_influence: 9, trend_score: 9, audience_score: 8}
+  - {name: "Shoshana Zuboff", category: ai_society, priority: 84, technology_impact: 6, scientific_authority: 9, future_vision: 9, public_influence: 9, trend_score: 8, audience_score: 8}
+  - {name: "Timnit Gebru", category: ai_society, priority: 85, technology_impact: 7, scientific_authority: 9, future_vision: 8, public_influence: 9, trend_score: 9, audience_score: 8}
+  - {name: "Tristan Harris", category: ai_society, priority: 82, technology_impact: 7, scientific_authority: 7, future_vision: 9, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Lex Fridman", category: science_communicator, priority: 94, technology_impact: 7, scientific_authority: 7, future_vision: 9, public_influence: 10, trend_score: 10, audience_score: 10}
+  - {name: "Dwarkesh Patel", category: science_communicator, priority: 94, technology_impact: 8, scientific_authority: 8, future_vision: 9, public_influence: 9, trend_score: 10, audience_score: 9}
+  - {name: "Sean Carroll", category: science_communicator, priority: 86, technology_impact: 6, scientific_authority: 10, future_vision: 9, public_influence: 9, trend_score: 8, audience_score: 9}
+  - {name: "Michael Levin", category: bio_embodied_intelligence, priority: 91, technology_impact: 9, scientific_authority: 10, future_vision: 10, public_influence: 8, trend_score: 10, audience_score: 8}
+  - {name: "Karl Friston", category: bio_embodied_intelligence, priority: 88, technology_impact: 8, scientific_authority: 10, future_vision: 10, public_influence: 7, trend_score: 9, audience_score: 7}
+  - {name: "Chris Olah", category: silent_frontier_pioneer, priority: 92, technology_impact: 9, scientific_authority: 10, future_vision: 9, public_influence: 7, trend_score: 10, audience_score: 7}
+  - {name: "Christopher Olah", category: silent_frontier_pioneer, priority: 92, technology_impact: 9, scientific_authority: 10, future_vision: 9, public_influence: 7, trend_score: 10, audience_score: 7}
+  - {name: "Sam Marks", category: silent_frontier_pioneer, priority: 79, technology_impact: 7, scientific_authority: 9, future_vision: 8, public_influence: 6, trend_score: 9, audience_score: 6}
+  - {name: "Daniel Dennett", category: mind_consciousness, priority: 85, technology_impact: 6, scientific_authority: 10, future_vision: 9, public_influence: 10, trend_score: 7, audience_score: 9}

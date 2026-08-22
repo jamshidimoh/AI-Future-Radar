@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI Future Radar — بازخورد و دیدگاه کاربران درباره رادار آینده فناوری">
+  <title>AI Future Radar | بازخورد کاربران</title>
+  <style>
+    :root { color-scheme: dark; --bg:#07111f; --panel:#0d1b2d; --line:#20344d; --text:#edf4ff; --muted:#9fb1c7; --accent:#55c7ff; --accent2:#8b7cff; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; font-family:Tahoma,"Segoe UI",sans-serif; background:linear-gradient(135deg,#06101d,#0a1728 55%,#0b2130); color:var(--text); }
+    .wrap { max-width:980px; margin:auto; padding:48px 20px 70px; }
+    .hero { padding:34px; border:1px solid var(--line); border-radius:24px; background:rgba(13,27,45,.86); box-shadow:0 18px 60px rgba(0,0,0,.28); }
+    .eyebrow { color:var(--accent); font-size:14px; font-weight:700; letter-spacing:.4px; }
+    h1 { margin:10px 0 12px; font-size:clamp(30px,5vw,52px); }
+    p { line-height:1.9; color:var(--muted); }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin:26px 0 8px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:48px; padding:11px 18px; border:1px solid var(--line); border-radius:14px; background:#0a1626; color:var(--text); text-decoration:none; cursor:pointer; font:inherit; transition:.18s ease; }
+    .btn:hover { transform:translateY(-1px); border-color:var(--accent); }
+    .btn.primary { background:linear-gradient(135deg,#12658b,#3d3a91); border-color:#4e9fc6; }
+    .btn .icon { font-size:20px; }
+    .reactions { display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 0; }
+    .reaction { display:flex; align-items:center; gap:8px; padding:11px 15px; border:1px solid var(--line); border-radius:14px; background:#0a1626; color:var(--text); font-size:15px; }
+    .reaction span:first-child { font-size:22px; }
+    .section { margin-top:26px; padding:26px; border:1px solid var(--line); border-radius:20px; background:rgba(13,27,45,.72); }
+    .section h2 { margin-top:0; }
+    .notice { border-right:3px solid var(--accent); padding:12px 15px; background:#091626; color:var(--muted); line-height:1.9; }
+    .comment-card { margin-top:18px; display:grid; gap:14px; padding:20px; border:1px solid var(--line); border-radius:18px; background:#091626; }
+    .comment-card strong { font-size:18px; }
+    .comment-card p { margin:0; }
+    .steps { margin:0; padding-right:22px; color:var(--muted); line-height:2; }
+    .steps li { margin:3px 0; }
+    .quick { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:18px; }
+    .quick a { display:flex; align-items:center; gap:10px; padding:15px; border:1px solid var(--line); border-radius:15px; color:var(--text); text-decoration:none; background:#0a1626; }
+    .quick a:hover { border-color:var(--accent2); }
+    .footer { margin-top:28px; text-align:center; color:#71859d; font-size:13px; }
+    .floating-comment { position:fixed; left:22px; bottom:22px; z-index:20; width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#12658b,#3d3a91); border:1px solid #6ab7dd; color:white; text-decoration:none; font-size:26px; box-shadow:0 10px 35px rgba(0,0,0,.4); }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media (max-width:600px) { .wrap { padding:25px 14px 60px; } .hero,.section { padding:20px; } .floating-comment { left:14px; bottom:14px; } }
+  </style>
+</head>
+<body>
+  <a class="floating-comment" href="https://github.com/jamshidimoh/AI-Future-Radar/discussions" target="_blank" rel="noopener" aria-label="ثبت نظر در GitHub Discussions">💬</a>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">AI FUTURE RADAR</div>
+      <h1>نظر شما درباره رادار آینده فناوری چیست؟</h1>
+      <p>بازخورد کاربران بخشی از حلقه بهبود رادار است. کیفیت انتخاب محتوا، تنوع منابع، مصاحبه‌های افراد اثرگذار، تحلیل‌ها و اولویت‌بندی سیگنال‌ها را ارزیابی کنید.</p>
+
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/jamshidimoh/AI-Future-Radar/discussions" target="_blank" rel="noopener">
+          <span class="icon">💬</span><span>ثبت نظر و گفتگو</span>
+        </a>
+        <a class="btn" href="https://github.com/jamshidimoh/AI-Future-Radar/discussions" target="_blank" rel="noopener">
+          <span class="icon">👥</span><span>مشاهده همه نظرات</span>
+        </a>
+      </div>
+
+      <div class="reactions" aria-label="دسته‌بندی بازخورد">
+        <div class="reaction"><span>👍</span><span>مفید بود</span></div>
+        <div class="reaction"><span>💡</span><span>ایده خوبی دارم</span></div>
+        <div class="reaction"><span>🔥</span><span>سیگنال مهم</span></div>
+        <div class="reaction"><span>🤔</span><span>نیاز به بررسی</span></div>
+        <div class="reaction"><span>❤️</span><span>دوست داشتم</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="comments">
+      <h2>ثبت واکنش و کامنت</h2>
+      <div class="notice">نظرات در GitHub Discussions ذخیره می‌شوند؛ بنابراین سابقه گفتگو، پاسخ‌ها، واکنش‌ها و مدیریت محتوا در همان مخزن باقی می‌ماند. برای ارسال نظر فقط روی «ثبت نظر و گفتگو» کلیک کنید و با حساب GitHub وارد شوید.</div>
+
+      <div class="comment-card">
+        <strong>چطور نظر بدهید؟</strong>
+        <ol class="steps">
+          <li>روی «ثبت نظر و گفتگو» بزنید.</li>
+          <li>در GitHub یک Discussion جدید ایجاد کنید یا به گفتگوی موجود پاسخ دهید.</li>
+          <li>نظر خود را درباره یک خبر، مصاحبه، منبع، تحلیل یا اولویت سیگنال بنویسید.</li>
+          <li>مدیریت و پاسخ به نظرات از داخل GitHub Discussions انجام می‌شود.</li>
+        </ol>
+        <div class="actions">
+          <a class="btn primary" href="https://github.com/jamshidimoh/AI-Future-Radar/discussions/new" target="_blank" rel="noopener">➕ ایجاد Discussion جدید</a>
+          <a class="btn" href="https://github.com/jamshidimoh/AI-Future-Radar/discussions" target="_blank" rel="noopener">📋 گفتگوهای قبلی</a>
+        </div>
+      </div>
+
+      <div class="quick" aria-label="دسته‌های پیشنهادی گفتگو">
+        <a href="https://github.com/jamshidimoh/AI-Future-Radar/discussions" target="_blank" rel="noopener">🎯 کیفیت انتخاب محتوا</a>
+        <a href="https://github.com/jamshidimoh/AI-Future-Radar/discussions" target="_blank" rel="noopener">🎙️ مصاحبه‌های افراد اثرگذار</a>
+        <a href="https://github.com/jamshidimoh/AI-Future-Radar/discussions" target="_blank" rel="noopener">🌐 تنوع منابع</a>
+        <a href="https://github.com/jamshidimoh/AI-Future-Radar/discussions" target="_blank" rel="noopener">📊 اولویت‌بندی سیگنال‌ها</a>
+      </div>
+    </section>
+
+    <div class="footer">AI Future Radar · Community Feedback · Powered by GitHub Discussions</div>
+  </main>
+</body>
+</html>

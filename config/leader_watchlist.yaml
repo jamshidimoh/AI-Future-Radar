@@ -1,0 +1,119 @@
+# People & Ideas Radar
+# شخصیت‌های کلیدی، فعالیت‌ها، محصولات و مصاحبه‌های مرتبط با AI/AGI را با اولویت بالا دنبال می‌کند.
+
+people:
+  featured_ai_leaders:
+    priority: 11
+    names:
+      - Andrew Ng
+  ai_builders:
+    priority: 10
+    names:
+      - Sam Altman
+      - Dario Amodei
+      - Demis Hassabis
+      - Jensen Huang
+      - Elon Musk
+      - Mark Zuckerberg
+      - Sundar Pichai
+      - Satya Nadella
+      - Ilya Sutskever
+      - Andrej Karpathy
+      - Fei-Fei Li
+      - Yann LeCun
+      - Geoffrey Hinton
+      - Yoshua Bengio
+  technology_strategists_and_industry_thinkers:
+    priority: 11
+    names:
+      - Eric Schmidt
+      - Mustafa Suleyman
+      - Reid Hoffman
+  futurists_and_long_term_thinkers:
+    priority: 8
+    names:
+      - Yuval Noah Harari
+      - Nick Bostrom
+      - Max Tegmark
+      - Toby Ord
+      - Amy Webb
+      - Ray Kurzweil
+      - Stuart Russell
+      - Eliezer Yudkowsky
+  consciousness_and_mind_ai:
+    priority: 9
+    names:
+      - David Chalmers
+      - Anil Seth
+      - Joscha Bach
+      - Christof Koch
+      - Murray Shanahan
+      - Ryota Kanai
+      - David Dalrymple
+      - Susan Blackmore
+      - Bernardo Kastrup
+
+google_news_queries:
+  - {query: "Sam Altman AI AGI interview latest", watch_person: "Sam Altman", category: ai, tier: 1, content_type: interview}
+  - {query: "Sam Altman OpenAI product launch model announcement", watch_person: "Sam Altman", category: ai, tier: 1, content_type: product_news}
+  - {query: "Dario Amodei AI future interview latest", watch_person: "Dario Amodei", category: ai, tier: 1, content_type: interview}
+  - {query: "Dario Amodei Anthropic model product launch", watch_person: "Dario Amodei", category: ai, tier: 1, content_type: product_news}
+  - {query: "Demis Hassabis AI AGI interview latest", watch_person: "Demis Hassabis", category: ai, tier: 1, content_type: interview}
+  - {query: "Google DeepMind Demis Hassabis product model research launch", watch_person: "Demis Hassabis", category: ai, tier: 1, content_type: product_news}
+  - {query: "Jensen Huang AI robotics future interview", watch_person: "Jensen Huang", category: ai, tier: 1, content_type: interview}
+  - {query: "NVIDIA Jensen Huang AI product announcement platform launch", watch_person: "Jensen Huang", category: ai, tier: 1, content_type: product_news}
+  - {query: "Elon Musk AI xAI future interview", watch_person: "Elon Musk", category: ai, tier: 1, content_type: interview}
+  - {query: "Elon Musk xAI Grok product launch AI announcement", watch_person: "Elon Musk", category: ai, tier: 1, content_type: product_news}
+  - {query: "Mark Zuckerberg Meta AI Llama interview", watch_person: "Mark Zuckerberg", category: ai, tier: 1, content_type: interview}
+  - {query: "Meta Mark Zuckerberg Llama AI product launch", watch_person: "Mark Zuckerberg", category: ai, tier: 1, content_type: product_news}
+  - {query: "Sundar Pichai Google AI interview Gemini", watch_person: "Sundar Pichai", category: ai, tier: 1, content_type: interview}
+  - {query: "Google Sundar Pichai Gemini AI product launch", watch_person: "Sundar Pichai", category: ai, tier: 1, content_type: product_news}
+  - {query: "Satya Nadella Microsoft AI Copilot interview", watch_person: "Satya Nadella", category: ai, tier: 1, content_type: interview}
+  - {query: "Microsoft Satya Nadella Copilot AI product launch", watch_person: "Satya Nadella", category: ai, tier: 1, content_type: product_news}
+  - {query: "Ilya Sutskever Safe Superintelligence AI interview", watch_person: "Ilya Sutskever", category: ai, tier: 1, content_type: interview}
+  - {query: "Ilya Sutskever SSI AI research launch company", watch_person: "Ilya Sutskever", category: ai, tier: 1, content_type: news}
+  - {query: "Noam Shazeer AI interview latest", watch_person: "Noam Shazeer", category: ai, tier: 1, content_type: interview}
+  - {query: "Noam Shazeer Character AI Google AI model launch", watch_person: "Noam Shazeer", category: ai, tier: 1, content_type: product_news}
+  - {query: "Lisa Su AI semiconductor future interview", watch_person: "Lisa Su", category: ai, tier: 1, content_type: interview}
+  - {query: "Lisa Su AMD AI accelerator product launch", watch_person: "Lisa Su", category: ai, tier: 1, content_type: product_news}
+  - {query: "Andrej Karpathy AI agents interview", watch_person: "Andrej Karpathy", category: ai, tier: 1, content_type: interview}
+  - {query: "Andrej Karpathy AI product project launch", watch_person: "Andrej Karpathy", category: ai, tier: 1, content_type: product_news}
+  - {query: "Fei-Fei Li AI future interview", watch_person: "Fei-Fei Li", category: ai, tier: 1, content_type: interview}
+  - {query: "Fei-Fei Li World Labs AI product research launch", watch_person: "Fei-Fei Li", category: ai, tier: 1, content_type: product_news}
+  - {query: "Andrew Ng AI interview latest", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
+  - {query: "Andrew Ng DeepLearning.AI AI product launch", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: product_news}
+  - {query: "Andrew Ng AI Fund startup investment activity", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: news}
+  - {query: "Andrew Ng Landing AI product computer vision enterprise AI", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: product_news}
+  - {query: "Andrew Ng AI education course agentic AI latest", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: news}
+  - {query: "Eric Schmidt AI future 5 years interview multi agent reasoning", watch_person: "Eric Schmidt", category: future, tier: 1, content_type: interview}
+  - {query: "Eric Schmidt AI 1000 step reasoning infrastructure risk", watch_person: "Eric Schmidt", category: future, tier: 1, content_type: interview}
+  - {query: "Eric Schmidt AI strategy national security future of AI", watch_person: "Eric Schmidt", category: future, tier: 1, content_type: news}
+  - {query: "Geoffrey Hinton AI future consciousness interview", watch_person: "Geoffrey Hinton", category: ai, tier: 1, content_type: interview}
+  - {query: "Yann LeCun AI future world model interview", watch_person: "Yann LeCun", category: ai, tier: 1, content_type: interview}
+  - {query: "Yoshua Bengio AI safety AGI interview", watch_person: "Yoshua Bengio", category: ai, tier: 1, content_type: interview}
+  - {query: "Yuval Noah Harari AI artificial intelligence future interview", watch_person: "Yuval Noah Harari", category: future, tier: 1, content_type: interview}
+  - {query: "Nick Bostrom AI superintelligence future interview", watch_person: "Nick Bostrom", category: future, tier: 1, content_type: interview}
+  - {query: "Max Tegmark AI future intelligence interview", watch_person: "Max Tegmark", category: future, tier: 1, content_type: interview}
+  - {query: "Toby Ord AI existential risk interview", watch_person: "Toby Ord", category: future, tier: 1, content_type: interview}
+  - {query: "Amy Webb AI future technology interview", watch_person: "Amy Webb", category: future, tier: 1, content_type: interview}
+  - {query: "Ray Kurzweil AI singularity future interview", watch_person: "Ray Kurzweil", category: future, tier: 1, content_type: interview}
+  - {query: "Stuart Russell AI safety AGI interview", watch_person: "Stuart Russell", category: ai, tier: 1, content_type: interview}
+  - {query: "Eliezer Yudkowsky AI alignment superintelligence interview", watch_person: "Eliezer Yudkowsky", category: future, tier: 1, content_type: interview}
+  - {query: "David Chalmers AI consciousness interview", watch_person: "David Chalmers", category: mind, tier: 1, content_type: interview}
+  - {query: "Anil Seth AI consciousness interview", watch_person: "Anil Seth", category: mind, tier: 1, content_type: interview}
+  - {query: "Joscha Bach AI consciousness AGI interview", watch_person: "Joscha Bach", category: mind, tier: 1, content_type: interview}
+  - {query: "Christof Koch AI consciousness interview", watch_person: "Christof Koch", category: mind, tier: 1, content_type: interview}
+  - {query: "Murray Shanahan AI consciousness interview", watch_person: "Murray Shanahan", category: mind, tier: 1, content_type: interview}
+  - {query: "Ryota Kanai AI consciousness interview", watch_person: "Ryota Kanai", category: mind, tier: 1, content_type: interview}
+  - {query: "site:cap.csail.mit.edu/podcast AI artificial intelligence machine learning robotics Building 32", category: ai, tier: 1, content_type: podcast, preferred_source: "MIT CSAIL - Building 32"}
+
+youtube_channels:
+  - {name: "World Economic Forum", handle: "@wef", category: ai, tier: 1, type: "global_forum", content_type: interview, official: true}
+  - {name: "80,000 Hours", handle: "@80000Hours", category: ai, tier: 1, type: "longtermism_podcast", content_type: podcast, official: true}
+  - {name: "Future of Life Institute", handle: "@futureoflifeinstitute", category: ai, tier: 1, type: "ai_safety", content_type: interview, official: true}
+  - {name: "Institute of Art and Ideas", handle: "@instituteofartandideas", category: ai, tier: 1, type: "ideas_forum", content_type: talk, official: true}
+  - {name: "MIT CSAIL - Building 32", channel_id: "UCfplsUBZ2IZitni1qzsjnRQ", category: ai, tier: 1, type: "building32_podcast", content_type: podcast, official: true}
+  - {name: "World Science Festival", channel_id: "UCShHFwKyhcDo3g7hr4f1R8A", category: ai, tier: 1, type: "science_media", content_type: talk, official: true}
+
+rotation_window_days: 7
+leader_selection_bonus: 5

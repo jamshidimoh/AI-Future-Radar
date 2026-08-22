@@ -1,0 +1,254 @@
+education:
+  enabled: true
+  lessons_per_run: 1
+  curriculum_version: "1.0"
+  reviewed_at: "2026-08-14"
+  source_policy:
+    primary_first: true
+    preferred_domains:
+      - nist.gov
+      - developers.google.com
+      - ai.google.dev
+      - hai.stanford.edu
+      - oecd.org
+      - arxiv.org
+    rule: "Use primary standards, official technical documentation, major research papers and current authoritative reports. Do not invent citations."
+  lessons:
+    - id: 1
+      title: "AI و Machine Learning"
+      a: {term: "Artificial Intelligence (AI)", fa: "هوش مصنوعی", seed: "سامانه‌ای ماشینی که برای هدف‌های صریح یا ضمنی از ورودی‌ها برای تولید خروجی‌هایی مانند پیش‌بینی، محتوا، توصیه یا تصمیم استفاده می‌کند."}
+      b: {term: "Machine Learning (ML)", fa: "یادگیری ماشین", seed: "روشی برای آموزش مدل‌ها با داده تا بتوانند روی نمونه‌های جدید پیش‌بینی یا تولید انجام دهند، بدون اینکه همه قواعد مسئله به‌صورت دستی نوشته شوند."}
+      relation: "یادگیری ماشین یکی از رویکردهای مهم برای ساخت سامانه‌های هوش مصنوعی است، نه مترادف کامل AI."
+      sources:
+        - {name: "OECD AI Principles / AI system definition", url: "https://www.oecd.org/en/topics/ai-principles.html"}
+        - {name: "Google Machine Learning: What is ML?", url: "https://developers.google.com/machine-learning/intro-to-ml/what-is-ml"}
+    - id: 2
+      title: "Supervised و Unsupervised Learning"
+      a: {term: "Supervised Learning", fa: "یادگیری نظارت‌شده", seed: "آموزش مدل با نمونه‌هایی که ورودی و پاسخ درست یا برچسب دارند."}
+      b: {term: "Unsupervised Learning", fa: "یادگیری بدون نظارت", seed: "یادگیری الگوها و ساختارها از داده‌هایی که برچسب پاسخ از پیش تعیین‌شده ندارند."}
+      relation: "تفاوت اصلی در وجود برچسب هدف در داده آموزشی است."
+      sources:
+        - {name: "Google ML Glossary: Fundamentals", url: "https://developers.google.com/machine-learning/glossary/fundamentals"}
+        - {name: "Google: What is Machine Learning?", url: "https://developers.google.com/machine-learning/intro-to-ml/what-is-ml"}
+    - id: 3
+      title: "Training و Inference"
+      a: {term: "Training", fa: "آموزش", seed: "فرایندی که طی آن پارامترهای مدل با مشاهده داده و بهینه‌سازی خطا تنظیم می‌شوند."}
+      b: {term: "Inference", fa: "استنتاج/اجرای مدل", seed: "استفاده از مدل آموزش‌دیده برای تولید پیش‌بینی یا پاسخ روی ورودی جدید."}
+      relation: "Training مدل را می‌سازد یا تغییر می‌دهد؛ inference از مدل موجود استفاده می‌کند."
+      sources:
+        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 4
+      title: "Feature و Label"
+      a: {term: "Feature", fa: "ویژگی", seed: "اطلاعات ورودی که مدل برای یادگیری یا پیش‌بینی از آن استفاده می‌کند."}
+      b: {term: "Label", fa: "برچسب/هدف", seed: "پاسخ یا نتیجه مورد انتظار در یک نمونه آموزشی نظارت‌شده."}
+      relation: "در یادگیری نظارت‌شده، مدل رابطه میان featureها و label را یاد می‌گیرد."
+      sources:
+        - {name: "Google ML Glossary: Fundamentals", url: "https://developers.google.com/machine-learning/glossary/fundamentals"}
+    - id: 5
+      title: "Neural Network و Deep Learning"
+      a: {term: "Neural Network", fa: "شبکه عصبی", seed: "مدلی متشکل از لایه‌ها و واحدهایی که با وزن‌ها و توابع فعال‌سازی روابط غیرخطی را یاد می‌گیرد."}
+      b: {term: "Deep Learning", fa: "یادگیری عمیق", seed: "خانواده‌ای از روش‌های یادگیری ماشین مبتنی بر شبکه‌های عصبی با لایه‌های متعدد برای یادگیری نمایش‌های پیچیده."}
+      relation: "Deep Learning زیرمجموعه‌ای از یادگیری ماشین است که عمدتاً بر شبکه‌های عصبی عمیق تکیه دارد."
+      sources:
+        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+        - {name: "OECD Digital Economy Outlook: AI", url: "https://www.oecd.org/en/publications/2024/05/oecd-digital-economy-outlook-2024-volume-1_d30a04c9/full-report/component-5.html"}
+    - id: 6
+      title: "Parameter و Hyperparameter"
+      a: {term: "Parameter", fa: "پارامتر مدل", seed: "مقداری که مدل در جریان آموزش از داده یاد می‌گیرد؛ مانند وزن‌های شبکه عصبی."}
+      b: {term: "Hyperparameter", fa: "ابرپارامتر", seed: "تنظیمی که معمولاً پیش از یا خارج از فرایند یادگیری مستقیم مدل تعیین می‌شود؛ مانند نرخ یادگیری یا اندازه batch."}
+      relation: "پارامترها توسط آموزش یاد گرفته می‌شوند؛ ابرپارامترها برای کنترل فرایند آموزش تنظیم می‌شوند."
+      sources:
+        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+    - id: 7
+      title: "Token و Embedding"
+      a: {term: "Token", fa: "توکن", seed: "واحدی از متن که مدل زبانی آن را به‌عنوان بخشی از ورودی یا خروجی پردازش می‌کند؛ یک کلمه همیشه الزاماً یک توکن نیست."}
+      b: {term: "Embedding", fa: "بردار تعبیه", seed: "نمایش عددی یک متن یا شیء در فضایی برداری که امکان سنجش شباهت و بازیابی معنایی را فراهم می‌کند."}
+      relation: "Tokenization متن را به واحدهای قابل پردازش تقسیم می‌کند؛ embedding معنای آن را به نمایش عددی تبدیل می‌کند."
+      sources:
+        - {name: "Google Gemini: Tokens", url: "https://ai.google.dev/gemini-api/docs/tokens"}
+        - {name: "Google AI: Embeddings", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
+    - id: 8
+      title: "Attention و Transformer"
+      a: {term: "Attention", fa: "توجه", seed: "مکانیزمی برای وزن‌دهی به بخش‌های مختلف ورودی هنگام محاسبه نمایش یا خروجی، به‌گونه‌ای که بخش‌های مرتبط‌تر اثر بیشتری داشته باشند."}
+      b: {term: "Transformer", fa: "ترنسفورمر", seed: "معماری عصبی مبتنی بر مکانیزم‌های attention که برای پردازش توالی‌ها طراحی شد و پایه بسیاری از مدل‌های زبانی مدرن است."}
+      relation: "Attention یک مکانیزم است؛ Transformer معماری‌ای است که از attention به‌صورت مرکزی استفاده می‌کند."
+      sources:
+        - {name: "Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762"}
+        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+    - id: 9
+      title: "Foundation Model و LLM"
+      a: {term: "Foundation Model", fa: "مدل پایه", seed: "مدل پیش‌آموزش‌دیده بزرگ و عمومی که می‌تواند مبنای چندین کاربرد و سازگارسازی بعدی باشد."}
+      b: {term: "Large Language Model (LLM)", fa: "مدل زبانی بزرگ", seed: "مدل زبانی با مقیاس بزرگ که الگوهای زبان را یاد می‌گیرد و می‌تواند متن را پردازش یا تولید کند."}
+      relation: "بسیاری از LLMها مدل پایه‌اند، اما foundation model مفهوم گسترده‌تری از مدل‌های زبانی دارد و می‌تواند چندوجهی یا غیرزبانی نیز باشد."
+      sources:
+        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+    - id: 10
+      title: "Pre-training و Fine-tuning"
+      a: {term: "Pre-training", fa: "پیش‌آموزش", seed: "آموزش اولیه مدل روی داده‌ای بزرگ و عمومی برای یادگیری قابلیت‌ها و نمایش‌های عمومی."}
+      b: {term: "Fine-tuning", fa: "ریزتنظیم", seed: "مرحله آموزشی تکمیلی برای سازگار کردن مدل پیش‌آموزش‌دیده با یک وظیفه یا حوزه مشخص."}
+      relation: "Pre-training قابلیت عمومی می‌سازد؛ fine-tuning آن را برای هدف مشخص‌تر تنظیم می‌کند."
+      sources:
+        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+        - {name: "LoRA", url: "https://arxiv.org/abs/2106.09685"}
+    - id: 11
+      title: "Prompt و In-context Learning"
+      a: {term: "Prompt", fa: "پرامپت", seed: "ورودی متنی یا چندوجهی که رفتار و پاسخ مدل مولد را شرطی می‌کند."}
+      b: {term: "In-context Learning", fa: "یادگیری در متن/زمینه", seed: "توانایی مدل برای تطبیق با یک کار از طریق دستور و نمونه‌هایی که در همان ورودی ارائه می‌شوند، بدون به‌روزرسانی وزن‌های مدل."}
+      relation: "Prompt وسیله تعامل است؛ in-context learning یکی از توانایی‌هایی است که می‌تواند از طریق prompt و مثال در اختیار مدل قرار گیرد."
+      sources:
+        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+        - {name: "Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165"}
+    - id: 12
+      title: "Hallucination و Grounding"
+      a: {term: "Hallucination", fa: "توهم‌زایی مدل", seed: "تولید خروجی نادرست یا ساختگی که ممکن است با لحن مطمئن ارائه شود."}
+      b: {term: "Grounding", fa: "اتصال به شواهد/منبع", seed: "واداشتن سیستم به تکیه بر اطلاعات قابل استناد و مرتبط، مانند اسناد بازیابی‌شده یا داده معتبر، برای کاهش پاسخ‌های بی‌پشتوانه."}
+      relation: "Grounding یکی از راه‌های کاهش ریسک hallucination است، اما تضمین حذف خطا نیست."
+      sources:
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"}
+        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+    - id: 13
+      title: "RAG و Vector Database"
+      a: {term: "Retrieval-Augmented Generation (RAG)", fa: "تولید تقویت‌شده با بازیابی", seed: "الگویی که پیش از تولید، اطلاعات مرتبط را از یک منبع بیرونی بازیابی و در زمینه مدل قرار می‌دهد."}
+      b: {term: "Vector Database", fa: "پایگاه داده برداری", seed: "سامانه‌ای برای ذخیره و بازیابی نمایش‌های برداری بر اساس شباهت، که برای جست‌وجوی معنایی کاربرد دارد."}
+      relation: "RAG یک معماری/الگوست؛ vector database می‌تواند یکی از اجزای بازیابی آن باشد."
+      sources:
+        - {name: "Retrieval-Augmented Generation", url: "https://arxiv.org/abs/2005.11401"}
+        - {name: "Google AI Embeddings", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
+    - id: 14
+      title: "Multimodal AI و Vision-Language Model"
+      a: {term: "Multimodal AI", fa: "هوش مصنوعی چندوجهی", seed: "سامانه‌ای که بیش از یک نوع داده یا modality مانند متن، تصویر، صدا یا ویدئو را پردازش یا به هم مرتبط می‌کند."}
+      b: {term: "Vision-Language Model (VLM)", fa: "مدل بینایی-زبانی", seed: "مدلی که اطلاعات تصویری و زبانی را در یک سامانه برای درک یا تولید ترکیبی به کار می‌گیرد."}
+      relation: "VLM یک نمونه مهم از AI چندوجهی است؛ multimodal مفهوم گسترده‌تری است."
+      sources:
+        - {name: "A Survey on Multimodal Large Language Models", url: "https://arxiv.org/abs/2306.13549"}
+        - {name: "Google AI Embeddings 2", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
+    - id: 15
+      title: "AI Agent و Tool Use"
+      a: {term: "AI Agent", fa: "عامل هوش مصنوعی", seed: "سامانه‌ای که برای رسیدن به هدف، می‌تواند وضعیت را ارزیابی کند، برنامه‌ریزی کند و در محیط یا ابزارها اقدام انجام دهد."}
+      b: {term: "Tool Use", fa: "استفاده از ابزار", seed: "توانایی مدل یا عامل برای فراخوانی ابزارهای بیرونی مانند جست‌وجو، API، پایگاه داده یا اجرای کد برای انجام کار."}
+      relation: "Tool use یکی از قابلیت‌های سازنده agentic systems است؛ یک agent معمولاً از ابزارها برای تبدیل پاسخ متنی به عمل استفاده می‌کند."
+      sources:
+        - {name: "NIST SP 1500-29: AI Terminology", url: "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=959510"}
+        - {name: "ReAct: Reasoning and Acting", url: "https://arxiv.org/abs/2210.03629"}
+    - id: 16
+      title: "Context Window و Memory"
+      a: {term: "Context Window", fa: "پنجره زمینه", seed: "مقدار اطلاعاتی که مدل می‌تواند در یک درخواست و پاسخ به‌عنوان زمینه پردازش کند؛ معمولاً با token اندازه‌گیری می‌شود."}
+      b: {term: "AI Memory", fa: "حافظه سامانه AI", seed: "سازوکاری بیرونی یا درون سامانه برای نگهداری اطلاعات قابل استفاده در تعاملات بعدی؛ لزوماً بخشی از وزن‌های مدل نیست."}
+      relation: "Context چیزی است که مدل در یک تعامل در اختیار دارد؛ memory می‌تواند زمینه را بین تعامل‌ها یا وظایف نگه دارد."
+      sources:
+        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+        - {name: "Google Gemini Tokens", url: "https://ai.google.dev/gemini-api/docs/tokens"}
+    - id: 17
+      title: "RLHF و Instruction Tuning"
+      a: {term: "RLHF", fa: "یادگیری تقویتی از بازخورد انسانی", seed: "روشی که از ترجیحات یا بازخورد انسان برای بهبود رفتار مدل، معمولاً پس از آموزش اولیه، استفاده می‌کند."}
+      b: {term: "Instruction Tuning", fa: "تنظیم دستوری", seed: "آموزش مدل با نمونه‌های دستور-پاسخ برای بهتر دنبال کردن دستورهای کاربر."}
+      relation: "هر دو برای بهبود رفتار مدل استفاده می‌شوند، اما instruction tuning معمولاً با داده‌های نمونه‌ای و RLHF با سیگنال ترجیح انسانی و مرحله تقویتی شناخته می‌شود."
+      sources:
+        - {name: "Training language models to follow instructions with human feedback", url: "https://arxiv.org/abs/2203.02155"}
+        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+    - id: 18
+      title: "LoRA و Parameter-Efficient Fine-Tuning"
+      a: {term: "LoRA", fa: "LoRA", seed: "روشی برای سازگار کردن مدل‌های بزرگ با افزودن پارامترهای کم‌رتبه قابل آموزش و ثابت نگه داشتن وزن‌های اصلی مدل."}
+      b: {term: "Parameter-Efficient Fine-Tuning (PEFT)", fa: "ریزتنظیم کم‌پارامتر", seed: "خانواده روش‌هایی که برای سازگار کردن مدل، به‌جای آموزش همه پارامترها تنها بخش کوچکی از پارامترها را تغییر می‌دهند."}
+      relation: "LoRA یکی از روش‌های شناخته‌شده PEFT است."
+      sources:
+        - {name: "LoRA paper", url: "https://arxiv.org/abs/2106.09685"}
+        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+    - id: 19
+      title: "Benchmark و Evaluation"
+      a: {term: "Benchmark", fa: "بنچمارک", seed: "مجموعه وظایف یا داده استاندارد برای مقایسه عملکرد مدل‌ها تحت شرایط مشخص."}
+      b: {term: "Evaluation", fa: "ارزیابی", seed: "فرایند سنجش کیفیت، قابلیت، محدودیت یا ریسک یک مدل یا سامانه با معیارها و آزمون‌های مشخص."}
+      relation: "Benchmark یکی از ابزارهای evaluation است؛ یک ارزیابی خوب فقط به یک benchmark محدود نمی‌شود."
+      sources:
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 20
+      title: "Quantization و Distillation"
+      a: {term: "Quantization", fa: "کوانتیزه‌سازی", seed: "کاهش دقت عددی نمایش وزن‌ها یا محاسبات مدل برای کاهش حافظه و هزینه محاسبات، با کنترل افت کیفیت."}
+      b: {term: "Knowledge Distillation", fa: "تقطیر دانش", seed: "آموزش یک مدل کوچک‌تر با استفاده از خروجی‌ها یا رفتار یک مدل بزرگ‌تر به‌عنوان teacher."}
+      relation: "هر دو برای کارایی بیشتر مفیدند، اما quantization بیشتر نمایش عددی را فشرده می‌کند و distillation دانش را به مدل دیگری منتقل می‌کند."
+      sources:
+        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+    - id: 21
+      title: "Synthetic Data و Data Augmentation"
+      a: {term: "Synthetic Data", fa: "داده مصنوعی", seed: "داده‌ای که به‌صورت مصنوعی تولید می‌شود تا برخی ویژگی‌های داده واقعی را بازنمایی کند و برای آموزش، آزمون یا توسعه به کار رود."}
+      b: {term: "Data Augmentation", fa: "افزایش داده", seed: "تولید تغییرات کنترل‌شده از نمونه‌های موجود برای افزایش تنوع مؤثر داده آموزشی."}
+      relation: "Augmentation معمولاً نمونه‌های موجود را تغییر می‌دهد؛ synthetic data می‌تواند داده جدید را از یک فرایند مولد یا شبیه‌سازی تولید کند."
+      sources:
+        - {name: "NIST AI Glossary", url: "https://airc.nist.gov/glossary/"}
+        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+    - id: 22
+      title: "Explainability و Interpretability"
+      a: {term: "Explainability", fa: "توضیح‌پذیری", seed: "توانایی ارائه اطلاعات قابل فهم درباره چرایی یا چگونگی یک خروجی سامانه AI."}
+      b: {term: "Interpretability", fa: "تفسیرپذیری", seed: "میزانی که انسان می‌تواند سازوکار یا رابطه درونی یک مدل و خروجی آن را درک کند."}
+      relation: "این دو مفهوم نزدیک‌اند اما یکسان نیستند؛ explainability می‌تواند بر توضیح خروجی تمرکز کند، در حالی که interpretability بیشتر بر قابل‌فهم بودن سازوکار مدل تأکید دارد."
+      sources:
+        - {name: "NIST Explainable AI resources", url: "https://www.nist.gov/artificial-intelligence"}
+        - {name: "NIST AI Glossary", url: "https://airc.nist.gov/glossary/"}
+    - id: 23
+      title: "AI Safety و Responsible AI"
+      a: {term: "AI Safety", fa: "ایمنی هوش مصنوعی", seed: "تمرکز بر پیشگیری، شناسایی و کاهش رفتارها یا پیامدهای خطرناک سامانه‌های AI در کاربرد واقعی."}
+      b: {term: "Responsible AI", fa: "هوش مصنوعی مسئولانه", seed: "رویکردی گسترده برای طراحی، توسعه و استفاده از AI با توجه به ایمنی، عدالت، شفافیت، حریم خصوصی، امنیت و مسئولیت‌پذیری."}
+      relation: "Safety بخشی مهم از مسئولیت‌پذیری AI است، اما Responsible AI دامنه وسیع‌تری از ملاحظات فنی و اجتماعی دارد."
+      sources:
+        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+        - {name: "OECD AI Principles", url: "https://www.oecd.org/en/topics/ai-principles.html"}
+    - id: 24
+      title: "AI Compute و AI Accelerator"
+      a: {term: "AI Compute", fa: "توان محاسباتی AI", seed: "منابع محاسباتی، حافظه و زیرساخت لازم برای آموزش و اجرای مدل‌ها و سامانه‌های AI."}
+      b: {term: "AI Accelerator", fa: "شتاب‌دهنده هوش مصنوعی", seed: "پردازنده یا معماری سخت‌افزاری تخصصی برای اجرای کارآمدتر محاسبات AI مانند ضرب ماتریسی و عملیات تنسوری."}
+      relation: "AI accelerator یکی از اجزای سخت‌افزاری برای تأمین compute مورد نیاز AI است."
+      sources:
+        - {name: "OECD Emerging AI Divides 2025 glossary", url: "https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/06/emerging-divides-in-the-transition-to-artificial-intelligence_eeb5e120/7376c776-en.pdf"}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+    - id: 25
+      title: "Embodied AI و Robotics"
+      a: {term: "Embodied AI", fa: "هوش مصنوعی تجسم‌یافته", seed: "هوش مصنوعی‌ای که ادراک و تصمیم‌گیری آن با تعامل با محیط فیزیکی یا شبیه‌سازی‌شده گره خورده است."}
+      b: {term: "Robotics", fa: "رباتیک", seed: "حوزه طراحی و ساخت سامانه‌هایی که می‌توانند در محیط فیزیکی ادراک، برنامه‌ریزی و عمل کنند."}
+      relation: "Embodied AI می‌تواند مغز نرم‌افزاری ربات باشد، اما هر سامانه رباتیک الزاماً دارای AI پیشرفته یا embodied intelligence نیست."
+      sources:
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "NIST Artificial Intelligence", url: "https://www.nist.gov/artificial-intelligence"}
+    - id: 26
+      title: "Quantum Computing و Qubit"
+      a: {term: "Quantum Computing", fa: "رایانش کوانتومی", seed: "مدل محاسباتی مبتنی بر پدیده‌های مکانیک کوانتومی که برای برخی مسائل می‌تواند مسیرهای محاسباتی متفاوتی نسبت به رایانش کلاسیک فراهم کند."}
+      b: {term: "Qubit", fa: "کیوبیت", seed: "واحد پایه اطلاعات کوانتومی که می‌تواند در برهم‌نهی حالت‌های کوانتومی قرار گیرد و با اندازه‌گیری به نتیجه‌ای کلاسیک منجر شود."}
+      relation: "Qubit واحد اطلاعات در رایانش کوانتومی است؛ quantum computing معماری و روش‌های محاسباتی مبتنی بر آن را در بر می‌گیرد."
+      sources:
+        - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/topics/quantum-information-science"}
+        - {name: "NIST Quantum", url: "https://www.nist.gov/quantum-information-science"}
+    - id: 27
+      title: "Quantum Machine Learning و Classical ML"
+      a: {term: "Quantum Machine Learning (QML)", fa: "یادگیری ماشین کوانتومی", seed: "حوزه‌ای که از مدارها یا الگوریتم‌های کوانتومی در بخش‌هایی از فرایند یادگیری ماشین استفاده می‌کند."}
+      b: {term: "Classical Machine Learning", fa: "یادگیری ماشین کلاسیک", seed: "روش‌های یادگیری ماشین که روی محاسبات کلاسیک اجرا می‌شوند و پایه اصلی کاربردهای امروزی ML را تشکیل می‌دهند."}
+      relation: "QML جایگزین عمومی ML کلاسیک نیست؛ ارزش آن باید برای مسئله و سخت‌افزار مشخص به‌صورت تجربی سنجیده شود."
+      sources:
+        - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/topics/quantum-information-science"}
+        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+    - id: 28
+      title: "AI Governance و AI Incident"
+      a: {term: "AI Governance", fa: "حکمرانی هوش مصنوعی", seed: "مجموعه ساختارها، قواعد، فرایندها و مسئولیت‌هایی که نحوه طراحی، استقرار، استفاده و نظارت بر AI را هدایت می‌کنند."}
+      b: {term: "AI Incident", fa: "رخداد هوش مصنوعی", seed: "رخدادی که در آن سامانه AI موجب آسیب واقعی یا یک وضعیت ناخواسته مهم می‌شود و نیازمند ثبت، بررسی یا پاسخ است."}
+      relation: "Governance سازوکار مدیریت و پاسخ‌گویی را فراهم می‌کند؛ incident یکی از محرک‌های مهم برای بهبود آن است."
+      sources:
+        - {name: "OECD: Defining AI incidents", url: "https://www.oecd.org/en/publications/defining-ai-incidents-and-related-terms_d1a8d965-en.html"}
+        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 29
+      title: "Open-weight و Open-source AI"
+      a: {term: "Open-weight Model", fa: "مدل با وزن‌های باز", seed: "مدلی که وزن‌های آموزش‌دیده آن برای دریافت و اجرای مستقل در دسترس قرار می‌گیرند؛ این امر الزاماً به معنی باز بودن همه اجزای توسعه نیست."}
+      b: {term: "Open-source AI", fa: "هوش مصنوعی متن‌باز", seed: "اصطلاحی گسترده‌تر که درباره باز بودن کد، داده، وزن‌ها و شرایط مجوز به کار می‌رود و در AI تعریف ساده و واحدی ندارد."}
+      relation: "Open-weight و open-source یکی نیستند؛ برای ارزیابی بازبودن یک مدل باید دقیقاً دید کدام اجزا و با چه مجوزی منتشر شده‌اند."
+      sources:
+        - {name: "OECD AI openness 2025", url: "https://www.oecd.org/en/publications/ai-openness_02f73362-en.html"}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+    - id: 30
+      title: "World Model و Digital Twin"
+      a: {term: "World Model", fa: "مدل جهان", seed: "مدلی که تلاش می‌کند ساختار یا پویایی محیط را یاد بگیرد تا بتواند پیامد اعمال یا وضعیت‌های آینده را پیش‌بینی کند."}
+      b: {term: "Digital Twin", fa: "دوقلوی دیجیتال", seed: "نمایش دیجیتال یک شیء، سامانه یا فرایند واقعی که با داده‌های آن سامانه برای پایش، شبیه‌سازی یا بهینه‌سازی به‌کار می‌رود."}
+      relation: "World model یک مفهوم یادگیری و پیش‌بینی محیط است؛ digital twin یک کاربرد مهندسی و داده‌محور برای بازنمایی یک سامانه واقعی است."
+      sources:
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "NIST Artificial Intelligence", url: "https://www.nist.gov/artificial-intelligence"}

@@ -1,0 +1,58 @@
+name: Final Production Acceptance
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: final-acceptance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run full regression suite
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -m pytest -q
+
+      - name: Run final production acceptance tests
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -m pytest -q tests/test_final_production_acceptance.py
+
+      - name: Validate production state contract
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          state = json.loads(Path("data/publication_state.json").read_text(encoding="utf-8"))
+          assert int(state["run_number"]) >= 1
+          assert isinstance(state.get("last_published_news_score"), (int, float))
+          assert state["last_published_news_score"] > 0
+          assert isinstance(state.get("last_published_normal_news_score"), (int, float))
+          assert state["last_published_normal_news_score"] > 0
+          print("Production state contract: PASS")
+          print(f"run_number={state['run_number']}")
+          print(f"last_published_news_score={state['last_published_news_score']}")
+          print(f"last_published_normal_news_score={state['last_published_normal_news_score']}")
+          PY

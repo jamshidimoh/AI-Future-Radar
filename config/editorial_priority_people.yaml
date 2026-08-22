@@ -1,0 +1,30 @@
+# Generic editorial priority roster for interviews, podcasts and substantive quotes.
+# This is intentionally person-centric but not person-exclusive.
+# Matches should be exact/canonicalized; aliases are handled by the source normalizer.
+priority_tier: 0
+priority_people:
+  - Elon Musk
+  - Sam Altman
+  - Demis Hassabis
+  - Dario Amodei
+  - Yann LeCun
+  - Yoshua Bengio
+  - Geoffrey Hinton
+  - Andrew Ng
+  - Eric Schmidt
+  - Ilya Sutskever
+  - Noam Shazeer
+  - Fei-Fei Li
+  - Stuart Russell
+  - Nick Bostrom
+  - Yuval Noah Harari
+  - Mustafa Suleyman
+  - Jensen Huang
+  - Mark Zuckerberg
+  - Satya Nadella
+  - Lisa Su
+
+# Any substantive interview, podcast, keynote Q&A, or attributable direct quote
+# from a tier-0 person is exempt from the normal per-period news quota.
+# It must still pass source validation, deduplication, attribution/quote integrity,
+# language safety, and minimum editorial quality gates.

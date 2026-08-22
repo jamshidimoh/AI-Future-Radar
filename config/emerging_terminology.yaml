@@ -1,0 +1,175 @@
+emerging_terminology:
+  enabled: true
+  version: "2026.08"
+  reviewed_at: "2026-08-14"
+  policy:
+    status_labels: [established, emerging, informal]
+    rule: "Introduce new terminology only when it has credible current usage. Distinguish standards/specifications from practitioner terminology and hype. Never present an emerging or informal term as an established scientific standard."
+    primary_first: true
+    preferred_domains:
+      - modelcontextprotocol.io
+      - anthropic.com
+      - ibm.com
+      - martinfowler.com
+      - arxiv.org
+      - openai.com
+      - developers.google.com
+      - nist.gov
+  lessons:
+    - id: 101
+      status: established
+      title: "Model Context Protocol و MCP Server"
+      a: {term: "Model Context Protocol (MCP)", fa: "پروتکل زمینه مدل", seed: "یک پروتکل باز برای استانداردسازی نحوه ارائه context، ابزارها و منابع به برنامه‌های متصل به مدل‌های زبانی."}
+      b: {term: "MCP Server", fa: "سرور MCP", seed: "جزئی از معماری MCP که ابزارها، منابع یا قابلیت‌های قابل دسترس برای یک MCP client را ارائه می‌کند."}
+      relation: "MCP یک پروتکل است؛ MCP Server یک پیاده‌سازی/نقطه ارائه قابلیت‌ها در آن اکوسیستم است."
+      sources:
+        - {name: "Model Context Protocol Specification", url: "https://modelcontextprotocol.io/specification/2025-11-25"}
+        - {name: "Anthropic MCP Documentation", url: "https://docs.anthropic.com/en/docs/mcp"}
+
+    - id: 102
+      status: emerging
+      title: "Vibe Coding و Agentic Engineering"
+      a: {term: "Vibe Coding", fa: "کدنویسی مبتنی بر تعامل زبانی با AI", seed: "روشی که در آن توسعه‌دهنده عمدتاً با توضیح خواسته به مدل مولد، کد تولیدشده را تکراری اصلاح می‌کند؛ در تعریف رایج، ممکن است بدون بررسی مستقیم کد انجام شود."}
+      b: {term: "Agentic Engineering", fa: "مهندسی عامل‌محور", seed: "رویکردی برای توسعه نرم‌افزار که در آن AI agents به‌عنوان ابزارهای فعال در چرخه مهندسی به کار گرفته می‌شوند و انسان معماری، مشخصات، کنترل و ارزیابی را هدایت می‌کند."}
+      relation: "Vibe Coding بیشتر یک شیوه تعامل سریع با مدل است؛ Agentic Engineering بر مهندسی کنترل‌شده سامانه‌ها و عامل‌ها برای کارهای پیچیده‌تر تأکید دارد."
+      sources:
+        - {name: "Martin Fowler: Vibe Coding", url: "https://martinfowler.com/bliki/VibeCoding.html"}
+        - {name: "IBM: What is Agentic Engineering?", url: "https://www.ibm.com/think/topics/agentic-engineering"}
+
+    - id: 103
+      status: established
+      title: "Context Engineering و Prompt Engineering"
+      a: {term: "Context Engineering", fa: "مهندسی زمینه", seed: "طراحی و گزینش اطلاعاتی که هنگام inference در اختیار مدل قرار می‌گیرد تا احتمال رسیدن به رفتار یا نتیجه مطلوب افزایش یابد."}
+      b: {term: "Prompt Engineering", fa: "مهندسی پرامپت", seed: "طراحی و سازمان‌دهی دستورها و ورودی‌ها برای هدایت پاسخ مدل به سمت نتیجه مطلوب."}
+      relation: "Prompt بخشی از context است؛ context engineering دامنه وسیع‌تری دارد و ابزارها، تاریخچه، داده بازیابی‌شده و سایر اطلاعات زمینه‌ای را نیز دربرمی‌گیرد."
+      sources:
+        - {name: "Anthropic: Effective Context Engineering for AI Agents", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+        - {name: "Martin Fowler: Context Engineering for Coding Agents", url: "https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html"}
+
+    - id: 104
+      status: emerging
+      title: "Agentic Loop و Loop Engineering"
+      a: {term: "Agentic Loop", fa: "حلقه عامل‌محور", seed: "چرخه تکرارشونده‌ای که در آن یک agent وضعیت را بررسی می‌کند، اقدام انجام می‌دهد، نتیجه را مشاهده می‌کند و بر اساس آن گام بعدی را انتخاب می‌کند."}
+      b: {term: "Loop Engineering", fa: "مهندسی حلقه", seed: "رویکرد نوظهوری برای طراحی و کنترل حلقه‌های عامل‌محور؛ شامل تعیین هدف، ابزار، verification، وضعیت، retry و شرط توقف به‌جای تکیه بر prompting دستی در هر گام."}
+      relation: "Agentic loop خودِ چرخه اجراست؛ loop engineering به طراحی، ارزیابی و کنترل این چرخه می‌پردازد."
+      sources:
+        - {name: "IBM: What is Loop Engineering?", url: "https://www.ibm.com/think/topics/loop-engineering"}
+        - {name: "arXiv: Engineering the Loops that Replace Step-by-Step Prompting", url: "https://arxiv.org/abs/2607.00038"}
+
+    - id: 105
+      status: emerging
+      title: "Harness Engineering و AI Agent Harness"
+      a: {term: "Harness Engineering", fa: "مهندسی هارنس عامل", seed: "طراحی محیط، ابزارها، محدودیت‌ها، آزمون‌ها و بازخوردهایی که یک agent در آن‌ها کار می‌کند تا رفتار آن قابل کنترل‌تر و قابل ارزیابی‌تر شود."}
+      b: {term: "Agent Harness", fa: "هارنس عامل", seed: "لایه اجرایی پیرامون یک AI agent که context، ابزار، مجوزها، مشاهده نتایج و کنترل اجرای آن را مدیریت می‌کند."}
+      relation: "Harness Engineering یک فعالیت طراحی است؛ Agent Harness سامانه یا لایه‌ای است که این طراحی را در اجرا پیاده می‌کند."
+      sources:
+        - {name: "InfoQ: From MCP and Vibe Coding to Harness Engineering", url: "https://www.infoq.com/podcasts/mcp-vibe-coding-harness-engineering/"}
+        - {name: "Anthropic: Effective Context Engineering", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+
+    - id: 106
+      status: established
+      title: "Tool Calling و Function Calling"
+      a: {term: "Tool Calling", fa: "فراخوانی ابزار", seed: "سازوکاری که به مدل اجازه می‌دهد به‌جای تولید صرفاً متن، درخواست ساختاریافته‌ای برای اجرای یک ابزار بیرونی ایجاد کند."}
+      b: {term: "Function Calling", fa: "فراخوانی تابع", seed: "شکل مشخصی از tool calling که مدل آرگومان‌های یک تابع تعریف‌شده را تولید می‌کند تا برنامه بتواند آن تابع را اجرا کند."}
+      relation: "Function calling را می‌توان شکل مشخصی از tool calling دانست؛ تفاوت دقیق اصطلاحات به پلتفرم و API بستگی دارد."
+      sources:
+        - {name: "Anthropic MCP Documentation", url: "https://docs.anthropic.com/en/docs/mcp"}
+        - {name: "Google Gemini Function Calling", url: "https://ai.google.dev/gemini-api/docs/function-calling"}
+
+    - id: 107
+      status: emerging
+      title: "AI Skills و Sub-agent"
+      a: {term: "AI Skill", fa: "مهارت AI", seed: "بسته‌ای از دستورها، دانش، ابزار یا رویه‌های قابل استفاده مجدد که توانایی یک agent را برای انجام یک نوع کار مشخص افزایش می‌دهد."}
+      b: {term: "Sub-agent", fa: "عامل فرعی", seed: "یک agent تخصصی یا مجزا که برای بخشی از یک وظیفه بزرگ‌تر اجرا می‌شود و نتیجه آن به جریان اصلی بازمی‌گردد."}
+      relation: "Skill قابلیت قابل استفاده مجدد را توصیف می‌کند؛ sub-agent یک واحد اجرایی مستقل‌تر برای تقسیم کار است."
+      sources:
+        - {name: "Anthropic Labs: Skills", url: "https://www.anthropic.com/news/introducing-anthropic-labs"}
+        - {name: "Anthropic: Effective Context Engineering", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+
+    - id: 108
+      status: emerging
+      title: "Spec-Driven Development و AI Coding Agent"
+      a: {term: "Spec-Driven Development", fa: "توسعه مبتنی بر مشخصات", seed: "رویکردی که در آن مشخصات دقیق و قابل بررسی پیش از یا همراه با تولید کد توسط AI به‌عنوان مرجع اصلی اجرای کار استفاده می‌شود."}
+      b: {term: "AI Coding Agent", fa: "عامل کدنویسی هوش مصنوعی", seed: "سامانه‌ای عامل‌محور که می‌تواند با دسترسی کنترل‌شده به کد، ابزارها و محیط توسعه، چند گام از کار مهندسی نرم‌افزار را انجام دهد."}
+      relation: "Spec-driven development ورودی و معیار کار را ساختارمند می‌کند؛ coding agent اجرا و اصلاح بخشی از کار را بر عهده می‌گیرد."
+      sources:
+        - {name: "Martin Fowler: Vibe Coding", url: "https://martinfowler.com/bliki/VibeCoding.html"}
+        - {name: "IBM: Agentic Engineering", url: "https://www.ibm.com/think/topics/agentic-engineering"}
+
+    - id: 109
+      status: established
+      title: "Computer Use و Browser Agent"
+      a: {term: "Computer Use", fa: "کار با رابط رایانه", seed: "قابلیتی که به یک مدل یا agent امکان می‌دهد از طریق رابط کاربری رایانه مانند مشاهده صفحه و انجام اقدام‌های ورودی، با نرم‌افزار تعامل کند."}
+      b: {term: "Browser Agent", fa: "عامل مرورگر", seed: "agentی که برای انجام وظایف وب می‌تواند صفحات را مشاهده کند، اطلاعات را استخراج کند و اقدام‌های مجاز مرورگر را انجام دهد."}
+      relation: "Browser agent یک کاربرد تخصصی computer use برای محیط وب است."
+      sources:
+        - {name: "Anthropic: Effective Context Engineering", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+        - {name: "NIST AI", url: "https://www.nist.gov/artificial-intelligence"}
+
+    - id: 110
+      status: emerging
+      title: "MCP Apps و MCP Tasks"
+      a: {term: "MCP Apps", fa: "برنامه‌های MCP", seed: "الگویی در اکوسیستم MCP برای ارائه رابط‌های کاربری تعاملی مرتبط با قابلیت‌های یک MCP server."}
+      b: {term: "MCP Tasks", fa: "وظایف MCP", seed: "قابلیتی در مسیر تکامل MCP برای پشتیبانی از کارهای طولانی‌تر و مدیریت چرخه اجرای آن‌ها."}
+      relation: "هر دو بخشی از گسترش اکوسیستم MCP هستند؛ Apps بر تعامل UI و Tasks بر عملیات طولانی‌تر تمرکز دارد."
+      sources:
+        - {name: "MCP 2026-07-28 Specification", url: "https://blog.modelcontextprotocol.io/posts/2026-07-28/"}
+        - {name: "MCP 2026 Release Candidate", url: "https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/"}
+
+    - id: 111
+      status: established
+      title: "Agentic Workflow و Autonomous Agent"
+      a: {term: "Agentic Workflow", fa: "گردش‌کار عامل‌محور", seed: "گردش‌کاری که در آن یک یا چند agent در چند مرحله با context، ابزار و قواعد مشخص برای رسیدن به هدف کار می‌کنند."}
+      b: {term: "Autonomous Agent", fa: "عامل خودمختار", seed: "عاملی که می‌تواند بدون هدایت انسانی در هر گام، بخشی از تصمیم‌گیری و اجرای وظایف را بر اساس هدف و محدودیت‌های تعیین‌شده انجام دهد."}
+      relation: "Agentic workflow بر ساختار فرایند تأکید دارد؛ autonomous agent بر میزان استقلال عامل در اجرای آن فرایند."
+      sources:
+        - {name: "Anthropic: Effective Context Engineering", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+        - {name: "IBM: Agentic Engineering", url: "https://www.ibm.com/think/topics/agentic-engineering"}
+
+    - id: 112
+      status: emerging
+      title: "Just-in-Time Context و Context Compaction"
+      a: {term: "Just-in-Time Context", fa: "زمینه در زمان نیاز", seed: "راهبردی که به‌جای قراردادن همه اطلاعات مرتبط از ابتدا، اطلاعات لازم را در زمان مناسب و با ابزار یا بازیابی وارد context می‌کند."}
+      b: {term: "Context Compaction", fa: "فشرده‌سازی زمینه", seed: "کاهش یا بازنمایی فشرده اطلاعات تاریخی یک اجرای طولانی برای آزاد کردن ظرفیت context و حفظ اطلاعات مهم."}
+      relation: "هر دو برای مدیریت context محدود در agentهای طولانی‌مدت استفاده می‌شوند، اما یکی بر زمان بازیابی و دیگری بر فشرده‌سازی سابقه تمرکز دارد."
+      sources:
+        - {name: "Anthropic: Effective Context Engineering", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+
+    - id: 113
+      status: emerging
+      title: "Agentic Memory و Structured Memory"
+      a: {term: "Agentic Memory", fa: "حافظه عامل", seed: "سازوکاری برای نگهداری و بازیابی اطلاعاتی که agent می‌تواند در تعامل‌ها یا وظایف بعدی از آن استفاده کند."}
+      b: {term: "Structured Memory", fa: "حافظه ساختاریافته", seed: "حافظه‌ای که اطلاعات را در ساختاری مشخص و قابل بازیابی نگهداری می‌کند تا agent بتواند آن را در زمان مناسب به context بازگرداند."}
+      relation: "Structured memory یک روش سازمان‌دهی حافظه است؛ agentic memory مفهوم گسترده‌تری برای حفظ اطلاعات قابل استفاده توسط agent است."
+      sources:
+        - {name: "Anthropic: Effective Context Engineering", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+
+    - id: 114
+      status: emerging
+      title: "Agent Evaluation و Verifier"
+      a: {term: "Agent Evaluation", fa: "ارزیابی عامل", seed: "سنجش توانایی و قابلیت اطمینان یک agent در انجام وظایف چندمرحله‌ای با معیارها و سناریوهای مشخص."}
+      b: {term: "Verifier", fa: "راستی‌آزما/بازرس", seed: "مولفه‌ای که نتیجه یا وضعیت اجرای agent را با یک معیار مستقل بررسی می‌کند تا مشخص شود آیا شرط موفقیت برآورده شده است."}
+      relation: "Evaluation عملکرد کلی را می‌سنجد؛ verifier بخشی از یک اجرای مشخص را برای تصمیم‌گیری درباره موفقیت یا ادامه کار بررسی می‌کند."
+      sources:
+        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+        - {name: "arXiv: Engineering the Loops that Replace Step-by-Step Prompting", url: "https://arxiv.org/abs/2607.00038"}
+
+    - id: 115
+      status: emerging
+      title: "Agentic Coding و Continuous Agent Loop"
+      a: {term: "Agentic Coding", fa: "کدنویسی عامل‌محور", seed: "توسعه نرم‌افزار با استفاده از agentهایی که می‌توانند چند مرحله از خواندن کد، تغییر، اجرای ابزار و بررسی نتیجه را دنبال کنند."}
+      b: {term: "Continuous Agent Loop", fa: "حلقه پیوسته عامل", seed: "اجرای تکرارشونده یک agent یا workflow که پس از دریافت نتیجه، در صورت برقرار بودن شرایط ادامه، گام بعدی را به‌صورت خودکار آغاز می‌کند."}
+      relation: "Agentic coding حوزه کاربرد است؛ continuous agent loop یکی از الگوهای اجرایی برای خودکارسازی تکرار در آن حوزه است."
+      sources:
+        - {name: "IBM: Agentic Engineering", url: "https://www.ibm.com/think/topics/agentic-engineering"}
+        - {name: "IBM: Loop Engineering", url: "https://www.ibm.com/think/topics/loop-engineering"}
+
+    - id: 116
+      status: emerging
+      title: "AI Slop و AI-generated Software"
+      a: {term: "AI Slop", fa: "محتوای کم‌کیفیت تولیدشده با AI", seed: "اصطلاحی غیررسمی برای محتوای تولیدشده با AI که معمولاً حجم بالا، کیفیت پایین، تکراری یا کم‌ارزش تلقی می‌شود."}
+      b: {term: "AI-generated Software", fa: "نرم‌افزار تولیدشده با AI", seed: "نرم‌افزاری که بخش قابل توجهی از کد یا اجزای آن با کمک مدل‌های مولد تولید شده است؛ کیفیت آن به فرایند مهندسی و ارزیابی وابسته است."}
+      relation: "AI-generated software الزاماً AI slop نیست؛ تفاوت اصلی در کیفیت، هدف، بررسی و فرایند مهندسی است."
+      sources:
+        - {name: "Martin Fowler: Vibe Coding", url: "https://martinfowler.com/bliki/VibeCoding.html"}
+        - {name: "IBM: Agentic Engineering", url: "https://www.ibm.com/think/topics/agentic-engineering"}

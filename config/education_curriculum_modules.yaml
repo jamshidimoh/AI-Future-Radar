@@ -1,0 +1,268 @@
+education_curriculum_modules:
+  version: "1.0"
+  reviewed_at: "2026-08-22"
+  lessons:
+    - id: 31
+      domain: "Machine learning"
+      prerequisites: [2, 3, 6]
+      title: "Validation، Generalization و Distribution Shift"
+      status: "established"
+      a: {term: "Generalization", fa: "تعمیم‌پذیری", seed: "توانایی مدل برای عملکرد مناسب روی داده‌های جدید و ندیده است، نه فقط داده‌های آموزش."}
+      b: {term: "Distribution Shift", fa: "تغییر توزیع", seed: "تغییر معنادار در توزیع داده میان شرایط آموزش و استفاده از مدل که می‌تواند عملکرد مدل را کاهش دهد."}
+      relation: "Validation، cross-validation و آزمون مستقل برای سنجش تعمیم‌پذیری‌اند؛ distribution shift یکی از علل مهم افت عملکرد پس از استقرار است."
+      sources:
+        - {name: "scikit-learn Cross-validation", url: "https://scikit-learn.org/stable/modules/cross_validation.html"}
+        - {name: "Google Machine Learning Crash Course: Validation", url: "https://developers.google.com/machine-learning/crash-course/validation"}
+    - id: 32
+      domain: "Deep learning"
+      prerequisites: [5, 6]
+      title: "Optimization، Regularization و Normalization"
+      status: "established"
+      a: {term: "Optimization", fa: "بهینه‌سازی", seed: "فرایند تنظیم پارامترهای مدل برای کمینه‌کردن تابع هدف یا خطای تعریف‌شده."}
+      b: {term: "Regularization", fa: "منظم‌سازی", seed: "روش‌هایی برای محدودکردن پیچیدگی مدل یا رفتار یادگیری با هدف کاهش overfitting و بهبود تعمیم."}
+      relation: "بهینه‌سازی مسیر یادگیری را تعیین می‌کند و regularization و normalization به پایداری، سرعت و تعمیم کمک می‌کنند."
+      sources:
+        - {name: "PyTorch Optimizers", url: "https://pytorch.org/docs/stable/optim.html"}
+        - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 33
+      domain: "Generative AI"
+      prerequisites: [8, 9]
+      title: "Generative Architectures و Decoding"
+      status: "established"
+      a: {term: "Generative Architecture", fa: "معماری مولد", seed: "معماری مدلی که برای تولید داده یا توکن‌های جدید از یک توزیع آموخته‌شده طراحی شده است."}
+      b: {term: "Decoding", fa: "رمزگشایی", seed: "فرایند انتخاب خروجی از توزیع احتمالاتی مدل مولد، مانند greedy، sampling یا beam search."}
+      relation: "معماری ظرفیت تولید را تعیین می‌کند و decoding نحوه تبدیل توزیع مدل به خروجی نهایی را کنترل می‌کند."
+      sources:
+        - {name: "Hugging Face Text Generation", url: "https://huggingface.co/docs/transformers/main/en/llm_tutorial"}
+        - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 34
+      domain: "Alignment & post-training"
+      prerequisites: [10, 11]
+      title: "SFT، Preference Optimization و RLHF/DPO"
+      status: "established"
+      a: {term: "Supervised Fine-Tuning (SFT)", fa: "ریزتنظیم نظارت‌شده", seed: "آموزش تکمیلی مدل با نمونه‌های ورودی-خروجی باکیفیت برای یادگیری رفتار یا وظیفه مشخص."}
+      b: {term: "Preference Optimization", fa: "بهینه‌سازی ترجیح", seed: "روش‌هایی برای نزدیک‌کردن رفتار مدل به ترجیحات ثبت‌شده بدون اتکا به یک روش واحد برای یادگیری از بازخورد."}
+      relation: "SFT یک رفتار مطلوب را مستقیماً یاد می‌دهد؛ preference optimization رفتار را نسبت به ترجیحات مقایسه‌ای تنظیم می‌کند."
+      sources:
+        - {name: "Hugging Face TRL", url: "https://huggingface.co/docs/trl/index"}
+        - {name: "Anthropic Research", url: "https://www.anthropic.com/research"}
+    - id: 35
+      domain: "Inference & optimization"
+      prerequisites: [3, 9]
+      title: "Serving، Batching و KV Cache"
+      status: "established"
+      a: {term: "Model Serving", fa: "سرویس‌دهی مدل", seed: "زیرساختی برای ارائه مدل آموزش‌دیده به‌عنوان یک سرویس قابل‌درخواست در محیط تولید."}
+      b: {term: "KV Cache", fa: "کش کلید-مقدار", seed: "ذخیره نمایش‌های میانی attention برای کاهش محاسبه تکراری هنگام تولید توکن‌های متوالی."}
+      relation: "Serving معماری عملیاتی را می‌سازد؛ batching و KV cache دو ابزار اصلی برای بهبود throughput و latency در inference هستند."
+      sources:
+        - {name: "NVIDIA Triton Inference Server", url: "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/"}
+        - {name: "Google Cloud Vertex AI Prediction", url: "https://cloud.google.com/vertex-ai/docs/predictions/overview"}
+    - id: 36
+      domain: "Inference & optimization"
+      prerequisites: [20, 35]
+      title: "Quantization و Speculative Decoding"
+      status: "established"
+      a: {term: "Quantization", fa: "کوانتیزه‌سازی", seed: "نمایش پارامترها یا محاسبات با دقت عددی کمتر برای کاهش حافظه و هزینه و افزایش سرعت بالقوه."}
+      b: {term: "Speculative Decoding", fa: "رمزگشایی حدسی", seed: "روش تولید که در آن یک مدل یا مسیر سریع‌تر چند توکن پیشنهادی تولید و مدل اصلی آن‌ها را تأیید یا رد می‌کند."}
+      relation: "هر دو برای کاهش هزینه و latency inference استفاده می‌شوند، اما یکی بر نمایش عددی و دیگری بر الگوی محاسبه تولید تمرکز دارد."
+      sources:
+        - {name: "Hugging Face Quantization", url: "https://huggingface.co/docs/transformers/main/en/quantization/overview"}
+        - {name: "NVIDIA TensorRT-LLM", url: "https://nvidia.github.io/TensorRT-LLM/"}
+    - id: 37
+      domain: "Data & data engineering"
+      prerequisites: [2, 4]
+      title: "Data Engineering، Quality و Lineage برای AI"
+      status: "established"
+      a: {term: "Data Lineage", fa: "تبار داده", seed: "ثبت و ردیابی منبع، تبدیل‌ها و مسیر حرکت داده در چرخه تولید و استفاده."}
+      b: {term: "Data Quality", fa: "کیفیت داده", seed: "میزان مناسب‌بودن داده از نظر صحت، کامل‌بودن، سازگاری، تازگی و تناسب با کاربرد."}
+      relation: "کیفیت و lineage داده زیربنای قابلیت بازتولید، ارزیابی و حاکمیت سامانه‌های AI هستند."
+      sources:
+        - {name: "Google Machine Learning Data Quality", url: "https://developers.google.com/machine-learning/data-prep"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 38
+      domain: "Data & data engineering"
+      prerequisites: [37]
+      title: "Synthetic Data، Curation و Augmentation"
+      status: "established"
+      a: {term: "Synthetic Data", fa: "داده مصنوعی", seed: "داده‌ای تولیدشده با فرایند مصنوعی برای افزایش پوشش، آزمایش یا کاهش برخی محدودیت‌های داده واقعی."}
+      b: {term: "Data Curation", fa: "پایش و گزینش داده", seed: "فرایند انتخاب، پاک‌سازی، پالایش، برچسب‌گذاری و سازمان‌دهی داده برای یک هدف مشخص."}
+      relation: "Synthetic data می‌تواند ماده اولیه باشد، اما کیفیت نهایی به curation، اعتبارسنجی و سنجش خطرهای حلقه‌ای وابسته است."
+      sources:
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"}
+        - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
+    - id: 39
+      domain: "Retrieval & RAG"
+      prerequisites: [7, 12, 13]
+      title: "RAG Pipeline، Reranking و Grounding"
+      status: "established"
+      a: {term: "Reranking", fa: "بازمرتب‌سازی", seed: "مرحله‌ای پس از retrieval برای امتیازدهی دقیق‌تر و مرتب‌سازی مجدد اسناد یا قطعات بازیابی‌شده."}
+      b: {term: "Grounding", fa: "مستند‌سازی پاسخ با منبع", seed: "پیوند دادن پاسخ مدل به اطلاعات بیرونی قابل‌ردیابی برای کاهش خطای بی‌پایه و افزایش قابلیت بررسی."}
+      relation: "RAG خوب فقط embedding نیست؛ retrieval، reranking، grounding، citation و مدیریت failure modeها همگی بخشی از pipeline هستند."
+      sources:
+        - {name: "Microsoft RAG Overview", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
+        - {name: "Google Cloud RAG", url: "https://cloud.google.com/vertex-ai/generative-ai/docs/rag-overview"}
+    - id: 40
+      domain: "Multimodal AI"
+      prerequisites: [7, 8, 9]
+      title: "Vision-Language، Audio/Video و Multimodal Evaluation"
+      status: "established"
+      a: {term: "Multimodal Model", fa: "مدل چندوجهی", seed: "مدلی که می‌تواند بیش از یک نوع داده مانند متن، تصویر، صدا یا ویدئو را پردازش یا تولید کند."}
+      b: {term: "Multimodal Evaluation", fa: "ارزیابی چندوجهی", seed: "سنجش عملکرد مدل در وظایفی که چند modality را هم‌زمان یا در تعامل با یکدیگر به کار می‌گیرند."}
+      relation: "چندوجهی‌بودن فقط افزودن ورودی جدید نیست؛ باید alignment بین modalityها و ارزیابی مستقل هر مسیر و تعامل آن‌ها را سنجید."
+      sources:
+        - {name: "Google Gemini Vision", url: "https://ai.google.dev/gemini-api/docs/vision"}
+        - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 41
+      domain: "Agents & agentic systems"
+      prerequisites: [15, 16]
+      title: "Agent Architecture، Planning و State"
+      status: "established"
+      a: {term: "Agent Architecture", fa: "معماری عامل", seed: "ساختاری که مدل، وضعیت، ابزارها، حافظه، سیاست تصمیم و چرخه اجرا را در یک سامانه عامل‌محور به هم متصل می‌کند."}
+      b: {term: "Planning", fa: "برنامه‌ریزی", seed: "تجزیه هدف به گام‌ها یا تصمیم‌های میانی برای رسیدن به نتیجه مورد نظر."}
+      relation: "Agent معماری سامانه است و planning یکی از قابلیت‌های تصمیم‌گیری در آن معماری است."
+      sources:
+        - {name: "Anthropic Building Effective Agents", url: "https://www.anthropic.com/research/building-effective-agents"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 42
+      domain: "Tool use & protocols"
+      prerequisites: [41]
+      title: "Tool Calling، MCP و Protocol Boundaries"
+      status: "established"
+      a: {term: "Tool Calling", fa: "فراخوانی ابزار", seed: "مکانیزمی که به مدل اجازه می‌دهد یک عمل ساختاریافته را از طریق ابزار یا API درخواست کند."}
+      b: {term: "Model Context Protocol (MCP)", fa: "پروتکل زمینه مدل", seed: "یک پروتکل برای اتصال مدل‌ها و agentها به ابزارها و منابع از طریق قراردادهای استاندارد."}
+      relation: "Tool calling یک قابلیت تعامل مدل با ابزار است؛ پروتکل‌هایی مانند MCP قرارداد اتصال، کشف و مرزبندی را استاندارد می‌کنند."
+      sources:
+        - {name: "MCP Specification", url: "https://modelcontextprotocol.io/specification/2025-11-25"}
+        - {name: "Google Gemini Function Calling", url: "https://ai.google.dev/gemini-api/docs/function-calling"}
+    - id: 43
+      domain: "Memory & context"
+      prerequisites: [16, 41, 42]
+      title: "Context Engineering و Agent Memory"
+      status: "established"
+      a: {term: "Context Engineering", fa: "مهندسی زمینه", seed: "طراحی نظام‌مند اطلاعاتی که در هر مرحله به مدل داده می‌شود، شامل انتخاب، فشرده‌سازی و بازیابی زمینه."}
+      b: {term: "Agent Memory", fa: "حافظه عامل", seed: "سازوکار ذخیره و بازیابی اطلاعاتی که فراتر از یک درخواست منفرد برای تداوم رفتار عامل استفاده می‌شود."}
+      relation: "Context کوتاه‌مدت اجرای جاری است؛ memory می‌تواند اطلاعات را در طول زمان نگهداری و دوباره وارد context کند."
+      sources:
+        - {name: "OpenAI Context Management", url: "https://platform.openai.com/docs/guides/context"}
+        - {name: "Microsoft Agentic AI Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/agentic-ai"}
+    - id: 44
+      domain: "Evaluation & benchmarks"
+      prerequisites: [19, 41]
+      title: "Agent Evaluation، Verification و Reliability"
+      status: "established"
+      a: {term: "Agent Evaluation", fa: "ارزیابی عامل", seed: "سنجش رفتار یک agent در انجام وظایف چندمرحله‌ای، استفاده از ابزار و رسیدن به نتیجه تحت شرایط واقعی یا شبیه‌سازی‌شده."}
+      b: {term: "Verification", fa: "راستی‌آزمایی", seed: "بررسی مستقل خروجی، مسیر اجرا یا ادعای عامل برای کشف خطا پیش از اثرگذاری نهایی."}
+      relation: "در سامانه‌های agentic، ارزیابی باید هم نتیجه و هم فرایند را بسنجد و verification نقش کنترل خطا پیش از اقدام را دارد."
+      sources:
+        - {name: "OpenAI Evals", url: "https://platform.openai.com/docs/guides/evals"}
+        - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 45
+      domain: "AI security & robustness"
+      prerequisites: [28, 42]
+      title: "Prompt Injection و Tool Abuse"
+      status: "established"
+      a: {term: "Prompt Injection", fa: "تزریق پرامپت", seed: "دستکاری ورودی یا محتوای زمینه برای منحرف کردن رفتار مدل از سیاست یا هدف مورد نظر."}
+      b: {term: "Tool Abuse", fa: "سوءاستفاده از ابزار", seed: "استفاده مخرب یا ناایمن از قابلیت‌های ابزاری agent برای انجام عمل غیرمجاز یا پرخطر."}
+      relation: "در agentهای ابزارمحور، prompt injection می‌تواند به tool abuse منجر شود؛ بنابراین مرزبندی داده، دستور و عمل ضروری است."
+      sources:
+        - {name: "NIST AI 100-2e2025", url: "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"}
+        - {name: "OWASP Top 10 for LLM Applications 2025", url: "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/"}
+    - id: 46
+      domain: "AI security & robustness"
+      prerequisites: [45]
+      title: "Poisoning، Supply Chain و Adversarial Robustness"
+      status: "established"
+      a: {term: "Data/Model Poisoning", fa: "مسموم‌سازی داده/مدل", seed: "واردکردن تغییرات مخرب به داده، آموزش یا artifactها با هدف اثرگذاری بر رفتار مدل یا زنجیره یادگیری."}
+      b: {term: "Adversarial Robustness", fa: "تاب‌آوری در برابر حمله", seed: "توانایی سیستم برای حفظ رفتار قابل‌قبول در برابر ورودی‌ها یا دستکاری‌های خصمانه."}
+      relation: "Poisoning و supply-chain risk در چرخه ساخت رخ می‌دهند و robustness و verification ابزارهای کنترل پیامد آن‌ها هستند."
+      sources:
+        - {name: "NIST AI 100-2e2025", url: "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"}
+        - {name: "OWASP Top 10 for LLM and GenAI", url: "https://genai.owasp.org/initiatives/top-10-for-llm-and-genai/"}
+    - id: 47
+      domain: "AI engineering & MLOps"
+      prerequisites: [19, 35, 44]
+      title: "MLOps، Observability و Rollback"
+      status: "established"
+      a: {term: "MLOps", fa: "عملیات چرخه عمر ML", seed: "مجموعه فرایندها و ابزارهایی برای ساخت، تست، استقرار، پایش و نگهداری سیستم‌های یادگیری ماشین."}
+      b: {term: "Model Rollback", fa: "بازگردانی مدل", seed: "برگرداندن نسخهٔ مستقر مدل یا پیکربندی به وضعیت قبلی در واکنش به خطا یا افت عملکرد."}
+      relation: "MLOps چرخه کامل است و rollback یکی از کنترل‌های ضروری برای کاهش ریسک deployment است."
+      sources:
+        - {name: "Google Cloud MLOps Architecture", url: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"}
+        - {name: "Azure Machine Learning MLOps", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment"}
+    - id: 48
+      domain: "AI infrastructure & compute"
+      prerequisites: [24, 35, 36]
+      title: "Accelerators، Distributed Training و AI Infrastructure"
+      status: "established"
+      a: {term: "AI Accelerator", fa: "شتاب‌دهنده هوش مصنوعی", seed: "پردازنده یا سامانه‌ای تخصصی برای اجرای کارآمد عملیات رایج AI مانند tensor operations."}
+      b: {term: "Distributed Training", fa: "آموزش توزیع‌شده", seed: "تقسیم فرایند آموزش بین چند پردازنده یا چند گره برای افزایش مقیاس و کاهش زمان یا افزایش ظرفیت."}
+      relation: "شتاب‌دهنده ظرفیت محاسباتی را فراهم می‌کند و distributed training نحوه مقیاس‌دادن workload را تعیین می‌کند."
+      sources:
+        - {name: "NVIDIA AI Enterprise", url: "https://docs.nvidia.com/ai-enterprise/"}
+        - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
+    - id: 49
+      domain: "AI for science & biomedicine"
+      prerequisites: [25, 30]
+      title: "AI for Science، Protein Models و Biomedical Validation"
+      status: "emerging"
+      a: {term: "AI for Science", fa: "هوش مصنوعی برای علم", seed: "استفاده از AI برای مدل‌سازی، کشف، شبیه‌سازی، تحلیل و طراحی در علوم طبیعی و مهندسی."}
+      b: {term: "Scientific Validation", fa: "اعتبارسنجی علمی", seed: "تأیید نتایج AI با معیارها، آزمایش، داده مستقل یا شواهد تجربی مناسب با حوزه علمی."}
+      relation: "توان مدل کافی نیست؛ در science و biomedicine نتیجه باید با validation تجربی یا مستقل از مدل پشتیبانی شود."
+      sources:
+        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/science"}
+        - {name: "FDA AI/ML Medical Device Research", url: "https://www.fda.gov/medical-devices/medical-device-regulatory-science-research-programs-conducted-osel/artificial-intelligence-program-research-aiml-based-medical-devices"}
+    - id: 50
+      domain: "Human-AI interaction"
+      prerequisites: [19, 28, 44]
+      title: "Human-AI Interaction، Calibration و Oversight"
+      status: "established"
+      a: {term: "Calibration", fa: "کالیبراسیون اعتماد", seed: "هم‌تراز کردن میزان اعتماد یا اتکا به خروجی AI با احتمال درست‌بودن و محدودیت واقعی آن."}
+      b: {term: "Human Oversight", fa: "نظارت انسانی", seed: "طراحی نقاطی از چرخه تصمیم که انسان می‌تواند خروجی AI را بررسی، اصلاح یا متوقف کند."}
+      relation: "سیستم قابل‌اعتماد باید سطح اعتماد کاربر و اختیار تصمیم را با قابلیت واقعی مدل و ریسک وظیفه هماهنگ کند."
+      sources:
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+        - {name: "Stanford AI Index 2026 Responsible AI", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/responsible-ai"}
+    - id: 51
+      domain: "Governance & policy"
+      prerequisites: [28, 50]
+      title: "AI Governance، Standards و Assurance"
+      status: "established"
+      a: {term: "AI Governance", fa: "حاکمیت هوش مصنوعی", seed: "ساختارها و فرایندهایی برای تعیین مسئولیت، سیاست، کنترل و تصمیم‌گیری در چرخه عمر AI."}
+      b: {term: "Assurance", fa: "اطمینان‌بخشی", seed: "شواهد و کنترل‌هایی که نشان می‌دهند یک سیستم نسبت به الزامات تعریف‌شده قابل‌اتکا و قابل‌ارزیابی است."}
+      relation: "Governance چارچوب تصمیم‌گیری را می‌سازد و assurance شواهد قابل‌بررسی برای انطباق، ایمنی و کیفیت فراهم می‌کند."
+      sources:
+        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+        - {name: "Stanford AI Index 2026 Policy and Governance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/policy-and-governance"}
+    - id: 52
+      domain: "Open models & ecosystems"
+      prerequisites: [9, 24]
+      title: "Open-Weight، Open-Source و Model Supply Chain"
+      status: "established"
+      a: {term: "Open-Weight", fa: "وزن‌باز", seed: "مدلی که وزن‌های آموزش‌دیده آن در دسترس دیگران قرار گرفته است، بدون اینکه الزاماً تمام اجزای یک پروژه open-source باشند."}
+      b: {term: "Model Supply Chain", fa: "زنجیره تأمین مدل", seed: "مجموعه منابع، artifactها، داده‌ها و اجزایی که برای ساخت و استقرار مدل به یکدیگر وابسته‌اند."}
+      relation: "Open-weight بودن با open-source بودن یکسان نیست و هر دو باید در کنار provenance، license و supply-chain risk تحلیل شوند."
+      sources:
+        - {name: "Hugging Face Model Hub", url: "https://huggingface.co/docs/hub/models-the-hub"}
+        - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
+    - id: 53
+      domain: "Robotics & embodied AI"
+      prerequisites: [25, 41, 48]
+      title: "Embodied AI، Perception-Action و Simulation"
+      status: "emerging"
+      a: {term: "Embodied AI", fa: "هوش مصنوعی تجسم‌یافته", seed: "هوشی که در چرخه ادراک، تصمیم و عمل یک سامانه فیزیکی یا محیط شبیه‌سازی‌شده عمل می‌کند."}
+      b: {term: "Perception-Action Loop", fa: "حلقه ادراک-عمل", seed: "چرخه‌ای که در آن سامانه محیط را دریافت می‌کند، تصمیم می‌گیرد، عمل می‌کند و بر اساس پیامد عمل دوباره ادراک می‌کند."}
+      relation: "در embodied AI، موفقیت فقط کیفیت پیش‌بینی نیست؛ تعامل فیزیکی، latency، safety و uncertainty بخشی از مسئله‌اند."
+      sources:
+        - {name: "NVIDIA Isaac", url: "https://docs.nvidia.com/isaac/"}
+        - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 54
+      domain: "Quantum AI"
+      prerequisites: [26, 27]
+      title: "Quantum Machine Learning، Hybrid Algorithms و Evidence Limits"
+      status: "emerging"
+      a: {term: "Quantum Machine Learning (QML)", fa: "یادگیری ماشین کوانتومی", seed: "استفاده از محاسبات یا مدارهای کوانتومی در الگوریتم‌های یادگیری ماشین یا زیرروال‌های آن."}
+      b: {term: "Hybrid Quantum-Classical Algorithm", fa: "الگوریتم ترکیبی کوانتومی-کلاسیک", seed: "روش محاسباتی که بخشی از چرخه را روی سامانه کوانتومی و بخشی را با محاسبات کلاسیک اجرا می‌کند."}
+      relation: "QML یک حوزه پژوهشی است و بسیاری از روش‌های عملی امروز hybrid هستند؛ ادعاهای برتری باید با evidence و مقایسه منصفانه سنجیده شوند."
+      sources:
+        - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/quantum-information-science"}
+        - {name: "IBM Quantum Learning", url: "https://quantum.cloud.ibm.com/learning"}

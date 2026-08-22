@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787400637,
+  "updated_at": 1787401193,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2697,6 +2697,22 @@
       "title": "امکان‌سنجی ساخت دوقلوی دیجیتال مغز انسان",
       "link": "https://www.youtube.com/shorts/mG9LrbYIF9g",
       "posted_at": 1787400637
+    },
+    "-1004482051328:1196": {
+      "chat_id": -1004482051328,
+      "message_id": 1196,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Reddit - r/artificial",
+      "content_type": "community",
+      "category": "future",
+      "leader": "",
+      "title": "آینده آموزش AI: گذار از حجم داده به کیفیت نمونه‌های هدفمند",
+      "link": "https://www.reddit.com/r/artificial/comments/1vvasub/what_parsewaves_work_says_about_the_next_phase_of/",
+      "posted_at": 1787401193
     }
   }
 }

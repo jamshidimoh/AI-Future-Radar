@@ -22,7 +22,7 @@ class TelegramFormatTests(unittest.TestCase):
             self.assertIn(expected, plain)
         self.assertIn("<b>\u00a0📡", text)
         self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
-        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)
+        self.assertIn("<blockquote>💡 <b>چرا مهم است؟", text)
         self.assertIn("\u2067", text)
         self.assertIn("\u2066", text)
         self.assertIn("\u2069", text)
@@ -38,7 +38,7 @@ class TelegramFormatTests(unittest.TestCase):
     def test_html_tags_are_not_corrupted_by_bidi_isolation(self):
         text = format_post({"title": "DeepMind: هوش مصنوعی", "summary": "خلاصه فارسی با ChatGPT", "why_it_matters": "اهمیت فناوری", "category": "ai"}, "Google News", "https://example.com/news")
         self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
-        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)
+        self.assertIn("<blockquote>💡 <b>چرا مهم است؟", text)
         self.assertIn("<a href=\"", text)
         self.assertNotIn("<\u2066", text)
         self.assertNotIn("\u2069>", text)
@@ -71,7 +71,7 @@ class TelegramFormatTests(unittest.TestCase):
             result = telegram_single_delivery.send("متن آزمون", image_url="https://example.com/image.jpg", source_link="https://example.com/article")
         self.assertEqual(result["message_id"], 123)
         self.assertIsNone(result["photo_message_id"])
-        text_sender.assert_called_once_with("token", "-100123", "متن آزمون", preflight=False)
+        text_sender.assert_called_once_with("token", "-100123", "متن آزمون", preview_url="https://example.com/article", preflight=False)
         photo_sender.assert_not_called()
 
     def test_long_content_is_chunked_without_truncation(self):

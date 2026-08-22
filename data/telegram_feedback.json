@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787399541,
+  "updated_at": 1787400637,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2681,6 +2681,22 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787399541
+    },
+    "-1004482051328:1195": {
+      "chat_id": -1004482051328,
+      "message_id": 1195,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL - Building 32",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "امکان‌سنجی ساخت دوقلوی دیجیتال مغز انسان",
+      "link": "https://www.youtube.com/shorts/mG9LrbYIF9g",
+      "posted_at": 1787400637
     }
   }
 }

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -15,6 +16,7 @@ FALLBACKS = ROOT / "config" / "education_source_fallbacks.yaml"
 EMERGING = ROOT / "config" / "emerging_terminology.yaml"
 REPORT = ROOT / "data" / "education_source_audit.json"
 MIN_CURRENT_YEAR = 2025
+AUDIT_WORKERS = 12
 MAINTAINED_CURRENT_DOMAINS = {
     "developers.google.com", "ai.google.dev", "cloud.google.com",
     "huggingface.co", "platform.openai.com", "openai.com",
@@ -99,7 +101,7 @@ def extract_year(text: str) -> int | None:
 
 def fetch_source(url: str) -> tuple[bool, int | None, str, bool]:
     try:
-        r = requests.get(url, timeout=12, headers={"User-Agent": "AI-Future-Tech-Radar/education-source-audit"})
+        r = requests.get(url, timeout=10, headers={"User-Agent": "AI-Future-Tech-Radar/education-source-audit"})
         r.raise_for_status()
         content_type = r.headers.get("content-type", "")
         if "text/html" not in content_type and "application/xhtml+xml" not in content_type:
@@ -123,7 +125,7 @@ def collect() -> list[dict]:
     fallbacks = load_yaml(FALLBACKS).get("education_source_fallbacks", {})
     emerging = load_yaml(EMERGING).get("emerging_terminology", {})
     lessons = list(curriculum.get("lessons") or []) + list(emerging.get("lessons") or [])
-    rows: list[dict] = []
+    source_specs: list[tuple[dict, str]] = []
     for lesson in lessons:
         lid = str(lesson.get("id"))
         sources = list(lesson.get("sources") or []) + list(fallbacks.get(lid, []) or [])
@@ -133,25 +135,41 @@ def collect() -> list[dict]:
             if not url or url in seen:
                 continue
             seen.add(url)
-            ok, detected_year, status, maintained_current = fetch_source(url)
-            declared = src.get("year")
-            declared_year = int(declared) if str(declared or "").isdigit() else None
-            current = bool(ok and ((detected_year and detected_year >= MIN_CURRENT_YEAR) or maintained_current))
-            rows.append({
-                "lesson_id": int(lesson.get("id", 0) or 0),
-                "lesson_title": lesson.get("title", ""),
-                "url": url,
-                "host": host(url),
-                "organization": organization(url),
-                "authority_tier": authority_tier(url),
-                "reachable": ok,
-                "declared_year": declared_year,
-                "detected_year": detected_year,
-                "maintained_current": maintained_current,
-                "current_2025_plus": current,
-                "date_verification": "verified" if detected_year else ("maintained_current" if maintained_current else "unverified"),
-                "status": status,
-            })
+            source_specs.append((lesson, src))
+
+    fetched: dict[str, tuple[bool, int | None, str, bool]] = {}
+    urls = sorted({str(src.get("url", "")).strip() for _, src in source_specs if str(src.get("url", "")).strip()})
+    with ThreadPoolExecutor(max_workers=AUDIT_WORKERS) as executor:
+        futures = {executor.submit(fetch_source, url): url for url in urls}
+        for future in as_completed(futures):
+            url = futures[future]
+            try:
+                fetched[url] = future.result()
+            except Exception as exc:  # defensive: audit must never crash on one source
+                fetched[url] = (False, None, f"audit_worker_error:{type(exc).__name__}", False)
+
+    rows: list[dict] = []
+    for lesson, src in source_specs:
+        url = str(src.get("url", "")).strip()
+        ok, detected_year, status, maintained_current = fetched[url]
+        declared = src.get("year")
+        declared_year = int(declared) if str(declared or "").isdigit() else None
+        current = bool(ok and ((detected_year and detected_year >= MIN_CURRENT_YEAR) or maintained_current))
+        rows.append({
+            "lesson_id": int(lesson.get("id", 0) or 0),
+            "lesson_title": lesson.get("title", ""),
+            "url": url,
+            "host": host(url),
+            "organization": organization(url),
+            "authority_tier": authority_tier(url),
+            "reachable": ok,
+            "declared_year": declared_year,
+            "detected_year": detected_year,
+            "maintained_current": maintained_current,
+            "current_2025_plus": current,
+            "date_verification": "verified" if detected_year else ("maintained_current" if maintained_current else "unverified"),
+            "status": status,
+        })
     return rows
 
 
@@ -195,6 +213,7 @@ def summarize(rows: list[dict]) -> dict:
             "tier1_is_preferred_not_automatically_blocking": True,
             "maintained_official_docs_can_be_current_without_embedded_year": True,
             "declared_year_alone_never_verifies": True,
+            "live_audit_workers": AUDIT_WORKERS,
         },
         "lessons": lessons,
         "source_rows": rows,

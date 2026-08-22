@@ -71,7 +71,7 @@ class TelegramFormatTests(unittest.TestCase):
             result = telegram_single_delivery.send("متن آزمون", image_url="https://example.com/image.jpg", source_link="https://example.com/article")
         self.assertEqual(result["message_id"], 123)
         self.assertIsNone(result["photo_message_id"])
-        text_sender.assert_called_once_with("token", "-100123", "متن آزمون", preflight=False)
+        text_sender.assert_called_once_with("token", "-100123", "متن آزمون", preview_url="https://example.com/article", preflight=False)
         photo_sender.assert_not_called()
 
     def test_long_content_is_chunked_without_truncation(self):

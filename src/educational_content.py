@@ -18,10 +18,10 @@ from llm_router_light import call_llm_with_fallback, get_quality_chain
 
 ROOT = Path(__file__).resolve().parent.parent
 CURRICULUM_PATH = ROOT / "config" / "education_curriculum.yaml"
+MODULES_PATH = ROOT / "config" / "education_curriculum_modules.yaml"
 EMERGING_PATH = ROOT / "config" / "emerging_terminology.yaml"
 SOURCE_FALLBACKS_PATH = ROOT / "config" / "education_source_fallbacks.yaml"
 STATE_PATH = ROOT / "data" / "education_state.json"
-RLM = "\u200f"
 
 LESSON_15_CURRENT_SOURCES = [
     {
@@ -38,7 +38,7 @@ LESSON_15_CURRENT_SOURCES = [
 
 
 def _default_state():
-    return {"version": 5, "next_lesson": 1, "next_slot": 0, "completed": [], "updated_at": 0}
+    return {"version": 6, "next_lesson": 1, "next_slot": 0, "completed": [], "updated_at": 0}
 
 
 def load_state():
@@ -62,32 +62,38 @@ def save_state(state):
     tmp.replace(STATE_PATH)
 
 
-def load_curriculum():
-    with CURRICULUM_PATH.open("r", encoding="utf-8") as f:
+def _load_yaml_file(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    with path.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
+
+
+def load_curriculum():
+    return _load_yaml_file(CURRICULUM_PATH)
+
+
+def load_curriculum_modules():
+    data = _load_yaml_file(MODULES_PATH)
+    return data.get("education_curriculum_modules", {})
 
 
 def load_emerging():
-    if not EMERGING_PATH.exists():
-        return {}
-    with EMERGING_PATH.open("r", encoding="utf-8") as f:
-        return yaml.safe_load(f) or {}
+    return _load_yaml_file(EMERGING_PATH)
 
 
 def load_source_fallbacks() -> dict[str, list[dict[str, Any]]]:
-    if not SOURCE_FALLBACKS_PATH.exists():
-        return {}
     try:
-        with SOURCE_FALLBACKS_PATH.open("r", encoding="utf-8") as f:
-            raw = yaml.safe_load(f) or {}
-        mapping = raw.get("education_source_fallbacks") or {}
+        mapping = _load_yaml_file(SOURCE_FALLBACKS_PATH).get("education_source_fallbacks") or {}
         return {str(k): list(v or []) for k, v in mapping.items()}
-    except (OSError, yaml.YAMLError, TypeError, ValueError):
+    except (TypeError, ValueError):
         return {}
 
 
 def _base_lessons():
-    return list(load_curriculum().get("education", {}).get("lessons") or [])
+    base = list(load_curriculum().get("education", {}).get("lessons") or [])
+    modules = list(load_curriculum_modules().get("lessons") or [])
+    return base + modules
 
 
 def _emerging_lessons():
@@ -197,7 +203,6 @@ def _source_candidates(lesson: dict[str, Any]) -> list[dict[str, Any]]:
     candidates.extend(load_source_fallbacks().get(lesson_id, []))
     if int(lesson.get("id", 0) or 0) == 15:
         candidates.extend(LESSON_15_CURRENT_SOURCES)
-
     deduped = []
     seen = set()
     for source in candidates:
@@ -222,10 +227,7 @@ def _generate(lesson):
             print(f"[Education Source Gate] rejected retrieval url={url}", flush=True)
             continue
         declared = source.get("year")
-        try:
-            declared_year = int(declared) if str(declared or "").isdigit() else None
-        except (TypeError, ValueError):
-            declared_year = None
+        declared_year = int(declared) if str(declared or "").isdigit() else None
         assessment = assess_source(url=url, reachable=True, detected_year=detected_year, declared_year=declared_year)
         if not assessment.get("current"):
             print(f"[Education Source Gate] rejected status={assessment.get('status')} url={url}", flush=True)
@@ -262,7 +264,7 @@ def _generate(lesson):
 10) خروجی فقط JSON معتبر باشد.
 JSON: {{"term_a_definition":"...","term_a_simple":"...","term_b_definition":"...","term_b_simple":"...","relationship":"...","example":"...","takeaway":"..."}}
 """
-    user = (f"درس {lesson.get('id')}: {lesson.get('title')}\nوضعیت: {status}\n"
+    user = (f"درس {lesson.get('id')}: {lesson.get('title')}\nحوزه: {lesson.get('domain', 'AI')}\nپیش‌نیازها: {lesson.get('prerequisites', [])}\nوضعیت: {status}\n"
             f"مفهوم اول: {a['term']} / معادل فارسی: {a['fa']}\nتعریف پایه: {a['seed']}\n"
             f"مفهوم دوم: {b['term']} / معادل فارسی: {b['fa']}\nتعریف پایه: {b['seed']}\n"
             f"رابطه پایه: {lesson.get('relation', '')}\n\n" + "\n\n".join(source_blocks))

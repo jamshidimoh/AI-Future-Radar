@@ -62,6 +62,79 @@ def _score(item):
     return float(item.get("final_editorial_score", 0) or 0)
 
 
+def _source_key(item):
+    return str(item.get("source") or item.get("source_name") or "unknown").strip().lower() or "unknown"
+
+
+def _content_type_key(item):
+    return str(item.get("content_type") or "unknown").strip().lower() or "unknown"
+
+
+def _rotation_source_counts(history, rotation_days):
+    cutoff = time.time() - max(0, int(rotation_days)) * 86400
+    counts = {}
+    for record in history or []:
+        if str(record.get("content_type") or "").strip().lower() == "education":
+            continue
+        try:
+            ts = float(record.get("ts", 0) or 0)
+        except (TypeError, ValueError):
+            continue
+        if ts < cutoff:
+            continue
+        source = str(record.get("source") or "unknown").strip().lower() or "unknown"
+        counts[source] = counts.get(source, 0) + 1
+    return counts
+
+
+def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
+    rotation_days = int(policy.get("rotation_days", 7) or 7)
+    try:
+        source_history = _pipeline.load_source_history()
+    except Exception:
+        source_history = []
+    recent_source_counts = _rotation_source_counts(source_history, rotation_days)
+    source_cap = max(1, int(max_per_source or 1))
+    type_cap = max(1, int(max_per_type or 1))
+    limit = max(0, int(max_posts or 0))
+    selected = []
+    selected_source_counts = {}
+    selected_type_counts = {}
+
+    def can_take(item):
+        source = _source_key(item)
+        content_type = _content_type_key(item)
+        return (
+            selected_source_counts.get(source, 0) < source_cap
+            and selected_type_counts.get(content_type, 0) < type_cap
+        )
+
+    fresh = [x for x in normal if recent_source_counts.get(_source_key(x), 0) == 0]
+    recent = [x for x in normal if recent_source_counts.get(_source_key(x), 0) > 0]
+
+    for pool_name, pool in (("fresh", fresh), ("rotation_backfill", recent)):
+        for item in pool:
+            if not can_take(item):
+                continue
+            selected.append(item)
+            source = _source_key(item)
+            content_type = _content_type_key(item)
+            selected_source_counts[source] = selected_source_counts.get(source, 0) + 1
+            selected_type_counts[content_type] = selected_type_counts.get(content_type, 0) + 1
+            if len(selected) >= limit:
+                break
+        if len(selected) >= limit:
+            break
+
+    print(
+        f"[Source Diversity Gate] rotation_days={rotation_days} fresh_candidates={len(fresh)} "
+        f"recent_candidates={len(recent)} selected={len(selected)} "
+        f"source_counts={selected_source_counts} recent_source_counts={recent_source_counts}",
+        flush=True,
+    )
+    return selected
+
+
 def _exclude_published_candidates(items):
     records = _load_records()
     if not records or not items:
@@ -154,7 +227,7 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     priority = _priority_story_diversified(priority_candidates)
     priority_ids = {id(x) for x in priority}
     normal = [x for x in normal if id(x) not in priority_ids]
-    normal_window = normal[:max(4, min(len(normal), max_posts))]
+    normal_window = _diversify_normal_candidates(normal, max(4, min(len(normal), max_posts)), max_per_source, max_per_type, policy)
     ranked = priority + normal_window
     normal_rank = tier0_rank = 0
     for global_rank, item in enumerate(ranked, 1):

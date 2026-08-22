@@ -18,14 +18,11 @@ from llm_router_light import call_llm_with_fallback, get_quality_chain
 ROOT = Path(__file__).resolve().parent.parent
 CURRICULUM_PATH = ROOT / "config" / "education_curriculum.yaml"
 EMERGING_PATH = ROOT / "config" / "emerging_terminology.yaml"
+SOURCE_FALLBACKS_PATH = ROOT / "config" / "education_source_fallbacks.yaml"
 STATE_PATH = ROOT / "data" / "education_state.json"
 MIN_SOURCE_YEAR = 2025
 RLM = "\u200f"
 
-# Lesson 15 previously depended on a 2022 paper and a NIST PDF whose
-# publication year could not be extracted by the HTML-only source gate.
-# Keep the curriculum contract strict, but supplement this lesson with
-# current authoritative sources published in 2025.
 LESSON_15_CURRENT_SOURCES = [
     {
         "name": "NIST: Lessons Learned from the Consortium — Tool Use in Agent Systems",
@@ -77,6 +74,18 @@ def load_emerging():
         return yaml.safe_load(f) or {}
 
 
+def load_source_fallbacks() -> dict[str, list[dict[str, Any]]]:
+    if not SOURCE_FALLBACKS_PATH.exists():
+        return {}
+    try:
+        with SOURCE_FALLBACKS_PATH.open("r", encoding="utf-8") as f:
+            raw = yaml.safe_load(f) or {}
+        mapping = raw.get("education_source_fallbacks") or {}
+        return {str(k): list(v or []) for k, v in mapping.items()}
+    except (OSError, yaml.YAMLError, TypeError, ValueError):
+        return {}
+
+
 def _base_lessons():
     return list(load_curriculum().get("education", {}).get("lessons") or [])
 
@@ -113,8 +122,6 @@ def _next_lesson():
 
 def _extract_source_year(raw_html: str) -> int | None:
     """Extract publication year without mistaking unrelated page dates for it."""
-    # Prefer structured metadata. NIST and Google Developers both expose
-    # publication dates in machine-readable HTML/JSON-LD.
     structured_patterns = [
         r'"datePublished"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
         r'"dateModified"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
@@ -144,6 +151,7 @@ def _fetch_reference(url):
         r = requests.get(url, timeout=10, headers={"User-Agent": "AI-Future-Tech-Radar/education-source-check"})
         r.raise_for_status()
         if "text/html" not in r.headers.get("content-type", ""):
+            print(f"[Education] reference fetch skipped: unsupported content type url={url} content_type={r.headers.get('content-type', '')}", flush=True)
             return "", None
         raw_html = r.text
         year = _extract_source_year(raw_html)
@@ -158,6 +166,9 @@ def _fetch_reference(url):
                 text = text[:start] + text[end:]
                 low = text.lower()
         text = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", text))).strip()
+        if not text:
+            print(f"[Education] reference fetch skipped: empty extracted content url={url}", flush=True)
+            return "", None
         return text[:5000], year
     except Exception as exc:
         print(f"[Education] reference fetch skipped: {url} | {exc}", flush=True)
@@ -177,29 +188,48 @@ def _parse_json(raw, keys):
         return None
 
 
+def _source_candidates(lesson: dict[str, Any]) -> list[dict[str, Any]]:
+    lesson_id = str(int(lesson.get("id", 0) or 0))
+    candidates = list(lesson.get("sources") or [])
+    candidates.extend(load_source_fallbacks().get(lesson_id, []))
+    if int(lesson.get("id", 0) or 0) == 15:
+        candidates.extend(LESSON_15_CURRENT_SOURCES)
+
+    deduped = []
+    seen = set()
+    for source in candidates:
+        url = str(source.get("url", "")).strip()
+        if not url or url in seen:
+            continue
+        seen.add(url)
+        deduped.append(dict(source))
+    return deduped
+
+
 def _generate(lesson):
     a, b = lesson["a"], lesson["b"]
     status = str(lesson.get("status", "established"))
-    sources = list(lesson.get("sources") or [])
-    lesson_id = int(lesson.get("id", 0) or 0)
-    if lesson_id == 15:
-        known_urls = {str(s.get("url", "")).strip() for s in sources}
-        sources.extend(s for s in LESSON_15_CURRENT_SOURCES if s["url"] not in known_urls)
+    sources = _source_candidates(lesson)
     source_blocks = []
     verified_sources = []
     for source in sources:
         url = str(source.get("url", "")).strip()
         excerpt, detected_year = _fetch_reference(url)
+        if not excerpt:
+            print(f"[Education Source Gate] rejected retrieval url={url}", flush=True)
+            continue
         declared_year = source.get("year")
         year = int(declared_year) if str(declared_year or "").isdigit() else detected_year
         if year is None or year < MIN_SOURCE_YEAR:
             print(f"[Education Source Gate] rejected year={year} url={url}", flush=True)
             continue
         verified_sources.append({**source, "year": year})
-        source_blocks.append(f"منبع: {source.get('name')}\nسال: {year}\nURL: {url}\n" + (f"بخش بازیابی‌شده: {excerpt[:2200]}" if excerpt else "مرجع تأیید شد؛ متن صفحه در این اجرا بازیابی نشد."))
+        source_blocks.append(f"منبع: {source.get('name')}\nسال: {year}\nURL: {url}\nبخش بازیابی‌شده: {excerpt[:2200]}")
+
     if not verified_sources:
         print(f"[Education Source Gate] FAILED lesson={lesson.get('id')} no verified source >= {MIN_SOURCE_YEAR}", flush=True)
         return None, []
+
     prompt = f"""تو ویراستار و نویسنده ارشد یک کانال آموزشی فارسی درباره هوش مصنوعی و فناوری هستی.
 قواعد سخت و غیرقابل مذاکره:
 1) دقیقاً فقط دو مفهوم اصلی را آموزش بده.
@@ -214,7 +244,10 @@ def _generate(lesson):
 10) خروجی فقط JSON معتبر باشد.
 JSON: {{"term_a_definition":"...","term_a_simple":"...","term_b_definition":"...","term_b_simple":"...","relationship":"...","example":"...","takeaway":"..."}}
 """
-    user = (f"درس {lesson.get('id')}: {lesson.get('title')}\nوضعیت: {status}\n" f"مفهوم اول: {a['term']} / معادل فارسی: {a['fa']}\nتعریف پایه: {a['seed']}\n" f"مفهوم دوم: {b['term']} / معادل فارسی: {b['fa']}\nتعریف پایه: {b['seed']}\n" f"رابطه پایه: {lesson.get('relation', '')}\n\n" + "\n\n".join(source_blocks))
+    user = (f"درس {lesson.get('id')}: {lesson.get('title')}\nوضعیت: {status}\n"
+            f"مفهوم اول: {a['term']} / معادل فارسی: {a['fa']}\nتعریف پایه: {a['seed']}\n"
+            f"مفهوم دوم: {b['term']} / معادل فارسی: {b['fa']}\nتعریف پایه: {b['seed']}\n"
+            f"رابطه پایه: {lesson.get('relation', '')}\n\n" + "\n\n".join(source_blocks))
     raw, provider = call_llm_with_fallback(prompt, user, providers=get_quality_chain())
     keys = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
     data = _parse_json(raw or "", keys) if raw else None

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787415270,
+  "updated_at": 1787429611,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2741,6 +2741,23 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787415270
+    },
+    "-1004482051328:1199": {
+      "chat_id": -1004482051328,
+      "message_id": 1199,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Forbes)",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "Andrew Ng",
+      "watch_person": "Andrew Ng",
+      "title": "Andrew Ng نقشه‌ای از مهارت‌های تعیین‌کننده کارایی تیم‌های هوش مصنوعی ترسیم می‌کند",
+      "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQOG45d0VnNjVlNFFTSnNtOExMdFZSSnBZOUZ1bHBvU2QyTXdTMDhTeHRiN1gzbU1fTkJEcFR6b09aVlB2Q05yYkdkdE9CUFRBclZMSzl2R0NzX1BsaXVPTXEtNFRwYTRVSGJyUUpTR2toNGFsTVpaYWxoalhKT3djNHNhc3FFckl3VXJFV3lPNWpsU09xTm9laVNCWE5sZU9CNXh4SnJ1QUR4emhQRFlVendoZw?oc=5",
+      "posted_at": 1787429611
     }
   }
 }

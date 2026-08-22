@@ -21,8 +21,6 @@ class EducationalContentTests(unittest.TestCase):
         self.assertGreaterEqual(len(lines), 10)
         rtl_blocks = sum(1 for line in lines if line.startswith(RLI))
         self.assertGreaterEqual(rtl_blocks, 8)
-        # Every non-structural line belongs to an RTL isolate; continuation lines
-        # are allowed because term labels intentionally contain a newline.
         self.assertEqual(text.count(PDI), text.count(RLI) + text.count(LRI))
         self.assertGreaterEqual(text.count(LRI), 4)
         self.assertGreaterEqual(text.count(RLI), 8)
@@ -57,6 +55,30 @@ class EducationalContentTests(unittest.TestCase):
         for expected in ("Context Engineering", "Loop Engineering", "Vibe Coding"):
             self.assertIn(expected, text)
 
+    def _current_sources(self):
+        return [
+            {
+                "name": "NIST AI Risk Management Framework",
+                "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+                "year": 2026,
+                "current_verified": True,
+                "current_status": "maintained_current",
+                "organization": "nist",
+                "authority_tier": 1,
+                "authority_score": 95,
+            },
+            {
+                "name": "Stanford AI Index 2026",
+                "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+                "year": 2026,
+                "current_verified": True,
+                "current_status": "dated_current",
+                "organization": "stanford",
+                "authority_tier": 1,
+                "authority_score": 95,
+            },
+        ]
+
     def _foundation_item(self):
         return {
             "education_number": 1,
@@ -72,7 +94,7 @@ class EducationalContentTests(unittest.TestCase):
             "relationship": "یادگیری ماشین یکی از روش‌های مهم برای ساخت سامانه‌های هوش مصنوعی است؛ بنابراین هوش مصنوعی مفهوم گسترده‌تر و یادگیری ماشین یکی از زیرشاخه‌های اصلی آن است.",
             "example": "برای نمونه، سامانه تشخیص هرزنامه می‌تواند با مشاهده هزاران پیام برچسب‌خورده یاد بگیرد که کدام الگوها بیشتر با پیام‌های ناخواسته ارتباط دارند و سپس پیام‌های جدید را طبقه‌بندی کند.",
             "takeaway": "نکته کلیدی این است که هوش مصنوعی هدف و حوزه کلی را بیان می‌کند، درحالی‌که یادگیری ماشین یکی از سازوکارهای اصلی رسیدن به این هدف از طریق یادگیری الگوها از داده است.",
-            "education_sources": [{"name": "NIST AI Risk Management Framework", "url": "https://www.nist.gov/itl/ai-risk-management-framework", "year": 2025}],
+            "education_sources": self._current_sources(),
         }
 
     def test_rendering_foundation_is_clean_persian_first(self):
@@ -106,7 +128,7 @@ class EducationalContentTests(unittest.TestCase):
             "relationship": "هر دو مفهوم به همکاری انسان و مدل‌های مولد مربوط‌اند، اما پروتکل مدل کانتکست بر اتصال استاندارد مدل به ابزار و داده تمرکز دارد، درحالی‌که Vibe Coding بر شیوه استفاده از مدل برای تولید نرم‌افزار تمرکز می‌کند.",
             "example": "برای نمونه، یک توسعه‌دهنده می‌تواند از یک مدل متصل به ابزارهای پروژه برای خواندن مستندات و فایل‌های کد استفاده کند و سپس با دستورهای زبانی تغییرات موردنیاز را به‌صورت مرحله‌ای درخواست کند.",
             "takeaway": "نکته کلیدی این است که یک مفهوم زیرساخت ارتباط مدل با محیط بیرونی را استاندارد می‌کند و مفهوم دیگر یک شیوه عملی برای استفاده از مدل در فرایند توسعه نرم‌افزار را توصیف می‌کند.",
-            "education_sources": [{"name": "NIST AI Risk Management Framework", "url": "https://www.nist.gov/itl/ai-risk-management-framework", "year": 2025}],
+            "education_sources": self._current_sources(),
         }
         text = format_educational_post(item)
         self.assertIn("Model Context Protocol (MCP)", text)

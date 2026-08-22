@@ -151,6 +151,7 @@ def _fetch_reference(url):
         r = requests.get(url, timeout=10, headers={"User-Agent": "AI-Future-Tech-Radar/education-source-check"})
         r.raise_for_status()
         if "text/html" not in r.headers.get("content-type", ""):
+            print(f"[Education] reference fetch skipped: unsupported content type url={url} content_type={r.headers.get('content-type', '')}", flush=True)
             return "", None
         raw_html = r.text
         year = _extract_source_year(raw_html)
@@ -165,6 +166,9 @@ def _fetch_reference(url):
                 text = text[:start] + text[end:]
                 low = text.lower()
         text = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", text))).strip()
+        if not text:
+            print(f"[Education] reference fetch skipped: empty extracted content url={url}", flush=True)
+            return "", None
         return text[:5000], year
     except Exception as exc:
         print(f"[Education] reference fetch skipped: {url} | {exc}", flush=True)
@@ -211,13 +215,16 @@ def _generate(lesson):
     for source in sources:
         url = str(source.get("url", "")).strip()
         excerpt, detected_year = _fetch_reference(url)
+        if not excerpt:
+            print(f"[Education Source Gate] rejected retrieval url={url}", flush=True)
+            continue
         declared_year = source.get("year")
         year = int(declared_year) if str(declared_year or "").isdigit() else detected_year
         if year is None or year < MIN_SOURCE_YEAR:
             print(f"[Education Source Gate] rejected year={year} url={url}", flush=True)
             continue
         verified_sources.append({**source, "year": year})
-        source_blocks.append(f"منبع: {source.get('name')}\nسال: {year}\nURL: {url}\n" + (f"بخش بازیابی‌شده: {excerpt[:2200]}" if excerpt else "مرجع تأیید شد؛ متن صفحه در این اجرا بازیابی نشد."))
+        source_blocks.append(f"منبع: {source.get('name')}\nسال: {year}\nURL: {url}\nبخش بازیابی‌شده: {excerpt[:2200]}")
 
     if not verified_sources:
         print(f"[Education Source Gate] FAILED lesson={lesson.get('id')} no verified source >= {MIN_SOURCE_YEAR}", flush=True)

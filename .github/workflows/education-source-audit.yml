@@ -1,0 +1,37 @@
+name: Education Source Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1"
+  pull_request:
+    paths:
+      - "config/education_curriculum.yaml"
+      - "config/education_source_fallbacks.yaml"
+      - "config/emerging_terminology.yaml"
+      - "config/education_governance.yaml"
+      - "tools/audit_education_sources.py"
+      - "tests/test_education_source_audit.py"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run deterministic audit tests
+        run: python -m pytest -q tests/test_education_source_audit.py
+      - name: Run live source audit
+        run: python -u tools/audit_education_sources.py
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: education-source-audit
+          path: data/education_source_audit.json

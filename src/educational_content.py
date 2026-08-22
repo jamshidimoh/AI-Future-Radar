@@ -13,8 +13,11 @@ import yaml
 
 from education_editor import normalize_education_item, terminology_review_prompt
 from educational_telegram_style import format_educational_post
-from education_source_policy import assess_source, validate_current_sources
+from education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_current_sources
 from llm_router_light import call_llm_with_fallback, get_quality_chain
+
+# Backward-compatible public constant retained for existing tests/callers.
+MIN_SOURCE_YEAR = MIN_CURRENT_YEAR
 
 ROOT = Path(__file__).resolve().parent.parent
 CURRICULUM_PATH = ROOT / "config" / "education_curriculum.yaml"

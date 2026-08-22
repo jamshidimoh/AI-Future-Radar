@@ -12,14 +12,10 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from education_source_policy import (  # noqa: E402
-    MIN_CURRENT_YEAR,
-    authority_tier,
-    assess_source,
-    organization,
-)
+from education_source_policy import MIN_CURRENT_YEAR, assess_source  # noqa: E402
 
 CURRICULUM = ROOT / "config" / "education_curriculum.yaml"
+MODULES = ROOT / "config" / "education_curriculum_modules.yaml"
 FALLBACKS = ROOT / "config" / "education_source_fallbacks.yaml"
 EMERGING = ROOT / "config" / "emerging_terminology.yaml"
 REPORT = ROOT / "data" / "education_source_audit.json"
@@ -43,8 +39,7 @@ def extract_year(text: str) -> int | None:
     ]
     for pattern in patterns:
         for match in re.finditer(pattern, text, flags=re.I):
-            value = match.group(1)
-            year_match = re.search(r"20\d{2}", value)
+            year_match = re.search(r"20\d{2}", match.group(1))
             if year_match:
                 years.append(int(year_match.group(0)))
     return max(years) if years else None
@@ -75,9 +70,10 @@ def load_fallbacks() -> dict[str, list[dict]]:
 
 def collect() -> list[dict]:
     curriculum = load_yaml(CURRICULUM).get("education", {})
+    modules = load_yaml(MODULES).get("education_curriculum_modules", {})
     fallbacks = load_fallbacks()
     emerging = load_yaml(EMERGING).get("emerging_terminology", {})
-    lessons = list(curriculum.get("lessons") or []) + list(emerging.get("lessons") or [])
+    lessons = list(curriculum.get("lessons") or []) + list(modules.get("lessons") or []) + list(emerging.get("lessons") or [])
     source_specs: list[tuple[dict, dict]] = []
     for lesson in lessons:
         lid = str(lesson.get("id"))
@@ -111,6 +107,7 @@ def collect() -> list[dict]:
         rows.append({
             "lesson_id": int(lesson.get("id", 0) or 0),
             "lesson_title": lesson.get("title", ""),
+            "domain": lesson.get("domain", ""),
             "url": url,
             "host": host(url),
             "organization": assessment["organization"],
@@ -153,6 +150,7 @@ def summarize(rows: list[dict]) -> dict:
         lessons.append({
             "lesson_id": lid,
             "lesson_title": items[0]["lesson_title"],
+            "domain": items[0].get("domain", ""),
             "verified_current_count": len(current),
             "independent_organizations": sorted(orgs),
             "has_tier1": authoritative,
@@ -171,6 +169,7 @@ def summarize(rows: list[dict]) -> dict:
         },
         "lessons": lessons,
         "source_rows": rows,
+        "lesson_count": len(lessons),
         "violation_count": sum(bool(x["violations"]) for x in lessons),
         "warning_count": sum(len(x["warnings"]) for x in lessons),
     }

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787401193,
+  "updated_at": 1787415270,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2713,6 +2713,34 @@
       "title": "آینده آموزش AI: گذار از حجم داده به کیفیت نمونه‌های هدفمند",
       "link": "https://www.reddit.com/r/artificial/comments/1vvasub/what_parsewaves_work_says_about_the_next_phase_of/",
       "posted_at": 1787401193
+    },
+    "-1004482051328:1197": {
+      "chat_id": -1004482051328,
+      "message_id": 1197,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Reddit - r/artificial",
+      "content_type": "community",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی سوئیت تولید محتوای خلاقانه با دستیار چندعاملی مبتنی بر صدا",
+      "link": "https://www.reddit.com/r/artificial/comments/1vvd56h/working_on_a_accessible_creative_production_suite/",
+      "posted_at": 1787415264
+    },
+    "-1004482051328:1198": {
+      "chat_id": -1004482051328,
+      "message_id": 1198,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787415270
     }
   }
 }

@@ -13,6 +13,7 @@ import yaml
 
 from education_editor import normalize_education_item, terminology_review_prompt
 from educational_telegram_style import format_educational_post
+from education_source_policy import assess_source, validate_current_sources
 from llm_router_light import call_llm_with_fallback, get_quality_chain
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -20,7 +21,6 @@ CURRICULUM_PATH = ROOT / "config" / "education_curriculum.yaml"
 EMERGING_PATH = ROOT / "config" / "emerging_terminology.yaml"
 SOURCE_FALLBACKS_PATH = ROOT / "config" / "education_source_fallbacks.yaml"
 STATE_PATH = ROOT / "data" / "education_state.json"
-MIN_SOURCE_YEAR = 2025
 RLM = "\u200f"
 
 LESSON_15_CURRENT_SOURCES = [
@@ -121,19 +121,22 @@ def _next_lesson():
 
 
 def _extract_source_year(raw_html: str) -> int | None:
-    """Extract publication year without mistaking unrelated page dates for it."""
     structured_patterns = [
         r'"datePublished"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
         r'"dateModified"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
-        r'<meta[^>]+(?:property|name)=["\'](?:article:published_time|date|publishdate)["\'][^>]+content=["\'](20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
+        r'"dateCreated"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
+        r'<meta[^>]+(?:property|name)=["\'](?:article:published_time|article:modified_time|citation_date|date|publishdate|last-modified)["\'][^>]+content=["\']([^"\']+)',
     ]
+    years = []
     for pattern in structured_patterns:
-        match = re.search(pattern, raw_html, flags=re.I)
-        if match:
-            return int(match.group(1))
-
+        for match in re.finditer(pattern, raw_html, flags=re.I):
+            year_match = re.search(r"20\d{2}", match.group(1))
+            if year_match:
+                years.append(int(year_match.group(0)))
+    if years:
+        return max(years)
     patterns = [
-        r"(?:last\s+updated|updated)\s*[:\-]?\s*(20\d{2})[-/]\d{1,2}[-/]\d{1,2}",
+        r"(?:last\s+updated|updated|modified|reviewed)\s*[:\-]?\s*(20\d{2})[-/]\d{1,2}[-/]\d{1,2}",
         r"(?:published|publication|approved)\s*[:\-]?\s*(20\d{2})[-/]\d{1,2}[-/]\d{1,2}",
         r"(?:published|publication|approved)\s+[^\d]{0,40}(20\d{2})",
         r"/(20\d{2})/\d{1,2}/",
@@ -218,17 +221,32 @@ def _generate(lesson):
         if not excerpt:
             print(f"[Education Source Gate] rejected retrieval url={url}", flush=True)
             continue
-        declared_year = source.get("year")
-        year = int(declared_year) if str(declared_year or "").isdigit() else detected_year
-        if year is None or year < MIN_SOURCE_YEAR:
-            print(f"[Education Source Gate] rejected year={year} url={url}", flush=True)
+        declared = source.get("year")
+        try:
+            declared_year = int(declared) if str(declared or "").isdigit() else None
+        except (TypeError, ValueError):
+            declared_year = None
+        assessment = assess_source(url=url, reachable=True, detected_year=detected_year, declared_year=declared_year)
+        if not assessment.get("current"):
+            print(f"[Education Source Gate] rejected status={assessment.get('status')} url={url}", flush=True)
             continue
-        verified_sources.append({**source, "year": year})
-        source_blocks.append(f"منبع: {source.get('name')}\nسال: {year}\nURL: {url}\nبخش بازیابی‌شده: {excerpt[:2200]}")
+        verified = {
+            **source,
+            "year": assessment.get("year", detected_year if detected_year is not None else declared_year),
+            "current_verified": True,
+            "current_status": assessment.get("status"),
+            "organization": assessment.get("organization"),
+            "authority_tier": assessment.get("authority_tier"),
+            "authority_score": assessment.get("authority_score"),
+        }
+        verified_sources.append(verified)
+        current_label = str(assessment.get("year") or assessment.get("status") or "current")
+        source_blocks.append(f"منبع: {source.get('name')}\nوضعیت زمانی: {current_label}\nURL: {url}\nبخش بازیابی‌شده: {excerpt[:2200]}")
 
-    if not verified_sources:
-        print(f"[Education Source Gate] FAILED lesson={lesson.get('id')} no verified source >= {MIN_SOURCE_YEAR}", flush=True)
-        return None, []
+    source_ok, verified_sources, source_reason = validate_current_sources(verified_sources)
+    if not source_ok:
+        print(f"[Education Source Gate] FAILED lesson={lesson.get('id')} reason={source_reason}", flush=True)
+        return None, verified_sources
 
     prompt = f"""تو ویراستار و نویسنده ارشد یک کانال آموزشی فارسی درباره هوش مصنوعی و فناوری هستی.
 قواعد سخت و غیرقابل مذاکره:
@@ -238,8 +256,8 @@ def _generate(lesson):
 4) برای اصطلاحات نوظهور، نام رسمی انگلیسی فقط در عنوان همان اصطلاح مجاز است؛ توضیح کاملاً فارسی باشد.
 5) نام افراد، شرکت‌ها و محصولات غیرایرانی رسمی و انگلیسی باشند.
 6) هیچ آوانویسی فارسی برای اصطلاح تخصصی یا نام خاص نساز.
-7) تعریف علمی باید فقط بر اساس seed و منابع تأییدشده 2025 به بعد باشد.
-8) هیچ منبع، ادعا، عدد یا تاریخ قبل از 2025 وارد نکن.
+7) تعریف علمی باید فقط بر اساس seed و منابع جاری تأییدشده باشد.
+8) هیچ ادعا، عدد یا تاریخ قدیمی‌تر از 2025 را به‌عنوان وضعیت جاری وارد نکن.
 9) رابطه، مثال و نکته باید با تعریف‌ها سازگار باشند.
 10) خروجی فقط JSON معتبر باشد.
 JSON: {{"term_a_definition":"...","term_a_simple":"...","term_b_definition":"...","term_b_simple":"...","relationship":"...","example":"...","takeaway":"..."}}
@@ -270,7 +288,7 @@ def build_educational_item():
         return None
     generated, verified_sources = _generate(lesson)
     if not generated:
-        raise RuntimeError(f"[Education Contract] no publishable lesson: source policy requires >= {MIN_SOURCE_YEAR}")
+        raise RuntimeError("[Education Contract] no publishable lesson: source policy requires two independent current sources")
     track = "emerging" if lesson_id >= 101 else "foundation"
     return {"content_type": "education", "category": "ai", "education_id": lesson_id, "education_total": total, "education_track": track, "education_track_label": "ترمینولوژی روز و فناوری‌های نو" if track == "emerging" else "مفاهیم پایه و بنیادی", "education_number": lesson_id - 100 if track == "emerging" else lesson_id, "education_status": lesson.get("status", "established"), "education_title": lesson.get("title", ""), "education_term_a": lesson["a"]["term"], "education_term_a_fa": lesson["a"]["fa"], "education_term_b": lesson["b"]["term"], "education_term_b_fa": lesson["b"]["fa"], "education_sources": verified_sources, **generated}
 

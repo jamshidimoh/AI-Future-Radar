@@ -1,0 +1,18 @@
+education_source_fallbacks:
+  26:
+    - name: "NIST: Quantum Information Science (2025 briefing)"
+      url: "https://www.nist.gov/document/nist-and-qis-2025"
+      year: 2025
+    - name: "NIST: Quantum Computing Explained"
+      url: "https://www.nist.gov/quantum-information-science/quantum-computing-explained"
+      year: 2025
+    - name: "NIST: Quantum Science"
+      url: "https://www.nist.gov/quantum-science"
+      year: 2025
+  27:
+    - name: "NIST: Quantum Computing Explained"
+      url: "https://www.nist.gov/quantum-information-science/quantum-computing-explained"
+      year: 2025
+    - name: "NIST: Quantum Information Science (2025 briefing)"
+      url: "https://www.nist.gov/document/nist-and-qis-2025"
+      year: 2025

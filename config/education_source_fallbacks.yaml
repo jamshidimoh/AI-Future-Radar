@@ -3,6 +3,7 @@ education_source_fallbacks:
     - {name: "NIST AI Glossary", url: "https://csrc.nist.gov/glossary/term/artificial_intelligence"}
     - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
   2:
+    - {name: "NIST Supervised Learning Glossary", url: "https://csrc.nist.gov/glossary/term/supervised_learning"}
     - {name: "scikit-learn Supervised Learning", url: "https://scikit-learn.org/stable/supervised_learning.html"}
     - {name: "Google Machine Learning Glossary", url: "https://developers.google.com/machine-learning/glossary/fundamentals"}
   3:

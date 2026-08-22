@@ -11,6 +11,17 @@ class _FakeResponse:
         return {"ok": True, "result": {"message_id": 321, "chat": {"id": -100123}}}
 
 
+class _DynamicResponse:
+    status_code = 200
+
+    def __init__(self, message_id):
+        self.message_id = message_id
+        self.text = '{"ok": true, "result": {"message_id": %d, "chat": {"id": -100123}}}' % message_id
+
+    def json(self):
+        return {"ok": True, "result": {"message_id": self.message_id, "chat": {"id": -100123}}}
+
+
 def test_send_text_full_requests_source_preview_once(monkeypatch):
     calls = []
     monkeypatch.setattr(send_telegram, "_telegram_preflight", lambda token, channel: True)
@@ -69,11 +80,7 @@ def test_long_text_uses_preview_only_on_first_chunk(monkeypatch):
 
     def fake_post(url, data, timeout):
         calls.append(data)
-        message_id = 400 + len(calls)
-        response = _FakeResponse()
-        response.text = f'{{"ok": true, "result": {{"message_id": {message_id}, "chat": {{"id": -100123}}}}}}'
-        response.json = lambda: {"ok": True, "result": {"message_id": message_id, "chat": {"id": -100123}}
-        return response
+        return _DynamicResponse(400 + len(calls))
 
     monkeypatch.setattr(send_telegram.requests, "post", fake_post)
 

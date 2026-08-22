@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787387665,
+  "updated_at": 1787389585,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2621,6 +2621,38 @@
       "title": "مالیات استدلال: آیا هوش مصنوعی قدرتمندتر، خطای بیشتری تولید می‌کند؟",
       "link": "https://www.reddit.com/r/artificial/comments/1vv2wi8/are_we_paying_a_reasoning_tax_for_smarter_ai/",
       "posted_at": 1787387664
+    },
+    "-1004482051328:1191": {
+      "chat_id": -1004482051328,
+      "message_id": 1191,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Reddit - r/artificial",
+      "content_type": "community",
+      "category": "ai",
+      "leader": "",
+      "title": "درخواست ابزار AI برای ویرایش متن آهنگ‌های موجود",
+      "link": "https://www.reddit.com/r/artificial/comments/1vv4zqz/ai_for_editing_existing_songsmusic/",
+      "posted_at": 1787389583
+    },
+    "-1004482051328:1192": {
+      "chat_id": -1004482051328,
+      "message_id": 1192,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Reddit - r/artificial",
+      "content_type": "community",
+      "category": "ai",
+      "leader": "",
+      "title": "چرا حلقه‌های خوداصلاحی می‌توانند قابلیت اطمینان پایپ‌لاین‌های LLM را کاهش دهند",
+      "link": "https://www.reddit.com/r/artificial/comments/1vv2kki/why_selfcorrection_loops_can_degrade_reliability/",
+      "posted_at": 1787389585
     }
   }
 }

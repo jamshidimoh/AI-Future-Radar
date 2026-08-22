@@ -120,12 +120,17 @@ def load_yaml(path: Path) -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
 
 
+def load_fallbacks() -> dict[str, list[dict]]:
+    raw = load_yaml(FALLBACKS).get("education_source_fallbacks", {})
+    return {str(key): list(value or []) for key, value in raw.items()}
+
+
 def collect() -> list[dict]:
     curriculum = load_yaml(CURRICULUM).get("education", {})
-    fallbacks = load_yaml(FALLBACKS).get("education_source_fallbacks", {})
+    fallbacks = load_fallbacks()
     emerging = load_yaml(EMERGING).get("emerging_terminology", {})
     lessons = list(curriculum.get("lessons") or []) + list(emerging.get("lessons") or [])
-    source_specs: list[tuple[dict, str]] = []
+    source_specs: list[tuple[dict, str, dict]] = []
     for lesson in lessons:
         lid = str(lesson.get("id"))
         sources = list(lesson.get("sources") or []) + list(fallbacks.get(lid, []) or [])
@@ -135,21 +140,21 @@ def collect() -> list[dict]:
             if not url or url in seen:
                 continue
             seen.add(url)
-            source_specs.append((lesson, src))
+            source_specs.append((lesson, lid, src))
 
     fetched: dict[str, tuple[bool, int | None, str, bool]] = {}
-    urls = sorted({str(src.get("url", "")).strip() for _, src in source_specs if str(src.get("url", "")).strip()})
+    urls = sorted({str(src.get("url", "")).strip() for _, _, src in source_specs if str(src.get("url", "")).strip()})
     with ThreadPoolExecutor(max_workers=AUDIT_WORKERS) as executor:
         futures = {executor.submit(fetch_source, url): url for url in urls}
         for future in as_completed(futures):
             url = futures[future]
             try:
                 fetched[url] = future.result()
-            except Exception as exc:  # defensive: audit must never crash on one source
+            except Exception as exc:
                 fetched[url] = (False, None, f"audit_worker_error:{type(exc).__name__}", False)
 
     rows: list[dict] = []
-    for lesson, src in source_specs:
+    for lesson, lid, src in source_specs:
         url = str(src.get("url", "")).strip()
         ok, detected_year, status, maintained_current = fetched[url]
         declared = src.get("year")

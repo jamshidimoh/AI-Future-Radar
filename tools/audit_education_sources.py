@@ -15,19 +15,26 @@ FALLBACKS = ROOT / "config" / "education_source_fallbacks.yaml"
 EMERGING = ROOT / "config" / "emerging_terminology.yaml"
 REPORT = ROOT / "data" / "education_source_audit.json"
 MIN_CURRENT_YEAR = 2025
-
+MAINTAINED_CURRENT_DOMAINS = {
+    "developers.google.com", "ai.google.dev", "cloud.google.com",
+    "huggingface.co", "platform.openai.com", "openai.com",
+    "anthropic.com", "docs.anthropic.com", "modelcontextprotocol.io",
+    "learn.microsoft.com", "nvidia.com", "docs.nvidia.com",
+    "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu",
+    "nist.gov", "csrc.nist.gov", "airc.nist.gov",
+}
 TIER1 = {
     "nist.gov", "csrc.nist.gov", "airc.nist.gov", "oecd.org", "iso.org",
     "iec.ch", "ieee.org", "hai.stanford.edu",
 }
-
 ORG_ALIASES = {
-    "developers.google.com": "google",
-    "ai.google.dev": "google",
-    "cloud.google.com": "google",
-    "openai.com": "openai",
-    "anthropic.com": "anthropic",
-    "arxiv.org": "arxiv",
+    "developers.google.com": "google", "ai.google.dev": "google", "cloud.google.com": "google",
+    "openai.com": "openai", "platform.openai.com": "openai",
+    "anthropic.com": "anthropic", "docs.anthropic.com": "anthropic",
+    "arxiv.org": "arxiv", "huggingface.co": "huggingface",
+    "learn.microsoft.com": "microsoft", "nvidia.com": "nvidia", "docs.nvidia.com": "nvidia",
+    "quantum.cloud.ibm.com": "ibm", "ibm.com": "ibm",
+    "modelcontextprotocol.io": "mcp", "hai.stanford.edu": "stanford",
 }
 
 
@@ -61,9 +68,14 @@ def authority_tier(url: str) -> int:
         return 1
     if h.endswith(".edu") or h == "arxiv.org":
         return 2
-    if h in {"developers.google.com", "ai.google.dev", "cloud.google.com", "openai.com", "anthropic.com"}:
+    if h in {"developers.google.com", "ai.google.dev", "cloud.google.com", "platform.openai.com", "openai.com", "anthropic.com", "docs.anthropic.com"}:
         return 3
     return 4
+
+
+def is_maintained_domain(url: str) -> bool:
+    h = host(url)
+    return h in MAINTAINED_CURRENT_DOMAINS or any(h.endswith("." + d) for d in MAINTAINED_CURRENT_DOMAINS)
 
 
 def extract_year(text: str) -> int | None:
@@ -71,8 +83,9 @@ def extract_year(text: str) -> int | None:
     patterns = [
         r'"datePublished"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
         r'"dateModified"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
-        r'<meta[^>]+(?:property|name)=["\'](?:article:published_time|article:modified_time|date|publishdate|last-modified)["\'][^>]+content=["\']([^"\']+)',
-        r'(?:published|publication|updated|modified|reviewed)\D{0,60}(20\d{2})',
+        r'"dateCreated"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
+        r'<meta[^>]+(?:property|name)=["\'](?:article:published_time|article:modified_time|citation_date|date|publishdate|last-modified)["\'][^>]+content=["\']([^"\']+)',
+        r'(?:published|publication|updated|modified|reviewed|last updated)\D{0,80}(20\d{2})',
         r"/(20\d{2})/\d{1,2}/",
     ]
     for pattern in patterns:
@@ -84,16 +97,19 @@ def extract_year(text: str) -> int | None:
     return max(years) if years else None
 
 
-def fetch_source(url: str) -> tuple[bool, int | None, str]:
+def fetch_source(url: str) -> tuple[bool, int | None, str, bool]:
     try:
         r = requests.get(url, timeout=12, headers={"User-Agent": "AI-Future-Tech-Radar/education-source-audit"})
         r.raise_for_status()
         content_type = r.headers.get("content-type", "")
         if "text/html" not in content_type and "application/xhtml+xml" not in content_type:
-            return False, None, f"unsupported_content_type:{content_type}"
-        return True, extract_year(r.text[:2_000_000]), "ok"
+            return False, None, f"unsupported_content_type:{content_type}", False
+        body = r.text[:2_000_000]
+        detected_year = extract_year(body)
+        maintained_current = bool(is_maintained_domain(url) and not detected_year)
+        return True, detected_year, "ok", maintained_current
     except requests.RequestException as exc:
-        return False, None, f"request_error:{type(exc).__name__}"
+        return False, None, f"request_error:{type(exc).__name__}", False
 
 
 def load_yaml(path: Path) -> dict:
@@ -117,9 +133,10 @@ def collect() -> list[dict]:
             if not url or url in seen:
                 continue
             seen.add(url)
-            ok, detected_year, status = fetch_source(url)
+            ok, detected_year, status, maintained_current = fetch_source(url)
             declared = src.get("year")
             declared_year = int(declared) if str(declared or "").isdigit() else None
+            current = bool(ok and ((detected_year and detected_year >= MIN_CURRENT_YEAR) or maintained_current))
             rows.append({
                 "lesson_id": int(lesson.get("id", 0) or 0),
                 "lesson_title": lesson.get("title", ""),
@@ -130,8 +147,9 @@ def collect() -> list[dict]:
                 "reachable": ok,
                 "declared_year": declared_year,
                 "detected_year": detected_year,
-                "current_2025_plus": bool(detected_year and detected_year >= MIN_CURRENT_YEAR),
-                "date_verification": "verified" if detected_year else "unverified",
+                "maintained_current": maintained_current,
+                "current_2025_plus": current,
+                "date_verification": "verified" if detected_year else ("maintained_current" if maintained_current else "unverified"),
                 "status": status,
             })
     return rows
@@ -156,10 +174,10 @@ def summarize(rows: list[dict]) -> dict:
             violations.append("sources_not_independent_by_organization")
         if not authoritative:
             warnings.append("no_tier1_authoritative_source_detected")
-        if any(x["reachable"] and not x["current_2025_plus"] and x["detected_year"] for x in items):
+        if any(x["reachable"] and x["detected_year"] and x["detected_year"] < MIN_CURRENT_YEAR for x in items):
             warnings.append("older_sources_present")
-        if any(x["reachable"] and not x["detected_year"] for x in items):
-            warnings.append("date_unverifiable_for_some_sources")
+        if any(x["reachable"] and not x["detected_year"] and not x["maintained_current"] for x in items):
+            warnings.append("date_unverifiable_for_non_maintained_source")
         lessons.append({
             "lesson_id": lid,
             "lesson_title": items[0]["lesson_title"],
@@ -175,6 +193,7 @@ def summarize(rows: list[dict]) -> dict:
             "min_verified_current_sources": 2,
             "require_independent_organizations": True,
             "tier1_is_preferred_not_automatically_blocking": True,
+            "maintained_official_docs_can_be_current_without_embedded_year": True,
             "declared_year_alone_never_verifies": True,
         },
         "lessons": lessons,

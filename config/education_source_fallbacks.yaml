@@ -4,7 +4,7 @@ education_source_fallbacks:
     - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
   2:
     - {name: "scikit-learn Supervised Learning", url: "https://scikit-learn.org/stable/supervised_learning.html"}
-    - {name: "scikit-learn Unsupervised Learning", url: "https://scikit-learn.org/stable/unsupervised_learning.html"}
+    - {name: "Google Machine Learning Glossary", url: "https://developers.google.com/machine-learning/glossary/fundamentals"}
   3:
     - {name: "NIST AI Glossary", url: "https://csrc.nist.gov/glossary/term/artificial_intelligence"}
     - {name: "Google Machine Learning Glossary", url: "https://developers.google.com/machine-learning/glossary"}
@@ -19,7 +19,7 @@ education_source_fallbacks:
     - {name: "NIST AI Glossary", url: "https://csrc.nist.gov/glossary/term/artificial_intelligence"}
   7:
     - {name: "Hugging Face Tokenizer documentation", url: "https://huggingface.co/docs/transformers/main_classes/tokenizer"}
-    - {name: "Sentence Transformers documentation", url: "https://www.sbert.net/"}
+    - {name: "OpenAI Embeddings documentation", url: "https://platform.openai.com/docs/guides/embeddings"}
   8:
     - {name: "Hugging Face Transformers", url: "https://huggingface.co/docs/transformers/main/en/index"}
     - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
@@ -37,6 +37,7 @@ education_source_fallbacks:
     - {name: "Azure RAG documentation", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
   13:
     - {name: "Azure RAG documentation", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
+    - {name: "Google Embeddings documentation", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
     - {name: "Azure AI Search RAG solution design", url: "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/rag/rag-solution-design-and-evaluation-guide"}
   14:
     - {name: "Anthropic Vision", url: "https://docs.anthropic.com/en/docs/build-with-claude/vision"}
@@ -44,6 +45,9 @@ education_source_fallbacks:
   15:
     - {name: "Anthropic Building Effective Agents", url: "https://www.anthropic.com/research/building-effective-agents"}
     - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
+  16:
+    - {name: "Anthropic Context Windows", url: "https://docs.anthropic.com/en/docs/build-with-claude/context-windows"}
+    - {name: "OpenAI Context Management", url: "https://platform.openai.com/docs/guides/context"}
   17:
     - {name: "Hugging Face TRL documentation", url: "https://huggingface.co/docs/trl/index"}
     - {name: "Anthropic Alignment research", url: "https://www.anthropic.com/research"}
@@ -124,4 +128,3 @@ education_source_fallbacks:
   116:
     - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
     - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering"}
-  

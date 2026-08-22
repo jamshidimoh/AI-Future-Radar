@@ -4,7 +4,7 @@
 
 ## وضعیت محصول
 
-نسخه فعلی برای Production آماده است و با GitHub Actions هر ۳ ساعت یک‌بار اجرا می‌شود. اجرای دستی نیز از Actions ممکن است. اجرای خودکار با Push به `main` عمداً فعال نیست تا Commitهای فنی باعث انتشار ناخواسته Story نشوند.
+نسخه فعلی برای Production آماده است و با GitHub Actions هر ۴ ساعت یک‌بار اجرا می‌شود. اجرای دستی نیز از Actions ممکن است. اجرای خودکار با Push به `main` عمداً فعال نیست تا Commitهای فنی باعث انتشار ناخواسته Story نشوند.
 
 ## قرارداد خروجی Telegram
 
@@ -13,7 +13,7 @@
 - نام منبع و «مطالعه منبع اصلی» در یک بلوک مستقل قرار دارند.
 - «بررسی بیشتر با ChatGPT» در ردیف مستقل، Bold و قابل کلیک است.
 - Model و Date در پایین کارت به‌عنوان metadata کم‌اهمیت نمایش داده می‌شوند.
-- برای تراز RTL/LTR از فاصله‌های ثابت یا Directional Mark استفاده نمی‌شود؛ چیدمان عمودی برای سازگاری بهتر با کلاینت‌های مختلف Telegram استفاده شده است.
+- برای تراز RTL/LTR از فاصله‌های ثابت یا Directional Mark استفاده نمی‌شود؛ چیدمان عمودی برای سازگاری بهتر با کلاینت‌های مختلف Telegram استفاده می‌شود.
 - Telegram Native Reactions و Channel Comments تجربه تعامل اصلی هستند و نیازی به دکمه‌های مصنوعی HTML ندارند.
 
 ## پیکربندی کانال
@@ -79,7 +79,7 @@ Router مدل نیز در صورت `429` یا خطای provider به مدل بع
 
 ## CI/CD
 
-Quality CI روی تغییرات Repository قراردادهای compile، YAML، AI-first، Leader slot، Story dedup، quote evidence و Telegram formatting را کنترل می‌کند. Production فقط طبق Schedule سه‌ساعته یا اجرای دستی اجرا می‌شود.
+Quality CI روی تغییرات Repository قراردادهای compile، YAML، AI-first، Leader slot، Story dedup، quote evidence و Telegram formatting را کنترل می‌کند. Production فقط طبق Schedule چهار‌ساعته یا اجرای دستی اجرا می‌شود.
 
 Workflow تولیدی concurrency دارد تا دو Run همزمان روی state اشتراکی اجرا نشوند. Diagnostics هر Run برای ۷ روز به‌عنوان Artifact نگهداری می‌شود.
 

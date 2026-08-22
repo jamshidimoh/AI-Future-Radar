@@ -89,3 +89,6 @@ def test_two_independent_current_sources_with_tier1_pass_core_quorum():
     ])
     assert result["lessons"][0]["violations"] == []
     assert result["lessons"][0]["warnings"] == []
+
+
+# Keep the audit contract regression suite explicit and deterministic.

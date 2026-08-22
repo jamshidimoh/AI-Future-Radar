@@ -1,0 +1,79 @@
+education_governance:
+  version: "1.0"
+  priorities:
+    - scientific_authority
+    - current_validity
+    - topical_coverage
+  source_rules:
+    dead_or_unreachable_url_is_never_verified: true
+    declared_year_alone_is_not_verification: true
+    established_foundational:
+      minimum_sources: 2
+      require_current_authoritative_source: true
+      allow_canonical_historical_reference: true
+    current_or_fast_moving:
+      minimum_sources: 2
+      require_independent_sources: true
+      require_primary_or_official_when_available: true
+    emerging_or_informal:
+      minimum_sources: 2
+      require_current_usage_evidence: true
+      require_status_label: true
+      never_present_as_established_standard: true
+  preferred_authority_tiers:
+    tier_1:
+      - nist.gov
+      - csrc.nist.gov
+      - airc.nist.gov
+      - oecd.org
+      - iso.org
+      - iec.ch
+      - ieee.org
+    tier_2:
+      - major_university_research_centers
+      - peer_reviewed_research
+      - reputable_research_surveys
+    tier_3:
+      - official_vendor_documentation
+      - official_product_specifications
+    tier_4:
+      - practitioner_sources
+      - reputable_technical_analysis
+  freshness:
+    current_state_preferred_year: 2025
+    rapidly_changing_topics_preferred_year: 2026
+    latest_version_required_when_source_is_versioned: true
+    stale_sources_must_be_contextualized: true
+  content_rules:
+    no_invented_citations: true
+    source_content_must_support_claims: true
+    distinguish_definition_from_current_state: true
+    distinguish_established_emerging_informal: true
+    cross_check_conflicting_definitions: true
+  curriculum_coverage:
+    required_domains:
+      - ai_fundamentals
+      - machine_learning
+      - deep_learning
+      - generative_ai
+      - llm
+      - multimodal_ai
+      - retrieval_and_rag
+      - agents_and_agentic_systems
+      - tool_use_and_protocols
+      - memory_and_context
+      - evaluation_and_benchmarks
+      - alignment_and_post_training
+      - inference_and_optimization
+      - data_and_data_engineering
+      - ai_security_and_robustness
+      - safety_and_responsible_ai
+      - governance_and_policy
+      - ai_infrastructure_and_compute
+      - robotics_and_embodied_ai
+      - ai_for_science_and_biomedicine
+      - quantum_ai
+      - open_models_and_ecosystems
+      - ai_engineering_and_mlops
+      - human_ai_interaction
+      - emerging_terminology

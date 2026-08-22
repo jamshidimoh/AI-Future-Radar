@@ -1,5 +1,6 @@
 import inspect
 import json
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -26,6 +27,16 @@ class FinalProductionAcceptanceTests(unittest.TestCase):
             for i in range(5)
         ]
 
+    def _rank_item(self, title, source, score):
+        return {
+            "title": title,
+            "summary": "A verified development in artificial intelligence research.",
+            "content_type": "news",
+            "source": source,
+            "editorial_score": score,
+            "published": "2026-08-22",
+        }
+
     def test_ranked_selection_assigns_normal_rank_to_every_selected_normal_story(self):
         with patch.object(ranking, "_load_records", return_value=[]):
             selected = ranking._global_ranked_selection(
@@ -41,6 +52,63 @@ class FinalProductionAcceptanceTests(unittest.TestCase):
         normal_ranks = [item.get("normal_period_rank") for item in selected if not item.get("_rank_is_tier0")]
         self.assertEqual(normal_ranks, list(range(1, len(normal_ranks) + 1)))
         self.assertTrue(all(rank is not None for rank in normal_ranks))
+
+    def test_ranked_selection_enforces_source_cap(self):
+        items = [
+            self._rank_item(f"Reddit {i}", "Reddit", 100 - i)
+            for i in range(5)
+        ] + [
+            self._rank_item(f"Research {i}", "Research Institute", 80 - i)
+            for i in range(3)
+        ] + [
+            self._rank_item(f"University {i}", "University Lab", 70 - i)
+            for i in range(3)
+        ]
+
+        with patch.object(ranking, "_load_records", return_value=[]), patch.object(ranking._pipeline, "load_source_history", return_value=[]):
+            selected = ranking._global_ranked_selection(
+                items,
+                max_posts=4,
+                max_per_source=2,
+                max_per_type=4,
+                policy={"rotation_days": 7},
+            )
+
+        self.assertEqual(len(selected), 4)
+        counts = {}
+        for item in selected:
+            source = item["source"]
+            counts[source] = counts.get(source, 0) + 1
+        self.assertTrue(all(count <= 2 for count in counts.values()))
+
+    def test_ranked_selection_prefers_sources_outside_rotation_window(self):
+        items = [
+            self._rank_item("Reddit recent 1", "Reddit", 100),
+            self._rank_item("Reddit recent 2", "Reddit", 99),
+            self._rank_item("Research fresh 1", "Research Institute", 90),
+            self._rank_item("Research fresh 2", "Research Institute", 89),
+            self._rank_item("University fresh 1", "University Lab", 88),
+            self._rank_item("University fresh 2", "University Lab", 87),
+        ]
+        recent_ts = time.time() - 3600
+        history = [
+            {"ts": recent_ts, "source": "Reddit", "content_type": "news"},
+            {"ts": recent_ts + 1, "source": "Reddit", "content_type": "news"},
+        ]
+
+        with patch.object(ranking, "_load_records", return_value=[]), patch.object(ranking._pipeline, "load_source_history", return_value=history):
+            selected = ranking._global_ranked_selection(
+                items,
+                max_posts=4,
+                max_per_source=2,
+                max_per_type=4,
+                policy={"rotation_days": 7},
+            )
+
+        selected_sources = [item["source"] for item in selected]
+        self.assertNotIn("Reddit", selected_sources)
+        self.assertEqual(selected_sources.count("Research Institute"), 2)
+        self.assertEqual(selected_sources.count("University Lab"), 2)
 
     def test_period_ranked_pipeline_exports_ranked_selector(self):
         self.assertIs(ranking.select_editorial, ranking._global_ranked_selection)

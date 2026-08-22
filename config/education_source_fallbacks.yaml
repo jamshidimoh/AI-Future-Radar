@@ -19,7 +19,7 @@ education_source_fallbacks:
     - {name: "NIST AI Glossary", url: "https://csrc.nist.gov/glossary/term/artificial_intelligence"}
   7:
     - {name: "Hugging Face Tokenizer documentation", url: "https://huggingface.co/docs/transformers/main_classes/tokenizer"}
-    - {name: "Hugging Face Sentence Transformers", url: "https://www.sbert.net/"}
+    - {name: "Sentence Transformers documentation", url: "https://www.sbert.net/"}
   8:
     - {name: "Hugging Face Transformers", url: "https://huggingface.co/docs/transformers/main/en/index"}
     - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
@@ -33,7 +33,7 @@ education_source_fallbacks:
     - {name: "Anthropic Prompt Engineering", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}
     - {name: "OpenAI prompting guide", url: "https://platform.openai.com/docs/guides/prompt-engineering"}
   12:
-    - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/ generative-artificial-intelligence-profile"}
+    - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - {name: "Azure RAG documentation", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
   13:
     - {name: "Azure RAG documentation", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
@@ -55,14 +55,14 @@ education_source_fallbacks:
     - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
   20:
     - {name: "Hugging Face Quantization", url: "https://huggingface.co/docs/transformers/main/en/quantization/overview"}
-    - {name: "NVIDIA Model Optimization", url: "https://docs.nvidia.com/deeplearning/tensorrt/latest/index.html"}
+    - {name: "NVIDIA TensorRT", url: "https://docs.nvidia.com/deeplearning/tensorrt/latest/index.html"}
   22:
     - {name: "Stanford AI Index 2026 Responsible AI", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/responsible-ai"}
   23:
     - {name: "Stanford AI Index 2026 Responsible AI", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/responsible-ai"}
     - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
   24:
-    - {name: "NVIDIA AI Enterprise / accelerated computing", url: "https://docs.nvidia.com/ai-enterprise/"}
+    - {name: "NVIDIA AI Enterprise", url: "https://docs.nvidia.com/ai-enterprise/"}
     - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
   25:
     - {name: "NVIDIA Isaac Robotics", url: "https://docs.nvidia.com/isaac/"}
@@ -87,7 +87,7 @@ education_source_fallbacks:
     - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
   103:
     - {name: "OpenAI prompting guide", url: "https://platform.openai.com/docs/guides/prompt-engineering"}
-    - {name: "Google context caching and context docs", url: "https://ai.google.dev/gemini-api/docs/caching"}
+    - {name: "Google context caching", url: "https://ai.google.dev/gemini-api/docs/caching"}
   104:
     - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
     - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
@@ -99,7 +99,7 @@ education_source_fallbacks:
     - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
     - {name: "Google Gemini function calling", url: "https://ai.google.dev/gemini-api/docs/function-calling"}
   108:
-    - {name: "OpenAI Codex / coding agents documentation", url: "https://platform.openai.com/docs/guides/code-generation"}
+    - {name: "OpenAI coding agents documentation", url: "https://platform.openai.com/docs/guides/code-generation"}
     - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering"}
   109:
     - {name: "OpenAI computer use", url: "https://platform.openai.com/docs/guides/tools-computer-use"}
@@ -114,13 +114,14 @@ education_source_fallbacks:
     - {name: "OpenAI context management", url: "https://platform.openai.com/docs/guides/context"}
     - {name: "Google Gemini context caching", url: "https://ai.google.dev/gemini-api/docs/caching"}
   113:
-    - {name: "OpenAI Agents memory", url: "https://platform.openai.com/docs/guides/agents"}
+    - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
     - {name: "Microsoft agent memory patterns", url: "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/agentic-ai"}
   114:
     - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
-    - {name: "OpenAI Agents evaluation documentation", url: "https://platform.openai.com/docs/guides/evals"}
+    - {name: "OpenAI Evals documentation", url: "https://platform.openai.com/docs/guides/evals"}
   115:
     - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
   116:
     - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
     - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering"}
+  

@@ -1,18 +1,126 @@
 education_source_fallbacks:
+  1:
+    - {name: "NIST AI Glossary", url: "https://csrc.nist.gov/glossary/term/artificial_intelligence"}
+    - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+  2:
+    - {name: "scikit-learn Supervised Learning", url: "https://scikit-learn.org/stable/supervised_learning.html"}
+    - {name: "scikit-learn Unsupervised Learning", url: "https://scikit-learn.org/stable/unsupervised_learning.html"}
+  3:
+    - {name: "NIST AI Glossary", url: "https://csrc.nist.gov/glossary/term/artificial_intelligence"}
+    - {name: "Google Machine Learning Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+  4:
+    - {name: "scikit-learn supervised learning guide", url: "https://scikit-learn.org/stable/supervised_learning.html"}
+    - {name: "NIST AI Glossary", url: "https://csrc.nist.gov/glossary/term/artificial_intelligence"}
+  5:
+    - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - {name: "Hugging Face Transformers documentation", url: "https://huggingface.co/docs/transformers/main/en/index"}
+  6:
+    - {name: "scikit-learn model selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+    - {name: "NIST AI Glossary", url: "https://csrc.nist.gov/glossary/term/artificial_intelligence"}
+  7:
+    - {name: "Hugging Face Tokenizer documentation", url: "https://huggingface.co/docs/transformers/main_classes/tokenizer"}
+    - {name: "Hugging Face Sentence Transformers", url: "https://www.sbert.net/"}
+  8:
+    - {name: "Hugging Face Transformers", url: "https://huggingface.co/docs/transformers/main/en/index"}
+    - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+  9:
+    - {name: "Hugging Face Transformers", url: "https://huggingface.co/docs/transformers/main/en/index"}
+    - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+  10:
+    - {name: "Hugging Face PEFT", url: "https://huggingface.co/docs/peft/index"}
+    - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
+  11:
+    - {name: "Anthropic Prompt Engineering", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}
+    - {name: "OpenAI prompting guide", url: "https://platform.openai.com/docs/guides/prompt-engineering"}
+  12:
+    - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/ generative-artificial-intelligence-profile"}
+    - {name: "Azure RAG documentation", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
+  13:
+    - {name: "Azure RAG documentation", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
+    - {name: "Azure AI Search RAG solution design", url: "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/rag/rag-solution-design-and-evaluation-guide"}
+  14:
+    - {name: "Anthropic Vision", url: "https://docs.anthropic.com/en/docs/build-with-claude/vision"}
+    - {name: "Google Gemini vision documentation", url: "https://ai.google.dev/gemini-api/docs/vision"}
+  15:
+    - {name: "Anthropic Building Effective Agents", url: "https://www.anthropic.com/research/building-effective-agents"}
+    - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
+  17:
+    - {name: "Hugging Face TRL documentation", url: "https://huggingface.co/docs/trl/index"}
+    - {name: "Anthropic Alignment research", url: "https://www.anthropic.com/research"}
+  18:
+    - {name: "Hugging Face PEFT", url: "https://huggingface.co/docs/peft/index"}
+    - {name: "Microsoft fine-tuning documentation", url: "https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/fine-tuning"}
+  19:
+    - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+  20:
+    - {name: "Hugging Face Quantization", url: "https://huggingface.co/docs/transformers/main/en/quantization/overview"}
+    - {name: "NVIDIA Model Optimization", url: "https://docs.nvidia.com/deeplearning/tensorrt/latest/index.html"}
+  22:
+    - {name: "Stanford AI Index 2026 Responsible AI", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/responsible-ai"}
+  23:
+    - {name: "Stanford AI Index 2026 Responsible AI", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/responsible-ai"}
+    - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+  24:
+    - {name: "NVIDIA AI Enterprise / accelerated computing", url: "https://docs.nvidia.com/ai-enterprise/"}
+    - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
+  25:
+    - {name: "NVIDIA Isaac Robotics", url: "https://docs.nvidia.com/isaac/"}
+    - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
   26:
-    - name: "NIST: Quantum Information Science (2025 briefing)"
-      url: "https://www.nist.gov/document/nist-and-qis-2025"
-      year: 2025
-    - name: "NIST: Quantum Computing Explained"
-      url: "https://www.nist.gov/quantum-information-science/quantum-computing-explained"
-      year: 2025
-    - name: "NIST: Quantum Science"
-      url: "https://www.nist.gov/quantum-science"
-      year: 2025
+    - {name: "NIST Quantum Computing Explained", url: "https://www.nist.gov/quantum-information-science/quantum-computing-explained"}
+    - {name: "IBM Quantum Learning", url: "https://quantum.cloud.ibm.com/learning"}
   27:
-    - name: "NIST: Quantum Computing Explained"
-      url: "https://www.nist.gov/quantum-information-science/quantum-computing-explained"
-      year: 2025
-    - name: "NIST: Quantum Information Science (2025 briefing)"
-      url: "https://www.nist.gov/document/nist-and-qis-2025"
-      year: 2025
+    - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/quantum-information-science"}
+    - {name: "IBM Quantum Learning", url: "https://quantum.cloud.ibm.com/learning"}
+  28:
+    - {name: "Stanford AI Index 2026 Responsible AI", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/responsible-ai"}
+    - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+  29:
+    - {name: "Hugging Face Model Documentation", url: "https://huggingface.co/docs/hub/models-the-hub"}
+    - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
+  30:
+    - {name: "NVIDIA Omniverse Digital Twins", url: "https://docs.omniverse.nvidia.com/"}
+    - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/science"}
+  102:
+    - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering"}
+    - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+  103:
+    - {name: "OpenAI prompting guide", url: "https://platform.openai.com/docs/guides/prompt-engineering"}
+    - {name: "Google context caching and context docs", url: "https://ai.google.dev/gemini-api/docs/caching"}
+  104:
+    - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
+    - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+  105:
+    - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
+  106:
+    - {name: "OpenAI tools documentation", url: "https://platform.openai.com/docs/guides/tools"}
+  107:
+    - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
+    - {name: "Google Gemini function calling", url: "https://ai.google.dev/gemini-api/docs/function-calling"}
+  108:
+    - {name: "OpenAI Codex / coding agents documentation", url: "https://platform.openai.com/docs/guides/code-generation"}
+    - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering"}
+  109:
+    - {name: "OpenAI computer use", url: "https://platform.openai.com/docs/guides/tools-computer-use"}
+    - {name: "Anthropic computer use", url: "https://docs.anthropic.com/en/docs/build-with-claude/computer-use"}
+  110:
+    - {name: "MCP specification", url: "https://modelcontextprotocol.io/specification/2025-11-25"}
+    - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
+  111:
+    - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
+    - {name: "Google Agent Development Kit", url: "https://google.github.io/adk-docs/"}
+  112:
+    - {name: "OpenAI context management", url: "https://platform.openai.com/docs/guides/context"}
+    - {name: "Google Gemini context caching", url: "https://ai.google.dev/gemini-api/docs/caching"}
+  113:
+    - {name: "OpenAI Agents memory", url: "https://platform.openai.com/docs/guides/agents"}
+    - {name: "Microsoft agent memory patterns", url: "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/agentic-ai"}
+  114:
+    - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - {name: "OpenAI Agents evaluation documentation", url: "https://platform.openai.com/docs/guides/evals"}
+  115:
+    - {name: "OpenAI Agents documentation", url: "https://platform.openai.com/docs/guides/agents"}
+  116:
+    - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
+    - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering"}

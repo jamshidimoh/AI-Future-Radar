@@ -19,7 +19,8 @@ def _send_text_only(text: str, source_link: str = ""):
     ``image_url`` is deliberately absent from this internal API. Callers may
     still pass it to ``send`` for backward compatibility, but it is ignored.
     A successful text publication is the complete delivery; no second Telegram
-    request is made for media.
+    request is made for media. When a source URL is available, Telegram may
+    render its own link preview inside the same message.
     """
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     channel = os.environ.get("TELEGRAM_CHANNEL")
@@ -28,7 +29,7 @@ def _send_text_only(text: str, source_link: str = ""):
     if not send_telegram._telegram_preflight(token, channel):
         return False
 
-    result = send_telegram._send_text_full(token, channel, text, preflight=False)
+    result = send_telegram._send_text_full(token, channel, text, preview_url=source_link, preflight=False)
     if not isinstance(result, dict) or result.get("message_id") is None:
         return False
 

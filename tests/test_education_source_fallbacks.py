@@ -34,6 +34,9 @@ def test_source_candidates_keep_curriculum_sources_as_primary_order(monkeypatch)
 def test_unreachable_declared_2025_source_is_not_verified(monkeypatch):
     lesson = {
         "id": 26,
+        "a": {"term": "A", "fa": "آ", "seed": "تعریف پایه A"},
+        "b": {"term": "B", "fa": "ب", "seed": "تعریف پایه B"},
+        "relation": "رابطه",
         "sources": [{"name": "dead", "url": "https://dead.example/source", "year": 2025}],
     }
     monkeypatch.setattr(educational_content, "_source_candidates", lambda _: lesson["sources"])

@@ -4,12 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-MIN_SOURCE_YEAR = 2025
-PRIMARY_DOMAINS = {
-    "nist.gov", "developers.google.com", "ai.google.dev", "hai.stanford.edu",
-    "oecd.org", "itu.int", "iso.org", "anthropic.com", "openai.com",
-    "deepmind.google", "research.google", "microsoft.com", "ibm.com",
-}
+from education_source_policy import validate_current_sources
 
 # Common Persian transliterations that must never survive the final education draft.
 BANNED_TRANSLITERATIONS = {
@@ -25,45 +20,21 @@ REQUIRED_FIELDS = (
 
 
 def source_quality(source: dict[str, Any]) -> int:
-    """Score source authority; recency is a hard gate elsewhere."""
-    url = str(source.get("url", "")).lower()
-    score = 60
-    if any(domain in url for domain in PRIMARY_DOMAINS):
-        score += 30
-    if "arxiv.org" in url:
-        score += 20
-    if any(x in url for x in ("/standard", "/spec", "specification", "recommendation")):
-        score += 10
-    return min(score, 100)
+    """Return authority score supplied by the shared source-governance policy."""
+    try:
+        return int(source.get("authority_score", 0))
+    except (TypeError, ValueError):
+        return 0
 
 
 def validate_sources(sources: list[dict[str, Any]]) -> tuple[bool, list[dict[str, Any]], str]:
-    valid = []
-    for source in sources:
-        year = source.get("year")
-        try:
-            year = int(year)
-        except (TypeError, ValueError):
-            year = None
-        if year is None or year < MIN_SOURCE_YEAR:
-            continue
-        item = dict(source)
-        item["year"] = year
-        item["authority_score"] = source_quality(item)
-        valid.append(item)
-    valid.sort(key=lambda x: (int(x.get("authority_score", 0)), int(x.get("year", 0))), reverse=True)
-    if not valid:
-        return False, [], f"no verified source from {MIN_SOURCE_YEAR}+"
-    if not any(int(x.get("authority_score", 0)) >= 80 for x in valid):
-        return False, valid, "no authoritative 2025+ source"
-    return True, valid, "ok"
+    """Require two current, independently attributable sources with authority support."""
+    return validate_current_sources(sources)
 
 
 def terminology_errors(item: dict[str, Any]) -> list[str]:
     text = " ".join(str(item.get(k, "")) for k in REQUIRED_FIELDS)
     errors = [x for x in BANNED_TRANSLITERATIONS if x in text]
-    # Detect obvious English technical terms that were accidentally rendered as
-    # Persian phonetics in the prose. Keep this conservative to avoid false positives.
     phonetic_patterns = ("کدنویسی وایب", "وایب کدینگ", "لوپ انجینیرینگ", "مهندسی کانتکست")
     errors.extend(x for x in phonetic_patterns if x in text)
     return sorted(set(errors))
@@ -88,7 +59,6 @@ def educational_quality_score(item: dict[str, Any], sources: list[dict[str, Any]
     if not source_ok:
         issues.append(f"source:{reason}")
 
-    # Transparent score: content 60 + sources 25 + terminology 15.
     score = 100
     score -= min(60, len([x for x in issues if x.startswith("missing:") or x.startswith("too_short:")]) * 8)
     if "terminology" in issues:

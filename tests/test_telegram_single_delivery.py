@@ -29,8 +29,8 @@ def test_image_is_ignored_and_canonical_text_is_published_once(monkeypatch):
 
     long_text = "<b>📡 عنوان خبر</b>\n\n" + ("این بخش از متن خبر باید کامل باقی بماند. " * 140)
 
-    def successful_text(token, channel, text, preflight=False):
-        calls["text"].append(text)
+    def successful_text(token, channel, text, *, preview_url="", preflight=False):
+        calls["text"].append((text, preview_url))
         return {"message_id": 101, "chat_id": -100123}
 
     def forbidden_photo(*args, **kwargs):
@@ -49,16 +49,32 @@ def test_image_is_ignored_and_canonical_text_is_published_once(monkeypatch):
     assert result["message_id"] == 101
     assert result["photo_message_id"] is None
     assert result["delivery_complete"] is True
-    assert calls["text"] == [long_text]
+    assert calls["text"] == [(long_text, "https://example.com/story")]
     assert calls["photo"] == 0
-    assert len(calls["text"][0]) > 1024
+    assert len(calls["text"][0][0]) > 1024
+
+
+def test_no_source_link_disables_preview(monkeypatch):
+    calls = []
+    _configure(monkeypatch)
+
+    def successful_text(token, channel, text, *, preview_url="", preflight=False):
+        calls.append(preview_url)
+        return {"message_id": 102, "chat_id": -100123}
+
+    monkeypatch.setattr(delivery.send_telegram, "_send_text_full", successful_text)
+
+    result = delivery.send("متن بدون منبع", source_link="")
+
+    assert result["message_id"] == 102
+    assert calls == [""]
 
 
 def test_successful_text_is_complete_delivery_and_no_photo_request_occurs(monkeypatch):
     calls = {"text": 0, "photo": 0}
     _configure(monkeypatch)
 
-    def successful_text(*args, **kwargs):
+    def successful_text(token, channel, text, *, preview_url="", preflight=False):
         calls["text"] += 1
         return {"message_id": 101, "chat_id": -100123}
 

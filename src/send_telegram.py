@@ -268,13 +268,49 @@ def _telegram_preflight(token, channel):
         return False
 
 
-def _send_text_full(token, channel, text, *, preflight=True):
+def _valid_preview_url(value):
+    raw = str(value or "").strip()
+    if not raw:
+        return ""
+    try:
+        parsed = urlparse(raw)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            return ""
+    except Exception:
+        return ""
+    return raw
+
+
+def _link_preview_options(preview_url="", *, enabled=True):
+    raw = _valid_preview_url(preview_url)
+    if not enabled or not raw:
+        return {"is_disabled": True}
+    return {
+        "is_disabled": False,
+        "url": raw,
+        "prefer_large_media": True,
+        "show_above_text": True,
+    }
+
+
+def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
     if preflight and not _telegram_preflight(token, channel):
         return False
     chunks = _chunk_text(text)
     last = None
     for i, chunk in enumerate(chunks, 1):
-        data = {"chat_id": channel, "text": chunk, "parse_mode": "HTML", "disable_web_page_preview": True}
+        # The canonical single-message path may be invoked with long text that
+        # requires chunking. Never request the same preview more than once.
+        preview_enabled = i == 1 and bool(_valid_preview_url(preview_url))
+        data = {
+            "chat_id": channel,
+            "text": chunk,
+            "parse_mode": "HTML",
+            "link_preview_options": json.dumps(
+                _link_preview_options(preview_url, enabled=preview_enabled),
+                ensure_ascii=False,
+            ),
+        }
         try:
             response = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data=data, timeout=20)
         except requests.RequestException as exc:
@@ -283,7 +319,14 @@ def _send_text_full(token, channel, text, *, preflight=True):
         meta = _result_metadata(response)
         if not meta:
             if response.status_code in {400, 401, 403, 404}:
-                fallback = {"chat_id": channel, "text": _normalize_plain(chunk), "disable_web_page_preview": True}
+                fallback = {
+                    "chat_id": channel,
+                    "text": _normalize_plain(chunk),
+                    "link_preview_options": json.dumps(
+                        _link_preview_options(preview_url, enabled=preview_enabled),
+                        ensure_ascii=False,
+                    ),
+                }
                 try:
                     response = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data=fallback, timeout=20)
                 except requests.RequestException as exc:
@@ -355,7 +398,7 @@ def send_to_telegram(text, image_url="", source_link=""):
         if photo_result:
             return photo_result
         print("[Telegram Image] photo delivery failed; falling back to canonical text", flush=True)
-    return _send_text_full(token, channel, text, preflight=False)
+    return _send_text_full(token, channel, text, preview_url=source_link, preflight=False)
 
 
 def send_to_telegram_safe(text, image_url="", source_link=""):

@@ -2,7 +2,13 @@ import period_ranked_pipeline as pipeline
 
 
 def test_global_ranking_returns_top_four_only():
-    items = [{"title":"A","editorial_score":91,"source":"source-a"},{"title":"B","editorial_score":95,"source":"source-b"},{"title":"C","editorial_score":80,"source":"source-c"},{"title":"D","editorial_score":88,"source":"source-d"},{"title":"E","editorial_score":99,"source":"source-e"}]
+    items = [
+        {"title":"A","editorial_score":91,"source":"source-a","content_type":"research"},
+        {"title":"B","editorial_score":95,"source":"source-b","content_type":"news"},
+        {"title":"C","editorial_score":80,"source":"source-c","content_type":"research"},
+        {"title":"D","editorial_score":88,"source":"source-d","content_type":"research"},
+        {"title":"E","editorial_score":99,"source":"source-e","content_type":"news"},
+    ]
     ranked = pipeline._global_ranked_selection(items, 1, 2, 2, {})
     assert [x["title"] for x in ranked] == ["E","B","A","D"]
     assert [x["period_rank"] for x in ranked] == [1,2,3,4]

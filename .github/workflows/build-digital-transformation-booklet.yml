@@ -1,0 +1,68 @@
+name: Build Digital Transformation Booklet
+
+on:
+  push:
+    paths:
+      - 'digital_transformation_booklet/chapter-01/source/**'
+      - 'digital_transformation_booklet/chapter-01/generate_outputs.py'
+      - '.github/workflows/build-digital-transformation-booklet.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: digital-transformation-booklet
+  cancel-in-progress: false
+
+jobs:
+  build-chapter-01:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-core
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install document dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install python-docx reportlab arabic-reshaper python-bidi
+
+      - name: Generate Word and PDF
+        run: python digital_transformation_booklet/chapter-01/generate_outputs.py
+
+      - name: Validate outputs
+        run: |
+          test -s digital_transformation_booklet/chapter-01/docx/فصل-01-تحول-دیجیتال-2-0.docx
+          test -s digital_transformation_booklet/chapter-01/pdf/فصل-01-تحول-دیجیتال-2-0.pdf
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          p=Path('digital_transformation_booklet/chapter-01/docx/فصل-01-تحول-دیجیتال-2-0.docx')
+          with ZipFile(p) as z:
+              assert 'word/document.xml' in z.namelist()
+          q=Path('digital_transformation_booklet/chapter-01/pdf/فصل-01-تحول-دیجیتال-2-0.pdf')
+          assert q.read_bytes().startswith(b'%PDF')
+          print('document validation: PASS')
+          PY
+
+      - name: Commit generated artifacts
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add digital_transformation_booklet/chapter-01/docx digital_transformation_booklet/chapter-01/pdf
+          if git diff --cached --quiet; then
+            echo 'No artifact changes.'
+          else
+            git commit -m 'build: generate chapter 01 Word and PDF [skip ci]'
+            git push
+          fi

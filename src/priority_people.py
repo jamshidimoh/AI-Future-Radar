@@ -1,8 +1,8 @@
-"""Generic tier-0 detection for substantive interviews and attributable quotes.
+"""Generic priority-person detection for substantive interviews and attributable quotes.
 
-Tier-0 is an editorial classification, not a ranking side effect.  In
-particular, an item must earn the classification from its own evidence; a
-previously assigned ``tier0_rank`` must never make an item tier-0.
+Tier-0 is reserved for substantive interview-style content. Ordinary news
+coverage that merely quotes a priority person remains eligible for normal
+ranking and does not bypass the normal score window.
 """
 from __future__ import annotations
 
@@ -76,10 +76,9 @@ def priority_people_features(item):
     ctype = str(item.get("content_type") or "").lower()
     title = _bounded(item.get("title"), MAX_FIELD_CHARS["title"]).lower()
     explicit_interview = ctype in INTERVIEW_TYPES or bool(_INTERVIEW_TERM_RE.search(title))
-    if explicit_interview:
-        is_tier0 = len(text) >= 100
-    else:
-        is_tier0 = _has_attributable_quote(item, text, people) and len(text) >= 280
+    # A quoted person in ordinary reporting is useful metadata, but must not
+    # become Tier-0 and bypass normal score-based selection.
+    is_tier0 = explicit_interview and len(text) >= 100
     return people, is_tier0, 50.0 if is_tier0 else 0.0
 
 def is_substantive_priority_interview(item):

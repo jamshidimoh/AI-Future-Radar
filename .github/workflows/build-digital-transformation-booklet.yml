@@ -5,6 +5,7 @@ on:
     paths:
       - 'digital_transformation_booklet/chapter-01/source/**'
       - 'digital_transformation_booklet/chapter-01/generate_outputs.py'
+      - 'tools/harden_rtl_docx.py'
       - 'tools/validate_visual_layout.py'
       - '.github/workflows/build-digital-transformation-booklet.yml'
   workflow_dispatch:
@@ -42,7 +43,14 @@ jobs:
       - name: Generate Word and provisional PDF
         run: python digital_transformation_booklet/chapter-01/generate_outputs.py
 
-      - name: Render publication PDF from canonical Word output
+      - name: Harden canonical Word RTL
+        run: |
+          python tools/harden_rtl_docx.py \
+            digital_transformation_booklet/chapter-01/docx/فصل-01-تحول-دیجیتال-2-0.docx \
+            --locale fa-IR \
+            --validate
+
+      - name: Render publication PDF from hardened Word output
         run: |
           rm -f digital_transformation_booklet/chapter-01/pdf/*.pdf
           soffice --headless --convert-to pdf --outdir digital_transformation_booklet/chapter-01/pdf digital_transformation_booklet/chapter-01/docx/فصل-01-تحول-دیجیتال-2-0.docx

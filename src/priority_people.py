@@ -1,8 +1,8 @@
-"""Generic priority-person detection for substantive interviews and attributable quotes.
+"""Generic priority-person detection for substantive interviews.
 
 Tier-0 is reserved for substantive interview-style content. Ordinary news
-coverage that merely quotes a priority person remains eligible for normal
-ranking and does not bypass the normal score window.
+coverage that merely mentions or quotes a priority person remains eligible for
+normal ranking and does not bypass the normal score window.
 """
 from __future__ import annotations
 
@@ -12,13 +12,10 @@ TOP_AI_VOICES={"elon musk","sam altman","demis hassabis","dario amodei","jensen 
 PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","altman"),"demis hassabis":("demis hassabis","hassabis"),"dario amodei":("dario amodei","amodei"),"jensen huang":("jensen huang","huang"),"yann lecun":("yann lecun","yann le cun","lecun"),"yoshua bengio":("yoshua bengio","bengio"),"geoffrey hinton":("geoffrey hinton","hinton"),"andrew ng":("andrew ng",),"eric schmidt":("eric schmidt","schmidt"),"ilya sutskever":("ilya sutskever","sutskever"),"noam shazeer":("noam shazeer","shazeer"),"fei-fei li":("fei-fei li","fei fei li","fei-fei","fei fei"),"stuart russell":("stuart russell","russell"),"nick bostrom":("nick bostrom","bostrom"),"yuval noah harari":("yuval noah harari","yuval harari","harari"),"mustafa suleyman":("mustafa suleyman","suleyman"),"mark zuckerberg":("mark zuckerberg","zuckerberg"),"satya nadella":("satya nadella","nadella"),"lisa su":("lisa su",)}
 INTERVIEW_TYPES={"interview","podcast","talk","lecture","fireside","conversation","discussion","q&a"}
 INTERVIEW_TERMS=("interview","podcast","fireside chat","conversation","q&a","keynote q&a","question and answer","speaks with","talks with","in conversation","sit-down","سخنرانی","مصاحبه","پادکست","گفتگو","گفت‌وگو","پرسش و پاسخ")
-QUOTE_TERMS=("said","says","told","argued","warned","believes","predicts","stated","explained","می‌گوید","گفت","اظهار کرد","هشدار داد","معتقد است","پیش‌بینی کرد","توضیح داد")
 MAX_FIELD_CHARS={"title":1200,"summary":4000,"description":4000,"source":600,"content_type":200,"speakers":1200,"speaker":600,"watch_person":600,"leader":600,"key_quote":1600}
 _NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases) for canonical, aliases in PERSON_ALIASES.items() if any(" " in alias for alias in aliases)}
 _SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias) for canonical, aliases in PERSON_ALIASES.items()}
 _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TERMS), re.I)
-_QUOTE_RE=re.compile("|".join(re.escape(term) for term in QUOTE_TERMS), re.I)
-_NO_QUOTE_RE=re.compile(r"\b(no|without|not)\b.{0,35}\b(direct\s+)?(quote|quoted|attributable|statement)\b", re.I)
 
 def _bounded(value: object, limit: int) -> str:
     return str(value or "")[:limit]
@@ -55,19 +52,6 @@ def matched_priority_people(item, *, text: str | None = None):
                 matches.append(canonical)
     return sorted(set(matches))
 
-def _has_attributable_quote(item,text,people):
-    if _NO_QUOTE_RE.search(text):
-        return False
-    quote = _bounded(item.get("key_quote"), MAX_FIELD_CHARS["key_quote"]).strip()
-    if len(quote) >= 20:
-        return True
-    names=[a for p in people for a in PERSON_ALIASES.get(p,(p,))]
-    if not names:
-        return False
-    left="(?:"+"|".join(re.escape(x) for x in names)+")\W{0,80}(?:"+_QUOTE_RE.pattern+")"
-    right="(?:"+_QUOTE_RE.pattern+")\W{0,80}(?:"+"|".join(re.escape(x) for x in names)+")"
-    return bool(re.search(left,text,re.I) or re.search(right,text,re.I))
-
 def priority_people_features(item):
     text = _text(item)
     people = matched_priority_people(item, text=text)
@@ -76,8 +60,8 @@ def priority_people_features(item):
     ctype = str(item.get("content_type") or "").lower()
     title = _bounded(item.get("title"), MAX_FIELD_CHARS["title"]).lower()
     explicit_interview = ctype in INTERVIEW_TYPES or bool(_INTERVIEW_TERM_RE.search(title))
-    # A quoted person in ordinary reporting is useful metadata, but must not
-    # become Tier-0 and bypass normal score-based selection.
+    # Person mentions and attributable quotes are metadata only. Tier-0 is a
+    # routing class for substantive interview-style content, not a score bonus.
     is_tier0 = explicit_interview and len(text) >= 100
     return people, is_tier0, 50.0 if is_tier0 else 0.0
 

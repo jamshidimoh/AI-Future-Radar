@@ -1,0 +1,40 @@
+name: Ranking Behavioral Audit
+
+on:
+  pull_request:
+    paths:
+      - 'period_ranked_pipeline.py'
+      - 'main.py'
+      - 'signal_engine.py'
+      - 'src/priority_people.py'
+      - 'tools/ranking_behavioral_benchmark.py'
+      - '.github/workflows/ranking-behavioral-audit.yml'
+  workflow_dispatch:
+
+jobs:
+  behavioral-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install minimal dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+
+      - name: Run behavioral benchmark
+        run: python tools/ranking_behavioral_benchmark.py
+
+      - name: Publish benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ranking-behavioral-benchmark
+          path: ranking_behavioral_benchmark.json
+          if-no-files-found: error

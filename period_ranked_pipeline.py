@@ -88,6 +88,7 @@ def _rotation_source_counts(history, rotation_days):
 
 
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
+    policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     try:
         source_history = _pipeline.load_source_history()
@@ -101,9 +102,17 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     selected_source_counts = {}
     selected_type_counts = {}
 
-    def can_take(item):
+    def selection_source(item):
         source = _source_key(item)
+        return source if source != "unknown" else f"__missing_source_{id(item)}"
+
+    def selection_type(item):
         content_type = _content_type_key(item)
+        return content_type if content_type != "unknown" else f"__missing_type_{id(item)}"
+
+    def can_take(item):
+        source = selection_source(item)
+        content_type = selection_type(item)
         return (
             selected_source_counts.get(source, 0) < source_cap
             and selected_type_counts.get(content_type, 0) < type_cap
@@ -117,8 +126,8 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
             if not can_take(item):
                 continue
             selected.append(item)
-            source = _source_key(item)
-            content_type = _content_type_key(item)
+            source = selection_source(item)
+            content_type = selection_type(item)
             selected_source_counts[source] = selected_source_counts.get(source, 0) + 1
             selected_type_counts[content_type] = selected_type_counts.get(content_type, 0) + 1
             if len(selected) >= limit:

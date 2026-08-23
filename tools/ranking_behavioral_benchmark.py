@@ -7,7 +7,14 @@ must use persisted real-run audit records.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+# The benchmark lives under tools/, while the production module is at repo root.
+# Make the repository root importable when Actions executes this file directly.
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from period_ranked_pipeline import canonical_rank_score
 
@@ -74,7 +81,10 @@ def main() -> int:
     assert scores["model_release"] > scores["viral"]
 
     output = Path("ranking_behavioral_benchmark.json")
-    output.write_text(json.dumps({"scores": scores, "status": "PASS"}, ensure_ascii=False, indent=2), encoding="utf-8")
+    output.write_text(
+        json.dumps({"scores": scores, "status": "PASS"}, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     print(json.dumps({"status": "PASS", "scores": scores}, ensure_ascii=False, indent=2))
     return 0
 

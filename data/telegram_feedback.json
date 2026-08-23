@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787487593,
+  "updated_at": 1787501878,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2819,6 +2819,34 @@
       "title": "انتقاد از مدل‌های Anthropic و ترجیح GPT-5.6 SOL توسط کاربران",
       "link": "https://www.reddit.com/r/artificial/comments/1vvvi8d/ai_models_rankings/",
       "posted_at": 1787473202
+    },
+    "-1004482051328:1204": {
+      "chat_id": -1004482051328,
+      "message_id": 1204,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Reddit - r/artificial",
+      "content_type": "community",
+      "category": "ai",
+      "leader": "",
+      "title": "تحلیل چالش داده‌های منسوخ در مدل‌های زبانی با مطالعه موردی Napster",
+      "link": "https://www.reddit.com/r/artificial/comments/1vw85a0/napsters_homepage_is_now_entirely_ai_agents_its_a/",
+      "posted_at": 1787501873
+    },
+    "-1004482051328:1205": {
+      "chat_id": -1004482051328,
+      "message_id": 1205,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787501878
     }
   }
 }

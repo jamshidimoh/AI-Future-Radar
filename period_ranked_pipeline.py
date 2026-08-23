@@ -1,4 +1,9 @@
-"""Production adapter: bounded global period ranking."""
+"""Production adapter: bounded global period ranking.
+
+The module owns the single final ranking calculation. Policy classifications
+(Tier-0/protected), model-release detection, and person detection remain
+independent metadata; they no longer receive additive score bonuses here.
+"""
 from __future__ import annotations
 
 import time
@@ -10,19 +15,38 @@ from protected_story_identity import probable_same_story
 from src.priority_people import priority_people_features
 
 REGULAR_SAME_STORY_THRESHOLD = 0.82
+EDITORIAL_WEIGHT = 0.75
+SIGNAL_WEIGHT = 0.25
 
 
-def _base_score(item):
-    for key in ("final_editorial_score", "leader_story_score", "mission_score", "editorial_score", "score"):
+def _base_editorial_score(item):
+    """Return the canonical editorial score before legacy signal mutation."""
+    for key in ("editorial_score_pre_signal", "final_editorial_score", "editorial_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
             if value:
-                break
+                return value
         except (TypeError, ValueError):
             continue
-    else:
-        value = 0.0
-    return value
+    return 0.0
+
+
+def canonical_rank_score(item):
+    """Combine independent editorial and technology signals exactly once.
+
+    Editorial score remains the primary judgement layer. Signal score is an
+    independent technical/evidence signal. Policy bonuses are intentionally
+    excluded; policy controls routing/eligibility rather than value inflation.
+    """
+    editorial = _base_editorial_score(item)
+    signal = float(item.get("signal_score", 0) or 0)
+    score = editorial * EDITORIAL_WEIGHT + signal * SIGNAL_WEIGHT
+    return round(score, 2)
+
+
+def _base_score(item):
+    """Compatibility alias for callers expecting the old ranking helper."""
+    return canonical_rank_score(item)
 
 
 def _is_priority_interview(item):
@@ -49,12 +73,12 @@ def _prepare_rank_features(items):
         if protected and leader and leader not in people:
             people = list(people or []) + [leader]
         item["model_release_priority"] = bool(model_bonus)
-        item["model_release_bonus"] = model_bonus
+        item["model_release_bonus_legacy"] = model_bonus
         item["priority_person_interview"] = bool(is_tier0 or protected)
-        item["priority_person_bonus"] = people_bonus
+        item["priority_person_bonus_legacy"] = people_bonus
         item["priority_story_people"] = people
         item["_rank_is_tier0"] = bool(is_tier0 or protected)
-        item["final_editorial_score"] = round(_base_score(item) + model_bonus + people_bonus, 2)
+        item["final_editorial_score"] = canonical_rank_score(item)
     return items
 
 
@@ -221,7 +245,7 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     eligible = _exclude_published_candidates(eligible)
     _prepare_rank_features(eligible)
     print(f"[Ranking Timing] feature_cache items={len(eligible)} elapsed={time.monotonic()-started:.3f}s", flush=True)
-    eligible.sort(key=lambda x: (int(bool(x.get("_rank_is_tier0"))), int(bool(x.get("model_release_priority"))), _score(x), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
+    eligible.sort(key=lambda x: (int(bool(x.get("_rank_is_tier0"))), _score(x), int(bool(x.get("model_release_priority"))), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
     priority_candidates = [x for x in eligible if x.get("_rank_is_tier0")]
     normal = [x for x in eligible if not x.get("_rank_is_tier0")]
     priority = _priority_story_diversified(priority_candidates)

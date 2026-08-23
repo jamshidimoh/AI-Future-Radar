@@ -3,11 +3,11 @@ from period_ranked_pipeline import _global_ranked_selection
 
 def test_global_selection_assigns_ranks_to_top_four():
     items = [
-        {"title": "A", "editorial_score": 110, "source": "source-a"},
-        {"title": "B", "editorial_score": 108, "source": "source-b"},
-        {"title": "C", "editorial_score": 106, "source": "source-c"},
-        {"title": "D", "editorial_score": 104, "source": "source-d"},
-        {"title": "E", "editorial_score": 102, "source": "source-e"},
+        {"title": "A", "editorial_score": 110, "source": "source-a", "content_type": "research"},
+        {"title": "B", "editorial_score": 108, "source": "source-b", "content_type": "news"},
+        {"title": "C", "editorial_score": 106, "source": "source-c", "content_type": "research"},
+        {"title": "D", "editorial_score": 104, "source": "source-d", "content_type": "news"},
+        {"title": "E", "editorial_score": 102, "source": "source-e", "content_type": "product_news"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
     assert [x["period_rank"] for x in ranked] == [1, 2, 3, 4]
@@ -31,8 +31,8 @@ def test_tier0_keeps_best_story_per_leader():
         {"title": "Sam Altman interview: AI future", "summary": "Sam Altman discusses model progress, agents and long-term AI development.", "content_type": "interview", "editorial_score": 95, "source": "source-a"},
         {"title": "Sam Altman interview: enterprise AI", "summary": "Sam Altman discusses enterprise deployment, model economics and safety tradeoffs.", "content_type": "interview", "editorial_score": 130, "source": "source-b"},
         {"title": "Dario Amodei interview: AI safety", "summary": "Dario Amodei discusses AI safety, capability evaluation and frontier-model risks.", "content_type": "interview", "editorial_score": 120, "source": "source-c"},
-        {"title": "normal news", "editorial_score": 110, "source": "source-d"},
-        {"title": "normal news 2", "editorial_score": 105, "source": "source-e"},
+        {"title": "normal news", "editorial_score": 110, "source": "source-d", "content_type": "news"},
+        {"title": "normal news 2", "editorial_score": 105, "source": "source-e", "content_type": "research"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
     tier0 = [x for x in ranked if x.get("tier0_rank") is not None]
@@ -43,7 +43,7 @@ def test_tier0_leader_story_is_not_replaced_by_lower_scoring_same_person():
     items = [
         {"title": "Elon Musk interview high value", "summary": "Elon Musk discusses AI, robotics, autonomy and implications for the future.", "content_type": "interview", "editorial_score": 125, "source": "source-a"},
         {"title": "Elon Musk interview lower value", "summary": "Elon Musk discusses a smaller product announcement and short-term roadmap details.", "content_type": "interview", "editorial_score": 80, "source": "source-b"},
-        {"title": "major research", "editorial_score": 115, "source": "source-c"},
+        {"title": "major research", "editorial_score": 115, "source": "source-c", "content_type": "research"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
     assert len([x for x in ranked if x.get("tier0_rank") is not None]) == 1

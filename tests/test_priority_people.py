@@ -67,3 +67,30 @@ def test_large_description_is_bounded_and_still_detects_person():
     assert "sam altman" in people
     assert tier0 is True
     assert bonus == 50.0
+
+
+def test_configured_watchlist_person_outside_static_priority_list_gets_priority():
+    item = {
+        "title": "David Chalmers in a substantive conversation about AI consciousness",
+        "content_type": "conversation",
+        "summary": "David Chalmers discusses machine consciousness, AI systems, cognitive science, the implications of increasingly capable models, and several concrete research questions in a long-form conversation.",
+        "watch_person": "David Chalmers",
+        "leader": "David Chalmers",
+        "is_leader_watch": True,
+    }
+    people, tier0, bonus = priority_people_features(item)
+    assert people == ["david chalmers"]
+    assert tier0 is True
+    assert bonus == 50.0
+
+
+def test_watchlist_metadata_does_not_make_short_news_item_tier_zero():
+    item = {
+        "title": "David Chalmers attends AI event",
+        "content_type": "news",
+        "summary": "A short event note.",
+        "watch_person": "David Chalmers",
+        "leader": "David Chalmers",
+        "is_leader_watch": True,
+    }
+    assert not is_substantive_priority_interview(item)

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787515607,
+  "updated_at": 1787515782,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2863,6 +2863,18 @@
       "title": "شواهدی از تغییر پارادایم مهارت‌ها: از مدارج تحصیلی به تسلط بر هوش مصنوعی",
       "link": "https://www.reddit.com/r/artificial/comments/1vwbhe0/former_microsoft_ceo_steve_ballmer_his_own/",
       "posted_at": 1787512325
+    },
+    "-1004482051328:1207": {
+      "chat_id": -1004482051328,
+      "message_id": 1207,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787515782
     }
   }
 }

@@ -63,8 +63,6 @@ def novelty_score(item: dict) -> float:
 def future_impact_score(item: dict) -> float:
     text = _text(item)
     score = 3.0 + min(_count_terms(text, FUTURE_TERMS) * 1.2, 3.0)
-    if item.get("is_leader_watch") or item.get("leader_watch_protected"):
-        score += 1.5
     if str(item.get("category") or "").lower() in {"future", "trend", "futures"}:
         score += 1.5
     return _clamp(score)
@@ -163,13 +161,13 @@ def enrich_with_signal(item: dict) -> dict:
     enriched = dict(item)
     vector = calculate_signal_vector(enriched)
     score = calculate_signal_score(vector)
-    is_leader = bool(enriched.get("is_leader_watch") or enriched.get("leader_watch_protected"))
     is_interview = bool(
         str(enriched.get("content_type") or "").lower() in {"interview", "podcast", "talk", "lecture"}
         or any(term in _text(enriched) for term in INTERVIEW_TERMS)
     )
-    if is_leader and is_interview:
-        score = min(100.0, score + 15.0)
+    # Interview status is metadata for downstream policy/routing. It is deliberately
+    # not a ranking bonus: leader authority and protected-stream eligibility belong
+    # to the policy/ranking layers, preventing double counting.
     enriched["signal_vector"] = vector
     enriched["signal_score"] = round(score, 2)
     enriched["signal_class"] = classify_signal(score)

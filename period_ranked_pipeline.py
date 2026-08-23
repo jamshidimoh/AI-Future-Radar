@@ -1,4 +1,9 @@
-"""Production adapter: bounded global period ranking."""
+"""Production adapter: bounded global period ranking.
+
+The module owns the single final ranking calculation. Policy classifications
+(Tier-0/protected), model-release detection, and person detection remain
+independent metadata; they no longer receive additive score bonuses here.
+"""
 from __future__ import annotations
 
 import time
@@ -10,19 +15,36 @@ from protected_story_identity import probable_same_story
 from src.priority_people import priority_people_features
 
 REGULAR_SAME_STORY_THRESHOLD = 0.82
+EDITORIAL_WEIGHT = 0.75
+SIGNAL_WEIGHT = 0.25
 
 
-def _base_score(item):
-    for key in ("final_editorial_score", "leader_story_score", "mission_score", "editorial_score", "score"):
+def _base_editorial_score(item):
+    """Return the canonical editorial score before legacy signal mutation."""
+    for key in ("editorial_score_pre_signal", "final_editorial_score", "editorial_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
             if value:
-                break
+                return value
         except (TypeError, ValueError):
             continue
-    else:
-        value = 0.0
-    return value
+    return 0.0
+
+
+def canonical_rank_score(item):
+    """Combine independent editorial and technology signals exactly once.
+
+    Editorial score remains the primary judgement layer. Signal score is an
+    independent technical/evidence signal. Policy bonuses are intentionally
+    excluded; policy controls routing/eligibility rather than value inflation.
+    """
+    editorial = _base_editorial_score(item)
+    signal = float(item.get("signal_score", 0) or 0)
+    return round(editorial * EDITORIAL_WEIGHT + signal * SIGNAL_WEIGHT, 2)
+
+
+def _base_score(item):
+    return canonical_rank_score(item)
 
 
 def _is_priority_interview(item):
@@ -33,11 +55,7 @@ def _is_priority_interview(item):
 
 
 def _is_protected_publication_story(item):
-    return bool(
-        item.get("protected_content")
-        or item.get("_named_leader_interview")
-        or _is_priority_interview(item)
-    )
+    return bool(item.get("protected_content") or item.get("_named_leader_interview") or _is_priority_interview(item))
 
 
 def _prepare_rank_features(items):
@@ -49,12 +67,12 @@ def _prepare_rank_features(items):
         if protected and leader and leader not in people:
             people = list(people or []) + [leader]
         item["model_release_priority"] = bool(model_bonus)
-        item["model_release_bonus"] = model_bonus
+        item["model_release_bonus_legacy"] = model_bonus
         item["priority_person_interview"] = bool(is_tier0 or protected)
-        item["priority_person_bonus"] = people_bonus
+        item["priority_person_bonus_legacy"] = people_bonus
         item["priority_story_people"] = people
         item["_rank_is_tier0"] = bool(is_tier0 or protected)
-        item["final_editorial_score"] = round(_base_score(item) + model_bonus + people_bonus, 2)
+        item["final_editorial_score"] = canonical_rank_score(item)
     return items
 
 
@@ -88,6 +106,7 @@ def _rotation_source_counts(history, rotation_days):
 
 
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
+    policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     try:
         source_history = _pipeline.load_source_history()
@@ -97,41 +116,28 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     source_cap = max(1, int(max_per_source or 1))
     type_cap = max(1, int(max_per_type or 1))
     limit = max(0, int(max_posts or 0))
-    selected = []
-    selected_source_counts = {}
-    selected_type_counts = {}
+    selected, selected_source_counts, selected_type_counts = [], {}, {}
 
     def can_take(item):
         source = _source_key(item)
         content_type = _content_type_key(item)
-        return (
-            selected_source_counts.get(source, 0) < source_cap
-            and selected_type_counts.get(content_type, 0) < type_cap
-        )
+        return selected_source_counts.get(source, 0) < source_cap and selected_type_counts.get(content_type, 0) < type_cap
 
     fresh = [x for x in normal if recent_source_counts.get(_source_key(x), 0) == 0]
     recent = [x for x in normal if recent_source_counts.get(_source_key(x), 0) > 0]
-
-    for pool_name, pool in (("fresh", fresh), ("rotation_backfill", recent)):
+    for pool in (fresh, recent):
         for item in pool:
             if not can_take(item):
                 continue
             selected.append(item)
-            source = _source_key(item)
-            content_type = _content_type_key(item)
+            source, content_type = _source_key(item), _content_type_key(item)
             selected_source_counts[source] = selected_source_counts.get(source, 0) + 1
             selected_type_counts[content_type] = selected_type_counts.get(content_type, 0) + 1
             if len(selected) >= limit:
                 break
         if len(selected) >= limit:
             break
-
-    print(
-        f"[Source Diversity Gate] rotation_days={rotation_days} fresh_candidates={len(fresh)} "
-        f"recent_candidates={len(recent)} selected={len(selected)} "
-        f"source_counts={selected_source_counts} recent_source_counts={recent_source_counts}",
-        flush=True,
-    )
+    print(f"[Source Diversity Gate] rotation_days={rotation_days} fresh_candidates={len(fresh)} recent_candidates={len(recent)} selected={len(selected)} source_counts={selected_source_counts} recent_source_counts={recent_source_counts}", flush=True)
     return selected
 
 
@@ -139,27 +145,22 @@ def _exclude_published_candidates(items):
     records = _load_records()
     if not records or not items:
         return items
-    kept = []
-    blocked = {"canonical_url": 0, "title": 0, "semantic": 0}
-    semantic_bypassed = 0
-    protected_same_story_blocked = 0
+    kept, blocked = [], {"canonical_url": 0, "title": 0, "semantic": 0}
+    semantic_bypassed = protected_same_story_blocked = 0
     for item in items:
         candidate_url = _canonical_url(item.get("canonical_url") or item.get("link") or item.get("url") or "")
         title = _normalized_title(item.get("title") or "")
         summary = str(item.get("summary") or item.get("description") or "")
         protected = _is_protected_publication_story(item)
-        conflict = None
-        conflict_record = None
+        conflict = conflict_record = None
         for record in records:
             record_url = _canonical_url(record.get("link", ""))
             if candidate_url and record_url and candidate_url == record_url:
-                conflict = "canonical_url"
-                conflict_record = record
+                conflict, conflict_record = "canonical_url", record
                 break
             stored_title = _normalized_title(record.get("title", ""))
             if title and stored_title and title == stored_title:
-                conflict = "title"
-                conflict_record = record
+                conflict, conflict_record = "title", record
                 break
         if conflict is None:
             if protected:
@@ -167,8 +168,7 @@ def _exclude_published_candidates(items):
                     if not str(record.get("title") or "").strip():
                         continue
                     if probable_same_story(item, record):
-                        conflict = "semantic"
-                        conflict_record = record
+                        conflict, conflict_record = "semantic", record
                         protected_same_story_blocked += 1
                         break
                 if conflict is None:
@@ -177,10 +177,8 @@ def _exclude_published_candidates(items):
                 for record in records:
                     if not str(record.get("title") or "").strip():
                         continue
-                    score = _semantic_conflict(title, summary, record)
-                    if score >= REGULAR_SAME_STORY_THRESHOLD:
-                        conflict = "semantic"
-                        conflict_record = record
+                    if _semantic_conflict(title, summary, record) >= REGULAR_SAME_STORY_THRESHOLD:
+                        conflict, conflict_record = "semantic", record
                         break
         if conflict:
             blocked[conflict] += 1
@@ -200,18 +198,13 @@ def _priority_story_diversified(items):
         people = list(item.get("priority_story_people") or [])
         if not people:
             leader = str(item.get("leader") or item.get("watch_person") or "").strip()
-            if leader:
-                people = [leader]
-        if not people:
-            people = [f"__item__{id(item)}"]
+            people = [leader] if leader else [f"__item__{id(item)}"]
         for person in people:
             candidate_key = (_score(item), float(item.get("signal_score", 0) or 0), int(item.get("leader_source_authority", 0) or 0), str(item.get("published", "")))
             current = best_by_person.get(person)
             if current is None or candidate_key > current[0]:
                 best_by_person[person] = (candidate_key, item)
-    selected = {}
-    for _, (_, item) in best_by_person.items():
-        selected[id(item)] = item
+    selected = {id(item): item for _, (_, item) in best_by_person.items()}
     return sorted(selected.values(), key=lambda x: (_score(x), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
 
 
@@ -221,7 +214,7 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     eligible = _exclude_published_candidates(eligible)
     _prepare_rank_features(eligible)
     print(f"[Ranking Timing] feature_cache items={len(eligible)} elapsed={time.monotonic()-started:.3f}s", flush=True)
-    eligible.sort(key=lambda x: (int(bool(x.get("_rank_is_tier0"))), int(bool(x.get("model_release_priority"))), _score(x), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
+    eligible.sort(key=lambda x: (int(bool(x.get("_rank_is_tier0"))), _score(x), int(bool(x.get("model_release_priority"))), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
     priority_candidates = [x for x in eligible if x.get("_rank_is_tier0")]
     normal = [x for x in eligible if not x.get("_rank_is_tier0")]
     priority = _priority_story_diversified(priority_candidates)

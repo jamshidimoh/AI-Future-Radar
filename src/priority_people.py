@@ -16,8 +16,8 @@ MAX_FIELD_CHARS={"title":1200,"summary":4000,"description":4000,"source":600,"co
 
 # Full names and multi-word aliases use Unicode-aware boundaries. This avoids
 # matching an ambiguous surname such as "Russell" in ordinary news.
-_NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\\w){re.escape(alias)}(?!\\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
-_SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\\b{re.escape(alias)}\\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
+_NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\w){re.escape(alias)}(?!\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
+_SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
 _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TERMS), re.I)
 
 def _bounded(value: object, limit: int) -> str:

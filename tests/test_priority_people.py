@@ -16,7 +16,7 @@ def test_substantive_interview_gets_tier_zero_priority():
     assert priority_people_bonus(item) > 0
 
 
-def test_attributable_quote_from_priority_voice_gets_priority():
+def test_attributable_quote_from_priority_voice_stays_normal_ranked():
     item = {
         "title": "Eric Schmidt says AI capability is accelerating",
         "content_type": "news",
@@ -24,7 +24,9 @@ def test_attributable_quote_from_priority_voice_gets_priority():
         "key_quote": "AI capability is accelerating faster than expected.",
         "source": "technology interview report",
     }
-    assert is_substantive_priority_interview(item)
+    assert matched_priority_people(item) == ["eric schmidt"]
+    assert not is_substantive_priority_interview(item)
+    assert priority_people_bonus(item) == 0.0
 
 
 def test_generic_news_about_priority_person_is_not_automatically_priority():

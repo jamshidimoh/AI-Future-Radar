@@ -3,23 +3,23 @@ from period_ranked_pipeline import _global_ranked_selection
 
 def test_global_selection_assigns_ranks_to_top_four():
     items = [
-        {"title": "A", "editorial_score": 110},
-        {"title": "B", "editorial_score": 108},
-        {"title": "C", "editorial_score": 106},
-        {"title": "D", "editorial_score": 104},
-        {"title": "E", "editorial_score": 102},
+        {"title": "A", "editorial_score": 110, "source": "source-a"},
+        {"title": "B", "editorial_score": 108, "source": "source-b"},
+        {"title": "C", "editorial_score": 106, "source": "source-c"},
+        {"title": "D", "editorial_score": 104, "source": "source-d"},
+        {"title": "E", "editorial_score": 102, "source": "source-e"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
     assert [x["period_rank"] for x in ranked] == [1, 2, 3, 4]
-    assert [x["final_editorial_score"] for x in ranked] == [110, 108, 106, 104]
+    assert [x["final_editorial_score"] for x in ranked] == [82.5, 81.0, 79.5, 78.0]
     assert all(x["publication_rank_assigned"] for x in ranked)
 
 
 def test_protected_flag_does_not_reserve_publication_slot():
     items = [
         {"title": "routine leader story", "editorial_score": 80, "leader_watch_protected": True},
-        {"title": "strategic story", "editorial_score": 120},
-        {"title": "second strategic story", "editorial_score": 115},
+        {"title": "strategic story", "editorial_score": 120, "source": "source-a"},
+        {"title": "second strategic story", "editorial_score": 115, "source": "source-b"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
     assert ranked[0]["title"] == "strategic story"
@@ -28,50 +28,22 @@ def test_protected_flag_does_not_reserve_publication_slot():
 
 def test_tier0_keeps_best_story_per_leader():
     items = [
-        {
-            "title": "Sam Altman interview: AI future",
-            "summary": "Sam Altman discusses model progress, agents and long-term AI development.",
-            "content_type": "interview",
-            "editorial_score": 95,
-        },
-        {
-            "title": "Sam Altman interview: enterprise AI",
-            "summary": "Sam Altman discusses enterprise deployment, model economics and safety tradeoffs.",
-            "content_type": "interview",
-            "editorial_score": 130,
-        },
-        {
-            "title": "Dario Amodei interview: AI safety",
-            "summary": "Dario Amodei discusses AI safety, capability evaluation and frontier-model risks.",
-            "content_type": "interview",
-            "editorial_score": 120,
-        },
-        {"title": "normal news", "editorial_score": 110},
-        {"title": "normal news 2", "editorial_score": 105},
+        {"title": "Sam Altman interview: AI future", "summary": "Sam Altman discusses model progress, agents and long-term AI development.", "content_type": "interview", "editorial_score": 95, "source": "source-a"},
+        {"title": "Sam Altman interview: enterprise AI", "summary": "Sam Altman discusses enterprise deployment, model economics and safety tradeoffs.", "content_type": "interview", "editorial_score": 130, "source": "source-b"},
+        {"title": "Dario Amodei interview: AI safety", "summary": "Dario Amodei discusses AI safety, capability evaluation and frontier-model risks.", "content_type": "interview", "editorial_score": 120, "source": "source-c"},
+        {"title": "normal news", "editorial_score": 110, "source": "source-d"},
+        {"title": "normal news 2", "editorial_score": 105, "source": "source-e"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
     tier0 = [x for x in ranked if x.get("tier0_rank") is not None]
-    assert [x["title"] for x in tier0] == [
-        "Sam Altman interview: enterprise AI",
-        "Dario Amodei interview: AI safety",
-    ]
+    assert [x["title"] for x in tier0] == ["Sam Altman interview: enterprise AI", "Dario Amodei interview: AI safety"]
 
 
 def test_tier0_leader_story_is_not_replaced_by_lower_scoring_same_person():
     items = [
-        {
-            "title": "Elon Musk interview high value",
-            "summary": "Elon Musk discusses AI, robotics, autonomy and implications for the future.",
-            "content_type": "interview",
-            "editorial_score": 125,
-        },
-        {
-            "title": "Elon Musk interview lower value",
-            "summary": "Elon Musk discusses a smaller product announcement and short-term roadmap details.",
-            "content_type": "interview",
-            "editorial_score": 80,
-        },
-        {"title": "major research", "editorial_score": 115},
+        {"title": "Elon Musk interview high value", "summary": "Elon Musk discusses AI, robotics, autonomy and implications for the future.", "content_type": "interview", "editorial_score": 125, "source": "source-a"},
+        {"title": "Elon Musk interview lower value", "summary": "Elon Musk discusses a smaller product announcement and short-term roadmap details.", "content_type": "interview", "editorial_score": 80, "source": "source-b"},
+        {"title": "major research", "editorial_score": 115, "source": "source-c"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
     assert len([x for x in ranked if x.get("tier0_rank") is not None]) == 1

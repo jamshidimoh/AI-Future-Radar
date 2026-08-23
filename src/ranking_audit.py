@@ -67,6 +67,14 @@ def _record(item: dict, audit_index: int) -> dict:
     }
 
 
+def _display_path(path: Path) -> str:
+    """Return a stable repo-relative path, or an absolute test path when needed."""
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def audit_selection(items: Iterable[dict]) -> Path:
     """Persist a read-only audit record for the ranking window."""
     rows = [_record(item, index) for index, item in enumerate(items, 1)]
@@ -82,7 +90,7 @@ def audit_selection(items: Iterable[dict]) -> Path:
         "record_count": len(rows),
         "max_period_rank": max((row.get("period_rank") or 0 for row in rows), default=0),
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "path": str(AUDIT_PATH.relative_to(ROOT)),
+        "path": _display_path(AUDIT_PATH),
     }
     SUMMARY_PATH.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"[Ranking Audit] records={len(rows)} path={AUDIT_PATH}", flush=True)

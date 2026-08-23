@@ -1,6 +1,13 @@
 """Production launcher that adds a read-only ranking audit hook."""
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 import period_ranked_pipeline as pipeline
 from src.ranking_audit import audit_selection
 

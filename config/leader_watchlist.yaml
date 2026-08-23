@@ -23,6 +23,8 @@ people:
       - Yann LeCun
       - Geoffrey Hinton
       - Yoshua Bengio
+      - Noam Shazeer
+      - Lisa Su
   technology_strategists_and_industry_thinkers:
     priority: 11
     names:
@@ -105,6 +107,11 @@ google_news_queries:
   - {query: "Christof Koch AI consciousness interview", watch_person: "Christof Koch", category: mind, tier: 1, content_type: interview}
   - {query: "Murray Shanahan AI consciousness interview", watch_person: "Murray Shanahan", category: mind, tier: 1, content_type: interview}
   - {query: "Ryota Kanai AI consciousness interview", watch_person: "Ryota Kanai", category: mind, tier: 1, content_type: interview}
+  - {query: "Mustafa Suleyman AI future interview latest", watch_person: "Mustafa Suleyman", category: ai, tier: 1, content_type: interview}
+  - {query: "Reid Hoffman AI future interview latest", watch_person: "Reid Hoffman", category: ai, tier: 1, content_type: interview}
+  - {query: "David Dalrymple AI consciousness interview", watch_person: "David Dalrymple", category: mind, tier: 1, content_type: interview}
+  - {query: "Susan Blackmore AI consciousness interview", watch_person: "Susan Blackmore", category: mind, tier: 1, content_type: interview}
+  - {query: "Bernardo Kastrup AI consciousness interview", watch_person: "Bernardo Kastrup", category: mind, tier: 1, content_type: interview}
   - {query: "site:cap.csail.mit.edu/podcast AI artificial intelligence machine learning robotics Building 32", category: ai, tier: 1, content_type: podcast, preferred_source: "MIT CSAIL - Building 32"}
 
 youtube_channels:

@@ -13,31 +13,37 @@ PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","alt
 INTERVIEW_TYPES={"interview","podcast","talk","lecture","fireside","conversation","discussion","q&a"}
 INTERVIEW_TERMS=("interview","podcast","fireside chat","conversation","q&a","keynote q&a","question and answer","speaks with","talks with","in conversation","sit-down","سخنرانی","مصاحبه","پادکست","گفتگو","گفت‌وگو","پرسش و پاسخ")
 MAX_FIELD_CHARS={"title":1200,"summary":4000,"description":4000,"source":600,"content_type":200,"speakers":1200,"speaker":600,"watch_person":600,"leader":600,"key_quote":1600}
-_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " in alias) for canonical, aliases in PERSON_ALIASES.items()}
-_SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
+
+# Full names and multi-word aliases use Unicode-aware boundaries. This avoids
+# matching an ambiguous surname such as "Russell" in ordinary news.
+_NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\\w){re.escape(alias)}(?!\\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
+_SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\\b{re.escape(alias)}\\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
 _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TERMS), re.I)
 
 def _bounded(value: object, limit: int) -> str:
     return str(value or "")[:limit]
 
+def _normalize(value: str) -> str:
+    return value.replace("ي", "ی").replace("ى", "ی").replace("ك", "ک").replace("ـ", " ")
+
 def _text(item):
-    return " ".join(_bounded(item.get(k), MAX_FIELD_CHARS[k]) for k in MAX_FIELD_CHARS).lower()
+    return _normalize(" ".join(_bounded(item.get(k), MAX_FIELD_CHARS[k]) for k in MAX_FIELD_CHARS).lower())
 
 def _explicit_people(item):
-    return {str(item.get(k) or "").strip().lower() for k in ("speaker","speakers","watch_person","leader","priority_person") if str(item.get(k) or "").strip()}
+    return {_normalize(str(item.get(k) or "").strip().lower()) for k in ("speaker","speakers","watch_person","leader","priority_person") if str(item.get(k) or "").strip()}
 
 def _watchlist_person(item):
     if not (item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("protected_content")):
         return ""
-    return str(item.get("watch_person") or item.get("leader") or "").strip().lower()
+    return _normalize(str(item.get("watch_person") or item.get("leader") or "").strip().lower())
 
 def _interview_context(item):
-    ctype = str(item.get("content_type") or "").strip().lower()
-    title = _bounded(item.get("title"), MAX_FIELD_CHARS["title"]).lower()
+    ctype = _normalize(str(item.get("content_type") or "").strip().lower())
+    title = _normalize(_bounded(item.get("title"), MAX_FIELD_CHARS["title"]).lower())
     return ctype in INTERVIEW_TYPES or bool(_INTERVIEW_TERM_RE.search(title))
 
 def matched_priority_people(item, *, text: str | None = None):
-    text = _text(item) if text is None else text
+    text = _text(item) if text is None else _normalize(text)
     explicit = _explicit_people(item)
     matches = []
     watch_person = _watchlist_person(item)
@@ -45,7 +51,7 @@ def matched_priority_people(item, *, text: str | None = None):
         matches.append(watch_person)
     interview_context = _interview_context(item)
     for canonical, aliases in PERSON_ALIASES.items():
-        if canonical in explicit or any(a in explicit for a in aliases):
+        if canonical in explicit or any(_normalize(a.lower()) in explicit for a in aliases):
             matches.append(canonical)
             continue
         if any(pattern.search(text) for pattern in _NAME_PATTERNS.get(canonical, ())):

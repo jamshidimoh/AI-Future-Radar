@@ -3,9 +3,9 @@ from period_ranked_pipeline import _global_ranked_selection
 
 def test_rank_news_orders_by_final_score_and_assigns_period_rank():
     items = [
-        {"id": "b", "editorial_score": 81, "title": "B", "summary": "متن فارسی", "why_it_matters": "اهمیت", "content_type": "product_news"},
-        {"id": "a", "editorial_score": 95, "title": "A", "summary": "متن فارسی", "why_it_matters": "اهمیت", "content_type": "news"},
-        {"id": "c", "editorial_score": 88, "title": "C", "summary": "متن فارسی", "why_it_matters": "اهمیت", "content_type": "research"},
+        {"id": "b", "editorial_score": 81, "title": "B", "summary": "متن فارسی", "why_it_matters": "اهمیت", "content_type": "product_news", "source": "source-b"},
+        {"id": "a", "editorial_score": 95, "title": "A", "summary": "متن فارسی", "why_it_matters": "اهمیت", "content_type": "news", "source": "source-a"},
+        {"id": "c", "editorial_score": 88, "title": "C", "summary": "متن فارسی", "why_it_matters": "اهمیت", "content_type": "research", "source": "source-c"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
     assert [x["id"] for x in ranked] == ["a", "c", "b"]

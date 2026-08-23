@@ -39,7 +39,7 @@ jobs:
           TELEGRAM_CHANNEL: "-1004482051328"
         run: python -u scripts/telegram_preflight.py
 
-      - name: Run bot
+      - name: Run bot with ranking audit
         env:
           PYTHONUNBUFFERED: "1"
           RADAR_WATCHDOG_MINUTES: "22"
@@ -52,7 +52,7 @@ jobs:
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-        run: timeout 24m bash -o pipefail -c 'python -u production_resilient_runner.py 2>&1 | tee run.log'
+        run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
 
       - name: Persist production state
         if: success()
@@ -82,11 +82,13 @@ jobs:
           echo "Unable to persist production state after 3 attempts."
           exit 1
 
-      - name: Upload diagnostics
+      - name: Upload production diagnostics and ranking audit
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ai-future-radar-${{ github.event_name }}-${{ github.run_number }}
-          path: run.log
+          path: |
+            run.log
+            artifacts/ranking_audit/
           if-no-files-found: warn
-          retention-days: 7
+          retention-days: 14

@@ -9,12 +9,12 @@ from __future__ import annotations
 import re
 
 TOP_AI_VOICES={"elon musk","sam altman","demis hassabis","dario amodei","jensen huang","yann lecun","yoshua bengio","geoffrey hinton","andrew ng","eric schmidt","ilya sutskever","noam shazeer","fei-fei li","stuart russell","nick bostrom","yuval noah harari","mustafa suleyman","mark zuckerberg","satya nadella","lisa su"}
-PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","altman"),"demis hassabis":("demis hassabis","hassabis"),"dario amodei":("dario amodei","amodei"),"jensen huang":("jensen huang","huang"),"yann lecun":("yann lecun","yann le cun","lecun"),"yoshua bengio":("yoshua bengio","bengio"),"geoffrey hinton":("geoffrey hinton","hinton"),"andrew ng":("andrew ng",),"eric schmidt":("eric schmidt","schmidt"),"ilya sutskever":("ilya sutskever","sutskever"),"noam shazeer":("noam shazeer","shazeer"),"fei-fei li":("fei-fei li","fei fei li","fei-fei","fei fei"),"stuart russell":("stuart russell","russell"),"nick bostrom":("nick bostrom","bostrom"),"yuval noah harari":("yuval noah harari","yuval harari","harari"),"mustafa suleyman":("mustafa suleyman","suleyman"),"mark zuckerberg":("mark zuckerberg","zuckerberg"),"satya nadella":("satya nadella","nadella"),"lisa su":("lisa su",)}
+PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","altman","سم آلتمن","سم التمن"),"demis hassabis":("demis hassabis","hassabis"),"dario amodei":("dario amodei","amodei"),"jensen huang":("jensen huang","huang"),"yann lecun":("yann lecun","yann le cun","lecun"),"yoshua bengio":("yoshua bengio","bengio"),"geoffrey hinton":("geoffrey hinton","hinton"),"andrew ng":("andrew ng",),"eric schmidt":("eric schmidt","schmidt"),"ilya sutskever":("ilya sutskever","sutskever"),"noam shazeer":("noam shazeer","shazeer"),"fei-fei li":("fei-fei li","fei fei li","fei-fei","fei fei"),"stuart russell":("stuart russell","russell"),"nick bostrom":("nick bostrom","bostrom"),"yuval noah harari":("yuval noah harari","yuval harari","harari"),"mustafa suleyman":("mustafa suleyman","suleyman"),"mark zuckerberg":("mark zuckerberg","zuckerberg"),"satya nadella":("satya nadella","nadella"),"lisa su":("lisa su",)}
 INTERVIEW_TYPES={"interview","podcast","talk","lecture","fireside","conversation","discussion","q&a"}
 INTERVIEW_TERMS=("interview","podcast","fireside chat","conversation","q&a","keynote q&a","question and answer","speaks with","talks with","in conversation","sit-down","سخنرانی","مصاحبه","پادکست","گفتگو","گفت‌وگو","پرسش و پاسخ")
 MAX_FIELD_CHARS={"title":1200,"summary":4000,"description":4000,"source":600,"content_type":200,"speakers":1200,"speaker":600,"watch_person":600,"leader":600,"key_quote":1600}
-_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases) for canonical, aliases in PERSON_ALIASES.items() if any(" " in alias for alias in aliases)}
-_SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias) for canonical, aliases in PERSON_ALIASES.items()}
+_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " in alias) for canonical, aliases in PERSON_ALIASES.items()}
+_SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
 _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TERMS), re.I)
 
 def _bounded(value: object, limit: int) -> str:
@@ -31,6 +31,11 @@ def _watchlist_person(item):
         return ""
     return str(item.get("watch_person") or item.get("leader") or "").strip().lower()
 
+def _interview_context(item):
+    ctype = str(item.get("content_type") or "").strip().lower()
+    title = _bounded(item.get("title"), MAX_FIELD_CHARS["title"]).lower()
+    return ctype in INTERVIEW_TYPES or bool(_INTERVIEW_TERM_RE.search(title))
+
 def matched_priority_people(item, *, text: str | None = None):
     text = _text(item) if text is None else text
     explicit = _explicit_people(item)
@@ -38,6 +43,7 @@ def matched_priority_people(item, *, text: str | None = None):
     watch_person = _watchlist_person(item)
     if watch_person:
         matches.append(watch_person)
+    interview_context = _interview_context(item)
     for canonical, aliases in PERSON_ALIASES.items():
         if canonical in explicit or any(a in explicit for a in aliases):
             matches.append(canonical)
@@ -45,11 +51,10 @@ def matched_priority_people(item, *, text: str | None = None):
         if any(pattern.search(text) for pattern in _NAME_PATTERNS.get(canonical, ())):
             matches.append(canonical)
             continue
-        if any(pattern.search(text) for pattern in _SINGLE_NAME_PATTERNS.get(canonical, ())):
-            ctype = str(item.get("content_type") or "").lower()
-            title = _bounded(item.get("title"), MAX_FIELD_CHARS["title"]).lower()
-            if ctype in INTERVIEW_TYPES or _INTERVIEW_TERM_RE.search(title):
-                matches.append(canonical)
+        # Single surnames are inherently ambiguous; only accept them when the
+        # metadata explicitly identifies interview-style content.
+        if interview_context and any(pattern.search(text) for pattern in _SINGLE_NAME_PATTERNS.get(canonical, ())):
+            matches.append(canonical)
     return sorted(set(matches))
 
 def priority_people_features(item):
@@ -57,12 +62,9 @@ def priority_people_features(item):
     people = matched_priority_people(item, text=text)
     if not people:
         return people, False, 0.0
-    ctype = str(item.get("content_type") or "").lower()
-    title = _bounded(item.get("title"), MAX_FIELD_CHARS["title"]).lower()
-    explicit_interview = ctype in INTERVIEW_TYPES or bool(_INTERVIEW_TERM_RE.search(title))
-    # Person mentions and attributable quotes are metadata only. Tier-0 is a
-    # routing class for substantive interview-style content, not a score bonus.
-    is_tier0 = explicit_interview and len(text) >= 100
+    # Tier-0 is a routing class, not score inflation. A priority person in
+    # ordinary reporting remains normal-ranked even when directly quoted.
+    is_tier0 = _interview_context(item) and len(text) >= 100
     return people, is_tier0, 50.0 if is_tier0 else 0.0
 
 def is_substantive_priority_interview(item):

@@ -63,7 +63,7 @@ def novelty_score(item: dict) -> float:
 def future_impact_score(item: dict) -> float:
     text = _text(item)
     score = 3.0 + min(_count_terms(text, FUTURE_TERMS) * 1.2, 3.0)
-    if item.get("category", "").lower() in {"future", "trend", "futures"}:
+    if str(item.get("category") or "").lower() in {"future", "trend", "futures"}:
         score += 1.5
     return _clamp(score)
 

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787445743,
+  "updated_at": 1787459354,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2775,6 +2775,34 @@
       "title": "مصاحبه با مایک کینگ، مدیر ارشد محصول و استراتژی IQVIA در سری Unite.AI",
       "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5LbGJZcm5MQnJxdVY0VzAyc1NVTlZpOFpZaUt2amk0dlhxYkNweE1WU1UzZzhrVUJyODhSUW5tN0hvWlQ4NkItUGNhdjh0NkdNbTBlMXVmSFdkQU0wMGVndkVhNVpFc3puempZWUxncXcxX0Y0T2Q4RUFn?oc=5",
       "posted_at": 1787445743
+    },
+    "-1004482051328:1201": {
+      "chat_id": -1004482051328,
+      "message_id": 1201,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - No Priors Podcast",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "هوش به عنوان یک قانون فیزیکی: همپوشانی هندسی در مغز و هوش مصنوعی",
+      "link": "https://www.youtube.com/shorts/wwhzeUVDyUw",
+      "posted_at": 1787459350
+    },
+    "-1004482051328:1202": {
+      "chat_id": -1004482051328,
+      "message_id": 1202,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787459354
     }
   }
 }

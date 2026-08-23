@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787459354,
+  "updated_at": 1787473202,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2803,6 +2803,22 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787459354
+    },
+    "-1004482051328:1203": {
+      "chat_id": -1004482051328,
+      "message_id": 1203,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Reddit - r/artificial",
+      "content_type": "community",
+      "category": "ai",
+      "leader": "",
+      "title": "انتقاد از مدل‌های Anthropic و ترجیح GPT-5.6 SOL توسط کاربران",
+      "link": "https://www.reddit.com/r/artificial/comments/1vvvi8d/ai_models_rankings/",
+      "posted_at": 1787473202
     }
   }
 }

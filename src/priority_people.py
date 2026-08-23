@@ -29,10 +29,18 @@ def _text(item):
 def _explicit_people(item):
     return {str(item.get(k) or "").strip().lower() for k in ("speaker","speakers","watch_person","leader","priority_person") if str(item.get(k) or "").strip()}
 
+def _watchlist_person(item):
+    if not (item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("protected_content")):
+        return ""
+    return str(item.get("watch_person") or item.get("leader") or "").strip().lower()
+
 def matched_priority_people(item, *, text: str | None = None):
     text = _text(item) if text is None else text
     explicit = _explicit_people(item)
     matches = []
+    watch_person = _watchlist_person(item)
+    if watch_person:
+        matches.append(watch_person)
     for canonical, aliases in PERSON_ALIASES.items():
         if canonical in explicit or any(a in explicit for a in aliases):
             matches.append(canonical)

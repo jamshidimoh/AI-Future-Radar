@@ -62,14 +62,7 @@ def filter_ai_relevance(items,ai_keywords=None):
     for raw in items:
         x=dict(raw);t=_text(x)
         if _has(t,LOW):continue
-        category=str(x.get("category") or "").strip().lower()
-        source_type=str(x.get("source_type") or "").strip().lower()
-        source=str(x.get("source") or "").strip().lower()
-        metadata_ai = category == "ai" and source_type != "global_forum" and not source.startswith("youtube - ")
-        if metadata_ai:
-            fam,ev="ai_core",["explicit_ai_metadata"]
-        else:
-            fam,ev=_topic(t,ai_keywords)
+        fam,ev=_topic(t,ai_keywords)
         if fam=="out_of_scope":drop+=1;continue
         x.update(_ai_link=True,relevance_reason=reason[fam],relevance_evidence=ev,topic_family=fam,evidence_level="A");out.append(x)
     print(f"[AI Gate] rejected={drop} | kept={len(out)}")

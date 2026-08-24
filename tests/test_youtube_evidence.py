@@ -7,6 +7,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from fetch_youtube import _normalize_video_result, _walk_video_renderers
 
 
+# Regression coverage for YouTube channel-page evidence recovery.
 def test_channel_renderer_keeps_structured_description_as_evidence():
     out = []
     payload = {

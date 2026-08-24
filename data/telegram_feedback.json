@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787550005,
+  "updated_at": 1787550696,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3061,6 +3061,43 @@
       "why_it_matters": "عدم وجود کنترل‌های مستند در ایجنت‌های هوش مصنوعی، سازمان‌ها را در معرض جریمه‌های سنگین تا ۳۵ میلیون یورو یا ۷٪ درآمد جهانی تحت چارچوب جدید اتحادیه اروپا قرار می‌دهد. این آمار نشان می‌دهد که تمرکز صرف بر دقت مدل‌ها بدون Attention به امنیت داده‌ها، یک آسیب‌پذیری حیاتی و پرهزینه ایجاد کرده است.",
       "link": "https://www.reddit.com/r/artificial/comments/1vwr687/most_ai_agents_processing_sensitive_data_right/",
       "posted_at": 1787549665
+    },
+    "-1004482051328:1219": {
+      "chat_id": -1004482051328,
+      "message_id": 1219,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Yellow.com)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "خروج همزمان چهار رهبر بنیان‌گذار از Google DeepMind",
+      "summary": "شرکت Google DeepMind در یک رویداد غیرمعمول، چهار نفر از رهبران کلیدی دوران بنیان‌گذاری خود را در عرض یک روز از دست داد. این خروج‌های متوالی نشان‌دهنده تغییرات ساختاری عمیق در لایه‌های مدیریتی ارشد این واحد تحقیقاتی هوش مصنوعی است.",
+      "why_it_matters": "این خروج‌های همزمان از چهره‌های تأثیرگذار دوران شکل‌گیری DeepMind، نگرانی‌هایی را درباره ثبات رهبری و استراتژی بلندمدت این شرکت برانگیخته است. تحلیلگران معتقدند این تغییرات می‌تواند بر جهت‌گیری تحقیقاتی و فرهنگ سازمانی این غول فناوری تأثیر قابل‌Attentionی بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5rSTlQeFNUM2lsbjRlWnNNejhsV0NQWE14R0c4dXJqWkxvOWVxQ1djVHpsM2UwNWJtTHlvVFJ5MXIwSll0U2hRLUJuSVNfUzQyQlVYVVJEMS02cFpfTFlySFBzLTg1ZUVT?oc=5",
+      "posted_at": 1787550694
+    },
+    "-1004482051328:1220": {
+      "chat_id": -1004482051328,
+      "message_id": 1220,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "بازخوانی میراث مالکوم ایکس: نژادپرستی ساختاری و خودتعیین‌مقی",
+      "summary": "کِهندِ اندروز، نخستین استاد مطالعات سیاه‌پوستان در بریتانیا، با ردّ کلیشه‌ها، مالکوم ایکس را نه به‌عنوان انحرافی از جنبش حقوق مدنی، بلکه به‌عنوان دقیق‌ترین تشخیص‌دهندهٔ ماهیت نژادپرستی معرفی می‌کند. او استدلال می‌کند که نژادپرستی یک نقص اخلاقی گذرا نیست، بلکه پدیده‌ای ساختاری، جهانی و پایدار است که ادغام بدون عدالت، هرگز به آزادی منجر نمی‌شود. چالش ناتمام مالکوم، تأکید بر خودتعیین‌مقی، قدرت و حقیقت به‌جای راحتی کاذب است.",
+      "why_it_matters": "این تحلیل با بازتعریف مالکوم ایکس به‌عنوان منتقد ساختاری نژادپرستی، به بحث‌های معاصر دربارهٔ عدالت اجتماعی و حقوق مدنی عمق می‌بخشد. تأکید بر خودتعیین‌مقی و ردّ ادغام ناعادلانه، چارچوبی برای درک چالش‌های پایدار نژادی در سطح جهانی ارائه می‌دهد.",
+      "link": "https://www.youtube.com/watch?v=PYtfO4dS-pw",
+      "posted_at": 1787550696
     }
   }
 }

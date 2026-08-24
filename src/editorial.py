@@ -3,8 +3,22 @@ from mission_selector import mission_score, select_mission_portfolio
 from strategic_signal import strategic_forecast_score
 
 
+_AI_TAXONOMY_BRIDGE_TERMS = {
+    "gpt", "chatgpt", "transformer", "neural network", "neural networks",
+    "frontier model", "ai model", "autoresearch", "openai model", "anthropic model",
+    "deepmind model", "claude model", "gemini model", "llama model", "qwen model",
+    "mistral model",
+}
+
+
 def filter_ai_relevance(items, ai_keywords=None):
-    """Apply the existing AI relevance semantics to all available source evidence."""
+    """Apply the existing AI relevance semantics to all available source evidence.
+
+    The base relevance engine remains unchanged. The adapter supplies a small,
+    high-confidence taxonomy bridge for common AI model/architecture terms that
+    are already part of the repository's source policy but were missing from the
+    canonical editorial vocabulary.
+    """
     prepared = []
     for raw in items or []:
         item = dict(raw)
@@ -14,7 +28,8 @@ def filter_ai_relevance(items, ai_keywords=None):
                 part for part in (str(item.get("summary") or "").strip(), evidence) if part
             )[:5000]
         prepared.append(item)
-    return _filter_ai_relevance(prepared, ai_keywords)
+    effective_keywords = list(dict.fromkeys(list(ai_keywords or []) + sorted(_AI_TAXONOMY_BRIDGE_TERMS)))
+    return _filter_ai_relevance(prepared, effective_keywords)
 
 
 def classify_editorial_item(item, prior=None):

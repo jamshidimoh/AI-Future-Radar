@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787549032,
+  "updated_at": 1787549665,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3043,6 +3043,24 @@
       "title": "تغییرات ساختاری در رهبری هوش مصنوعی گوگل: استعفای دمیس هسabis و خروج Jeff Dean",
       "link": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxQZTVoRExtb2I1ZlVYdnRySHFqUnBwWTJYZ1dKbnZpQkc2dzdfVjUwMmxNcE5Ua3MtT2I5LVo5VlhvTEd0dFFvbUJsbUw2RWdCYk9LRVlvaDN5ck9KOFJ6VzBjYTZFVGEwZktKNVB1NUtDY0JXeVZnVlpIcklqbGxtN2ZuWGt4ZGlPRUdqOFdMNEkzTEdic2wwT0hKaEhITndaQ3lBT19GS3ZmZUtNdmFvbWZnaFNUcWR5UU42VnFDZnFQbnFxbUFQb2xoRnRrTjBWVm0wNnZUWXdJdFlNcWdLZXVya1NOSzlqdlEwYVNiNmxVdEo1Y2tfMdIB_gFBVV95cUxQUl92TUNiRWhaczBJZ0pmTEtVRzl2YUNiYWJkMlVSRENZdzhwLW9Ic2dKQ2t0NkVILXZIVDNhN3FocjlIaHNwaFphVVRJczNQZGlPQzE1LXlYVjZJTlNURFU1dk14TDhSeXhhNnJINnVzZDF3b1JUeFljNnpIWlJZMTI5UHNkMzJ0dF9UVXFWSjhTQmplZDUzbl9rY0tGNzFlQ1JTVVdlaFQ2bzE5Zjk5Y0t1cXlnNHBubTNNUkk2RHBTaENsbzdXMkJqWl9rRDBQWjYwUU1waWNVMFpBOFQ2WkdZbFJXMkdRRTU3cTlnekp0eGswbzBzNDdCZGl2Zw?oc=5",
       "posted_at": 1787549032
+    },
+    "-1004482051328:1218": {
+      "chat_id": -1004482051328,
+      "message_id": 1218,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Reddit - r/artificial",
+      "content_type": "community",
+      "category": "ai",
+      "leader": "",
+      "title": "بحران حاکمیت در ایجنت‌های هوش مصنوعی: ۷۸٪ سازمان‌ها فاقد کنترل‌های مستند هستند",
+      "summary": "بررسی‌ها نشان می‌دهد ۷۸٪ سازمان‌ها علیرغم استقرار ایجنت‌های پردازش‌کننده داده‌های حساس، اقدامات معناداری برای انطباق با مقررات انجام نداده‌اند. این شکاف بین سرعت استقرار و آمادگی حاکمیتی، ریسک‌های جدی نشت PII و تزریق Prompt را به همراه دارد. در مقابل، رویکردهایی مانند لایه Responsible AI شرکت Lyzr با ادغام کنترل‌ها در خط لوله استقرار، راهکاری معماری‌محور ارائه می‌دهند.",
+      "why_it_matters": "عدم وجود کنترل‌های مستند در ایجنت‌های هوش مصنوعی، سازمان‌ها را در معرض جریمه‌های سنگین تا ۳۵ میلیون یورو یا ۷٪ درآمد جهانی تحت چارچوب جدید اتحادیه اروپا قرار می‌دهد. این آمار نشان می‌دهد که تمرکز صرف بر دقت مدل‌ها بدون Attention به امنیت داده‌ها، یک آسیب‌پذیری حیاتی و پرهزینه ایجاد کرده است.",
+      "link": "https://www.reddit.com/r/artificial/comments/1vwr687/most_ai_agents_processing_sensitive_data_right/",
+      "posted_at": 1787549665
     }
   }
 }

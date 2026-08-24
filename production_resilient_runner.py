@@ -1,8 +1,8 @@
 """Resilient production launcher.
 
 Education is a separate scheduled product stream. If education cannot satisfy
-its source contract, the news pipeline continues exactly once with education
-explicitly disabled; the news orchestration is never rerun after completion.
+its source or language contract, the news pipeline continues exactly once with
+education explicitly disabled; the news orchestration is never rerun after completion.
 """
 from __future__ import annotations
 
@@ -121,7 +121,12 @@ def main() -> int:
             return production_entrypoint.main()
         except RuntimeError as exc:
             message = str(exc)
-            if "[Education Contract]" not in message and "[Education Source Gate]" not in message:
+            education_error = (
+                "[Education Contract]" in message
+                or "[Education Source Gate]" in message
+                or "[Education Language Gate]" in message
+            )
+            if not education_error:
                 raise
 
             if getattr(production_entrypoint, "_NEWS_PIPELINE_COMPLETED", False):

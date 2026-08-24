@@ -62,20 +62,22 @@ def _load_supplemental_sources():
 
 
 def _merge_rss_sources(rss_sources):
-    merged = []
-    seen = set()
-    for source in list(rss_sources or []) + _load_supplemental_sources():
+    merged = list(rss_sources or [])
+    seen = {str(source.get("url", "")).rstrip("/") for source in merged if isinstance(source, dict)}
+    filtered = []
+    for source in merged + _load_supplemental_sources():
         if not isinstance(source, dict):
             continue
         url = str(source.get("url", "")).rstrip("/")
-        if not url or url in seen:
+        if not url or url in seen and source not in merged:
             continue
         if is_excluded_source_url(url) or is_excluded_source_url(source.get("name")):
             print(f"[Discovery Exclusion] skipped RSS source: {source.get('name', url)}", flush=True)
             continue
-        merged.append(source)
-        seen.add(url)
-    return merged
+        if url in {str(x.get("url", "")).rstrip("/") for x in filtered}:
+            continue
+        filtered.append(source)
+    return filtered
 
 
 def _collect_source(source, categories, cutoff):
@@ -89,6 +91,13 @@ def _collect_source(source, categories, cutoff):
     results = []
     source_name = source["name"]
     source_category = str(source.get("mission") or "").strip().lower() or None
+    if source_category is None:
+        if "quant-ph" in source_name.lower():
+            source_category = "quantum"
+        elif "q-bio" in source_name.lower():
+            source_category = "genetics"
+        elif "cs.ai" in source_name.lower() or "cs.lg" in source_name.lower():
+            source_category = "ai"
 
     for entry in feed.entries:
         published = entry.get("published_parsed") or entry.get("updated_parsed")

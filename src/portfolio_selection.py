@@ -7,8 +7,10 @@ redundancy penalties.
 """
 from __future__ import annotations
 
+import time
 from collections import Counter
 
+from dedup import load_source_history
 from mission_selector import _source_tier, classify_area, mission_score
 from ranking_guard import filter_quality_candidates
 
@@ -37,7 +39,26 @@ def _is_research(item: dict) -> bool:
     return _content_type(item) in _RESEARCH_TYPES or bool(item.get("research_signal"))
 
 
-def _quality_utility(item: dict, area_counts: Counter, type_counts: Counter, source_counts: Counter) -> tuple:
+def _recent_source_counts(rotation_days: int) -> Counter:
+    cutoff = time.time() - max(0, int(rotation_days)) * 86400
+    counts: Counter = Counter()
+    try:
+        history = load_source_history()
+    except Exception:
+        history = []
+    for record in history or []:
+        try:
+            ts = float(record.get("ts", 0) or 0)
+        except (TypeError, ValueError):
+            continue
+        if ts < cutoff or str(record.get("content_type") or "").strip().lower() == "education":
+            continue
+        source = str(record.get("source") or "unknown").strip().casefold() or "unknown"
+        counts[source] += 1
+    return counts
+
+
+def _quality_utility(item: dict, area_counts: Counter, type_counts: Counter, source_counts: Counter, recent_sources: Counter) -> tuple:
     base = float(item.get("final_editorial_score", 0) or item.get("editorial_score", 0) or 0)
     mission = float(item.get("mission_score", 0) or 0)
     signal = float(item.get("signal_score", 0) or 0)
@@ -68,6 +89,9 @@ def _quality_utility(item: dict, area_counts: Counter, type_counts: Counter, sou
     if area != "ai_core" and not area_counts[area]:
         utility += 2.0
 
+    # Preserve the existing seven-day source-rotation behavior as a soft penalty.
+    utility -= min(8.0, recent_sources[source] * 3.0)
+
     tier = _source_tier(item)
     utility += {1: 2.0, 2: 0.5, 3: -2.0}.get(tier, -2.0)
     return (round(utility, 4), base, mission, signal)
@@ -76,11 +100,14 @@ def _quality_utility(item: dict, area_counts: Counter, type_counts: Counter, sou
 def select_normal_portfolio(items: list[dict], max_posts: int, max_per_source: int, max_per_type: int, policy: dict | None = None) -> list[dict]:
     """Return a diverse normal portfolio without changing canonical score semantics."""
     policy = policy or {}
+    rotation_days = int(policy.get("rotation_days", 7) or 7)
+    recent_sources = _recent_source_counts(rotation_days)
     quality_candidates = filter_quality_candidates([dict(x) for x in (items or [])])
     prepared: list[dict] = []
     for item in quality_candidates:
         mission_score(item)
         item["mission_area"] = _area(item)
+        item["source_rotation_count"] = int(recent_sources[_source_key(item)])
         prepared.append(item)
 
     prepared.sort(
@@ -114,7 +141,7 @@ def select_normal_portfolio(items: list[dict], max_posts: int, max_per_source: i
 
         chosen = max(
             eligible,
-            key=lambda item: _quality_utility(item, area_counts, type_counts, source_counts),
+            key=lambda item: _quality_utility(item, area_counts, type_counts, source_counts, recent_sources),
         )
         remaining.remove(chosen)
         source = _source_key(chosen)
@@ -125,9 +152,10 @@ def select_normal_portfolio(items: list[dict], max_posts: int, max_per_source: i
         type_counts[ctype] += 1
         area_counts[area] += 1
         chosen["portfolio_rank"] = len(selected) + 1
+        utility = _quality_utility(chosen, area_counts, type_counts, source_counts, recent_sources)[0]
         chosen["portfolio_selection_reason"] = (
-            f"mission={area};utility={_quality_utility(chosen, area_counts, type_counts, source_counts)[0]:.2f};"
-            f"source_tier={_source_tier(chosen)}"
+            f"mission={area};utility={utility:.2f};source_tier={_source_tier(chosen)};"
+            f"rotation_count={recent_sources[source]}"
         )
         chosen.setdefault("editorial_slot", "fallback")
         chosen.setdefault("selection_reason", "mission_aware_portfolio")
@@ -143,7 +171,7 @@ def select_normal_portfolio(items: list[dict], max_posts: int, max_per_source: i
         flush=True,
     )
     print(
-        f"[Mission-Aware Portfolio] areas={dict(area_counts)} sources={dict(source_counts)} types={dict(type_counts)}",
+        f"[Mission-Aware Portfolio] rotation_days={rotation_days} areas={dict(area_counts)} sources={dict(source_counts)} types={dict(type_counts)}",
         flush=True,
     )
     return selected

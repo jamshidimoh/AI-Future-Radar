@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787563618,
+  "updated_at": 1787564132,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3117,6 +3117,44 @@
       "why_it_matters": "این تغییرات نشان‌دهنده بازچینش ساختاری عمیق گوگل برای تقویت موقعیت رقابتی خود در بازار هوش مصنوعی است. تمرکز بر مدل‌های بزرگ و ادغام DeepMind می‌تواند مسیر توسعه فناوری‌های آینده این شرکت را به‌طور چشمگیری دگرگون کند.",
       "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQa0xwaW5tWGhxcFR3S05tZmZxcFlkYUxWYmdFUi0xWWRTWGdPYUVVYndvZHhSbEMtMDRaSVpPODUzeEhzZmRRcXZsTFJuQkRXdzlnQzVWdmE3VkotcllEcEh4ZTl2aDl3ZzM3dkl1YzcwR3ZCOUVSZ2swWHI3S3lIYzI0NFh3ZWluWFZRWmI2TlE5Nk5pZlpoWk9oUkwzRTc1cFZvS0pUQ21pN2JsUG52MmNKX1ZFV1JHWWJpeS1VRENmd0tJdnNsdA?oc=5",
       "posted_at": 1787551616
+    },
+    "-1004482051328:1222": {
+      "chat_id": -1004482051328,
+      "message_id": 1222,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (inc.com)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "تغییر ساختار رهبری Gemini در گوگل پس از خروج پژوهشگران برجسته",
+      "summary": "گوگل پس از خروج ۸ پژوهشگر برجسته در مدت دو ماه، ساختار رهبری پروژه Gemini را تغییر داده است. این شرکت اکنون یک مدیر اجرایی را به عنوان مسئول اصلی این پروژه تعیین کرده است تا ثبات و تمرکز لازم را در توسعه مدل‌های هوش مصنوعی خود ایجاد کند.",
+      "why_it_matters": "این تغییرات نشان‌دهنده تلاش گوگل برای تثبیت تیم توسعه Gemini پس از نوسانات اخیر است. تمرکز رهبری بر یک مدیر اجرایی می‌تواند سرعت تصمیم‌گیری را افزایش دهد، اما خروج پژوهشگران کلیدی ممکن است بر نوآوری بلندمدت تأثیر بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNbklRWElDdmFma3NqSnoxaDMxN3MzaUFTMVBQLWU1RHJPUHRsX3hCNDA2Rktka041ay1ycHBiTE9nYVQ1VjQxS09ycEdFal9tQWh1d2pkejlJRGZyRUUwMXpDTHc5TlFkYUMwdTloS0ZwMGZQV2pIdGE1bEFJblNickdPWU9XZ01YTmdOVUQ0WHE3a2RpVXJYRXBjQVQxRVE5NFNTMUIwSzhVRkFvMXNxaUk3cDg5SFY5QW1oa1hOMzhDMU1USWc?oc=5",
+      "posted_at": 1787564130
+    },
+    "-1004482051328:1223": {
+      "chat_id": -1004482051328,
+      "message_id": 1223,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (TechCrunch)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Sundar Pichai",
+      "watch_person": "Sundar Pichai",
+      "title": "ثبت رکورد یک میلیارد کاربر برای اپلیکیشن Gemini گوگل",
+      "summary": "اپلیکیشن Gemini متعلق به شرکت Google به سرعت رشد کرده و تعداد کاربران فعال آن به یک میلیارد نفر رسیده است. این دستاورد نشان‌دهنده پذیرش گسترده و موفقیت استراتژی هوش مصنوعی گوگل در بازار جهانی است.",
+      "why_it_matters": "رسیدن به مرز یک میلیارد کاربر، Gemini را به یکی از پرمخاطب‌ترین پلتفرم‌های هوش مصنوعی در جهان تبدیل کرده و سهم بازار گوگل را در برابر رقبا تثبیت می‌کند. این آمار نشان می‌دهد که کاربران نهایی به سرعت در حال انتقال از مدل‌های آزمایشی به ابزارهای روزمره مبتنی بر هوش مصنوعی هستند.",
+      "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPS3V6Z3Nrc3ZmdUNDbjI4WEcxZFFSYnU4MWduRHp4R09ZZEJyYmp2UXRsNGhMNFdRbmlJNkROZ2NIUC1jUmpfeVhfeHhsUkd3dHhGRW8zbVU2YnV6X2MzYTczYnBIVU0xQXlvUG5ETlIwaThYVDZueVdRR0N2ZU14TG96UEJHemo1?oc=5",
+      "posted_at": 1787564132
     }
   }
 }

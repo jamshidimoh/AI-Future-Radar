@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
 from editorial import filter_ai_relevance
 
 
@@ -23,7 +29,7 @@ def test_persian_ai_core_is_relevant():
 
 def test_persian_ai_agents_are_relevant():
     result = filter_ai_relevance([
-        _item("عامل‌های هوشمند و آینده خودکارسازی پژوهش", "سامانه‌های عامل‌محور برای استدلال و انجام پژوهش به کار گرفته می‌شوند.")
+        _item("عامل‌های هوشمند و آینده خودکارسازی پژوهش", "سامانه‌های عامل‌محور برای مدل استدلالی و انجام پژوهش به کار گرفته می‌شوند.")
     ], ["AI"])
     assert len(result) == 1
 
@@ -40,6 +46,13 @@ def test_persian_quantum_with_ai_is_relevant():
         _item("یادگیری ماشین کوانتومی برای مدل‌های هوش مصنوعی", "این مطالعه از محاسبات کوانتومی برای بهبود یادگیری ماشین استفاده می‌کند.", category="quantum")
     ], ["AI"])
     assert len(result) == 1
+
+
+def test_generic_reasoning_alone_stays_rejected():
+    result = filter_ai_relevance([
+        _item("تحلیل استدلال انسانی", "این متن درباره منطق و فلسفه است و هیچ ارتباطی با هوش مصنوعی ندارد.", category="mind")
+    ], ["AI"])
+    assert result == []
 
 
 def test_unrelated_persian_topic_stays_rejected():

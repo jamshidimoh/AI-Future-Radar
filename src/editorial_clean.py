@@ -64,7 +64,8 @@ def filter_ai_relevance(items,ai_keywords=None):
         if _has(t,LOW):continue
         category=str(x.get("category") or "").strip().lower()
         source_type=str(x.get("source_type") or "").strip().lower()
-        metadata_ai = category == "ai" and source_type != "global_forum"
+        source=str(x.get("source") or "").strip().lower()
+        metadata_ai = category == "ai" and source_type != "global_forum" and not source.startswith("youtube - ")
         if metadata_ai:
             fam,ev="ai_core",["explicit_ai_metadata"]
         else:

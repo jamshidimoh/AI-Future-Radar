@@ -66,6 +66,11 @@ rss_sources:
   - {name: "Harvard Gazette", url: "https://news.harvard.edu/gazette/feed/", tier: 1, type: "university", content_type: "research", official: true}
   - {name: "Science Daily - Mind & Brain", url: "https://www.sciencedaily.com/rss/mind_brain.xml", tier: 2, type: "science_media", content_type: "research", official: false}
   - {name: "Ars Technica - Science", url: "https://arstechnica.com/science/feed/", tier: 2, type: "specialist_media", content_type: "news", official: false}
+  - {name: "OpenAI News", url: "https://openai.com/news/rss.xml", tier: 1, type: "ai_lab", content_type: "official", official: true}
+  - {name: "Google DeepMind Blog", url: "https://deepmind.google/blog/rss.xml", tier: 1, type: "research_lab", content_type: "research", official: true}
+  - {name: "Google Research Blog", url: "https://research.google/blog/rss/", tier: 1, type: "research_lab", content_type: "research", official: true}
+  - {name: "BAIR Blog", url: "https://bair.berkeley.edu/blog/feed.xml", tier: 1, type: "university_lab", content_type: "research", official: true}
+  - {name: "Hugging Face Blog", url: "https://huggingface.co/blog/feed.xml", tier: 1, type: "ai_platform", content_type: "research", official: true}
 
 youtube_channels:
   - {name: "Lex Fridman Podcast", channel_id: "UCSHZKyawb77ixDdsGog4iWA", category: ai, tier: 1, type: "podcast", content_type: "podcast", official: true}

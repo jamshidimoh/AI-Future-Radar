@@ -7,6 +7,7 @@ sys.path.insert(0, str(ROOT))
 
 from main import _annotate_named_leader_interviews, _split_protected
 from src.editorial import filter_ai_relevance
+from src.story_identity import deduplicate_stories
 
 
 def test_named_leader_recovered_before_filter():
@@ -42,3 +43,38 @@ def test_protected_leader_bypasses_regular_ai_gate():
     assert not regular
     assert filter_ai_relevance(regular, ["AI", "agent", "AGI"]) == []
     assert protected[0]["protected_reason"] == "leader_interview_or_activity"
+
+
+def test_distinct_protected_leader_interview_survives_similar_history():
+    candidate = {
+        "title": "Dario Amodei discusses AI safety and frontier models in a new conversation",
+        "summary": "A new interview covering AI safety, frontier models, scaling and future systems.",
+        "description": "Extended discussion with Dario Amodei.",
+        "leader": "Dario Amodei",
+        "watch_person": "Dario Amodei",
+        "protected_content": True,
+        "protected_reason": "leader_interview_or_activity",
+        "interview_signal": True,
+        "canonical_url": "https://example.com/interview-new",
+    }
+    prior = {
+        "title": "Dario Amodei discusses AI safety and frontier models in an earlier conversation",
+        "summary": "An interview covering AI safety, frontier models, scaling and future systems.",
+        "leader": "Dario Amodei",
+        "canonical_url": "https://example.com/interview-old",
+    }
+    result = deduplicate_stories([candidate], history=[prior])
+    assert result == [candidate]
+
+
+def test_exact_duplicate_protected_leader_interview_is_still_removed():
+    candidate = {
+        "title": "Dario Amodei in conversation about frontier AI",
+        "leader": "Dario Amodei",
+        "protected_content": True,
+        "protected_reason": "leader_interview_or_activity",
+        "interview_signal": True,
+        "canonical_url": "https://example.com/interview-1",
+    }
+    prior = dict(candidate)
+    assert deduplicate_stories([candidate], history=[prior]) == []

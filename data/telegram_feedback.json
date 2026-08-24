@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787589865,
+  "updated_at": 1787593763,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3302,6 +3302,25 @@
       "why_it_matters": "این دیدگاه چارچوب سنتی بحث درباره هوشیاری ماشین را به چالش می‌کشد و نشان می‌دهد که تمرکز صرف بر الگوریتم‌ها بدون در نظر گرفتن زمینه زیستی و فیزیکی، ناقص است. درک این ارتباط برای پیشرفت‌های آینده در هوش مصنوعی و فلسفه ذهن ضروری است.",
       "link": "https://www.nature.com/articles/d41586-026-02571-9",
       "posted_at": 1787588721
+    },
+    "-1004482051328:1232": {
+      "chat_id": -1004482051328,
+      "message_id": 1232,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (finance.biggo.com)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Sundar Pichai",
+      "watch_person": "Sundar Pichai",
+      "title": "سرگی برین فشار می‌آورد تا DeepMind توسعه Gemini را تسریع کند",
+      "summary": "سرگی برین، هم‌بنیان‌گذار Google، از DeepMind خواسته است تا فرآیند توسعه Large Language Model (LLM) Gemini را تسریع کند. این درخواست در حالی مطرح شده که Alphabet در حال بازچینی ساختار رهبری بخش هوش مصنوعی خود است تا هماهنگی بیشتری بین تیم‌های مختلف ایجاد شود.",
+      "why_it_matters": "این تغییرات نشان‌دهنده اولویت استراتژیک Alphabet برای تسریع رقابت در بازار هوش مصنوعی است. فشار بر DeepMind برای تسریع Gemini می‌تواند منجر به انتشار سریع‌تر قابلیت‌های جدید و تغییرات ساختاری در نحوه مدیریت پروژه‌های کلیدی هوش مصنوعی شود.",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9UbDR0N2FqOW5LdlhadVI4VFpNMWlXMUNxNV9UZzFiZ1d4Yk9aM1pvNV9HVWs0aU5NUXVFMzhwdHRFTjJ3Q3RvSHBzUzg3aDBJWnE3enh6ODJ3d3ZVRVhJVWNEOWh5RDhaLTJEODBwektOcTRob0E?oc=5",
+      "posted_at": 1787593763
     }
   }
 }

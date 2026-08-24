@@ -1,0 +1,61 @@
+name: Apply YouTube evidence fix
+
+on:
+  push:
+    branches: [fix/youtube-evidence-recall]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Apply narrowly scoped evidence enrichment
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("src/fetch_youtube.py")
+          text = path.read_text(encoding="utf-8")
+
+          old = '''            pub = str(((renderer.get("publishedTimeText") or {}).get("simpleText") or "")).strip()\n            if video_id and title:\n                out.append({"video_id": video_id, "title": html.unescape(title), "published_label": html.unescape(pub)})\n'''
+          new = '''            pub = str(((renderer.get("publishedTimeText") or {}).get("simpleText") or "")).strip()\n            description_parts = []\n            for detail in renderer.get("detailedMetadataSnippets") or []:\n                snippet = detail.get("snippet") or {}\n                runs = snippet.get("runs") or []\n                if runs:\n                    description_parts.extend(str(run.get("text") or "") for run in runs if isinstance(run, dict))\n                elif snippet.get("simpleText"):\n                    description_parts.append(str(snippet.get("simpleText")))\n            if not description_parts:\n                snippet = renderer.get("descriptionSnippet") or {}\n                runs = snippet.get("runs") or []\n                description_parts.extend(str(run.get("text") or "") for run in runs if isinstance(run, dict))\n            description = html.unescape(" ".join(part for part in description_parts if part).strip())\n            if video_id and title:\n                out.append({\n                    "video_id": video_id,\n                    "title": html.unescape(title),\n                    "published_label": html.unescape(pub),\n                    "summary": description,\n                })\n'''
+          if old not in text:
+              raise SystemExit("expected renderer block not found")
+          text = text.replace(old, new, 1)
+
+          old = '''                    "link": f"https://www.youtube.com/watch?v={video_id}",\n                    "summary": "",\n                    "published": published,\n'''
+          new = '''                    "link": f"https://www.youtube.com/watch?v={video_id}",\n                    "summary": str(item.get("summary") or ""),\n                    "published": published,\n'''
+          if old not in text:
+              raise SystemExit("expected channel-page result block not found")
+          text = text.replace(old, new, 1)
+
+          old = '''    video_id = str(item.get("video_id") or "").strip()\n    transcript = _get_transcript_snippet(video_id)\n    return {\n        "title": title,\n        "link": item.get("link", ""),\n        "summary": (transcript or str(item.get("summary") or ""))[:2000],\n'''
+          new = '''    video_id = str(item.get("video_id") or "").strip()\n    raw_summary = str(item.get("summary") or "").strip()\n    transcript = _get_transcript_snippet(video_id) if not raw_summary else ""\n    evidence_text = transcript or raw_summary\n    evidence_source = "transcript" if transcript else ("channel_page_description" if raw_summary else "none")\n    return {\n        "title": title,\n        "link": item.get("link", ""),\n        "summary": evidence_text[:2000],\n        "evidence_text": evidence_text[:3000],\n        "evidence_source": evidence_source,\n'''
+          if old not in text:
+              raise SystemExit("expected normalize block not found")
+          text = text.replace(old, new, 1)
+
+          path.write_text(text, encoding="utf-8")
+
+          test = Path("tests/test_youtube_evidence.py")
+          test.write_text('''import sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[1]\nsys.path.insert(0, str(ROOT / "src"))\n\nfrom fetch_youtube import _normalize_video_result, _walk_video_renderers\n\n\ndef test_channel_renderer_keeps_structured_description_as_evidence():\n    out = []\n    payload = {\n        "videoRenderer": {\n            "videoId": "abcdefghijk",\n            "title": {"runs": [{"text": "A future AI interview"}]},\n            "publishedTimeText": {"simpleText": "1 day ago"},\n            "detailedMetadataSnippets": [\n                {"snippet": {"runs": [{"text": "This discussion covers artificial intelligence, agents and reasoning models."}]}}\n            ],\n        }\n    }\n    _walk_video_renderers(payload, out)\n    assert out[0]["summary"]\n    assert "artificial intelligence" in out[0]["summary"].lower()\n\n\ndef test_normalize_prefers_real_description_before_network_transcript():\n    channel = {"name": "Test AI", "category": "ai", "tier": 1, "type": "podcast", "official": True}\n    item = {\n        "video_id": "abcdefghijk",\n        "title": "Research on AI agents",\n        "link": "https://www.youtube.com/watch?v=abcdefghijk",\n        "summary": "Researchers evaluate AI agents and reasoning models.",\n        "published": "2026-08-24 00:00",\n    }\n    result = _normalize_video_result(channel, item)\n    assert result["summary"] == item["summary"]\n    assert result["evidence_source"] == "channel_page_description"\n    assert result["evidence_text"] == item["summary"]\n''', encoding="utf-8")
+
+          import py_compile
+          py_compile.compile("src/fetch_youtube.py", doraise=True)
+          py_compile.compile(str(test), doraise=True)
+
+      - name: Commit patch and remove temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/fetch_youtube.py tests/test_youtube_evidence.py .github/workflows/apply-youtube-evidence-fix.yml
+          git commit -m "fix: preserve YouTube fallback evidence [skip ci]"
+          git rm .github/workflows/apply-youtube-evidence-fix.yml
+          git commit --amend --no-edit
+          git push origin HEAD:fix/youtube-evidence-recall

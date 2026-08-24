@@ -43,4 +43,14 @@ class DomainRegressionTests(unittest.TestCase):
         self.assertEqual(x["topic_family"],"ai_core")
         self.assertEqual(x["relevance_reason"],"ai_evidence")
 
+    def test_named_ai_model_reaches_ai_gate(self):
+        x=self.check(
+            "Who Is Claude Actually Aligned To",
+            "A discussion of model alignment and reasoning.",
+            content_type="podcast",
+            source="YouTube - Test AI",
+        )[0]
+        self.assertEqual(x["topic_family"],"ai_core")
+        self.assertEqual(x["relevance_reason"],"ai_evidence")
+
 if __name__=="__main__": unittest.main()

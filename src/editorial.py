@@ -8,6 +8,8 @@ _AI_TAXONOMY_BRIDGE_TERMS = {
     "frontier model", "ai model", "autoresearch", "openai model", "anthropic model",
     "deepmind model", "claude model", "gemini model", "llama model", "qwen model",
     "mistral model",
+    # High-confidence AI entities. These are evidence terms, not source-authority bypasses.
+    "openai", "anthropic", "deepmind", "chatgpt", "claude", "gemini", "llama", "qwen", "mistral",
     # Persian mission vocabulary. These terms are evidence, not source-authority bypasses.
     "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی بزرگ",
     "مدل بنیادی", "هوش مصنوعی مولد", "هوش مولد", "عامل هوشمند", "عامل‌های هوشمند",

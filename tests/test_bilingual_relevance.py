@@ -60,3 +60,5 @@ def test_unrelated_persian_topic_stays_rejected():
         _item("روندهای جدید کشاورزی شهری", "این گزارش فقط درباره آبیاری، خاک و کشت گیاهان است.", category="health")
     ], ["AI"])
     assert result == []
+
+# Trigger PR validation after correcting the negative fixture.

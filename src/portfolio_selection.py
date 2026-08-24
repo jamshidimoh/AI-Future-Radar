@@ -102,7 +102,15 @@ def select_normal_portfolio(items: list[dict], max_posts: int, max_per_source: i
     policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     recent_sources = _recent_source_counts(rotation_days)
-    quality_candidates = filter_quality_candidates([dict(x) for x in (items or [])])
+
+    # Tier-0/protected leader interviews are selected separately by the existing
+    # protected publication path. Leader activity without explicit interview
+    # evidence remains eligible here and must earn its normal ranking.
+    normal_inputs = [
+        x for x in (items or [])
+        if not x.get("_rank_is_tier0") and not x.get("protected_content")
+    ]
+    quality_candidates = filter_quality_candidates([dict(x) for x in normal_inputs])
     prepared: list[dict] = []
     for item in quality_candidates:
         mission_score(item)

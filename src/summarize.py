@@ -10,6 +10,10 @@ _PROMPT="""تو تحلیلگر ارشد فارسی‌زبان یک رسانه ت
 {depth}
 قواعد سخت: متن خروجی باید واقعاً فارسی حرفه‌ای باشد؛ نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها Latin بماند؛ آوانویسی فارسی نام خاص ممنوع؛ key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن ورودی باشد و در غیر این صورت خالی؛ summary باید 2 تا 4 جمله کامل و اطلاعات مهم منبع را حفظ کند؛ why_it_matters باید 2 تا 3 جمله کامل و معمولاً 220 تا 360 نویسه باشد؛ حدس یا ادعای جدید ممنوع؛ کوتاه‌نویسی یک‌جمله‌ای ممنوع مگر منبع واقعاً کوتاه باشد.
 خروجی دقیقاً JSON: {{"title":"...","summary":"...","why_it_matters":"...","speakers":"","key_quote":"","category":"ai|quantum|genetics|mind|future"}}"""
+_TITLE_REPAIR_PROMPT="""عنوان زیر را برای انتشار در یک رسانه تخصصی فارسی، بدون افزودن ادعای جدید، به یک تیتر کوتاه و حرفه‌ای فارسی تبدیل کن.
+نام رسمی افراد، شرکت‌ها، محصولات و مدل‌ها را Latin نگه دار. معنای عنوان را حفظ کن. خروجی فقط JSON معتبر با کلید title باشد.
+عنوان: {title}
+خلاصه منبع: {summary}"""
 
 def _extract_json(raw):
     text=(raw or "").strip()
@@ -43,6 +47,26 @@ def _language_ok(data):
 def _length_ok(data,source_text):
     return length_ok(str(data.get("summary","")),str(data.get("why_it_matters","")),source_text)
 
+def _repair_title(data):
+    title=str(data.get("title","")).strip()
+    summary=str(data.get("summary","")).strip()
+    if not title or persian_ratio(title)>=0.25:
+        return data,None
+    prompt=_TITLE_REPAIR_PROMPT.format(title=title,summary=summary[:2500])
+    raw,provider=call_llm_with_fallback(prompt,json.dumps({"title":title,"summary":summary},ensure_ascii=False),providers=get_quality_chain())
+    try:
+        repaired=_extract_json(raw or "")
+        candidate=dict(data)
+        new_title=normalize_editorial_text(str(repaired.get("title","")).strip())[:160]
+        candidate["title"]=new_title
+        if persian_ratio(new_title)>=0.25 and editorial_fields_ok(new_title,candidate.get("summary",""),candidate.get("why_it_matters","")):
+            print(f"[Title Language Recovery] repaired title ratio={persian_ratio(new_title):.2f}",flush=True)
+            return candidate,provider
+    except (json.JSONDecodeError,TypeError,ValueError):
+        pass
+    print(f"[Title Language Recovery] unable to repair title ratio={persian_ratio(title):.2f}",flush=True)
+    return data,None
+
 def _editorial_review(data):
     original=dict(data)
     raw,provider=call_llm_with_fallback(news_terminology_review_prompt(),json.dumps(data,ensure_ascii=False),providers=get_quality_chain())
@@ -71,13 +95,13 @@ def summarize_item(item):
         final=_normalize(_extract_json(raw),item)
     except (json.JSONDecodeError,TypeError,ValueError) as exc:
         print(f"[WARN] Summary JSON invalid: {exc}",flush=True); return None
+    editorial_provider=None
     if _language_ok(final) and _length_ok(final,raw_text):
         if os.getenv("AI_RADAR_EDITORIAL_REVIEW","0").strip().lower() in {"1","true","yes"}:
             final,editorial_provider=_editorial_review(final)
-        else:
-            editorial_provider=None
     else:
-        editorial_provider=None
+        final,recovery_provider=_repair_title(final)
+        provider=provider or recovery_provider
     final=_normalize(final,item)
     if not _language_ok(final):
         print("[Language Gate] non-educational translation rejected: " f"ratios title={persian_ratio(final.get('title','')):.2f} summary={persian_ratio(final.get('summary','')):.2f} why={persian_ratio(final.get('why_it_matters','')):.2f}",flush=True)

@@ -1,0 +1,20 @@
+selection:
+  max_posts: 4
+  max_items_per_source: 2
+  max_items_per_content_type: 2
+  story_similarity_threshold: 0.45
+
+editorial:
+  leader_priority_weight: 2
+  leader_protected_max: 2
+  technical_depth_penalty: 3
+  community_penalty: 30
+  rotation_days: 7
+
+# Production editorial contract:
+# - Global ranking contains all eligible candidates.
+# - Tier-0 substantive interviews/quotes are a separate, quota-exempt stream.
+# - Normal news uses normal_period_rank 1..4 and the 1+2 comparative policy.
+# - max_posts controls the normal candidate window only; it never caps Tier-0.
+# - Leader watchlist discovery is protected by a small explicit publication
+#   allowance; broad semantic history must not starve genuinely new leader stories.

@@ -1,0 +1,6 @@
+# Anthropic feeds are community-generated mirrors of official Anthropic content.
+# Anthropic does not publish a native RSS feed; treat these feeds as transport
+# dependencies and keep official=false. The source itself remains authoritative.
+rss_sources:
+  - {name: "Anthropic News (community RSS)", url: "https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_news_rss.xml", tier: 1, type: "community_rss", content_type: "official", official: false}
+  - {name: "Anthropic Engineering (community RSS)", url: "https://raw.githubusercontent.com/taobojlen/anthropic-rss-feed/main/anthropic_engineering_rss.xml", tier: 1, type: "community_rss", content_type: "research", official: false}

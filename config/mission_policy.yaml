@@ -1,0 +1,50 @@
+# AI Future Radar — mission-driven editorial portfolio
+# The channel is a radar, not a generic AI news feed.
+# Every run should maximize: frontier relevance + evidence + strategic importance + diversity.
+
+mission:
+  max_posts: 4
+  min_unique_sources: 3
+  max_same_source: 1
+  max_same_mission_area: 2
+  min_authoritative_items: 2
+  stale_hours: 72
+  ai_core_target_min: 1
+  ai_core_target_max: 2
+  convergence_target: 1
+  mind_future_target: 1
+  research_target: 1
+  interview_target_max: 1
+  community_max: 0
+
+areas:
+  ai_core:
+    label: "هوش مصنوعی و مرزهای توانمندی"
+    keywords: ["artificial intelligence", "llm", "foundation model", "reasoning", "agent", "agentic", "multimodal", "generative ai", "ai safety", "agi", "model", "machine learning"]
+  convergence:
+    label: "همگرایی AI و فناوری‌های نوظهور"
+    keywords: ["quantum", "quantum computing", "robotics", "humanoid", "brain-computer", "bci", "neurotechnology", "biotech", "synthetic biology", "genomics", "crispr", "protein", "materials", "semiconductor", "energy", "space"]
+  mind_cognition:
+    label: "ذهن، شناخت و آگاهی"
+    keywords: ["consciousness", "sentience", "cognitive science", "cognition", "mind", "brain", "neuroscience", "philosophy of mind", "philosophy of science", "machine consciousness", "awareness"]
+  future_governance:
+    label: "آینده‌پژوهی، جامعه و حکمرانی فناوری"
+    keywords: ["future of ai", "foresight", "governance", "policy", "jobs", "economy", "geopolitics", "existential risk", "alignment", "regulation", "future of work", "society"]
+
+# Strategic signal terms receive a capped boost. They indicate a change in trajectory,
+# not merely popularity.
+frontier_signals: ["breakthrough", "new capability", "state of the art", "frontier", "first", "new model", "new architecture", "autonomous", "scaling", "reasoning", "agentic", "world model", "scientific discovery", "clinical", "deployment", "commercialized"]
+trend_signals: ["roadmap", "benchmark", "adoption", "infrastructure", "investment", "standard", "platform", "ecosystem", "policy", "regulation", "research direction", "trend"]
+low_signal_terms: ["top 10", "best tools", "prompt collection", "weekly roundup", "productivity tips", "how to use chatgpt", "10 tools", "20 tools"]
+
+# Evidence hierarchy: official research > peer-reviewed science > university/research lab > specialist media > community.
+source_tiers:
+  1: ["MIT CSAIL", "Stanford HAI", "BAIR", "Google DeepMind", "OpenAI", "Anthropic", "MIT News", "Nature", "Quanta Magazine", "CMU", "Carnegie Mellon", "NIST", "IEEE", "arXiv"]
+  2: ["MIT Technology Review", "IEEE Spectrum", "Ars Technica", "Reuters", "Wired", "Scientific American", "New Scientist"]
+  3: ["Reddit", "community", "aggregator"]
+
+# Category rotation prevents the same area from dominating successive runs.
+rotation:
+  window_runs: 6
+  max_same_area_in_window: 3
+  max_same_source_in_window: 2

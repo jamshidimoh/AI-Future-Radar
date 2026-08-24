@@ -1,0 +1,94 @@
+name: Run AI Future Radar Bot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */4 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-future-radar-production
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 26
+    steps:
+      - name: Checkout current ref
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 1
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Telegram production preflight
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: "-1004482051328"
+        run: python -u scripts/telegram_preflight.py
+
+      - name: Run bot with ranking audit
+        env:
+          PYTHONUNBUFFERED: "1"
+          RADAR_WATCHDOG_MINUTES: "22"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: "-1004482051328"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_MODEL: ${{ vars.HF_MODEL }}
+          HF_POLICY: free-first
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
+
+      - name: Persist production state
+        if: success()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
+          if git diff --cached --quiet; then
+            echo "No production state changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: persist production state [skip ci]"
+          for attempt in 1 2 3; do
+            git fetch origin "${{ github.ref_name }}" --depth=20
+            if git rebase "origin/${{ github.ref_name }}"; then
+              if git push origin "HEAD:${{ github.ref_name }}"; then
+                echo "Production state persisted on attempt ${attempt}."
+                exit 0
+              fi
+            else
+              git rebase --abort || true
+            fi
+            echo "State push attempt ${attempt} lost a race with the production branch; retrying."
+            sleep $((attempt * 2))
+          done
+          echo "Unable to persist production state after 3 attempts."
+          exit 1
+
+      - name: Upload production diagnostics and ranking audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-future-radar-${{ github.event_name }}-${{ github.run_number }}
+          path: |
+            run.log
+            artifacts/ranking_audit/
+          if-no-files-found: warn
+          retention-days: 14

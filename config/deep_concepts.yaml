@@ -1,0 +1,27 @@
+# Deep fallback concepts: used only when no fresh story has a sufficient analytical anchor.
+concepts:
+  - id: consciousness_hard_problem
+    title: "مسئله دشوار آگاهی و امکان آگاهی ماشینی"
+    domains: [mind_cognition, ai]
+    horizons: [5-15]
+    anchor_type: philosophical_scientific
+  - id: active_inference
+    title: "Active Inference و مدل‌سازی شناخت"
+    domains: [mind_cognition, neuroscience, ai]
+    horizons: [3-10]
+    anchor_type: cross_domain
+  - id: world_models_causality
+    title: "World Models، علیت و محدودیت‌های Scaling"
+    domains: [ai_core, cognitive_science]
+    horizons: [2-8]
+    anchor_type: paradigm_tension
+  - id: autonomous_science
+    title: "AI Scientist و گذار از دستیار علمی به پژوهش مستقل"
+    domains: [ai_core, biology, science]
+    horizons: [2-7]
+    anchor_type: frontier_trend
+  - id: biological_intelligence
+    title: "هوش زیستی، Bioelectricity و Organoid Intelligence"
+    domains: [biology, neuroscience, ai]
+    horizons: [5-15]
+    anchor_type: cross_domain

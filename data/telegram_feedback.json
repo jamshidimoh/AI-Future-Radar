@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787564132,
+  "updated_at": 1787566300,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3155,6 +3155,61 @@
       "why_it_matters": "رسیدن به مرز یک میلیارد کاربر، Gemini را به یکی از پرمخاطب‌ترین پلتفرم‌های هوش مصنوعی در جهان تبدیل کرده و سهم بازار گوگل را در برابر رقبا تثبیت می‌کند. این آمار نشان می‌دهد که کاربران نهایی به سرعت در حال انتقال از مدل‌های آزمایشی به ابزارهای روزمره مبتنی بر هوش مصنوعی هستند.",
       "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPS3V6Z3Nrc3ZmdUNDbjI4WEcxZFFSYnU4MWduRHp4R09ZZEJyYmp2UXRsNGhMNFdRbmlJNkROZ2NIUC1jUmpfeVhfeHhsUkd3dHhGRW8zbVU2YnV6X2MzYTczYnBIVU0xQXlvUG5ETlIwaThYVDZueVdRR0N2ZU14TG96UEJHemo1?oc=5",
       "posted_at": 1787564132
+    },
+    "-1004482051328:1224": {
+      "chat_id": -1004482051328,
+      "message_id": 1224,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "arXiv cs.LG",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "بررسی انتقادی مجموعه‌داده‌ها و خط‌مشی‌های پیش‌بینی فضایی-زمانی",
+      "summary": "این پژوهش به نقد مجموعه‌داده‌های رایج مانند Chickenpox و METR-LA در ارزیابی شبکه‌های عصبی گرافی (GNN) می‌پردازد. نویسندگان نشان می‌دهند که مدل‌های خطی ساده‌تر از نظر عملکرد با GNNها رقابت می‌کنند و این موضوع به دلیل سوگیری ساختاری ناشی از تفاضل‌گیری مرتبه اول در داده‌هاست. تحلیل آماری ارائه‌شده ابزاری برای شناسایی همبستگی‌های فضایی و زمانی است و استفاده کمتر از این مجموعه‌داده‌های معیوب را توصیه می‌کند.",
+      "why_it_matters": "این مطالعه اعتبار تشخیصی بنچمارک‌های رایج در حوزه پیش‌بینی سری‌های زمانی چندمتغیره را زیر سوال می‌برد و نشان می‌دهد که پیچیدگی مدل‌های GNN ممکن است بی‌دلیل باشد. با آشکار کردن سوگیری‌های پنهان در داده‌ها، این پژوهش مسیر را برای توسعه روش‌های ارزیابی دقیق‌تر و مدل‌های هیبریدی کارآمدتر هموار می‌سازد.",
+      "link": "https://arxiv.org/abs/2608.20980",
+      "posted_at": 1787566297
+    },
+    "-1004482051328:1225": {
+      "chat_id": -1004482051328,
+      "message_id": 1225,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "arXiv q-bio.GN",
+      "content_type": "research",
+      "category": "genetics",
+      "leader": "",
+      "title": "TracingFlow: چارچوب مسیر‌یابی بدون شبیه‌سازی بر پایه دینامیک مرتبه دوم",
+      "summary": "مقالهٔ TracingFlow یک چارچوب جدید برای Inference مسیرهای تک‌سلولی بدون نیاز به شبیه‌سازی ارائه می‌دهد. این روش با یادگیری میدان شتاب به‌جای سرعت، به‌صورت دقیق مسألهٔ Dynamical Optimal Acceleration Transport (DOAT) را حل می‌کند و توانایی بازسازی توزیع‌های پیچیده و مسیرهای با انحناهای بالا را نشان می‌دهد. ارزیابی بر روی داده‌های مصنوعی و scRNA‑seq بزرگ‌مقیاس، دقت بالاتر نسبت به روش‌های مرتبهٔ اول را ثابت می‌کند. ادغام اطلاعات ردیابی ریشه‌ای، نتایج را هم به لحاظ ریاضی بهینه و هم از نظر زیست‌شناسی معقول می‌سازد.",
+      "why_it_matters": "در حوزهٔ تک‌سلولی، توانایی مدل‌سازی دینامیک‌های مرتبهٔ دوم به پژوهشگران اجازه می‌دهد تا اثرات مومنتوم تنظیمی و پاسخ‌های تاخیری را در مسیرهای تمایزی به‌دقت بیشتری بازتاب دهند. این پیشرفت می‌تواند به کشف مکانیزم‌های کلیدی در تمایز سلولی و بیماری‌های مرتبط با تغییرات ژنتیکی کمک کند و ابزارهای تحلیلی دقیق‌تری برای تجزیه و تحلیل داده‌های omics فراهم آورد.",
+      "link": "https://arxiv.org/abs/2608.21070",
+      "posted_at": 1787566298
+    },
+    "-1004482051328:1226": {
+      "chat_id": -1004482051328,
+      "message_id": 1226,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Times of India)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Sundar Pichai",
+      "watch_person": "Sundar Pichai",
+      "title": "برنامه Gemini سریع‌ترین محصول مصرفی Google شد؛ Sundar Pichai تشکر کرد",
+      "summary": "Google اعلام کرد برنامه Gemini به‌سرعت‌ترین محصول مصرفی خود تبدیل شده است. این رشد سریع توسط مدیرعامل شرکت، Sundar Pichai، تأیید شد و او از کاربران تشکر کرد. این موفقیت نشان‌دهنده پذیرش گسترده هوش مصنوعی در ابزارهای روزمره است. منبع: The Times of India (Google News).",
+      "why_it_matters": "سرعت رشد Gemini نشان می‌دهد که کاربران به‌سرعت ابزارهای مبتنی بر هوش مصنوعی را می‌پذیرند و این می‌تواند به تسریع نوآوری در خدمات مصرفی منجر شود. همچنین، موفقیت این محصول می‌تواند استراتژی Google را در رقابت با سایر پلتفرم‌های هوش مصنوعی تقویت کند و تأثیر قابل‌Attentionی بر بازار فناوری داشته باشد.",
+      "link": "https://news.google.com/rss/articles/CBMimgJBVV95cUxOdWJ1YThPX1B2RlBCRzBhLUJzRTlyRVhoUy1XSFp2X0o3N010NTluTlFTRUNsaU5vdzF0T0lRNlhITC1mcHVTNmptdkp3VG9Kb3JGdkJzNHBXbm5JOHJqRTBydklCbERaN0k5UUhpRkd2UTNoLWtKc05OaURVV011eHhrYUVmemd4OWtGM1JvOXVtSEJabVJ4TG9IaUN5SDhVRU54ZzFJRnZjU0NXWW1VZi1YSFhkYW9RNV9zd0l5UnFmNFF2NmRWVEh5Z3B5S2lra2N3cFFvZlNmczBVR3JhTVVxYVF6Z2UzSHpmQjN6dUJESnJWM2d3bldBMDc2cjM0T0wtRW91Ym5NT0hVakM5YWxPZGJ1UWFKY1HSAZ8CQVVfeXFMUFhBVDBzRUlYVVNnMFdPU0I2TUhyaW8zMnphU1NoWjBwQ29JTlNYMDVjM1RZNVhNMXNJaTc2TEpxaHZ5N0Y0YldpbjJRdkFDOHVibUpCOGNqcW9UMVdpV2pPNXc0SzBXdDNESm1WT1g3Ny1BclE0ZEU2VTVCX3dKWWh3YmRQMXQ0NzdHR2lINlRXNGpuSHZIZXFZUlBKTURDZUFMUUhFS2xqV3VzMnM3bFRmUzN3SHpjX3kyUlZnMGJqTzM5cVR3WDZhTTB6NjIzQnBzRGxMLWJWMk5RbUVKX1pCQnBQQVVmX3B2bi1aMnN4VFR6TDRlZ2hRNFR6TnZVcUJ6WFIyUjBWUjhoZ2hLUWlyQ09sREI0LVFPR3VtTkE?oc=5",
+      "posted_at": 1787566300
     }
   }
 }

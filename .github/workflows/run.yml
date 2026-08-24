@@ -2,6 +2,7 @@ name: Run AI Future Radar Bot
 
 on:
   push:
+  pull_request:
   workflow_dispatch:
   schedule:
     - cron: "0 */4 * * *"

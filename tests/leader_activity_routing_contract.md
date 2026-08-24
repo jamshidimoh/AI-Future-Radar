@@ -1,0 +1,1 @@
+Leader activity routing contract: watchlist activity remains in the normal ranking path; substantive leader interviews remain protected/Tier-0.

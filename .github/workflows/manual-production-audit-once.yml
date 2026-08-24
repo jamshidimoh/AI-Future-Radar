@@ -1,0 +1,77 @@
+name: One-time production audit
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: one-time-production-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 26
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Telegram preflight
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: "-1004482051328"
+        run: python -u scripts/telegram_preflight.py
+      - name: Production audit
+        env:
+          PYTHONUNBUFFERED: "1"
+          RADAR_WATCHDOG_MINUTES: "22"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: "-1004482051328"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_MODEL: ${{ vars.HF_MODEL }}
+          HF_POLICY: free-first
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
+      - name: Persist production state and cleanup
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
+          git rm .github/workflows/manual-production-audit-once.yml .github/workflows/production-audit-trigger.txt 2>/dev/null || true
+          git add -u
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "chore: persist production audit state [skip ci]"
+          for attempt in 1 2 3; do
+            git fetch origin main --depth=20
+            if git rebase origin/main && git push origin HEAD:main; then exit 0; fi
+            git rebase --abort || true
+            sleep $((attempt * 2))
+          done
+          exit 1
+      - name: Upload production diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: one-time-production-audit
+          path: |
+            run.log
+            artifacts/ranking_audit/
+          if-no-files-found: warn
+          retention-days: 14

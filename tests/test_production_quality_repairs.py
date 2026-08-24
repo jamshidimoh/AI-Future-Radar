@@ -6,21 +6,8 @@ from src.summarize import _fallback_title_from_persian_summary
 
 
 class ProductionQualityRepairTests(unittest.TestCase):
-    def test_final_portfolio_limits_arxiv_to_one_when_alternatives_exist(self):
+    def test_research_portfolio_accepts_non_arxiv_research(self):
         items = [
-            {
-                "title": "AI benchmark paper one",
-                "summary": "artificial intelligence machine learning research benchmark",
-                "content_type": "research",
-                "source": "arXiv cs.LG",
-                "source_type": "scientific_repository",
-                "canonical_url": "https://arxiv.org/abs/1",
-                "source_tier": 2,
-                "editorial_score": 92,
-                "signal_score": 60,
-                "editorial_confidence": 0.95,
-                "category": "ai",
-            },
             {
                 "title": "Bioinformatics research result",
                 "summary": "AI biology genomics research result from a university lab",
@@ -35,17 +22,17 @@ class ProductionQualityRepairTests(unittest.TestCase):
                 "category": "genetics",
             },
             {
-                "title": "AI benchmark paper two",
-                "summary": "artificial intelligence machine learning research benchmark second study",
+                "title": "University AI research result",
+                "summary": "artificial intelligence machine learning research result from a university lab",
                 "content_type": "research",
-                "source": "arXiv q-bio.GN",
-                "source_type": "scientific_repository",
-                "canonical_url": "https://arxiv.org/abs/2",
-                "source_tier": 2,
-                "editorial_score": 91,
-                "signal_score": 59,
+                "source": "University Research Lab",
+                "source_type": "research_institution",
+                "canonical_url": "https://example.edu/research/ai",
+                "source_tier": 1,
+                "editorial_score": 87,
+                "signal_score": 54,
                 "editorial_confidence": 0.95,
-                "category": "genetics",
+                "category": "ai",
             },
             {
                 "title": "Frontier AI interview",
@@ -61,10 +48,13 @@ class ProductionQualityRepairTests(unittest.TestCase):
                 "interview_signal": True,
             },
         ]
-        selected = select_normal_portfolio(items, max_posts=4, max_per_source=2, max_per_type=2, policy={})
-        arxiv = [x for x in selected if "arxiv" in str(x.get("source", "")).lower()]
-        self.assertEqual(len(arxiv), 1)
+        selected = select_normal_portfolio(
+            items, max_posts=4, max_per_source=2, max_per_type=2, policy={}
+        )
         self.assertGreaterEqual(len(selected), 3)
+        self.assertTrue(any(x.get("content_type") == "research" for x in selected))
+        self.assertTrue(all("arxiv.org" not in str(x.get("canonical_url", "")).lower() for x in selected))
+        self.assertTrue(all("arxiv" not in str(x.get("source", "")).lower() for x in selected))
 
     def test_provider_independent_title_fallback_uses_validated_persian_summary(self):
         data = {

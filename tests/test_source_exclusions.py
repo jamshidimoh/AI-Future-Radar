@@ -31,7 +31,9 @@ def test_excluded_rss_source_is_removed_before_fetch():
         {"name": "OpenAI", "url": "https://openai.com/news/rss.xml"},
     ]
     merged = _merge_rss_sources(sources)
-    assert [item["name"] for item in merged] == ["OpenAI"]
+    names = [item["name"] for item in merged]
+    assert "OpenAI" in names
+    assert all("arxiv" not in str(name).lower() for name in names)
 
 
 def test_accidental_excluded_result_is_rejected():

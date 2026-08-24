@@ -11,6 +11,7 @@ if str(ROOT) not in sys.path:
 import period_ranked_pipeline as pipeline
 from src.portfolio_selection import select_normal_portfolio
 from src.ranking_audit import audit_selection
+from src.rtl_contract import force_rtl_blocks
 
 _original_main = pipeline.main
 _original_rank = pipeline._global_ranked_selection
@@ -19,6 +20,7 @@ _original_rank = pipeline._global_ranked_selection
 def _audited_main(hooks=None):
     merged = dict(hooks or {})
     explicit_select = merged.get("select_editorial")
+    original_format = merged.get("format_post")
 
     def production_select(items, max_posts, max_per_source, max_per_type, policy):
         if explicit_select is not None:
@@ -32,9 +34,6 @@ def _audited_main(hooks=None):
             audit_selection(selected)
             return selected
 
-        # Build a wider candidate window with relaxed local caps. The final
-        # portfolio selector is the only place that applies the publication
-        # source/type caps for normal stories.
         window_size = max(int(max_posts or 0) + 6, int(max_posts or 0) * 3, 10)
         candidate_window = _original_rank(
             items,
@@ -65,7 +64,12 @@ def _audited_main(hooks=None):
         audit_selection(selected)
         return selected
 
+    def rtl_format(*args, **kwargs):
+        formatter = original_format or pipeline._format_post
+        return force_rtl_blocks(formatter(*args, **kwargs))
+
     merged["select_editorial"] = production_select
+    merged["format_post"] = rtl_format
     return _original_main(hooks=merged)
 
 

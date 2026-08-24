@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787593763,
+  "updated_at": 1787595205,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3321,6 +3321,43 @@
       "why_it_matters": "این تغییرات نشان‌دهنده اولویت استراتژیک Alphabet برای تسریع رقابت در بازار هوش مصنوعی است. فشار بر DeepMind برای تسریع Gemini می‌تواند منجر به انتشار سریع‌تر قابلیت‌های جدید و تغییرات ساختاری در نحوه مدیریت پروژه‌های کلیدی هوش مصنوعی شود.",
       "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9UbDR0N2FqOW5LdlhadVI4VFpNMWlXMUNxNV9UZzFiZ1d4Yk9aM1pvNV9HVWs0aU5NUXVFMzhwdHRFTjJ3Q3RvSHBzUzg3aDBJWnE3enh6ODJ3d3ZVRVhJVWNEOWh5RDhaLTJEODBwektOcTRob0E?oc=5",
       "posted_at": 1787593763
+    },
+    "-1004482051328:1233": {
+      "chat_id": -1004482051328,
+      "message_id": 1233,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Axios)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "سوال مالی سرسخت در مصاحبه‌های شغلی کاندیداهای Anthropic",
+      "summary": "در مصاحبه‌های استخدامی شرکت Anthropic، کاندیداها با سؤال مستقیم درباره انتظارات حقوقی خود مواجه می‌شوند. این رویکرد شفاف‌سازی هزینه‌های استخدام و تطبیق توقعات مالی را هدف دارد. گزارش Axios نشان می‌دهد این سؤال می‌تواند به تصمیم‌گیری‌های سریع‌تر برای هر دو طرف منجر شود.",
+      "why_it_matters": "شفاف‌سازی انتظارات حقوقی در مراحل اولیه جذب، ریسک عدم توافق در مذاکرات نهایی را کاهش می‌دهد و زمان صرف شده برای هر دو طرف را بهینه می‌کند. این رویکرد می‌تواند به بهبود تجربه کاندیداها و افزایش کارایی فرآیند استخدام در شرکت‌های فناوری پیشرو منجر شود، به‌ویژه در حوزه‌های هوش مصنوعی که رقابت برای استعدادهای برتر شدید است.",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPdklqampjeURCbHdfR3J2ZEdOUG1hdnF6T3dMd0lKbVQyRE9ESWFsNkFxRnBxNlRnY1RLd1duUEZabVRvMWhHWXh4ZzhRNm1haC1XY2hmZF90LVRZVzItdTVudUtBb2g3eWZpXzNwdDI5RVVyR29FeWxJNXFneVJWZ0xQTGtZdFNQTjlGRHpn?oc=5",
+      "posted_at": 1787595204
+    },
+    "-1004482051328:1234": {
+      "chat_id": -1004482051328,
+      "message_id": 1234,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "ChatGPT Work: تبدیل گفتار به خروجی کاربردی",
+      "summary": "در ویدئوی رسمی OpenAI، سرویس جدید ChatGPT Work معرفی می‌شود. این ابزار گفتار کاربر را به اسناد و محتواهای قابل استفاده تبدیل می‌کند و به‌صورت خودکار افکار را ثبت و پیش‌نویس می‌سازد. با این قابلیت، کاربران می‌توانند ایده‌های خود را سریع‌تر به‌صورت متنی درآورده و به پروژه‌های خود اضافه کنند. این فناوری می‌تواند روند تولید محتوا و همکاری تیمی را به‌طور قابل‌Attentionی تسریع کند.",
+      "why_it_matters": "ChatGPT Work با حذف موانع تبدیل گفتار به متن، زمان صرف‌شده برای مستندسازی افکار را به‌طور چشمگیری کاهش می‌دهد و به‌خصوص برای تیم‌های خلاق و پژوهشی که نیاز به ثبت سریع ایده‌ها دارند، ارزش افزوده می‌آورد. این قابلیت نه تنها بهره‌وری فردی را ارتقا می‌دهد، بلکه امکان همگام‌سازی لحظه‌ای محتوا بین اعضای تیم را فراهم می‌کند، که می‌تواند به تسریع تصمیم‌گیری و پیشبرد پروژه‌ها منجر شود.",
+      "link": "https://www.youtube.com/watch?v=ceBruD6v5Bk",
+      "posted_at": 1787595205
     }
   }
 }

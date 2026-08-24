@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787566300,
+  "updated_at": 1787574892,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3210,6 +3210,42 @@
       "why_it_matters": "سرعت رشد Gemini نشان می‌دهد که کاربران به‌سرعت ابزارهای مبتنی بر هوش مصنوعی را می‌پذیرند و این می‌تواند به تسریع نوآوری در خدمات مصرفی منجر شود. همچنین، موفقیت این محصول می‌تواند استراتژی Google را در رقابت با سایر پلتفرم‌های هوش مصنوعی تقویت کند و تأثیر قابل‌Attentionی بر بازار فناوری داشته باشد.",
       "link": "https://news.google.com/rss/articles/CBMimgJBVV95cUxOdWJ1YThPX1B2RlBCRzBhLUJzRTlyRVhoUy1XSFp2X0o3N010NTluTlFTRUNsaU5vdzF0T0lRNlhITC1mcHVTNmptdkp3VG9Kb3JGdkJzNHBXbm5JOHJqRTBydklCbERaN0k5UUhpRkd2UTNoLWtKc05OaURVV011eHhrYUVmemd4OWtGM1JvOXVtSEJabVJ4TG9IaUN5SDhVRU54ZzFJRnZjU0NXWW1VZi1YSFhkYW9RNV9zd0l5UnFmNFF2NmRWVEh5Z3B5S2lra2N3cFFvZlNmczBVR3JhTVVxYVF6Z2UzSHpmQjN6dUJESnJWM2d3bldBMDc2cjM0T0wtRW91Ym5NT0hVakM5YWxPZGJ1UWFKY1HSAZ8CQVVfeXFMUFhBVDBzRUlYVVNnMFdPU0I2TUhyaW8zMnphU1NoWjBwQ29JTlNYMDVjM1RZNVhNMXNJaTc2TEpxaHZ5N0Y0YldpbjJRdkFDOHVibUpCOGNqcW9UMVdpV2pPNXc0SzBXdDNESm1WT1g3Ny1BclE0ZEU2VTVCX3dKWWh3YmRQMXQ0NzdHR2lINlRXNGpuSHZIZXFZUlBKTURDZUFMUUhFS2xqV3VzMnM3bFRmUzN3SHpjX3kyUlZnMGJqTzM5cVR3WDZhTTB6NjIzQnBzRGxMLWJWMk5RbUVKX1pCQnBQQVVmX3B2bi1aMnN4VFR6TDRlZ2hRNFR6TnZVcUJ6WFIyUjBWUjhoZ2hLUWlyQ09sREI0LVFPR3VtTkE?oc=5",
       "posted_at": 1787566300
+    },
+    "-1004482051328:1227": {
+      "chat_id": -1004482051328,
+      "message_id": 1227,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "arXiv cs.AI",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "FM-Bench: Model Evaluation‌های زبانی در مدیریت بلندمدت و رقابتی",
+      "summary": "FM-Bench یک بنچمارک جدید برای سنجش تصمیم‌گیری بلندمدت مدل‌های زبانی در محیط‌های رقابتی است که در آن یک AI Agent به مدت ۲۰ سال یک باشگاه فوتبال را مدیریت می‌کند. این سیستم شامل ۲۶ ابزار و حدود ۳۴۰ تا ۴۰۰ نقطه تصمیم‌گیری است و بدون قضاوت انسانی یا مدل زبانی، بر اساس یک موتور قطعی امتیازدهی می‌شود. نتایج نشان می‌دهد که رفتارهای مدیریتی مانند مدیریت نقدینگی و زمان‌بندی مذاکرات، نه مقیاس مدل یا هزینه توکن، تعیین‌کننده موفقیت نهایی است.",
+      "why_it_matters": "این پژوهش نشان می‌دهد که در محیط‌های پیچیده و بلندمدت، توانایی‌های رفتاری و استراتژیک مدل‌های زبانی مهم‌تر از قدرت محاسیاتی یا اندازه آن‌هاست. FM-Bench با حذف قضاوت‌های سلیقه‌ای و استفاده از یک موتور قطعی، معیاری دقیق برای سنجش پایداری تصمیم‌گیری در طول زمان ارائه می‌دهد. این یافته‌ها مسیر توسعه عامل‌های هوش مصنوعی را از تمرکز صرف بر مقیاس‌پذیری به سمت بهینه‌سازی رفتارهای مدیریتی و حافظه‌ای هدایت می‌کند.",
+      "link": "https://arxiv.org/abs/2608.18423",
+      "posted_at": 1787574891
+    },
+    "-1004482051328:1228": {
+      "chat_id": -1004482051328,
+      "message_id": 1228,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "arXiv quant-ph",
+      "content_type": "research",
+      "category": "quantum",
+      "leader": "",
+      "title": "بررسی کارایی کاهش خطای کوانتومی مبتنی بر تقارن در مدل شوینگر",
+      "summary": "این پژوهش از تقارن‌های زوجیت و تعداد فرمیون در مدل شوینگر برای کاهش خطای کوانتومی در شبیه‌سازی‌های دیجیتال استفاده می‌کند. نتایج نشان می‌دهد که انتخاب پس‌از-محاسبه در آماده‌سازی حالت آدیاباتیک می‌تواند تا ۶۰ درصد از خطای ناشی از نویز را حذف کند. با این حال، در الگوریتم‌های واریاسیونی مانند VQE، این روش اگرچه سوگیری انرژی را کاهش می‌دهد، اما لزوماً کیفیت حالت نهایی یا پارامترهای بهینه‌شده را بهبود نمی‌بخشد.",
+      "why_it_matters": "این مطالعه نشان می‌دهد که اثربخشی کاهش خطای مبتنی بر تقارن به شدت به محل اعمال آن در گردش کار محاسباتی بستگی دارد. این یافته‌ها راهنمایی عملی برای پژوهشگران فراهم می‌کند تا درک کنند بهبود تخمین‌گر تابع هزینه در الگوریتم‌های واریاسیونی لزوماً منجر به بهبود خروجی نهایی نمی‌شود.",
+      "link": "https://arxiv.org/abs/2608.21103",
+      "posted_at": 1787574892
     }
   }
 }

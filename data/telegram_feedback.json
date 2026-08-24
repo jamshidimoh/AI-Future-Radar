@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787574892,
+  "updated_at": 1787588721,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3246,6 +3246,62 @@
       "why_it_matters": "این مطالعه نشان می‌دهد که اثربخشی کاهش خطای مبتنی بر تقارن به شدت به محل اعمال آن در گردش کار محاسباتی بستگی دارد. این یافته‌ها راهنمایی عملی برای پژوهشگران فراهم می‌کند تا درک کنند بهبود تخمین‌گر تابع هزینه در الگوریتم‌های واریاسیونی لزوماً منجر به بهبود خروجی نهایی نمی‌شود.",
       "link": "https://arxiv.org/abs/2608.21103",
       "posted_at": 1787574892
+    },
+    "-1004482051328:1229": {
+      "chat_id": -1004482051328,
+      "message_id": 1229,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Mshale)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "title": "مصاحبه اختصاصی با Dario Amodei، مدیرعامل Anthropic، در برنامه The Circuit",
+      "summary": "این ویدیو شامل مصاحبه‌ای طولانی و عمیق با Dario Amodei، مدیرعامل شرکت Anthropic، در برنامه The Circuit است. این گفتگو که با حضور Bob Odenkirk انجام شده، به بررسی دیدگاه‌های مدیرعامل Anthropic در مورد هوش مصنوعی و آینده این فناوری می‌پردازد.",
+      "why_it_matters": "این مصاحبه فرصتی برای درک بهتر استراتژی‌ها و نگرانی‌های کلیدی یکی از پیشروترین شرکت‌های هوش مصنوعی جهان فراهم می‌کند. شنیدن دیدگاه‌های Dario Amodei می‌تواند به درک بهتر چالش‌ها و فرصت‌های پیش رو در صنعت هوش مصنوعی کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5zNTl2ZDJpQjVGME95X2JhUTlTZ0o4V1R4TWtYZ2dYUHVuVi05eDh1dFNieVI3V1hNanpZaUMwZzFTcnRMN1BQQ2Q1VWtQeTNzWUs0MzBLSkI0cVE?oc=5",
+      "posted_at": 1787588718
+    },
+    "-1004482051328:1230": {
+      "chat_id": -1004482051328,
+      "message_id": 1230,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Yahoo Finance)",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "Ilya Sutskever",
+      "watch_person": "Ilya Sutskever",
+      "title": "استارتاپ Ilya Sutskever با ۵۰ کارمند و بدون محصول، ۳۲ میلیارد دلار ارزش‌گذاری شد",
+      "summary": "یک استارتاپ هوش مصنوعی که توسط Ilya Sutskever رهبری می‌شود، با وجود داشتن تنها حدود ۵۰ کارمند، عدم ارائه محصول نهایی و انتشار هیچ‌گونه مقاله پژوهشی، به ارزش‌گذاری ۳۲ میلیارد دلاری دست یافته است. این اتفاق نشان‌دهنده تمرکز سرمایه‌گذاران بر پتانسیل تیم بنیان‌گذار و چشم‌انداز بلندمدت است، نه خروجی‌های فوری یا سوابق انتشار علمی.",
+      "why_it_matters": "این ارزش‌گذاری بی‌سابقه نشان می‌دهد که بازار سرمایه‌گذاری خطرپذیر در حوزه هوش مصنوعی، وزن بسیار زیادی به اعتبار بنیان‌گذاران و تیم فنی می‌دهد، حتی در غیاب محصولات تجاری یا انتشارات پژوهشی. این روند می‌تواند معیارهای سنتی ارزیابی استارتاپ‌های فناوری را به چالش بکشد و انتظارات را از بازدهی سریع تغییر دهد.",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQUVhWajdRUTRBYnpSNGJDVzRpNlNRbV85Mml0VEFINUZndjNnNFpsdFVSRFktei1BdXVpUXB2dkxCRlBYelZ4YnZRZGpuejFSUkVHV2haUjZsa3Z2czVLc2Nfa01ZbGpsSUc1R0lXYnFnMkVrRUpLZDdNWUFyT0lVS3B1VWlCcEVtTE50bUliWThxUElQYUxNT1lRSQ?oc=5",
+      "posted_at": 1787588720
+    },
+    "-1004482051328:1231": {
+      "chat_id": -1004482051328,
+      "message_id": 1231,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature News",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "کتاب جدید نیچر: نادیده گرفتن نقش بدن در بحث هوشیاری هوش مصنوعی",
+      "summary": "یک کتاب جدید منتشر شده در نیچر استدلال می‌کند که حوزه‌های هوش مصنوعی، روان‌شناسی و فلسفه جنبه‌ای کلیدی از هوشیاری را نادیده گرفته‌اند. این اثر تأکید دارد که بدن فیزیکی نقش محوری در درک صحیح پدیده هوشیاری ایفا می‌کند و غفلت از آن باعث کج‌فهمی در بحث‌های مربوط به هوش مصنوعی شده است.",
+      "why_it_matters": "این دیدگاه چارچوب سنتی بحث درباره هوشیاری ماشین را به چالش می‌کشد و نشان می‌دهد که تمرکز صرف بر الگوریتم‌ها بدون در نظر گرفتن زمینه زیستی و فیزیکی، ناقص است. درک این ارتباط برای پیشرفت‌های آینده در هوش مصنوعی و فلسفه ذهن ضروری است.",
+      "link": "https://www.nature.com/articles/d41586-026-02571-9",
+      "posted_at": 1787588721
     }
   }
 }

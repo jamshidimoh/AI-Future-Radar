@@ -48,11 +48,17 @@ def has_interview_evidence(item):
     if _contains_interview_term(item.get("title")):
         return True
 
-    # Interview-oriented media may expose the format in description/summary.
     source_type = str(item.get("source_type") or "").strip().casefold()
-    if source_type in _VIDEO_SOURCE_TYPES and _contains_interview_term(_text(item)):
+    source = str(item.get("source") or "").strip().casefold()
+    interview_media = source_type in _VIDEO_SOURCE_TYPES or any(
+        token in source for token in ("youtube", "podcast", "spotify")
+    )
+    if interview_media and (
+        str(item.get("content_type") or "").strip().casefold() in INTERVIEW_CONTENT_TYPES
+        or _contains_interview_term(_text(item))
+    ):
         return True
 
-    # Generic content_type values are supporting metadata only; by themselves they
-    # are insufficient because upstream/news classifiers can over-label articles.
+    # Generic news/content-type labels are supporting metadata only; by themselves
+    # they are insufficient because upstream/news classifiers can over-label articles.
     return False

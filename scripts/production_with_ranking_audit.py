@@ -36,7 +36,7 @@ def _audited_main(hooks=None):
 
         # Do not pre-select a tiny ranked window. The mission-aware selector must
         # see the full post-Story-Gate normal pool so it can trade off mission,
-        # source, type, research/interview/news and arXiv concentration.
+        # source, type, research/interview/news and source rotation.
         eligible = [
             x for x in (items or [])
             if not x.get("duplicate") and not x.get("publication_blocked")

@@ -46,7 +46,7 @@ class MissionAwarePortfolioTests(unittest.TestCase):
                 "title": "Quantum machine learning breakthrough",
                 "summary": "quantum computing machine learning research breakthrough",
                 "content_type": "research",
-                "source": "arXiv quant-ph",
+                "source": "Nature Physics",
                 "source_tier": 1,
                 "editorial_score": 84,
                 "editorial_confidence": 0.95,

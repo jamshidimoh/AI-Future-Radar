@@ -246,9 +246,12 @@ def _eligibility_split(items, max_protected=2):
     candidates, regular = [], []
     for raw in items:
         item = dict(raw)
-        if _pipeline._is_protected_leader_interview(item) or _pipeline._is_protected_leader_activity(item):
+        # Only substantive leader interviews receive the protected/Tier-0
+        # routing class. Leader activity is still valuable and remains in the
+        # normal pool where editorial score, signal, and diversity rules apply.
+        if _pipeline._is_protected_leader_interview(item):
             item["protected_content"] = True
-            item["protected_reason"] = "leader_interview_or_activity"
+            item["protected_reason"] = "leader_interview"
             item["_ai_link"] = True
             item["leader_watch_protected"] = True
             item["leader_source_authority"] = _pipeline._leader_source_authority(item)
@@ -258,6 +261,8 @@ def _eligibility_split(items, max_protected=2):
             item["_rank_is_tier0"] = True
             candidates.append(item)
         else:
+            # Includes leader_activity items deliberately. They may carry
+            # watchlist metadata but must earn normal ranking placement.
             regular.append(item)
     candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _pipeline._direct_interview_signal(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
     limit = max(0, int(max_protected))

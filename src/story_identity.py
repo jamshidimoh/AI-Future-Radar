@@ -68,6 +68,28 @@ def _context(sig: dict[str, Any]) -> set[str]:
     return set(sig.get("context") or sig.get("title") or [])
 
 
+def _is_protected_leader_interview(item: Any) -> bool:
+    """Identify the narrow protected-interview contract without importing main."""
+    if not isinstance(item, dict):
+        return False
+    if not item.get("protected_content"):
+        return False
+    if str(item.get("protected_reason") or "").strip() != "leader_interview_or_activity":
+        return False
+    leader = str(item.get("leader") or item.get("watch_person") or "").strip()
+    if not leader:
+        return False
+    explicit = item.get("interview_signal") or item.get("interview_format") or item.get("is_interview")
+    if explicit is True:
+        return True
+    text = _normalize(" ".join(str(item.get(k) or "") for k in ("title", "summary", "description")))
+    return any(term in text for term in (
+        "interview", "conversation", "fireside", "q&a", "question and answer",
+        "talk with", "talks with", "speaks with", "in conversation", "sits down with",
+        "مصاحبه", "گفتگو", "گفت و گو", "پرسش و پاسخ",
+    ))
+
+
 def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     """Return True only when evidence supports story identity."""
     candidate_sig = get_story_signature(candidate)
@@ -87,6 +109,16 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     title_tokens_b = set(prior_sig.get("title") or _tokens(title_b))
     title_j = _jaccard(title_tokens_a, title_tokens_b)
     title_sequence = difflib.SequenceMatcher(None, title_a, title_b).ratio()
+
+    # Protected leader interviews have a deliberately narrower history policy:
+    # exact URL/title identity remains a duplicate, but broad semantic/context
+    # similarity must not erase a distinct interview about the same leader.
+    # This is intentionally limited to the protected interview contract.
+    if _is_protected_leader_interview(candidate):
+        if title_sequence >= 0.96 or title_j >= 0.92:
+            return True
+        return False
+
     context_j = _jaccard(_context(candidate_sig), _context(prior_sig))
     leader_a = _normalize(candidate_sig.get("leader"))
     leader_b = _normalize(prior_sig.get("leader"))

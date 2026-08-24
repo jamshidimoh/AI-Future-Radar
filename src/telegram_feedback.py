@@ -64,13 +64,22 @@ def _ensure_message(store: dict[str, Any], chat_id: int | str, message_id: int) 
 
 
 def register_post(store: dict[str, Any], delivery: dict[str, Any], item: dict[str, Any]) -> None:
-    """Persist Story metadata against the exact Telegram message identity."""
+    """Persist Story metadata against the exact Telegram message identity.
+
+    The publication ledger keeps the rendered story anchors required for
+    cross-language duplicate detection. URL identity alone is insufficient for
+    Google News because the aggregator can emit a different publisher URL for
+    the same underlying story across runs.
+    """
     chat_id = delivery.get("chat_id")
     message_id = delivery.get("message_id")
     if chat_id is None or message_id is None:
         return
     record = _ensure_message(store, chat_id, int(message_id))
-    for key in ("source", "content_type", "category", "leader", "watch_person", "title", "link"):
+    for key in (
+        "source", "content_type", "category", "leader", "watch_person",
+        "title", "summary", "description", "why_it_matters", "link",
+    ):
         if item.get(key) is not None:
             record[key] = item.get(key)
     record["posted_at"] = int(delivery.get("date") or time.time())

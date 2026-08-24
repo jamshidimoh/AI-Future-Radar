@@ -18,14 +18,12 @@ if str(SRC) not in sys.path:
 
 import educational_content  # noqa: E402
 import production_entrypoint  # noqa: E402
-import main as _pipeline  # noqa: E402
 import src.normal_publication_fallback as _normal_fallback  # noqa: E402
 import src.production_publication_adapter as _publication_adapter  # noqa: E402
 
 _ORIGINAL_FETCH_REFERENCE = educational_content._fetch_reference
 _ORIGINAL_REWRITE_EDUCATION_PERSIAN = production_entrypoint._rewrite_education_persian
 _ORIGINAL_PUBLISH_PRODUCTION_STORY = _publication_adapter.publish_production_story
-_ORIGINAL_PROTECTED_LEADER_INTERVIEW = _pipeline._is_protected_leader_interview
 
 DEFAULT_WATCHDOG_MINUTES = 22
 
@@ -74,38 +72,6 @@ def _rewrite_education_only_if_needed(item: dict, llm_call, providers) -> dict:
         print(f"[Education Language Gate] source_validated min_ratio={minimum:.2f}; rewrite skipped", flush=True)
         return item
     return _ORIGINAL_REWRITE_EDUCATION_PERSIAN(item, llm_call, providers)
-
-
-def _has_explicit_interview_evidence(item: dict) -> bool:
-    """Require evidence of interview-style content before granting protected routing."""
-    explicit = item.get("interview_signal") or item.get("interview_format") or item.get("is_interview")
-    if explicit is True:
-        return True
-    text = " ".join(str(item.get(k) or "") for k in ("title", "summary", "description")).lower()
-    terms = (
-        "interview", "conversation", "fireside", "q&a", "question and answer",
-        "talk with", "talks with", "speaks with", "in conversation", "sits down with",
-        "مصاحبه", "گفتگو", "گفت‌وگو", "پرسش و پاسخ"
-    )
-    return any(term in text for term in terms)
-
-
-def _protected_leader_interview_with_evidence(item) -> bool:
-    leader = str(item.get("leader") or item.get("watch_person") or "").strip()
-    if not leader:
-        return False
-    watch = bool(item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("_named_leader_interview"))
-    if not watch:
-        return False
-    source = str(item.get("source") or item.get("source_name") or "").lower()
-    url = str(item.get("canonical_url") or item.get("link") or item.get("url") or "").lower()
-    news_aggregator = "google news" in source or "news.google.com" in url or "/rss/articles/" in url
-    if news_aggregator and not _has_explicit_interview_evidence(item):
-        return False
-    return bool(_ORIGINAL_PROTECTED_LEADER_INTERVIEW(item) and _has_explicit_interview_evidence(item))
-
-
-_pipeline._is_protected_leader_interview = _protected_leader_interview_with_evidence
 
 
 def _publish_education_after_news(run_number: int) -> bool:

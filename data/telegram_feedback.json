@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787548418,
+  "updated_at": 1787549032,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3026,6 +3026,23 @@
       "title": "تغییرات ساختاری در هسته هوش مصنوعی گوگل: استعفای Demis Hassabis و خروج Jeff Dean",
       "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9VR1BIbjRHVXRlTzk5VTYwdWstNTFMV2V2Ykd3TW9Kci1rcGpuWkNzY29CY3BMRGI5NU45YzV2Y2Zlcnp1dDRRQXc4SDVRXzhydXJmbDVETVNNRXRsYW1pMl9XOW9GSy1SemttSENQb3BJMngwd1E?oc=5",
       "posted_at": 1787548418
+    },
+    "-1004482051328:1217": {
+      "chat_id": -1004482051328,
+      "message_id": 1217,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Moneycontrol.com)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "تغییرات ساختاری در رهبری هوش مصنوعی گوگل: استعفای دمیس هسabis و خروج Jeff Dean",
+      "link": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxQZTVoRExtb2I1ZlVYdnRySHFqUnBwWTJYZ1dKbnZpQkc2dzdfVjUwMmxNcE5Ua3MtT2I5LVo5VlhvTEd0dFFvbUJsbUw2RWdCYk9LRVlvaDN5ck9KOFJ6VzBjYTZFVGEwZktKNVB1NUtDY0JXeVZnVlpIcklqbGxtN2ZuWGt4ZGlPRUdqOFdMNEkzTEdic2wwT0hKaEhITndaQ3lBT19GS3ZmZUtNdmFvbWZnaFNUcWR5UU42VnFDZnFQbnFxbUFQb2xoRnRrTjBWVm0wNnZUWXdJdFlNcWdLZXVya1NOSzlqdlEwYVNiNmxVdEo1Y2tfMdIB_gFBVV95cUxQUl92TUNiRWhaczBJZ0pmTEtVRzl2YUNiYWJkMlVSRENZdzhwLW9Ic2dKQ2t0NkVILXZIVDNhN3FocjlIaHNwaFphVVRJczNQZGlPQzE1LXlYVjZJTlNURFU1dk14TDhSeXhhNnJINnVzZDF3b1JUeFljNnpIWlJZMTI5UHNkMzJ0dF9UVXFWSjhTQmplZDUzbl9rY0tGNzFlQ1JTVVdlaFQ2bzE5Zjk5Y0t1cXlnNHBubTNNUkk2RHBTaENsbzdXMkJqWl9rRDBQWjYwUU1waWNVMFpBOFQ2WkdZbFJXMkdRRTU3cTlnekp0eGswbzBzNDdCZGl2Zw?oc=5",
+      "posted_at": 1787549032
     }
   }
 }

@@ -39,12 +39,6 @@ def _is_research(item: dict) -> bool:
     return _content_type(item) in _RESEARCH_TYPES or bool(item.get("research_signal"))
 
 
-def _is_arxiv(item: dict) -> bool:
-    source = str(item.get("source") or item.get("source_name") or "").casefold()
-    url = str(item.get("canonical_url") or item.get("link") or item.get("url") or "").casefold()
-    return "arxiv" in source or "arxiv.org" in url
-
-
 def _recent_source_counts(rotation_days: int) -> Counter:
     cutoff = time.time() - max(0, int(rotation_days)) * 86400
     counts: Counter = Counter()
@@ -70,7 +64,6 @@ def _quality_utility(
     type_counts: Counter,
     source_counts: Counter,
     recent_sources: Counter,
-    arxiv_count: int,
 ) -> tuple:
     base = float(item.get("final_editorial_score", 0) or item.get("editorial_score", 0) or 0)
     mission = float(item.get("mission_score", 0) or 0)
@@ -101,14 +94,6 @@ def _quality_utility(
 
     # Preserve seven-day source rotation as a soft penalty.
     utility -= min(8.0, recent_sources[source] * 3.0)
-
-    # arXiv is a discovery-strength preprint source, not a publication authority.
-    # Once one arXiv story is selected, additional arXiv candidates receive a
-    # strong concentration penalty so another credible source can surface.
-    if _is_arxiv(item):
-        utility -= 6.0
-        if arxiv_count >= 1:
-            utility -= 20.0
 
     tier = _source_tier(item)
     utility += {1: 2.0, 2: 0.5, 3: -2.0}.get(tier, -2.0)
@@ -154,7 +139,6 @@ def select_normal_portfolio(
     type_counts: Counter = Counter()
     source_counts: Counter = Counter()
     remaining = list(prepared)
-    arxiv_count = 0
 
     limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or 1))
@@ -170,13 +154,6 @@ def select_normal_portfolio(
         if not eligible:
             break
 
-        # Normally keep at most one arXiv story in the final portfolio. Relax
-        # only when the remaining pool contains no non-arXiv alternative.
-        if arxiv_count >= 1:
-            non_arxiv = [item for item in eligible if not _is_arxiv(item)]
-            if non_arxiv:
-                eligible = non_arxiv
-
         chosen = max(
             eligible,
             key=lambda item: _quality_utility(
@@ -185,27 +162,23 @@ def select_normal_portfolio(
                 type_counts,
                 source_counts,
                 recent_sources,
-                arxiv_count,
             ),
         )
         remaining.remove(chosen)
         source = _source_key(chosen)
         ctype = _content_type(chosen)
         area = _area(chosen)
-        is_arxiv = _is_arxiv(chosen)
 
         source_counts[source] += 1
         type_counts[ctype] += 1
         area_counts[area] += 1
-        arxiv_count += 1 if is_arxiv else 0
         chosen["portfolio_rank"] = len(selected) + 1
-        chosen["arxiv_portfolio_count"] = arxiv_count
         utility = _quality_utility(
-            chosen, area_counts, type_counts, source_counts, recent_sources, arxiv_count
+            chosen, area_counts, type_counts, source_counts, recent_sources
         )[0]
         chosen["portfolio_selection_reason"] = (
             f"mission={area};utility={utility:.2f};source_tier={_source_tier(chosen)};"
-            f"rotation_count={recent_sources[source]};arxiv_count={arxiv_count}"
+            f"rotation_count={recent_sources[source]}"
         )
         chosen.setdefault("editorial_slot", "fallback")
         chosen.setdefault("selection_reason", "mission_aware_portfolio")
@@ -222,7 +195,7 @@ def select_normal_portfolio(
     )
     print(
         f"[Mission-Aware Portfolio] rotation_days={rotation_days} areas={dict(area_counts)} "
-        f"sources={dict(source_counts)} types={dict(type_counts)} arxiv_selected={arxiv_count}",
+        f"sources={dict(source_counts)} types={dict(type_counts)}",
         flush=True,
     )
     return selected

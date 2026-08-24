@@ -1,7 +1,9 @@
 """Canonical interview-format evidence used across editorial and production routing.
 
-This module separates format evidence from leader/watchlist identity. Derived leader
-flags and generic content-type labels alone never count as interview evidence.
+Interview format is classified once here and consumed by editorial/production.
+Leader/watchlist identity is context, not evidence by itself; however, a verified
+leader-watch item with an interview content type is valid format evidence when the
+source is not an unverified Google News aggregation label.
 """
 
 INTERVIEW_CONTENT_TYPES = frozenset({
@@ -30,8 +32,30 @@ def _text(item):
     ).casefold()
 
 
+def _is_google_news_aggregation(item):
+    values = (
+        str(item.get("source_type") or ""),
+        str(item.get("source") or ""),
+        str(item.get("canonical_url") or ""),
+    )
+    text = " ".join(values).casefold()
+    return "google news" in text or "news.google.com" in text
+
+
+def _has_verified_leader_context(item):
+    name = str(item.get("leader") or item.get("watch_person") or "").strip()
+    return bool(
+        name
+        and (
+            item.get("is_leader_watch")
+            or item.get("leader_watch_protected")
+            or item.get("leader_signal")
+        )
+    )
+
+
 def has_interview_evidence(item):
-    """Return True only for format evidence, never for leader identity alone."""
+    """Return True for canonical format evidence with source/provenance safeguards."""
     if not item:
         return False
 
@@ -42,10 +66,21 @@ def has_interview_evidence(item):
         if isinstance(value, str) and value.strip().casefold() in {"true", "yes", "1", "interview"}:
             return True
 
-    # A title that explicitly identifies the format is usable evidence regardless
-    # of source. This preserves Persian/English interview titles during exhaustion
-    # without treating a generic article as protected.
+    # Explicit format in the title is strong evidence regardless of source.
     if _contains_interview_term(item.get("title")):
+        return True
+
+    content_type = str(item.get("content_type") or "").strip().casefold()
+
+    # A verified leader-watch item classified upstream as an interview is valid
+    # format evidence, except when the only provenance is a Google News aggregation.
+    # This preserves the established leader-priority contract without allowing
+    # generic Google News labels to create false protected interviews.
+    if (
+        content_type in INTERVIEW_CONTENT_TYPES
+        and _has_verified_leader_context(item)
+        and not _is_google_news_aggregation(item)
+    ):
         return True
 
     source_type = str(item.get("source_type") or "").strip().casefold()
@@ -54,11 +89,10 @@ def has_interview_evidence(item):
         token in source for token in ("youtube", "podcast", "spotify")
     )
     if interview_media and (
-        str(item.get("content_type") or "").strip().casefold() in INTERVIEW_CONTENT_TYPES
+        content_type in INTERVIEW_CONTENT_TYPES
         or _contains_interview_term(_text(item))
     ):
         return True
 
-    # Generic news/content-type labels are supporting metadata only; by themselves
-    # they are insufficient because upstream/news classifiers can over-label articles.
+    # Generic content_type=interview without trustworthy provenance is not enough.
     return False

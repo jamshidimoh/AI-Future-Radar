@@ -18,6 +18,7 @@ from editorial import enrich_items, filter_ai_relevance, filter_low_signal, sele
 from fetch_google_news import fetch_google_news_items
 from fetch_rss import fetch_rss_items
 from fetch_youtube import fetch_youtube_items
+from interview_evidence import has_interview_evidence
 from mission_selector import _source_tier
 from send_telegram import format_post, resolve_source_image, send_to_telegram_safe
 from signal_engine import enrich_signal_items
@@ -46,27 +47,11 @@ def _contains_person(text, name):
 
 
 def _has_explicit_interview_evidence(item):
-    """Return True only when the item carries explicit interview-format evidence."""
-    explicit = item.get("interview_signal") or item.get("interview_format") or item.get("is_interview")
-    if explicit is True:
-        return True
-    text = _text(item)
-    terms = (
-        "interview", "conversation", "fireside", "q&a", "question and answer",
-        "talk with", "talks with", "speaks with", "in conversation", "sits down with",
-        "مصاحبه", "گفتگو", "گفت‌وگو", "پرسش و پاسخ"
-    )
-    return any(term in text for term in terms)
+    return has_interview_evidence(item)
 
 
 def _direct_interview_signal(item):
-    ctype = str(item.get("content_type") or "").lower()
-    source = str(item.get("source") or "").lower()
-    return (
-        _has_explicit_interview_evidence(item)
-        or ctype in {"podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
-        or ("podcast" in source and ctype not in {"news", "official", "product_news"})
-    )
+    return has_interview_evidence(item)
 
 
 def _leader_activity_signal(item):
@@ -133,7 +118,7 @@ def _is_protected_leader_interview(item):
         return False
     if not (item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("_named_leader_interview")):
         return False
-    return _has_explicit_interview_evidence(item)
+    return has_interview_evidence(item)
 
 
 def _is_protected_leader_activity(item):

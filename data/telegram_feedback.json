@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787602208,
+  "updated_at": 1787602857,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3430,6 +3430,18 @@
       "why_it_matters": "معرفی Gemini نشان‌دهنده گام مهمی در جهت یکپارچه‌سازی کامل مدال‌های مختلف داده در هوش مصنوعی است. این قابلیت به سیستم‌ها اجازه می‌دهد تا مانند انسان‌ها اطلاعات را از منابع متنوع ترکیب کرده و درک جامع‌تری از جهان پیرامون کسب کنند که برای کاربردهای پیچیده حیاتی است.",
       "link": "https://www.youtube.com/watch?v=d95J8yzvjbQ",
       "posted_at": 1787602208
+    },
+    "-1004482051328:1239": {
+      "chat_id": -1004482051328,
+      "message_id": 1239,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787602857
     }
   }
 }

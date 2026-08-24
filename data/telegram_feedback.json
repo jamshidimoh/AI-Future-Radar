@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787515986,
+  "updated_at": 1787532081,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2875,6 +2875,38 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787515782
+    },
+    "-1004482051328:1208": {
+      "chat_id": -1004482051328,
+      "message_id": 1208,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چرا دادن ارزش‌های مستقل به هوش مصنوعی خطرناک است؟",
+      "link": "https://www.youtube.com/watch?v=iUssTMQRDHI",
+      "posted_at": 1787532080
+    },
+    "-1004482051328:1209": {
+      "chat_id": -1004482051328,
+      "message_id": 1209,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Reddit - r/artificial",
+      "content_type": "community",
+      "category": "ai",
+      "leader": "",
+      "title": "تحلیل پتانسیل هوش مصنوعی و رباتیک در ایجاد برتری نظامی مطلق",
+      "link": "https://www.reddit.com/r/artificial/comments/1vwhuz8/what_military_use_of_airobotics_advancement_could/",
+      "posted_at": 1787532081
     }
   }
 }

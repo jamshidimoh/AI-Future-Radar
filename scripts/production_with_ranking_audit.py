@@ -34,18 +34,20 @@ def _audited_main(hooks=None):
             audit_selection(selected)
             return selected
 
-        window_size = max(int(max_posts or 0) + 6, int(max_posts or 0) * 3, 10)
-        candidate_window = _original_rank(
-            items,
-            max_posts=window_size,
-            max_per_source=max(max_per_source, 6),
-            max_per_type=max(max_per_type, 8),
-            policy=policy,
-        )
+        # Do not pre-select a tiny ranked window. The mission-aware selector must
+        # see the full post-Story-Gate normal pool so it can trade off mission,
+        # source, type, research/interview/news and arXiv concentration.
+        eligible = [
+            x for x in (items or [])
+            if not x.get("duplicate") and not x.get("publication_blocked")
+        ]
+        eligible = pipeline._exclude_published_candidates(eligible)
+        pipeline._prepare_rank_features(eligible)
         normal_candidates = [
-            item for item in candidate_window
+            item for item in eligible
             if not item.get("_rank_is_tier0") and not item.get("protected_content")
         ]
+
         selected = select_normal_portfolio(
             normal_candidates,
             max_posts=max_posts,
@@ -53,19 +55,17 @@ def _audited_main(hooks=None):
             max_per_type=max_per_type,
             policy=policy,
         )
-
-        tier0_count = sum(1 for item in candidate_window if item.get("_rank_is_tier0"))
         for normal_rank, item in enumerate(selected, 1):
             item["normal_period_rank"] = normal_rank
             item["tier0_rank"] = None
-            item["period_rank"] = tier0_count + normal_rank
+            item["period_rank"] = normal_rank
             item["publication_rank_assigned"] = True
 
         audit_selection(selected)
         return selected
 
     def rtl_format(*args, **kwargs):
-        formatter = original_format or pipeline._format_post
+        formatter = original_format or pipeline.format_post
         return force_rtl_blocks(formatter(*args, **kwargs))
 
     merged["select_editorial"] = production_select

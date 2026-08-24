@@ -26,6 +26,15 @@ _TITLE_REPAIR_PROMPT = """عنوان زیر را برای انتشار در یک
 عنوان: {title}
 خلاصه منبع: {summary}"""
 
+_DRAFT_REPAIR_PROMPT = """پیش‌نویس زیر برای انتشار فارسی نامعتبر است. آن را از نو و کامل بازنویسی کن؛ فقط از شواهد موجود در منبع استفاده کن و هیچ ادعای جدیدی نساز.
+تمام سه فیلد title، summary و why_it_matters باید فارسی حرفه‌ای باشند. نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها را Latin نگه دار و آوانویسی فارسی نام خاص انجام نده.
+summary باید 2 تا 4 جمله کامل و اطلاعات مهم منبع را حفظ کند. why_it_matters باید 2 تا 3 جمله کامل و معمولاً 220 تا 360 نویسه باشد. key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن منبع باشد و در غیر این صورت خالی. category را از مقدار فعلی حفظ کن.
+خروجی دقیقاً JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
+
+پیش‌نویس: {draft}
+
+متن منبع: {source}"""
+
 
 def _extract_json(raw):
     text = (raw or "").strip()
@@ -130,6 +139,49 @@ def _repair_title(data):
     return data, provider
 
 
+def _repair_persian_draft(data, item):
+    """Recover the complete Persian editorial draft before the final language gate.
+
+    Title-only recovery cannot rescue a provider that returned an otherwise
+    valid-looking but entirely non-Persian draft. This bounded second pass uses
+    the same quality-provider chain and validates the complete draft before it
+    is allowed back into the normal publication path.
+    """
+    prompt = _DRAFT_REPAIR_PROMPT.format(
+        draft=json.dumps(data, ensure_ascii=False),
+        source=str(item.get("summary", "") or "")[:3500],
+    )
+    raw, provider = call_llm_with_fallback(
+        prompt,
+        json.dumps({"draft": data, "source": str(item.get("summary", "") or "")[:3500]}, ensure_ascii=False),
+        providers=get_quality_chain(),
+    )
+    try:
+        candidate = _normalize(_extract_json(raw or ""), item)
+    except (json.JSONDecodeError, TypeError, ValueError):
+        print("[Draft Language Recovery] invalid JSON; preserving original draft", flush=True)
+        return data, provider
+
+    if _language_ok(candidate) and _length_ok(candidate, str(item.get("summary", "") or "")):
+        print(
+            "[Draft Language Recovery] recovered full Persian draft "
+            f"title={persian_ratio(candidate.get('title','')):.2f} "
+            f"summary={persian_ratio(candidate.get('summary','')):.2f} "
+            f"why={persian_ratio(candidate.get('why_it_matters','')):.2f}",
+            flush=True,
+        )
+        return candidate, provider
+
+    print(
+        "[Draft Language Recovery] rejected recovered draft "
+        f"ratios title={persian_ratio(candidate.get('title','')):.2f} "
+        f"summary={persian_ratio(candidate.get('summary','')):.2f} "
+        f"why={persian_ratio(candidate.get('why_it_matters','')):.2f}",
+        flush=True,
+    )
+    return data, provider
+
+
 def _editorial_review(data):
     original = dict(data)
     raw, provider = call_llm_with_fallback(
@@ -179,8 +231,12 @@ def summarize_item(item):
         if os.getenv("AI_RADAR_EDITORIAL_REVIEW", "0").strip().lower() in {"1", "true", "yes"}:
             final, editorial_provider = _editorial_review(final)
     else:
-        final, recovery_provider = _repair_title(final)
-        provider = provider or recovery_provider
+        if not _language_ok(final):
+            final, recovery_provider = _repair_persian_draft(final, item)
+            provider = provider or recovery_provider
+        if not _language_ok(final) or not _length_ok(final, raw_text):
+            final, recovery_provider = _repair_title(final)
+            provider = provider or recovery_provider
 
     final = _normalize(final, item)
     if not _language_ok(final):

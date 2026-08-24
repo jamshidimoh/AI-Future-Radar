@@ -1,10 +1,12 @@
 # Mission-critical supplemental feeds. These extend the canonical source policy
 # without replacing it. They are discovery inputs; AI relevance/publication gates
 # remain authoritative downstream.
+# arXiv is treated as a research-discovery source (preprint), not as a publication-quality
+# authority tier. Final portfolio selection also limits arXiv concentration to one story.
 rss_sources:
-  - {name: "arXiv cs.AI", url: "https://export.arxiv.org/rss/cs.AI", tier: 1, type: "scientific_repository", content_type: "research", official: true, mission: "ai"}
-  - {name: "arXiv cs.LG", url: "https://export.arxiv.org/rss/cs.LG", tier: 1, type: "scientific_repository", content_type: "research", official: true, mission: "ai"}
-  - {name: "arXiv quant-ph", url: "https://export.arxiv.org/rss/quant-ph", tier: 1, type: "scientific_repository", content_type: "research", official: true, mission: "quantum"}
-  - {name: "arXiv q-bio.BM", url: "https://export.arxiv.org/rss/q-bio.BM", tier: 1, type: "scientific_repository", content_type: "research", official: true, mission: "genetics"}
-  - {name: "arXiv q-bio.GN", url: "https://export.arxiv.org/rss/q-bio.GN", tier: 1, type: "scientific_repository", content_type: "research", official: true, mission: "genetics"}
-  - {name: "arXiv q-bio.NC", url: "https://export.arxiv.org/rss/q-bio.NC", tier: 1, type: "scientific_repository", content_type: "research", official: true, mission: "mind"}
+  - {name: "arXiv cs.AI", url: "https://export.arxiv.org/rss/cs.AI", tier: 2, type: "scientific_repository", content_type: "research", official: true, mission: "ai"}
+  - {name: "arXiv cs.LG", url: "https://export.arxiv.org/rss/cs.LG", tier: 2, type: "scientific_repository", content_type: "research", official: true, mission: "ai"}
+  - {name: "arXiv quant-ph", url: "https://export.arxiv.org/rss/quant-ph", tier: 2, type: "scientific_repository", content_type: "research", official: true, mission: "quantum"}
+  - {name: "arXiv q-bio.BM", url: "https://export.arxiv.org/rss/q-bio.BM", tier: 2, type: "scientific_repository", content_type: "research", official: true, mission: "genetics"}
+  - {name: "arXiv q-bio.GN", url: "https://export.arxiv.org/rss/q-bio.GN", tier: 2, type: "scientific_repository", content_type: "research", official: true, mission: "genetics"}
+  - {name: "arXiv q-bio.NC", url: "https://export.arxiv.org/rss/q-bio.NC", tier: 2, type: "scientific_repository", content_type: "research", official: true, mission: "mind"}

@@ -39,7 +39,7 @@ low_signal_terms: ["top 10", "best tools", "prompt collection", "weekly roundup"
 
 # Evidence hierarchy: official research > peer-reviewed science > university/research lab > specialist media > community.
 source_tiers:
-  1: ["MIT CSAIL", "Stanford HAI", "BAIR", "Google DeepMind", "OpenAI", "Anthropic", "MIT News", "Nature", "Quanta Magazine", "CMU", "Carnegie Mellon", "NIST", "IEEE", "arXiv"]
+  1: ["MIT CSAIL", "Stanford HAI", "BAIR", "Google DeepMind", "OpenAI", "Anthropic", "MIT News", "Nature", "Quanta Magazine", "CMU", "Carnegie Mellon", "NIST", "IEEE"]
   2: ["MIT Technology Review", "IEEE Spectrum", "Ars Technica", "Reuters", "Wired", "Scientific American", "New Scientist"]
   3: ["Reddit", "community", "aggregator"]
 

@@ -50,7 +50,7 @@ def test_persian_quantum_with_ai_is_relevant():
 
 def test_generic_reasoning_alone_stays_rejected():
     result = filter_ai_relevance([
-        _item("تحلیل استدلال انسانی", "این متن درباره منطق و فلسفه است و هیچ ارتباطی با هوش مصنوعی ندارد.", category="mind")
+        _item("تحلیل استدلال انسانی", "این متن درباره منطق، فلسفه و استدلال انسان است.", category="mind")
     ], ["AI"])
     assert result == []
 

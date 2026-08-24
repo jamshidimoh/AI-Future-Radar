@@ -45,11 +45,28 @@ def _contains_person(text, name):
     return str(name or "").strip().lower() in str(text or "").lower()
 
 
+def _has_explicit_interview_evidence(item):
+    """Return True only when the item carries explicit interview-format evidence."""
+    explicit = item.get("interview_signal") or item.get("interview_format") or item.get("is_interview")
+    if explicit is True:
+        return True
+    text = _text(item)
+    terms = (
+        "interview", "conversation", "fireside", "q&a", "question and answer",
+        "talk with", "talks with", "speaks with", "in conversation", "sits down with",
+        "مصاحبه", "گفتگو", "گفت‌وگو", "پرسش و پاسخ"
+    )
+    return any(term in text for term in terms)
+
+
 def _direct_interview_signal(item):
     ctype = str(item.get("content_type") or "").lower()
     source = str(item.get("source") or "").lower()
-    text = _text(item)
-    return ctype in {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"} or bool(item.get("interview_signal")) or any(term in text for term in ("interview", "conversation", "fireside", "keynote", "podcast", "discussion", "q&a", "talk with", "speaks with", "in conversation", "sits down with")) or ("podcast" in source and ctype not in {"news", "official", "product_news"})
+    return (
+        _has_explicit_interview_evidence(item)
+        or ctype in {"podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
+        or ("podcast" in source and ctype not in {"news", "official", "product_news"})
+    )
 
 
 def _leader_activity_signal(item):
@@ -111,7 +128,12 @@ def _annotate_named_leader_interviews(items, leader_people, leader_priorities=No
 
 
 def _is_protected_leader_interview(item):
-    leader = str(item.get("leader") or item.get("watch_person") or "").strip(); return bool(leader and (item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("_named_leader_interview")) and _direct_interview_signal(item))
+    leader = str(item.get("leader") or item.get("watch_person") or "").strip()
+    if not leader:
+        return False
+    if not (item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("_named_leader_interview")):
+        return False
+    return _has_explicit_interview_evidence(item)
 
 
 def _is_protected_leader_activity(item):

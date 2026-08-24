@@ -87,20 +87,33 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         from semantic_publication_guard import cross_language_anchor_conflict
     except Exception:
         return 0.0
+
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
-    leader = str(record.get("leader") or record.get("watch_person") or "")
+    leader = str(record.get("leader") or record.get("watch_person") or "").strip()
     candidate_text = f"{candidate_title} {candidate_summary}"
     stored_text = f"{stored_title} {stored_summary}"
+
     candidate = get_story_signature({"title": candidate_title, "summary": candidate_summary})
     stored = get_story_signature({"title": stored_title, "summary": stored_summary})
     score = _similarity(candidate, stored)
+
     if cross_language_anchor_conflict(candidate_text, stored_text):
         score = max(score, 0.70)
+
     if leader and _normalized_title(leader) in _normalized_title(candidate_text):
-        leader_sig = get_story_signature({"title": f"{leader} {candidate_title}", "summary": candidate_summary})
-        stored_sig = get_story_signature({"title": f"{leader} {stored_title}", "summary": stored_summary})
+        leader_candidate_text = f"{leader} {candidate_text}"
+        leader_stored_text = f"{leader} {stored_text}"
+        leader_sig = get_story_signature({"title": leader_candidate_text, "summary": candidate_summary})
+        stored_sig = get_story_signature({"title": leader_stored_text, "summary": stored_summary})
         score = max(score, _similarity(leader_sig, stored_sig))
+        # A translated rewrite can lose lexical similarity while retaining the
+        # same named leader plus two or more stable English anchors (for example,
+        # co-speaker, company, model, or quantitative marker). Promote that
+        # evidence to the same fail-closed threshold used elsewhere.
+        if cross_language_anchor_conflict(leader_candidate_text, leader_stored_text):
+            score = max(score, 0.70)
+
     return score
 
 

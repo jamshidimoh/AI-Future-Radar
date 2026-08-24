@@ -1,6 +1,20 @@
-from editorial_clean import filter_ai_relevance, enrich_items as _enrich_items, classify_editorial_item as _classify_editorial_item, contract_summary, filter_low_signal
+from editorial_clean import filter_ai_relevance as _filter_ai_relevance, enrich_items as _enrich_items, classify_editorial_item as _classify_editorial_item, contract_summary, filter_low_signal
 from mission_selector import mission_score, select_mission_portfolio
 from strategic_signal import strategic_forecast_score
+
+
+def filter_ai_relevance(items, ai_keywords=None):
+    """Apply the existing AI relevance semantics to all available source evidence."""
+    prepared = []
+    for raw in items or []:
+        item = dict(raw)
+        evidence = str(item.get("evidence_text") or "").strip()
+        if evidence:
+            item["summary"] = " ".join(
+                part for part in (str(item.get("summary") or "").strip(), evidence) if part
+            )[:5000]
+        prepared.append(item)
+    return _filter_ai_relevance(prepared, ai_keywords)
 
 
 def classify_editorial_item(item, prior=None):

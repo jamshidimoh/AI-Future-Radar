@@ -1,5 +1,5 @@
 from editorial_clean import filter_ai_relevance, enrich_items as _enrich_items, classify_editorial_item as _classify_editorial_item, contract_summary, filter_low_signal
-from mission_selector import mission_score, select_mission_portfolio, _source_tier
+from mission_selector import mission_score, select_mission_portfolio
 from strategic_signal import strategic_forecast_score
 
 
@@ -88,41 +88,48 @@ def _apply_strategic_signal(item):
 
 
 def _regular_portfolio(items, cap, max_per_source, max_per_type):
-    """Select the regular stream only through the canonical mission portfolio.
-
-    The previous implementation had separate research/news fast paths that could
-    bypass source-authority and analytical-anchor safeguards enforced by
-    ``select_mission_portfolio``. That made low-authority aggregators and community
-    items able to occupy normal slots despite the central editorial policy.
-    """
     if cap <= 0 or not items:
         return []
-
     scored = []
     for raw in items:
         x = dict(raw)
         mission_score(x)
         _apply_strategic_signal(x)
         scored.append(x)
+    result = []
+    used_sources = set()
 
-    authoritative = [
-        x for x in scored
-        if _source_tier(x) <= 2
-        and bool(x.get("analytical_anchor"))
-    ]
+    def source_key(x):
+        return str(x.get("source") or x.get("source_domain") or "unknown").strip().casefold()
 
-    if not authoritative:
-        return []
+    def add_best(predicate, reason):
+        candidates = [x for x in scored if source_key(x) not in used_sources and predicate(x)]
+        if not candidates:
+            return False
+        chosen = max(candidates, key=lambda x: float(x.get("mission_score", 0) or 0))
+        chosen["mission_selection_reason"] = reason
+        result.append(chosen)
+        used_sources.add(source_key(chosen))
+        return True
 
-    selected = select_mission_portfolio(
-        authoritative,
-        max_posts=cap,
-        max_per_source=max_per_source,
-        max_per_type=max_per_type,
-    )
-    for item in selected:
-        item.setdefault("mission_selection_reason", "mission_portfolio")
-    return selected[:cap]
+    if len(result) < cap:
+        add_best(lambda x: str(x.get("content_type") or "").lower() in {"research", "paper", "study", "preprint"} or x.get("research_signal"), "research_evidence")
+    if len(result) < cap:
+        add_best(lambda x: str(x.get("content_type") or "").lower() in {"news", "official", "product_news"} or x.get("news_signal"), "major_industry_news")
+
+    remaining = [x for x in scored if source_key(x) not in used_sources]
+    if len(result) < cap and remaining:
+        extra = select_mission_portfolio(remaining, max_posts=cap - len(result), max_per_source=max_per_source, max_per_type=max_per_type)
+        for x in extra:
+            if source_key(x) in used_sources:
+                continue
+            if _leader_name(x) and (x.get("leader_watch_protected") or x.get("leader_signal") or x.get("leader_priority")):
+                continue
+            result.append(x)
+            used_sources.add(source_key(x))
+            if len(result) >= cap:
+                break
+    return result[:cap]
 
 
 def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, policy=None):

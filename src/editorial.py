@@ -8,16 +8,24 @@ _AI_TAXONOMY_BRIDGE_TERMS = {
     "frontier model", "ai model", "autoresearch", "openai model", "anthropic model",
     "deepmind model", "claude model", "gemini model", "llama model", "qwen model",
     "mistral model",
+    # Persian mission vocabulary. These terms are evidence, not source-authority bypasses.
+    "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی بزرگ",
+    "مدل زبانی", "مدل بنیادی", "هوش مصنوعی مولد", "هوش مولد", "عامل هوشمند",
+    "عامل‌های هوشمند", "ایجنت هوشمند", "عامل‌های ai", "هوش عمومی مصنوعی", "استدلال",
+    "مدل استدلالی", "چندرسانه‌ای", "بینایی ماشین", "رباتیک", "ربات‌های هوشمند",
+    "استفاده از رایانه", "ایمنی هوش مصنوعی", "حکمرانی هوش مصنوعی", "سیاست‌گذاری هوش مصنوعی",
+    "آینده هوش مصنوعی", "آینده‌ی هوش مصنوعی", "داده مصنوعی", "شبکه عصبی", "شبکه‌های عصبی",
+    "خودکارسازی پژوهش", "اتوماسیون پژوهش", "مدل مولد", "مدل بنیادی",
 }
 
 
 def filter_ai_relevance(items, ai_keywords=None):
     """Apply the existing AI relevance semantics to all available source evidence.
 
-    The base relevance engine remains unchanged. The adapter supplies a small,
-    high-confidence taxonomy bridge for common AI model/architecture terms that
-    are already part of the repository's source policy but were missing from the
-    canonical editorial vocabulary.
+    The base relevance engine remains unchanged. The adapter supplies a bilingual,
+    high-confidence taxonomy bridge so Persian evidence is not discarded before
+    semantic/editorial enrichment. Source authority and content type never bypass
+    relevance on their own.
     """
     prepared = []
     for raw in items or []:

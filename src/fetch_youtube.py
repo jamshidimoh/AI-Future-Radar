@@ -211,8 +211,26 @@ def _walk_video_renderers(node, out: list[dict]) -> None:
             if not title:
                 title = str((title_obj.get("simpleText") or "")).strip()
             pub = str(((renderer.get("publishedTimeText") or {}).get("simpleText") or "")).strip()
+            description_parts = []
+            for detail in renderer.get("detailedMetadataSnippets") or []:
+                snippet = detail.get("snippet") or {}
+                runs = snippet.get("runs") or []
+                if runs:
+                    description_parts.extend(str(run.get("text") or "") for run in runs if isinstance(run, dict))
+                elif snippet.get("simpleText"):
+                    description_parts.append(str(snippet.get("simpleText")))
+            if not description_parts:
+                snippet = renderer.get("descriptionSnippet") or {}
+                runs = snippet.get("runs") or []
+                description_parts.extend(str(run.get("text") or "") for run in runs if isinstance(run, dict))
+            description = html.unescape(" ".join(part for part in description_parts if part).strip())
             if video_id and title:
-                out.append({"video_id": video_id, "title": html.unescape(title), "published_label": html.unescape(pub)})
+                out.append({
+                    "video_id": video_id,
+                    "title": html.unescape(title),
+                    "published_label": html.unescape(pub),
+                    "summary": description,
+                })
         for value in node.values():
             _walk_video_renderers(value, out)
     elif isinstance(node, list):
@@ -278,7 +296,7 @@ def _fetch_channel_page_items(channel_id: str, channel_name: str, cutoff: float)
                     "video_id": video_id,
                     "title": item.get("title", ""),
                     "link": f"https://www.youtube.com/watch?v={video_id}",
-                    "summary": "",
+                    "summary": str(item.get("summary") or ""),
                     "published": published,
                 })
             if results:
@@ -327,11 +345,16 @@ def _normalize_video_result(channel: dict, item: dict) -> dict | None:
     if not title or _is_low_signal_video(title, str(item.get("summary") or ""), channel):
         return None
     video_id = str(item.get("video_id") or "").strip()
-    transcript = _get_transcript_snippet(video_id)
+    raw_summary = str(item.get("summary") or "").strip()
+    transcript = _get_transcript_snippet(video_id) if not raw_summary else ""
+    evidence_text = transcript or raw_summary
+    evidence_source = "transcript" if transcript else ("channel_page_description" if raw_summary else "none")
     return {
         "title": title,
         "link": item.get("link", ""),
-        "summary": (transcript or str(item.get("summary") or ""))[:2000],
+        "summary": evidence_text[:2000],
+        "evidence_text": evidence_text[:3000],
+        "evidence_source": evidence_source,
         "source": f"YouTube - {channel['name']}",
         "category": channel.get("category", "ai"),
         "is_video": True,

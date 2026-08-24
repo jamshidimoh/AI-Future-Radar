@@ -1,6 +1,7 @@
 name: Run AI Future Radar Bot
 
 on:
+  push:
   workflow_dispatch:
   schedule:
     - cron: "0 */4 * * *"
@@ -9,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: ai-future-radar-production
+  group: ai-future-radar-probe
   cancel-in-progress: false
 
 jobs:
@@ -52,7 +53,7 @@ jobs:
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-        run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
+        run: timeout 24m bash -o pipefail -c 'python -u scripts/ai_gate_runtime_probe.py 2>&1 | tee run.log'
 
       - name: Persist production state
         if: success()

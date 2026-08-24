@@ -26,6 +26,14 @@ Discovery
 
 Collectors are not responsible for editorial selection. LLMs are not responsible for deciding whether an item belongs to the monitored domain. The editorial module is the scoring authority; production orchestration adds only explicit runtime contracts such as cadence, protected-source handling, language gates, and delivery safety.
 
+## Discovery source boundary
+
+The source registry is authoritative for discovery. A globally excluded source is not a Radar source and must not be searched, crawled, ingested, ranked, selected, or published. Exclusions are enforced before network discovery where the query/source is known and again at ingestion as a defense against accidental upstream results.
+
+The current global exclusion is `arxiv.org` (including `export.arxiv.org`). It is intentionally absent from the source registry. Research coverage must come from validated non-arXiv sources such as peer-reviewed publishers, universities, research laboratories, scientific organizations, standards bodies, credible industry reports, and substantive expert content.
+
+This is a source boundary, not a ranking penalty or editorial exception. No downstream component should contain source-specific arXiv scoring, quota, concentration, or fallback logic.
+
 ## Discovery resilience
 
 ### YouTube
@@ -103,7 +111,7 @@ Every production run reports:
 
 ## Regression strategy
 
-The regression suite protects the production contracts rather than only unit-level helpers. It covers cadence, editorial selection, leader priority, MIT/Building 32 priority, canonical deduplication, YouTube resolution/fallback, image validation/delivery, Telegram formatting, educational RTL, language gates and configuration invariants.
+The regression suite protects the production contracts rather than only unit-level helpers. It covers cadence, editorial selection, leader priority, MIT/Building 32 priority, canonical deduplication, YouTube resolution/fallback, image validation/delivery, Telegram formatting, educational RTL, language gates, source exclusion, and configuration invariants.
 
 Any change to one of these contracts must update the corresponding regression test before production is considered ready.
 

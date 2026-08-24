@@ -25,9 +25,8 @@ ORG_ALIASES = {
     "developers.google.com": "google", "ai.google.dev": "google", "cloud.google.com": "google",
     "openai.com": "openai", "platform.openai.com": "openai",
     "anthropic.com": "anthropic", "docs.anthropic.com": "anthropic",
-    "arxiv.org": "arxiv", "huggingface.co": "huggingface",
-    "scikit-learn.org": "scikit-learn", "sbert.net": "sentence-transformers",
-    "pytorch.org": "pytorch", "tensorflow.org": "tensorflow",
+    "huggingface.co": "huggingface", "scikit-learn.org": "scikit-learn",
+    "sbert.net": "sentence-transformers", "pytorch.org": "pytorch", "tensorflow.org": "tensorflow",
     "learn.microsoft.com": "microsoft", "nvidia.com": "nvidia", "docs.nvidia.com": "nvidia",
     "quantum.cloud.ibm.com": "ibm", "ibm.com": "ibm",
     "modelcontextprotocol.io": "mcp", "hai.stanford.edu": "stanford",
@@ -68,7 +67,7 @@ def authority_tier(url: str) -> int:
     h = host(url)
     if h in TIER1_DOMAINS or top_domain(h) in TIER1_DOMAINS:
         return 1
-    if h.endswith(".edu") or h == "arxiv.org":
+    if h.endswith(".edu"):
         return 2
     if h in PRIMARY_DOMAINS:
         return 3
@@ -80,8 +79,6 @@ def authority_score(url: str) -> int:
     h = host(url)
     if h in PRIMARY_DOMAINS or top_domain(h) in PRIMARY_DOMAINS:
         score += 30
-    if "arxiv.org" in h:
-        score += 20
     if any(x in str(url).lower() for x in ("/standard", "/spec", "specification", "recommendation")):
         score += 10
     return min(score, 100)

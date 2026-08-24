@@ -7,6 +7,11 @@ import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
+try:
+    from .source_exclusions import is_excluded_source_text, is_excluded_source_url
+except ImportError:
+    from source_exclusions import is_excluded_source_text, is_excluded_source_url
+
 _FEED_TIMEOUT_SECONDS = 8
 _MAX_WORKERS = 4
 _MAX_RETRIES = 1
@@ -42,7 +47,11 @@ def _parse_feed(url):
 
 
 def _collect_query(q, cutoff):
-    encoded_query = urllib.parse.quote(q["query"])
+    query_text = str(q.get("query", ""))
+    if is_excluded_source_text(query_text):
+        print(f"[Discovery Exclusion] skipped Google News query targeting excluded source: {query_text}", flush=True)
+        return q, [], None
+    encoded_query = urllib.parse.quote(query_text)
     url = f"https://news.google.com/rss/search?q={encoded_query}&hl=en-US&gl=US&ceid=US:en"
     try:
         feed = _parse_feed(url)
@@ -63,6 +72,8 @@ def _collect_query(q, cutoff):
         summary = entry.get("summary", "")
         link = entry.get("link", "")
         source_title = entry.get("source", {}).get("title", "Google News") if hasattr(entry, "get") else "Google News"
+        if is_excluded_source_url(link) or is_excluded_source_text(source_title) or is_excluded_source_text(title):
+            continue
         watch_person = str(q.get("watch_person", "") or "").strip()
         is_leader_watch = bool(watch_person)
 
@@ -140,11 +151,9 @@ def fetch_google_news_items(queries, max_age_hours=36, max_workers=None, inter_q
 
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = [executor.submit(_collect_query, q, cutoff) for q in queries]
-        failures = 0
         for future in as_completed(futures):
             q, items, error = future.result()
             if error:
-                failures += 1
                 query_text = str(q.get("query", ""))
                 print(f"[WARN] خطا در خواندن Google News برای «{query_text}»: {error}", flush=True)
                 continue

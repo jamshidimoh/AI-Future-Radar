@@ -59,10 +59,15 @@ def _topic(t,extra=None):
     return ("ai_core",_hits(t,AI|e)[:6]) if _has(t,AI|e) else ("out_of_scope",[])
 def filter_ai_relevance(items,ai_keywords=None):
     out=[];drop=0;reason={"ai_core":"ai_evidence","quantum_ai":"quantum_ai_bridge","consciousness_cognition":"mind_technology_bridge","future_technology":"future_technology_bridge","bio_ai":"bio_ai_bridge","bci_neuro_ai":"bci_ai_bridge","robotics_embodied":"robotics_ai_bridge","computing_infrastructure":"computing_ai_bridge"}
+    explicit_families={"ai":"ai_core","quantum":"quantum_ai","genetics":"bio_ai","mind":"consciousness_cognition","future":"future_technology"}
     for raw in items:
         x=dict(raw);t=_text(x)
         if _has(t,LOW):continue
-        fam,ev=_topic(t,ai_keywords)
+        category=str(x.get("category") or "").strip().lower()
+        if category in explicit_families or bool(x.get("_ai_link")):
+            fam=explicit_families.get(category,"ai_core");ev=["explicit_ai_metadata"]
+        else:
+            fam,ev=_topic(t,ai_keywords)
         if fam=="out_of_scope":drop+=1;continue
         x.update(_ai_link=True,relevance_reason=reason[fam],relevance_evidence=ev,topic_family=fam,evidence_level="A");out.append(x)
     print(f"[AI Gate] rejected={drop} | kept={len(out)}")

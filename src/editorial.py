@@ -1,4 +1,5 @@
 from editorial_clean import filter_ai_relevance as _filter_ai_relevance, enrich_items as _enrich_items, classify_editorial_item as _classify_editorial_item, contract_summary, filter_low_signal
+from interview_evidence import has_interview_evidence
 from mission_selector import mission_score, select_mission_portfolio
 from strategic_signal import strategic_forecast_score
 
@@ -8,9 +9,7 @@ _AI_TAXONOMY_BRIDGE_TERMS = {
     "frontier model", "ai model", "autoresearch", "openai model", "anthropic model",
     "deepmind model", "claude model", "gemini model", "llama model", "qwen model",
     "mistral model",
-    # High-confidence AI entities. These are evidence terms, not source-authority bypasses.
     "openai", "anthropic", "deepmind", "chatgpt", "claude", "gemini", "llama", "qwen", "mistral",
-    # Persian mission vocabulary. These terms are evidence, not source-authority bypasses.
     "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی بزرگ",
     "مدل بنیادی", "هوش مصنوعی مولد", "هوش مولد", "عامل هوشمند", "عامل‌های هوشمند",
     "ایجنت هوشمند", "عامل‌های ai", "هوش عمومی مصنوعی", "مدل استدلالی", "بینایی ماشین",
@@ -21,13 +20,7 @@ _AI_TAXONOMY_BRIDGE_TERMS = {
 
 
 def filter_ai_relevance(items, ai_keywords=None):
-    """Apply the existing AI relevance semantics to all available source evidence.
-
-    The base relevance engine remains unchanged. The adapter supplies a bilingual,
-    high-confidence taxonomy bridge so Persian evidence is not discarded before
-    semantic/editorial enrichment. Source authority and content type never bypass
-    relevance on their own.
-    """
+    """Apply the existing AI relevance semantics to all available source evidence."""
     prepared = []
     for raw in items or []:
         item = dict(raw)
@@ -47,8 +40,7 @@ def classify_editorial_item(item, prior=None):
     if item.get("is_leader_watch") or item.get("leader_watch_protected"):
         result["leader"] = named
         result["leader_signal"] = True
-        ctype = str(item.get("content_type") or "").lower()
-        if named and (result.get("interview_signal") or ctype in {"interview", "podcast", "talk", "conversation", "fireside", "discussion", "q&a"}):
+        if named and has_interview_evidence({**item, **result}):
             result["interview_signal"] = True
             result["editorial_class"] = "leader_interview"
             result["editorial_confidence"] = 1.0
@@ -60,7 +52,7 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
     for item in enriched:
         if item.get("is_leader_watch") or item.get("leader_watch_protected"):
             item["leader_signal"] = True
-            if item.get("leader") and item.get("interview_signal"):
+            if item.get("leader") and has_interview_evidence(item):
                 item["leader_watch_protected"] = True
     return enriched
 
@@ -70,13 +62,9 @@ def _leader_name(item):
 
 
 def _is_named_leader_interview(item, allow_explicit_leader=False):
-    """Recognize protected named-leader interviews without weakening fallback semantics."""
+    """Recognize a named leader interview from the canonical format evidence."""
     name = _leader_name(item)
-    if not name:
-        return False
-    ctype = str(item.get("content_type") or "").lower()
-    is_interview = bool(item.get("interview_signal")) or ctype in {"interview", "podcast", "talk", "conversation", "fireside", "discussion", "q&a"}
-    if not is_interview:
+    if not name or not has_interview_evidence(item):
         return False
     return bool(
         item.get("is_leader_watch")

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787546246,
+  "updated_at": 1787548418,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3009,6 +3009,23 @@
       "title": "تغییرات ساختاری در تیم رهبری Gemini گوگل و خروج دانشمند ارشد",
       "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE5UTGwxcldIZjBoQTd4Z3hiY2JGb2VCQXZlMlpqRjh2SnpQYjhLV21iLWttN0lqaWxaa19HSm9vRU1aR1dSWVFwU2w5QjRZLTd3S1ZN?oc=5",
       "posted_at": 1787546246
+    },
+    "-1004482051328:1216": {
+      "chat_id": -1004482051328,
+      "message_id": 1216,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (finance.biggo.com)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "تغییرات ساختاری در هسته هوش مصنوعی گوگل: استعفای Demis Hassabis و خروج Jeff Dean",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9VR1BIbjRHVXRlTzk5VTYwdWstNTFMV2V2Ykd3TW9Kci1rcGpuWkNzY29CY3BMRGI5NU45YzV2Y2Zlcnp1dDRRQXc4SDVRXzhydXJmbDVETVNNRXRsYW1pMl9XOW9GSy1SemttSENQb3BJMngwd1E?oc=5",
+      "posted_at": 1787548418
     }
   }
 }

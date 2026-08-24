@@ -12,7 +12,10 @@ _WEAK_AI_KEYWORDS = {"ai"}
 _FEED_TIMEOUT_SECONDS = 20
 _MAX_WORKERS = 6
 _ROOT = Path(__file__).resolve().parents[1]
-_SUPPLEMENTAL_SOURCES_PATH = _ROOT / "config" / "anthropic_rss_sources.yaml"
+_SUPPLEMENTAL_SOURCES_PATHS = (
+    _ROOT / "config" / "anthropic_rss_sources.yaml",
+    _ROOT / "config" / "radar_rss_sources.yaml",
+)
 
 
 def _keyword_match(text, keyword):
@@ -39,23 +42,24 @@ def _parse_feed(url):
 
 def _load_supplemental_sources():
     """Load optional source extensions without changing the canonical source policy."""
-    if not _SUPPLEMENTAL_SOURCES_PATH.exists():
-        return []
-    try:
-        payload = yaml.safe_load(_SUPPLEMENTAL_SOURCES_PATH.read_text(encoding="utf-8")) or {}
-        sources = payload.get("rss_sources", [])
-        return sources if isinstance(sources, list) else []
-    except Exception as exc:
-        print(f"[WARN] supplemental RSS registry unavailable: {exc}", flush=True)
-        return []
+    merged = []
+    for path in _SUPPLEMENTAL_SOURCES_PATHS:
+        if not path.exists():
+            continue
+        try:
+            payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            sources = payload.get("rss_sources", [])
+            if isinstance(sources, list):
+                merged.extend(source for source in sources if isinstance(source, dict))
+        except Exception as exc:
+            print(f"[WARN] supplemental RSS registry unavailable: {path.name}: {exc}", flush=True)
+    return merged
 
 
 def _merge_rss_sources(rss_sources):
     merged = list(rss_sources or [])
     seen = {str(source.get("url", "")).rstrip("/") for source in merged if isinstance(source, dict)}
     for source in _load_supplemental_sources():
-        if not isinstance(source, dict):
-            continue
         url = str(source.get("url", "")).rstrip("/")
         if not url or url in seen:
             continue
@@ -72,13 +76,14 @@ def _collect_source(source, categories, cutoff):
 
     results = []
     source_name = source["name"]
-    source_category = None
-    if "quant-ph" in source_name.lower():
-        source_category = "quantum"
-    elif "q-bio" in source_name.lower():
-        source_category = "genetics"
-    elif "cs.ai" in source_name.lower():
-        source_category = "ai"
+    source_category = str(source.get("mission") or "").strip().lower() or None
+    if source_category is None:
+        if "quant-ph" in source_name.lower():
+            source_category = "quantum"
+        elif "q-bio" in source_name.lower():
+            source_category = "genetics"
+        elif "cs.ai" in source_name.lower() or "cs.lg" in source_name.lower():
+            source_category = "ai"
 
     for entry in feed.entries:
         published = entry.get("published_parsed") or entry.get("updated_parsed")
@@ -113,6 +118,7 @@ def _collect_source(source, categories, cutoff):
                 "source_type": source.get("type", "news"),
                 "content_type": source.get("content_type", "research"),
                 "official": bool(source.get("official", False)),
+                "mission_source": str(source.get("mission") or matched_category),
             })
     return source, results, None
 
@@ -130,4 +136,5 @@ def fetch_rss_items(rss_sources, categories, max_age_hours=48):
                 print(f"[WARN] خطا در خواندن {source['name']}: {error}", flush=True)
                 continue
             results.extend(items)
+    print(f"[RSS Discovery] configured={len(rss_sources)} accepted={len(results)}", flush=True)
     return results

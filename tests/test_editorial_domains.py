@@ -6,8 +6,9 @@ sys.path.insert(0, str(ROOT / "src"))
 from editorial import filter_ai_relevance
 
 class DomainRegressionTests(unittest.TestCase):
-    def check(self, title, summary, category="ai"):
+    def check(self, title, summary, category="ai", **extra):
         item={"title":title,"summary":summary,"category":category,"content_type":"research","source":"Test","source_tier":1}
+        item.update(extra)
         return filter_ai_relevance([item],["AI","AGI","machine learning"])
 
     def test_pure_quantum_rejected(self):
@@ -30,5 +31,16 @@ class DomainRegressionTests(unittest.TestCase):
 
     def test_irrelevant_health_rejected(self):
         self.assertEqual(self.check("Healthcare is failing women","A health policy discussion with no AI link.","health"),[])
+
+    def test_youtube_evidence_text_reaches_ai_gate(self):
+        x=self.check(
+            "Interview with a technology researcher",
+            "",
+            evidence_text="The discussion covers artificial intelligence, AI agents and reasoning models.",
+            content_type="podcast",
+            source="YouTube - Test AI",
+        )[0]
+        self.assertEqual(x["topic_family"],"ai_core")
+        self.assertEqual(x["relevance_reason"],"ai_evidence")
 
 if __name__=="__main__": unittest.main()

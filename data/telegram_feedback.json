@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787544491,
+  "updated_at": 1787546246,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -2992,6 +2992,23 @@
       "title": "شبکه فارغ‌التحصیلان Fei-Fei Li: World Labs، DAIR و پرنستون ۲۰۲۶",
       "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNTmR3UUxlX3VQMUlJc01abWlKWnpmRDJTTUpIV2QwTUJGaUdZNEIxMWh3My1mbkh4cDhpSmprUXF3RGVMUzFpak9CbXVid3cza2xfeHZ0MUlycVRwVlRTM2JOQmxFOUVLMUZpN3FydEZnRWw5R3Bkb2dFZkdlUlk4UUE3cDl1WjlxY1JxZnNlQzB1MHlJY0lPRlR0UDBISlpDaEE?oc=5",
       "posted_at": 1787544491
+    },
+    "-1004482051328:1215": {
+      "chat_id": -1004482051328,
+      "message_id": 1215,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (36Kr)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "تغییرات ساختاری در تیم رهبری Gemini گوگل و خروج دانشمند ارشد",
+      "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE5UTGwxcldIZjBoQTd4Z3hiY2JGb2VCQXZlMlpqRjh2SnpQYjhLV21iLWttN0lqaWxaa19HSm9vRU1aR1dSWVFwU2w5QjRZLTd3S1ZN?oc=5",
+      "posted_at": 1787546246
     }
   }
 }

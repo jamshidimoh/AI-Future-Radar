@@ -66,7 +66,6 @@ rss_sources:
   - {name: "Harvard Gazette", url: "https://news.harvard.edu/gazette/feed/", tier: 1, type: "university", content_type: "research", official: true}
   - {name: "Science Daily - Mind & Brain", url: "https://www.sciencedaily.com/rss/mind_brain.xml", tier: 2, type: "science_media", content_type: "research", official: false}
   - {name: "Ars Technica - Science", url: "https://arstechnica.com/science/feed/", tier: 2, type: "specialist_media", content_type: "news", official: false}
-  - {name: "Reddit - r/artificial", url: "https://www.reddit.com/r/artificial/.rss", tier: 3, type: "community", content_type: "community", official: false}
 
 youtube_channels:
   - {name: "Lex Fridman Podcast", channel_id: "UCSHZKyawb77ixDdsGog4iWA", category: ai, tier: 1, type: "podcast", content_type: "podcast", official: true}

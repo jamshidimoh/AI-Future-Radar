@@ -22,17 +22,23 @@ def _audited_main(hooks=None):
 
     def production_select(items, max_posts, max_per_source, max_per_type, policy):
         if explicit_select is not None:
-            candidate_window = explicit_select(items, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
+            candidate_window = explicit_select(
+                items,
+                max_posts=max_posts,
+                max_per_source=max_per_source,
+                max_per_type=max_per_type,
+                policy=policy,
+            )
         else:
-            # Let the canonical ranker create a wider, still bounded candidate
-            # window. The mission-aware portfolio then decides the final normal
-            # stories without replacing the canonical score semantics.
+            # Build a wider candidate window with relaxed local caps. The final
+            # portfolio selector is the only place that applies the publication
+            # source/type caps for normal stories.
             window_size = max(int(max_posts or 0) + 6, int(max_posts or 0) * 3, 10)
             candidate_window = _original_rank(
                 items,
                 max_posts=window_size,
-                max_per_source=max_per_source,
-                max_per_type=max_per_type,
+                max_per_source=max(max_per_source, 6),
+                max_per_type=max(max_per_type, 8),
                 policy=policy,
             )
 

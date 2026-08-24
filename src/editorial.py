@@ -107,7 +107,7 @@ def _regular_portfolio(items, cap, max_per_source, max_per_type):
 
     authoritative = [
         x for x in scored
-        if int(x.get("source_tier_effective", _source_tier(x)) or 3) <= 2
+        if _source_tier(x) <= 2
         and bool(x.get("analytical_anchor"))
     ]
 

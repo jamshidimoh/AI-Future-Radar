@@ -8,6 +8,11 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
+try:
+    from .source_exclusions import is_excluded_source_url
+except ImportError:
+    from source_exclusions import is_excluded_source_url
+
 _WEAK_AI_KEYWORDS = {"ai"}
 _FEED_TIMEOUT_SECONDS = 20
 _MAX_WORKERS = 6
@@ -57,11 +62,16 @@ def _load_supplemental_sources():
 
 
 def _merge_rss_sources(rss_sources):
-    merged = list(rss_sources or [])
-    seen = {str(source.get("url", "")).rstrip("/") for source in merged if isinstance(source, dict)}
-    for source in _load_supplemental_sources():
+    merged = []
+    seen = set()
+    for source in list(rss_sources or []) + _load_supplemental_sources():
+        if not isinstance(source, dict):
+            continue
         url = str(source.get("url", "")).rstrip("/")
         if not url or url in seen:
+            continue
+        if is_excluded_source_url(url) or is_excluded_source_url(source.get("name")):
+            print(f"[Discovery Exclusion] skipped RSS source: {source.get('name', url)}", flush=True)
             continue
         merged.append(source)
         seen.add(url)
@@ -69,6 +79,8 @@ def _merge_rss_sources(rss_sources):
 
 
 def _collect_source(source, categories, cutoff):
+    if is_excluded_source_url(source.get("url")) or is_excluded_source_url(source.get("name")):
+        return source, [], None
     try:
         feed = _parse_feed(source["url"])
     except Exception as exc:
@@ -77,13 +89,6 @@ def _collect_source(source, categories, cutoff):
     results = []
     source_name = source["name"]
     source_category = str(source.get("mission") or "").strip().lower() or None
-    if source_category is None:
-        if "quant-ph" in source_name.lower():
-            source_category = "quantum"
-        elif "q-bio" in source_name.lower():
-            source_category = "genetics"
-        elif "cs.ai" in source_name.lower() or "cs.lg" in source_name.lower():
-            source_category = "ai"
 
     for entry in feed.entries:
         published = entry.get("published_parsed") or entry.get("updated_parsed")
@@ -97,6 +102,8 @@ def _collect_source(source, categories, cutoff):
         title = entry.get("title", "")
         summary = entry.get("summary", "") or entry.get("description", "")
         link = entry.get("link", "")
+        if is_excluded_source_url(link):
+            continue
         text_to_check = f"{title} {summary}".lower()
 
         matched_category = source_category

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787550696,
+  "updated_at": 1787551616,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3098,6 +3098,25 @@
       "why_it_matters": "این تحلیل با بازتعریف مالکوم ایکس به‌عنوان منتقد ساختاری نژادپرستی، به بحث‌های معاصر دربارهٔ عدالت اجتماعی و حقوق مدنی عمق می‌بخشد. تأکید بر خودتعیین‌مقی و ردّ ادغام ناعادلانه، چارچوبی برای درک چالش‌های پایدار نژادی در سطح جهانی ارائه می‌دهد.",
       "link": "https://www.youtube.com/watch?v=PYtfO4dS-pw",
       "posted_at": 1787550696
+    },
+    "-1004482051328:1221": {
+      "chat_id": -1004482051328,
+      "message_id": 1221,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (富途牛牛)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "تغییر استراتژیک گوگل در هوش مصنوعی: تمرکز بر مدل‌های بزرگ و ادغام DeepMind",
+      "summary": "گوگل در حال گذراندن یک تغییر استراتژیک اساسی در حوزه هوش مصنوعی است که محوریت آن تمرکز بر مدل‌های بزرگ (Large Models) می‌باشد. این تحول با خروج یک مدیر ارشد باسابقه و در جریان بودن فرآیند ادغام DeepMind همراه است.",
+      "why_it_matters": "این تغییرات نشان‌دهنده بازچینش ساختاری عمیق گوگل برای تقویت موقعیت رقابتی خود در بازار هوش مصنوعی است. تمرکز بر مدل‌های بزرگ و ادغام DeepMind می‌تواند مسیر توسعه فناوری‌های آینده این شرکت را به‌طور چشمگیری دگرگون کند.",
+      "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQa0xwaW5tWGhxcFR3S05tZmZxcFlkYUxWYmdFUi0xWWRTWGdPYUVVYndvZHhSbEMtMDRaSVpPODUzeEhzZmRRcXZsTFJuQkRXdzlnQzVWdmE3VkotcllEcEh4ZTl2aDl3ZzM3dkl1YzcwR3ZCOUVSZ2swWHI3S3lIYzI0NFh3ZWluWFZRWmI2TlE5Nk5pZlpoWk9oUkwzRTc1cFZvS0pUQ21pN2JsUG52MmNKX1ZFV1JHWWJpeS1VRENmd0tJdnNsdA?oc=5",
+      "posted_at": 1787551616
     }
   }
 }

@@ -111,6 +111,13 @@ def _item_final_score(item: dict) -> float:
     return 0.0
 
 
+def normal_news_policy_allowed(score: float, previous_normal_score: float | None, normal_rank: int | None) -> bool:
+    """Apply the adaptive normal-news score policy consistently across the rank window."""
+    if normal_rank is None or normal_rank > RANK_WINDOW:
+        return False
+    return normal_score_allowed(float(score), previous_normal_score)
+
+
 def main(*, skip_education: bool = False) -> int:
     import period_ranked_pipeline as pipeline
     from educational_content import build_educational_item, commit_education_lesson
@@ -247,11 +254,8 @@ def main(*, skip_education: bool = False) -> int:
             return delivered({"message_id": None})
         if normal_rank is None or normal_rank > RANK_WINDOW:
             return policy_blocked(f"normal_rank_outside_window:{normal_rank}")
-        if normal_rank == 1:
-            allowed = True
-        else:
-            baseline = previous_normal_score
-            allowed = render_state["normal_news_delivered_count"] < MAX_NORMAL_NEWS_PER_PERIOD and normal_score_allowed(score, baseline)
+        baseline = previous_normal_score
+        allowed = render_state["normal_news_delivered_count"] < MAX_NORMAL_NEWS_PER_PERIOD and normal_news_policy_allowed(score, baseline, normal_rank)
         if not allowed:
             return policy_blocked(f"normal_score_policy_blocked:{score}<={previous_normal_score}")
         print(f"[Publication Policy] PUBLISH normal_rank={normal_rank} score={score} previous_normal={previous_normal_score}", flush=True)

@@ -13,7 +13,6 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from content_selector import select_content as _select_content
 from dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
 from editorial import enrich_items, filter_ai_relevance, filter_low_signal, select_editorial
 from fetch_google_news import fetch_google_news_items
@@ -42,18 +41,14 @@ def load_yaml(path):
 def _text(item):
     return " ".join(str(item.get(k) or "") for k in ("title", "summary", "description")).lower()
 
-
 def _contains_person(text, name):
     return str(name or "").strip().lower() in str(text or "").lower()
-
 
 def _has_explicit_interview_evidence(item):
     return has_interview_evidence(item)
 
-
 def _direct_interview_signal(item):
     return has_interview_evidence(item)
-
 
 def _leader_activity_signal(item):
     ctype = str(item.get("content_type") or "").lower().strip(); text = _text(item)
@@ -108,7 +103,7 @@ def _annotate_named_leader_interviews(items, leader_people, leader_priorities=No
                 if _direct_interview_signal(item):
                     item["_named_leader_interview"] = True; item["leader_watch_protected"] = True; matched += 1
                 elif _leader_activity_signal(item):
-                    item["leader_activity_signal"] = True; item["leader_watch_protected"] = True; protected += 1
+                    item["leader_activity_signal"] = True; item["is_leader_watch"] = True; item["leader_watch_protected"] = True; protected += 1
                 break
     print(f"[Leader Identity Recovery] verified_interviews={matched} | activity_protected={protected} | watchlist_candidates={watch_candidates}"); return items
 
@@ -173,23 +168,17 @@ def _summarize_selected(selected, summarize_fn):
     selected = list(selected or [])
     if len(selected) <= 1:
         return [summarize_fn(item) for item in selected]
-
     workers = min(_summary_workers(), len(selected))
     print(f"[Summary Parallel] items={len(selected)} workers={workers}", flush=True)
-    results = [None] * len(selected)
-    errors = [None] * len(selected)
+    results = [None] * len(selected); errors = [None] * len(selected)
     with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="radar-summary") as executor:
         futures = {executor.submit(summarize_fn, item): index for index, item in enumerate(selected)}
         for future in as_completed(futures):
             index = futures[future]
-            try:
-                results[index] = future.result()
-            except Exception as exc:
-                errors[index] = exc
-
+            try: results[index] = future.result()
+            except Exception as exc: errors[index] = exc
     for error in errors:
-        if error is not None:
-            raise error
+        if error is not None: raise error
     return results
 
 
@@ -228,16 +217,11 @@ def main(hooks=None):
         try:
             source_name = str(item.get("source") or item.get("source_name") or "منبع"); link = str(item.get("link") or item.get("url") or ""); post = format_fn(item, source_name, link, is_video=str(item.get("source_type") or "").lower() in {"youtube", "video"}, published=item.get("published", ""), content_type=item.get("content_type", "news"), source_tier=item.get("source_tier", 3), source_type=item.get("source_type", "news"), leader=item.get("leader") or item.get("watch_person") or ""); result = deliver_fn(post, image_url=str(item.get("source_image") or ""), source_link=link)
             if hasattr(result, "status"):
-                status = getattr(result, "status")
-                status_value = getattr(status, "value", str(status))
-                if status_value == "delivered":
-                    sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history); continue
-                if status_value in {"policy_blocked", "rejected", "duplicate"}:
-                    print(f"[Publication Contract] candidate rejected reason={getattr(result, 'reason', '')}; continuing to next ranked candidate", flush=True)
-                    continue
-                raise RuntimeError(f"Telegram transport failure: {getattr(result, 'reason', 'unknown')}" )
-            if not result:
-                raise RuntimeError("Telegram delivery returned false")
+                status = getattr(result, "status"); status_value = getattr(status, "value", str(status))
+                if status_value == "delivered": sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history); continue
+                if status_value in {"policy_blocked", "rejected", "duplicate"}: print(f"[Publication Contract] candidate rejected reason={getattr(result, 'reason', '')}; continuing to next ranked candidate", flush=True); continue
+                raise RuntimeError(f"Telegram transport failure: {getattr(result, 'reason', 'unknown')}")
+            if not result: raise RuntimeError("Telegram delivery returned false")
             sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history)
         except Exception as exc:
             print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)

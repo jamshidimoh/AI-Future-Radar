@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787624600,
+  "updated_at": 1787632292,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3558,6 +3558,60 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787624600
+    },
+    "-1004482051328:1247": {
+      "chat_id": -1004482051328,
+      "message_id": 1247,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "سیاست کشف بهینه‌سازی‌شده در هوش مصنوعی",
+      "summary": "این پژوهش بر توسعه سیاست‌های کشف بهینه‌سازی‌شده در حوزه هوش مصنوعی تمرکز دارد. این رویکرد به عنوان یک دسته‌بندی تحقیقاتی سطح یک طبقه‌بندی شده است. هدف اصلی بهبود فرآیندهای تصمیم‌گیری و اکتشاف در سیستم‌های هوشمند است.",
+      "why_it_matters": "سیاست‌های کشف بهینه‌سازی‌شده نقش حیاتی در افزایش کارایی و دقت سیستم‌های هوش مصنوعی ایفا می‌کنند. این پیشرفت‌ها می‌توانند منجر به توسعه الگوریتم‌های قدرتمندتر برای حل مسائل پیچیده در دنیای واقعی شوند.",
+      "link": "https://www.youtube.com/watch?v=LtWsIiGtZ3M",
+      "posted_at": 1787632290
+    },
+    "-1004482051328:1248": {
+      "chat_id": -1004482051328,
+      "message_id": 1248,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Google DeepMind",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Google DeepMind: دسته‌بندی سیاست کشف محتوای منتخب",
+      "summary": "این پست از Google DeepMind به بررسی سیاست کشف محتوای منتخب در حوزه هوش مصنوعی می‌پردازد. منبع این محتوا در سطح یک (Tier 1) طبقه‌بندی شده و نوع آن پژوهشی است. این دسته‌بندی بر استانداردهای کیفی و اعتبار علمی محتوای منتشر شده تأکید دارد.",
+      "why_it_matters": "طبقه‌بندی دقیق منابع در سطح یک برای پژوهش‌های هوش مصنوعی حیاتی است، زیرا اعتبار و دقت داده‌های ورودی به مدل‌ها را تضمین می‌کند. این رویکرد توسط Google DeepMind نشان‌دهنده تعهد به شفافیت و کیفیت در توسعه فناوری‌های پیشرفته است.",
+      "link": "https://www.youtube.com/watch?v=wd5ZZV8if54",
+      "posted_at": 1787632291
+    },
+    "-1004482051328:1249": {
+      "chat_id": -1004482051328,
+      "message_id": 1249,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "Science Shorts and Explainers: مجموعه‌ای از ویدیوهای کوتاه علمی",
+      "summary": "این ویدیو بخشی از مجموعه Science Shorts and Explainers است که توسط World Science Festival ارائه شده است. این مجموعه شامل ویدیوهای کوتاه و توضیحی است که مفاهیم علمی را به شکلی ساده و جذاب برای مخاطبان عمومی توضیح می‌دهد.",
+      "why_it_matters": "این مجموعه به دلیل ارائه مفاهیم پیچیده علمی به شکلی ساده و قابل فهم برای عموم مردم اهمیت دارد. این ویدیوها می‌توانند به افزایش سواد علمی و درک بهتر مفاهیم علمی کمک کنند.",
+      "link": "https://www.youtube.com/watch?v=KWj00MCqSxs",
+      "posted_at": 1787632292
     }
   }
 }

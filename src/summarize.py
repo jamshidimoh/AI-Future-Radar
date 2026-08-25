@@ -162,14 +162,17 @@ def _repair_persian_draft(data, item):
         print("[Draft Language Recovery] invalid JSON; preserving original draft", flush=True)
         return data, provider
 
-    if _language_ok(candidate) and _length_ok(candidate, str(item.get("summary", "") or "")):
-        print(
-            "[Draft Language Recovery] recovered full Persian draft "
-            f"title={persian_ratio(candidate.get('title','')):.2f} "
-            f"summary={persian_ratio(candidate.get('summary','')):.2f} "
-            f"why={persian_ratio(candidate.get('why_it_matters','')):.2f}",
-            flush=True,
-        )
+    if _language_ok(candidate):
+        if _length_ok(candidate, str(item.get("summary", "") or "")):
+            print(
+                "[Draft Language Recovery] recovered full Persian draft "
+                f"title={persian_ratio(candidate.get('title','')):.2f} "
+                f"summary={persian_ratio(candidate.get('summary','')):.2f} "
+                f"why={persian_ratio(candidate.get('why_it_matters','')):.2f}",
+                flush=True,
+            )
+        else:
+            print("[Draft Language Recovery] recovered Persian draft; deferred length validation to final gate", flush=True)
         return candidate, provider
 
     print(

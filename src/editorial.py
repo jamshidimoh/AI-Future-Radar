@@ -20,24 +20,27 @@ _AI_TAXONOMY_BRIDGE_TERMS = {
 
 _CURATED_DISCOVERY_CATEGORIES = {"ai", "quantum", "genetics", "mind", "future"}
 _CURATED_CONTENT_TYPES = {"research", "paper", "study", "preprint", "official", "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
+_TRUSTED_DISCOVERY_SOURCE_TYPES = {"youtube", "video", "podcast", "ai_lab", "research_lab", "university_lab", "university", "scientific_publisher", "science_media"}
 
 
 def _curated_discovery_context(item):
-    """Return bounded source-policy evidence without weakening the core taxonomy.
+    """Expose curated discovery provenance only when source provenance is trusted.
 
-    Discovery configuration is itself a policy signal: items arriving from a
-    curated AI/quantum/mind/future/genetics stream, from a tier-1/2 source, and
-    carrying an editorial content type may legitimately omit the literal token
-    'AI' from the headline/snippet. We expose that provenance as secondary
-    evidence; it never overrides low-authority sources or arbitrary news items.
+    This is a bounded bridge for genuine channel/source metadata. It does not
+    turn an arbitrary category label into AI evidence, which would defeat the
+    relevance gate. Untrusted tests, generic aggregators and low-authority news
+    remain subject to the literal taxonomy in editorial_clean.
     """
     category = str(item.get("category") or "").strip().lower()
     content_type = str(item.get("content_type") or "").strip().lower()
+    source_type = str(item.get("source_type") or "").strip().lower()
+    preferred_source = str(item.get("preferred_source") or "").strip()
     try:
         tier = int(item.get("source_tier"))
     except (TypeError, ValueError):
         tier = 3
-    if category not in _CURATED_DISCOVERY_CATEGORIES or tier not in {1, 2} or content_type not in _CURATED_CONTENT_TYPES:
+    trusted = bool(preferred_source) or source_type in _TRUSTED_DISCOVERY_SOURCE_TYPES
+    if category not in _CURATED_DISCOVERY_CATEGORIES or tier not in {1, 2} or content_type not in _CURATED_CONTENT_TYPES or not trusted:
         return ""
     labels = {
         "ai": "AI",

@@ -1,5 +1,4 @@
-from unittest.mock import patch
-
+import src.llm_router_light as router
 import production_entrypoint as production
 
 
@@ -21,23 +20,30 @@ def test_feedback_bonus_does_not_change_publication_policy_directly():
 
 
 def test_provider_exhaustion_fails_closed_at_llm_boundary():
-    from llm_router_light import call_llm_with_fallback
+    calls = []
 
-    providers = [
-        {"name": "p1", "kind": "test", "model": "m1"},
-        {"name": "p2", "kind": "test", "model": "m2"},
-    ]
-
-    def fail(*args, **kwargs):
+    def fail_one(system_prompt, user_content):
+        calls.append("p1")
         raise RuntimeError("forced provider exhaustion")
 
-    with patch("llm_router_light._call_provider", side_effect=fail):
-        try:
-            call_llm_with_fallback("test", "payload", providers=providers)
-        except Exception as exc:
-            assert "forced provider exhaustion" in str(exc)
+    def fail_two(system_prompt, user_content):
+        calls.append("p2")
+        raise RuntimeError("forced provider exhaustion")
+
+    providers = [("Test:p1", fail_one), ("Test:p2", fail_two)]
+    previous_timeout = router._PROVIDER_TIMEOUTS.get("Test:")
+    router._PROVIDER_TIMEOUTS["Test:"] = 0.5
+    try:
+        result, provider = router.call_llm_with_fallback("test", "payload", providers=providers)
+    finally:
+        if previous_timeout is None:
+            router._PROVIDER_TIMEOUTS.pop("Test:", None)
         else:
-            raise AssertionError("provider exhaustion must fail closed")
+            router._PROVIDER_TIMEOUTS["Test:"] = previous_timeout
+
+    assert result is None
+    assert provider is None
+    assert calls == ["p1", "p2"]
 
 
 def test_acceptance_workflow_contract_remains_present():

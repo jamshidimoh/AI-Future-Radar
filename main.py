@@ -4,6 +4,7 @@ import re
 import sys
 import time
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -159,6 +160,39 @@ def _persist_item_success(item, seen_hashes, seen_signatures, source_history):
     mark_as_seen(item, seen_hashes, seen_signatures, source_history); save_seen(seen_hashes, seen_signatures, source_history); identity = str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or "")[:120]; print(f"[Publication Ledger] persisted story={item.get('title','')[:100]} identity={identity}", flush=True)
 
 
+def _summary_workers():
+    raw = os.getenv("RADAR_SUMMARY_WORKERS", "4").strip()
+    try:
+        value = int(raw)
+    except ValueError:
+        return 4
+    return max(1, min(4, value))
+
+
+def _summarize_selected(selected, summarize_fn):
+    selected = list(selected or [])
+    if len(selected) <= 1:
+        return [summarize_fn(item) for item in selected]
+
+    workers = min(_summary_workers(), len(selected))
+    print(f"[Summary Parallel] items={len(selected)} workers={workers}", flush=True)
+    results = [None] * len(selected)
+    errors = [None] * len(selected)
+    with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="radar-summary") as executor:
+        futures = {executor.submit(summarize_fn, item): index for index, item in enumerate(selected)}
+        for future in as_completed(futures):
+            index = futures[future]
+            try:
+                results[index] = future.result()
+            except Exception as exc:
+                errors[index] = exc
+
+    for error in errors:
+        if error is not None:
+            raise error
+    return results
+
+
 def main(hooks=None):
     hooks = dict(hooks or {})
     select_editorial_fn = hooks.get("select_editorial", select_editorial)
@@ -183,8 +217,8 @@ def main(hooks=None):
     if not selected:
         print("[Final Publication Guard] no publishable items remain", flush=True); save_seen(seen_hashes, seen_signatures, source_history); print("Posts sent: 0/0"); return
     print("[6/7] AI processing / summarization")
-    for item in selected:
-        summary = summarize_fn(item)
+    summaries = _summarize_selected(selected, summarize_fn)
+    for item, summary in zip(selected, summaries):
         if summary: item.update(summary)
         else: item["_publication_blocked"] = True; print(f"[Editorial Gate] skipped candidate: {str(item.get('title',''))[:120]}", flush=True)
         item["source_image"] = resolve_image_fn(item)

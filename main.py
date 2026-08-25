@@ -13,7 +13,6 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from content_selector import select_content as _select_content
 from dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
 from editorial import enrich_items, filter_ai_relevance, filter_low_signal, select_editorial
 from fetch_google_news import fetch_google_news_items
@@ -216,32 +215,25 @@ def main(hooks=None):
     selected = filter_new_items(selected, seen_hashes)
     if not selected:
         print("[Final Publication Guard] no publishable items remain", flush=True); save_seen(seen_hashes, seen_signatures, source_history); print("Posts sent: 0/0"); return
-    print("[6/7] AI processing / summarization")
+    print(f"[6/7] AI processing / summarization: {len(selected)} selected items")
     summaries = _summarize_selected(selected, summarize_fn)
+    posted = 0
+    total_candidates = len(selected)
     for item, summary in zip(selected, summaries):
-        if summary: item.update(summary)
-        else: item["_publication_blocked"] = True; print(f"[Editorial Gate] skipped candidate: {str(item.get('title',''))[:120]}", flush=True)
-        item["source_image"] = resolve_image_fn(item)
-    print("[7/7] Telegram publication"); sent = 0
-    for item in selected:
-        if item.get("_publication_blocked"): continue
-        try:
-            source_name = str(item.get("source") or item.get("source_name") or "منبع"); link = str(item.get("link") or item.get("url") or ""); post = format_fn(item, source_name, link, is_video=str(item.get("source_type") or "").lower() in {"youtube", "video"}, published=item.get("published", ""), content_type=item.get("content_type", "news"), source_tier=item.get("source_tier", 3), source_type=item.get("source_type", "news"), leader=item.get("leader") or item.get("watch_person") or ""); result = deliver_fn(post, image_url=str(item.get("source_image") or ""), source_link=link)
-            if hasattr(result, "status"):
-                status = getattr(result, "status")
-                status_value = getattr(status, "value", str(status))
-                if status_value == "delivered":
-                    sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history); continue
-                if status_value in {"policy_blocked", "rejected", "duplicate"}:
-                    print(f"[Publication Contract] candidate rejected reason={getattr(result, 'reason', '')}; continuing to next ranked candidate", flush=True)
-                    continue
-                raise RuntimeError(f"Telegram transport failure: {getattr(result, 'reason', 'unknown')}" )
-            if not result:
-                raise RuntimeError("Telegram delivery returned false")
-            sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history)
-        except Exception as exc:
-            print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
-    save_seen(seen_hashes, seen_signatures, source_history); print(f"Posts sent: {sent}/{len(selected)}")
-
-if __name__ == "__main__":
-    main()
+        if summary is None:
+            item["_publication_blocked"] = True
+            continue
+        item["summary_result"] = summary
+        payload = format_fn(item, summary)
+        if not payload:
+            item["_publication_blocked"] = True
+            continue
+        if not item.get("image_url"):
+            item["image_url"] = resolve_image_fn(item)
+        delivered = deliver_fn(payload, item.get("image_url"))
+        if delivered:
+            persist_fn(item, seen_hashes, seen_signatures, source_history)
+            posted += 1
+        else:
+            item["_publication_blocked"] = True
+    print(f"Posts sent: {posted}/{total_candidates}")

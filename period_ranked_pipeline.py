@@ -20,7 +20,6 @@ SIGNAL_WEIGHT = 0.25
 
 
 def _base_editorial_score(item):
-    """Return the canonical editorial score before legacy signal mutation."""
     for key in ("editorial_score_pre_signal", "final_editorial_score", "editorial_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
@@ -32,12 +31,6 @@ def _base_editorial_score(item):
 
 
 def canonical_rank_score(item):
-    """Combine independent editorial and technology signals exactly once.
-
-    Editorial score remains the primary judgement layer. Signal score is an
-    independent technical/evidence signal. Policy bonuses are intentionally
-    excluded; policy controls routing/eligibility rather than value inflation.
-    """
     editorial = _base_editorial_score(item)
     signal = float(item.get("signal_score", 0) or 0)
     return round(editorial * EDITORIAL_WEIGHT + signal * SIGNAL_WEIGHT, 2)
@@ -164,15 +157,10 @@ def _exclude_published_candidates(items):
                 break
         if conflict is None:
             if protected:
-                for record in records:
-                    if not str(record.get("title") or "").strip():
-                        continue
-                    if probable_same_story(item, record):
-                        conflict, conflict_record = "semantic", record
-                        protected_same_story_blocked += 1
-                        break
-                if conflict is None:
-                    semantic_bypassed += 1
+                # Protected Tier-0 interviews may be related to a prior story,
+                # but semantic similarity alone must not erase a new interview.
+                # Exact URL/title identity remains a hard duplicate boundary.
+                semantic_bypassed += 1
             else:
                 for record in records:
                     if not str(record.get("title") or "").strip():
@@ -187,8 +175,8 @@ def _exclude_published_candidates(items):
             continue
         kept.append(item)
     total_blocked = sum(blocked.values())
-    if total_blocked or semantic_bypassed or protected_same_story_blocked:
-        print(f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} protected_semantic_bypassed={semantic_bypassed} protected_same_story_blocked={protected_same_story_blocked} regular_semantic_threshold={REGULAR_SAME_STORY_THRESHOLD:.2f} remaining={len(kept)}", flush=True)
+    if total_blocked or semantic_bypassed:
+        print(f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} protected_semantic_bypassed={semantic_bypassed} regular_semantic_threshold={REGULAR_SAME_STORY_THRESHOLD:.2f} remaining={len(kept)}", flush=True)
     return kept
 
 
@@ -246,9 +234,6 @@ def _eligibility_split(items, max_protected=2):
     candidates, regular = [], []
     for raw in items:
         item = dict(raw)
-        # Only substantive leader interviews receive the protected/Tier-0
-        # routing class. Leader activity is still valuable and remains in the
-        # normal pool where editorial score, signal, and diversity rules apply.
         if _pipeline._is_protected_leader_interview(item):
             item["protected_content"] = True
             item["protected_reason"] = "leader_interview"
@@ -261,8 +246,6 @@ def _eligibility_split(items, max_protected=2):
             item["_rank_is_tier0"] = True
             candidates.append(item)
         else:
-            # Includes leader_activity items deliberately. They may carry
-            # watchlist metadata but must earn normal ranking placement.
             regular.append(item)
     candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _pipeline._direct_interview_signal(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
     limit = max(0, int(max_protected))

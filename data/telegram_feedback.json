@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787622708,
+  "updated_at": 1787624105,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3479,6 +3479,19 @@
       "why_it_matters": "این قابلیت با ساده‌سازی فرآیند تبدیل داده‌های خام به رابط‌های کاربری تعاملی، شکاف بین تحلیل داده و ارائه بصری را کاهش می‌دهد. کاربران می‌توانند بدون نیاز به کدنویسی پیچیده، خروجی‌های قابل انتشار یا تصویری سریع تولید کنند که بهره‌وری در مدیریت اطلاعات را افزایش می‌دهد.",
       "link": "https://www.youtube.com/watch?v=jzmNh8lbSp8",
       "posted_at": 1787618371
+    },
+    "-1004482051328:1242": {
+      "chat_id": -1004482051328,
+      "message_id": 1242,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "title": "Education lesson 32",
+      "posted_at": 1787624105
     }
   }
 }

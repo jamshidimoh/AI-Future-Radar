@@ -1,4 +1,8 @@
+import threading
+import time
+
 import scripts.production_with_ranking_audit as launcher
+from main import _summarize_selected
 
 
 def test_audited_main_wraps_existing_selection_hook(monkeypatch):
@@ -22,32 +26,38 @@ def test_audited_main_wraps_existing_selection_hook(monkeypatch):
     assert audited == [[{"period_rank": 1, "title": "top story"}]]
 
 
-def test_production_selector_retains_tier0_interview_and_normal_portfolio(monkeypatch):
-    tier0 = {
-        "title": "Leader interview",
-        "_rank_is_tier0": True,
-        "protected_content": True,
-        "leader": "Leader",
-        "final_editorial_score": 40,
-    }
-    normal = {
-        "title": "Normal AI story",
-        "_rank_is_tier0": False,
-        "protected_content": False,
-        "final_editorial_score": 80,
-    }
+def test_production_selector_delegates_to_canonical_period_rank(monkeypatch):
+    selected = [{"title": "Tier-0 interview", "period_rank": 1}]
+    captured = {}
 
-    monkeypatch.setattr(launcher.pipeline, "_exclude_published_candidates", lambda items: list(items))
-    monkeypatch.setattr(launcher.pipeline, "_prepare_rank_features", lambda items: items)
-    monkeypatch.setattr(launcher.pipeline, "_priority_story_diversified", lambda items: list(items))
-    monkeypatch.setattr(launcher, "select_normal_portfolio", lambda *args, **kwargs: [normal])
+    def rank(items, max_posts, max_per_source, max_per_type, policy):
+        captured["args"] = (items, max_posts, max_per_source, max_per_type, policy)
+        return selected
 
-    selected = launcher._production_select([tier0, normal], 4, 2, 2, {})
+    monkeypatch.setattr(launcher, "_original_rank", rank)
 
-    assert selected == [tier0, normal]
-    assert tier0["tier0_rank"] == 1
-    assert tier0["normal_period_rank"] is None
-    assert tier0["period_rank"] == 1
-    assert normal["tier0_rank"] is None
-    assert normal["normal_period_rank"] == 1
-    assert normal["period_rank"] == 2
+    result = launcher._production_select([{"title": "candidate"}], 4, 2, 2, {"rotation_days": 7})
+
+    assert result == selected
+    assert captured["args"][1:] == (4, 2, 2, {"rotation_days": 7})
+
+
+def test_parallel_summary_preserves_input_order_and_runs_concurrently(monkeypatch):
+    monkeypatch.setenv("RADAR_SUMMARY_WORKERS", "2")
+    state = {"active": 0, "peak": 0}
+    lock = threading.Lock()
+
+    def summarize(item):
+        with lock:
+            state["active"] += 1
+            state["peak"] = max(state["peak"], state["active"])
+        time.sleep(0.05)
+        with lock:
+            state["active"] -= 1
+        return {"title": f"done-{item['title']}"}
+
+    items = [{"title": "a"}, {"title": "b"}, {"title": "c"}, {"title": "d"}]
+    results = _summarize_selected(items, summarize)
+
+    assert [result["title"] for result in results] == ["done-a", "done-b", "done-c", "done-d"]
+    assert state["peak"] == 2

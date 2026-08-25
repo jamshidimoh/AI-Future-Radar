@@ -1,9 +1,7 @@
 """Production launcher with mission-aware normal portfolio selection and audit."""
 from __future__ import annotations
 
-import os
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,57 +12,9 @@ import period_ranked_pipeline as pipeline
 from src.portfolio_selection import select_normal_portfolio
 from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
-from src.summarize import summarize_item
 
 _original_main = pipeline.main
 _original_rank = pipeline._global_ranked_selection
-
-
-def _summary_workers() -> int:
-    raw = os.getenv("RADAR_SUMMARY_WORKERS", "4").strip()
-    try:
-        value = int(raw)
-    except ValueError:
-        return 4
-    return max(1, min(4, value))
-
-
-def _summarize_one(item):
-    try:
-        return summarize_item(item)
-    except Exception as exc:
-        print(
-            f"[Summary Worker] failed title={str(item.get('title', ''))[:120]} error={exc}",
-            flush=True,
-        )
-        return None
-
-
-def _parallel_summarize(items):
-    items = list(items or [])
-    if len(items) <= 1:
-        return [_summarize_one(items[0])] if items else []
-
-    workers = min(_summary_workers(), len(items))
-    print(f"[Summary Parallel] items={len(items)} workers={workers}", flush=True)
-    results = [None] * len(items)
-    with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="radar-summary") as executor:
-        futures = {
-            executor.submit(_summarize_one, item): index
-            for index, item in enumerate(items)
-        }
-        for future in as_completed(futures):
-            index = futures[future]
-            try:
-                results[index] = future.result()
-            except Exception as exc:
-                item = items[index]
-                print(
-                    f"[Summary Worker] unexpected failure title={str(item.get('title', ''))[:120]} error={exc}",
-                    flush=True,
-                )
-                results[index] = None
-    return results
 
 
 def _production_select(items, max_posts, max_per_source, max_per_type, policy):
@@ -157,42 +107,7 @@ def _audited_main(hooks=None):
 
     merged["select_editorial"] = production_select
     merged["format_post"] = rtl_format
-    if "summarize_item" not in merged:
-        summary_results = _parallel_summarize
-
-        def summarize_parallel_hook(items):
-            return summary_results(items)
-
-        summary_queue = []
-
-        def summarize_dispatch(item):
-            summary_queue.append(item)
-            # The production main loop invokes this hook item-by-item. The
-            # actual batching hook below is installed by wrapping main's
-            # imported function only when the selected set is known.
-            return summarize_item(item)
-
-        # Keep the hook contract intact for production code that may supply
-        # its own summarize implementation. The production parallel path is
-        # enabled by replacing main's serial hook at the module level below.
-        merged["summarize_item"] = summarize_dispatch
-
     return _original_main(hooks=merged)
-
-
-# The main module's contract calls summarize_item once per selected item. To
-# preserve that contract while parallelizing the real provider work, wrap the
-# imported callable used by main with a small batch collector is not possible
-# without changing main itself. Keep the serial hook here for custom callers;
-# production uses the dedicated parallel adapter below through this dispatcher.
-def _parallel_dispatch_factory():
-    pending = []
-
-    def dispatch(item):
-        pending.append(item)
-        return summarize_item(item)
-
-    return dispatch
 
 
 pipeline.main = _audited_main

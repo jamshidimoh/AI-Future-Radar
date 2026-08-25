@@ -43,7 +43,6 @@ jobs:
         env:
           PYTHONUNBUFFERED: "1"
           RADAR_WATCHDOG_MINUTES: "22"
-          RADAR_SUMMARY_WORKERS: "4"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: "-1004482051328"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

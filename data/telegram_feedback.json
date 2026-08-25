@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787602857,
+  "updated_at": 1787618371,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3442,6 +3442,43 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787602857
+    },
+    "-1004482051328:1240": {
+      "chat_id": -1004482051328,
+      "message_id": 1240,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Satya Nadella",
+      "watch_person": "Satya Nadella",
+      "title": "هشدار درباره تهدید هوش مصنوعی به کسب‌وکارهای اصلی Microsoft",
+      "summary": "Satya Nadella با تمرکز کامل بر هوش مصنوعی، استراتژی جدیدی را در Microsoft پیاده‌سازی کرده است. این رویکرد اکنون به کسب‌وکارهای بزرگ و سنتی این شرکت تهدید جدی وارد می‌کند. گزارش Business Insider به بررسی این چالش‌های داخلی و پیامدهای آن می‌پردازد.",
+      "why_it_matters": "این گزارش نشان می‌دهد که حتی غول‌های فناوری نیز در گذار به هوش مصنوعی با چالش‌های ساختاری مواجه‌اند. تمرکز بیش‌ازحد بر AI می‌تواند منابع و Attention را از هسته اصلی کسب‌وکارهای سودآور Microsoft منحرف کند.",
+      "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNa1lfQS1pVUlJbTd1NXFZNTdsa3paQmEtUVpEbzQyVENQbGh6TWtiYzhHTG5nQ0xad0d5R3YtTjdteFpwVWdQVENiNDIwTFBQVFp1VFY0b0FoUGZ6S2tsUEptemlhZnl1WUoycGlkQWxsQW51eWk5bWhUTVZpSDFjbUlDQkpEU0h5SUVKUHFYbkEzaWc2TVNN?oc=5",
+      "posted_at": 1787618370
+    },
+    "-1004482051328:1241": {
+      "chat_id": -1004482051328,
+      "message_id": 1241,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "تبدیل اطلاعات پیچیده به بصری‌سازی تعاملی با قابلیت Visualize در ChatGPT",
+      "summary": "قابلیت Visualize در ChatGPT و Codex به کاربران امکان می‌دهد اطلاعات متراکم را به بصری‌سازی‌های تعاملی تبدیل کنند. Katia Gil Guzman نحوه تبدیل یادداشت‌های جلسه به رابط کاربری، تکرار با نمای تقویم و اکشن‌ها، و خروجی گرفتن به صورت تصویر یا انتشار به عنوان سایت را نشان می‌دهد.",
+      "why_it_matters": "این قابلیت با ساده‌سازی فرآیند تبدیل داده‌های خام به رابط‌های کاربری تعاملی، شکاف بین تحلیل داده و ارائه بصری را کاهش می‌دهد. کاربران می‌توانند بدون نیاز به کدنویسی پیچیده، خروجی‌های قابل انتشار یا تصویری سریع تولید کنند که بهره‌وری در مدیریت اطلاعات را افزایش می‌دهد.",
+      "link": "https://www.youtube.com/watch?v=jzmNh8lbSp8",
+      "posted_at": 1787618371
     }
   }
 }

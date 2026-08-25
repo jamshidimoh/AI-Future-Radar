@@ -9,6 +9,8 @@ from education_editor import normalize_editorial_text
 from llm_router_light import call_llm_with_fallback, get_quality_chain
 from src.editorial_quality_policy import editorial_fields_ok, headline_quality_ok, persian_ratio
 
+_GROUNDING_THRESHOLD = 0.70
+
 _GROUNDING_PROMPT = """تو ویراستار کنترل کیفیت یک رسانه تخصصی فناوری هستی.
 فقط بررسی کن آیا «عنوان» درباره همان موضوع اصلی «خلاصه» و «متن منبع» است یا نه.
 عنوان نباید موضوعی مستقل، شخص/محصول/نتیجه‌ای متفاوت، یا ادعایی فراتر از متن معرفی کند.
@@ -64,7 +66,7 @@ def _llm_grounded(title: str, summary: str, source: str) -> bool | None:
         data = json.loads(raw or "{}")
         if isinstance(data, dict) and isinstance(data.get("grounded"), bool):
             return bool(data["grounded"])
-    except (json.JSONDecodeError, TypeError, ValueError, Exception):
+    except Exception:
         return None
     return None
 
@@ -97,7 +99,7 @@ def ensure_headline_grounding(data: dict, item: dict) -> dict | None:
         return None
 
     score = deterministic_grounding_score(title, summary, source)
-    if score >= 0.55:
+    if score >= _GROUNDING_THRESHOLD:
         data["title_grounding_score"] = round(score, 3)
         return data
 
@@ -119,13 +121,13 @@ def ensure_headline_grounding(data: dict, item: dict) -> dict | None:
         candidate = dict(data)
         candidate["title"] = candidate_title
         repaired_score = deterministic_grounding_score(candidate_title, summary, source)
-        if headline_quality_ok(candidate_title) and editorial_fields_ok(candidate_title, summary, str(data.get("why_it_matters", ""))) and repaired_score >= 0.55:
+        if headline_quality_ok(candidate_title) and editorial_fields_ok(candidate_title, summary, str(data.get("why_it_matters", ""))) and repaired_score >= _GROUNDING_THRESHOLD:
             candidate["title_grounding_score"] = round(repaired_score, 3)
             candidate["title_grounding_repaired"] = True
             candidate["_title_grounding_provider"] = provider
             print(f"[Headline Grounding] repaired score={repaired_score:.2f}", flush=True)
             return candidate
-    except (json.JSONDecodeError, TypeError, ValueError):
+    except Exception:
         pass
 
     fallback = _fallback_title(summary, item)

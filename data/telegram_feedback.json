@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787675129,
+  "updated_at": 1787689151,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4093,6 +4093,63 @@
       "why_it_matters": "این بحث مرزهای دانش بشری را به چالش می‌کشد و نشان می‌دهد که محدودیت‌های فیزیولوژیک ممکن است مانع از دستیابی به نظریه‌ای جامع از واقعیت شوند. درک این محدودیت‌ها برای توسعه ابزارهای کمکی شناختی و هوش مصنوعی جهت پر کردن شکاف‌های درک علمی حیاتی است.",
       "link": "https://www.youtube.com/shorts/ToFF_B1vXEs",
       "posted_at": 1787675129
+    },
+    "-1004482051328:1277": {
+      "chat_id": -1004482051328,
+      "message_id": 1277,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Hoover Institution)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "تامین مالی مشترک سه پروژه جدید در تقاطع هوش مصنوعی و ژئوپلیتیک توسط TPA و HAI",
+      "summary": "Hoover’s TPA و Stanford’s HAI به صورت مشترک سه پروژه جدید را برای بررسی تقاطع هوش مصنوعی و ژئوپلیتیک تامین مالی کرده‌اند. این ابتکار پژوهشی بر تحلیل پیچیدگی‌های سیاسی و استراتژیک ناشی از توسعه و استقرار فناوری‌های هوش مصنوعی تمرکز دارد.",
+      "why_it_matters": "همکاری بین Hoover’s TPA و Stanford’s HAI نشان‌دهنده افزایش Attention جدی به پیامدهای ژئوپلیتیک هوش مصنوعی است. این پروژه‌ها می‌توانند چارچوب‌های تحلیلی مهمی برای درک تأثیرات استراتژیک AI بر روابط بین‌الملل و امنیت ملی ارائه دهند.",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQRWY5NHphaGVGZDlXZ19LTTVWbzA2TFhXdS1XbUZEQy14YkZiZG9neGl2Yy02VVhnMkxmZDVXUHRRaFRzRjlfSkRfZG1mR19DMUlZOVliYjAxNnR4dWJrR1BiVjhVSUY0eTZqb2gzMVY0aWdIQjF5RHNfZGthcVRFWmFBY3FjcXIzRG9OOXdQaVFxWjU4Y1VjbEdySFhtM0k0bE5DMWRna2xucjZ1b012ZmlvRVI?oc=5",
+      "posted_at": 1787689147
+    },
+    "-1004482051328:1278": {
+      "chat_id": -1004482051328,
+      "message_id": 1278,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Defending Education)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "تأثیر DEI بر هوش مصنوعی: نقش دانشگاه‌ها",
+      "summary": "این گزارش به بررسی نفوذ اصول DEI در توسعه و پیاده‌سازی سیستم‌های هوش مصنوعی می‌پردازد. تمرکز اصلی بر تأثیر دانشگاه‌ها و نهادهای آموزشی در شکل‌دهی به این رویکردها و پیامدهای آن برای اکوسیستم فناوری است.",
+      "why_it_matters": "بررسی نفوذ DEI در هوش مصنوعی نشان می‌دهد که دانشگاه‌ها به عنوان مراکز اصلی تولید دانش، نقش تعیین‌کننده‌ای در جهت‌دهی به الگوریتم‌ها دارند. این روند می‌تواند بر بی‌طرفی فنی و استانداردهای آموزشی تأثیر عمیق بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9JQjVrT214bmhhdFVfMWd0V29OSFlMRGVyMzQ3S3JCT1FYRTB2NnlrT0RpTjJmYkZmQnNUTEJLOTNVS0UyeUR6bkV5blBfY1NKcUpNaE5DQ3lDajR5YUxuc2xlY0ZDYmpuUENiU09MRUVXcENhbTM0bWdB?oc=5",
+      "posted_at": 1787689149
+    },
+    "-1004482051328:1279": {
+      "chat_id": -1004482051328,
+      "message_id": 1279,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (TechCrunch)",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "تیبو سوتیو: جهان برای هوش مصنوعی آماده به نظر می‌رسد",
+      "summary": "در این مصاحبه با TechCrunch، تیبو سوتیو، مدیر محصول OpenAI، به بررسی آمادگی جهانی برای پذیرش فناوری‌های جدید می‌پردازد. او معتقد است که زیرساخت‌ها و ذهنیت کاربران اکنون برای یک تحول گسترده در حوزه هوش مصنوعی مهیا هستند.",
+      "why_it_matters": "این دیدگاه از سوی یکی از مدیران ارشد OpenAI نشان‌دهنده تغییر فاز صنعت از مرحله آزمایشی به پذیرش گسترده است. درک این آمادگی بازار برای توسعه‌دهندگان و سرمایه‌گذاران حیاتی است تا استراتژی‌های خود را با واقعیت‌های فعلی همسو کنند.",
+      "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPTkRSQ1lnRGxrZWVfODFJTktXUEFjWU4wcDc0NzNxZzJFdHZsRkwwQkpUM2QzQk84TGdaY0trVHZXR2VkNGtmX1NCWjFlUDVSWjhtdUVfTEx3OXdMZHFCWTVNT01qeXhQbWpickJjbFk1c1FUcWhKTmU2aGVxWGxiNnBLaGNGZ1Z4OW1SMGx2alZYMkxwaG9Nbk5kbjVPRjdDMEtxOC1YeXloSnJaNEFMaHNTVE5JLS1zOVRkeXhn?oc=5",
+      "posted_at": 1787689151
     }
   }
 }

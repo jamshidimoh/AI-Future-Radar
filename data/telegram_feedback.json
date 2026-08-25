@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787635448,
+  "updated_at": 1787641017,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3666,6 +3666,72 @@
       "why_it_matters": "سازمان‌دهی محتوای علمی بر اساس موضوعات تخصصی مانند هوش مصنوعی، دسترسی مخاطبان به دانش دقیق را تسهیل می‌کند. این رویکرد در پلتفرم‌های معتبری مانند World Science Festival، کیفیت و تمرکز آموزشی را ارتقا می‌دهد.",
       "link": "https://www.youtube.com/watch?v=6LC1-yxSC8o",
       "posted_at": 1787635447
+    },
+    "-1004482051328:1253": {
+      "chat_id": -1004482051328,
+      "message_id": 1253,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "Albert Einstein: میراث علمی و زندگی‌نامه",
+      "summary": "این سخنرانی در جشنواره جهانی علوم به بررسی زندگی و دستاوردهای علمی آلبرت اینشتین می‌پردازد. با وجود اینکه متن ورودی فاقد جزئیات محتوایی است، این رویداد به عنوان یک سخنرانی سطح یک در دسته‌بندی کشف‌های علمی طبقه‌بندی شده است.",
+      "why_it_matters": "آلبرت اینشتین به عنوان یکی از تأثیرگذارترین فیزیکدانان تاریخ شناخته می‌شود و درک نظریه‌های او همچنان برای پیشرفت‌های مدرن علمی ضروری است. این سخنرانی فرصتی برای مرور دقیق‌تر میراث او در جشنواره جهانی علوم فراهم می‌کند.",
+      "link": "https://www.youtube.com/watch?v=ZmrHlGD20T0",
+      "posted_at": 1787641009
+    },
+    "-1004482051328:1254": {
+      "chat_id": -1004482051328,
+      "message_id": 1254,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی صدای جدید ChatGPT با قدرت GPT-Live",
+      "summary": "شرکت OpenAI در ویدیوی رسمی خود، قابلیت صوتی جدید ChatGPT را معرفی کرد که بر پایه فناوری GPT-Live ساخته شده است. این به‌روزرسانی نشان‌دهنده تمرکز شرکت بر بهبود تعاملات گفتاری و طبیعی‌تر با کاربران است.",
+      "why_it_matters": "معرفی GPT-Live به عنوان هسته پردازش صدای جدید ChatGPT، گامی مهم در جهت طبیعی‌تر و تعاملی‌تر کردن گفتگوهای صوتی با هوش مصنوعی محسوب می‌شود. این فناوری می‌تواند تجربه کاربری را در پلتفرم‌های گفتگومحور متحول کند.",
+      "link": "https://www.youtube.com/watch?v=EAN5Cj347PY",
+      "posted_at": 1787641011
+    },
+    "-1004482051328:1255": {
+      "chat_id": -1004482051328,
+      "message_id": 1255,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Lex Fridman Podcast",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "Lex Fridman Podcast: بررسی‌های فنی و فلسفی در حوزه هوش مصنوعی",
+      "summary": "این اپیزود از Lex Fridman Podcast به بررسی مباحث فنی و فلسفی مرتبط با هوش مصنوعی می‌پردازد. محتوای ارائه‌شده در دسته‌بندی کشف محتوای AI قرار گرفته و از سطح منبع یک برخوردار است.",
+      "why_it_matters": "این پادکست با ترکیب تحلیل‌های فنی و پرسش‌های فلسفی، درکی عمیق‌تر از پیامدهای هوش مصنوعی ارائه می‌دهد. طبقه‌بندی آن به عنوان منبع سطح یک، نشان‌دهنده اعتبار و اهمیت محتوای تولیدشده در این حوزه است.",
+      "link": "https://www.youtube.com/watch?v=bCA54RIkpTo",
+      "posted_at": 1787641012
+    },
+    "-1004482051328:1256": {
+      "chat_id": -1004482051328,
+      "message_id": 1256,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787641017
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787624105,
+  "updated_at": 1787624600,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3492,6 +3492,72 @@
       "category": "ai",
       "title": "Education lesson 32",
       "posted_at": 1787624105
+    },
+    "-1004482051328:1243": {
+      "chat_id": -1004482051328,
+      "message_id": 1243,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Lex Fridman Podcast",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "پادکست لکس فریدمن: گیتار و پیانو",
+      "summary": "این اپیزود از پادکست Lex Fridman Podcast با عنوان Guitar & Piano منتشر شده است. طبق طبقه‌بندی منبع، این محتوا در دسته‌بندی کشف‌های منتخب با موضوع هوش مصنوعی (AI) قرار می‌گیرد و دارای سطح منبع یک (Tier 1) است.",
+      "why_it_matters": "این محتوا به عنوان یک منبع سطح یک در حوزه هوش مصنوعی طبقه‌بندی شده است. بررسی دقیق این اپیزود می‌تواند بینش‌های ارزشمندی درباره تقاطع هنر و فناوری یا دیدگاه‌های مهمانان در این زمینه ارائه دهد.",
+      "link": "https://www.youtube.com/watch?v=l6USUAIKJls",
+      "posted_at": 1787624593
+    },
+    "-1004482051328:1244": {
+      "chat_id": -1004482051328,
+      "message_id": 1244,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Lex Fridman Podcast",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "Lex Fridman: هنرهای رزمی و فلسفه زندگی",
+      "summary": "در این اپیزود از Lex Fridman Podcast، میزبان به بررسی عمیق ارتباط میان تمرینات هنرهای رزمی و اصول هدایت زندگی می‌پردازد. Fridman با تکیه بر تجربیات شخصی و گفتگوهای تخصصی، نشان می‌دهد که چگونه انضباط، تمرکز و پذیرش عدم قطعیت در رینگ مبارزه، می‌تواند به توسعه فردی و آرامش ذهنی در زندگی روزمره منجر شود.",
+      "why_it_matters": "این گفتگو فراتر از بحث‌های فنی، پلی میان عملکرد فیزیکی و سلامت روان ایجاد می‌کند. در دنیای پرشتاب فناوری، درک این اصول برای حفظ تعادل و تاب‌آوری ذهنی ضروری است.",
+      "link": "https://www.youtube.com/watch?v=Khf-N2f8T78",
+      "posted_at": 1787624594
+    },
+    "-1004482051328:1245": {
+      "chat_id": -1004482051328,
+      "message_id": 1245,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "MIT CSAIL: پلی میان پژوهش و واقعیت در هوش مصنوعی",
+      "summary": "این ویدیو از کانال MIT CSAIL به بررسی گذار از پژوهش‌های نظری به کاربردهای عملی در حوزه هوش مصنوعی می‌پردازد. با تکیه بر محتوای پژوهشی سطح یک، این اثر بر اهمیت تبدیل کشفیات علمی به سیاست‌ها و راهکارهای قابل اجرا در دنیای واقعی تأکید دارد.",
+      "why_it_matters": "درک شکاف میان پژوهش‌های آکادمیک و پیاده‌سازی صنعتی برای توسعه پایدار فناوری حیاتی است. این محتوا با تمرکز بر سیاست‌گذاری کشف‌محور، چارچوبی برای تبدیل نوآوری‌های آزمایشگاهی به راهکارهای مؤثر در اکوسیستم هوش مصنوعی ارائه می‌دهد.",
+      "link": "https://www.youtube.com/watch?v=FKSQG4IC1qE",
+      "posted_at": 1787624595
+    },
+    "-1004482051328:1246": {
+      "chat_id": -1004482051328,
+      "message_id": 1246,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787624600
     }
   }
 }

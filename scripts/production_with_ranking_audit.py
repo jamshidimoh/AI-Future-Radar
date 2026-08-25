@@ -1,4 +1,4 @@
-"""Production launcher with mission-aware normal portfolio selection and audit."""
+"""Production launcher with canonical period ranking and audit."""
 from __future__ import annotations
 
 import sys
@@ -9,7 +9,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import period_ranked_pipeline as pipeline
-from src.portfolio_selection import select_normal_portfolio
 from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
 
@@ -18,57 +17,16 @@ _original_rank = pipeline._global_ranked_selection
 
 
 def _production_select(items, max_posts, max_per_source, max_per_type, policy):
-    """Select Tier-0 stories first, then build the normal mission portfolio.
-
-    Tier-0/protected interviews are not normal portfolio candidates: they are
-    policy-exempt and must survive the production audit path. The normal
-    mission-aware selector therefore operates only on the remaining pool.
-    """
-    eligible = [
-        x for x in (items or [])
-        if not x.get("duplicate") and not x.get("publication_blocked")
-    ]
-    eligible = pipeline._exclude_published_candidates(eligible)
-    pipeline._prepare_rank_features(eligible)
-
-    priority_candidates = [
-        item for item in eligible
-        if item.get("_rank_is_tier0") or item.get("protected_content")
-    ]
-    priority = pipeline._priority_story_diversified(priority_candidates)
-    priority_ids = {id(item) for item in priority}
-    normal_candidates = [
-        item for item in eligible
-        if id(item) not in priority_ids
-        and not item.get("_rank_is_tier0")
-        and not item.get("protected_content")
-    ]
-
-    selected_normal = select_normal_portfolio(
-        normal_candidates,
+    """Use the canonical period ranking implementation for production."""
+    selected = _original_rank(
+        items,
         max_posts=max_posts,
         max_per_source=max_per_source,
         max_per_type=max_per_type,
         policy=policy,
     )
-
-    selected = priority + selected_normal
-    normal_rank = tier0_rank = 0
-    for global_rank, item in enumerate(selected, 1):
-        if item in priority:
-            tier0_rank += 1
-            item["tier0_rank"] = tier0_rank
-            item["normal_period_rank"] = None
-        else:
-            normal_rank += 1
-            item["normal_period_rank"] = normal_rank
-            item["tier0_rank"] = None
-        item["period_rank"] = global_rank
-        item["publication_rank_assigned"] = True
-
     print(
-        f"[Production Selection] tier0={len(priority)} normal={len(selected_normal)} "
-        f"total={len(selected)}",
+        f"[Production Selection] canonical_period_rank=true total={len(selected)}",
         flush=True,
     )
     return selected

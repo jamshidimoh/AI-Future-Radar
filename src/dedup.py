@@ -109,6 +109,18 @@ def save_seen(seen_hashes, seen_signatures, source_history=None):
 def _is_protected_leader(item): return bool(item.get("protected_content") or item.get("_named_leader_interview"))
 
 
+def _is_education(item):
+    return str(item.get("content_type") or "").strip().lower() == "education"
+
+
+def _education_identity(item):
+    value = item.get("education_id")
+    try:
+        return f"education:{int(value)}" if value is not None else ""
+    except (TypeError, ValueError):
+        return ""
+
+
 def _stored_story_ids(signatures): return {s[len(STORY_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(STORY_MARKER)}
 
 
@@ -149,10 +161,9 @@ def _protected_same_story_match(item, signatures):
 def filter_new_items(items, seen_hashes):
     """Single publication gate: canonical URL, exact Story ID, then semantic identity.
 
-    Protected leader material uses a conservative same-story rewrite check instead
-    of broad historical topic similarity. This prevents a leader's new interview
-    from being starved by older stories about the same person while still blocking
-    mirrored/reframed versions of the same story.
+    Education is a separate scheduled product stream. It has no article URL and
+    therefore must not enter the URL/semantic Story dedup path; its stable
+    identity is ``education:<lesson_id>`` and its cadence/state is authoritative.
     """
     _, seen_signatures = load_seen()
     protected_sent = {s[len(PROTECTED_MARKER):] for s in seen_signatures if isinstance(s, str) and s.startswith(PROTECTED_MARKER)}
@@ -162,6 +173,19 @@ def filter_new_items(items, seen_hashes):
     protected_semantic_bypassed = 0
     protected_same_story_blocked = 0
     for item in items:
+        if _is_education(item):
+            identity = _education_identity(item)
+            if identity and identity in stored_story_ids:
+                rejected_story += 1
+                continue
+            if identity and identity in local_stories:
+                rejected_story += 1
+                continue
+            if identity:
+                local_stories.add(identity)
+            result.append(item)
+            continue
+
         link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
         protected = _is_protected_leader(item)
         if protected:
@@ -208,6 +232,13 @@ def filter_new_items(items, seen_hashes):
 
 def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
     from semantic_dedup import encode_story_signature, get_signature
+    if _is_education(item):
+        identity = _education_identity(item)
+        if identity:
+            seen_signatures.append(STORY_MARKER + identity)
+        if source_history is not None:
+            source_history.append({"ts": int(time.time()), "source": item.get("source", "education"), "category": item.get("category", "ai"), "content_type": "education", "leader": "", "story_id": identity})
+        return seen_hashes, seen_signatures, source_history
     link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
     if _is_protected_leader(item): seen_signatures.append(PROTECTED_MARKER + link_hash)
     else: seen_hashes.add(link_hash)

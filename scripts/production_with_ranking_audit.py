@@ -9,6 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import period_ranked_pipeline as pipeline
+from src.content_grounding import ensure_source_grounding
 from src.headline_grounding import ensure_headline_grounding
 from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
@@ -63,10 +64,13 @@ def _audited_main(hooks=None):
         return selected
 
     def grounded_summarize(item):
-        summary = original_summarize(item)
-        if summary is None:
+        draft = original_summarize(item)
+        if draft is None:
             return None
-        return ensure_headline_grounding(summary, item)
+        source_grounded = ensure_source_grounding(draft, item)
+        if source_grounded is None:
+            return None
+        return ensure_headline_grounding(source_grounded, item)
 
     def rtl_format(item, source_name, link, **kwargs):
         formatter = original_format or pipeline.format_post

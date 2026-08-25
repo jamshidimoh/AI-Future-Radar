@@ -68,9 +68,9 @@ def _audited_main(hooks=None):
             return None
         return ensure_headline_grounding(summary, item)
 
-    def rtl_format(*args, **kwargs):
+    def rtl_format(item, source_name, link, **kwargs):
         formatter = original_format or pipeline.format_post
-        return force_rtl_blocks(formatter(*args, **kwargs))
+        return force_rtl_blocks(formatter(item, source_name, link, **kwargs))
 
     merged["select_editorial"] = production_select
     merged["summarize_item"] = grounded_summarize

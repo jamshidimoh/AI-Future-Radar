@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787641017,
+  "updated_at": 1787641830,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3732,6 +3732,60 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787641017
+    },
+    "-1004482051328:1257": {
+      "chat_id": -1004482051328,
+      "message_id": 1257,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "چالش اخلاقی و فیزیکی جاودانگی: دیدگاه دو فیزیکدان در World Science Festival",
+      "summary": "در این سخنرانی از World Science Festival، دو فیزیکدان دربارهٔ امکان و مطلوبیت زندگی ابدی بحث می‌کنند. یکی از آن‌ها بدون تردید پاسخ منفی می‌دهد، در حالی که دیگری در این زمینه مردد است و تردیدهای خود را بیان می‌کند.",
+      "why_it_matters": "این گفتگو مرزهای فلسفهٔ علم و اخلاق زیستی را در مواجهه با پیشرفت‌های بالقوهٔ فناوری‌های افزایش طول عمر به چالش می‌کشد. تضاد دیدگاه‌ها نشان می‌دهد که حتی متخصصان علوم پایه نیز در قبال پیامدهای وجودی جاودانگی هم‌نظر نیستند.",
+      "link": "https://www.youtube.com/shorts/Bt4fHRbcC30",
+      "posted_at": 1787641827
+    },
+    "-1004482051328:1258": {
+      "chat_id": -1004482051328,
+      "message_id": 1258,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "ریان گرین‌بلاط: چرا پروژه Mythos به دلیل خطرات امنیتی لغو شد",
+      "summary": "در این مصاحبه با Dwarkesh Patel، ریان گرین‌بلاط به بررسی دلایل داخلی لغو پروژه Mythos می‌پردازد. او توضیح می‌دهد که این مدل هوش مصنوعی به دلیل نگرانی‌های جدی امنیتی و خطرات بالقوه ناشی از انتشار عمومی، هرگز به مرحله عرضه نرسید.",
+      "why_it_matters": "این گفتگو نشان می‌دهد که شرکت‌های پیشرو در هوش مصنوعی چگونه مرزهای ایمنی را تعیین می‌کنند و حتی پروژه‌های پیشرفته را در صورت تشخیص خطر متوقف می‌کنند. این رویکرد مسئولانه می‌تواند الگویی برای توسعه‌دهندگان دیگر در مدیریت ریسک‌های فناوری‌های نوظهور باشد.",
+      "link": "https://www.youtube.com/watch?v=wtaoBxnf1vQ",
+      "posted_at": 1787641829
+    },
+    "-1004482051328:1259": {
+      "chat_id": -1004482051328,
+      "message_id": 1259,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "تأثیر فقدان بر مسیر علمی Marcelo Gleiser",
+      "summary": "Marcelo Gleiser در این سخنرانی به بازگویی تجربه شخصی خود از از دست دادن مادرش در شش سالگی می‌پردازد. او توضیح می‌دهد که چگونه یک ایده کلیدی دهه‌ها بعد، نحوه مواجهه او با این فقدان را تغییر داد و دیدگاهش را نسبت به جهان بازسازی کرد.",
+      "why_it_matters": "این سخنرانی نشان می‌دهد که چگونه تجربیات عمیق انسانی و عاطفی می‌توانند بر رویکرد یک فیزیکدان به علم و جهان‌بینی او تأثیر بگذارند. این موضوع پیوند میان روان‌شناسی فردی و خلاقیت علمی را برجسته می‌سازد.",
+      "link": "https://www.youtube.com/shorts/8_oSwfviCHY",
+      "posted_at": 1787641830
     }
   }
 }

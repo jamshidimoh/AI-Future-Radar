@@ -29,6 +29,19 @@ def test_rewritten_story_from_previous_run_is_blocked(tmp_path, monkeypatch):
     seen_hashes,_=dedup.load_seen(); assert dedup.filter_new_items([rewritten],seen_hashes)==[]
 
 
+def test_education_without_url_survives_story_dedup(tmp_path, monkeypatch):
+    state, _ = _isolated_state(tmp_path, monkeypatch)
+    education = {"content_type": "education", "education_id": 31, "category": "ai", "title": "Validation و Generalization"}
+    seen_hashes, _ = dedup.load_seen()
+    assert dedup.filter_new_items([education], seen_hashes) == [education]
+
+    seen_hashes, seen_signatures = dedup.load_seen()
+    dedup.mark_as_seen(education, seen_hashes, seen_signatures, [])
+    dedup.save_seen(seen_hashes, seen_signatures, [])
+    restarted_hashes, _ = dedup.load_seen()
+    assert dedup.filter_new_items([education], restarted_hashes) == []
+
+
 def test_same_run_semantic_duplicate_is_blocked(tmp_path, monkeypatch):
     state,_=_isolated_state(tmp_path,monkeypatch); state.write_text(json.dumps({"seen_hashes":[],"seen_signatures":[],"source_history":[]}),encoding="utf-8")
     first=_item("MIT CSAIL researchers introduce a new AI model for physical-world interaction","https://example.com/first","Researchers at MIT CSAIL present a model designed to improve interaction with the physical world.","The work may improve AI systems operating outside purely digital environments.")

@@ -243,8 +243,7 @@ def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
     if _is_protected_leader(item): seen_signatures.append(PROTECTED_MARKER + link_hash)
     else: seen_hashes.add(link_hash)
     if identity: seen_signatures.append(STORY_MARKER + identity)
-    seen_signatures.append(get_signature(item.get("title", "")))
-    seen_signatures.append(encode_story_signature(item))
+    seen_signatures.append(get_signature(item.get("title", ""))); seen_signatures.append(encode_story_signature(item))
     if source_history is not None:
         source_history.append({"ts": int(time.time()), "source": item.get("source", "unknown"), "category": item.get("category", "ai"), "content_type": item.get("content_type", "news"), "leader": item.get("leader") or item.get("watch_person") or item.get("_leader_match", ""), "story_id": identity})
     return seen_hashes, seen_signatures, source_history

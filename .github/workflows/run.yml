@@ -43,6 +43,7 @@ jobs:
         env:
           PYTHONUNBUFFERED: "1"
           RADAR_WATCHDOG_MINUTES: "22"
+          RADAR_SUMMARY_WORKERS: "4"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: "-1004482051328"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -55,7 +56,7 @@ jobs:
         run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
 
       - name: Persist production state
-        if: success()
+        if: always()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"

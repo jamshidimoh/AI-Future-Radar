@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787632292,
+  "updated_at": 1787635448,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3612,6 +3612,60 @@
       "why_it_matters": "این مجموعه به دلیل ارائه مفاهیم پیچیده علمی به شکلی ساده و قابل فهم برای عموم مردم اهمیت دارد. این ویدیوها می‌توانند به افزایش سواد علمی و درک بهتر مفاهیم علمی کمک کنند.",
       "link": "https://www.youtube.com/watch?v=KWj00MCqSxs",
       "posted_at": 1787632292
+    },
+    "-1004482051328:1250": {
+      "chat_id": -1004482051328,
+      "message_id": 1250,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Google DeepMind",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "داستان AlphaFold: تحولی در پیش‌بینی ساختار پروتئین",
+      "summary": "این ویدیو به بررسی داستان توسعه AlphaFold توسط Google DeepMind می‌پردازد. این پروژه با استفاده از هوش مصنوعی، چالش کهنه‌ی بیولوژیکی پیش‌بینی ساختار سه‌بعدی پروتئین‌ها را حل کرده است. این دستاورد علمی، درک ما از بیماری‌ها و توسعه داروهای جدید را متحول می‌کند.",
+      "why_it_matters": "AlphaFold با حل مسئله‌ی ساختار پروتئین، مرزهای دانش بیولوژیکی و پزشکی را جابه‌جا کرده است. این فناوری به محققان اجازه می‌دهد تا فرآیندهای زیستی را در سطح مولکولی بهتر درک کنند و سرعت کشف داروهای جدید را به‌طور چشمگیری افزایش دهند.",
+      "link": "https://www.youtube.com/watch?v=R-Yqes8AotY",
+      "posted_at": 1787635445
+    },
+    "-1004482051328:1251": {
+      "chat_id": -1004482051328,
+      "message_id": 1251,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "آشنایی اولیه با سیاه‌چاله‌ها",
+      "summary": "این ویدیو که توسط World Science Festival ارائه شده است، به عنوان یک سخنرانی آموزشی با عنوان Black Holes 101 شناخته می‌شود. منبع در تیر ۱ طبقه‌بندی شده و سیاست کشف آن بر پایه AI تنظیم شده است.",
+      "why_it_matters": "این محتوا به عنوان یک منبع درجه یک در حوزه آموزش عمومی علوم، درک مفاهیم پیچیده فیزیک نظری را برای مخاطبان عادی تسهیل می‌کند. طبقه‌بندی دقیق آن بر اساس هوش مصنوعی، نشان‌دهنده اهمیت سیستماتیک در مدیریت و دسترسی به دانش علمی است.",
+      "link": "https://www.youtube.com/watch?v=iFYF_e1GSGI",
+      "posted_at": 1787635446
+    },
+    "-1004482051328:1252": {
+      "chat_id": -1004482051328,
+      "message_id": 1252,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "پلی‌لیست‌های موضوعی در World Science Festival",
+      "summary": "این محتوا به دسته‌بندی پلی‌لیست‌ها بر اساس موضوع در World Science Festival اشاره دارد. سیاست کشف محتوای منتخب بر روی دسته‌بندی AI متمرکز است. منبع در سطح 1 قرار دارد و نوع محتوا مصاحبه یا سخنرانی است.",
+      "why_it_matters": "سازمان‌دهی محتوای علمی بر اساس موضوعات تخصصی مانند هوش مصنوعی، دسترسی مخاطبان به دانش دقیق را تسهیل می‌کند. این رویکرد در پلتفرم‌های معتبری مانند World Science Festival، کیفیت و تمرکز آموزشی را ارتقا می‌دهد.",
+      "link": "https://www.youtube.com/watch?v=6LC1-yxSC8o",
+      "posted_at": 1787635447
     }
   }
 }

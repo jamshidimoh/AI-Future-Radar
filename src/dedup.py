@@ -17,10 +17,20 @@ PROTECTED_MARKER = "__protected_sent__:"
 STORY_MARKER = "__story_id__:"
 
 
-def _canonical_url(link): return canonical_url(link)
-def _hash_link(link): return url_id({"link": link})
-def _normalize_story_title(title): return normalize_title(title)
-def _story_id(item): return story_id(item)
+def _canonical_url(link):
+    return canonical_url(link)
+
+
+def _hash_link(link):
+    return url_id({"link": link})
+
+
+def _normalize_story_title(title):
+    return normalize_title(title)
+
+
+def _story_id(item):
+    return story_id(item)
 
 
 def _load_state():
@@ -77,7 +87,9 @@ def _unique_signatures(signatures):
 
 
 def load_seen():
-    data = _load_state(); signatures = data.get("seen_signatures", []) if isinstance(data.get("seen_signatures", []), list) else []; hashes = data.get("seen_hashes", []) if isinstance(data.get("seen_hashes", []), list) else []
+    data = _load_state()
+    signatures = data.get("seen_signatures", []) if isinstance(data.get("seen_signatures", []), list) else []
+    hashes = data.get("seen_hashes", []) if isinstance(data.get("seen_hashes", []), list) else []
     hashes, signatures, _ = _reconcile_feedback(set(hashes), signatures)
     return hashes, _unique_signatures(signatures)
 
@@ -90,79 +102,123 @@ def load_source_history():
 def save_seen(seen_hashes, seen_signatures, source_history=None):
     os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
     if source_history is None: source_history = load_source_history()
-    with open(STATE_FILE, "w", encoding="utf-8") as f: json.dump({"seen_hashes": list(dict.fromkeys(seen_hashes))[-MAX_HISTORY:], "seen_signatures": _unique_signatures(seen_signatures), "source_history": source_history[-MAX_SOURCE_HISTORY:]}, f, ensure_ascii=False, indent=2)
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
+        json.dump({"seen_hashes": list(dict.fromkeys(seen_hashes))[-MAX_HISTORY:], "seen_signatures": _unique_signatures(seen_signatures), "source_history": source_history[-MAX_SOURCE_HISTORY:]}, f, ensure_ascii=False, indent=2)
 
 
 def _is_protected_leader(item): return bool(item.get("protected_content") or item.get("_named_leader_interview"))
-def _is_education(item): return str(item.get("content_type") or "").strip().lower() == "education"
+
+
+def _is_education(item):
+    return str(item.get("content_type") or "").strip().lower() == "education"
+
 
 def _education_identity(item):
     value = item.get("education_id")
-    try: return f"education:{int(value)}" if value is not None else ""
-    except (TypeError, ValueError): return ""
+    try:
+        return f"education:{int(value)}" if value is not None else ""
+    except (TypeError, ValueError):
+        return ""
+
 
 def _stored_story_ids(signatures): return {s[len(STORY_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(STORY_MARKER)}
 
+
 def _semantic_history_match(item, signatures):
     try:
-        from semantic_dedup import get_story_signature, _similarity
+        from semantic_dedup import get_story_signature, _similarity, SEMANTIC_MARKER
         from semantic_threshold import semantic_threshold
-    except Exception: return 0.0
-    candidate = get_story_signature(item); threshold = semantic_threshold(item, local=False); best = 0.0
+    except Exception:
+        return 0.0
+    candidate = get_story_signature(item)
+    threshold = semantic_threshold(item, local=False)
+    best = 0.0
     for stored in signatures or []:
-        if not isinstance(stored, str) or not stored.startswith("__semantic__:"): continue
-        best = max(best, _similarity(candidate, stored))
+        if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER): continue
+        score = _similarity(candidate, stored)
+        best = max(best, score)
         if best >= threshold: return best
     return best
 
+
 def _protected_same_story_match(item, signatures):
-    """Protected interviews require strong same-story evidence, not topic similarity."""
+    """Detect only strong rewrites of the same protected story, not same-topic items."""
     try:
         from semantic_dedup import SEMANTIC_MARKER, _decode_signature, get_story_signature
         from protected_story_identity import probable_same_story
-    except Exception: return False
+    except Exception:
+        return False
     candidate = get_story_signature(item)
     for stored in signatures or []:
-        if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER): continue
+        if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER):
+            continue
         stored_signature = _decode_signature(stored)
-        if stored_signature and probable_same_story(candidate, stored_signature): return True
+        if stored_signature and probable_same_story(candidate, stored_signature):
+            return True
     return False
 
+
 def filter_new_items(items, seen_hashes):
-    _, seen_signatures = load_seen(); protected_sent = {s[len(PROTECTED_MARKER):] for s in seen_signatures if isinstance(s, str) and s.startswith(PROTECTED_MARKER)}; stored_story_ids = _stored_story_ids(seen_signatures)
+    """Single publication gate: canonical URL, exact Story ID, then semantic identity.
+
+    Education is a separate scheduled product stream. It has no article URL and
+    therefore must not enter the URL/semantic Story dedup path; its stable
+    identity is ``education:<lesson_id>`` and its cadence/state is authoritative.
+    """
+    _, seen_signatures = load_seen()
+    protected_sent = {s[len(PROTECTED_MARKER):] for s in seen_signatures if isinstance(s, str) and s.startswith(PROTECTED_MARKER)}
+    stored_story_ids = _stored_story_ids(seen_signatures)
     result, local_urls, local_stories, local_semantic = [], set(), set(), []
-    rejected_url = rejected_story = rejected_semantic = 0; protected_semantic_bypassed = protected_same_story_blocked = 0
+    rejected_url = rejected_story = rejected_semantic = 0
+    protected_semantic_bypassed = 0
+    protected_same_story_blocked = 0
     for item in items:
         if _is_education(item):
             identity = _education_identity(item)
-            if identity and identity in stored_story_ids: rejected_story += 1; continue
-            if identity and identity in local_stories: rejected_story += 1; continue
-            if identity: local_stories.add(identity)
-            result.append(item); continue
-        link_hash, identity = _hash_link(item.get("link", "")), _story_id(item); protected = _is_protected_leader(item)
+            if identity and identity in stored_story_ids:
+                rejected_story += 1
+                continue
+            if identity and identity in local_stories:
+                rejected_story += 1
+                continue
+            if identity:
+                local_stories.add(identity)
+            result.append(item)
+            continue
+
+        link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
+        protected = _is_protected_leader(item)
         if protected:
-            if link_hash in protected_sent or (identity and identity in stored_story_ids): rejected_story += 1; continue
-            if _protected_same_story_match(item, seen_signatures): rejected_semantic += 1; protected_same_story_blocked += 1; continue
+            if link_hash in protected_sent or (identity and identity in stored_story_ids):
+                rejected_story += 1; continue
+            if _protected_same_story_match(item, seen_signatures):
+                rejected_semantic += 1
+                protected_same_story_blocked += 1
+                continue
             protected_semantic_bypassed += 1
         else:
-            if link_hash in seen_hashes: rejected_url += 1; continue
-            if identity and identity in stored_story_ids: rejected_story += 1; continue
+            if link_hash in seen_hashes:
+                rejected_url += 1; continue
+            if identity and identity in stored_story_ids:
+                rejected_story += 1; continue
             semantic_match = _semantic_history_match(item, seen_signatures)
-            try:
-                from semantic_threshold import semantic_threshold
-                if semantic_match >= semantic_threshold(item, local=False): rejected_semantic += 1; continue
-            except Exception: pass
-        if link_hash in local_urls or (identity and identity in local_stories): rejected_story += 1; continue
+            if semantic_match >= __import__("semantic_threshold").semantic_threshold(item, local=False):
+                rejected_semantic += 1; continue
+        if link_hash in local_urls or (identity and identity in local_stories):
+            rejected_story += 1; continue
         local_match = 0.0
         try:
             from semantic_dedup import get_story_signature, _similarity
-            candidate = get_story_signature(item); local_match = max((_similarity(candidate, previous) for previous in local_semantic), default=0.0)
+            candidate = get_story_signature(item)
+            local_match = max((_similarity(candidate, previous) for previous in local_semantic), default=0.0)
         except Exception: pass
         try:
             from semantic_threshold import semantic_threshold
             local_threshold = semantic_threshold(item, local=True)
-        except Exception: local_threshold = 0.60
-        if local_match >= local_threshold: rejected_semantic += 1; continue
+        except Exception:
+            local_threshold = 0.60
+        if local_match >= local_threshold:
+            rejected_semantic += 1; continue
         local_urls.add(link_hash)
         if identity: local_stories.add(identity)
         try:
@@ -178,13 +234,17 @@ def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
     from semantic_dedup import encode_story_signature, get_signature
     if _is_education(item):
         identity = _education_identity(item)
-        if identity: seen_signatures.append(STORY_MARKER + identity)
-        if source_history is not None: source_history.append({"ts": int(time.time()), "source": item.get("source", "education"), "category": item.get("category", "ai"), "content_type": "education", "leader": "", "story_id": identity})
+        if identity:
+            seen_signatures.append(STORY_MARKER + identity)
+        if source_history is not None:
+            source_history.append({"ts": int(time.time()), "source": item.get("source", "education"), "category": item.get("category", "ai"), "content_type": "education", "leader": "", "story_id": identity})
         return seen_hashes, seen_signatures, source_history
     link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
     if _is_protected_leader(item): seen_signatures.append(PROTECTED_MARKER + link_hash)
     else: seen_hashes.add(link_hash)
     if identity: seen_signatures.append(STORY_MARKER + identity)
-    seen_signatures.append(get_signature(item.get("title", ""))); seen_signatures.append(encode_story_signature(item))
-    if source_history is not None: source_history.append({"ts": int(time.time()), "source": item.get("source", "unknown"), "category": item.get("category", "ai"), "content_type": item.get("content_type", "news"), "leader": item.get("leader") or item.get("watch_person") or item.get("_leader_match", ""), "story_id": identity})
+    seen_signatures.append(get_signature(item.get("title", "")))
+    seen_signatures.append(encode_story_signature(item))
+    if source_history is not None:
+        source_history.append({"ts": int(time.time()), "source": item.get("source", "unknown"), "category": item.get("category", "ai"), "content_type": item.get("content_type", "news"), "leader": item.get("leader") or item.get("watch_person") or item.get("_leader_match", ""), "story_id": identity})
     return seen_hashes, seen_signatures, source_history

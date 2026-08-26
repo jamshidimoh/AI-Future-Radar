@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787729759,
+  "updated_at": 1787730363,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4116,6 +4116,60 @@
       "why_it_matters": "بیانیه‌های رهبران کلیدی OpenAI درباره آمادگی بازار، سیگنال‌های مهمی برای سرمایه‌گذاران و توسعه‌دهندگان اکوسیستم هوش مصنوعی محسوب می‌شوند. این دیدگاه نشان می‌دهد که تمرکز شرکت از مرحله آزمایشی به سمت مقیاس‌پذیری و پذیرش انبوه تغییر کرده است.",
       "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPTkRSQ1lnRGxrZWVfODFJTktXUEFjWU4wcDc0NzNxZzJFdHZsRkwwQkpUM2QzQk84TGdaY0trVHZXR2VkNGtmX1NCWjFlUDVSWjhtdUVfTEx3OXdMZHFCWTVNT01qeXhQbWpickJjbFk1c1FUcWhKTmU2aGVxWGxiNnBLaGNGZ1Z4OW1SMGx2alZYMkxwaG9Nbk5kbjVPRjdDMEtxOC1YeXloSnJaNEFMaHNTVE5JLS1zOVRkeXhn?oc=5",
       "posted_at": 1787729759
+    },
+    "-1004482051328:1303": {
+      "chat_id": -1004482051328,
+      "message_id": 1303,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "مدیریت یکپارچه فضای کاری با پلاگین ChatGPT admin",
+      "summary": "پلاگین ChatGPT admin قابلیت‌های مدیریت فضای کاری را مستقیماً درون محیط ChatGPT Work ادغام می‌کند. Aarti Bagul از OpenAI نشان می‌دهد که مدیران چگونه می‌توانند بدون جابجایی بین ابزارها، میزان پذیرش و مصرف اعتبار را تحلیل کنند. همچنین امکان به‌روزرسانی و اشتراک‌گذاری بسته‌های ارائه AI و همچنین بررسی و تأیید درخواست‌های محدودیت استفاده فراهم شده است.",
+      "why_it_matters": "این قابلیت با حذف نیاز به جابجایی بین پلتفرم‌های مختلف، کارایی مدیران IT را در نظارت بر مصرف و سیاست‌های AI افزایش می‌دهد. یکپارچه‌سازی فرآیندهای اداری درون محیط کاربری نه‌تنها زمان صرفه‌جویی می‌کند، بلکه شفافیت بیشتری در مدیریت منابع و محدودیت‌های سازمانی ایجاد می‌نماید.",
+      "link": "https://www.youtube.com/watch?v=29SyCndnMZs",
+      "posted_at": 1787730359
+    },
+    "-1004482051328:1304": {
+      "chat_id": -1004482051328,
+      "message_id": 1304,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی WebMCP در OpenAI Codex: امکان همکاری مستقیم انسان و ایجنت‌ها در محیط‌های وب",
+      "summary": "Eric Provencher از تیم تجربه توسعه‌دهندگان OpenAI، پشتیبانی WebMCP را در Codex با استفاده از Codex Modeling Studio به نمایش گذاشت. این پلتفرم مدل‌سازی سه‌بعدی به گونه‌ای طراحی شده که انسان‌ها و ایجنت‌ها بتوانند به‌طور مشترک از آن استفاده کنند. با افزودن ابزارها مستقیماً به وب‌سایت، Codex قادر است قابلیت‌ها را کشف کرده، روی تصاویر تکرار انجام دهد و بازخورد را در یک رابط کاربری واحد ثبت کند.",
+      "why_it_matters": "این توسعه نشان می‌دهد که ایجنت‌های هوش مصنوعی دیگر محدود به محیط‌های متنی یا APIهای جداگانه نیستند، بلکه می‌توانند مستقیماً در رابط‌های کاربری وب با انسان‌ها همکاری کنند. این رویکرد با یکپارچه‌سازی ابزارها در لایه وب، فرآیند تکرار و بازخورد را برای کاربردهای پیچیده مانند مدل‌سازی سه‌بعدی تسهیل می‌کند.",
+      "link": "https://www.youtube.com/watch?v=Is2NHa7awWY",
+      "posted_at": 1787730361
+    },
+    "-1004482051328:1305": {
+      "chat_id": -1004482051328,
+      "message_id": 1305,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "سیاست کشف بهینه‌سازی‌شده در هوش مصنوعی",
+      "summary": "این ویدیو کوتاه از MIT CSAIL به بررسی سیاست کشف بهینه‌سازی‌شده (Curated discovery policy) در حوزه هوش مصنوعی می‌پردازد. این پژوهش در دسته‌بندی تحقیقاتی سطح یک قرار دارد و بر رویکردی نوین در مدیریت و کشف داده‌ها تمرکز دارد.",
+      "why_it_matters": "این پژوهش نشان‌دهنده پیشرفت‌های اخیر در روش‌های کشف و مدیریت داده‌ها در سیستم‌های هوش مصنوعی است. با Attention به اهمیت داده‌های باکیفیت در آموزش مدل‌ها، این رویکرد می‌تواند به بهبود دقت و کارایی الگوریتم‌ها کمک کند.",
+      "link": "https://www.youtube.com/watch?v=31JQLAYXGO4",
+      "posted_at": 1787730363
     }
   }
 }

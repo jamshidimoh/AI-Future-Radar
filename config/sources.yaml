@@ -28,7 +28,7 @@ categories:
     hashtag: "#آینده_AI"
     keywords: ["future of AI", "AI future", "AGI future", "AI governance", "AI policy", "AI economy", "AI jobs", "existential risk AI", "technological singularity AI", "future of intelligence AI"]
 
-ai_bridge_keywords: ["artificial intelligence", "AI", "machine learning", "deep learning", "LLM", "agent", "AGI", "foundation model", "generative AI", "reasoning model", "neural network", "computer vision", "robotics", "AI safety", "AI governance", "AI drug discovery", "machine consciousness", "quantum machine learning", "AI genomics", "protein design AI"]
+ai_bridge_keywords: ["artificial intelligence", "AI", "machine learning", "deep learning", "LLM", "agent", "AGI", "foundation model", "generative AI", "reasoning model", "neural network", "computer vision", "robotics", "AI safety", "AI governance", "AI drug discovery", "machine consciousness", "quantum machine learning", "AI genomics", "protein design AI", "philosophy of science AI", "epistemology AI", "scientific method AI", "future of AI"]
 
 action_policy:
   ai_share_target: 0.70

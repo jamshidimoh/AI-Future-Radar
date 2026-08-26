@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787729243,
+  "updated_at": 1787729557,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4005,6 +4005,61 @@
       "why_it_matters": "همکاری بین Hoover’s TPA و Stanford’s HAI نشان‌دهنده اهمیت فزاینده درک تأثیرات ژئوپلیتیک هوش مصنوعی است. این پروژه‌ها می‌توانند بینش‌های ارزشمندی برای سیاست‌گذاران و پژوهشگران در زمینه‌های امنیت و فناوری ارائه دهند.",
       "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQRWY5NHphaGVGZDlXZ19LTTVWbzA2TFhXdS1XbUZEQy14YkZiZG9neGl2Yy02VVhnMkxmZDVXUHRRaFRzRjlfSkRfZG1mR19DMUlZOVliYjAxNnR4dWJrR1BiVjhVSUY0eTZqb2gzMVY0aWdIQjF5RHNfZGthcVRFWmFBY3FjcXIzRG9OOXdQaVFxWjU4Y1VjbEdySFhtM0k0bE5DMWRna2xucjZ1b012ZmlvRVI?oc=5",
       "posted_at": 1787729243
+    },
+    "-1004482051328:1297": {
+      "chat_id": -1004482051328,
+      "message_id": 1297,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - NVIDIA",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی لپ‌تاپ‌های NVIDIA RTX Spark: گیمینگ مدرن با DLSS و Ray Tracing",
+      "summary": "NVIDIA از لپ‌تاپ‌های سری RTX Spark رونمایی کرد که به عنوان سخت‌افزار تعریف‌کننده گیمینگ مدرن PC معرفی شده‌اند. این دستگاه‌ها از نورپردازی Ray-traced برای غوطه‌وری بصری، عملکرد بهبودیافته با DLSS و پاسخ‌دهی رقابتی با NVIDIA Reflex بهره می‌برند. تمام گیم‌پلی‌های نمایش‌داده‌شده در رزولوشن 1440p بر روی سخت‌افزار پیش‌ازانتشار RTX Spark ضبط شده‌اند.",
+      "why_it_matters": "ورود سری RTX Spark نشان‌دهنده تکامل سخت‌افزارهای گیمینگ همراه است که ترکیب Ray Tracing و هوش مصنوعی را در رزولوشن 1440p ارائه می‌دهد. این پلتفرم با تکیه بر فناوری‌های DLSS و NVIDIA Reflex، تجربه‌ای بدون تأخیر و با کیفیت بصری بالا را برای گیمرها فراهم می‌کند.",
+      "link": "https://www.youtube.com/watch?v=3VeAFFry80I",
+      "posted_at": 1787729554
+    },
+    "-1004482051328:1298": {
+      "chat_id": -1004482051328,
+      "message_id": 1298,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - No Priors Podcast",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "Science Corporation: تمرکز بر بازگرداندن حواس و استقلال از زیرساخت بیولوژیک",
+      "summary": "Max Hodak از Science Corporation توضیح می‌دهد که چرا این شرکت برخلاف بسیاری از رقبای خود که بر تسریع ارتباط انسان با هوش مصنوعی تمرکز دارند، رویکرد متفاوتی را دنبال می‌کند. هدف اصلی Science Corporation بازگرداندن بینایی و شنوایی است و در نهایت به دنبال دستیابی به استقلال از زیرساخت بیولوژیک (substrate independence) می‌باشد.",
+      "why_it_matters": "این رویکرد نشان‌دهنده تغییر پارادایم در صنعت BCI از ابزارهای ارتباطی صرف به سمت توانمندسازی حسی و پایداری زیستی است. تمرکز بر substrate independence می‌تواند مرزهای میان بیولوژی و فناوری را بازتعریف کند و پیامدهای عمیقی برای آینده سلامت و تکامل انسان داشته باشد.",
+      "link": "https://www.youtube.com/shorts/DWOekbnWISA",
+      "posted_at": 1787729556
+    },
+    "-1004482051328:1299": {
+      "chat_id": -1004482051328,
+      "message_id": 1299,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Moneycontrol.com)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "مطالعه MIT: عدم امکان ردیابی تصاویر AI به داده‌های آموزشی",
+      "summary": "تحقیقات جدید دانشگاه MIT نشان می‌دهد که تصاویر تولیدشده توسط هوش مصنوعی ممکن است به داده‌های آموزشی اولیه قابل ردیابی نباشند. این یافته‌ها چالش‌های جدی برای تعیین مالکیت معنوی و شناسایی منبع اثرات هنری دیجیتال ایجاد می‌کند. در نتیجه، مفهوم سنتی «نویسنده» یا «خالق» در هنر مبتنی بر AI با ابهام مواجه می‌شود.",
+      "why_it_matters": "این کشف نشان می‌دهد که پیوند فنی بین خروجی مدل‌های هوش مصنوعی و داده‌های ورودی آن‌ها به قدری پیچیده است که ردیابی مستقیم غیرممکن می‌شود. این موضوع پیامدهای عمیقی برای قوانین کپی‌رایت، مسئولیت‌پذیری قانونی و اخلاق در توسعه فناوری‌های تولید محتوا دارد.",
+      "link": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOelBiYlcwQ0pydFhJZ2IyaHlRRXI0c0JRUTl3eURmU2tTbUc4Ym1RZ3h6a1BGNG5mVEdQY2lNY1FMS09BbHZqR0JvbVBzMDA0RVg0Z0YwS0hVZDhxUXNGTUgtVGhjaGpzdUhiMkNHUlRSOUcxeWVGLXFVa0tleDBYejVKY2FXM0hwdXBtdnhlZThrQ3FTYUdnRWpoSjNVbFg1VHVvMkVtbF9qNzhud0FkdWVvNFREdVlqYjFHcFV1SFdyclBPQUhEUG9xNnJBTW1zTVQ2SFN1UThsZUgwRzc4d0VB0gHnAUFVX3lxTFBxcFhBTzE4SnA4TzlRMzBFUXhCZFBPdG9zZW12XzNYcURSNDRJaWxGbDFETDVBcU10MGp0ejhMQXVLSEpCRmQybDR6bEx4ZkJRaWIyT3BPekZKTGRmSEVhaElwTjVHTlgycVNRV2lUVWFEWUNjMDlvT3pRdmE3ZUVVWlBHVE1icC05R0NvVG5zSmNRWmxpR2wxYU5CQVk5dUpzcmx2QUNIUEZDbmxEQ3lVdVZrNG5jV0dxRUxVSy1pajFPWkxxZ3pNOHdXN2dneWJSYW44SFpScUd3V1BCN3BqZUJxSEhLcw?oc=5",
+      "posted_at": 1787729557
     }
   }
 }

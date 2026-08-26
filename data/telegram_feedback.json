@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787717430,
+  "updated_at": 1787718291,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4259,6 +4259,60 @@
       "why_it_matters": "طبقه‌بندی دقیق محتوای AI در پلتفرم‌های علمی معتبر مانند World Science Festival نشان‌دهنده اهمیت فزاینده هوش مصنوعی در گفتگوهای علمی است. این دسته‌بندی به کاربران کمک می‌کند تا محتوای مرتبط با AI را به‌راحتی شناسایی کنند.",
       "link": "https://www.youtube.com/watch?v=DPPnrDdNoUU",
       "posted_at": 1787717430
+    },
+    "-1004482051328:1286": {
+      "chat_id": -1004482051328,
+      "message_id": 1286,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "مصاحبه در پادکست Dwarkesh Patel",
+      "summary": "این محتوا یک مصاحبه از پادکست Dwarkesh Patel است که در دسته‌بندی هوش مصنوعی قرار می‌گیرد. منبع این مطلب به عنوان سطح یک طبقه‌بندی شده و نوع آن مصاحبه است.",
+      "why_it_matters": "این مصاحبه به عنوان یک منبع سطح یک در حوزه هوش مصنوعی شناخته می‌شود و برای تحلیل‌گران این صنعت اهمیت دارد. دسترسی به این محتوا می‌تواند بینش‌های ارزشمندی از آخرین تحولات این حوزه ارائه دهد.",
+      "link": "https://www.youtube.com/watch?v=aV26V1UvkJw",
+      "posted_at": 1787718287
+    },
+    "-1004482051328:1287": {
+      "chat_id": -1004482051328,
+      "message_id": 1287,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "OpenAI: دسته‌بندی سیاست‌های کشف محتوای AI",
+      "summary": "این منبع رسمی از OpenAI به دسته‌بندی سیاست‌های کشف محتوای هوش مصنوعی می‌پردازد. طبق مشخصات ارائه‌شده، این محتوا در سطح اول (Tier 1) قرار دارد و نوع آن رسمی تعیین شده است.",
+      "why_it_matters": "تعیین سطح اول برای محتوای رسمی OpenAI نشان‌دهنده اهمیت بالای این سیاست‌ها در چارچوب‌های نظارتی و فنی است. این طبقه‌بندی دقیق به توسعه‌دهندگان و ناظران کمک می‌کند تا استانداردهای کشف و مدیریت محتوای AI را به درستی پیاده‌سازی کنند.",
+      "link": "https://www.youtube.com/watch?v=EDWbX_-RYws",
+      "posted_at": 1787718289
+    },
+    "-1004482051328:1288": {
+      "chat_id": -1004482051328,
+      "message_id": 1288,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "سیاست کشف محتوای منتخب OpenAI در حوزه هوش مصنوعی",
+      "summary": "این منبع رسمی از OpenAI، سیاست‌های مربوط به دسته‌بندی کشف محتوای منتخب را در حوزه هوش مصنوعی تشریح می‌کند. طبق اطلاعات ارائه‌شده، این محتوا دارای سطح منبع ۱ (source tier: 1) و نوع رسمی (official) است که نشان‌دهنده اعتبار بالای آن می‌باشد.",
+      "why_it_matters": "تعیین دقیق سیاست‌های کشف محتوا توسط OpenAI، چارچوبی شفاف برای درک نحوه مدیریت و طبقه‌بندی اطلاعات در اکوسیستم هوش مصنوعی فراهم می‌کند. این رویکرد رسمی به کاربران و توسعه‌دهندگان کمک می‌کند تا با اطمینان بیشتری از منابع معتبر و دسته‌بندی‌شده استفاده کنند.",
+      "link": "https://www.youtube.com/watch?v=aVfV_KoaFLE",
+      "posted_at": 1787718291
     }
   }
 }

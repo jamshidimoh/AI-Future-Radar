@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787643135,
+  "updated_at": 1787729243,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -3948,6 +3948,63 @@
       "why_it_matters": "پادکست‌های منتخب با رده‌بندی دقیق، دسترسی به بحث‌های عمیق و به‌روز در حوزه هوش مصنوعی را برای مخاطبان تخصصی تسهیل می‌کند. این نوع محتوا، به‌ویژه در بسترهای آموزشی و پژوهشی، امکان ارتقاء دانش و تبادل ایده‌های نوآورانه را فراهم می‌سازد و نقش مهمی در شکل‌گیری چشم‌اندازهای آینده فناوری دارد.",
       "link": "https://www.youtube.com/watch?v=0VH1Lim8gL8",
       "posted_at": 1787643134
+    },
+    "-1004482051328:1294": {
+      "chat_id": -1004482051328,
+      "message_id": 1294,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (PhocusWire)",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "Andrew Ng",
+      "watch_person": "Andrew Ng",
+      "title": "سرمایه‌گذاران استانداردهای سخت‌گیرانه‌تری برای استارتاپ‌های سفر مبتنی بر AI تعیین می‌کنند",
+      "summary": "سرمایه‌گذاران در صنعت گردشگری، انتظارات و استانداردهای خود را برای استارتاپ‌هایی که از فناوری هوش مصنوعی استفاده می‌کنند، به شدت افزایش داده‌اند. این تغییر رویکرد نشان‌دهنده بلوغ بازار و نیاز به ارائه ارزش ملموس و قابل اندازه‌گیری توسط شرکت‌های نوپا است.",
+      "why_it_matters": "این افزایش سطح توقعات سرمایه‌گذاران، استارتاپ‌های حوزه سفر را وادار می‌کند تا فراتر از شعارهای کلی هوش مصنوعی، به سمت راه‌حل‌های عملیاتی و سودآور حرکت کنند. در نتیجه، شکاف بین شرکت‌های نوآور واقعی و پروژه‌های صرفاً تبلیغاتی در این اکوسیستم عمیق‌تر خواهد شد.",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQS1NzOVNQcFpzX2YzLXY5WVRFcmdrZlJSZEw1MFU1OXkzM1BwUnVRdWZhZWFfcmRKeWNyWkUzZF94RllvUUNvbm1pZ3NRUVFoMEFTR2JoVlIxX2VVSmprMmRmbWd0aDA1SjN0QUQxLXNDelZlUC1EQzY0QUZFUlZsRkMtOGtDS0FxQ1dCT19jVHc?oc=5",
+      "posted_at": 1787729240
+    },
+    "-1004482051328:1295": {
+      "chat_id": -1004482051328,
+      "message_id": 1295,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Defending Education)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "تأثیر DEI بر هوش مصنوعی: نقش دانشگاه‌ها در Defending Education",
+      "summary": "این گزارش به بررسی نفوذ اصول DEI در توسعه و پیاده‌سازی سیستم‌های هوش مصنوعی می‌پردازد. تمرکز اصلی بر تأثیر دانشگاه‌ها و نهادهای آموزشی بر جهت‌گیری‌های فنی و اخلاقی AI است. منبع Defending Education این پدیده را از منظر حفظ استانداردهای آموزشی و فنی تحلیل می‌کند.",
+      "why_it_matters": "بررسی تعامل میان ایدئولوژی‌های DEI و توسعه AI نشان می‌دهد که دانشگاه‌ها نقش محوری در شکل‌دهی به سوگیری‌های الگوریتمی دارند. درک این تأثیرات برای ارزیابی بی‌طرفی و دقت فنی مدل‌های زبانی و سیستم‌های تصمیم‌گیر خودکار ضروری است.",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9JQjVrT214bmhhdFVfMWd0V29OSFlMRGVyMzQ3S3JCT1FYRTB2NnlrT0RpTjJmYkZmQnNUTEJLOTNVS0UyeUR6bkV5blBfY1NKcUpNaE5DQ3lDajR5YUxuc2xlY0ZDYmpuUENiU09MRUVXcENhbTM0bWdB?oc=5",
+      "posted_at": 1787729242
+    },
+    "-1004482051328:1296": {
+      "chat_id": -1004482051328,
+      "message_id": 1296,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Hoover Institution)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "تامین مالی مشترک سه پروژه جدید در تقاطع هوش مصنوعی و ژئوپلیتیک توسط Hoover’s TPA و Stanford’s HAI",
+      "summary": "Hoover’s TPA و Stanford’s HAI به‌طور مشترک سه پروژه جدید را برای بررسی تقاطع هوش مصنوعی و ژئوپلیتیک تامین مالی کرده‌اند. این ابتکار پژوهشی بر تحلیل تأثیرات متقابل فناوری‌های پیشرفته و پویایی‌های سیاسی جهانی تمرکز دارد.",
+      "why_it_matters": "همکاری بین Hoover’s TPA و Stanford’s HAI نشان‌دهنده اهمیت فزاینده درک تأثیرات ژئوپلیتیک هوش مصنوعی است. این پروژه‌ها می‌توانند بینش‌های ارزشمندی برای سیاست‌گذاران و پژوهشگران در زمینه‌های امنیت و فناوری ارائه دهند.",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQRWY5NHphaGVGZDlXZ19LTTVWbzA2TFhXdS1XbUZEQy14YkZiZG9neGl2Yy02VVhnMkxmZDVXUHRRaFRzRjlfSkRfZG1mR19DMUlZOVliYjAxNnR4dWJrR1BiVjhVSUY0eTZqb2gzMVY0aWdIQjF5RHNfZGthcVRFWmFBY3FjcXIzRG9OOXdQaVFxWjU4Y1VjbEdySFhtM0k0bE5DMWRna2xucjZ1b012ZmlvRVI?oc=5",
+      "posted_at": 1787729243
     }
   }
 }

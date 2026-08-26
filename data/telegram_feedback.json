@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787749064,
+  "updated_at": 1787753806,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4446,6 +4446,36 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787747456
+    },
+    "-1004482051328:1309": {
+      "chat_id": -1004482051328,
+      "message_id": 1309,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Hugging Face Blog",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "آموزش و Fine-tuning مدل‌های Embedding چندبُعدی با Sentence Transformers",
+      "summary": "این مقاله روش‌های آموزش و Fine-tuning مدل‌های Embedding چندبُعدی (Multi-Vector) را در چارچوب Sentence Transformers تشریح می‌کند. تمرکز اصلی بر روی قابلیت‌های جدید این کتابخانه برای مدیریت و بهینه‌سازی مدل‌هایی است که به جای یک بردار واحد، چندین بردار برای نمایش معنایی تولید می‌کنند. این رویکرد به توسعه‌دهندگان اجازه می‌دهد تا از مزایای مدل‌های پیشرفته‌تر در کاربردهای جستجوی معنایی و بازیابی اطلاعات بهره‌مند شوند.",
+      "why_it_matters": "پشتیبانی از مدل‌های Multi-Vector در Sentence Transformers، موانع فنی برای استفاده از معماری‌های پیچیده‌تر در محیط‌های تولیدی را کاهش می‌دهد. این قابلیت به سازمان‌ها امکان می‌دهد تا دقت و کیفیت نتایج جستجوی معنایی را بدون نیاز به پیاده‌سازی‌های سفارشی و پرهزینه بهبود بخشند. با این حال، پیچیدگی محاسباتی و نیاز به منابع بیشتر برای آموزش این مدل‌ها، محدودیت‌هایی را برای استقرار در مقیاس‌های کوچک ایجاد می‌کند.",
+      "link": "https://huggingface.co/blog/train-multi-vector-encoder",
+      "posted_at": 1787753800
+    },
+    "-1004482051328:1310": {
+      "chat_id": -1004482051328,
+      "message_id": 1310,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787753806
     }
   }
 }

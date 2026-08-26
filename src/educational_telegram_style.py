@@ -16,13 +16,12 @@ PDI = "\u2069"
 RLM = "\u200f"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 SHORT_DIVIDER = "──────────────"
-# Expanded only for the two concept-explanation blocks. Other section budgets
-# intentionally remain unchanged to preserve the existing message contract.
-MAX_DEFINITION = 650
-MAX_SIMPLE = 380
-MAX_RELATION = 360
-MAX_EXAMPLE = 380
-MAX_TAKEAWAY = 240
+# Keep the rendered lesson safely below Telegram's 4096-character limit.
+MAX_DEFINITION = 580
+MAX_SIMPLE = 350
+MAX_RELATION = 340
+MAX_EXAMPLE = 360
+MAX_TAKEAWAY = 220
 
 
 def _e(value: Any, quote: bool = False) -> str:
@@ -91,11 +90,7 @@ def _source_lines(item: dict[str, Any]) -> list[str]:
 
 
 def _boxed_section(icon: str, title: str, body: str) -> list[str]:
-    return [
-        _rtl(f"<b>{icon} {title}</b>"),
-        "",
-        _rtl(f"<blockquote>{body}</blockquote>"),
-    ]
+    return [_rtl(f"<b>{icon} {title}</b>"), "", _rtl(f"<blockquote>{body}</blockquote>")]
 
 
 def _concept(number: str, label: str, definition: str, simple: str) -> list[str]:
@@ -145,24 +140,9 @@ def format_educational_post(item: dict[str, Any]) -> str:
         DIVIDER,
         "",
     ]
-
-    lines.extend(
-        _concept(
-            "۱.",
-            a_label,
-            _e(_fit(item.get("term_a_definition"), MAX_DEFINITION)),
-            _e(_fit(item.get("term_a_simple"), MAX_SIMPLE)),
-        )
-    )
+    lines.extend(_concept("۱.", a_label, _e(_fit(item.get("term_a_definition"), MAX_DEFINITION)), _e(_fit(item.get("term_a_simple"), MAX_SIMPLE))))
     lines.extend(["", SHORT_DIVIDER, ""])
-    lines.extend(
-        _concept(
-            "۲.",
-            b_label,
-            _e(_fit(item.get("term_b_definition"), MAX_DEFINITION)),
-            _e(_fit(item.get("term_b_simple"), MAX_SIMPLE)),
-        )
-    )
+    lines.extend(_concept("۲.", b_label, _e(_fit(item.get("term_b_definition"), MAX_DEFINITION)), _e(_fit(item.get("term_b_simple"), MAX_SIMPLE))))
     lines.extend(["", SHORT_DIVIDER, ""])
     lines.extend(_boxed_section("🔗", "رابطه دو مفهوم", _e(_fit(item.get("relationship"), MAX_RELATION))))
     lines.extend(["", SHORT_DIVIDER, ""])
@@ -178,9 +158,6 @@ def format_educational_post(item: dict[str, Any]) -> str:
 
     _assert_rtl_contract(lines)
     result = "\n".join(lines).strip()
-    # Telegram accepts up to 4096 characters for sendMessage. Keep a small
-    # safety margin while allowing the education content to use the available
-    # single-message budget instead of failing at an unnecessarily low cap.
     if len(result) > 4090:
         raise ValueError(f"Educational post exceeds single-message budget: {len(result)} characters")
     return result

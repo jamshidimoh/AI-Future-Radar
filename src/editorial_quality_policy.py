@@ -101,16 +101,41 @@ def _overlap(a: str, b: str) -> float:
 
 
 def _source_support(summary: str, why: str, source_text: str) -> tuple[float, float]:
-    """Measure lexical evidence without pretending it is semantic verification."""
+    """Measure source evidence without treating cross-language translation as missing evidence."""
     source = _content_tokens(source_text)
     summary_tokens = _content_tokens(summary)
     why_tokens = _content_tokens(why)
     if not source:
         return 0.0, 0.0
-    return (
-        len(summary_tokens & source) / max(1, len(summary_tokens)),
-        len(why_tokens & source) / max(1, len(why_tokens)),
-    )
+    lexical_summary = len(summary_tokens & source) / max(1, len(summary_tokens))
+    lexical_why = len(why_tokens & source) / max(1, len(why_tokens))
+
+    # A Persian editorial draft is intentionally not lexically identical to an
+    # English source. For that common case, validate the portable anchors that
+    # survive translation: numbers and explicit Latin model/product/entity names.
+    source_anchors = set(re.findall(r"\d+(?:[.,]\d+)?%?", source_text or ""))
+    source_anchors |= {
+        x.lower() for x in re.findall(r"\b[A-Z][A-Za-z0-9.+/#-]{1,}\b", source_text or "")
+        if len(x) >= 2
+    }
+    if source_anchors and persian_ratio(summary) >= BODY_PERSIAN_RATIO_MIN:
+        def anchor_ratio(text: str) -> float:
+            text_value = str(text or "")
+            present = set(re.findall(r"\d+(?:[.,]\d+)?%?", text_value))
+            present |= {
+                x.lower() for x in re.findall(r"\b[A-Z][A-Za-z0-9.+/#-]{1,}\b", text_value)
+                if len(x) >= 2
+            }
+            return len(present & source_anchors) / max(1, len(present))
+
+        anchor_summary = anchor_ratio(summary)
+        anchor_why = anchor_ratio(why)
+        # Keep lexical evidence when languages match; otherwise use conservative
+        # anchor evidence. A missing anchor is not itself a hallucination signal.
+        source_is_mostly_latin = persian_ratio(source_text) < 0.35
+        if source_is_mostly_latin:
+            return max(lexical_summary, anchor_summary * 0.55), max(lexical_why, anchor_why * 0.35)
+    return lexical_summary, lexical_why
 
 
 def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_text: str = "") -> bool:
@@ -138,10 +163,16 @@ def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_tex
 
     summary_support, why_support = _source_support(summary, why, source)
     if source_len >= 350:
-        if summary_support < 0.28 or why_support < 0.16:
+        if persian_ratio(summary) >= BODY_PERSIAN_RATIO_MIN and persian_ratio(source) < 0.35:
+            if summary_support < 0.12 or why_support < 0.04:
+                return False
+        elif summary_support < 0.28 or why_support < 0.16:
             return False
     elif source_len > 0:
-        if summary_support < 0.20 or why_support < 0.10:
+        if persian_ratio(summary) >= BODY_PERSIAN_RATIO_MIN and persian_ratio(source) < 0.35:
+            if summary_support < 0.08 or why_support < 0.03:
+                return False
+        elif summary_support < 0.20 or why_support < 0.10:
             return False
     return True
 

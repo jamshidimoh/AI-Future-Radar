@@ -18,10 +18,10 @@ categories:
     hashtag: "#ژنتیک_و_AI"
     keywords: ["AI drug discovery", "AI genomics", "machine learning genomics", "protein design AI", "foundation model biology", "genomics AI", "CRISPR AI"]
   mind:
-    label: "ذهن و آگاهی × AI"
+    label: "ذهن، آگاهی و فلسفه علم × AI"
     emoji: "🧠"
-    hashtag: "#ذهن_و_AI"
-    keywords: ["machine consciousness", "AI consciousness", "AGI philosophy", "consciousness AI", "sentience AI", "cognitive science AI"]
+    hashtag: "#ذهن_آگاهی_و_AI"
+    keywords: ["machine consciousness", "AI consciousness", "AGI philosophy", "consciousness AI", "sentience AI", "cognitive science AI", "philosophy of science AI", "epistemology AI", "scientific method AI", "philosophy of artificial intelligence", "AI epistemology", "AI and scientific discovery"]
   future:
     label: "آینده‌پژوهی × AI"
     emoji: "🔮"
@@ -122,7 +122,7 @@ google_news_queries:
   - {query: "future of intelligence AI long term", category: future, tier: 1, content_type: research}
 
 max_posts_per_run: 4
-category_weights: {ai: 0.70, quantum: 0.075, genetics: 0.075, mind: 0.05, future: 0.05}
+category_weights: {ai: 0.70, quantum: 0.075, genetics: 0.075, mind: 0.075, future: 0.075}
 
 influential_people:
   - "Sam Altman"

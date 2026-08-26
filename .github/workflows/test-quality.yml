@@ -28,3 +28,5 @@ jobs:
         run: python -c "import yaml; s=yaml.safe_load(open('config/selection_policy.yaml',encoding='utf-8')); l=yaml.safe_load(open('config/leader_watchlist.yaml',encoding='utf-8')); assert s['selection']['max_posts'] == 4; assert s['selection']['max_items_per_source'] >= 1; assert s['editorial']['leader_protected_max'] == 2; assert s['editorial']['technical_depth_penalty'] >= 1; names=sum([g['names'] for g in l['people'].values()],[]); assert 'Sam Altman' in names and 'Yuval Noah Harari' in names and 'Anil Seth' in names; print('CONFIG_OK', len(names))"
       - name: Run full quality contract suite
         run: python -m pytest -q
+      - name: CI execution marker
+        run: echo "EDITORIAL_VALUE_GATE_V2_VALIDATION"

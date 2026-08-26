@@ -5,7 +5,7 @@ import re
 
 from llm_router_light import call_llm_with_fallback, get_quality_chain
 from education_editor import normalize_editorial_text, news_terminology_review_prompt
-from src.editorial_quality_policy import editorial_fields_ok, length_ok, news_language_ok, persian_ratio
+from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_ratio
 
 _DEPTH = {
     "ai": "محتوای محوری کانال است؛ مدل، روش، عدد، قابلیت، محدودیت و پیامد فنی را دقیق حفظ کن.",
@@ -30,6 +30,17 @@ _DRAFT_REPAIR_PROMPT = """پیش‌نویس زیر برای انتشار فار�
 تمام سه فیلد title، summary و why_it_matters باید فارسی حرفه‌ای باشند. نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها را Latin نگه دار و آوانویسی فارسی نام خاص انجام نده.
 summary باید 3 تا 5 جمله کامل و اطلاعات مهم منبع را حفظ کند و why_it_matters باید 3 تا 4 جمله کامل و معمولاً 320 تا 500 نویسه باشد. why_it_matters باید از summary تکراری نباشد و پیامد، کاربرد، محدودیت یا اهمیت واقعی را فقط بر پایه شواهد منبع بیان کند. key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن منبع باشد و در غیر این صورت خالی. category را از مقدار فعلی حفظ کن.
 خروجی دقیقاً JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
+
+پیش‌نویس: {draft}
+
+متن منبع: {source}"""
+
+_VALUE_REPAIR_PROMPT = """تو ویراستار ارشد محتوای یک رسانه تخصصی فناوری هستی. پیش‌نویس زیر از نظر زبان معتبر است اما از نظر ارزش اطلاعاتی ضعیف است.
+فقط با استفاده از متن منبع آن را اصلاح کن.
+summary: دو تا چهار جمله که مشخصاً بگوید چه اتفاقی افتاده، مهم‌ترین روش/یافته/قابلیت/عدد یا محدودیت چیست. کلی‌گویی و تکرار عنوان ممنوع.
+why_it_matters: دو یا سه جمله که یک پیامد مشخص برای پژوهش، محصول، زیرساخت، بازار، ایمنی، حکمرانی یا مسیر آینده فناوری توضیح دهد. از کلیشه‌هایی مانند «این موضوع آینده AI را تغییر می‌دهد» بدون سازوکار مشخص استفاده نکن.
+summary و why_it_matters نباید یکدیگر را تکرار کنند. هیچ ادعایی خارج از منبع اضافه نکن. نام رسمی افراد، شرکت‌ها، مدل‌ها و پروژه‌ها Latin بماند.
+خروجی فقط JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 
 پیش‌نویس: {draft}
 
@@ -84,6 +95,15 @@ def _language_ok(data):
 
 def _length_ok(data, source_text):
     return length_ok(str(data.get("summary", "")), str(data.get("why_it_matters", "")), source_text)
+
+
+def _value_ok(data, source_text):
+    return editorial_value_ok(
+        str(data.get("title", "")),
+        str(data.get("summary", "")),
+        str(data.get("why_it_matters", "")),
+        source_text,
+    )
 
 
 def _fallback_title_from_persian_summary(data):
@@ -185,6 +205,24 @@ def _repair_persian_draft(data, item):
     return data, provider
 
 
+def _repair_editorial_value(data, item):
+    prompt = _VALUE_REPAIR_PROMPT.format(
+        draft=json.dumps(data, ensure_ascii=False),
+        source=str(item.get("summary", "") or "")[:3500],
+    )
+    raw, provider = call_llm_with_fallback(
+        prompt,
+        json.dumps({"draft": data, "source": str(item.get("summary", "") or "")[:3500]}, ensure_ascii=False),
+        providers=get_quality_chain(),
+    )
+    try:
+        candidate = _normalize(_extract_json(raw or ""), item)
+    except (json.JSONDecodeError, TypeError, ValueError):
+        print("[Editorial Value Repair] invalid JSON; rejecting candidate", flush=True)
+        return data, provider
+    return candidate, provider
+
+
 def _editorial_review(data):
     original = dict(data)
     raw, provider = call_llm_with_fallback(
@@ -258,6 +296,17 @@ def summarize_item(item):
             flush=True,
         )
         return None
+
+    if not _value_ok(final, raw_text):
+        print("[Editorial Value Gate] weak summary; attempting one bounded repair", flush=True)
+        repaired, repair_provider = _repair_editorial_value(final, item)
+        if _language_ok(repaired) and _length_ok(repaired, raw_text) and _value_ok(repaired, raw_text):
+            final = repaired
+            editorial_provider = repair_provider
+            print("[Editorial Value Gate] repaired candidate accepted", flush=True)
+        else:
+            print("[Editorial Value Gate] repaired candidate rejected; item will not be published", flush=True)
+            return None
 
     final["_provider"] = provider
     final["_provider_draft"] = provider

@@ -14,8 +14,6 @@ INTERVIEW_TYPES={"interview","podcast","talk","lecture","fireside","conversation
 INTERVIEW_TERMS=("interview","podcast","fireside chat","conversation","q&a","keynote q&a","question and answer","speaks with","talks with","in conversation","sit-down","سخنرانی","مصاحبه","پادکست","گفتگو","گفت‌وگو","پرسش و پاسخ")
 MAX_FIELD_CHARS={"title":1200,"summary":4000,"description":4000,"source":600,"content_type":200,"speakers":1200,"speaker":600,"watch_person":600,"leader":600,"key_quote":1600}
 
-# Full names and multi-word aliases use Unicode-aware boundaries. This avoids
-# matching an ambiguous surname such as "Russell" in ordinary news.
 _NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\w){re.escape(alias)}(?!\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
 _SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
 _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TERMS), re.I)
@@ -57,13 +55,17 @@ def matched_priority_people(item, *, text: str | None = None):
         if any(pattern.search(text) for pattern in _NAME_PATTERNS.get(canonical, ())):
             matches.append(canonical)
             continue
-        # Single surnames are inherently ambiguous; only accept them when the
-        # metadata explicitly identifies interview-style content.
         if interview_context and any(pattern.search(text) for pattern in _SINGLE_NAME_PATTERNS.get(canonical, ())):
             matches.append(canonical)
     return sorted(set(matches))
 
 def priority_people_features(item):
+    # A failed translation/editorial QA candidate must never regain the Tier-0
+    # quota exemption merely because its metadata identifies a protected leader.
+    # This is intentionally a single routing guard; it does not alter ranking,
+    # watchlists, or the normal-news policy.
+    if item.get("_publication_blocked"):
+        return [], False, 0.0
     text = _text(item)
     people = matched_priority_people(item, text=text)
     if not people:

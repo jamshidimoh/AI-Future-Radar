@@ -22,16 +22,21 @@ categories:
     emoji: "🧠"
     hashtag: "#ذهن_و_AI"
     keywords: ["machine consciousness", "AI consciousness", "AGI philosophy", "consciousness AI", "sentience AI", "cognitive science AI"]
+  philosophy_science:
+    label: "فلسفه علم × AI"
+    emoji: "🧩"
+    hashtag: "#فلسفه_علم_و_AI"
+    keywords: ["philosophy of science AI", "epistemology AI", "scientific method AI", "AI philosophy science", "philosophy of artificial intelligence", "AI epistemology", "AI and scientific discovery"]
   future:
     label: "آینده‌پژوهی × AI"
     emoji: "🔮"
     hashtag: "#آینده_AI"
     keywords: ["future of AI", "AI future", "AGI future", "AI governance", "AI policy", "AI economy", "AI jobs", "existential risk AI", "technological singularity AI", "future of intelligence AI"]
 
-ai_bridge_keywords: ["artificial intelligence", "AI", "machine learning", "deep learning", "LLM", "agent", "AGI", "foundation model", "generative AI", "reasoning model", "neural network", "computer vision", "robotics", "AI safety", "AI governance", "AI drug discovery", "machine consciousness", "quantum machine learning", "AI genomics", "protein design AI"]
+ai_bridge_keywords: ["artificial intelligence", "AI", "machine learning", "deep learning", "LLM", "agent", "AGI", "foundation model", "generative AI", "reasoning model", "neural network", "computer vision", "robotics", "AI safety", "AI governance", "AI drug discovery", "machine consciousness", "quantum machine learning", "AI genomics", "protein design AI", "philosophy of science AI", "epistemology AI", "scientific method AI", "future of AI"]
 
 action_policy:
-  ai_share_target: 0.75
+  ai_share_target: 0.70
   min_unique_sources: 3
   max_items_per_source: 2
   max_items_per_content_type: 2
@@ -85,8 +90,6 @@ youtube_channels:
   - {name: "a16z", handle: "@a16z", category: ai, tier: 2, type: "venture_platform", content_type: "interview", official: true}
   - {name: "World Science Festival", channel_id: "UCShHFwKyhcDo3g7hr4f1R8A", category: ai, tier: 1, type: "science_media", content_type: "talk", official: true}
 
-# Search queries for authoritative sources. They are discovery priorities, not
-# unconditional publication rules: relevance to the channel mission remains mandatory.
 google_news_queries:
   - {query: "site:cap.csail.mit.edu/podcast AI artificial intelligence machine learning robotics", category: ai, tier: 1, content_type: podcast, preferred_source: "MIT CSAIL - Building 32"}
   - {query: "site:hai.stanford.edu AI research artificial intelligence", category: ai, tier: 1, content_type: research, preferred_source: "Stanford HAI"}
@@ -115,11 +118,16 @@ google_news_queries:
   - {query: "AI drug discovery genomics CRISPR machine learning", category: genetics, tier: 1, content_type: research}
   - {query: "protein design foundation models biology AI", category: genetics, tier: 1, content_type: research}
   - {query: "machine consciousness AGI research", category: mind, tier: 1, content_type: research}
+  - {query: "AI consciousness cognitive science interview", category: mind, tier: 1, content_type: interview}
+  - {query: "philosophy of science AI epistemology scientific discovery", category: philosophy_science, tier: 1, content_type: research}
+  - {query: "philosophy of artificial intelligence scientific method", category: philosophy_science, tier: 1, content_type: research}
+  - {query: "AI epistemology philosophy science interview", category: philosophy_science, tier: 1, content_type: interview}
   - {query: "future of AGI AI governance interview", category: future, tier: 1, content_type: interview}
   - {query: "AI economy jobs future interview", category: future, tier: 2, content_type: interview}
+  - {query: "future of intelligence AI long term", category: future, tier: 1, content_type: research}
 
 max_posts_per_run: 4
-category_weights: {ai: 0.75, quantum: 0.0833, genetics: 0.0833, mind: 0.0417, future: 0.0417}
+category_weights: {ai: 0.70, quantum: 0.075, genetics: 0.075, mind: 0.05, philosophy_science: 0.05, future: 0.05}
 
 influential_people:
   - "Sam Altman"

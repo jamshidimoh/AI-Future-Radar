@@ -137,8 +137,14 @@ def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_tex
         return False
 
     summary_support, why_support = _source_support(summary, why, source)
-    if source_len >= 350:
+    if source_len >= 700:
         if summary_support < 0.28 or why_support < 0.16:
+            return False
+    elif source_len >= 350:
+        # Short feeds often contain a compressed snippet rather than the full
+        # source. Keep the deterministic specificity/impact checks strict, but
+        # tolerate a bounded amount of legitimate Persian paraphrasing.
+        if summary_support < 0.20 or why_support < 0.12:
             return False
     elif source_len > 0:
         if summary_support < 0.20 or why_support < 0.10:

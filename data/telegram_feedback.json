@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787718765,
+  "updated_at": 1787721575,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4331,6 +4331,43 @@
       "why_it_matters": "بررسی هوش مصنوعی در بسترهای مختلف برای درک بهتر تأثیرات آن بر جامعه، اقتصاد و فناوری ضروری است. این پادکست می‌تواند به شنوندگان کمک کند تا دیدگاه جامع‌تری نسبت به نقش هوش مصنوعی در زندگی روزمره و آینده کسب کنند.",
       "link": "https://www.youtube.com/watch?v=aPCbyQPwPJo",
       "posted_at": 1787718569
+    },
+    "-1004482051328:1290": {
+      "chat_id": -1004482051328,
+      "message_id": 1290,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (PhocusWire)",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "Andrew Ng",
+      "watch_person": "Andrew Ng",
+      "title": "سرمایه‌گذاران استانداردهای سخت‌گیرانه‌تری برای استارتاپ‌های سفر مبتنی بر AI تعیین می‌کنند",
+      "summary": "سرمایه‌گذاران در صنعت گردشگری انتظارات و استانداردهای خود را برای استارتاپ‌هایی که از فناوری هوش مصنوعی بهره می‌برند، افزایش داده‌اند. این تغییر رویکرد نشان‌دهنده بلوغ بازار و نیاز به ارائه ارزش ملموس و قابل اندازه‌گیری توسط شرکت‌های نوپا است تا بتوانند تأمین مالی مورد نیاز خود را جذب کنند.",
+      "why_it_matters": "این روند نشان می‌دهد که سرمایه‌گذاران دیگر صرفاً به وعده‌های فناوری AI اکتفا نمی‌کنند، بلکه بر اثربخشی عملیاتی و بازدهی سرمایه تمرکز دارند. استارتاپ‌های حوزه سفر باید برای بقا و رشد، راه‌حل‌هایی ارائه دهند که چالش‌های واقعی صنعت را با دقت و کارایی بالا حل کنند.",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQS1NzOVNQcFpzX2YzLXY5WVRFcmdrZlJSZEw1MFU1OXkzM1BwUnVRdWZhZWFfcmRKeWNyWkUzZF94RllvUUNvbm1pZ3NRUVFoMEFTR2JoVlIxX2VVSmprMmRmbWd0aDA1SjN0QUQxLXNDelZlUC1EQzY0QUZFUlZsRkMtOGtDS0FxQ1dCT19jVHc?oc=5",
+      "posted_at": 1787721574
+    },
+    "-1004482051328:1291": {
+      "chat_id": -1004482051328,
+      "message_id": 1291,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "دسترسی نامحدود به چت متنی در ChatGPT با مدل GPT-5.6 Luna",
+      "summary": "OpenAI اعلام کرد که تمامی کاربران اکنون به چت‌های متنی نامحدود در پلتفرم ChatGPT دسترسی دارند. این قابلیت با بهره‌گیری از آخرین مدل زبانی شرکت، یعنی GPT-5.6 Luna، ارائه می‌شود.",
+      "why_it_matters": "حذف محدودیت‌های چت متنی برای همه کاربران، دسترسی به پیشرفته‌ترین قابلیت‌های هوش مصنوعی را دموکراتیک‌تر می‌کند. این حرکت نشان‌دهنده بلوغ زیرساختی OpenAI و تمرکز بر تجربه کاربری بدون مانع در مدل GPT-5.6 Luna است.",
+      "link": "https://www.youtube.com/watch?v=9MIkJHcMtVA",
+      "posted_at": 1787721575
     }
   }
 }

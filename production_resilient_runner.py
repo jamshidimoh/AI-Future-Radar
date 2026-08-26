@@ -7,6 +7,7 @@ education explicitly disabled; the news orchestration is never rerun after compl
 from __future__ import annotations
 
 import faulthandler
+import json
 import os
 import sys
 from pathlib import Path
@@ -26,6 +27,7 @@ _ORIGINAL_REWRITE_EDUCATION_PERSIAN = production_entrypoint._rewrite_education_p
 _ORIGINAL_PUBLISH_PRODUCTION_STORY = _publication_adapter.publish_production_story
 
 DEFAULT_WATCHDOG_MINUTES = 22
+EDUCATION_LANGUAGE_MIN_RATIO = 0.70
 
 
 def _watchdog_minutes() -> int:
@@ -63,15 +65,58 @@ def _fetch_reference_with_canonical_year(url: str):
     return excerpt, year
 
 
+def _parse_education_json(raw):
+    text = str(raw or "").strip()
+    if text.startswith("```"):
+        text = "\n".join(text.splitlines()[1:-1]).strip()
+    start, end = text.find("{"), text.rfind("}")
+    return json.loads(text[start:end + 1] if start >= 0 and end > start else text)
+
+
+def _education_language_retry(item: dict, llm_call, providers) -> dict:
+    """Retry only the Persian-language rewrite; never relax the 70% gate."""
+    payload = {k: str(item.get(k, "")) for k in production_entrypoint.EDU_FIELDS}
+    prompt = """این متن آموزشی برای انتشار در یک رسانه تخصصی فارسی آماده شده اما بازنویسی قبلی از حداقل نسبت فارسی عبور نکرده است.
+آن را دوباره و دقیق‌تر به فارسی حرفه‌ای بازنویسی کن.
+قواعد قطعی:
+- حداقل ۷۰٪ نویسه‌های هر یک از هفت فیلد باید فارسی باشد.
+- معنا، اعداد، نام منابع و ادعاها را تغییر نده.
+- نام افراد، شرکت‌ها، محصولات و مدل‌ها را فقط به شکل رسمی Latin نگه دار.
+- فقط اصطلاحات تخصصی ضروری می‌توانند English باشند؛ جمله‌بندی و توضیح باید فارسی باشد.
+- هیچ آوانویسی فارسی برای نام خاص یا اصطلاح تخصصی نساز.
+- طول، ساختار معنایی و محتوای علمی را حفظ کن؛ فقط زبان را فارسی‌تر و روان‌تر کن.
+- خروجی فقط JSON معتبر با دقیقاً همین هفت کلید باشد.
+"""
+    raw, provider = llm_call(prompt, json.dumps(payload, ensure_ascii=False), providers=providers)
+    result = _parse_education_json(raw)
+    if not isinstance(result, dict) or not all(str(result.get(k, "")).strip() for k in production_entrypoint.EDU_FIELDS):
+        raise RuntimeError("[Education Language Gate] retry returned invalid JSON")
+    candidate = dict(item)
+    candidate.update({k: str(result[k]).strip() for k in production_entrypoint.EDU_FIELDS})
+    ratios = [production_entrypoint._persian_ratio(candidate[k]) for k in production_entrypoint.EDU_FIELDS]
+    minimum = min(ratios) if ratios else 0.0
+    if minimum < EDUCATION_LANGUAGE_MIN_RATIO:
+        raise RuntimeError(f"[Education Language Gate] retry rejected min_ratio={minimum:.2f}")
+    candidate["_language_provider"] = provider or "editorial QA retry"
+    print(f"[Education Language Gate] retry accepted min_ratio={minimum:.2f}", flush=True)
+    return candidate
+
+
 def _rewrite_education_only_if_needed(item: dict, llm_call, providers) -> dict:
     ratios = [production_entrypoint._persian_ratio(str(item.get(k, ""))) for k in production_entrypoint.EDU_FIELDS]
     minimum = min(ratios) if ratios else 0.0
-    if minimum >= 0.70:
+    if minimum >= EDUCATION_LANGUAGE_MIN_RATIO:
         item = dict(item)
         item["_language_provider"] = "source-validated"
         print(f"[Education Language Gate] source_validated min_ratio={minimum:.2f}; rewrite skipped", flush=True)
         return item
-    return _ORIGINAL_REWRITE_EDUCATION_PERSIAN(item, llm_call, providers)
+    try:
+        return _ORIGINAL_REWRITE_EDUCATION_PERSIAN(item, llm_call, providers)
+    except RuntimeError as exc:
+        if "[Education Language Gate]" not in str(exc):
+            raise
+        print("[Education Language Gate] first rewrite failed; running one bounded Persian-only retry", flush=True)
+        return _education_language_retry(item, llm_call, providers)
 
 
 def _publish_education_after_news(run_number: int) -> bool:

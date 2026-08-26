@@ -8,8 +8,6 @@ from urllib.parse import quote
 
 from education_quality import assert_publishable
 
-# Directional isolates. Every visual row gets its own RTL container; Latin runs
-# are isolated inside that container so the first English token cannot flip the row.
 RLI = "\u2067"
 LRI = "\u2066"
 PDI = "\u2069"
@@ -17,6 +15,7 @@ RLM = "\u200f"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 SHORT_DIVIDER = "──────────────"
 # Keep the rendered lesson safely below Telegram's 4096-character limit.
+MAX_MESSAGE = 4090
 MAX_DEFINITION = 580
 MAX_SIMPLE = 350
 MAX_RELATION = 340
@@ -32,7 +31,7 @@ def _fit(value: Any, limit: int) -> str:
     text = str(value or "").strip()
     if len(text) <= limit:
         return text
-    cut = text[: limit - 1].rsplit(" ", 1)[0].rstrip()
+    cut = text[: max(1, limit - 1)].rsplit(" ", 1)[0].rstrip()
     return cut + "…"
 
 
@@ -60,7 +59,6 @@ def _rtl(text: str) -> str:
 
 
 def _ltr(text: str) -> str:
-    """Create a fully isolated LTR row, used only where the whole row is Latin."""
     return f"{LRI}{text}{PDI}"
 
 
@@ -74,18 +72,16 @@ def _term_label(term: str, fa: str) -> str:
     return _e(fa or term)
 
 
-def _source_lines(item: dict[str, Any]) -> list[str]:
+def _source_lines(item: dict[str, Any], limit: int = 3) -> list[str]:
     out: list[str] = []
-    for source in (item.get("education_sources") or [])[:3]:
+    for source in (item.get("education_sources") or [])[:limit]:
         name = str(source.get("name") or "").strip()
         url = _e(source.get("url", ""), quote=True)
         year = str(source.get("year") or "").strip()
         if not name or not url:
             continue
         year_part = f" · {year}" if year else ""
-        name_html = _e(name)
-        row = f"• <a href=\"{url}\">{name_html}</a>{year_part}"
-        out.append(_rtl(row))
+        out.append(_rtl(f"• <a href=\"{url}\">{_e(name)}</a>{year_part}"))
     return out
 
 
@@ -127,37 +123,64 @@ def _assert_rtl_contract(lines: list[str]) -> None:
             raise ValueError(f"Educational RTL contract violated: {line[:80]!r}")
 
 
-def format_educational_post(item: dict[str, Any]) -> str:
-    verified = assert_publishable(item, item.get("education_sources") or [], minimum_score=85)
-    item["education_sources"] = verified
-
+def _render(item: dict[str, Any], budgets: tuple[int, int, int, int, int], include_sources: bool = True) -> tuple[list[str], str]:
     a_label = _term_label(_e(item.get("education_term_a")), _e(item.get("education_term_a_fa")))
     b_label = _term_label(_e(item.get("education_term_b")), _e(item.get("education_term_b_fa")))
     number = int(item.get("education_number", item.get("education_id", 0)) or 0)
+    definition, simple, relation, example, takeaway = budgets
 
-    lines: list[str] = [
-        _rtl(f"<b>🧠 درس {number:02d}</b>"),
-        DIVIDER,
-        "",
-    ]
-    lines.extend(_concept("۱.", a_label, _e(_fit(item.get("term_a_definition"), MAX_DEFINITION)), _e(_fit(item.get("term_a_simple"), MAX_SIMPLE))))
+    lines: list[str] = [_rtl(f"<b>🧠 درس {number:02d}</b>"), DIVIDER, ""]
+    lines.extend(_concept("۱.", a_label, _e(_fit(item.get("term_a_definition"), definition)), _e(_fit(item.get("term_a_simple"), simple))))
     lines.extend(["", SHORT_DIVIDER, ""])
-    lines.extend(_concept("۲.", b_label, _e(_fit(item.get("term_b_definition"), MAX_DEFINITION)), _e(_fit(item.get("term_b_simple"), MAX_SIMPLE))))
+    lines.extend(_concept("۲.", b_label, _e(_fit(item.get("term_b_definition"), definition)), _e(_fit(item.get("term_b_simple"), simple))))
     lines.extend(["", SHORT_DIVIDER, ""])
-    lines.extend(_boxed_section("🔗", "رابطه دو مفهوم", _e(_fit(item.get("relationship"), MAX_RELATION))))
+    lines.extend(_boxed_section("🔗", "رابطه دو مفهوم", _e(_fit(item.get("relationship"), relation))))
     lines.extend(["", SHORT_DIVIDER, ""])
-    lines.extend(_boxed_section("🧩", "مثال واقعی", _e(_fit(item.get("example"), MAX_EXAMPLE))))
+    lines.extend(_boxed_section("🧩", "مثال واقعی", _e(_fit(item.get("example"), example))))
     lines.extend(["", SHORT_DIVIDER, ""])
-    lines.extend(_boxed_section("📌", "نکته کلیدی", _e(_fit(item.get("takeaway"), MAX_TAKEAWAY))))
+    lines.extend(_boxed_section("📌", "نکته کلیدی", _e(_fit(item.get("takeaway"), takeaway))))
     lines.extend(["", DIVIDER, ""])
     lines.extend(_chatgpt_cta(item))
 
-    sources = _source_lines(item)
+    sources = _source_lines(item, 3 if include_sources else 0)
     if sources:
         lines.extend(["", DIVIDER, "", _rtl("<b>📚 منابع منتخب</b>"), "", *sources])
 
     _assert_rtl_contract(lines)
     result = "\n".join(lines).strip()
-    if len(result) > 4090:
+    return lines, result
+
+
+def format_educational_post(item: dict[str, Any]) -> str:
+    verified = assert_publishable(item, item.get("education_sources") or [], minimum_score=85)
+    item["education_sources"] = verified
+
+    # First render preserves the normal rich lesson. If it is too large, progressively
+    # tighten only optional/verbose presentation fields. This is deterministic and keeps
+    # the complete message valid without hard-cutting HTML or silently dropping the lesson.
+    budget_sets = (
+        (MAX_DEFINITION, MAX_SIMPLE, MAX_RELATION, MAX_EXAMPLE, MAX_TAKEAWAY),
+        (480, 280, 270, 290, 180),
+        (400, 220, 220, 240, 150),
+        (330, 180, 180, 200, 120),
+    )
+    for budgets in budget_sets:
+        for include_sources in (True, False):
+            _, result = _render(item, budgets, include_sources=include_sources)
+            if len(result) <= MAX_MESSAGE:
+                return result
+
+    # Last-resort deterministic fit. Preserve complete visual rows and HTML boundaries;
+    # this path should be unreachable for normally generated lessons.
+    lines, _ = _render(item, budget_sets[-1], include_sources=False)
+    kept: list[str] = []
+    for line in lines:
+        candidate = "\n".join(kept + [line]).strip()
+        if len(candidate) <= MAX_MESSAGE:
+            kept.append(line)
+        else:
+            break
+    result = "\n".join(kept).strip()
+    if len(result) > MAX_MESSAGE:
         raise ValueError(f"Educational post exceeds single-message budget: {len(result)} characters")
     return result

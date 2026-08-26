@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787763077,
+  "updated_at": 1787765114,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4488,6 +4488,43 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787763077
+    },
+    "-1004482051328:1312": {
+      "chat_id": -1004482051328,
+      "message_id": 1312,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Time Magazine)",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "تحلیل بازسازی استراتژیک OpenAI: چالش‌ها و تغییرات ساختاری",
+      "summary": "مقاله Time Magazine به بررسی جزئیات داخلی فرآیند بازسازی و تغییرات ساختاری در OpenAI می‌پردازد. این گزارش بر چالش‌های مدیریتی، تغییرات در رویکرد توسعه مدل‌ها و پیامدهای این تحولات بر آینده شرکت تمرکز دارد. با Attention به محدودیت متن ورودی، جزئیات فنی دقیق یا اعداد مشخصی ارائه نشده است، اما محور اصلی بر تغییرات بنیادین در سازمان است.",
+      "why_it_matters": "درک تغییرات داخلی OpenAI برای تحلیل‌گران فناوری حیاتی است، زیرا این شرکت نقش محوری در جهت‌دهی به توسعه هوش مصنوعی عمومی دارد. هرگونه تغییر در ساختار یا استراتژی این شرکت می‌تواند بر سرعت نوآوری، استانداردهای ایمنی و رقابت در بازار جهانی تأثیر بگذارد. این گزارش نشان می‌دهد که پایداری و جهت‌گیری آینده OpenAI در حال بازتعریف است که پیامدهای گسترده‌ای برای اکوسیستم فناوری خواهد داشت.",
+      "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE1VV0QxTTNlaWk2MXdtUVRzbzV5Nmp2VXRDaHdYeVZlRWkxcVBadXQtOGRlTU9EVW01RUtEYlZqdFExNTFOaDVSV1ctb1lrMXo1azlTRWJBNWdPejVMa1RTbmZ5OVZCMEpJdmQ3cVZBYlphdw?oc=5",
+      "posted_at": 1787765112
+    },
+    "-1004482051328:1313": {
+      "chat_id": -1004482051328,
+      "message_id": 1313,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Google DeepMind",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "ریاضیات عدم قطعیت در هوش مصنوعی: دیدگاه Zoubin Ghahramani از Google DeepMind",
+      "summary": "Zoubin Ghahramani، استاد دانشگاه کمبریج و معاون تحقیقات Google DeepMind، سه دهه است که بر توسعه نوعی هوش مصنوعی مبتنی بر ریاضیات عدم قطعیت تمرکز دارد. او تلاش می‌کند تا به ماشین‌ها توانایی درک محدودیت‌های خود را ببخشد و مرز میان صحت پاسخ و اعتماد به نفس مدل را تبیین کند. این رویکرد که ریشه در تفکر بیزی دارد، به عنوان یکی از حلقه‌های مفقوده برای بهبود قابلیت اطمینان هوش مصنوعی و حرکت به سمت AGI مطرح می‌شود.",
+      "why_it_matters": "درک دقیق عدم قطعیت توسط مدل‌های هوش مصنوعی، چالش‌های فعلی در قابلیت اطمینان و ایمنی سیستم‌های خودکار را هدف قرار می‌دهد. با تفکیک صحت از اعتماد به نفس، این پژوهش‌ها می‌توانند به سیستم‌ها کمک کنند تا در مواجهه با داده‌های ناشناخته یا مبهم، رفتار ایمن‌تری داشته باشند. این پیشرفت‌ها برای گذار از مدل‌های زبانی بزرگ فعلی به هوش مصنوعی عمومی (AGI) که نیازمند درک عمیق‌تر از محدودیت‌های شناختی است، ضروری به نظر می‌رسد.",
+      "link": "https://www.youtube.com/watch?v=tBjgCj_dGZM",
+      "posted_at": 1787765114
     }
   }
 }

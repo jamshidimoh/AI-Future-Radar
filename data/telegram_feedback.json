@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787689151,
+  "updated_at": 1787704864,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4150,6 +4150,61 @@
       "why_it_matters": "این دیدگاه از سوی یکی از مدیران ارشد OpenAI نشان‌دهنده تغییر فاز صنعت از مرحله آزمایشی به پذیرش گسترده است. درک این آمادگی بازار برای توسعه‌دهندگان و سرمایه‌گذاران حیاتی است تا استراتژی‌های خود را با واقعیت‌های فعلی همسو کنند.",
       "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPTkRSQ1lnRGxrZWVfODFJTktXUEFjWU4wcDc0NzNxZzJFdHZsRkwwQkpUM2QzQk84TGdaY0trVHZXR2VkNGtmX1NCWjFlUDVSWjhtdUVfTEx3OXdMZHFCWTVNT01qeXhQbWpickJjbFk1c1FUcWhKTmU2aGVxWGxiNnBLaGNGZ1Z4OW1SMGx2alZYMkxwaG9Nbk5kbjVPRjdDMEtxOC1YeXloSnJaNEFMaHNTVE5JLS1zOVRkeXhn?oc=5",
       "posted_at": 1787689151
+    },
+    "-1004482051328:1280": {
+      "chat_id": -1004482051328,
+      "message_id": 1280,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - NVIDIA",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی لپ‌تاپ‌های NVIDIA RTX Spark: گیمینگ مدرن با DLSS و Ray Tracing",
+      "summary": "شرکت NVIDIA از لپ‌تاپ‌های سری RTX Spark رونمایی کرد که به عنوان سخت‌افزار تعریف‌کننده گیمینگ مدرن PC معرفی شده‌اند. این دستگاه‌ها از قابلیت‌های Ray-traced lighting برای غوطه‌وری بصری، فناوری DLSS برای بهبود عملکرد و گرافیک مبتنی بر هوش مصنوعی، و همچنین NVIDIA Reflex برای کاهش تأخیر و افزایش واکنش‌پذیری بهره می‌برند. تمام تصاویر گیم‌پلی در رزولوشن 1440p بر روی سخت‌افزار پیش از انتشار ضبط شده است.",
+      "why_it_matters": "ورود سری RTX Spark نشان‌دهنده تکامل سخت‌افزارهای گیمینگ همراه با تمرکز بر ترکیب رندرینگ نوری و بهینه‌سازی هوش مصنوعی است. این پلتفرم با ارائه تجربه بصری در رزولوشن 1440p و تأکید بر واکنش‌پذیری رقابتی، استانداردهای جدیدی را برای لپ‌تاپ‌های گیمینگ پیشرفته تعیین می‌کند.",
+      "link": "https://www.youtube.com/watch?v=3VeAFFry80I",
+      "posted_at": 1787704861
+    },
+    "-1004482051328:1281": {
+      "chat_id": -1004482051328,
+      "message_id": 1281,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Gizmodo)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "مطالعه جدید: اثبات سرقت آثار هنری توسط AI غیرممکن است",
+      "summary": "هنرمندان تلاش می‌کنند ثابت کنند که آثار آن‌ها توسط هوش مصنوعی دزدیده شده است، اما یک مطالعه جدید نشان می‌دهد که این کار از نظر فنی غیرممکن است. این پژوهش چالش‌های بنیادین در ردیابی و اثبات استفاده غیرمجاز از داده‌های آموزشی در مدل‌های AI را برجسته می‌کند.",
+      "why_it_matters": "این یافته‌ها نشان می‌دهند که مکانیسم‌های فعلی شفافیت در هوش مصنوعی برای حمایت از حقوق مالکیت معنوی هنرمندان ناکارآمد هستند. این موضوع شکاف حقوقی و فنی عمیقی را در برابر ادعاهای سرقت داده‌ها آشکار می‌سازد.",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPWHZhMmcydERqanhBcEthMG50WFN3d0RlSWc2NkhIWjhmcGpTbDJfSU41ckplTU93czJHZmpyWmxKWFhfb1hnYVJvQURaYWxrdFVGODJ1TVk4dE1tRmFjMm0yQUlpcnVveWdLQmFLUWVyRnlOcFplcHAtY0F4cUJ3RlRfQUhIWXNveGRrQkY4VzFISEotbHMzekV1ZkFTbUZoTWdRaU9HR0ZlN1lyd19mMXFjS3g?oc=5",
+      "posted_at": 1787704862
+    },
+    "-1004482051328:1282": {
+      "chat_id": -1004482051328,
+      "message_id": 1282,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "مدیریت یکپارچه فضای کاری با پلاگین ChatGPT admin",
+      "summary": "پلاگین ChatGPT admin قابلیت‌های مدیریت فضای کاری را مستقیماً درون محیط ChatGPT Work ادغام می‌کند. Aarti Bagul از OpenAI نشان می‌دهد که مدیران چگونه می‌توانند بدون جابجایی بین ابزارها، میزان پذیرش و مصرف اعتبار را تحلیل کنند. این قابلیت همچنین امکان به‌روزرسانی و اشتراک‌گذاری بسته‌های ارائه AI و همچنین بررسی و تأیید درخواست‌های محدودیت استفاده را فراهم می‌آورد.",
+      "why_it_matters": "این قابلیت با حذف نیاز به جابجایی بین ابزارهای مختلف، کارایی عملیاتی مدیران را در نظارت بر مصرف اعتبار و مدیریت دسترسی‌ها افزایش می‌دهد. یکپارچه‌سازی فرآیندهای اداری درون محیط چت‌بات، تجربه کاربری را برای تیم‌های فناوری ساده‌تر و سریع‌تر می‌کند.",
+      "link": "https://www.youtube.com/watch?v=29SyCndnMZs",
+      "posted_at": 1787704864
     }
   }
 }

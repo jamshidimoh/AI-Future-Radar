@@ -16,6 +16,28 @@ LATIN_TOKEN_MAX_CHARS = 64
 _BIDI_CONTROLS = "\u202A\u202B\u202C\u202D\u202E\u2066\u2067\u2069\u200E\u200F"
 _LTR_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9._+/#:&'’()\-]*")
 _URL_RE = re.compile(r"https?://[^\s<>\"]+")
+_GENERIC_WHY = (
+    "این خبر نشان می‌دهد",
+    "این موضوع نشان می‌دهد",
+    "این پیشرفت می‌تواند",
+    "این فناوری می‌تواند",
+    "اهمیت این خبر در این است",
+    "در آینده می‌تواند",
+    "می‌تواند آینده هوش مصنوعی را تغییر دهد",
+    "گامی مهم در مسیر",
+    "اهمیت زیادی دارد",
+)
+_IMPACT_MARKERS = (
+    "باعث", "منجر", "امکان", "کاهش", "افزایش", "بهبود", "تغییر", "پیامد", "ریسک",
+    "هزینه", "دقت", "سرعت", "کاربرد", "استقرار", "ارزیابی", "محدودیت", "مزیت",
+    "اثر", "رقابت", "بازار", "پژوهش", "سیاست", "حکمرانی",
+)
+_SPECIFICITY_MARKERS = (
+    "مدل", "روش", "آزمایش", "نتیجه", "داده", "معماری", "عامل", "آموزش", "استنتاج",
+    "ارزیابی", "معیار", "پژوهش", "مقاله", "سیستم", "کد", "ربات", "کوانتوم", "ژنوم",
+    "پروتئین", "آگاهی", "شناخت", "AGI", "LLM", "AI", "RL", "SFT", "DPO", "RAG",
+)
+_GENERIC_WORDS = {"این", "آن", "برای", "در", "از", "به", "با", "که", "و", "یک", "است", "شود", "دارد", "همین", "موضوع", "خبر", "فناوری", "پژوهش"}
 
 
 def persian_ratio(text: str) -> float:
@@ -40,6 +62,88 @@ def length_ok(summary: str, why_it_matters: str, source_text: str) -> bool:
     if source_len < 350:
         return summary_len >= SHORT_SOURCE_SUMMARY_MIN_CHARS and why_len >= SHORT_SOURCE_WHY_MIN_CHARS
     return summary_len >= SUMMARY_MIN_CHARS and why_len >= WHY_MIN_CHARS
+
+
+def _sentence_count(text: str) -> int:
+    parts = [p.strip() for p in re.split(r"(?<=[.!؟])\s+", str(text or "")) if p.strip()]
+    return len(parts)
+
+
+def _content_tokens(text: str) -> set[str]:
+    value = str(text or "").lower()
+    latin = {x for x in re.findall(r"[a-z][a-z0-9.+/#-]{1,}", value) if len(x) >= 2}
+    persian = {
+        x for x in re.findall(r"[\u0600-\u06ff]{3,}", value)
+        if x not in _GENERIC_WORDS
+    }
+    return latin | persian
+
+
+def _specificity_score(summary: str) -> int:
+    value = str(summary or "")
+    score = 0
+    if re.search(r"\d", value):
+        score += 1
+    if re.search(r"\b[A-Z][A-Za-z0-9.+/#-]{1,}\b", value):
+        score += 1
+    lower = value.lower()
+    score += min(2, sum(1 for marker in _SPECIFICITY_MARKERS if marker.lower() in lower))
+    if re.search(r"(?:در|با|روی|برای)\s+[\u0600-\u06ffA-Za-z]", value):
+        score += 1
+    return score
+
+
+def _overlap(a: str, b: str) -> float:
+    left, right = _content_tokens(a), _content_tokens(b)
+    if not left or not right:
+        return 0.0
+    return len(left & right) / max(1, len(left | right))
+
+
+def _source_support(summary: str, why: str, source_text: str) -> tuple[float, float]:
+    """Measure lexical evidence without pretending it is semantic verification."""
+    source = _content_tokens(source_text)
+    summary_tokens = _content_tokens(summary)
+    why_tokens = _content_tokens(why)
+    if not source:
+        return 0.0, 0.0
+    return (
+        len(summary_tokens & source) / max(1, len(summary_tokens)),
+        len(why_tokens & source) / max(1, len(why_tokens)),
+    )
+
+
+def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_text: str = "") -> bool:
+    """Reject fluent-but-empty News copy while requiring evidence from the supplied source."""
+    summary = str(summary or "").strip()
+    why = str(why_it_matters or "").strip()
+    source = str(source_text or "").strip()
+    source_len = len(source)
+    if not summary or not why:
+        return False
+    if source_len >= 350 and _sentence_count(summary) < 2:
+        return False
+    if source_len >= 350 and _sentence_count(why) < 2:
+        return False
+    if _specificity_score(summary) < 3:
+        return False
+    if any(phrase in why for phrase in _GENERIC_WHY):
+        return False
+    if not any(marker in why for marker in _IMPACT_MARKERS):
+        return False
+    if _overlap(summary, why) >= 0.78:
+        return False
+    if len(summary) > 260 and len(summary) / max(1, source_len) < 0.06 and source_len >= 700:
+        return False
+
+    summary_support, why_support = _source_support(summary, why, source)
+    if source_len >= 350:
+        if summary_support < 0.28 or why_support < 0.16:
+            return False
+    elif source_len > 0:
+        if summary_support < 0.20 or why_support < 0.10:
+            return False
+    return True
 
 
 def headline_quality_ok(title: str) -> bool:

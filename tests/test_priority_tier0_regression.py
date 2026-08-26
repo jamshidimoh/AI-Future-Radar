@@ -27,3 +27,18 @@ def test_explicit_priority_interview_remains_tier0():
     assert "nick bostrom" in people
     assert tier0 is True
     assert bonus == 50.0
+
+
+def test_blocked_candidate_cannot_use_tier0_exemption():
+    item = {
+        "title": "Interview with Nick Bostrom about superintelligence",
+        "content_type": "interview",
+        "summary": "Nick Bostrom discusses superintelligence, alignment, long-term AI risks, and the future of advanced AI systems.",
+        "source": "Specialist podcast",
+        "_publication_blocked": True,
+    }
+    people, tier0, bonus = priority_people_features(item)
+    assert people == []
+    assert tier0 is False
+    assert bonus == 0.0
+    assert is_substantive_priority_interview(item) is False

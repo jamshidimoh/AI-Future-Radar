@@ -5,7 +5,7 @@ import re
 
 from llm_router_light import call_llm_with_fallback, get_quality_chain
 from education_editor import normalize_editorial_text, news_terminology_review_prompt
-from src.editorial_quality_policy import editorial_fields_ok, length_ok, news_language_ok, persian_ratio
+from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_ratio
 
 _DEPTH = {
     "ai": "محتوای محوری کانال است؛ مدل، روش، عدد، قابلیت، محدودیت و پیامد فنی را دقیق حفظ کن.",
@@ -17,7 +17,10 @@ _DEPTH = {
 
 _PROMPT = """تو تحلیلگر ارشد فارسی‌زبان یک رسانه تخصصی فناوری هستی.
 {depth}
-قواعد سخت: متن خروجی باید واقعاً فارسی حرفه‌ای باشد؛ نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها Latin بماند؛ آوانویسی فارسی نام خاص ممنوع؛ key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن ورودی باشد و در غیر این صورت خالی؛ summary باید 2 تا 4 جمله کامل و اطلاعات مهم منبع را حفظ کند؛ why_it_matters باید 2 تا 3 جمله کامل و معمولاً 220 تا 360 نویسه باشد؛ حدس یا ادعای جدید ممنوع؛ کوتاه‌نویسی یک‌جمله‌ای ممنوع مگر منبع واقعاً کوتاه باشد.
+قواعد سخت: متن خروجی باید واقعاً فارسی حرفه‌ای باشد؛ نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها Latin بماند؛ آوانویسی فارسی نام خاص ممنوع؛ key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن ورودی باشد و در غیر این صورت خالی.
+summary باید 2 تا 4 جمله کامل باشد و دقیقاً بگوید چه چیزی رخ داده، چه یافته/قابلیت/روش یا عددی مهم است و اگر محدودیت یا نتیجه‌ای در منبع هست آن را حذف نکن. از بازگویی کلی عنوان خودداری کن.
+why_it_matters باید 2 تا 3 جمله کامل و مشخص باشد: پیامد مستقیم خبر، اثر آن بر مسیر فناوری/پژوهش/کاربرد و در صورت وجود محدودیت یا ریسک را توضیح بده. عبارت‌های کلی مانند «این پیشرفت می‌تواند آینده AI را تغییر دهد» بدون توضیح مشخص ممنوع است. why_it_matters نباید صرفاً summary را تکرار کند.
+حدس یا ادعای جدید ممنوع؛ کوتاه‌نویسی یک‌جمله‌ای ممنوع مگر منبع واقعاً کوتاه باشد.
 برای عنوان، حتماً یک تیتر فارسی حرفه‌ای تولید کن و نام رسمی محصولات/افراد/شرکت‌ها را فقط به صورت Latin نگه دار.
 خروجی دقیقاً JSON: {{"title":"...","summary":"...","why_it_matters":"...","speakers":"","key_quote":"","category":"ai|quantum|genetics|mind|future"}}"""
 
@@ -28,8 +31,19 @@ _TITLE_REPAIR_PROMPT = """عنوان زیر را برای انتشار در یک
 
 _DRAFT_REPAIR_PROMPT = """پیش‌نویس زیر برای انتشار فارسی نامعتبر است. آن را از نو و کامل بازنویسی کن؛ فقط از شواهد موجود در منبع استفاده کن و هیچ ادعای جدیدی نساز.
 تمام سه فیلد title، summary و why_it_matters باید فارسی حرفه‌ای باشند. نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها را Latin نگه دار و آوانویسی فارسی نام خاص انجام نده.
-summary باید 2 تا 4 جمله کامل و اطلاعات مهم منبع را حفظ کند. why_it_matters باید 2 تا 3 جمله کامل و معمولاً 220 تا 360 نویسه باشد. key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن منبع باشد و در غیر این صورت خالی. category را از مقدار فعلی حفظ کن.
+summary باید 2 تا 4 جمله کامل و اطلاعات مهم منبع را حفظ کند. why_it_matters باید 2 تا 3 جمله کامل و مشخص باشد و پیامد واقعی خبر را توضیح دهد، نه یک کلیشه عمومی. summary و why_it_matters نباید یکدیگر را تکرار کنند. key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن منبع باشد و در غیر این صورت خالی. category را از مقدار فعلی حفظ کن.
 خروجی دقیقاً JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
+
+پیش‌نویس: {draft}
+
+متن منبع: {source}"""
+
+_VALUE_REPAIR_PROMPT = """تو ویراستار ارشد محتوای یک رسانه تخصصی فناوری هستی. پیش‌نویس زیر از نظر زبان معتبر است اما از نظر ارزش اطلاعاتی ضعیف است.
+فقط با استفاده از متن منبع آن را اصلاح کن.
+summary: دو تا چهار جمله که مشخصاً بگوید چه اتفاقی افتاده، مهم‌ترین روش/یافته/قابلیت/عدد یا محدودیت چیست. کلی‌گویی و تکرار عنوان ممنوع.
+why_it_matters: دو یا سه جمله که یک پیامد مشخص برای پژوهش، محصول، زیرساخت، بازار، ایمنی، حکمرانی یا مسیر آینده فناوری توضیح دهد. از کلیشه‌هایی مانند «این موضوع آینده AI را تغییر می‌دهد» بدون سازوکار مشخص استفاده نکن.
+summary و why_it_matters نباید یکدیگر را تکرار کنند. هیچ ادعایی خارج از منبع اضافه نکن. نام رسمی افراد، شرکت‌ها، مدل‌ها و پروژه‌ها Latin بماند.
+خروجی فقط JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 
 پیش‌نویس: {draft}
 
@@ -86,6 +100,15 @@ def _length_ok(data, source_text):
     return length_ok(str(data.get("summary", "")), str(data.get("why_it_matters", "")), source_text)
 
 
+def _value_ok(data, source_text):
+    return editorial_value_ok(
+        str(data.get("title", "")),
+        str(data.get("summary", "")),
+        str(data.get("why_it_matters", "")),
+        source_text,
+    )
+
+
 def _fallback_title_from_persian_summary(data):
     """Provider-independent title recovery when all translation models are unavailable."""
     summary = normalize_editorial_text(str(data.get("summary", "")).strip())
@@ -140,13 +163,7 @@ def _repair_title(data):
 
 
 def _repair_persian_draft(data, item):
-    """Recover the complete Persian editorial draft before the final language gate.
-
-    Title-only recovery cannot rescue a provider that returned an otherwise
-    valid-looking but entirely non-Persian draft. This bounded second pass uses
-    the same quality-provider chain and validates the complete draft before it
-    is allowed back into the normal publication path.
-    """
+    """Recover the complete Persian editorial draft before the final language gate."""
     prompt = _DRAFT_REPAIR_PROMPT.format(
         draft=json.dumps(data, ensure_ascii=False),
         source=str(item.get("summary", "") or "")[:3500],
@@ -163,18 +180,7 @@ def _repair_persian_draft(data, item):
         return data, provider
 
     if _language_ok(candidate):
-        if _length_ok(candidate, str(item.get("summary", "") or "")):
-            print(
-                "[Draft Language Recovery] recovered full Persian draft "
-                f"title={persian_ratio(candidate.get('title','')):.2f} "
-                f"summary={persian_ratio(candidate.get('summary','')):.2f} "
-                f"why={persian_ratio(candidate.get('why_it_matters','')):.2f}",
-                flush=True,
-            )
-        else:
-            print("[Draft Language Recovery] recovered Persian draft; deferred length validation to final gate", flush=True)
         return candidate, provider
-
     print(
         "[Draft Language Recovery] rejected recovered draft "
         f"ratios title={persian_ratio(candidate.get('title','')):.2f} "
@@ -207,6 +213,24 @@ def _editorial_review(data):
         return candidate, provider
     except (json.JSONDecodeError, TypeError, ValueError):
         return original, None
+
+
+def _repair_editorial_value(data, item):
+    prompt = _VALUE_REPAIR_PROMPT.format(
+        draft=json.dumps(data, ensure_ascii=False),
+        source=str(item.get("summary", "") or "")[:3500],
+    )
+    raw, provider = call_llm_with_fallback(
+        prompt,
+        json.dumps({"draft": data, "source": str(item.get("summary", "") or "")[:3500]}, ensure_ascii=False),
+        providers=get_quality_chain(),
+    )
+    try:
+        candidate = _normalize(_extract_json(raw or ""), item)
+    except (json.JSONDecodeError, TypeError, ValueError):
+        print("[Editorial Value Repair] invalid JSON; rejecting candidate", flush=True)
+        return data, provider
+    return candidate, provider
 
 
 def summarize_item(item):
@@ -258,6 +282,17 @@ def summarize_item(item):
             flush=True,
         )
         return None
+
+    if not _value_ok(final, raw_text):
+        print("[Editorial Value Gate] weak summary; attempting one bounded repair", flush=True)
+        repaired, repair_provider = _repair_editorial_value(final, item)
+        if _language_ok(repaired) and _length_ok(repaired, raw_text) and _value_ok(repaired, raw_text):
+            final = repaired
+            editorial_provider = repair_provider
+            print("[Editorial Value Gate] repaired candidate accepted", flush=True)
+        else:
+            print("[Editorial Value Gate] repaired candidate rejected; item will not be published", flush=True)
+            return None
 
     final["_provider"] = provider
     final["_provider_draft"] = provider

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787729557,
+  "updated_at": 1787729759,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4060,6 +4060,62 @@
       "why_it_matters": "این کشف نشان می‌دهد که پیوند فنی بین خروجی مدل‌های هوش مصنوعی و داده‌های ورودی آن‌ها به قدری پیچیده است که ردیابی مستقیم غیرممکن می‌شود. این موضوع پیامدهای عمیقی برای قوانین کپی‌رایت، مسئولیت‌پذیری قانونی و اخلاق در توسعه فناوری‌های تولید محتوا دارد.",
       "link": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOelBiYlcwQ0pydFhJZ2IyaHlRRXI0c0JRUTl3eURmU2tTbUc4Ym1RZ3h6a1BGNG5mVEdQY2lNY1FMS09BbHZqR0JvbVBzMDA0RVg0Z0YwS0hVZDhxUXNGTUgtVGhjaGpzdUhiMkNHUlRSOUcxeWVGLXFVa0tleDBYejVKY2FXM0hwdXBtdnhlZThrQ3FTYUdnRWpoSjNVbFg1VHVvMkVtbF9qNzhud0FkdWVvNFREdVlqYjFHcFV1SFdyclBPQUhEUG9xNnJBTW1zTVQ2SFN1UThsZUgwRzc4d0VB0gHnAUFVX3lxTFBxcFhBTzE4SnA4TzlRMzBFUXhCZFBPdG9zZW12XzNYcURSNDRJaWxGbDFETDVBcU10MGp0ejhMQXVLSEpCRmQybDR6bEx4ZkJRaWIyT3BPekZKTGRmSEVhaElwTjVHTlgycVNRV2lUVWFEWUNjMDlvT3pRdmE3ZUVVWlBHVE1icC05R0NvVG5zSmNRWmxpR2wxYU5CQVk5dUpzcmx2QUNIUEZDbmxEQ3lVdVZrNG5jV0dxRUxVSy1pajFPWkxxZ3pNOHdXN2dneWJSYW44SFpScUd3V1BCN3BqZUJxSEhLcw?oc=5",
       "posted_at": 1787729557
+    },
+    "-1004482051328:1300": {
+      "chat_id": -1004482051328,
+      "message_id": 1300,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Gizmodo)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "مطالعه جدید: اثبات سرقت آثار هنری توسط AI غیرممکن است",
+      "summary": "هنرمندان تلاش می‌کنند ثابت کنند که آثار آن‌ها توسط هوش مصنوعی دزدیده شده است، اما یک مطالعه جدید نشان می‌دهد که این کار از نظر فنی غیرممکن است. این پژوهش به چالش‌های بنیادین در ردیابی و اثبات استفاده غیرمجاز از داده‌های آموزشی در مدل‌های هوش مصنوعی می‌پردازد.",
+      "why_it_matters": "این یافته‌ها نشان می‌دهند که مکانیسم‌های فعلی شفافیت در مدل‌های زبانی بزرگ، امکان پیگیری دقیق منشأ داده‌های آموزشی را برای مالکان محتوا فراهم نمی‌کنند. این موضوع شکاف حقوقی و فنی عمیقی بین ادعاهای هنرمندان و قابلیت‌های اثبات‌پذیری فنی ایجاد می‌کند.",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPWHZhMmcydERqanhBcEthMG50WFN3d0RlSWc2NkhIWjhmcGpTbDJfSU41ckplTU93czJHZmpyWmxKWFhfb1hnYVJvQURaYWxrdFVGODJ1TVk4dE1tRmFjMm0yQUlpcnVveWdLQmFLUWVyRnlOcFplcHAtY0F4cUJ3RlRfQUhIWXNveGRrQkY4VzFISEotbHMzekV1ZkFTbUZoTWdRaU9HR0ZlN1lyd19mMXFjS3g?oc=5",
+      "posted_at": 1787729757
+    },
+    "-1004482051328:1301": {
+      "chat_id": -1004482051328,
+      "message_id": 1301,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature News",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "نقش کلیدی قانون‌گذاران اروپا در مدیریت ریسک‌های هوش مصنوعی",
+      "summary": "در حالی که جهان درباره چگونگی تنظیم مقررات هوش مصنوعی بحث می‌کند، قانون‌گذاران اروپا بخش عمده‌ای از تلاش‌ها را بر عهده دارند. این گزارش به نقش پیشرو اروپا در فرآیند نظارتی و چالش‌های مرتبط با آن می‌پردازد.",
+      "why_it_matters": "با Attention به سرعت رشد فناوری‌های هوش مصنوعی، اقدامات قانون‌گذاران اروپا می‌تواند به عنوان الگویی برای سایر مناطق جهان در ایجاد تعادل بین نوآوری و ایمنی عمل کند. این رویکرد نظارتی تأثیر مستقیمی بر آینده توسعه و استقرار این فناوری‌ها خواهد داشت.",
+      "link": "https://www.nature.com/articles/d41586-026-02567-5",
+      "posted_at": 1787729758
+    },
+    "-1004482051328:1302": {
+      "chat_id": -1004482051328,
+      "message_id": 1302,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (TechCrunch)",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "تیبو سوتیو: جهان برای هوش مصنوعی آماده به نظر می‌رسد",
+      "summary": "در این مصاحبه با TechCrunch، تیبو سوتیو، مدیر محصول OpenAI، به بررسی آمادگی جهانی برای پذیرش گسترده فناوری‌های هوش مصنوعی می‌پردازد. او بر این باور است که زیرساخت‌ها و تمایل کاربران به استفاده از این ابزارها به سطحی رسیده که ورود گسترده‌تر به بازار امکان‌پذیر است.",
+      "why_it_matters": "بیانیه‌های رهبران کلیدی OpenAI درباره آمادگی بازار، سیگنال‌های مهمی برای سرمایه‌گذاران و توسعه‌دهندگان اکوسیستم هوش مصنوعی محسوب می‌شوند. این دیدگاه نشان می‌دهد که تمرکز شرکت از مرحله آزمایشی به سمت مقیاس‌پذیری و پذیرش انبوه تغییر کرده است.",
+      "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPTkRSQ1lnRGxrZWVfODFJTktXUEFjWU4wcDc0NzNxZzJFdHZsRkwwQkpUM2QzQk84TGdaY0trVHZXR2VkNGtmX1NCWjFlUDVSWjhtdUVfTEx3OXdMZHFCWTVNT01qeXhQbWpickJjbFk1c1FUcWhKTmU2aGVxWGxiNnBLaGNGZ1Z4OW1SMGx2alZYMkxwaG9Nbk5kbjVPRjdDMEtxOC1YeXloSnJaNEFMaHNTVE5JLS1zOVRkeXhn?oc=5",
+      "posted_at": 1787729759
     }
   }
 }

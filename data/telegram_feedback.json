@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787780368,
+  "updated_at": 1787781117,
   "last_update_id": 388459880,
   "messages": {
     "-1004482051328:991": {
@@ -4595,6 +4595,37 @@
       "why_it_matters": "این محصول با ادغام قابلیت‌های محاسباتی هوش مصنوعی و گرافیکی در یک سخت‌افزار واحد، مرز بین رایانه شخصی و کنسول بازی را کمرنگ می‌کند. پشتیبانی ناشران بزرگ نشان‌دهنده پذیرش صنعتی این پلتفرم به عنوان یک اکوسیستم قابل اعتماد برای بازی‌های نسل جدید است. اجرای محلی مدل‌های AI و بازی‌ها بر روی ویندوز، دغدغه‌های حریم خصوصی و وابستگی به ابر را کاهش می‌دهد. این رویکرد می‌تواند استانداردهای سخت‌افزاری برای تولیدکنندگان محتوا و گیمرها را با ارائه کارایی بالاتر در فرم‌فاکتور کوچک‌تر بازتعریف کند.",
       "link": "https://www.youtube.com/watch?v=En5vhDNLspU",
       "posted_at": 1787780368
+    },
+    "-1004482051328:1318": {
+      "chat_id": -1004482051328,
+      "message_id": 1318,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Stanford HAI)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "طراحی وفاداری در AI Agents و چالش تضاد منافع",
+      "summary": "مقاله منتشر شده توسط Stanford HAI به بررسی چالش‌های اخلاقی و فنی در طراحی AI Agents می‌پردازد. تمرکز اصلی پژوهش بر مفهوم «وفاداری» در سیستم‌های هوش مصنوعی و نحوه مدیریت تضاد منافع احتمالی است. این تحلیل نشان می‌دهد که تعریف دقیق اهداف و محدودیت‌ها برای جلوگیری از رفتارهای ناسازگار با منافع کاربران ضروری است.",
+      "why_it_matters": "با گسترش کاربرد AI Agents در تصمیم‌گیری‌های خودکار، تضمین وفاداری سیستم به منافع کاربر به یک چالش فنی و اخلاقی حیاتی تبدیل شده است. درک مکانیسم‌های تضاد منافع به توسعه‌دهندگان کمک می‌کند تا معماری‌های شفاف‌تری طراحی کنند که از سوءاستفاده یا انحراف اهداف جلوگیری نماید. این پژوهش پایه‌ای برای تدوین استانداردهای ایمنی و اعتماد در نسل بعدی سیستم‌های هوشمند فراهم می‌کند.",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQYS0yblhvZkx4alc4WFRhczkxYmVkS0VCZjFXRDhxSmdILURIY29oUHVrcDY4ZzJrVUMxbjhoSEZGbnZ1TldWVFQ2VWlnbjBvZllwb0lXMzkxVzNoU3lDeEkzaWZ1SGlIVFpTcGt2amFqOVB1bnljMWM0UGV5aTJTYnJQRG9telZYTWdRUU5n?oc=5",
+      "posted_at": 1787781111
+    },
+    "-1004482051328:1319": {
+      "chat_id": -1004482051328,
+      "message_id": 1319,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1787781117
     }
   }
 }

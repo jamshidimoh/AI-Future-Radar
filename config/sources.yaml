@@ -22,18 +22,13 @@ categories:
     emoji: "🧠"
     hashtag: "#ذهن_و_AI"
     keywords: ["machine consciousness", "AI consciousness", "AGI philosophy", "consciousness AI", "sentience AI", "cognitive science AI"]
-  philosophy_science:
-    label: "فلسفه علم × AI"
-    emoji: "🧩"
-    hashtag: "#فلسفه_علم_و_AI"
-    keywords: ["philosophy of science AI", "epistemology AI", "scientific method AI", "AI philosophy science", "philosophy of artificial intelligence", "AI epistemology", "AI and scientific discovery"]
   future:
     label: "آینده‌پژوهی × AI"
     emoji: "🔮"
     hashtag: "#آینده_AI"
     keywords: ["future of AI", "AI future", "AGI future", "AI governance", "AI policy", "AI economy", "AI jobs", "existential risk AI", "technological singularity AI", "future of intelligence AI"]
 
-ai_bridge_keywords: ["artificial intelligence", "AI", "machine learning", "deep learning", "LLM", "agent", "AGI", "foundation model", "generative AI", "reasoning model", "neural network", "computer vision", "robotics", "AI safety", "AI governance", "AI drug discovery", "machine consciousness", "quantum machine learning", "AI genomics", "protein design AI", "philosophy of science AI", "epistemology AI", "scientific method AI", "future of AI"]
+ai_bridge_keywords: ["artificial intelligence", "AI", "machine learning", "deep learning", "LLM", "agent", "AGI", "foundation model", "generative AI", "reasoning model", "neural network", "computer vision", "robotics", "AI safety", "AI governance", "AI drug discovery", "machine consciousness", "quantum machine learning", "AI genomics", "protein design AI"]
 
 action_policy:
   ai_share_target: 0.70
@@ -119,15 +114,15 @@ google_news_queries:
   - {query: "protein design foundation models biology AI", category: genetics, tier: 1, content_type: research}
   - {query: "machine consciousness AGI research", category: mind, tier: 1, content_type: research}
   - {query: "AI consciousness cognitive science interview", category: mind, tier: 1, content_type: interview}
-  - {query: "philosophy of science AI epistemology scientific discovery", category: philosophy_science, tier: 1, content_type: research}
-  - {query: "philosophy of artificial intelligence scientific method", category: philosophy_science, tier: 1, content_type: research}
-  - {query: "AI epistemology philosophy science interview", category: philosophy_science, tier: 1, content_type: interview}
+  - {query: "philosophy of science AI epistemology scientific discovery", category: mind, tier: 1, content_type: research}
+  - {query: "philosophy of artificial intelligence scientific method", category: mind, tier: 1, content_type: research}
+  - {query: "AI epistemology philosophy science interview", category: mind, tier: 1, content_type: interview}
   - {query: "future of AGI AI governance interview", category: future, tier: 1, content_type: interview}
   - {query: "AI economy jobs future interview", category: future, tier: 2, content_type: interview}
   - {query: "future of intelligence AI long term", category: future, tier: 1, content_type: research}
 
 max_posts_per_run: 4
-category_weights: {ai: 0.70, quantum: 0.075, genetics: 0.075, mind: 0.05, philosophy_science: 0.05, future: 0.05}
+category_weights: {ai: 0.70, quantum: 0.075, genetics: 0.075, mind: 0.05, future: 0.05}
 
 influential_people:
   - "Sam Altman"

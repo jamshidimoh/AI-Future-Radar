@@ -37,6 +37,7 @@ _SPECIFICITY_MARKERS = (
     "ارزیابی", "معیار", "پژوهش", "مقاله", "سیستم", "کد", "ربات", "کوانتوم", "ژنوم",
     "پروتئین", "آگاهی", "شناخت", "AGI", "LLM", "AI", "RL", "SFT", "DPO", "RAG",
 )
+_GENERIC_WORDS = {"این", "آن", "برای", "در", "از", "به", "با", "که", "و", "یک", "است", "شود", "دارد", "همین", "موضوع", "خبر", "فناوری", "پژوهش"}
 
 
 def persian_ratio(text: str) -> float:
@@ -71,7 +72,10 @@ def _sentence_count(text: str) -> int:
 def _content_tokens(text: str) -> set[str]:
     value = str(text or "").lower()
     latin = {x for x in re.findall(r"[a-z][a-z0-9.+/#-]{1,}", value) if len(x) >= 2}
-    persian = {x for x in re.findall(r"[\u0600-\u06ff]{3,}", value) if x not in {"است", "این", "برای", "شود", "دارد", "همین"}}
+    persian = {
+        x for x in re.findall(r"[\u0600-\u06ff]{3,}", value)
+        if x not in _GENERIC_WORDS
+    }
     return latin | persian
 
 
@@ -96,11 +100,25 @@ def _overlap(a: str, b: str) -> float:
     return len(left & right) / max(1, len(left | right))
 
 
+def _source_support(summary: str, why: str, source_text: str) -> tuple[float, float]:
+    """Measure lexical evidence without pretending it is semantic verification."""
+    source = _content_tokens(source_text)
+    summary_tokens = _content_tokens(summary)
+    why_tokens = _content_tokens(why)
+    if not source:
+        return 0.0, 0.0
+    return (
+        len(summary_tokens & source) / max(1, len(summary_tokens)),
+        len(why_tokens & source) / max(1, len(why_tokens)),
+    )
+
+
 def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_text: str = "") -> bool:
-    """Reject fluent-but-empty News copy using deterministic editorial checks."""
+    """Reject fluent-but-empty News copy while requiring evidence from the supplied source."""
     summary = str(summary or "").strip()
     why = str(why_it_matters or "").strip()
-    source_len = len(str(source_text or "").strip())
+    source = str(source_text or "").strip()
+    source_len = len(source)
     if not summary or not why:
         return False
     if source_len >= 350 and _sentence_count(summary) < 2:
@@ -117,6 +135,14 @@ def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_tex
         return False
     if len(summary) > 260 and len(summary) / max(1, source_len) < 0.06 and source_len >= 700:
         return False
+
+    summary_support, why_support = _source_support(summary, why, source)
+    if source_len >= 350:
+        if summary_support < 0.28 or why_support < 0.16:
+            return False
+    elif source_len > 0:
+        if summary_support < 0.20 or why_support < 0.10:
+            return False
     return True
 
 

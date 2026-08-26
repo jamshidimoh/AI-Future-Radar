@@ -98,7 +98,7 @@ education_source_fallbacks:
     - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
   34:
     - {name: "Hugging Face TRL", url: "https://huggingface.co/docs/trl/index"}
-    - {name: "Anthropic Teaching Claude Why", url: "https://www.anthropic.com/research/teaching-claude-why"}
+    - {name: "Anthropic Teaching Claude Why", url: "https://alignment.anthropic.com/2026/teaching-claude-why/"}
   35:
     - {name: "NVIDIA Triton Inference Server", url: "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/"}
     - {name: "Google Vertex AI Prediction", url: "https://cloud.google.com/vertex-ai/docs/predictions/overview"}

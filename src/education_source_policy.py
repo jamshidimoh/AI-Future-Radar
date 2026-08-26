@@ -10,7 +10,7 @@ MAINTAINED_CURRENT_DOMAINS = {
     "developers.google.com", "ai.google.dev", "cloud.google.com",
     "huggingface.co", "scikit-learn.org", "sbert.net", "pytorch.org",
     "tensorflow.org", "platform.openai.com", "openai.com",
-    "anthropic.com", "docs.anthropic.com", "modelcontextprotocol.io",
+    "anthropic.com", "alignment.anthropic.com", "docs.anthropic.com", "modelcontextprotocol.io",
     "learn.microsoft.com", "nvidia.com", "docs.nvidia.com",
     "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu",
     "nist.gov", "csrc.nist.gov", "airc.nist.gov", "oecd.org",
@@ -24,7 +24,7 @@ TIER1_DOMAINS = {
 ORG_ALIASES = {
     "developers.google.com": "google", "ai.google.dev": "google", "cloud.google.com": "google",
     "openai.com": "openai", "platform.openai.com": "openai",
-    "anthropic.com": "anthropic", "docs.anthropic.com": "anthropic",
+    "anthropic.com": "anthropic", "alignment.anthropic.com": "anthropic", "docs.anthropic.com": "anthropic",
     "huggingface.co": "huggingface", "scikit-learn.org": "scikit-learn",
     "sbert.net": "sentence-transformers", "pytorch.org": "pytorch", "tensorflow.org": "tensorflow",
     "learn.microsoft.com": "microsoft", "nvidia.com": "nvidia", "docs.nvidia.com": "nvidia",
@@ -34,7 +34,7 @@ ORG_ALIASES = {
 
 PRIMARY_DOMAINS = {
     "nist.gov", "csrc.nist.gov", "airc.nist.gov", "developers.google.com", "ai.google.dev",
-    "hai.stanford.edu", "oecd.org", "iso.org", "ieee.org", "anthropic.com", "openai.com",
+    "hai.stanford.edu", "oecd.org", "iso.org", "ieee.org", "anthropic.com", "alignment.anthropic.com", "openai.com",
     "deepmind.google", "research.google", "microsoft.com", "ibm.com", "nvidia.com",
 }
 
@@ -79,7 +79,7 @@ def authority_score(url: str) -> int:
     h = host(url)
     if h in PRIMARY_DOMAINS or top_domain(h) in PRIMARY_DOMAINS:
         score += 30
-    if any(x in str(url).lower() for x in ("/standard", "/spec", "specification", "recommendation")):
+    if any(x in str(url).lower() for x in ("/standard", "/spec", "specification", "/research/", "/2026/", "/2025/", "recommendation")):
         score += 10
     return min(score, 100)
 

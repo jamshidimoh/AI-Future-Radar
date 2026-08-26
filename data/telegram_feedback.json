@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787704864,
+  "updated_at": 1787717430,
   "last_update_id": 388459879,
   "messages": {
     "-1004482051328:991": {
@@ -4205,6 +4205,60 @@
       "why_it_matters": "این قابلیت با حذف نیاز به جابجایی بین ابزارهای مختلف، کارایی عملیاتی مدیران را در نظارت بر مصرف اعتبار و مدیریت دسترسی‌ها افزایش می‌دهد. یکپارچه‌سازی فرآیندهای اداری درون محیط چت‌بات، تجربه کاربری را برای تیم‌های فناوری ساده‌تر و سریع‌تر می‌کند.",
       "link": "https://www.youtube.com/watch?v=29SyCndnMZs",
       "posted_at": 1787704864
+    },
+    "-1004482051328:1283": {
+      "chat_id": -1004482051328,
+      "message_id": 1283,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی WebMCP در OpenAI Codex: امکان همکاری مستقیم انسان و ایجنت‌ها در محیط‌های وب",
+      "summary": "Eric Provencher از تیم تجربه توسعه‌دهندگان OpenAI، پشتیبانی WebMCP را در Codex با استفاده از Codex Modeling Studio به نمایش گذاشت. این پلتفرم مدل‌سازی سه‌بعدی به گونه‌ای طراحی شده که انسان‌ها و ایجنت‌ها بتوانند از طریق یک رابط مشترک با هم همکاری کنند. افزودن ابزارها مستقیماً به وب‌سایت به Codex اجازه می‌دهد تا قابلیت‌ها را کشف کرده، روی تصاویر تکرار کند و بازخوردها را ثبت نماید.",
+      "why_it_matters": "این توسعه نشان می‌دهد که چگونه ادغام ابزارها در وب‌سایت‌ها می‌تواند تعامل بین انسان و ایجنت‌ها را تسهیل کند. با استفاده از WebMCP، ایجنت‌ها قادرند به صورت مستقیم با محیط‌های وب تعامل داشته و فرآیندهای پیچیده مانند مدل‌سازی سه‌بعدی را به صورت خودکار انجام دهند.",
+      "link": "https://www.youtube.com/watch?v=Is2NHa7awWY",
+      "posted_at": 1787717428
+    },
+    "-1004482051328:1284": {
+      "chat_id": -1004482051328,
+      "message_id": 1284,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "کانال رسمی OpenAI در یوتیوب از حضور در رویداد Hahahacks قدردانی کرده است",
+      "summary": "کانال رسمی OpenAI در یوتیوب از حضور در رویداد Hahahacks قدردانی کرده است. این محتوا با سیاست کشف دسته‌بندی شده و در حوزه هوش مصنوعی طبقه‌بندی شده است.",
+      "why_it_matters": "این انتشار نشان‌دهنده تعامل رسمی OpenAI با رویدادهای جامعه توسعه‌دهندگان و تأکید بر کشف محتوای تخصصی در حوزه هوش مصنوعی است. طبقه‌بندی دقیق این محتوا به درک بهتر استراتژی ارتباطی شرکت کمک می‌کند.",
+      "link": "https://www.youtube.com/watch?v=2f9bBlGOuX4",
+      "posted_at": 1787717429
+    },
+    "-1004482051328:1285": {
+      "chat_id": -1004482051328,
+      "message_id": 1285,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "دسته‌بندی سیاست کشف محتوای AI در World Science Festival",
+      "summary": "این محتوا مربوط به World Science Festival است و در دسته‌بندی سیاست کشف محتوای AI قرار می‌گیرد. منبع در سطح 1 طبقه‌بندی شده و نوع آن به صورت talk تعریف شده است.",
+      "why_it_matters": "طبقه‌بندی دقیق محتوای AI در پلتفرم‌های علمی معتبر مانند World Science Festival نشان‌دهنده اهمیت فزاینده هوش مصنوعی در گفتگوهای علمی است. این دسته‌بندی به کاربران کمک می‌کند تا محتوای مرتبط با AI را به‌راحتی شناسایی کنند.",
+      "link": "https://www.youtube.com/watch?v=DPPnrDdNoUU",
+      "posted_at": 1787717430
     }
   }
 }

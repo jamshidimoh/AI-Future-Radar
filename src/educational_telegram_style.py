@@ -16,8 +16,10 @@ PDI = "\u2069"
 RLM = "\u200f"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 SHORT_DIVIDER = "──────────────"
-MAX_DEFINITION = 520
-MAX_SIMPLE = 300
+# Expanded only for the two concept-explanation blocks. Other section budgets
+# intentionally remain unchanged to preserve the existing message contract.
+MAX_DEFINITION = 650
+MAX_SIMPLE = 380
 MAX_RELATION = 360
 MAX_EXAMPLE = 380
 MAX_TAKEAWAY = 240

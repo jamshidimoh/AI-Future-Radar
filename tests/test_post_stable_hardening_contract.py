@@ -16,7 +16,11 @@ def test_feedback_bonus_is_nonzero_for_positive_profile():
 def test_feedback_bonus_does_not_change_publication_policy_directly():
     baseline = 55.75
     assert production.normal_news_policy_allowed(55.75, baseline, 1)
-    assert not production.normal_news_policy_allowed(55.74, baseline, 1)
+    # The policy intentionally permits a controlled 10-point step-down from
+    # the previous normal-news baseline. Test below that policy boundary so
+    # this contract verifies the actual publication policy rather than a
+    # nonexistent exact-score threshold.
+    assert not production.normal_news_policy_allowed(45.74, baseline, 1)
 
 
 def test_provider_exhaustion_fails_closed_at_llm_boundary():

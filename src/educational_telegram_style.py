@@ -85,9 +85,6 @@ def _source_lines(item: dict[str, Any]) -> list[str]:
             continue
         year_part = f" · {year}" if year else ""
         name_html = _e(name)
-        # Keep the entire source row RTL. If the source name itself is Latin,
-        # the Latin phrase is isolated inside the RTL container rather than
-        # making the entire row LTR/left-aligned.
         row = f"• <a href=\"{url}\">{name_html}</a>{year_part}"
         out.append(_rtl(row))
     return out
@@ -181,6 +178,9 @@ def format_educational_post(item: dict[str, Any]) -> str:
 
     _assert_rtl_contract(lines)
     result = "\n".join(lines).strip()
-    if len(result) > 3900:
+    # Telegram accepts up to 4096 characters for sendMessage. Keep a small
+    # safety margin while allowing the education content to use the available
+    # single-message budget instead of failing at an unnecessarily low cap.
+    if len(result) > 4090:
         raise ValueError(f"Educational post exceeds single-message budget: {len(result)} characters")
     return result

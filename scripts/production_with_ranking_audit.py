@@ -36,6 +36,72 @@ def _production_select(items, max_posts, max_per_source, max_per_type, policy):
     return selected
 
 
+def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
+    """Keep one story inside Telegram's safe limit without invoking transport chunking.
+
+    Editorial structure is preserved first; only generated prose fields are
+    compacted when necessary. This is intentionally production-only.
+    """
+    candidate = dict(item or {})
+    post = force_rtl_blocks(formatter(candidate, source_name, link, **kwargs))
+    if len(post) <= TELEGRAM_SAFE_TEXT_LIMIT:
+        return post
+
+    original_summary = str(candidate.get("summary") or "")
+    original_why = str(candidate.get("why_it_matters") or "")
+    original_quote = str(candidate.get("key_quote") or "")
+    original_title = str(candidate.get("title") or "")
+
+    def render(summary, why, quote, title):
+        compact = dict(candidate)
+        compact["summary"] = summary
+        compact["why_it_matters"] = why
+        compact["key_quote"] = quote
+        compact["title"] = title
+        return force_rtl_blocks(formatter(compact, source_name, link, **kwargs))
+
+    # First reduce the two main generated prose blocks together. Binary search
+    # gives the maximum content that still fits, rather than an arbitrary cut.
+    prose = original_summary + "\n\n" + original_why
+    if prose:
+        lo, hi, best = 0, len(prose), ""
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            sample = prose[:mid].rstrip()
+            split_at = sample.rfind("\n\n")
+            if split_at > 0:
+                summary = sample[:split_at].rstrip()
+                why = sample[split_at + 2:].strip()
+            else:
+                summary, why = sample, ""
+            rendered = render(summary, why, original_quote, original_title)
+            if len(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
+                best = rendered
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        if best:
+            print("[Telegram Payload Fit] compacted generated prose to single-message limit", flush=True)
+            return best
+
+    # Extremely long metadata/quote/title cases: progressively compact fields
+    # while retaining the canonical source and ChatGPT links supplied by the
+    # formatter.
+    for quote in (original_quote[:600], original_quote[:300], ""):
+        for title in (original_title, original_title[:240], original_title[:160]):
+            rendered = render(original_summary[:1200], original_why[:900], quote, title)
+            if len(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
+                print("[Telegram Payload Fit] applied fallback compacting", flush=True)
+                return rendered
+
+    # Last-resort safety: never pass an oversized payload to the transport.
+    print(
+        f"[Telegram Payload Fit] unable to fit payload length={len(post)}; publication blocked",
+        flush=True,
+    )
+    return ""
+
+
 def _audited_main(hooks=None):
     merged = dict(hooks or {})
     explicit_select = merged.get("select_editorial")
@@ -76,10 +142,13 @@ def _audited_main(hooks=None):
 
     def rtl_format(item, source_name, link, **kwargs):
         formatter = original_format or pipeline.format_post
-        return force_rtl_blocks(formatter(item, source_name, link, **kwargs))
+        return _fit_formatted_payload(formatter, item, source_name, link, kwargs)
 
     def single_message_deliver(text, image_url="", source_link=""):
         text_length = len(str(text or ""))
+        if not text.strip():
+            print("[Telegram Delivery Guard] blocked empty publication payload", flush=True)
+            return False
         if text_length > TELEGRAM_SAFE_TEXT_LIMIT:
             print(
                 f"[Telegram Delivery Guard] blocked oversized single-story payload length={text_length} limit={TELEGRAM_SAFE_TEXT_LIMIT}; no chunking/no partial publication",

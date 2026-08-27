@@ -110,9 +110,6 @@ def _source_support(summary: str, why: str, source_text: str) -> tuple[float, fl
     lexical_summary = len(summary_tokens & source) / max(1, len(summary_tokens))
     lexical_why = len(why_tokens & source) / max(1, len(why_tokens))
 
-    # A Persian editorial draft is intentionally not lexically identical to an
-    # English source. For that common case, validate the portable anchors that
-    # survive translation: numbers and explicit Latin model/product/entity names.
     source_anchors = set(re.findall(r"\d+(?:[.,]\d+)?%?", source_text or ""))
     source_anchors |= {
         x.lower() for x in re.findall(r"\b[A-Z][A-Za-z0-9.+/#-]{1,}\b", source_text or "")
@@ -130,11 +127,16 @@ def _source_support(summary: str, why: str, source_text: str) -> tuple[float, fl
 
         anchor_summary = anchor_ratio(summary)
         anchor_why = anchor_ratio(why)
-        # Keep lexical evidence when languages match; otherwise use conservative
-        # anchor evidence. A missing anchor is not itself a hallucination signal.
         source_is_mostly_latin = persian_ratio(source_text) < 0.35
         if source_is_mostly_latin:
-            return max(lexical_summary, anchor_summary * 0.55), max(lexical_why, anchor_why * 0.35)
+            summary_support = max(lexical_summary, anchor_summary * 0.55)
+            # why_it_matters is an editorial inference from the supported summary.
+            # In cross-language output it may contain no source-identical anchors.
+            # Permit only bounded evidence inherited from a strongly supported
+            # summary and shared substantive terms; generic claims remain blocked
+            # by the existing generic-why and impact-marker gates.
+            derived_why = _overlap(why, summary) * 0.50 if summary_support >= 0.12 else 0.0
+            return summary_support, max(lexical_why, anchor_why * 0.35, derived_why)
     return lexical_summary, lexical_why
 
 

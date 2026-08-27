@@ -25,7 +25,7 @@ from signal_engine import enrich_signal_items
 from summarize import summarize_item
 from semantic_dedup import deduplicate_semantically
 from story_gate import gate_story_candidates
-from publication_contract import unique_candidates
+from publication_contract import unique_candidates, validate_publication_payload
 
 CONFIG_PATH = ROOT / "config" / "sources.yaml"
 LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
@@ -150,9 +150,11 @@ def _summarize_selected(selected, summarize_fn):
     return results
 
 def _publication_text_within_limit(post):
-    size = len(str(post or ""));
-    if size <= TELEGRAM_SAFE_TEXT_LIMIT: return True
-    print(f"[Publication Contract] rejected oversized story before Telegram: chars={size} limit={TELEGRAM_SAFE_TEXT_LIMIT}", flush=True); return False
+    valid, reason = validate_publication_payload(post)
+    if not valid:
+        print(f"[Publication Contract] rejected story before Telegram: {reason}", flush=True)
+        return False
+    return True
 
 
 def main(hooks=None):

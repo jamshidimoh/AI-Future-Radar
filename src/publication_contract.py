@@ -1,8 +1,8 @@
-"""Single publication contract for candidate identity and delivery outcomes.
+"""Single publication contract for candidate identity, payload safety, and delivery outcomes.
 
-This module is the migration boundary between editorial orchestration and the
-transport layer. It keeps candidate identity deterministic and normalizes
-legacy delivery results into typed outcomes without adding another dedup layer.
+This module is the narrow boundary between editorial orchestration and the
+transport layer. It does not perform a second dedup pass; it centralizes the
+invariants that must hold immediately before a Telegram publication request.
 """
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ from typing import Iterable
 
 from canonical_story import canonical_url, normalize_title
 from delivery_contract import DeliveryOutcome, from_legacy
+
+TELEGRAM_SAFE_TEXT_LIMIT = 3900
 
 
 def candidate_identity(item: dict) -> str:
@@ -40,12 +42,22 @@ def unique_candidates(items: Iterable[dict]) -> list[dict]:
     return result
 
 
-def delivery_result(result: object) -> dict:
-    """Compatibility adapter for the current production wrapper.
+def validate_publication_payload(post: object, *, content_type: str = "news") -> tuple[bool, str]:
+    """Enforce the one-story/one-message payload boundary before transport.
 
-    The public production path still consumes a dict today, while the typed
-    DeliveryOutcome is introduced as the single migration boundary. Callers
-    can therefore migrate without changing editorial semantics in this step.
+    The production renderer deliberately uses a conservative 3900-character
+    ceiling below Telegram's 4096-character text limit. Oversized content is
+    rejected rather than chunked or retried through another delivery shape.
     """
+    text = str(post or "")
+    if not text.strip():
+        return False, "empty_payload"
+    if len(text) > TELEGRAM_SAFE_TEXT_LIMIT:
+        return False, f"oversized_payload:{len(text)}>{TELEGRAM_SAFE_TEXT_LIMIT}"
+    return True, "ok"
+
+
+def delivery_result(result: object) -> dict:
+    """Compatibility adapter for the current production wrapper."""
     outcome: DeliveryOutcome = from_legacy(result)
     return outcome.as_dict()

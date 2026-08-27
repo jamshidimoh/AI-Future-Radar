@@ -17,6 +17,7 @@ from src.rtl_contract import force_rtl_blocks
 _original_main = pipeline.main
 _original_rank = pipeline._global_ranked_selection
 _original_summarize = pipeline.summarize_item
+TELEGRAM_SAFE_TEXT_LIMIT = 3900
 
 
 def _production_select(items, max_posts, max_per_source, max_per_type, policy):
@@ -40,6 +41,7 @@ def _audited_main(hooks=None):
     explicit_select = merged.get("select_editorial")
     original_format = merged.get("format_post")
     original_summarize = merged.get("summarize_item") or _original_summarize
+    original_deliver = merged.get("send_to_telegram_safe") or pipeline.send_to_telegram_safe
 
     def production_select(items, max_posts, max_per_source, max_per_type, policy):
         if explicit_select is not None:
@@ -76,9 +78,20 @@ def _audited_main(hooks=None):
         formatter = original_format or pipeline.format_post
         return force_rtl_blocks(formatter(item, source_name, link, **kwargs))
 
+    def single_message_deliver(text, image_url="", source_link=""):
+        text_length = len(str(text or ""))
+        if text_length > TELEGRAM_SAFE_TEXT_LIMIT:
+            print(
+                f"[Telegram Delivery Guard] blocked oversized single-story payload length={text_length} limit={TELEGRAM_SAFE_TEXT_LIMIT}; no chunking/no partial publication",
+                flush=True,
+            )
+            return False
+        return original_deliver(text, image_url=image_url, source_link=source_link)
+
     merged["select_editorial"] = production_select
     merged["summarize_item"] = grounded_summarize
     merged["format_post"] = rtl_format
+    merged["send_to_telegram_safe"] = single_message_deliver
     return _original_main(hooks=merged)
 
 

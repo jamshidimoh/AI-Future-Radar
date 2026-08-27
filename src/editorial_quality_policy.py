@@ -101,7 +101,7 @@ def _overlap(a: str, b: str) -> float:
 
 
 def _source_support(summary: str, why: str, source_text: str) -> tuple[float, float]:
-    """Measure source evidence without treating cross-language translation as missing evidence."""
+    """Measure source evidence while allowing legitimate cross-language editorial inference."""
     source = _content_tokens(source_text)
     summary_tokens = _content_tokens(summary)
     why_tokens = _content_tokens(why)
@@ -111,7 +111,7 @@ def _source_support(summary: str, why: str, source_text: str) -> tuple[float, fl
     lexical_why = len(why_tokens & source) / max(1, len(why_tokens))
 
     # A Persian editorial draft is intentionally not lexically identical to an
-    # English source. For that common case, validate the portable anchors that
+    # English source. For that common case, validate portable anchors that
     # survive translation: numbers and explicit Latin model/product/entity names.
     source_anchors = set(re.findall(r"\d+(?:[.,]\d+)?%?", source_text or ""))
     source_anchors |= {
@@ -130,11 +130,16 @@ def _source_support(summary: str, why: str, source_text: str) -> tuple[float, fl
 
         anchor_summary = anchor_ratio(summary)
         anchor_why = anchor_ratio(why)
-        # Keep lexical evidence when languages match; otherwise use conservative
-        # anchor evidence. A missing anchor is not itself a hallucination signal.
         source_is_mostly_latin = persian_ratio(source_text) < 0.35
         if source_is_mostly_latin:
-            return max(lexical_summary, anchor_summary * 0.55), max(lexical_why, anchor_why * 0.35)
+            # `why_it_matters` is an editorial inference from the supported
+            # summary, so it often contains no source-identical English anchor.
+            # Permit a small, bounded derived-evidence score only when the
+            # summary itself has strong source support and the why text shares
+            # substantive content with that supported summary. This preserves
+            # the fail-closed behavior for generic unsupported impact claims.
+            derived_why = _overlap(why, summary) * 0.25 if max(lexical_summary, anchor_summary * 0.55) >= 0.12 else 0.0
+            return max(lexical_summary, anchor_summary * 0.55), max(lexical_why, anchor_why * 0.35, derived_why)
     return lexical_summary, lexical_why
 
 

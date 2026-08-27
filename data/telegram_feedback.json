@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787803613,
+  "updated_at": 1787808776,
   "last_update_id": 388459880,
   "messages": {
     "-1004482051328:991": {
@@ -4750,6 +4750,25 @@
       "why_it_matters": "این توصیف نشان می‌دهد که نخبگان فکری هوش مصنوعی را فراتر از یک ابزار تکنولوژیک و به عنوان یک رویداد تمدنی می‌بینند. با این حال، منبع فعلی سازوکار مشخصی برای پیامدهای ایمنی یا حکمرانی ارائه نمی‌دهد.",
       "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOTWwxc1QtVEhYbDFpeUZjSXlRWVdaLVVSZXdQOUVxYmtpekx6clBhZWRaM3lGblZrM1I4TGpMbElWa2h2UjRsYUxlT3lMMkFlUkVjemhnUksyMXJVX0RmNXdpeldlVjMtRFphUWo0R2t1S3JPUkV4OHNLSS1HcUNOV29DZGtwSzVRbUdtUDdJc0hCa3UwdnY0MWwzYUdtajYxMkhtVzJmTzFKYWQ1S1Jta2tfb3g?oc=5",
       "posted_at": 1787803613
+    },
+    "-1004482051328:1328": {
+      "chat_id": -1004482051328,
+      "message_id": 1328,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (OpenAI)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "واکنش OpenAI به حمله سایبری Hugging Face و راهکارهای آینده",
+      "summary": "OpenAI در این گزارش به بررسی پیامدهای امنیتی حمله سایبری اخیر به پلتفرم Hugging Face می‌پردازد که منجر به نشت یا دستکاری مدل‌های هوش مصنوعی شد. این شرکت بر لزوم افزایش شفافیت، بهبود پروتکل‌های تأیید اصالت مدل‌ها و همکاری نزدیک‌تر با جامعه توسعه‌دهندگان تأکید می‌کند. OpenAI همچنین راهکارهای فنی و سیاست‌های جدیدی را برای کاهش ریسک سوءاستفاده از مدل‌های زبانی بزرگ در آینده پیشنهاد می‌دهد.",
+      "why_it_matters": "این رویداد نشان‌دهنده آسیب‌پذیری زیرساخت‌های اشتراک‌گذاری مدل‌های هوش مصنوعی در برابر حملات هدفمند است. اقدامات OpenAI می‌تواند به عنوان استاندارد جدیدی برای امنیت و اعتماد در اکوسیستم مدل‌های متن‌باز عمل کند. عدم وجود مکانیزم‌های قوی تأیید اصالت، ریسک تزریق بدافزار یا داده‌های مخرب به مدل‌های پرکاربرد را افزایش می‌دهد.",
+      "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBiQ05GZDBOS3A3RTBOcjlScG9LZ3paU1RuNEhEWTkySFBQV0VMUVhYZnhNUjAyYzdObjNOSk11YVpOOHduNW1DRjBfaEhiNW43ZjdmU3FGczUtejFJOWUtWXYwTW5KWnJfbHg0YURRMHlDSHVB?oc=5",
+      "posted_at": 1787808776
     }
   }
 }

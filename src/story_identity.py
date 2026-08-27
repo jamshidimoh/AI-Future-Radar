@@ -59,6 +59,25 @@ _EVENT_CORE = {
     "hugging_face", "security_incident", "ai_agents", "exploitgym", "sandbox_escape",
 }
 
+# Terms that are useful evidence that a later source materially advances an
+# already-known event. These are deliberately narrow; generic words such as
+# "update", "report", or "details" must not by themselves defeat deduplication.
+_MATERIAL_UPDATE_TERMS = {
+    "finding", "findings", "evidence", "cause", "caused", "root_cause", "impact",
+    "impacts", "scope", "scale", "timeline", "postmortem", "transcript", "transcripts",
+    "manipulation", "manipulated", "coordination", "coordinated", "exfiltration",
+    "credential", "credentials", "root", "access", "privilege", "privileges",
+    "exploit", "exploited", "vulnerability", "vulnerabilities", "mitigation",
+    "remediation", "disclosure", "investigation", "investigators", "independent",
+    "assessment", "confirmed", "confirmation", "severity", "damage", "affected",
+    "victims", "attackers", "attacked", "behavior", "behaviour", "mechanism",
+    "technical", "forensic", "forensics", "newly", "previously", "revealed",
+    "reveals", "revealed", "discovered", "discovery", "جزئیات", "یافته", "یافته‌ها",
+    "شواهد", "علت", "دامنه", "مقیاس", "خط", "زمان", "گزارش_فنی", "پس_مرگ",
+    "دستکاری", "هماهنگی", "اعتبارنامه", "دسترسی", "آسیب_پذیری", "رفع", "تحقیق",
+    "مستقل", "تأیید", "تایید", "شدت", "خسارت", "رفتار", "مکانیسم",
+}
+
 
 def _normalize(text: Any) -> str:
     text = str(text or "").lower().replace("ي", "ی").replace("ك", "ک").replace("‌", " ")
@@ -115,9 +134,18 @@ def _event_tokens(sig: dict[str, Any]) -> set[str]:
     text = " ".join(sorted(context)) + " " + title_text
     normalized = _normalize(text)
     tokens = set(re.findall(r"[a-zA-Z\u0600-\u06FF0-9_]+", normalized))
-    if "hugging" in context and "face" in context:
+    if "hugging_face" in tokens or ("hugging" in context and "face" in context):
         tokens.add("hugging_face")
     return tokens & _EVENT_CORE
+
+
+def _material_update_tokens(sig: dict[str, Any]) -> set[str]:
+    """Return only conservative markers of substantive new evidence."""
+    context = _context(sig)
+    title_text = str(sig.get("title_text") or "")
+    normalized = _normalize(" ".join(sorted(context)) + " " + title_text)
+    tokens = set(re.findall(r"[a-zA-Z\u0600-\u06FF0-9_]+", normalized))
+    return tokens & _MATERIAL_UPDATE_TERMS
 
 
 def _is_protected_leader_interview(item: Any) -> bool:
@@ -154,6 +182,22 @@ def _same_event(candidate_sig: dict[str, Any], prior_sig: dict[str, Any]) -> boo
     return bool(concrete_shared and contextual_shared)
 
 
+def _has_material_update(candidate_sig: dict[str, Any], prior_sig: dict[str, Any]) -> bool:
+    """Detect substantive new evidence without using broad similarity thresholds."""
+    candidate_numbers = set(candidate_sig.get("numbers") or [])
+    prior_numbers = set(prior_sig.get("numbers") or [])
+    if candidate_numbers and candidate_numbers != prior_numbers:
+        return True
+
+    candidate_markers = _material_update_tokens(candidate_sig)
+    prior_markers = _material_update_tokens(prior_sig)
+    new_markers = candidate_markers - prior_markers
+    # Require at least two independent material markers. This prevents a single
+    # generic word from turning a rewrite into a publication, while allowing a
+    # report that adds a new finding such as scale + transcript manipulation.
+    return len(new_markers) >= 2
+
+
 def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     """Return True only when evidence supports story identity."""
     candidate_sig = get_story_signature(candidate)
@@ -188,16 +232,13 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     numbers_b = set(prior_sig.get("numbers") or [])
 
     if _same_event(candidate_sig, prior_sig):
-        event_context_a = _event_tokens(candidate_sig)
-        event_context_b = _event_tokens(prior_sig)
-        event_context_j = _jaccard(event_context_a, event_context_b)
-        if event_context_j >= 0.60:
-            if numbers_a and numbers_b and numbers_a != numbers_b:
-                return False
-            # A materially richer report remains eligible when it adds
-            # quantitative evidence or sufficiently new context.
-            return context_j >= 0.68
-        return False
+        # Same high-confidence event is not automatically a duplicate. A later
+        # report can be a legitimate update when it introduces substantive new
+        # evidence. Otherwise, event identity itself is the strongest signal and
+        # should suppress cross-source rewrites even when wording differs greatly.
+        if _has_material_update(candidate_sig, prior_sig):
+            return False
+        return True
 
     if numbers_a and numbers_b and numbers_a != numbers_b:
         return False

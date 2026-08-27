@@ -59,9 +59,6 @@ _EVENT_CORE = {
     "hugging_face", "security_incident", "ai_agents", "exploitgym", "sandbox_escape",
 }
 
-# Terms that are useful evidence that a later source materially advances an
-# already-known event. These are deliberately narrow; generic words such as
-# "update", "report", or "details" must not by themselves defeat deduplication.
 _MATERIAL_UPDATE_TERMS = {
     "finding", "findings", "evidence", "cause", "caused", "root_cause", "impact",
     "impacts", "scope", "scale", "timeline", "postmortem", "transcript", "transcripts",
@@ -72,10 +69,10 @@ _MATERIAL_UPDATE_TERMS = {
     "assessment", "confirmed", "confirmation", "severity", "damage", "affected",
     "victims", "attackers", "attacked", "behavior", "behaviour", "mechanism",
     "technical", "forensic", "forensics", "newly", "previously", "revealed",
-    "reveals", "revealed", "discovered", "discovery", "جزئیات", "یافته", "یافته‌ها",
-    "شواهد", "علت", "دامنه", "مقیاس", "خط", "زمان", "گزارش_فنی", "پس_مرگ",
-    "دستکاری", "هماهنگی", "اعتبارنامه", "دسترسی", "آسیب_پذیری", "رفع", "تحقیق",
-    "مستقل", "تأیید", "تایید", "شدت", "خسارت", "رفتار", "مکانیسم",
+    "reveals", "discovered", "discovery", "جزئیات", "یافته", "یافته‌ها", "شواهد",
+    "علت", "دامنه", "مقیاس", "خط", "زمان", "گزارش_فنی", "پس_مرگ", "دستکاری",
+    "هماهنگی", "اعتبارنامه", "دسترسی", "آسیب_پذیری", "رفع", "تحقیق", "مستقل",
+    "تأیید", "تایید", "شدت", "خسارت", "رفتار", "مکانیسم",
 }
 
 
@@ -128,14 +125,17 @@ def _context(sig: dict[str, Any]) -> set[str]:
 
 
 def _event_tokens(sig: dict[str, Any]) -> set[str]:
-    """Recover conservative event tokens from new and legacy signatures."""
+    """Extract event markers with one-pass aliasing to prevent recursive replacements."""
     context = set(sig.get("context") or [])
     title_text = str(sig.get("title_text") or "")
-    text = " ".join(sorted(context)) + " " + title_text
-    normalized = _normalize(text)
-    tokens = set(re.findall(r"[a-zA-Z\u0600-\u06FF0-9_]+", normalized))
-    if "hugging_face" in tokens or ("hugging" in context and "face" in context):
-        tokens.add("hugging_face")
+    raw = " ".join(sorted(context)) + " " + title_text
+    raw = raw.lower().replace("ي", "ی").replace("ك", "ک").replace("‌", " ")
+    # Apply aliases exactly once, longest first. Using boundaries prevents
+    # replacing 'agent' inside the canonical token 'ai_agents'.
+    for source, target in sorted(_EVENT_ALIASES.items(), key=lambda x: len(x[0]), reverse=True):
+        raw = re.sub(r"(?<![a-zA-Z0-9_])" + re.escape(source) + r"(?![a-zA-Z0-9_])", target, raw)
+    raw = re.sub(r"[^a-zA-Z\u0600-\u06FF0-9_]+", " ", raw)
+    tokens = set(re.findall(r"[a-zA-Z\u0600-\u06FF0-9_]+", raw))
     return tokens & _EVENT_CORE
 
 
@@ -144,15 +144,12 @@ def _material_update_tokens(sig: dict[str, Any]) -> set[str]:
     context = _context(sig)
     title_text = str(sig.get("title_text") or "")
     normalized = _normalize(" ".join(sorted(context)) + " " + title_text)
-    tokens = set(re.findall(r"[a-zA-Z\u0600-\u06FF0-9_]+", normalized))
+    tokens = set(re.findall(r"[a-zA-Z\u06FF0-9_]+", normalized))
     return tokens & _MATERIAL_UPDATE_TERMS
 
 
 def _is_protected_leader_interview(item: Any) -> bool:
-    """Identify the narrow protected-interview contract without importing main."""
-    if not isinstance(item, dict):
-        return False
-    if not item.get("protected_content"):
+    if not isinstance(item, dict) or not item.get("protected_content"):
         return False
     if str(item.get("protected_reason") or "").strip() != "leader_interview_or_activity":
         return False
@@ -171,7 +168,6 @@ def _is_protected_leader_interview(item: Any) -> bool:
 
 
 def _same_event(candidate_sig: dict[str, Any], prior_sig: dict[str, Any]) -> bool:
-    """Return true only for a high-confidence shared real-world event."""
     candidate_events = _event_tokens(candidate_sig)
     prior_events = _event_tokens(prior_sig)
     if not candidate_events or not prior_events:
@@ -183,23 +179,16 @@ def _same_event(candidate_sig: dict[str, Any], prior_sig: dict[str, Any]) -> boo
 
 
 def _has_material_update(candidate_sig: dict[str, Any], prior_sig: dict[str, Any]) -> bool:
-    """Detect substantive new evidence without using broad similarity thresholds."""
     candidate_numbers = set(candidate_sig.get("numbers") or [])
     prior_numbers = set(prior_sig.get("numbers") or [])
     if candidate_numbers and candidate_numbers != prior_numbers:
         return True
-
     candidate_markers = _material_update_tokens(candidate_sig)
     prior_markers = _material_update_tokens(prior_sig)
-    new_markers = candidate_markers - prior_markers
-    # Require at least two independent material markers. This prevents a single
-    # generic word from turning a rewrite into a publication, while allowing a
-    # report that adds a new finding such as scale + transcript manipulation.
-    return len(new_markers) >= 2
+    return len(candidate_markers - prior_markers) >= 2
 
 
 def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
-    """Return True only when evidence supports story identity."""
     candidate_sig = get_story_signature(candidate)
     prior_sig = _signature_parts(prior)
 
@@ -232,10 +221,6 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     numbers_b = set(prior_sig.get("numbers") or [])
 
     if _same_event(candidate_sig, prior_sig):
-        # Same high-confidence event is not automatically a duplicate. A later
-        # report can be a legitimate update when it introduces substantive new
-        # evidence. Otherwise, event identity itself is the strongest signal and
-        # should suppress cross-source rewrites even when wording differs greatly.
         if _has_material_update(candidate_sig, prior_sig):
             return False
         return True

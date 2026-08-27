@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787803035,
+  "updated_at": 1787803613,
   "last_update_id": 388459880,
   "messages": {
     "-1004482051328:991": {
@@ -4731,6 +4731,25 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1787803035
+    },
+    "-1004482051328:1327": {
+      "chat_id": -1004482051328,
+      "message_id": 1327,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (StartupHub.ai)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Yuval Noah Harari",
+      "watch_person": "Yuval Noah Harari",
+      "title": "یووال نوح هراری: هوش مصنوعی بزرگ‌ترین آزمایش تاریخ بشر",
+      "summary": "یووال نوح هراری (Yuval Noah Harari) توسعه هوش مصنوعی را بزرگ‌ترین آزمایش تاریخ بشر توصیف می‌کند. متن منبع جزئیات مشخصی درباره روش‌ها، اعداد یا محدودیت‌های فنی ارائه نمی‌دهد و تنها بر ماهیت ناشناخته پیامدهای این فناوری تأکید دارد.",
+      "why_it_matters": "این توصیف نشان می‌دهد که نخبگان فکری هوش مصنوعی را فراتر از یک ابزار تکنولوژیک و به عنوان یک رویداد تمدنی می‌بینند. با این حال، منبع فعلی سازوکار مشخصی برای پیامدهای ایمنی یا حکمرانی ارائه نمی‌دهد.",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOTWwxc1QtVEhYbDFpeUZjSXlRWVdaLVVSZXdQOUVxYmtpekx6clBhZWRaM3lGblZrM1I4TGpMbElWa2h2UjRsYUxlT3lMMkFlUkVjemhnUksyMXJVX0RmNXdpeldlVjMtRFphUWo0R2t1S3JPUkV4OHNLSS1HcUNOV29DZGtwSzVRbUdtUDdJc0hCa3UwdnY0MWwzYUdtajYxMkhtVzJmTzFKYWQ1S1Jta2tfb3g?oc=5",
+      "posted_at": 1787803613
     }
   }
 }

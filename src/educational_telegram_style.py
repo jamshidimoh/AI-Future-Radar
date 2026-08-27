@@ -14,13 +14,15 @@ PDI = "\u2069"
 RLM = "\u200f"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 SHORT_DIVIDER = "──────────────"
-# Keep the rendered lesson safely below Telegram's 4096-character limit.
 MAX_MESSAGE = 4090
-MAX_DEFINITION = 580
-MAX_SIMPLE = 350
-MAX_RELATION = 340
-MAX_EXAMPLE = 360
-MAX_TAKEAWAY = 220
+# Expanded educational budgets are intentionally limited to the educational
+# renderer. The renderer still has deterministic fallback budgets for Telegram's
+# single-message ceiling.
+MAX_DEFINITION = 650
+MAX_SIMPLE = 380
+MAX_RELATION = 360
+MAX_EXAMPLE = 380
+MAX_TAKEAWAY = 240
 
 
 def _e(value: Any, quote: bool = False) -> str:
@@ -36,25 +38,17 @@ def _fit(value: Any, limit: int) -> str:
 
 
 def _latin_runs(text: str) -> str:
-    """Isolate Latin runs while preserving HTML tags and their direction."""
     parts = re.split(r"(<[^>]+>)", str(text or ""))
     out: list[str] = []
     for part in parts:
         if part.startswith("<") and part.endswith(">"):
             out.append(part)
             continue
-        out.append(
-            re.sub(
-                r"[A-Za-z][A-Za-z0-9@._+/#:&'’(),\-\s]*",
-                lambda m: f"{LRI}{m.group(0).rstrip()}{PDI}{m.group(0)[len(m.group(0).rstrip()):]}",
-                part,
-            )
-        )
+        out.append(re.sub(r"[A-Za-z][A-Za-z0-9@._+/#:&'’(),\-\s]*", lambda m: f"{LRI}{m.group(0).rstrip()}{PDI}{m.group(0)[len(m.group(0).rstrip()):]}", part))
     return "".join(out)
 
 
 def _rtl(text: str) -> str:
-    """Create one independent RTL visual row/paragraph."""
     return f"{RLI}{RLM}{_latin_runs(text)}{RLM}{PDI}"
 
 
@@ -67,9 +61,7 @@ def _english(text: str) -> str:
 
 
 def _term_label(term: str, fa: str) -> str:
-    if fa and term:
-        return f"{_e(fa)}\n{_english(term)}"
-    return _e(fa or term)
+    return f"{_e(fa)}\n{_english(term)}" if fa and term else _e(fa or term)
 
 
 def _source_lines(item: dict[str, Any], limit: int = 3) -> list[str]:
@@ -80,8 +72,7 @@ def _source_lines(item: dict[str, Any], limit: int = 3) -> list[str]:
         year = str(source.get("year") or "").strip()
         if not name or not url:
             continue
-        year_part = f" · {year}" if year else ""
-        out.append(_rtl(f"• <a href=\"{url}\">{_e(name)}</a>{year_part}"))
+        out.append(_rtl(f"• <a href=\"{url}\">{_e(name)}</a>{f' · {year}' if year else ''}"))
     return out
 
 
@@ -90,23 +81,13 @@ def _boxed_section(icon: str, title: str, body: str) -> list[str]:
 
 
 def _concept(number: str, label: str, definition: str, simple: str) -> list[str]:
-    return [
-        _rtl(f"<b>{number} {label}</b>"),
-        "",
-        _rtl(f"<blockquote>{definition}</blockquote>"),
-        "",
-        _rtl("💡 <b>به زبان ساده</b>"),
-        _rtl(simple),
-    ]
+    return [_rtl(f"<b>{number} {label}</b>"), "", _rtl(f"<blockquote>{definition}</blockquote>"), "", _rtl("💡 <b>به زبان ساده</b>"), _rtl(simple)]
 
 
 def _chatgpt_prompt(item: dict[str, Any]) -> str:
     a = _e(item.get("education_term_a_fa")) or _e(item.get("education_term_a"))
     b = _e(item.get("education_term_b_fa")) or _e(item.get("education_term_b"))
-    return (
-        "درباره «{a}» و «{b}» آموزش عمیق اما ساده فارسی ارائه کن؛ تعریف علمی، سازوکار، "
-        "مثال، کاربرد، محدودیت و تفاوت‌ها را توضیح بده و فقط از منابع معتبر ۲۰۲۵+ استفاده کن."
-    ).format(a=a, b=b)
+    return f"درباره «{a}» و «{b}» آموزش عمیق اما ساده فارسی ارائه کن؛ تعریف علمی، سازوکار، مثال، کاربرد، محدودیت و تفاوت‌ها را توضیح بده و فقط از منابع معتبر ۲۰۲۵+ استفاده کن."
 
 
 def _chatgpt_cta(item: dict[str, Any]) -> list[str]:
@@ -115,7 +96,6 @@ def _chatgpt_cta(item: dict[str, Any]) -> list[str]:
 
 
 def _assert_rtl_contract(lines: list[str]) -> None:
-    """Fail closed if a non-empty visual row is not wrapped in an RTL isolate."""
     for line in lines:
         if not line or line in {DIVIDER, SHORT_DIVIDER}:
             continue
@@ -128,7 +108,6 @@ def _render(item: dict[str, Any], budgets: tuple[int, int, int, int, int], inclu
     b_label = _term_label(_e(item.get("education_term_b")), _e(item.get("education_term_b_fa")))
     number = int(item.get("education_number", item.get("education_id", 0)) or 0)
     definition, simple, relation, example, takeaway = budgets
-
     lines: list[str] = [_rtl(f"<b>🧠 درس {number:02d}</b>"), DIVIDER, ""]
     lines.extend(_concept("۱.", a_label, _e(_fit(item.get("term_a_definition"), definition)), _e(_fit(item.get("term_a_simple"), simple))))
     lines.extend(["", SHORT_DIVIDER, ""])
@@ -141,23 +120,16 @@ def _render(item: dict[str, Any], budgets: tuple[int, int, int, int, int], inclu
     lines.extend(_boxed_section("📌", "نکته کلیدی", _e(_fit(item.get("takeaway"), takeaway))))
     lines.extend(["", DIVIDER, ""])
     lines.extend(_chatgpt_cta(item))
-
     sources = _source_lines(item, 3 if include_sources else 0)
     if sources:
         lines.extend(["", DIVIDER, "", _rtl("<b>📚 منابع منتخب</b>"), "", *sources])
-
     _assert_rtl_contract(lines)
-    result = "\n".join(lines).strip()
-    return lines, result
+    return lines, "\n".join(lines).strip()
 
 
 def format_educational_post(item: dict[str, Any]) -> str:
     verified = assert_publishable(item, item.get("education_sources") or [], minimum_score=85)
     item["education_sources"] = verified
-
-    # First render preserves the normal rich lesson. If it is too large, progressively
-    # tighten only optional/verbose presentation fields. This is deterministic and keeps
-    # the complete message valid without hard-cutting HTML or silently dropping the lesson.
     budget_sets = (
         (MAX_DEFINITION, MAX_SIMPLE, MAX_RELATION, MAX_EXAMPLE, MAX_TAKEAWAY),
         (480, 280, 270, 290, 180),
@@ -169,9 +141,6 @@ def format_educational_post(item: dict[str, Any]) -> str:
             _, result = _render(item, budgets, include_sources=include_sources)
             if len(result) <= MAX_MESSAGE:
                 return result
-
-    # Last-resort deterministic fit. Preserve complete visual rows and HTML boundaries;
-    # this path should be unreachable for normally generated lessons.
     lines, _ = _render(item, budget_sets[-1], include_sources=False)
     kept: list[str] = []
     for line in lines:

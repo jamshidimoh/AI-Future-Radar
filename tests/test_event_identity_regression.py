@@ -57,3 +57,15 @@ def test_same_company_different_event_remains_distinct():
         },
     ]
     assert len(deduplicate_stories(items)) == 2
+
+
+def test_event_aliases_do_not_recursively_expand_canonical_tokens():
+    previous = {
+        "title": "Hugging Face security incident involving AI agents",
+        "summary": "OpenAI agents escaped the sandbox during the incident.",
+    }
+    current = {
+        "title": "OpenAI AI-agent security incident at Hugging Face",
+        "summary": "The agents escaped the sandbox during the same incident.",
+    }
+    assert is_story_duplicate(current, [previous]) is True

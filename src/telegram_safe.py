@@ -9,6 +9,7 @@ import requests
 from send_telegram import send_to_telegram as _send_html
 
 TELEGRAM_LIMIT = 4096
+SAFE_TEXT_LIMIT = 3900
 PHOTO_CAPTION_LIMIT = 1024
 
 
@@ -24,8 +25,12 @@ def _plain(text: str, limit: int) -> str:
 
 
 def send_to_telegram_safe(text: str, image_url: str = "") -> bool:
-    """Send formatted HTML first; if Telegram rejects entity parsing, retry plain text."""
-    if _send_html(text, image_url=image_url):
+    """Send one complete story; reject oversized text before any transport/fallback."""
+    raw_text = str(text or "")
+    if len(raw_text) > SAFE_TEXT_LIMIT:
+        print(f"[Telegram Safe] rejected oversized single-message story: chars={len(raw_text)} limit={SAFE_TEXT_LIMIT}", flush=True)
+        return False
+    if _send_html(raw_text, image_url=image_url):
         return True
 
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
@@ -34,26 +39,17 @@ def send_to_telegram_safe(text: str, image_url: str = "") -> bool:
         return False
 
     try:
-        if image_url:
-            response = requests.post(
-                f"https://api.telegram.org/bot{token}/sendPhoto",
-                data={
-                    "chat_id": channel,
-                    "photo": image_url,
-                    "caption": _plain(text, PHOTO_CAPTION_LIMIT),
-                },
-                timeout=20,
-            )
-        else:
-            response = requests.post(
-                f"https://api.telegram.org/bot{token}/sendMessage",
-                data={
-                    "chat_id": channel,
-                    "text": _plain(text, TELEGRAM_LIMIT),
-                    "disable_web_page_preview": False,
-                },
-                timeout=20,
-            )
+        # Fallback remains a single text message. Media is never used as an
+        # alternate publication path because that would create a second post.
+        response = requests.post(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            data={
+                "chat_id": channel,
+                "text": _plain(raw_text, SAFE_TEXT_LIMIT),
+                "disable_web_page_preview": False,
+            },
+            timeout=20,
+        )
         if response.status_code == 200:
             print("  ✓ Telegram plain-text fallback sent", flush=True)
             return True

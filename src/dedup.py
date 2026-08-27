@@ -188,6 +188,10 @@ def filter_new_items(items, seen_hashes):
 
         link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
         protected = _is_protected_leader(item)
+        # Canonical URL is terminal across both regular and protected streams.
+        if link_hash in seen_hashes:
+            rejected_url += 1
+            continue
         if protected:
             if link_hash in protected_sent or (identity and identity in stored_story_ids):
                 rejected_story += 1; continue
@@ -197,8 +201,6 @@ def filter_new_items(items, seen_hashes):
                 continue
             protected_semantic_bypassed += 1
         else:
-            if link_hash in seen_hashes:
-                rejected_url += 1; continue
             if identity and identity in stored_story_ids:
                 rejected_story += 1; continue
             semantic_match = _semantic_history_match(item, seen_signatures)
@@ -240,8 +242,10 @@ def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
             source_history.append({"ts": int(time.time()), "source": item.get("source", "education"), "category": item.get("category", "ai"), "content_type": "education", "leader": "", "story_id": identity})
         return seen_hashes, seen_signatures, source_history
     link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
+    # Keep the protected marker for compatibility, while also recording the URL
+    # in the global seen set so regular and protected streams share one ledger.
+    seen_hashes.add(link_hash)
     if _is_protected_leader(item): seen_signatures.append(PROTECTED_MARKER + link_hash)
-    else: seen_hashes.add(link_hash)
     if identity: seen_signatures.append(STORY_MARKER + identity)
     seen_signatures.append(get_signature(item.get("title", ""))); seen_signatures.append(encode_story_signature(item))
     if source_history is not None:

@@ -7,7 +7,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from publication_contract import candidate_identity, delivery_result, unique_candidates
+from publication_contract import TELEGRAM_SAFE_TEXT_LIMIT, candidate_identity, delivery_result, unique_candidates, validate_publication_payload
 
 
 class PublicationContractTests(unittest.TestCase):
@@ -41,6 +41,31 @@ class PublicationContractTests(unittest.TestCase):
             result = delivery_result(False)
         self.assertFalse(result["ok"])
         self.assertEqual(result["reason"], "telegram_delivery_failed")
+
+    # Regression coverage: publication identity and atomic payload safety.
+    def test_same_url_with_changed_title_is_one_publication_candidate(self):
+        items = [
+            {"title": "Original title", "link": "https://example.com/story?utm_source=x"},
+            {"title": "Updated title", "link": "https://example.com/story?utm_medium=y"},
+        ]
+        self.assertEqual(len(unique_candidates(items)), 1)
+
+    def test_protected_and_regular_candidates_share_url_identity(self):
+        items = [
+            {"title": "Leader version", "link": "https://example.com/story", "protected_content": True},
+            {"title": "Regular version", "link": "https://example.com/story"},
+        ]
+        self.assertEqual(len(unique_candidates(items)), 1)
+
+    def test_oversized_payload_is_rejected_before_transport(self):
+        ok, reason = validate_publication_payload("x" * (TELEGRAM_SAFE_TEXT_LIMIT + 1))
+        self.assertFalse(ok)
+        self.assertTrue(reason.startswith("oversized_payload:"))
+
+    def test_normal_payload_is_accepted(self):
+        ok, reason = validate_publication_payload("خبر\nخلاصه\nمنبع")
+        self.assertTrue(ok)
+        self.assertEqual(reason, "ok")
 
 
 if __name__ == "__main__":

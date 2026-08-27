@@ -42,6 +42,7 @@ class PublicationContractTests(unittest.TestCase):
         self.assertFalse(result["ok"])
         self.assertEqual(result["reason"], "telegram_delivery_failed")
 
+    # Regression coverage: publication identity and atomic payload safety.
     def test_same_url_with_changed_title_is_one_publication_candidate(self):
         items = [
             {"title": "Original title", "link": "https://example.com/story?utm_source=x"},

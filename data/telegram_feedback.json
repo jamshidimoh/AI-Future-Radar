@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787809315,
+  "updated_at": 1787817545,
   "last_update_id": 388459880,
   "messages": {
     "-1004482051328:991": {
@@ -4769,6 +4769,62 @@
       "why_it_matters": "این رویداد نشان‌دهنده آسیب‌پذیری زیرساخت‌های اشتراک‌گذاری مدل‌های هوش مصنوعی در برابر حملات هدفمند است. اقدامات OpenAI می‌تواند به عنوان استاندارد جدیدی برای امنیت و اعتماد در اکوسیستم مدل‌های متن‌باز عمل کند. عدم وجود مکانیزم‌های قوی تأیید اصالت، ریسک تزریق بدافزار یا داده‌های مخرب به مدل‌های پرکاربرد را افزایش می‌دهد.",
       "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBiQ05GZDBOS3A3RTBOcjlScG9LZ3paU1RuNEhEWTkySFBQV0VMUVhYZnhNUjAyYzdObjNOSk11YVpOOHduNW1DRjBfaEhiNW43ZjdmU3FGczUtejFJOWUtWXYwTW5KWnJfbHg0YURRMHlDSHVB?oc=5",
       "posted_at": 1787808776
+    },
+    "-1004482051328:1329": {
+      "chat_id": -1004482051328,
+      "message_id": 1329,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Yoshua Bengio",
+      "title": "تحلیل World Economic Forum درباره تأثیر هوش مصنوعی بر بازار کار و چالش‌های آموزشی",
+      "summary": "هوش مصنوعی در حال حاضر بر شیوه کار اکثر افراد تأثیر گذاشته است، اما پیش‌بینی دقیق مشاغلی که کاملاً منقرض می‌شوند یا مشاغل جدیدی که ایجاد خواهند شد، همچنان دشوار است. در این مصاحبه، Gayle Markovitz با Ravi Kumar از Cognizant و Saadia Zahidi از World Economic Forum گفتگو می‌کند تا به بررسی پیامدهای اقتصادی و اشتغال‌زایی هوش مصنوعی بپردازند. این گفتگو بر لزوم تطبیق سیستم‌های آموزش و مهارت‌آموزی با تحولات سریع فناوری تأکید دارد. همچنین به چالش‌های موجود در انتقال نیروی کار و نیاز به بازتعریف مهارت‌های مورد نیاز برای آینده اشاره می‌شود.",
+      "why_it_matters": "عدم قطعیت در پیش‌بینی دقیق مشاغل آینده، نیازمند رویکردهای انعطاف‌پذیر در سیاست‌گذاری‌های آموزشی و اقتصادی است. درک تأثیرات هوش مصنوعی بر اقتصاد و اشتغال، به سازمان‌ها و دولت‌ها کمک می‌کند تا استراتژی‌های مناسبی برای مدیریت تغییرات شغلی تدوین کنند. این تحلیل‌ها نشان می‌دهند که تمرکز بر آموزش مجدد و ارتقای مهارت‌ها، کلید اصلی برای کاهش شکاف‌های مهارتی و حفظ پایداری بازار کار در عصر هوش مصنوعی است.",
+      "link": "https://www.youtube.com/watch?v=HAtp6z1Dh5g",
+      "posted_at": 1787817541
+    },
+    "-1004482051328:1330": {
+      "chat_id": -1004482051328,
+      "message_id": 1330,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Pulse 2.0)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "Demis Hassabis به عنوان رئیس DeepMind و دانشمند ارشد Alphabet منصوب شد",
+      "summary": "گوگل تغییرات جدیدی در ساختار رهبری خود اعلام کرد که بر اساس آن Demis Hassabis به سمت‌های کلیدی رئیس DeepMind و دانشمند ارشد Alphabet منصوب شده است. این انتصاب نشان‌دهنده تمرکز استراتژیک شرکت بر یکپارچه‌سازی تحقیقات هوش مصنوعی پیشرفته در سطح کلان‌شرکت است. با این تغییرات، هاسابیس مسئولیت نظارت بر جهت‌گیری‌های علمی و فنی در دو بخش حیاتی اکوسیستم گوگل را بر عهده خواهد داشت.",
+      "why_it_matters": "این تغییرات ساختاری نشان می‌دهد که Alphabet قصد دارد بینش‌های علمی DeepMind را مستقیماً در استراتژی‌های کلان‌شرکتی و توسعه محصولات گوگل ادغام کند. با قرار دادن هاسابیس در راس این دو نهاد، تمرکز بر نوآوری‌های بنیادین هوش مصنوعی و تسریع در به‌کارگیری آن‌ها در خدمات تجاری افزایش می‌یابد. این حرکت می‌تواند سرعت رقابت در حوزه‌های پیشرفته فناوری را تغییر دهد و نشان‌دهنده اولویت‌بندی سرمایه‌گذاری‌های بلندمدت بر تحقیقات علمی است.",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQYXJjTVNSaFJIRzNkSFlUREdJMldkRWlJeU5MU0p6R0s3Q1VFSjA2MXZ6NFlvbTBEeTRPaDRzRlhwRW4zUFNxanlzS3JOaXpCLWFocFBuX2ZOaEJYb210OHJWcW1GZFY5ODJIWTVOV21abUJYZmNIdGdPUjkyTVlrNTFURjBSbzNHTExZa1J2S1FPNTl0T1J0MFNRd0tTWU4zZEJvNXZEMENtVnR6YXZwdXhoUWk4UdIBuwFBVV95cUxQd1JXaUNMQTFhZ0FWMFh0TmVvaEtzY01rc2VnMWtERVZxbTNrcDVHaDZHWHJlUGdfZmc4TGZ0SE5oa2xHYTFPTGp6dVFsaDUtUThuTVpicm9mYXEyTzVjTnFjS3lEaWFoNXk2ckFfeTlEeThpajZ6VHR4VUlLZ0E4aE1EcE9ZM25qZlAtM2U5a2lmaDVQU1liNC1abF9vU2VuaXBQZ2J6WFlPd2xBMGU2dTFpMGNsS3J6TWVv?oc=5",
+      "posted_at": 1787817543
+    },
+    "-1004482051328:1331": {
+      "chat_id": -1004482051328,
+      "message_id": 1331,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (조선일보)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "مدیرعامل OpenAI هدف‌گذاری توسعه سیستم داخلی AGI تا پایان سال را اعلام کرد",
+      "summary": "بر اساس گزارش‌های منتشرشده، مدیرعامل شرکت OpenAI برنامه‌ریزی کرده است تا یک سیستم هوش مصنوعی عمومی (AGI) را به‌صورت داخلی و تا پایان سال جاری توسعه دهد. این هدف نشان‌دهنده تسریع چشمگیر در برنامه‌های زمانی تحقیقاتی این شرکت برای دستیابی به سطح هوش انسانی یا فراتر از آن است. تمرکز بر توسعه داخلی این سیستم، استراتژی OpenAI را برای حفظ پیشرو بودن در رقابت فناوری‌های پیشرفته هوش مصنوعی برجسته می‌کند.",
+      "why_it_matters": "اعلام چنین برنامه‌ای توسط OpenAI، فشار رقابتی شدیدی را بر سایر بازیگران اصلی صنعت هوش مصنوعی وارد می‌کند و استانداردهای زمانی برای دستیابی به AGI را بازتعریف می‌نماید. این حرکت می‌تواند منجر به تغییرات سریع در سرمایه‌گذاری‌های تحقیقاتی و بحث‌های نظارتی درباره ایمنی و کنترل هوش مصنوعی پیشرفته شود. همچنین، تحقق این هدف تا پایان سال، پیامدهای فنی و اجتماعی گسترده‌ای در نحوه تعامل انسان‌ها با ماشین‌های هوشمند خواهد داشت.",
+      "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQLUp2Qm5UQzdodG1FZWlsZWV5WmlrRXNrZEZfS0xhWkdLQUsxMXJzUlkwNko5ZlA1VVFpVUlKVXVzcUtySGlfYTNUQldRVGQxblJETXlLWW00Nmd4TmRRWTRIb3Z1cWNSc19sdjdwbVpUanJvd0czbUNSN0hXQ3haOVZTMFBNN1BO?oc=5",
+      "posted_at": 1787817545
     }
   }
 }

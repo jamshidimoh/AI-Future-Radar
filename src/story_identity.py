@@ -21,9 +21,6 @@ _STOPWORDS = {
     "بر", "هم", "نیز", "یک", "می", "شود", "است", "های", "ها", "کرد", "شد",
 }
 
-# Deliberately small vocabulary: this is not a general NER/event system.
-# It covers high-confidence incident aliases so cross-source reports can be
-# grouped without making shared company/topic names sufficient evidence.
 _EVENT_ALIASES = {
     "hugging face": "hugging_face",
     "huggingface": "hugging_face",
@@ -112,13 +109,12 @@ def _context(sig: dict[str, Any]) -> set[str]:
 
 
 def _event_tokens(sig: dict[str, Any]) -> set[str]:
-    """Recover conservative event tokens from both new and legacy signatures."""
+    """Recover conservative event tokens from new and legacy signatures."""
     context = set(sig.get("context") or [])
     title_text = str(sig.get("title_text") or "")
     text = " ".join(sorted(context)) + " " + title_text
     normalized = _normalize(text)
     tokens = set(re.findall(r"[a-zA-Z\u0600-\u06FF0-9_]+", normalized))
-    # Legacy signatures may have tokenized 'hugging face' separately.
     if "hugging" in context and "face" in context:
         tokens.add("hugging_face")
     return tokens & _EVENT_CORE
@@ -147,25 +143,19 @@ def _is_protected_leader_interview(item: Any) -> bool:
 
 
 def _same_event(candidate_sig: dict[str, Any], prior_sig: dict[str, Any]) -> bool:
+    """Return true only for a high-confidence shared real-world event."""
     candidate_events = _event_tokens(candidate_sig)
     prior_events = _event_tokens(prior_sig)
     if not candidate_events or not prior_events:
         return False
     shared = candidate_events & prior_events
-    # A single generic incident marker is insufficient. Require a concrete
-    # object (e.g. Hugging Face/ExploitGym) plus an incident/agent marker.
     concrete_shared = shared & {"hugging_face", "exploitgym", "sandbox_escape"}
     contextual_shared = shared & {"security_incident", "ai_agents"}
     return bool(concrete_shared and contextual_shared)
 
 
 def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
-    """Return True only when evidence supports story identity.
-
-    Event-level matching is intentionally conservative: same event + high
-    contextual overlap is a duplicate; same event + substantially new context
-    is treated as a possible material update and remains eligible.
-    """
+    """Return True only when evidence supports story identity."""
     candidate_sig = get_story_signature(candidate)
     prior_sig = _signature_parts(prior)
 
@@ -185,9 +175,7 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     title_sequence = difflib.SequenceMatcher(None, title_a, title_b).ratio()
 
     if _is_protected_leader_interview(candidate):
-        if title_sequence >= 0.96 or title_j >= 0.92:
-            return True
-        return False
+        return title_sequence >= 0.96 or title_j >= 0.92
 
     context_a = _context(candidate_sig)
     context_b = _context(prior_sig)
@@ -199,15 +187,16 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     numbers_a = set(candidate_sig.get("numbers") or [])
     numbers_b = set(prior_sig.get("numbers") or [])
 
-    # Strong event identity takes precedence over generic topical similarity.
-    # A meaningful new report on the same event is not blocked automatically.
     if _same_event(candidate_sig, prior_sig):
-        event_context_j = _jaccard(context_a & {"openai", "hugging_face", "ai_agents", "security_incident", "exploitgym", "sandbox_escape"}, context_b & {"openai", "hugging_face", "ai_agents", "security_incident", "exploitgym", "sandbox_escape"})
-        if event_context_j >= 0.60 and context_j >= 0.55:
+        event_context_a = _event_tokens(candidate_sig)
+        event_context_b = _event_tokens(prior_sig)
+        event_context_j = _jaccard(event_context_a, event_context_b)
+        if event_context_j >= 0.60:
             if numbers_a and numbers_b and numbers_a != numbers_b:
-                return False  # same event, materially different quantitative evidence
-            # New source/report can add substantial facts even when wording differs.
-            return False if context_j < 0.68 else True
+                return False
+            # A materially richer report remains eligible when it adds
+            # quantitative evidence or sufficiently new context.
+            return context_j >= 0.68
         return False
 
     if numbers_a and numbers_b and numbers_a != numbers_b:

@@ -17,10 +17,20 @@ PROTECTED_MARKER = "__protected_sent__:"
 STORY_MARKER = "__story_id__:"
 
 
-def _canonical_url(link): return canonical_url(link)
-def _hash_link(link): return url_id({"link": link})
-def _normalize_story_title(title): return normalize_title(title)
-def _story_id(item): return story_id(item)
+def _canonical_url(link):
+    return canonical_url(link)
+
+
+def _hash_link(link):
+    return url_id({"link": link})
+
+
+def _normalize_story_title(title):
+    return normalize_title(title)
+
+
+def _story_id(item):
+    return story_id(item)
 
 
 def _load_state():
@@ -97,12 +107,19 @@ def save_seen(seen_hashes, seen_signatures, source_history=None):
 
 
 def _is_protected_leader(item): return bool(item.get("protected_content") or item.get("_named_leader_interview"))
-def _is_education(item): return str(item.get("content_type") or "").strip().lower() == "education"
+
+
+def _is_education(item):
+    return str(item.get("content_type") or "").strip().lower() == "education"
+
 
 def _education_identity(item):
     value = item.get("education_id")
-    try: return f"education:{int(value)}" if value is not None else ""
-    except (TypeError, ValueError): return ""
+    try:
+        return f"education:{int(value)}" if value is not None else ""
+    except (TypeError, ValueError):
+        return ""
+
 
 def _stored_story_ids(signatures): return {s[len(STORY_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(STORY_MARKER)}
 
@@ -111,11 +128,15 @@ def _semantic_history_match(item, signatures):
     try:
         from semantic_dedup import get_story_signature, _similarity, SEMANTIC_MARKER
         from semantic_threshold import semantic_threshold
-    except Exception: return 0.0
-    candidate = get_story_signature(item); threshold = semantic_threshold(item, local=False); best = 0.0
+    except Exception:
+        return 0.0
+    candidate = get_story_signature(item)
+    threshold = semantic_threshold(item, local=False)
+    best = 0.0
     for stored in signatures or []:
         if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER): continue
-        score = _similarity(candidate, stored); best = max(best, score)
+        score = _similarity(candidate, stored)
+        best = max(best, score)
         if best >= threshold: return best
     return best
 
@@ -125,12 +146,15 @@ def _protected_same_story_match(item, signatures):
     try:
         from semantic_dedup import SEMANTIC_MARKER, _decode_signature, get_story_signature
         from protected_story_identity import probable_same_story
-    except Exception: return False
+    except Exception:
+        return False
     candidate = get_story_signature(item)
     for stored in signatures or []:
-        if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER): continue
+        if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER):
+            continue
         stored_signature = _decode_signature(stored)
-        if stored_signature and probable_same_story(candidate, stored_signature): return True
+        if stored_signature and probable_same_story(candidate, stored_signature):
+            return True
     return False
 
 
@@ -146,25 +170,36 @@ def filter_new_items(items, seen_hashes):
     stored_story_ids = _stored_story_ids(seen_signatures)
     result, local_urls, local_stories, local_semantic = [], set(), set(), []
     rejected_url = rejected_story = rejected_semantic = 0
+    protected_semantic_bypassed = 0
     protected_same_story_blocked = 0
     for item in items:
         if _is_education(item):
             identity = _education_identity(item)
-            if identity and identity in stored_story_ids: rejected_story += 1; continue
-            if identity and identity in local_stories: rejected_story += 1; continue
-            if identity: local_stories.add(identity)
-            result.append(item); continue
+            if identity and identity in stored_story_ids:
+                rejected_story += 1
+                continue
+            if identity and identity in local_stories:
+                rejected_story += 1
+                continue
+            if identity:
+                local_stories.add(identity)
+            result.append(item)
+            continue
 
         link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
         protected = _is_protected_leader(item)
         # Canonical URL is terminal across both regular and protected streams.
         if link_hash in seen_hashes:
-            rejected_url += 1; continue
+            rejected_url += 1
+            continue
         if protected:
             if link_hash in protected_sent or (identity and identity in stored_story_ids):
                 rejected_story += 1; continue
             if _protected_same_story_match(item, seen_signatures):
-                rejected_semantic += 1; protected_same_story_blocked += 1; continue
+                rejected_semantic += 1
+                protected_same_story_blocked += 1
+                continue
+            protected_semantic_bypassed += 1
         else:
             if identity and identity in stored_story_ids:
                 rejected_story += 1; continue
@@ -182,7 +217,8 @@ def filter_new_items(items, seen_hashes):
         try:
             from semantic_threshold import semantic_threshold
             local_threshold = semantic_threshold(item, local=True)
-        except Exception: local_threshold = 0.60
+        except Exception:
+            local_threshold = 0.60
         if local_match >= local_threshold:
             rejected_semantic += 1; continue
         local_urls.add(link_hash)
@@ -192,7 +228,7 @@ def filter_new_items(items, seen_hashes):
             local_semantic.append(get_story_signature(item))
         except Exception: pass
         result.append(item)
-    print(f"[Canonical Story Gate] kept={len(result)} | url_rejected={rejected_url} | story_rejected={rejected_story} | semantic_rejected={rejected_semantic} | protected_same_story_blocked={protected_same_story_blocked}")
+    print(f"[Canonical Story Gate] kept={len(result)} | url_rejected={rejected_url} | story_rejected={rejected_story} | semantic_rejected={rejected_semantic} | protected_semantic_bypassed={protected_semantic_bypassed} | protected_same_story_blocked={protected_same_story_blocked}")
     return result
 
 
@@ -200,7 +236,8 @@ def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
     from semantic_dedup import encode_story_signature, get_signature
     if _is_education(item):
         identity = _education_identity(item)
-        if identity: seen_signatures.append(STORY_MARKER + identity)
+        if identity:
+            seen_signatures.append(STORY_MARKER + identity)
         if source_history is not None:
             source_history.append({"ts": int(time.time()), "source": item.get("source", "education"), "category": item.get("category", "ai"), "content_type": "education", "leader": "", "story_id": identity})
         return seen_hashes, seen_signatures, source_history

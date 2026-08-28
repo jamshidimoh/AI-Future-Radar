@@ -23,11 +23,24 @@ import src.normal_publication_fallback as _normal_fallback  # noqa: E402
 import src.production_publication_adapter as _publication_adapter  # noqa: E402
 
 _ORIGINAL_FETCH_REFERENCE = educational_content._fetch_reference
+_ORIGINAL_SOURCE_CANDIDATES = educational_content._source_candidates
 _ORIGINAL_REWRITE_EDUCATION_PERSIAN = production_entrypoint._rewrite_education_persian
 _ORIGINAL_PUBLISH_PRODUCTION_STORY = _publication_adapter.publish_production_story
 
 DEFAULT_WATCHDOG_MINUTES = 22
 EDUCATION_LANGUAGE_MIN_RATIO = 0.70
+LESSON_41_CURRENT_SOURCES = [
+    {
+        "name": "Anthropic: Demystifying evals for AI agents",
+        "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+        "year": 2026,
+    },
+    {
+        "name": "OpenAI Academy: Workspace agents",
+        "url": "https://openai.com/academy/workspace-agents/",
+        "year": 2026,
+    },
+]
 
 
 def _watchdog_minutes() -> int:
@@ -63,6 +76,21 @@ def _fetch_reference_with_canonical_year(url: str):
         year = 2026
         print(f"[Education Source Gate] canonical-year override year=2026 url={url}", flush=True)
     return excerpt, year
+
+
+def _source_candidates_with_current_overrides(lesson: dict):
+    candidates = _ORIGINAL_SOURCE_CANDIDATES(lesson)
+    lesson_id = int(lesson.get("id", 0) or 0)
+    if lesson_id != 41:
+        return candidates
+    stale_urls = {
+        "https://www.anthropic.com/research/building-effective-agents",
+        "https://platform.openai.com/docs/guides/agents",
+    }
+    filtered = [x for x in candidates if str(x.get("url", "")).rstrip("/") not in {u.rstrip("/") for u in stale_urls}]
+    filtered.extend(LESSON_41_CURRENT_SOURCES)
+    print("[Education Source Gate] lesson=41 current-source override enabled", flush=True)
+    return filtered
 
 
 def _parse_education_json(raw):
@@ -159,6 +187,7 @@ def main() -> int:
     watchdog_seconds = _watchdog_minutes() * 60
     faulthandler.dump_traceback_later(watchdog_seconds, exit=False, file=sys.stderr)
     educational_content._fetch_reference = _fetch_reference_with_canonical_year
+    educational_content._source_candidates = _source_candidates_with_current_overrides
     production_entrypoint._rewrite_education_persian = _rewrite_education_only_if_needed
 
     try:

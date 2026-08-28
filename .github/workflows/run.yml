@@ -3,7 +3,8 @@ name: Run AI Future Radar Bot
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */4 * * *"
+    # Avoid GitHub's high-load top-of-hour window.
+    - cron: "17 */4 * * *"
 
 permissions:
   contents: write

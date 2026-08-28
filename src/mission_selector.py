@@ -21,6 +21,15 @@ AREAS = {
 FRONTIER = ["breakthrough", "new capability", "state of the art", "frontier", "first", "new model", "new architecture", "autonomous", "scaling", "reasoning", "agentic", "world model", "scientific discovery", "clinical", "deployment", "commercialized", "mechanistic interpretability", "interpretability"]
 TREND = ["roadmap", "benchmark", "adoption", "infrastructure", "investment", "standard", "platform", "ecosystem", "policy", "regulation", "research direction", "trend", "forecast"]
 LOW_SIGNAL = ["top 10", "best tools", "prompt collection", "weekly roundup", "productivity tips", "how to use chatgpt", "10 tools", "20 tools", "tool roundup"]
+# Routine end-user/productivity stories are not intrinsically irrelevant, but
+# they should not outrank research, frontier capability, convergence, or
+# future-impact signals merely because they mention a popular AI product.
+ROUTINE_APPLICATION = [
+    "welcome home", "productivity", "workflow", "customer service", "marketing",
+    "content creation", "time savings", "saved time", "faster with chatgpt",
+    "using chatgpt", "used chatgpt", "chatgpt helped", "chatgpt reduced",
+    "chatgpt saves", "chatgpt saved", "prompt", "use chatgpt to",
+]
 INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
 
 
@@ -147,10 +156,17 @@ def mission_score(item: dict) -> float:
     pioneer = min(14.0, float(item.get("pioneer_priority", 0) or 0) * 0.12)
     tension = 5.0 if item.get("epistemic_tension_id") else 0.0
     low = min(20.0, _hits(text, LOW_SIGNAL) * 8.0)
+    routine_application = _hits(text, ROUTINE_APPLICATION)
+    # Penalize routine product-use stories only when they lack a stronger
+    # frontier/research/future signal. Genuine breakthroughs remain eligible.
+    strong_signal = bool(frontier >= 4 or research or future >= 7 or item.get("research_signal") or item.get("strategic_signal"))
+    routine_penalty = min(10.0, routine_application * 4.0) if routine_application and not strong_signal else 0.0
     if tier == 3: low += 10.0
-    score = base + frontier + trend + evidence + future + research + interview + deep + pioneer + tension - low
+    score = base + frontier + trend + evidence + future + research + interview + deep + pioneer + tension - low - routine_penalty
     item["mission_area"] = area
     item["source_tier_effective"] = tier
+    item["routine_application_hits"] = routine_application
+    item["routine_application_penalty"] = round(routine_penalty, 2)
     item["mission_score"] = round(score, 2)
     item["frontier_signal"] = frontier > 0
     item["future_signal"] = future > 0 or trend >= 3
@@ -198,7 +214,6 @@ def select_mission_portfolio(items: list[dict], max_posts: int = 4, history: lis
 
     protected = [x for x in ranked if _is_protected_leader(x)]
     protected.sort(key=lambda x: (int(x.get("source_tier_effective", _source_tier(x))), -int(x.get("leader_priority") or x.get("pioneer_priority") or 0), 1 if _is_interview(x) else 0, float(x.get("mission_score") or 0)), reverse=False)
-    # Pick the best source for each leader first; only fall back to a weaker source if no stronger source exists.
     best_by_leader = {}
     for x in protected:
         key = _leader_key(x)

@@ -74,7 +74,6 @@ def classify_area(item: dict) -> str:
 
 
 def _source_tier(item: dict) -> int:
-    """Return an authority tier; explicit low-authority publishers override upstream optimistic metadata."""
     raw = item.get("source_tier")
     try:
         raw_tier = int(raw) if raw is not None else None
@@ -156,8 +155,6 @@ def mission_score(item: dict) -> float:
     tension = 5.0 if item.get("epistemic_tension_id") else 0.0
     low = min(20.0, _hits(text, LOW_SIGNAL) * 8.0)
     routine_application = _hits(text, ROUTINE_APPLICATION)
-    # A routine product-use story must carry an explicit strong signal to
-    # compete with frontier/research/convergence/future-impact stories.
     explicit_strong_signal = bool(
         item.get("research_signal")
         or item.get("strategic_signal")
@@ -174,6 +171,7 @@ def mission_score(item: dict) -> float:
     item["source_tier_effective"] = tier
     item["routine_application_hits"] = routine_application
     item["routine_application_penalty"] = round(routine_penalty, 2)
+    item["routine_application_strong_signal"] = strong_signal
     item["mission_score"] = round(score, 2)
     item["frontier_signal"] = frontier > 0
     item["future_signal"] = future > 0 or trend >= 3
@@ -188,6 +186,10 @@ def select_mission_portfolio(items: list[dict], max_posts: int = 4, history: lis
     for raw in items or []:
         item = dict(raw)
         score = mission_score(item)
+        routine_hits = int(item.get("routine_application_hits") or 0)
+        routine_strong = bool(item.get("routine_application_strong_signal"))
+        if routine_hits and not routine_strong:
+            continue
         if score < 5 or (_source_tier(item) >= 3 and not _is_protected_leader(item)) or not item.get("analytical_anchor"):
             continue
         candidates.append(item)

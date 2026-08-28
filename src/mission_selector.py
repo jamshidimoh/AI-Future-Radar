@@ -18,7 +18,7 @@ AREAS = {
     "mind_cognition": ["consciousness", "sentience", "cognitive science", "cognition", "mind", "brain", "neuroscience", "philosophy of mind", "philosophy of science", "machine consciousness", "awareness", "predictive processing", "active inference"],
     "future_governance": ["future of ai", "foresight", "governance", "policy", "jobs", "economy", "geopolitics", "existential risk", "alignment", "regulation", "future of work", "society", "civilization"],
 }
-FRONTIER = ["breakthrough", "new capability", "state of the art", "frontier", "first", "new model", "new architecture", "autonomous", "scaling", "reasoning", "agentic", "world model", "scientific discovery", "clinical", "deployment", "commercialized", "mechanistic interpretability", "interpretability"]
+FRONTIER = ["breakthrough", "new capability", "state of the art", "frontier", "first", "new model", "new architecture", "autonomous", "scaling", "reasoning", "agentic", "world model", "scientific discovery", "clinical", "mechanistic interpretability", "interpretability"]
 TREND = ["roadmap", "benchmark", "adoption", "infrastructure", "investment", "standard", "platform", "ecosystem", "policy", "regulation", "research direction", "trend", "forecast"]
 LOW_SIGNAL = ["top 10", "best tools", "prompt collection", "weekly roundup", "productivity tips", "how to use chatgpt", "10 tools", "20 tools", "tool roundup"]
 ROUTINE_APPLICATION = [
@@ -28,6 +28,16 @@ ROUTINE_APPLICATION = [
     "chatgpt saves", "chatgpt saved", "prompt", "use chatgpt to",
     "meal planner", "meal planning", "recipe generator", "personalized meal",
     "personalised meal", "shopping list", "routine task", "daily task",
+]
+PRODUCT_ROUTINE = [
+    "new feature", "feature update", "feature rollout", "now available", "available in chatgpt",
+    "chatgpt images", "chatgpt image", "image generation", "image generator",
+    "chatgpt can now", "use chatgpt to", "chatgpt update", "product update",
+]
+PRODUCT_STRONG = [
+    "new model", "model release", "new architecture", "new capability", "breakthrough",
+    "state of the art", "frontier", "scientific discovery", "benchmark record",
+    "reasoning breakthrough", "research result", "experimental validation",
 ]
 INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
 
@@ -155,14 +165,25 @@ def mission_score(item: dict) -> float:
     tension = 5.0 if item.get("epistemic_tension_id") else 0.0
     low = min(20.0, _hits(text, LOW_SIGNAL) * 8.0)
     routine_application = _hits(text, ROUTINE_APPLICATION)
+    product_routine_hits = 0
+    ctype = str(item.get("content_type") or "").lower().strip()
+    if ctype in {"product_news", "official", "announcement"}:
+        product_routine_hits = _hits(text, PRODUCT_ROUTINE)
+    routine_application += product_routine_hits
     explicit_strong_signal = bool(
         item.get("research_signal")
         or item.get("strategic_signal")
         or item.get("breakthrough_signal")
         or item.get("frontier_signal")
         or item.get("scientific_discovery_signal")
+        or _hits(text, PRODUCT_STRONG) > 0
     )
-    strong_signal = bool(frontier >= 4 or research or future >= 7 or explicit_strong_signal)
+    strong_signal = bool(
+        frontier >= 4
+        or research
+        or future >= 7
+        or explicit_strong_signal
+    )
     routine_penalty = min(18.0, routine_application * 6.0) if routine_application and not strong_signal else 0.0
     if tier == 3:
         low += 10.0
@@ -170,6 +191,7 @@ def mission_score(item: dict) -> float:
     item["mission_area"] = area
     item["source_tier_effective"] = tier
     item["routine_application_hits"] = routine_application
+    item["product_routine_hits"] = product_routine_hits
     item["routine_application_penalty"] = round(routine_penalty, 2)
     item["routine_application_strong_signal"] = strong_signal
     item["mission_score"] = round(score, 2)

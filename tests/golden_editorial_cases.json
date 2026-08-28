@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "frontier_multimodal_breakthrough",
+      "title": "New multimodal reasoning breakthrough changes frontier model capability",
+      "expected": "publish",
+      "reason": "frontier research signal"
+    },
+    {
+      "id": "scientific_discovery_ai",
+      "title": "AI system discovers a new scientific mechanism validated experimentally",
+      "expected": "publish",
+      "reason": "scientific discovery"
+    },
+    {
+      "id": "chatgpt_meal_planner",
+      "title": "Build a personalized meal planner with ChatGPT Workflows",
+      "expected": "deprioritize",
+      "reason": "routine consumer application"
+    },
+    {
+      "id": "generic_productivity_chatgpt",
+      "title": "ChatGPT saves time on daily office tasks",
+      "expected": "deprioritize",
+      "reason": "generic productivity application"
+    },
+    {
+      "id": "quantum_frontier",
+      "title": "New quantum computing experiment demonstrates a previously unattainable regime",
+      "expected": "publish",
+      "reason": "advanced technology frontier"
+    },
+    {
+      "id": "bci_research",
+      "title": "Brain-computer interface study demonstrates a new high-bandwidth neural decoding method",
+      "expected": "publish",
+      "reason": "BCI research"
+    },
+    {
+      "id": "robotics_breakthrough",
+      "title": "Robotics research introduces a new general-purpose manipulation capability",
+      "expected": "publish",
+      "reason": "robotics frontier"
+    },
+    {
+      "id": "corporate_promo",
+      "title": "Company announces another way to use its chatbot for customer support",
+      "expected": "deprioritize",
+      "reason": "routine corporate application"
+    }
+  ]
+}

@@ -21,14 +21,13 @@ AREAS = {
 FRONTIER = ["breakthrough", "new capability", "state of the art", "frontier", "first", "new model", "new architecture", "autonomous", "scaling", "reasoning", "agentic", "world model", "scientific discovery", "clinical", "deployment", "commercialized", "mechanistic interpretability", "interpretability"]
 TREND = ["roadmap", "benchmark", "adoption", "infrastructure", "investment", "standard", "platform", "ecosystem", "policy", "regulation", "research direction", "trend", "forecast"]
 LOW_SIGNAL = ["top 10", "best tools", "prompt collection", "weekly roundup", "productivity tips", "how to use chatgpt", "10 tools", "20 tools", "tool roundup"]
-# Routine end-user/productivity stories are not intrinsically irrelevant, but
-# they should not outrank research, frontier capability, convergence, or
-# future-impact signals merely because they mention a popular AI product.
 ROUTINE_APPLICATION = [
     "welcome home", "productivity", "workflow", "customer service", "marketing",
     "content creation", "time savings", "saved time", "faster with chatgpt",
     "using chatgpt", "used chatgpt", "chatgpt helped", "chatgpt reduced",
     "chatgpt saves", "chatgpt saved", "prompt", "use chatgpt to",
+    "meal planner", "meal planning", "recipe generator", "personalized meal",
+    "personalised meal", "shopping list", "routine task", "daily task",
 ]
 INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
 
@@ -157,11 +156,19 @@ def mission_score(item: dict) -> float:
     tension = 5.0 if item.get("epistemic_tension_id") else 0.0
     low = min(20.0, _hits(text, LOW_SIGNAL) * 8.0)
     routine_application = _hits(text, ROUTINE_APPLICATION)
-    # Penalize routine product-use stories only when they lack a stronger
-    # frontier/research/future signal. Genuine breakthroughs remain eligible.
-    strong_signal = bool(frontier >= 4 or research or future >= 7 or item.get("research_signal") or item.get("strategic_signal"))
-    routine_penalty = min(10.0, routine_application * 4.0) if routine_application and not strong_signal else 0.0
-    if tier == 3: low += 10.0
+    # A routine product-use story must carry an explicit strong signal to
+    # compete with frontier/research/convergence/future-impact stories.
+    explicit_strong_signal = bool(
+        item.get("research_signal")
+        or item.get("strategic_signal")
+        or item.get("breakthrough_signal")
+        or item.get("frontier_signal")
+        or item.get("scientific_discovery_signal")
+    )
+    strong_signal = bool(frontier >= 4 or research or future >= 7 or explicit_strong_signal)
+    routine_penalty = min(18.0, routine_application * 6.0) if routine_application and not strong_signal else 0.0
+    if tier == 3:
+        low += 10.0
     score = base + frontier + trend + evidence + future + research + interview + deep + pioneer + tension - low - routine_penalty
     item["mission_area"] = area
     item["source_tier_effective"] = tier

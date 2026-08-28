@@ -10,7 +10,9 @@ import faulthandler
 import json
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
@@ -29,6 +31,7 @@ _ORIGINAL_PUBLISH_PRODUCTION_STORY = _publication_adapter.publish_production_sto
 
 DEFAULT_WATCHDOG_MINUTES = 22
 EDUCATION_LANGUAGE_MIN_RATIO = 0.70
+EDUCATION_WINDOWS_TEHRAN = (6, 20)
 LESSON_41_CURRENT_SOURCES = [
     {
         "name": "Anthropic: Demystifying evals for AI agents",
@@ -50,6 +53,21 @@ def _watchdog_minutes() -> int:
     except ValueError:
         return DEFAULT_WATCHDOG_MINUTES
     return max(1, value)
+
+
+def _education_is_due_by_tehran_window(run_number: int, last_education_run: int) -> bool:
+    """Education is eligible only in the 06:xx and 20:xx Tehran production windows.
+
+    The run-distance guard prevents duplicate education publication if a workflow
+    is manually retriggered within the same window, while still allowing the
+    two intended daily windows.
+    """
+    now = datetime.now(ZoneInfo("Asia/Tehran"))
+    if now.hour not in EDUCATION_WINDOWS_TEHRAN:
+        return False
+    if last_education_run < 0:
+        return True
+    return (run_number - last_education_run) >= 2
 
 
 def _publish_production_story_with_fallback(story, *, policy, transport, ledger):
@@ -189,6 +207,7 @@ def main() -> int:
     educational_content._fetch_reference = _fetch_reference_with_canonical_year
     educational_content._source_candidates = _source_candidates_with_current_overrides
     production_entrypoint._rewrite_education_persian = _rewrite_education_only_if_needed
+    production_entrypoint._education_is_due = _education_is_due_by_tehran_window
 
     try:
         try:

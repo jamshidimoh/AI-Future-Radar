@@ -11,20 +11,25 @@ CASES = json.loads(
 )["cases"]
 
 
-def score_for(title: str) -> float:
-    return float(mission_score({"title": title, "summary": ""}))
+def evaluate(case: dict) -> tuple[float, dict]:
+    item = dict(case.get("item") or {"title": case["title"], "summary": ""})
+    score = float(mission_score(item))
+    return score, item
 
 
 @pytest.mark.parametrize("case", CASES, ids=lambda c: c["id"])
 def test_golden_editorial_replay(case):
-    score = score_for(case["title"])
-    if case["expected"] == "publish":
-        assert score >= 5, (case["id"], score)
-    else:
-        assert score < 5, (case["id"], score)
+    score, item = evaluate(case)
+    assert item.get("analytical_anchor") is (case["expected"] == "publish"), (
+        case["id"], score, item.get("analytical_anchor_reasons")
+    )
 
 
-def test_frontier_signals_dominate_routine_applications():
-    frontier = [score_for(c["title"]) for c in CASES if c["expected"] == "publish"]
-    routine = [score_for(c["title"]) for c in CASES if c["expected"] == "deprioritize"]
-    assert min(frontier) > max(routine)
+def test_frontier_and_research_signals_dominate_routine_applications():
+    publish_scores = [
+        evaluate(c)[0] for c in CASES if c["expected"] == "publish"
+    ]
+    routine_scores = [
+        evaluate(c)[0] for c in CASES if c["expected"] == "deprioritize"
+    ]
+    assert min(publish_scores) > max(routine_scores)

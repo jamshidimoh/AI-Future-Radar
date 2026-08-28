@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "cases": [
+    {"id":"frontier_multimodal_breakthrough","title":"New multimodal reasoning breakthrough changes frontier model capability","expected":"publish","reason":"frontier research signal","item":{"title":"New multimodal reasoning breakthrough changes frontier model capability","summary":"","source":"MIT News","source_tier":1,"editorial_score":30,"frontier_signal":true}},
+    {"id":"scientific_discovery_ai","title":"AI system discovers a new scientific mechanism validated experimentally","expected":"publish","reason":"scientific discovery","item":{"title":"AI system discovers a new scientific mechanism validated experimentally","summary":"","source":"Nature","source_tier":1,"content_type":"research","research_signal":true}},
+    {"id":"chatgpt_meal_planner","title":"Build a personalized meal planner with ChatGPT Workflows","expected":"deprioritize","reason":"routine consumer application","item":{"title":"Build a personalized meal planner with ChatGPT Workflows","summary":"","source":"OpenAI","source_tier":1}},
+    {"id":"generic_productivity_chatgpt","title":"ChatGPT saves time on daily office tasks","expected":"deprioritize","reason":"generic productivity application","item":{"title":"ChatGPT saves time on daily office tasks","summary":"","source":"OpenAI","source_tier":1}},
+    {"id":"quantum_frontier","title":"New quantum computing experiment demonstrates a previously unattainable regime","expected":"publish","reason":"advanced technology frontier","item":{"title":"New quantum computing experiment demonstrates a previously unattainable regime","summary":"","source":"MIT News","source_tier":1,"content_type":"research","research_signal":true}},
+    {"id":"bci_research","title":"Brain-computer interface study demonstrates a new high-bandwidth neural decoding method","expected":"publish","reason":"BCI research","item":{"title":"Brain-computer interface study demonstrates a new high-bandwidth neural decoding method","summary":"","source":"Stanford","source_tier":1,"content_type":"study","research_signal":true}},
+    {"id":"robotics_breakthrough","title":"Robotics research introduces a new general-purpose manipulation capability","expected":"publish","reason":"robotics frontier","item":{"title":"Robotics research introduces a new general-purpose manipulation capability","summary":"","source":"Stanford","source_tier":1,"content_type":"research","research_signal":true}},
+    {"id":"corporate_promo","title":"Company announces another way to use its chatbot for customer support","expected":"deprioritize","reason":"routine corporate application","item":{"title":"Company announces another way to use its chatbot for customer support","summary":"","source":"OpenAI","source_tier":1}}
+  ]
+}

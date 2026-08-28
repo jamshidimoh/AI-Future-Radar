@@ -98,5 +98,37 @@ def test_routine_chatgpt_application_is_not_top_story_without_strong_signal():
     assert all("meal planner" not in x["title"].lower() for x in result)
 
 
+def test_routine_chatgpt_application_is_blocked_without_strong_signal_even_with_high_editorial_score():
+    items = [
+        {
+            "title": "Build a personalized meal planner with ChatGPT Workflows",
+            "summary": "A practical workflow shows how ChatGPT can plan meals and save time.",
+            "source": "OpenAI",
+            "source_tier": 1,
+            "content_type": "official",
+            "editorial_score": 95,
+        }
+    ]
+    result = select_mission_portfolio(items, max_posts=1)
+    assert result == []
+
+
+def test_routine_application_with_explicit_frontier_signal_remains_eligible():
+    items = [
+        {
+            "title": "New agentic architecture enables autonomous meal planning research",
+            "summary": "Researchers demonstrate a new architecture and frontier capability.",
+            "source": "DeepMind",
+            "source_tier": 1,
+            "content_type": "research",
+            "editorial_score": 20,
+            "breakthrough_signal": True,
+        }
+    ]
+    result = select_mission_portfolio(items, max_posts=1)
+    assert len(result) == 1
+    assert result[0]["routine_application_strong_signal"] is True
+
+
 def test_area_classification_maps_quantum_to_convergence():
     assert classify_area({"title": "Quantum computing for machine learning"}) == "convergence"

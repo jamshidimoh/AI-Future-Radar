@@ -1,0 +1,43 @@
+{
+  "version": "2.0",
+  "purpose": "Frozen editorial contract categories for future benchmark expansion",
+  "classes": [
+    "FRONTIER",
+    "SCIENTIFIC",
+    "STRATEGIC",
+    "INTERVIEW_SIGNAL",
+    "ROUTINE_PRODUCT",
+    "GENERIC_APPLICATION",
+    "IRRELEVANT",
+    "LOW_EVIDENCE"
+  ],
+  "required_axes": [
+    "mission_relevance",
+    "novelty",
+    "evidence_strength",
+    "technical_depth",
+    "future_impact",
+    "strategic_significance",
+    "source_quality",
+    "audience_value"
+  ],
+  "negative_axes": [
+    "routine_product",
+    "marketing",
+    "generic_application",
+    "commodity_signal",
+    "low_evidence"
+  ],
+  "invariants": [
+    "Mission relevance does not imply publishability",
+    "Routine product features must not outrank genuine frontier or scientific signals solely because of generic AI relevance",
+    "Persian translation must not change the editorial class",
+    "Deduplication and editorial classification are separate contracts",
+    "CI success is not sufficient evidence of production quality"
+  ],
+  "initial_dataset_target": {
+    "min_cases": 150,
+    "max_cases": 250,
+    "languages": ["fa", "en"]
+  }
+}

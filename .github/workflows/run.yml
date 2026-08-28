@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     # Iran audience-oriented publication windows (Tehran time):
-    # 08:17, 11:47, 14:47, 17:47, 20:47, 23:47.
+    # 06:17, 11:47, 14:47, 17:47, 20:47, 23:47.
     # Cron is UTC; minutes are intentionally offset from the top of the hour.
-    - cron: "47 4,8,11,14,17,19 * * *"
+    - cron: "47 2,8,11,14,17,19 * * *"
 
 permissions:
   contents: write

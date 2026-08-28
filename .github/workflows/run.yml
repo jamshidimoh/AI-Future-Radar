@@ -3,10 +3,10 @@ name: Run AI Future Radar Bot
 on:
   workflow_dispatch:
   schedule:
-    # Iran audience-oriented publication windows (Tehran time):
-    # 06:17, 10:47, 13:47, 17:47, 20:47, 22:47.
-    # Cron is UTC; minutes are intentionally offset from the top of the hour.
-    - cron: "47 2,7,10,14,17,19 * * *"
+    # Tehran publication windows:
+    # 05:17, 10:47, 13:47, 17:47, 20:47, 22:47.
+    # Cron is UTC (Iran UTC+3:30); minutes intentionally avoid :00.
+    - cron: "47 1,7,10,14,17,19 * * *"
 
 permissions:
   contents: write

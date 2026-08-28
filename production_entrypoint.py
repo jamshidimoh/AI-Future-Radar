@@ -1,10 +1,11 @@
-"""Production entrypoint with explicit normal-news policy and Tier-0 exemption."""
+"""Production entrypoint with explicit normal-news policy and resilient education cadence."""
 from __future__ import annotations
 
 import json
 import os
 import re
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from src.editorial_quality_policy import news_language_ok, normal_score_allowed, persian_ratio
@@ -13,28 +14,55 @@ from src.priority_people import is_substantive_priority_interview
 ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
 CADENCE_PATH = ROOT / "data" / "publication_state.json"
-EDUCATION_INTERVAL_RUNS = 3
 MAX_NORMAL_NEWS_PER_PERIOD = 3
 RANK_WINDOW = 4
 EDU_FIELDS = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
 NEWS_FIELDS = ("title", "summary", "why_it_matters")
 GUARD_REASON_ENV = "AI_RADAR_PUBLICATION_GUARD_REASON"
+EDUCATION_WINDOWS_TEHRAN = ((5, 7, "morning"), (20, 7, "evening"))
+TEHRAN = timezone(timedelta(hours=3, minutes=30))
 
 
 def _load_cadence() -> dict:
     try:
         data = json.loads(CADENCE_PATH.read_text(encoding="utf-8"))
-        return {"run_number": int(data.get("run_number", 0)), "last_education_run": int(data.get("last_education_run", -EDUCATION_INTERVAL_RUNS)), "last_published_news_score": data.get("last_published_news_score"), "last_published_normal_news_score": data.get("last_published_normal_news_score", data.get("last_published_news_score"))}
+        return {
+            "run_number": int(data.get("run_number", 0)),
+            "last_education_run": int(data.get("last_education_run", 0)),
+            "last_education_slot": str(data.get("last_education_slot", "")),
+            "last_published_news_score": data.get("last_published_news_score"),
+            "last_published_normal_news_score": data.get("last_published_normal_news_score", data.get("last_published_news_score")),
+        }
     except Exception:
-        return {"run_number": 0, "last_education_run": -EDUCATION_INTERVAL_RUNS, "last_published_news_score": None, "last_published_normal_news_score": None}
+        return {"run_number": 0, "last_education_run": 0, "last_education_slot": "", "last_published_news_score": None, "last_published_normal_news_score": None}
 
 
 def _save_cadence(state: dict) -> None:
     CADENCE_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def _education_is_due(run_number: int, last_education_run: int) -> bool:
-    return run_number == 1 or (run_number - last_education_run) >= EDUCATION_INTERVAL_RUNS
+def _tehran_now() -> datetime:
+    return datetime.now(timezone.utc).astimezone(TEHRAN)
+
+
+def _education_slot(now: datetime | None = None) -> str | None:
+    """Return the current education slot only during a scheduled publication window.
+
+    A generous one-hour window after the nominal cron time tolerates GitHub Actions
+    queueing without allowing the following news cycle to become an education run.
+    """
+    now = now or _tehran_now()
+    for hour, minute, name in EDUCATION_WINDOWS_TEHRAN:
+        start = now.replace(hour=hour, minute=0, second=0, microsecond=0)
+        end = now.replace(hour=hour + 1, minute=30, second=0, microsecond=0)
+        if start <= now <= end:
+            return f"{now.date().isoformat()}:{name}"
+    return None
+
+
+def _education_is_due(now: datetime | None, last_slot: str) -> tuple[bool, str | None]:
+    slot = _education_slot(now)
+    return bool(slot and slot != last_slot), slot
 
 
 def _record_normalized_score(record: dict) -> float:
@@ -112,7 +140,6 @@ def _item_final_score(item: dict) -> float:
 
 
 def normal_news_policy_allowed(score: float, previous_normal_score: float | None, normal_rank: int | None) -> bool:
-    """Apply the adaptive normal-news score policy consistently across the rank window."""
     if normal_rank is None or normal_rank > RANK_WINDOW:
         return False
     return normal_score_allowed(float(score), previous_normal_score)
@@ -131,12 +158,13 @@ def main(*, skip_education: bool = False) -> int:
 
     cadence = _load_cadence()
     run_number = cadence["run_number"] + 1
-    education_due = _education_is_due(run_number, cadence["last_education_run"])
-    if skip_education and education_due:
-        print("[Education Contract] skipped: no verified source >= 2025; news orchestration continues once without education", flush=True)
+    now_tehran = _tehran_now()
+    education_due, education_slot = _education_is_due(now_tehran, cadence.get("last_education_slot", ""))
+    if skip_education:
         education_due = False
+        education_slot = None
     previous_normal_score = cadence.get("last_published_normal_news_score")
-    print(f"[Cadence] run={run_number} normal_news=ranked_1_plus_2 max_normal={MAX_NORMAL_NEWS_PER_PERIOD} education_due={education_due} news_interval=4h education_interval=12h previous_normal_score={previous_normal_score} last_any_news_score={cadence.get('last_published_news_score')}", flush=True)
+    print(f"[Cadence] run={run_number} tehran={now_tehran.isoformat()} normal_news=ranked_1_plus_2 max_normal={MAX_NORMAL_NEWS_PER_PERIOD} education_due={education_due} education_slot={education_slot} education_windows=05:17,20:47 news_windows=05:17,10:47,13:47,17:47,20:47,22:47 previous_normal_score={previous_normal_score} last_any_news_score={cadence.get('last_published_news_score')}", flush=True)
 
     store = load_feedback(FEEDBACK_PATH)
     changed = ingest_from_env(FEEDBACK_PATH)
@@ -146,16 +174,21 @@ def main(*, skip_education: bool = False) -> int:
 
     education_item = None
     if education_due:
-        education_item = build_educational_item()
-        if not education_item:
-            raise RuntimeError("[Education Contract] failed: no educational item could be built")
-        ratios = [_persian_ratio(str(education_item.get(k, ""))) for k in EDU_FIELDS]
-        if min(ratios) >= 0.70:
-            education_item["_language_provider"] = "source-validated"
-            print(f"[Education Language Gate] source_validated min_ratio={min(ratios):.2f}; rewrite skipped", flush=True)
-        else:
-            education_item = _rewrite_education_persian(education_item, call_llm_with_fallback, get_quality_chain())
-        print(f"[Education] REQUIRED lesson={education_item.get('education_id')}/{education_item.get('education_total')}", flush=True)
+        try:
+            education_item = build_educational_item()
+            if not education_item:
+                raise RuntimeError("no educational item could be built")
+            ratios = [_persian_ratio(str(education_item.get(k, ""))) for k in EDU_FIELDS]
+            if min(ratios) >= 0.70:
+                education_item["_language_provider"] = "source-validated"
+                print(f"[Education Language Gate] source_validated min_ratio={min(ratios):.2f}; rewrite skipped", flush=True)
+            else:
+                education_item = _rewrite_education_persian(education_item, call_llm_with_fallback, get_quality_chain())
+            print(f"[Education] REQUIRED lesson={education_item.get('education_id')}/{education_item.get('education_total')} slot={education_slot}", flush=True)
+        except Exception as exc:
+            # A source outage must not fail or consume the educational slot.
+            education_item = None
+            print(f"[Education Source Gate] DEFERRED slot={education_slot} reason={exc}; news orchestration continues and slot remains due", flush=True)
 
     original_select = pipeline.select_editorial
 
@@ -231,6 +264,7 @@ def main(*, skip_education: bool = False) -> int:
         if item.get("content_type") == "education" and outcome is not None and outcome.message_id is not None:
             commit_education_lesson(int(item.get("education_id", 0)))
             cadence["last_education_run"] = run_number
+            cadence["last_education_slot"] = education_slot or f"run:{run_number}"
             return item
         return original_mark(item, seen_hashes, seen_signatures, source_history)
 
@@ -300,8 +334,8 @@ def main(*, skip_education: bool = False) -> int:
     cadence["run_number"] = run_number
     _save_cadence(cadence)
     if education_due and not render_state["education_delivered"]:
-        raise RuntimeError("[Education Contract] failed: educational Telegram post was not confirmed")
-    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} tier0_quota_exempt=true education={'confirmed' if education_due else 'not_due'}", flush=True)
+        print(f"[Education Contract] deferred: educational Telegram post was not confirmed; slot={education_slot} remains due for retry", flush=True)
+    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} tier0_quota_exempt=true education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
     print(f"[Telegram Feedback] stored_messages={len(store.get('messages', {}))}", flush=True)
     return 0
 

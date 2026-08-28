@@ -73,5 +73,30 @@ def test_authoritative_technology_media_remains_eligible():
     assert result[0]["source_tier_effective"] == 2
 
 
+def test_routine_chatgpt_application_is_not_top_story_without_strong_signal():
+    items = [
+        {
+            "title": "Build a personalized meal planner with ChatGPT Workflows",
+            "summary": "A practical workflow shows how ChatGPT can plan meals and save time.",
+            "source": "OpenAI",
+            "source_tier": 1,
+            "content_type": "official",
+            "editorial_score": 40,
+        },
+        {
+            "title": "New multimodal AI capability reaches frontier benchmark",
+            "summary": "Researchers demonstrate a new model capability with measured gains.",
+            "source": "DeepMind",
+            "source_tier": 1,
+            "content_type": "research",
+            "editorial_score": 30,
+        },
+    ]
+    result = select_mission_portfolio(items, max_posts=2)
+    assert result
+    assert result[0]["source"] == "DeepMind"
+    assert all("meal planner" not in x["title"].lower() for x in result)
+
+
 def test_area_classification_maps_quantum_to_convergence():
     assert classify_area({"title": "Quantum computing for machine learning"}) == "convergence"

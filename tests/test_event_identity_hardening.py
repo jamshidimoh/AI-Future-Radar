@@ -18,6 +18,19 @@ def test_persian_material_update_markers_are_detected():
     assert {"یافته‌ها", "شواهد", "مستقل", "دامنه"}.issubset(markers)
 
 
+def test_persian_material_update_marker_spacing_variants_are_detected():
+    for phrase in ("یافته‌ها", "یافته ها", "یافته‌های"):
+        sig = {"context": {"hugging_face", "security_incident"}, "title_text": f"{phrase} جدید و شواهد مستقل"}
+        markers = _material_update_tokens(sig)
+        assert "یافته‌ها" in markers
+
+
+def test_plain_persian_finding_is_not_misclassified_as_plural_marker():
+    sig = {"context": {"hugging_face", "security_incident"}, "title_text": "یافته جدید"}
+    markers = _material_update_tokens(sig)
+    assert "یافته‌ها" not in markers
+
+
 def test_same_event_material_update_survives_as_update():
     previous = {
         "title": "OpenAI AI agents breached Hugging Face",
@@ -37,4 +50,4 @@ def test_same_event_without_new_evidence_is_duplicate():
     ]
     assert len(deduplicate_stories(items)) == 1
 
-# Keep the regression suite intentionally small and deterministic.
+# Keep the regression suite deterministic and focused on the event-identity contract.

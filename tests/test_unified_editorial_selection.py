@@ -1,7 +1,7 @@
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 
-def item(title, source, score, *, area="ai", content_type="news", tier=1, research_signal=False):
+def item(title, source, score, *, area="ai", content_type="news", tier=1, research_signal=False, confidence=0.0, evidence_strength=0.0):
     return {
         "title": title,
         "source": source,
@@ -10,6 +10,8 @@ def item(title, source, score, *, area="ai", content_type="news", tier=1, resear
         "content_type": content_type,
         "final_editorial_score": score,
         "research_signal": research_signal,
+        "ai_relevance_confidence": confidence,
+        "evidence_strength": evidence_strength,
     }
 
 
@@ -20,13 +22,7 @@ def test_distinct_sources_are_preferred_before_source_repeat():
         item("MIT A", "MIT CSAIL", 92, area="convergence"),
         item("Nature A", "Nature", 90, area="mind"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=4,
-        max_per_source=2,
-        max_per_type=4,
-        recent_source_counts={},
-    )
+    selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={})
     sources = [x["source"] for x in selected]
     assert set(sources[:3]) == {"OpenAI", "MIT CSAIL", "Nature"}
     assert sources.count("OpenAI") <= 2
@@ -41,13 +37,7 @@ def test_recent_source_history_is_preference_not_exclusion():
         item("Nature A", "Nature", 90, area="mind"),
         item("Anthropic A", "Anthropic", 80, area="future"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=4,
-        max_per_source=2,
-        max_per_type=4,
-        recent_source_counts={"OpenAI": 10, "MIT CSAIL": 0, "Nature": 0, "Anthropic": 0},
-    )
+    selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={"OpenAI": 10, "MIT CSAIL": 0, "Nature": 0, "Anthropic": 0})
     assert any(x["source"] == "OpenAI" for x in selected)
     assert len(selected) == 4
 
@@ -58,13 +48,7 @@ def test_community_sources_are_excluded_from_normal_portfolio():
         item("MIT story", "MIT CSAIL", 90, area="convergence"),
         item("Nature story", "Nature", 80, area="mind"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=4,
-        max_per_source=2,
-        max_per_type=4,
-        recent_source_counts={},
-    )
+    selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={})
     assert all("reddit" not in x["source"].casefold() for x in selected)
 
 
@@ -76,13 +60,7 @@ def test_mission_coverage_gets_explicit_opportunities():
         item("Future", "NIST", 78, area="future"),
         item("Research", "Nature", 77, area="ai", content_type="research", research_signal=True),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=4,
-        max_per_source=2,
-        max_per_type=4,
-        recent_source_counts={},
-    )
+    selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={})
     reasons = {x.get("mission_selection_reason") for x in selected}
     assert "mission_coverage:convergence" in reasons
     assert "mission_coverage:mind_cognition" in reasons
@@ -98,13 +76,7 @@ def test_content_type_and_source_hard_caps_are_enforced():
         item("B1", "Nature", 97, area="future", content_type="research"),
         item("C1", "MIT", 96, area="ai", content_type="research"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=5,
-        max_per_source=2,
-        max_per_type=2,
-        recent_source_counts={},
-    )
+    selected = select_regular_portfolio(candidates, max_posts=5, max_per_source=2, max_per_type=2, recent_source_counts={})
     counts = {}
     types = {}
     for x in selected:
@@ -121,3 +93,21 @@ def test_contract_exposes_replacement_window_and_hard_ceiling():
     assert contract["replacement_buffer"] == 2
     assert contract["preferred_max_same_source"] == 1
     assert contract["hard_max_same_source"] == 2
+
+
+def test_confidence_breaks_equal_scores_before_published_time():
+    candidates = [
+        item("Lower confidence", "OpenAI", 100, confidence=0.60, evidence_strength=3),
+        item("Higher confidence", "Anthropic", 100, confidence=0.95, evidence_strength=3),
+    ]
+    selected = select_regular_portfolio(candidates, max_posts=1, max_per_source=2, max_per_type=2, recent_source_counts={})
+    assert selected[0]["title"] == "Higher confidence"
+
+
+def test_evidence_breaks_equal_score_and_confidence():
+    candidates = [
+        item("Weak evidence", "OpenAI", 100, confidence=0.90, evidence_strength=2),
+        item("Strong evidence", "MIT CSAIL", 100, confidence=0.90, evidence_strength=5),
+    ]
+    selected = select_regular_portfolio(candidates, max_posts=1, max_per_source=2, max_per_type=2, recent_source_counts={})
+    assert selected[0]["title"] == "Strong evidence"

@@ -1,7 +1,7 @@
 from period_ranked_pipeline import _global_ranked_selection
 
 
-def test_global_selection_assigns_ranks_to_top_four():
+def test_global_selection_assigns_ranks_to_candidate_window():
     items = [
         {"title": "A", "editorial_score": 110, "source": "source-a", "content_type": "research"},
         {"title": "B", "editorial_score": 108, "source": "source-b", "content_type": "news"},
@@ -10,8 +10,9 @@ def test_global_selection_assigns_ranks_to_top_four():
         {"title": "E", "editorial_score": 102, "source": "source-e", "content_type": "product_news"},
     ]
     ranked = _global_ranked_selection(items, 4, 2, 2, {})
-    assert [x["period_rank"] for x in ranked] == [1, 2, 3, 4]
-    assert [x["final_editorial_score"] for x in ranked] == [82.5, 81.0, 79.5, 78.0]
+    assert [x["period_rank"] for x in ranked] == list(range(1, len(ranked) + 1))
+    assert len(ranked) <= 6
+    assert [x["final_editorial_score"] for x in ranked] == [82.5, 81.0, 79.5, 78.0, 76.5]
     assert all(x["publication_rank_assigned"] for x in ranked)
 
 

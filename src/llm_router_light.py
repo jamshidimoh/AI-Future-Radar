@@ -28,10 +28,7 @@ _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
 _MAX_TRANSIENT_RETRIES = 1
 
-# Qwen3.6-27B is currently supported on Groq; Qwen3.8-27B is newer but is not
-# forced here because the production failure observed was account-wide 429s.
 GROQ_MODELS = ("qwen/qwen3.6-27b", "openai/gpt-oss-120b")
-# Use named, stable free OpenRouter endpoints instead of arbitrary discovery.
 OPENROUTER_MODELS = ("openai/gpt-oss-120b:free", "openai/gpt-oss-20b:free")
 GEMINI_DEFAULT_MODEL = "gemini-3.7-flash"
 
@@ -163,6 +160,11 @@ def _failure_class(message: str) -> str:
     if re.search(r"\b(?:408|500|502|503|504)\b|timeout|timed out|temporarily unavailable|connection", text):
         return "transient"
     return "other"
+
+
+def _should_disable_provider(message: str) -> bool:
+    """Backward-compatible predicate used by the existing router tests."""
+    return _failure_class(message) in {"permanent", "quota", "transient"}
 
 
 def _provider_timeout(name: str, remaining: float) -> float:

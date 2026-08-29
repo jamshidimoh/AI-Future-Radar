@@ -55,19 +55,20 @@ def _watchdog_minutes() -> int:
     return max(1, value)
 
 
-def _education_is_due_by_tehran_window(run_number: int, last_education_run: int) -> bool:
-    """Education is eligible only in the 06:xx and 20:xx Tehran production windows.
+def _education_is_due_by_tehran_window(now: datetime | None, last_slot: str) -> tuple[bool, str | None]:
+    """Return the education due state using the same tuple contract as production_entrypoint.
 
-    The run-distance guard prevents duplicate education publication if a workflow
-    is manually retriggered within the same window, while still allowing the
-    two intended daily windows.
+    Education is eligible only in the 06:xx and 20:xx Tehran windows. The slot
+    identity prevents a manual retrigger from publishing the same lesson twice
+    inside one window while allowing both intended daily windows.
     """
-    now = datetime.now(ZoneInfo("Asia/Tehran"))
-    if now.hour not in EDUCATION_WINDOWS_TEHRAN:
-        return False
-    if last_education_run < 0:
-        return True
-    return (run_number - last_education_run) >= 2
+    now = now or datetime.now(ZoneInfo("Asia/Tehran"))
+    slot = None
+    if now.hour == 6:
+        slot = f"{now.date().isoformat()}:morning"
+    elif now.hour == 20:
+        slot = f"{now.date().isoformat()}:evening"
+    return bool(slot and slot != str(last_slot or "")), slot
 
 
 def _publish_production_story_with_fallback(story, *, policy, transport, ledger):

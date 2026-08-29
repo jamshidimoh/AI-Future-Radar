@@ -26,20 +26,21 @@ _TRUSTED_DISCOVERY_SOURCE_TYPES = {"youtube", "video", "podcast", "ai_lab", "res
 def _curated_discovery_context(item):
     """Expose curated discovery provenance only when source provenance is trusted.
 
-    This is a bounded bridge for genuine channel/source metadata. It does not
-    turn an arbitrary category label into AI evidence, which would defeat the
-    relevance gate. Untrusted tests, generic aggregators and low-authority news
-    remain subject to the literal taxonomy in editorial_clean.
+    Configured Google News queries are an explicit editorial discovery policy.
+    Their results therefore retain a provenance marker instead of relying on
+    literal AI words in the syndicated title/summary. The bridge remains
+    bounded by category, source tier, and content type.
     """
     category = str(item.get("category") or "").strip().lower()
     content_type = str(item.get("content_type") or "").strip().lower()
     source_type = str(item.get("source_type") or "").strip().lower()
     preferred_source = str(item.get("preferred_source") or "").strip()
+    curated = bool(item.get("curated_discovery"))
     try:
         tier = int(item.get("source_tier"))
     except (TypeError, ValueError):
         tier = 3
-    trusted = bool(preferred_source) or source_type in _TRUSTED_DISCOVERY_SOURCE_TYPES
+    trusted = curated or bool(preferred_source) or source_type in _TRUSTED_DISCOVERY_SOURCE_TYPES
     if category not in _CURATED_DISCOVERY_CATEGORIES or tier not in {1, 2} or content_type not in _CURATED_CONTENT_TYPES or not trusted:
         return ""
     labels = {

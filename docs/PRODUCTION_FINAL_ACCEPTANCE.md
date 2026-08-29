@@ -8,11 +8,11 @@ This document is the release boundary for declaring the repository production-co
 - [x] Ranked selection is provided by `period_ranked_pipeline._global_ranked_selection`.
 - [x] The normal portfolio is constructed by `src/unified_editorial_selection.py` from mission and selection policy layers.
 - [x] Selected normal stories receive `period_rank` and contiguous `normal_period_rank` values.
-- [x] Normal publication capacity is `max_posts=4`; the six-item candidate window is a replacement buffer and never increases the publication quota.
+- [x] Normal publication capacity is `max_posts=3`; the six-item candidate window is a replacement buffer and never increases the publication quota.
 - [x] The replacement window is evaluated by the same language, editorial-quality, score and publication contracts as primary candidates.
 - [x] The normal-news adaptive baseline applies uniformly across the candidate window, including `normal_rank=1`; no rank is a score-policy bypass.
 - [x] Preferred same-source use is one item per source; a second item is permitted only as adaptive backfill under the hard source ceiling.
-- [x] Historical source usage is a preference signal, not a hard exclusion.
+- [x] Historical source usage is a bounded preference signal, not a hard exclusion.
 - [x] Mission coverage gives eligible convergence, mind/cognition, future/governance and research candidates explicit opportunities without fabricating missing coverage.
 - [x] Community/aggregator sources are excluded from the normal portfolio according to the mission contract.
 - [x] Protected leader/interview stories are exempt only through the explicit Tier-0/protected routing contract and still pass Story Identity and publication-quality checks.

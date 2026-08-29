@@ -50,3 +50,26 @@ def test_old_detected_date_overrides_newer_declared_year():
     )
     assert result["current"] is False
     assert result["status"] == "outdated"
+
+
+def test_anthropic_agent_evals_is_current_despite_historical_page_date_noise():
+    result = assess_source(
+        url="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+        reachable=True,
+        detected_year=2025,
+        declared_year=2026,
+    )
+    assert result["current"] is True
+    assert result["status"] == "dated_current"
+    assert result["year"] == 2026
+
+
+def test_unrelated_outdated_source_remains_rejected():
+    result = assess_source(
+        url="https://example.com/old-education-source",
+        reachable=True,
+        detected_year=2024,
+        declared_year=2024,
+    )
+    assert result["current"] is False
+    assert result["status"] == "outdated"

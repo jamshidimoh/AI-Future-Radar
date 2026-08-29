@@ -4,7 +4,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from llm_router_light import _provider_timeout, _should_disable_provider
+import llm_router_light as router
+from llm_router_light import _failure_class, _provider_timeout, _should_disable_provider
+
+
+def item(title, source, score, *, area="ai", content_type="news", tier=1, research_signal=False):
+    return {
+        "title": title,
+        "source": source,
+        "source_tier": tier,
+        "category": area,
+        "content_type": content_type,
+        "final_editorial_score": score,
+        "research_signal": research_signal,
+    }
 
 
 def test_unavailable_provider_codes_are_disabled():
@@ -28,3 +41,12 @@ def test_provider_timeout_is_bounded_by_provider_class_and_remaining_budget():
 
 def test_unknown_provider_has_safe_default_timeout():
     assert _provider_timeout("Unknown", 20) == 4.0
+
+
+def test_429_is_quota_and_does_not_disable_provider_family():
+    router._DISABLED.clear()
+    router._DISABLED_FAMILIES.clear()
+    assert _failure_class("Groq qwen: HTTP 429") == "quota"
+    router._disable("Groq:qwen/qwen3.6-27b", "quota")
+    assert "Groq:qwen/qwen3.6-27b" in router._DISABLED
+    assert "groq" not in router._DISABLED_FAMILIES

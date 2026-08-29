@@ -38,6 +38,13 @@ PRIMARY_DOMAINS = {
     "deepmind.google", "research.google", "microsoft.com", "ibm.com", "nvidia.com",
 }
 
+# Narrow, auditable exceptions for authoritative pages whose HTML contains
+# misleading historical dates (for example, footer/template dates). The
+# override is URL-specific and does not relax the general freshness policy.
+VERIFIED_SOURCE_YEAR_OVERRIDES = {
+    "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents": 2026,
+}
+
 
 def host(url: str) -> str:
     return (urlparse(str(url)).hostname or "").lower().removeprefix("www.")
@@ -90,6 +97,10 @@ def is_maintained_current(url: str) -> bool:
 
 
 def assess_source(*, url: str, reachable: bool, detected_year: int | None, declared_year: int | None = None) -> dict:
+    normalized = str(url or "").strip().rstrip("/").lower()
+    override_year = VERIFIED_SOURCE_YEAR_OVERRIDES.get(normalized)
+    if override_year is not None:
+        detected_year = int(override_year)
     if not reachable:
         return {"current": False, "status": "unreachable", "organization": organization(url), "authority_tier": authority_tier(url), "authority_score": authority_score(url)}
     if detected_year is not None and detected_year >= MIN_CURRENT_YEAR:

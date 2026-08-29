@@ -31,7 +31,7 @@ This document is the release boundary for declaring the repository production-co
 The following evidence cannot be honestly proven by static CI alone and must be observed from real production runs:
 
 1. Three consecutive production runs on the same accepted code lineage complete without timeout or manual intervention.
-2. The runs demonstrate both outcomes: at least one valid story is published when an eligible candidate exists, and a run with no candidate above the adaptive publication baseline safely publishes nothing rather than lowering the quality floor.
+2. The runs demonstrate both outcomes: at least one valid story is published when an eligible candidate exists, and a run with no candidate above the adaptive publication baseline safely publishes nothing rather than lowering the quality floor. The latter is explicitly allowed to publish zero news items.
 3. No duplicate Telegram publication is produced across the observation window.
 4. A story with an image preserves the canonical full-text publication contract; image failure cannot truncate or replace the text publication.
 5. No eligible normal candidate reaches publication with a rank outside the replacement candidate window, and no rank bypasses the adaptive score policy.

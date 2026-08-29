@@ -246,15 +246,11 @@ def _eligibility_split(items, max_protected=2):
     candidates, regular = [], []
     for raw in items:
         item = dict(raw)
-        # Both substantive leader interviews and explicitly identified leader
-        # activity belong to the protected watch stream. This is intentionally
-        # bounded by max_protected; remaining leader activity is not pushed
-        # through the regular AI relevance gate merely because it lacks literal
-        # AI words in a syndicated title.
-        is_protected = _pipeline._is_protected_leader_interview(item) or _pipeline._is_protected_leader_activity(item)
-        if is_protected:
+        is_interview = _pipeline._is_protected_leader_interview(item)
+        is_activity = _pipeline._is_protected_leader_activity(item)
+        if is_interview or is_activity:
             item["protected_content"] = True
-            item["protected_reason"] = "leader_interview_or_activity"
+            item["protected_reason"] = "leader_interview" if is_interview else "leader_activity"
             item["_ai_link"] = True
             item["leader_watch_protected"] = True
             item["leader_source_authority"] = _pipeline._leader_source_authority(item)
@@ -284,3 +280,4 @@ select_editorial = _global_ranked_selection
 for _name in ("load_yaml", "LEADER_CONFIG_PATH", "_direct_interview_signal", "summarize_item", "format_post", "mark_as_seen", "send_to_telegram_safe", "resolve_source_image", "_source_tier", "_persist_item_success"):
     if hasattr(_pipeline, _name):
         globals()[_name] = getattr(_pipeline, _name)
+

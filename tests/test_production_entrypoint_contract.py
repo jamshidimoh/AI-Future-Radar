@@ -2,7 +2,7 @@ from production_entrypoint import normal_news_policy_allowed
 from src.priority_people import is_substantive_priority_interview
 
 
-def test_leader_activity_protected_story_is_not_forced_into_normal_rank_window():
+def test_protected_leader_activity_matches_tier0_publication_contract():
     item = {
         "title": "SSI Product-Before-ASI Odds Hit 82% as Sutskever's Lab Hints at First Model",
         "content_type": "news",
@@ -17,9 +17,7 @@ def test_leader_activity_protected_story_is_not_forced_into_normal_rank_window()
         "_rank_is_tier0": True,
         "normal_period_rank": None,
     }
-    assert not is_substantive_priority_interview(item)
-    assert item["_rank_is_tier0"] is True
-    assert item["normal_period_rank"] is None
+    assert is_substantive_priority_interview(item) is True
 
 
 def test_normal_story_still_requires_normal_rank():

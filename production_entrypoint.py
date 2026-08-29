@@ -10,12 +10,14 @@ from pathlib import Path
 
 from src.editorial_quality_policy import news_language_ok, normal_score_allowed, persian_ratio
 from src.priority_people import is_substantive_priority_interview
+from src.unified_editorial_selection import load_editorial_contract
 
 ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
 CADENCE_PATH = ROOT / "data" / "publication_state.json"
+EDITORIAL_CONTRACT = load_editorial_contract()
 MAX_NORMAL_NEWS_PER_PERIOD = 3
-RANK_WINDOW = 4
+RANK_WINDOW = int(EDITORIAL_CONTRACT["candidate_window"])
 EDU_FIELDS = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
 NEWS_FIELDS = ("title", "summary", "why_it_matters")
 GUARD_REASON_ENV = "AI_RADAR_PUBLICATION_GUARD_REASON"
@@ -186,7 +188,6 @@ def main(*, skip_education: bool = False) -> int:
                 education_item = _rewrite_education_persian(education_item, call_llm_with_fallback, get_quality_chain())
             print(f"[Education] REQUIRED lesson={education_item.get('education_id')}/{education_item.get('education_total')} slot={education_slot}", flush=True)
         except Exception as exc:
-            # A source outage must not fail or consume the educational slot.
             education_item = None
             print(f"[Education Source Gate] DEFERRED slot={education_slot} reason={exc}; news orchestration continues and slot remains due", flush=True)
 
@@ -200,8 +201,9 @@ def main(*, skip_education: bool = False) -> int:
             item["editorial_score"] = round(float(item.get("editorial_score", 0) or 0) + bonus, 2)
         print(f"[Selection Timing] feedback items={len(items)} elapsed={time.monotonic() - started:.3f}s", flush=True)
         rank_started = time.monotonic()
-        candidates = unique_candidates(original_select(items, max(4, min(len(items), max_posts)), max_per_source, max_per_type, policy))
-        print(f"[Selection Timing] original_select candidates={len(candidates)} elapsed={time.monotonic() - rank_started:.3f}s", flush=True)
+        candidate_window = int(EDITORIAL_CONTRACT["candidate_window"])
+        candidates = unique_candidates(original_select(items, max(candidate_window, min(len(items), max_posts)), max_per_source, max_per_type, policy))
+        print(f"[Selection Timing] original_select candidates={len(candidates)} candidate_window={candidate_window} elapsed={time.monotonic() - rank_started:.3f}s", flush=True)
         return ([education_item] if education_item else []) + candidates
 
     original_summarize = pipeline.summarize_item

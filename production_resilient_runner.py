@@ -23,6 +23,7 @@ import educational_content  # noqa: E402
 import production_entrypoint  # noqa: E402
 import src.normal_publication_fallback as _normal_fallback  # noqa: E402
 import src.production_publication_adapter as _publication_adapter  # noqa: E402
+from src.unified_editorial_selection import load_editorial_contract  # noqa: E402
 
 _ORIGINAL_FETCH_REFERENCE = educational_content._fetch_reference
 _ORIGINAL_SOURCE_CANDIDATES = educational_content._source_candidates
@@ -203,6 +204,11 @@ def _publish_education_after_news(run_number: int) -> bool:
 
 def main() -> int:
     _normal_fallback._NORMAL_DELIVERED = 0
+    # Keep the publication fallback and policy in lock-step with the same
+    # candidate window used by the unified editorial selection contract.
+    production_entrypoint.RANK_WINDOW = int(load_editorial_contract()["candidate_window"])
+    print(f"[Selection Contract] runtime_candidate_window={production_entrypoint.RANK_WINDOW} normal_capacity={load_editorial_contract()['max_posts']}", flush=True)
+
     watchdog_seconds = _watchdog_minutes() * 60
     faulthandler.dump_traceback_later(watchdog_seconds, exit=False, file=sys.stderr)
     educational_content._fetch_reference = _fetch_reference_with_canonical_year

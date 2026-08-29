@@ -1,9 +1,12 @@
 # AI Future Radar — production contract
-# This file defines cross-cutting invariants. Detailed mission taxonomy remains in mission_policy.yaml.
+# Cross-cutting invariants. Mission taxonomy remains in mission_policy.yaml;
+# executable selection mechanics remain in selection_policy.yaml and are
+# validated here so the three layers cannot drift silently.
 
 contract:
-  version: 1
+  version: 2
   mission_policy: config/mission_policy.yaml
+  selection_policy: config/selection_policy.yaml
   architecture_document: ARCHITECTURE.md
   final_acceptance_document: docs/PRODUCTION_FINAL_ACCEPTANCE.md
 
@@ -23,7 +26,8 @@ protected:
 mission:
   required_areas: [ai_core, convergence, mind_cognition, future_governance]
   min_unique_sources: 3
-  max_same_source_per_run: 1
+  preferred_max_same_source_per_run: 1
+  hard_max_same_source_per_run: 2
   min_authoritative_items: 2
   community_max: 0
   ai_core_target: [1, 2]
@@ -31,6 +35,14 @@ mission:
   mind_future_target: 1
   research_target: 1
   interview_target_max: 1
+
+selection:
+  max_posts: 3
+  candidate_window: 6
+  replacement_buffer: 2
+  diversity_mode: adaptive
+  distinct_sources_first: true
+  historical_source_usage_is_hard_exclusion: false
 
 quality:
   language_gate: src/editorial_quality_policy.py
@@ -49,3 +61,4 @@ runtime_rules:
   llm_failure_is_fail_closed: true
   publication_requires_valid_payload: true
   confirmed_delivery_required_before_state_advance: true
+  replacement_after_quality_failure: true

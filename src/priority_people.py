@@ -1,9 +1,4 @@
-"""Generic priority-person detection for substantive interviews.
-
-Tier-0 is reserved for substantive interview-style content. Ordinary news
-coverage that merely mentions or quotes a priority person remains eligible for
-normal ranking and does not bypass the normal score window.
-"""
+"""Generic priority-person detection for substantive interviews and protected leader activity."""
 from __future__ import annotations
 
 import re
@@ -60,19 +55,14 @@ def matched_priority_people(item, *, text: str | None = None):
     return sorted(set(matches))
 
 def priority_people_features(item):
-    # A failed translation/editorial QA candidate must never regain the Tier-0
-    # quota exemption merely because its metadata identifies a protected leader.
-    # This is intentionally a single routing guard; it does not alter ranking,
-    # watchlists, or the normal-news policy.
     if item.get("_publication_blocked"):
         return [], False, 0.0
     text = _text(item)
     people = matched_priority_people(item, text=text)
     if not people:
         return people, False, 0.0
-    # Tier-0 is a routing class, not score inflation. A priority person in
-    # ordinary reporting remains normal-ranked even when directly quoted.
-    is_tier0 = _interview_context(item) and len(text) >= 100
+    protected_ranked_story = bool(item.get("protected_content") and item.get("_rank_is_tier0"))
+    is_tier0 = protected_ranked_story or (_interview_context(item) and len(text) >= 100)
     return people, is_tier0, 50.0 if is_tier0 else 0.0
 
 def is_substantive_priority_interview(item):

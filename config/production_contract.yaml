@@ -1,0 +1,51 @@
+# AI Future Radar — production contract
+# This file defines cross-cutting invariants. Detailed mission taxonomy remains in mission_policy.yaml.
+
+contract:
+  version: 1
+  mission_policy: config/mission_policy.yaml
+  architecture_document: ARCHITECTURE.md
+  final_acceptance_document: docs/PRODUCTION_FINAL_ACCEPTANCE.md
+
+protected:
+  people:
+    source: config/leader_watchlist.yaml
+    distinct_per_run: true
+    max_slots: 2
+    interviews_and_activity_use_distinct_reasons: true
+  sources:
+    - name: "MIT CSAIL - Building 32"
+      match: ["MIT CSAIL", "Building 32", "cap.csail.mit.edu"]
+      max_per_run: 1
+      selection_mode: "priority"
+      duplicate_key: "source"
+
+mission:
+  required_areas: [ai_core, convergence, mind_cognition, future_governance]
+  min_unique_sources: 3
+  max_same_source_per_run: 1
+  min_authoritative_items: 2
+  community_max: 0
+  ai_core_target: [1, 2]
+  convergence_target: 1
+  mind_future_target: 1
+  research_target: 1
+  interview_target_max: 1
+
+quality:
+  language_gate: src/editorial_quality_policy.py
+  title_persian_ratio_min: 0.25
+  body_persian_ratio_min: 0.60
+  generic_why_blocked: true
+  source_evidence_required: true
+  adaptive_normal_score_policy: true
+
+source_boundary:
+  excluded_domains: [arxiv.org, export.arxiv.org]
+  exclusion_stage: [discovery, ingestion]
+
+runtime_rules:
+  regular_items_use_ai_relevance_gate: true
+  llm_failure_is_fail_closed: true
+  publication_requires_valid_payload: true
+  confirmed_delivery_required_before_state_advance: true

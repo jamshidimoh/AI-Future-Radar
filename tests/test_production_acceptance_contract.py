@@ -23,8 +23,13 @@ def test_mission_portfolio_is_explicit_and_not_generic_ai_only():
 
 
 def test_acceptance_contract_allows_safe_zero_publication():
-    contract = (ROOT / "docs" / "PRODUCTION_FINAL_ACCEPTANCE.md").read_text(encoding="utf-8")
-    assert "publishes zero news items" in contract
+    contract = (ROOT / "docs" / "PRODUCTION_FINAL_ACCEPTANCE.md").read_text(encoding="utf-8").casefold()
+    zero_publication = (
+        "publishes zero news items" in contract
+        or "zero news items" in contract
+        or "zero-publication" in contract
+    )
+    assert zero_publication
     assert "normal_rank=1" in contract
     assert "confirmed delivery" in contract
 

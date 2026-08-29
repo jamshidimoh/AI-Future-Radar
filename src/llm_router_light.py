@@ -1,9 +1,9 @@
 """Low-token, provider-diverse LLM router for production summarization.
 
 The router is deliberately conservative: one provider-family failure should not
-consume the budget on sibling models, while transient failures get a bounded
-chance to recover. Model defaults favor currently supported endpoints and keep
-fallback diversity explicit.
+consume the budget on sibling models for permanent/auth failures, while quota
+responses disable only the affected model so an independent sibling can still
+recover the request. Transient failures get a bounded chance to recover.
 """
 from __future__ import annotations
 
@@ -18,7 +18,6 @@ _CALL_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_nam
 
 class QuotaExceeded(Exception):
     """Provider-side quota, auth, or availability failure safe for failover."""
-
 
 _DISABLED = set()
 _DISABLED_FAMILIES = set()
@@ -137,7 +136,7 @@ def _provider_timeout(name: str, remaining: float) -> float:
 def _disable(name: str, reason: str) -> None:
     family = _provider_family(name)
     _DISABLED.add(name)
-    if reason in {"permanent", "quota"}:
+    if reason == "permanent":
         _DISABLED_FAMILIES.add(family)
     print(f"[Light Router] disabled={name} family={family} reason={reason}", flush=True)
 
@@ -166,7 +165,10 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             _disable(name, "transient")
         except QuotaExceeded as exc:
             last = exc
-            _disable(name, _failure_class(str(exc)))
+            reason = _failure_class(str(exc))
+            _disable(name, reason)
+            if reason == "quota":
+                print(f"[Light Router] quota scoped to model={name}; sibling models remain eligible", flush=True)
         except Exception as exc:
             last = exc
             reason = _failure_class(str(exc))
@@ -184,7 +186,8 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                         return retry_result, name
                 except Exception as retry_exc:
                     last = retry_exc
-                    _disable(name, _failure_class(str(retry_exc)))
+                    retry_reason = _failure_class(str(retry_exc))
+                    _disable(name, retry_reason)
             else:
                 _disable(name, reason)
         if deadline - time.monotonic() <= 0:

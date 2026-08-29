@@ -4,7 +4,7 @@
 
 AI Future Radar is a deterministic editorial pipeline that discovers technology signals, removes duplicates, evaluates relevance and evidence, constructs a mission-aware editorial portfolio, uses an LLM only for transformation and bounded quality repair, and delivers validated content to Telegram.
 
-The current production cadence is one news publication every 4 hours and one educational publication every 12 hours. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
+The current production cadence is one normal news publication every 4 hours and one educational publication every 12 hours. Normal news capacity is three items per run; Tier-0 protected material is quota-exempt. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
 
 The system must remain useful when any individual LLM provider, RSS feed, YouTube transport, or image source is unavailable.
 
@@ -22,7 +22,7 @@ Discovery
        -> authoritative/community boundary
        -> adaptive source diversity
        -> content-type and mission-area caps
-       -> replacement-aware candidate window
+       -> replacement-aware candidate window (6)
   -> LLM transformation
   -> language / schema / editorial-quality gates
   -> ranked replacement candidates when a selected item fails QA
@@ -42,20 +42,20 @@ The selector has four explicit objectives, in order:
 
 1. Protect eligible Tier-0/leader material without creating a publication bypass.
 2. Give eligible mission areas and research evidence explicit coverage opportunities.
-3. Prefer distinct sources in the current run while treating historical source usage as a preference signal rather than a hard exclusion.
-4. Fill the remaining capacity by calibrated editorial score while respecting hard source, content-type, mission-area and community limits.
+3. Prefer distinct sources in the current run while treating historical source usage as a bounded preference signal rather than a hard exclusion.
+4. Fill remaining capacity by calibrated editorial score while respecting hard source, content-type, mission-area and community limits.
 
-The normal publication capacity is `max_posts=4`. The selector may construct a six-item candidate window (`candidate_window=6`) so that a candidate rejected during transformation or editorial QA can be replaced by the next ranked eligible candidate. Candidates 5–6 are replacement candidates; they do not increase the publication quota.
+Normal publication capacity is `max_posts=3`. The selector constructs a six-item candidate window (`candidate_window=6`); candidates beyond the first three are replacement candidates and never increase the publication quota. Transformation, editorial QA, language and publication policy apply equally to primary and replacement candidates.
 
-`max_items_per_source=2` is a hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. This distinction is deliberate: it prevents source concentration without collapsing the run when only a small set of sources is available.
+`max_items_per_source=2` is the hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. This distinction prevents source concentration without collapsing the run when only a small set of sources is available.
 
-Mission targets are opportunities, not fabricated quotas. When an eligible candidate for convergence, mind/cognition, future/governance or research exists, the selector gives it an explicit opportunity; when no eligible candidate exists, the system must continue without inventing coverage.
+Mission targets are opportunities, not fabricated quotas. When an eligible candidate for convergence, mind/cognition, future/governance or research exists, the selector gives it an explicit opportunity; when no eligible candidate exists, the system continues without inventing coverage.
 
 ## Discovery source boundary
 
 The source registry is authoritative for discovery. A globally excluded source is not a Radar source and must not be searched, crawled, ingested, ranked, selected, or published. Exclusions are enforced before network discovery where the query/source is known and again at ingestion as a defense against accidental upstream results.
 
-The current global exclusion is `arxiv.org` (including `export.arxiv.org`). It is intentionally absent from the source registry. Research coverage must come from validated non-arXiv sources such as peer-reviewed publishers, universities, research laboratories, scientific organizations, standards bodies, credible industry reports, and substantive expert content.
+The current global exclusion is `arxiv.org` (including `export.arxiv.org`). It is intentionally absent from the source registry. Research coverage must come from validated non-ArXiv sources such as peer-reviewed publishers, universities, research laboratories, scientific organizations, standards bodies, credible industry reports, and substantive expert content.
 
 This is a source boundary, not a ranking penalty or editorial exception. No downstream component should contain source-specific arXiv scoring, quota, concentration, or fallback logic.
 
@@ -95,7 +95,7 @@ The LLM router is provider-agnostic. A provider that reports quota exhaustion, p
 
 If all providers fail, the item is not published. Invalid LLM JSON and insufficient Persian-language output never reach Telegram.
 
-A failed transformation or editorial-quality check does not automatically fail the whole run. The candidate is blocked and the next ranked replacement candidate may be attempted, subject to the same publication contract. This is bounded replacement, not quality relaxation.
+A failed transformation or editorial-quality check does not automatically fail the whole run. The candidate is blocked and a lower-ranked replacement candidate may be attempted when one exists, subject to the same publication contract. This is bounded replacement, not quality relaxation.
 
 ## Telegram delivery contract
 
@@ -143,7 +143,7 @@ Ranking audit artifacts should permit reconstruction of why each published or bl
 
 The regression suite protects production contracts rather than only unit-level helpers. It covers cadence, editorial selection, leader priority, MIT/Building 32 priority, canonical deduplication, YouTube resolution/fallback, image validation/delivery, Telegram formatting, educational RTL, language gates, source exclusion, source diversity, mission coverage and configuration invariants.
 
-`tests/test_production_contract.py` checks that the protected-source declaration, mission targets, selection mechanics, quality thresholds, source boundary and architecture document remain synchronized. `tests/test_unified_editorial_selection.py` tests behavior, including distinct-source preference, adaptive backfill, mission coverage opportunities, community exclusion and hard caps.
+`tests/test_production_contract.py` checks that the protected-source declaration, mission targets, selection mechanics, source registry, quality thresholds, source boundary and architecture document remain synchronized. `tests/test_unified_editorial_selection.py` tests behavior, including distinct-source preference, adaptive backfill, mission coverage opportunities, community exclusion and hard caps.
 
 A contract drift is a CI failure, not a silent editorial change. Any change to a production contract must update the corresponding regression test before production is considered ready.
 

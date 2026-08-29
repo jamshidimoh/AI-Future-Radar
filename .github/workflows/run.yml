@@ -5,9 +5,10 @@ on:
   schedule:
     # Tehran publication windows:
     # 05:17, 10:47, 13:47, 17:47, 20:47, 22:47.
-    # Cron is UTC (Iran UTC+3:30); each UTC hour is paired with :17
-    # so the Tehran wall-clock minute remains :47 after conversion.
-    - cron: "17 1,7,10,14,17,19 * * *"
+    # Tehran is UTC+3:30. The first window needs :47 UTC;
+    # the remaining windows map from :17 UTC to :47 Tehran.
+    - cron: "47 1 * * *"
+    - cron: "17 7,10,14,17,19 * * *"
 
 permissions:
   contents: write

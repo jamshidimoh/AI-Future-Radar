@@ -17,6 +17,21 @@ def test_source_grounding_blocks_topic_drift(monkeypatch):
     assert grounding.ensure_source_grounding(draft, item) is None
 
 
+def test_source_grounding_blocks_drift_even_if_llm_says_grounded(monkeypatch):
+    item = {
+        "title": "Tennis (:30)",
+        "summary": "A short tennis clip showing a tennis rally and match play.",
+    }
+    draft = {
+        "title": "قابلیت تبدیل سبک هنری تصاویر در ChatGPT Images",
+        "summary": "ChatGPT Images قابلیت تبدیل سبک هنری تصاویر را معرفی می‌کند.",
+        "why_it_matters": "این قابلیت ویرایش تصویر را برای کاربران ساده‌تر می‌کند.",
+        "category": "ai",
+    }
+    monkeypatch.setattr(grounding, "_llm_check", lambda *args, **kwargs: True)
+    assert grounding.ensure_source_grounding(draft, item) is None
+
+
 def test_source_grounding_accepts_supported_draft(monkeypatch):
     item = {
         "title": "This is the new ChatGPT Voice, powered by GPT-Live",

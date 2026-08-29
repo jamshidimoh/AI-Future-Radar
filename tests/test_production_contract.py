@@ -45,7 +45,7 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     contract = load_editorial_contract()
     selection = _load(SELECTION)["selection"]
     mission = _load(MISSION)["mission"]
-    assert contract["max_posts"] == selection["max_posts"] == mission["max_posts"]
+    assert contract["max_posts"] == selection["max_posts"] == mission["max_posts"] == 3
     assert contract["candidate_window"] == 6
     assert contract["replacement_buffer"] == 2
     assert contract["preferred_max_same_source"] == mission["max_same_source"] == 1

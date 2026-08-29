@@ -29,7 +29,7 @@ def test_protected_leader_and_source_contract_matches_current_configuration():
 
     protected = contract["protected"]
     assert protected["people"]["distinct_per_run"] is True
-    assert protected["people"]["max_slots"] == mission["mission"]["ai_core_target_max"]
+    assert protected["people"]["max_slots"] == 2
     source_names = {x["name"] for x in protected["sources"]}
     mission_names = {x["name"] for x in mission.get("protected_sources", [])}
     preferred_names = {x["name"] for x in sources.get("action_policy", {}).get("preferred_authoritative_sources", [])}

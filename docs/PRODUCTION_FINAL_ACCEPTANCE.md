@@ -9,14 +9,16 @@ This document is the release boundary for declaring the repository production-co
 - [x] Selected normal stories receive `period_rank` and contiguous `normal_period_rank` values.
 - [x] The normal-news adaptive baseline applies uniformly across the rank window, including `normal_rank=1`; rank 1 is never a score-policy bypass.
 - [x] Protected leader/interview stories are exempt only through the explicit Tier-0/protected routing contract and still pass Story Identity and publication-quality checks.
+- [x] Protected-source policy is explicit in `config/production_contract.yaml` and `config/mission_policy.yaml`; protected sources remain priority candidates rather than relevance/quality bypasses.
 - [x] Canonical URL/title/semantic publication guards prevent duplicate publication; cross-language duplicates remain blocked.
 - [x] Telegram delivery is represented through the typed delivery contract and publication ledger; publication state advances only from confirmed delivery.
 - [x] Education is an independent scheduled stream; education failure must not rerun or duplicate the completed news orchestration.
 - [x] Editorial language/quality gates remain authoritative for published news.
-- [x] Mission coverage is preserved by the configured editorial portfolio: AI core, AI–emerging-technology convergence, mind/cognition/consciousness, and future/governance. fileciteturn39file0
-- [x] Source quality and rotation remain bounded by the configured evidence hierarchy and diversity policy; community sources are not a normal-news substitute. fileciteturn39file0
+- [x] Mission coverage is preserved by the configured editorial portfolio: AI core, AI–emerging-technology convergence, mind/cognition/consciousness, and future/governance.
+- [x] Source quality and rotation remain bounded by the configured evidence hierarchy and diversity policy; community sources are not a normal-news substitute.
+- [x] `tests/test_production_contract.py` prevents drift between the production contract, mission policy, source registry, quality gate and architecture document.
 - [x] Repository regression tests cover canonical deduplication, Story Identity, delivery outcomes, editorial quality, protected leaders, ranking/diversity, and the final ranking/publication boundary.
-- [x] A real publication baseline is present in `data/publication_state.json`. fileciteturn40file0
+- [x] A real publication baseline is present in `data/publication_state.json`.
 
 ## Real-production evidence required before final release declaration
 

@@ -1,6 +1,7 @@
 # AI Future Radar — mission-driven editorial portfolio
 # The channel is a radar, not a generic AI news feed.
 # Every run should maximize: frontier relevance + evidence + strategic importance + diversity.
+# Cross-cutting runtime invariants are declared in config/production_contract.yaml.
 
 mission:
   max_posts: 4
@@ -42,6 +43,15 @@ source_tiers:
   1: ["MIT CSAIL", "Stanford HAI", "BAIR", "Google DeepMind", "OpenAI", "Anthropic", "MIT News", "Nature", "Quanta Magazine", "CMU", "Carnegie Mellon", "NIST", "IEEE"]
   2: ["MIT Technology Review", "IEEE Spectrum", "Ars Technica", "Reuters", "Wired", "Scientific American", "New Scientist"]
   3: ["Reddit", "community", "aggregator"]
+
+# Protected sources are priority candidates, not AI-gate bypasses. They still need
+# normal relevance, deduplication, language, editorial-quality and publication gates.
+protected_sources:
+  - name: "MIT CSAIL - Building 32"
+    match: ["MIT CSAIL", "Building 32", "cap.csail.mit.edu"]
+    max_per_run: 1
+    selection_mode: "priority"
+    duplicate_key: "source"
 
 # Category rotation prevents the same area from dominating successive runs.
 rotation:

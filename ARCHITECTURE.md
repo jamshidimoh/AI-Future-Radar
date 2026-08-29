@@ -24,6 +24,8 @@ Discovery
   -> persistent seen/history/cadence state
 ```
 
+Cross-cutting production invariants are declared in `config/production_contract.yaml`. The mission taxonomy and portfolio targets remain in `config/mission_policy.yaml`; the contract test suite prevents silent drift between those files and the executable quality policy.
+
 Collectors are not responsible for editorial selection. LLMs are not responsible for deciding whether an item belongs to the monitored domain. The editorial module is the scoring authority; production orchestration adds only explicit runtime contracts such as cadence, protected-source handling, language gates, and delivery safety.
 
 ## Discovery source boundary
@@ -60,7 +62,9 @@ The radar has two distinct protected classes:
 - People: high-priority leaders such as Andrew Ng, Sam Altman, Demis Hassabis, Elon Musk, Jensen Huang and other configured leaders.
 - Protected sources: authoritative recurring sources such as MIT CSAIL — Building 32.
 
-Protected slots enforce diversity. The same person cannot occupy multiple protected slots in one run. Protected sources are likewise not duplicated by source. Fresh protected items are considered before ordinary editorial ranking, while regular content still passes the normal AI relevance and deduplication gates.
+Protected leader slots enforce diversity. The same person cannot occupy multiple protected slots in one run. Protected sources are likewise limited by source identity and treated as priority candidates, not as an AI-relevance or publication-quality bypass. All protected-source candidates still pass normal relevance, deduplication, language, editorial-quality and delivery gates.
+
+The protected-source contract is intentionally declarative in this stage: it establishes identity, per-run cap, and selection semantics without introducing a second publication path. This keeps the production path single-pass while making the invariant testable.
 
 Andrew Ng is currently a Featured Tier-1 leader with priority 11. MIT CSAIL — Building 32 is a protected source with the same high priority.
 
@@ -112,6 +116,8 @@ Every production run reports:
 ## Regression strategy
 
 The regression suite protects the production contracts rather than only unit-level helpers. It covers cadence, editorial selection, leader priority, MIT/Building 32 priority, canonical deduplication, YouTube resolution/fallback, image validation/delivery, Telegram formatting, educational RTL, language gates, source exclusion, and configuration invariants.
+
+`tests/test_production_contract.py` additionally checks that the protected-source declaration, mission targets, quality thresholds, source boundary and this architecture document remain synchronized. A contract drift is a CI failure, not a silent editorial change.
 
 Any change to one of these contracts must update the corresponding regression test before production is considered ready.
 

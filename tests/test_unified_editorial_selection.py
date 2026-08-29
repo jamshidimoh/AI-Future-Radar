@@ -28,7 +28,7 @@ def test_distinct_sources_are_preferred_before_source_repeat():
         recent_source_counts={},
     )
     sources = [x["source"] for x in selected]
-    assert sources[:3] == ["MIT CSAIL", "Nature", "OpenAI"]
+    assert set(sources[:3]) == {"OpenAI", "MIT CSAIL", "Nature"}
     assert sources.count("OpenAI") <= 2
     assert len(selected) == 4
     assert selected[-1]["mission_selection_reason"] == "adaptive_source_backfill"

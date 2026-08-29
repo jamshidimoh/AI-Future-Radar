@@ -22,7 +22,6 @@ SIGNAL_WEIGHT = 0.25
 
 
 def _base_editorial_score(item):
-    """Return the canonical editorial score before legacy signal mutation."""
     for key in ("editorial_score_pre_signal", "final_editorial_score", "editorial_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
@@ -34,7 +33,6 @@ def _base_editorial_score(item):
 
 
 def canonical_rank_score(item):
-    """Combine independent editorial and technology signals exactly once."""
     editorial = _base_editorial_score(item)
     signal = float(item.get("signal_score", 0) or 0)
     return round(editorial * EDITORIAL_WEIGHT + signal * SIGNAL_WEIGHT, 2)
@@ -103,7 +101,7 @@ def _rotation_source_counts(history, rotation_days):
 
 
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
-    """Apply the single normal-portfolio contract."""
+    """Apply unified selection in production; retain legacy score-only ordering for direct callers."""
     policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     try:
@@ -112,10 +110,7 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
         source_history = []
     recent_source_counts = _rotation_source_counts(source_history, rotation_days)
     contract = load_editorial_contract()
-    limit = min(
-        max(0, int(max_posts or 0)),
-        max(0, int(contract["candidate_window"] or max_posts or 0)),
-    )
+    limit = min(max(0, int(max_posts or 0)), max(0, int(contract["candidate_window"] or max_posts or 0)))
     selected = select_regular_portfolio(
         normal,
         max_posts=limit,
@@ -123,19 +118,17 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
         max_per_type=max_per_type,
         recent_source_counts=recent_source_counts,
         contract=contract,
+        mission_aware=bool(policy.get("mission_aware", False)),
     )
     source_counts = {}
     for item in selected:
         key = _source_key(item)
         source_counts[key] = source_counts.get(key, 0) + 1
     print(
-        f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} "
-        f"selected={len(selected)} source_counts={source_counts} "
-        f"recent_source_counts={recent_source_counts} adaptive=true "
-        f"preferred_source_cap={contract['preferred_max_same_source']} "
-        f"hard_source_cap={contract['hard_max_same_source']} "
-        f"candidate_window={contract['candidate_window']}",
-        flush=True,
+        f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} "
+        f"source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true "
+        f"preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} "
+        f"candidate_window={contract['candidate_window']} mission_aware={bool(policy.get('mission_aware', False))}", flush=True
     )
     return selected
 

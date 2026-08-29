@@ -23,7 +23,7 @@ class QuotaExceeded(Exception):
 _DISABLED = set()
 _DISABLED_FAMILIES = set()
 _CHAIN_CACHE = None
-_PROVIDER_TIMEOUTS = {"Groq:": 6.0, "OpenRouter:": 4.0, "Gemini": 8.0}
+_PROVIDER_TIMEOUTS = {"Groq:": 6.0, "OpenRouter:": 2.5, "Gemini": 8.0}
 _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
 _MAX_TRANSIENT_RETRIES = 1
@@ -163,8 +163,8 @@ def _failure_class(message: str) -> str:
 
 
 def _should_disable_provider(message: str) -> bool:
-    """Backward-compatible predicate used by the existing router tests."""
-    return _failure_class(message) in {"permanent", "quota", "transient"}
+    """Backward-compatible contract: only hard provider failures are disabling."""
+    return _failure_class(message) in {"permanent", "quota"}
 
 
 def _provider_timeout(name: str, remaining: float) -> float:
@@ -207,8 +207,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             _disable(name, "transient")
         except QuotaExceeded as exc:
             last = exc
-            reason = _failure_class(str(exc))
-            _disable(name, reason)
+            _disable(name, _failure_class(str(exc)))
         except Exception as exc:
             last = exc
             reason = _failure_class(str(exc))

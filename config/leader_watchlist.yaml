@@ -107,6 +107,9 @@ google_news_queries:
   - {query: "Ryota Kanai AI consciousness interview", watch_person: "Ryota Kanai", category: mind, tier: 1, content_type: interview}
   - {query: "site:cap.csail.mit.edu/podcast AI artificial intelligence machine learning robotics Building 32", category: ai, tier: 1, content_type: podcast, preferred_source: "MIT CSAIL - Building 32"}
 
+rss_sources:
+  - {name: "David Senra", url: "https://feeds.megaphone.fm/david-senra", tier: 1, type: "podcast", content_type: "interview", official: true}
+
 youtube_channels:
   - {name: "World Economic Forum", handle: "@wef", category: ai, tier: 1, type: "global_forum", content_type: interview, official: true}
   - {name: "80,000 Hours", handle: "@80000Hours", category: ai, tier: 1, type: "longtermism_podcast", content_type: podcast, official: true}

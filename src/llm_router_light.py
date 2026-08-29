@@ -23,7 +23,7 @@ class QuotaExceeded(Exception):
 _DISABLED = set()
 _DISABLED_FAMILIES = set()
 _CHAIN_CACHE = None
-_PROVIDER_TIMEOUTS = {"Groq:": 6.0, "OpenRouter:": 2.5, "Gemini": 8.0}
+_PROVIDER_TIMEOUTS = {"Groq:": 6.0, "OpenRouter:": 2.5, "Gemini": 10.0}
 _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
 _MAX_TRANSIENT_RETRIES = 1
@@ -55,28 +55,14 @@ def _groq(system_prompt, user_content, model):
     key = os.getenv("GROQ_API_KEY")
     if not key:
         return None
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ],
-        "response_format": {"type": "json_object"},
-        "max_completion_tokens": 900,
-        "stream": False,
-    }
+    payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "response_format": {"type": "json_object"}, "max_completion_tokens": 900, "stream": False}
     if model.startswith("qwen/"):
         payload.update({"reasoning_effort": "none", "reasoning_format": "hidden", "temperature": 0.15})
     elif model.startswith("openai/gpt-oss"):
         payload.update({"reasoning_effort": "low", "temperature": 0.15})
     else:
         payload.update({"temperature": 0.15})
-    r = requests.post(
-        "https://api.groq.com/openai/v1/chat/completions",
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        json=payload,
-        timeout=_REQUEST_TIMEOUT,
-    )
+    r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=_REQUEST_TIMEOUT)
     if r.status_code in (401, 402, 429):
         raise QuotaExceeded(f"Groq {model}: HTTP {r.status_code}")
     r.raise_for_status()
@@ -87,21 +73,7 @@ def _openrouter(system_prompt, user_content, model):
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         return None
-    r = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        json={
-            "model": model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_content},
-            ],
-            "response_format": {"type": "json_object"},
-            "max_tokens": 900,
-            "temperature": 0.15,
-        },
-        timeout=_REQUEST_TIMEOUT,
-    )
+    r = requests.post("https://openrouter.ai/api/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json={"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "response_format": {"type": "json_object"}, "max_tokens": 900, "temperature": 0.15}, timeout=_REQUEST_TIMEOUT)
     if r.status_code in (401, 402, 429):
         raise QuotaExceeded(f"OpenRouter {model}: HTTP {r.status_code}")
     r.raise_for_status()
@@ -114,20 +86,10 @@ def _gemini(system_prompt, user_content):
         return None
     from google import genai
     from google.genai import types
-
     model = (os.getenv("GEMINI_MODEL") or GEMINI_DEFAULT_MODEL).strip()
     client = genai.Client(api_key=key, http_options={"timeout": 8_000})
     try:
-        response = client.models.generate_content(
-            model=model,
-            contents=user_content,
-            config=types.GenerateContentConfig(
-                system_instruction=system_prompt,
-                response_mime_type="application/json",
-                temperature=0.15,
-                max_output_tokens=900,
-            ),
-        )
+        response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", temperature=0.15, max_output_tokens=900))
         return response.text
     except Exception as exc:
         msg = str(exc).lower()
@@ -140,12 +102,9 @@ def get_quality_chain():
     global _CHAIN_CACHE
     if _CHAIN_CACHE is not None:
         return list(_CHAIN_CACHE)
-    chain = []
-    for model in GROQ_MODELS:
-        chain.append((f"Groq:{model}", lambda sp, uc, m=model: _groq(sp, uc, m)))
+    chain = [(f"Groq:{model}", lambda sp, uc, m=model: _groq(sp, uc, m)) for model in GROQ_MODELS]
     chain.append(("Gemini", _gemini))
-    for model in OPENROUTER_MODELS:
-        chain.append((f"OpenRouter:{model}", lambda sp, uc, m=model: _openrouter(sp, uc, m)))
+    chain.extend((f"OpenRouter:{model}", lambda sp, uc, m=model: _openrouter(sp, uc, m)) for model in OPENROUTER_MODELS)
     _CHAIN_CACHE = list(chain)
     print("[Light Router] chain=" + ", ".join(name for name, _ in chain), flush=True)
     return list(_CHAIN_CACHE)
@@ -163,8 +122,9 @@ def _failure_class(message: str) -> str:
 
 
 def _should_disable_provider(message: str) -> bool:
-    """Backward-compatible contract: only hard provider failures are disabling."""
-    return _failure_class(message) in {"permanent", "quota"}
+    """Legacy compatibility predicate for unavailable HTTP/provider failures."""
+    text = str(message or "")
+    return bool(re.search(r"\b(?:401|403|404|408|429|500|502|503|504)\b", text))
 
 
 def _provider_timeout(name: str, remaining: float) -> float:
@@ -187,7 +147,6 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
     last = None
     deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS
     transient_retries = {}
-
     for name, fn in providers:
         family = _provider_family(name)
         if name in _DISABLED or family in _DISABLED_FAMILIES:
@@ -225,13 +184,10 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                         return retry_result, name
                 except Exception as retry_exc:
                     last = retry_exc
-                    retry_reason = _failure_class(str(retry_exc))
-                    print(f"[Light Router] retry failed={name} reason={retry_reason} | {retry_exc}", flush=True)
-                    _disable(name, retry_reason)
+                    _disable(name, _failure_class(str(retry_exc)))
             else:
-                _disable(name, "other")
+                _disable(name, reason)
         if deadline - time.monotonic() <= 0:
             break
-
     print(f"[Light Router] exhausted; last={last}", flush=True)
     return None, None

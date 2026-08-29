@@ -46,6 +46,13 @@ def _parse_feed(url):
     raise last_error
 
 
+def _is_strong_curated_query(q: dict) -> bool:
+    """Return true only for explicitly governed, high-intent discovery queries."""
+    preferred_source = str(q.get("preferred_source") or "").strip()
+    query_text = str(q.get("query") or "").strip().lower()
+    return bool(preferred_source or query_text.startswith("site:"))
+
+
 def _collect_query(q, cutoff):
     query_text = str(q.get("query", ""))
     if is_excluded_source_text(query_text):
@@ -89,6 +96,9 @@ def _collect_query(q, cutoff):
             "source_type": "news_aggregator",
             "content_type": q.get("content_type", "news"),
             "official": False,
+            "preferred_source": str(q.get("preferred_source") or "").strip(),
+            "curated_discovery": _is_strong_curated_query(q),
+            "discovery_query": query_text,
             "watch_person": watch_person,
             "leader": watch_person,
             "is_leader_watch": is_leader_watch,

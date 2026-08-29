@@ -34,6 +34,28 @@ def test_neural_network_is_ai_relevant():
     assert len(result) == 1
 
 
+def test_curated_google_news_provenance_bridges_nonliteral_ai_title():
+    item = _item("New approach to scientific discovery discussed by Stanford scientists")
+    item.update(
+        {
+            "source": "Google News (Stanford News)",
+            "source_type": "news_aggregator",
+            "preferred_source": "Stanford HAI",
+            "curated_discovery": True,
+        }
+    )
+    result = filter_ai_relevance([item], ["AI"])
+    assert len(result) == 1
+    assert result[0]["topic_family"] == "ai_core"
+
+
+def test_untrusted_news_label_does_not_bypass_relevance_gate():
+    item = _item("Urban gardening trends", "Soil preparation and irrigation only.")
+    item.update({"source_type": "news_aggregator", "source": "Google News (example)"})
+    result = filter_ai_relevance([item], ["AI"])
+    assert result == []
+
+
 def test_unrelated_topic_stays_rejected():
     result = filter_ai_relevance([_item("Urban gardening trends", "Soil preparation and irrigation only.")], ["AI"])
     assert result == []

@@ -15,10 +15,10 @@ def item(title, source, score, *, area="ai", content_type="news", tier=1, resear
 
 def test_distinct_sources_are_preferred_before_source_repeat():
     candidates = [
-        item("OpenAI A", "OpenAI", 100),
-        item("OpenAI B", "OpenAI", 99),
-        item("MIT A", "MIT CSAIL", 92),
-        item("Nature A", "Nature", 90),
+        item("OpenAI A", "OpenAI", 100, area="ai"),
+        item("OpenAI B", "OpenAI", 99, area="ai"),
+        item("MIT A", "MIT CSAIL", 92, area="convergence"),
+        item("Nature A", "Nature", 90, area="mind"),
     ]
     selected = select_regular_portfolio(
         candidates,
@@ -36,10 +36,10 @@ def test_distinct_sources_are_preferred_before_source_repeat():
 
 def test_recent_source_history_is_preference_not_exclusion():
     candidates = [
-        item("OpenAI A", "OpenAI", 100),
-        item("MIT A", "MIT CSAIL", 95),
-        item("Nature A", "Nature", 90),
-        item("Anthropic A", "Anthropic", 80),
+        item("OpenAI A", "OpenAI", 100, area="ai"),
+        item("MIT A", "MIT CSAIL", 95, area="convergence"),
+        item("Nature A", "Nature", 90, area="mind"),
+        item("Anthropic A", "Anthropic", 80, area="future"),
     ]
     selected = select_regular_portfolio(
         candidates,
@@ -55,8 +55,8 @@ def test_recent_source_history_is_preference_not_exclusion():
 def test_community_sources_are_excluded_from_normal_portfolio():
     candidates = [
         item("Reddit story", "Reddit - r/artificial", 120, tier=3),
-        item("MIT story", "MIT CSAIL", 90),
-        item("Nature story", "Nature", 80),
+        item("MIT story", "MIT CSAIL", 90, area="convergence"),
+        item("Nature story", "Nature", 80, area="mind"),
     ]
     selected = select_regular_portfolio(
         candidates,
@@ -92,11 +92,11 @@ def test_mission_coverage_gets_explicit_opportunities():
 
 def test_content_type_and_source_hard_caps_are_enforced():
     candidates = [
-        item("A1", "OpenAI", 100, content_type="news"),
-        item("A2", "OpenAI", 99, content_type="news"),
-        item("A3", "OpenAI", 98, content_type="news"),
-        item("B1", "Nature", 97, content_type="research"),
-        item("C1", "MIT", 96, content_type="research"),
+        item("A1", "OpenAI", 100, area="ai", content_type="news"),
+        item("A2", "OpenAI", 99, area="convergence", content_type="news"),
+        item("A3", "OpenAI", 98, area="mind", content_type="news"),
+        item("B1", "Nature", 97, area="future", content_type="research"),
+        item("C1", "MIT", 96, area="ai", content_type="research"),
     ]
     selected = select_regular_portfolio(
         candidates,
@@ -116,7 +116,7 @@ def test_content_type_and_source_hard_caps_are_enforced():
 
 def test_contract_exposes_replacement_window_and_hard_ceiling():
     contract = load_editorial_contract()
-    assert contract["max_posts"] == 4
+    assert contract["max_posts"] == 3
     assert contract["candidate_window"] == 6
     assert contract["replacement_buffer"] == 2
     assert contract["preferred_max_same_source"] == 1

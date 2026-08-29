@@ -19,6 +19,7 @@ _AREA_MAP = {
 }
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
 _COMMUNITY_MARKERS = ("reddit", "community", "aggregator")
+_GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -56,13 +57,10 @@ def content_type_key(item: dict[str, Any]) -> str:
 
 def mission_area(item: dict[str, Any]) -> str:
     explicit = str(item.get("mission_area") or "").strip().casefold()
-    if explicit in _AREA_MAP.values():
-        return explicit
+    if explicit in _AREA_MAP.values(): return explicit
     category = str(item.get("category") or "").strip().casefold()
-    if category in _AREA_MAP:
-        return _AREA_MAP[category]
-    if item.get("research_signal") or content_type_key(item) in _RESEARCH_TYPES:
-        return "ai_core"
+    if category in _AREA_MAP: return _AREA_MAP[category]
+    if item.get("research_signal") or content_type_key(item) in _RESEARCH_TYPES: return "ai_core"
     return "ai_core"
 
 
@@ -70,27 +68,28 @@ def _mission_text(item: dict[str, Any]) -> str:
     return " ".join(str(item.get(k) or "") for k in ("title", "summary", "description", "category", "mission_area", "content_type", "tags", "keywords")).casefold()
 
 
-def is_mission_relevant(item: dict[str, Any], *, strict: bool = False) -> bool:
-    """Validate mission relevance. Strict mode is reserved for production integration."""
-    explicit = str(item.get("mission_area") or "").strip().casefold()
-    if explicit in _AREA_MAP.values():
-        return True
-    category = str(item.get("category") or "").strip().casefold()
-    if category in _AREA_MAP:
-        item["mission_area"] = _AREA_MAP[category]
-        return True
-    if not strict:
-        # Preserve the historical selector contract for direct/unit-level callers.
-        if item.get("research_signal") or content_type_key(item) in _RESEARCH_TYPES:
-            return True
-        return True
-    keyword_map = _load_yaml(MISSION_PATH).get("areas", {})
-    text = _mission_text(item)
+def _keyword_match_area(item: dict[str, Any]) -> str | None:
+    text = _mission_text(item); keyword_map = _load_yaml(MISSION_PATH).get("areas", {}); matches: list[tuple[int, str]] = []
     for area, cfg in keyword_map.items():
         for keyword in cfg.get("keywords", []) or []:
-            if str(keyword).casefold() in text:
-                item["mission_area"] = area
-                return True
+            key = str(keyword).strip().casefold()
+            if not key or key not in text: continue
+            if area == "ai_core" and key in _GENERIC_AI_TERMS: continue
+            matches.append((len(key), area))
+    return max(matches, key=lambda x: x[0])[1] if matches else None
+
+
+def is_mission_relevant(item: dict[str, Any], *, strict: bool = False) -> bool:
+    """Validate mission relevance; strict mode is used at the production boundary."""
+    explicit = str(item.get("mission_area") or "").strip().casefold()
+    if explicit in _AREA_MAP.values(): return True
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _AREA_MAP:
+        item["mission_area"] = _AREA_MAP[category]; return True
+    matched_area = _keyword_match_area(item)
+    if matched_area:
+        item["mission_area"] = matched_area; return True
+    if not strict: return True
     return item.get("_ai_link") is True or item.get("ai_relevance") is True
 
 

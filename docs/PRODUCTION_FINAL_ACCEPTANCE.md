@@ -51,3 +51,5 @@ The following evidence cannot be honestly proven by static CI alone and must be 
 ## Final declaration rule
 
 The repository must not be labeled production-complete until all deterministic gates are green and all real-production evidence items above have been observed. Static CI success is necessary but not sufficient evidence for long-run operational reliability.
+
+<!-- unified-selection-v2-final-revalidation -->

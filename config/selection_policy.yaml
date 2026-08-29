@@ -22,3 +22,5 @@ editorial:
 # - Recent source usage is a preference signal, not a hard exclusion.
 # - Leader watchlist discovery is protected by a small explicit publication
 #   allowance; broad semantic history must not starve genuinely new leader stories.
+#
+# CI retrigger marker: adaptive-diversity-validation

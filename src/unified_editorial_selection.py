@@ -51,6 +51,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
     return {
         "max_posts": int(selection_cfg.get("max_posts", 4) or 4),
         "candidate_window": int(selection_cfg.get("candidate_window", 6) or 6),
+        "replacement_buffer": int(selection_cfg.get("replacement_buffer", 2) or 2),
         "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),
         "preferred_max_same_source": int(mission.get("max_same_source", 1) or 1),
@@ -111,11 +112,13 @@ def candidate_score(item: dict[str, Any]) -> float:
 
 def _rank_key(item: dict[str, Any], recent_source_counts: dict[str, int]) -> tuple:
     source = source_key(item)
+    recent_penalty = min(3, max(0, int(recent_source_counts.get(source, 0) or 0))) * 2.0
+    effective_score = candidate_score(item) - recent_penalty
     return (
-        recent_source_counts.get(source, 0),
-        -candidate_score(item),
+        -effective_score,
         -float(item.get("signal_score", 0) or 0),
         -float(item.get("mission_score", 0) or 0),
+        recent_source_counts.get(source, 0),
         str(item.get("published", "")),
     )
 
@@ -146,6 +149,7 @@ def select_regular_portfolio(
     ordered = sorted(eligible, key=lambda x: _rank_key(x, recent))
 
     selected: list[dict[str, Any]] = []
+    selected_ids: set[int] = set()
     source_counts: dict[str, int] = {}
     type_counts: dict[str, int] = {}
     area_counts: dict[str, int] = {}
@@ -169,43 +173,41 @@ def select_regular_portfolio(
     def add(item: dict[str, Any], reason: str) -> None:
         source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
         selected.append(item)
+        selected_ids.add(id(item))
         source_counts[source] = source_counts.get(source, 0) + 1
         type_counts[ctype] = type_counts.get(ctype, 0) + 1
         area_counts[area] = area_counts.get(area, 0) + 1
         item["mission_selection_reason"] = reason
 
     # Pass 1: satisfy portfolio coverage with distinct sources.
-    desired_areas = ["convergence", "mind_cognition", "future_governance"]
-    for area in desired_areas:
+    for area in ("convergence", "mind_cognition", "future_governance"):
         if len(selected) >= limit:
             break
         pool = [x for x in ordered if mission_area(x) == area and admissible(x, repeat_source=False)]
         if pool:
             add(pool[0], f"mission_coverage:{area}")
 
-    # Research evidence target gets priority, again without repeating a source.
+    # Research evidence gets an explicit opportunity without source repetition.
     if len(selected) < limit:
         research_pool = [
             x for x in ordered
-            if content_type_key(x) in _RESEARCH_TYPES or x.get("research_signal")
-            if admissible(x, repeat_source=False)
+            if (content_type_key(x) in _RESEARCH_TYPES or x.get("research_signal"))
+            and admissible(x, repeat_source=False)
         ]
         if research_pool:
             add(research_pool[0], "research_evidence")
 
-    # Pass 2: fill with the strongest remaining distinct-source candidates.
+    # Pass 2: strongest remaining distinct-source candidates.
     for item in ordered:
         if len(selected) >= limit:
             break
-        if id(item) in {id(x) for x in selected}:
+        if id(item) in selected_ids:
             continue
         if admissible(item, repeat_source=False):
             add(item, "distinct_source_fill")
 
-    # Pass 3: adaptive backfill. A second item from a source is allowed only
-    # after the distinct-source pass cannot fill the requested window.
+    # Pass 3: adaptive backfill only after the distinct-source pass is exhausted.
     if len(selected) < limit and source_cap > 1:
-        selected_ids = {id(x) for x in selected}
         for item in ordered:
             if len(selected) >= limit:
                 break
@@ -214,7 +216,6 @@ def select_regular_portfolio(
             if admissible(item, repeat_source=True):
                 add(item, "adaptive_source_backfill")
 
-    # Hard invariant: the selector never exceeds the source ceiling or content cap.
     return selected[:limit]
 
 
@@ -222,8 +223,6 @@ def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: d
     """Raise AssertionError for structural portfolio violations in tests/CI."""
     contract = contract or load_editorial_contract()
     items = list(selected or [])
-    sources = {source_key(x) for x in items}
-    assert len(sources) <= max(1, contract["hard_max_same_source"] * max(1, len(items)))
     source_counts: dict[str, int] = {}
     area_counts: dict[str, int] = {}
     for item in items:
@@ -232,6 +231,9 @@ def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: d
         area_counts[area] = area_counts.get(area, 0) + 1
     assert max(source_counts.values(), default=0) <= contract["hard_max_same_source"]
     assert max(area_counts.values(), default=0) <= contract["max_same_mission_area"]
+    if len(items) >= contract["min_unique_sources"]:
+        assert len(source_counts) >= contract["min_unique_sources"]
+    assert sum(1 for item in items if not _is_community(item)) == len(items)
 
 
 __all__ = [

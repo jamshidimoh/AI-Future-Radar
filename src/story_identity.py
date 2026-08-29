@@ -42,6 +42,14 @@ _MATERIAL_UPDATE_TERMS = {
     "مقیاس", "خط", "زمان", "گزارش_فنی", "پس_مرگ", "دستکاری", "هماهنگی", "اعتبارنامه", "دسترسی",
     "آسیب_پذیری", "رفع", "تحقیق", "مستقل", "تأیید", "تایید", "شدت", "خسارت", "رفتار", "مکانیسم",
 }
+_PERSIAN_MATERIAL_MARKERS = {
+    "یافته‌ها": "یافته‌ها", "یافته ها": "یافته‌ها", "یافته‌های": "یافته‌ها",
+    "شواهد": "شواهد", "علت": "علت", "دامنه": "دامنه", "مقیاس": "مقیاس",
+    "دستکاری": "دستکاری", "هماهنگی": "هماهنگی", "اعتبارنامه": "اعتبارنامه",
+    "دسترسی": "دسترسی", "آسیب‌پذیری": "آسیب‌پذیری", "آسیب پذیری": "آسیب‌پذیری",
+    "رفع": "رفع", "تحقیق": "تحقیق", "مستقل": "مستقل", "تأیید": "تأیید", "تایید": "تایید",
+    "شدت": "شدت", "خسارت": "خسارت", "رفتار": "رفتار", "مکانیسم": "مکانیسم", "جزئیات": "جزئیات",
+}
 
 
 def _normalize(text: Any) -> str:
@@ -100,9 +108,17 @@ def _event_tokens(sig: dict[str, Any]) -> set[str]:
 def _material_update_tokens(sig: dict[str, Any]) -> set[str]:
     context = _context(sig)
     title_text = str(sig.get("title_text") or "")
-    normalized = _normalize(" ".join(sorted(context)) + " " + title_text)
+    raw = " ".join(sorted(context)) + " " + title_text
+    raw = raw.lower().replace("ي", "ی").replace("ك", "ک")
+    # Preserve semantic Persian markers before generic ZWNJ normalization/tokenization.
+    canonical_markers: set[str] = set()
+    for source, target in sorted(_PERSIAN_MATERIAL_MARKERS.items(), key=lambda x: len(x[0]), reverse=True):
+        if re.search(re.escape(source), raw):
+            canonical_markers.add(target)
+            raw = re.sub(re.escape(source), " ", raw)
+    normalized = _normalize(raw)
     tokens = set(re.findall(r"[a-zA-Z\u0600-\u06FF0-9_]+", normalized))
-    return tokens & _MATERIAL_UPDATE_TERMS
+    return (tokens & _MATERIAL_UPDATE_TERMS) | canonical_markers
 
 
 def _is_protected_leader_interview(item: Any) -> bool:

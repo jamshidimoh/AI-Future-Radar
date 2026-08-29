@@ -1,8 +1,9 @@
 """Production adapter: bounded global period ranking.
 
-The module owns the single final ranking calculation. Policy classifications
+The module owns the final ranking calculation while delegating normal portfolio
+construction to the unified editorial selection contract. Policy classifications
 (Tier-0/protected), model-release detection, and person detection remain
-independent metadata; they no longer receive additive score bonuses here.
+independent metadata; they do not receive additive score bonuses here.
 """
 from __future__ import annotations
 
@@ -13,6 +14,7 @@ from model_release_priority import model_release_bonus
 from publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
 from protected_story_identity import probable_same_story
 from src.priority_people import priority_people_features
+from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 REGULAR_SAME_STORY_THRESHOLD = 0.82
 EDITORIAL_WEIGHT = 0.75
@@ -32,12 +34,7 @@ def _base_editorial_score(item):
 
 
 def canonical_rank_score(item):
-    """Combine independent editorial and technology signals exactly once.
-
-    Editorial score remains the primary judgement layer. Signal score is an
-    independent technical/evidence signal. Policy bonuses are intentionally
-    excluded; policy controls routing/eligibility rather than value inflation.
-    """
+    """Combine independent editorial and technology signals exactly once."""
     editorial = _base_editorial_score(item)
     signal = float(item.get("signal_score", 0) or 0)
     return round(editorial * EDITORIAL_WEIGHT + signal * SIGNAL_WEIGHT, 2)
@@ -106,15 +103,7 @@ def _rotation_source_counts(history, rotation_days):
 
 
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
-    """Select normal stories with adaptive source diversity.
-
-    Historical source usage is a preference signal, not a hard exclusion.
-    Within the current run, the selector first prefers one item per distinct
-    source, then allows a second item up to the configured source ceiling only
-    when more posts are still needed. This prevents source concentration while
-    avoiding the failure mode where broadly-active sources all become
-    ineligible and the normal window collapses to one story.
-    """
+    """Apply the single normal-portfolio contract."""
     policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     try:
@@ -122,62 +111,30 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     except Exception:
         source_history = []
     recent_source_counts = _rotation_source_counts(source_history, rotation_days)
-    source_cap = max(1, int(max_per_source or 1))
-    type_cap = max(1, int(max_per_type or 1))
-    limit = max(0, int(max_posts or 0))
-    selected, selected_source_counts, selected_type_counts = [], {}, {}
-
-    ordered = sorted(
-        normal,
-        key=lambda item: (
-            recent_source_counts.get(_source_key(item), 0),
-            -_score(item),
-            -float(item.get("signal_score", 0) or 0),
-            str(item.get("published", "")),
-        ),
+    contract = load_editorial_contract()
+    limit = min(
+        max(0, int(max_posts or 0)),
+        max(0, int(contract["candidate_window"] or max_posts or 0)),
     )
-
-    def can_take(item, allow_repeat_source):
-        source = _source_key(item)
-        content_type = _content_type_key(item)
-        if selected_type_counts.get(content_type, 0) >= type_cap:
-            return False
-        current_count = selected_source_counts.get(source, 0)
-        if allow_repeat_source:
-            return current_count < source_cap
-        return current_count == 0
-
-    # Pass 1: maximize source diversity within this execution.
-    for item in ordered:
-        if not can_take(item, allow_repeat_source=False):
-            continue
-        selected.append(item)
-        source, content_type = _source_key(item), _content_type_key(item)
-        selected_source_counts[source] = selected_source_counts.get(source, 0) + 1
-        selected_type_counts[content_type] = selected_type_counts.get(content_type, 0) + 1
-        if len(selected) >= limit:
-            break
-
-    # Pass 2: fill remaining capacity from the best remaining candidates,
-    # respecting the configured adaptive ceiling per source and type.
-    if len(selected) < limit and source_cap > 1:
-        selected_ids = {id(item) for item in selected}
-        for item in ordered:
-            if id(item) in selected_ids:
-                continue
-            if not can_take(item, allow_repeat_source=True):
-                continue
-            selected.append(item)
-            source, content_type = _source_key(item), _content_type_key(item)
-            selected_source_counts[source] = selected_source_counts.get(source, 0) + 1
-            selected_type_counts[content_type] = selected_type_counts.get(content_type, 0) + 1
-            if len(selected) >= limit:
-                break
-
+    selected = select_regular_portfolio(
+        normal,
+        max_posts=limit,
+        max_per_source=max_per_source,
+        max_per_type=max_per_type,
+        recent_source_counts=recent_source_counts,
+        contract=contract,
+    )
+    source_counts = {}
+    for item in selected:
+        key = _source_key(item)
+        source_counts[key] = source_counts.get(key, 0) + 1
     print(
         f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} "
-        f"selected={len(selected)} source_counts={selected_source_counts} "
-        f"recent_source_counts={recent_source_counts} adaptive=true source_cap={source_cap}",
+        f"selected={len(selected)} source_counts={source_counts} "
+        f"recent_source_counts={recent_source_counts} adaptive=true "
+        f"preferred_source_cap={contract['preferred_max_same_source']} "
+        f"hard_source_cap={contract['hard_max_same_source']} "
+        f"candidate_window={contract['candidate_window']}",
         flush=True,
     )
     return selected
@@ -262,7 +219,9 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     priority = _priority_story_diversified(priority_candidates)
     priority_ids = {id(x) for x in priority}
     normal = [x for x in normal if id(x) not in priority_ids]
-    normal_window = _diversify_normal_candidates(normal, max(4, min(len(normal), max_posts)), max_per_source, max_per_type, policy)
+    contract = load_editorial_contract()
+    candidate_window = max(4, min(len(normal), int(contract["candidate_window"] or 6)))
+    normal_window = _diversify_normal_candidates(normal, candidate_window, max_per_source, max_per_type, policy)
     ranked = priority + normal_window
     normal_rank = tier0_rank = 0
     for global_rank, item in enumerate(ranked, 1):
@@ -279,7 +238,7 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
             item["tier0_rank"] = None
     print("[Global Final Ranking] " + ", ".join(f"rank={x['period_rank']} normal_rank={x.get('normal_period_rank')} tier0_rank={x.get('tier0_rank')} score={x['final_editorial_score']} priority_person={x.get('priority_person_interview',False)} model_release={x.get('model_release_priority',False)} title={str(x.get('title',''))[:90]}" for x in ranked), flush=True)
     print(f"[Tier0 Interview Priority] retained={len(priority)} quota_exempt=true unique_people=true", flush=True)
-    print(f"[Normal Ranking Window] retained={len(normal_window)} normal_rank=1..{len(normal_window)}", flush=True)
+    print(f"[Normal Ranking Window] retained={len(normal_window)} normal_candidate_window={candidate_window} publication_capacity={contract['max_posts']}", flush=True)
     print(f"[Ranking Timing] total elapsed={time.monotonic()-started:.3f}s", flush=True)
     return ranked
 

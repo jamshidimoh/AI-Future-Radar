@@ -18,8 +18,9 @@ editorial:
 # Unified production selection contract:
 # - max_posts=3 is the normal publication capacity; candidate_window=6 is the
 #   pre-QA candidate pool used for replacement-aware publication.
-# - max_items_per_source is a hard ceiling. preferred_max_same_source is the
-#   target for the first selection pass.
+# - max_items_per_source=2 is the adaptive ceiling and hard ceiling. One item
+#   per source is preferred first; a second item is allowed only during adaptive
+#   backfill when capacity remains.
 # - Within a run, distinct sources are preferred first; source repetition is
 #   allowed only during adaptive backfill when capacity remains.
 # - Historical source usage is a bounded preference signal, never a hard exclusion.

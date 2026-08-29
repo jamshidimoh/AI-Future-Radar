@@ -1,7 +1,7 @@
 from period_ranked_pipeline import _eligibility_split
 
 
-def test_leader_activity_stays_in_normal_pool():
+def test_leader_activity_enters_protected_pool():
     item = {
         "title": "Andrew Ng announces a new AI initiative",
         "content_type": "official",
@@ -14,10 +14,12 @@ def test_leader_activity_stays_in_normal_pool():
         "leader_priority": 10,
     }
     protected, regular = _eligibility_split([item], max_protected=2)
-    assert protected == []
-    assert len(regular) == 1
-    assert regular[0]["leader_activity_signal"] is True
-    assert "protected_content" not in regular[0]
+    assert len(protected) == 1
+    assert regular == []
+    assert protected[0]["leader_activity_signal"] is True
+    assert protected[0]["protected_content"] is True
+    assert protected[0]["protected_reason"] == "leader_activity"
+    assert protected[0]["_rank_is_tier0"] is True
 
 
 def test_substantive_leader_interview_remains_protected():

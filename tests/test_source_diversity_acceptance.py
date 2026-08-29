@@ -17,7 +17,7 @@ def _item(title, source, score):
 
 def test_source_cap_is_enforced():
     items = [
-        *[_item(f"Reddit {i}", "Reddit", 100 - i) for i in range(5)],
+        *[_item(f"Community {i}", "Reddit", 100 - i) for i in range(5)],
         *[_item(f"Research {i}", "Research Institute", 80 - i) for i in range(3)],
         *[_item(f"University {i}", "University Lab", 70 - i) for i in range(3)],
     ]
@@ -31,13 +31,14 @@ def test_source_cap_is_enforced():
     for item in selected:
         counts[item["source"]] = counts.get(item["source"], 0) + 1
     assert len(selected) == 4
+    assert "Reddit" not in counts
     assert all(value <= 2 for value in counts.values())
 
 
-def test_recent_source_is_preferred_after_fresh_sources_but_can_backfill_when_needed():
+def test_recent_community_source_is_excluded_while_fresh_authoritative_sources_backfill():
     items = [
-        _item("Reddit recent 1", "Reddit", 100),
-        _item("Reddit recent 2", "Reddit", 99),
+        _item("Community recent 1", "Reddit", 100),
+        _item("Community recent 2", "Reddit", 99),
         _item("Research fresh 1", "Research Institute", 90),
         _item("Research fresh 2", "Research Institute", 89),
         _item("University fresh 1", "University Lab", 88),
@@ -57,6 +58,6 @@ def test_recent_source_is_preferred_after_fresh_sources_but_can_backfill_when_ne
     sources = [item["source"] for item in selected]
     assert len(selected) == 4
     assert sources[:2] == ["Research Institute", "University Lab"]
-    assert sources.count("Reddit") == 1
+    assert "Reddit" not in sources
     assert sources.count("Research Institute") == 2
-    assert sources.count("University Lab") == 1
+    assert sources.count("University Lab") == 2

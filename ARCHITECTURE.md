@@ -2,7 +2,7 @@
 
 ## Purpose
 
-AI Future Radar is a deterministic editorial pipeline that discovers technology signals, removes duplicates, scores stories, selects a small editorial set, uses an LLM only for transformation, and delivers validated content to Telegram.
+AI Future Radar is a deterministic editorial pipeline that discovers technology signals, removes duplicates, evaluates relevance and evidence, constructs a mission-aware editorial portfolio, uses an LLM only for transformation and bounded quality repair, and delivers validated content to Telegram.
 
 The current production cadence is one news publication every 4 hours and one educational publication every 12 hours. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
 
@@ -16,17 +16,40 @@ Discovery
   -> AI relevance gate
   -> semantic story clustering / canonical story
   -> editorial enrichment and scoring
-  -> constrained selection
-  -> LLM transformation (draft + editorial pass)
-  -> language / schema / publication gates
+  -> Unified Editorial Contract
+       -> protected-stream eligibility
+       -> mission coverage opportunities
+       -> authoritative/community boundary
+       -> adaptive source diversity
+       -> content-type and mission-area caps
+       -> replacement-aware candidate window
+  -> LLM transformation
+  -> language / schema / editorial-quality gates
+  -> ranked replacement candidates when a selected item fails QA
   -> source-image validation
+  -> Publication Contract
   -> Telegram delivery
   -> persistent seen/history/cadence state
 ```
 
-Cross-cutting production invariants are declared in `config/production_contract.yaml`. The mission taxonomy and portfolio targets remain in `config/mission_policy.yaml`; the contract test suite prevents silent drift between those files and the executable quality policy.
+Cross-cutting production invariants are declared in `config/production_contract.yaml`. Mission taxonomy and targets remain in `config/mission_policy.yaml`. Execution mechanics remain in `config/selection_policy.yaml`. `src/unified_editorial_selection.py` is the executable bridge: it resolves those layers into one deterministic portfolio contract.
 
-Collectors are not responsible for editorial selection. LLMs are not responsible for deciding whether an item belongs to the monitored domain. The editorial module is the scoring authority; production orchestration adds only explicit runtime contracts such as cadence, protected-source handling, language gates, and delivery safety.
+Collectors are not responsible for editorial selection. LLMs are not the sole authority for monitored-domain eligibility. The deterministic relevance, provenance, mission, diversity, quality and publication contracts remain authoritative; LLMs transform source material and may perform one bounded editorial repair.
+
+## Unified editorial selection
+
+The selector has four explicit objectives, in order:
+
+1. Protect eligible Tier-0/leader material without creating a publication bypass.
+2. Give eligible mission areas and research evidence explicit coverage opportunities.
+3. Prefer distinct sources in the current run while treating historical source usage as a preference signal rather than a hard exclusion.
+4. Fill the remaining capacity by calibrated editorial score while respecting hard source, content-type, mission-area and community limits.
+
+The normal publication capacity is `max_posts=4`. The selector may construct a six-item candidate window (`candidate_window=6`) so that a candidate rejected during transformation or editorial QA can be replaced by the next ranked eligible candidate. Candidates 5–6 are replacement candidates; they do not increase the publication quota.
+
+`max_items_per_source=2` is a hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. This distinction is deliberate: it prevents source concentration without collapsing the run when only a small set of sources is available.
+
+Mission targets are opportunities, not fabricated quotas. When an eligible candidate for convergence, mind/cognition, future/governance or research exists, the selector gives it an explicit opportunity; when no eligible candidate exists, the system must continue without inventing coverage.
 
 ## Discovery source boundary
 
@@ -62,17 +85,17 @@ The radar has two distinct protected classes:
 - People: high-priority leaders such as Andrew Ng, Sam Altman, Demis Hassabis, Elon Musk, Jensen Huang and other configured leaders.
 - Protected sources: authoritative recurring sources such as MIT CSAIL — Building 32.
 
-Protected leader slots enforce diversity. The same person cannot occupy multiple protected slots in one run. Protected sources are likewise limited by source identity and treated as priority candidates, not as an AI-relevance or publication-quality bypass. All protected-source candidates still pass normal relevance, deduplication, language, editorial-quality and delivery gates.
+Protected leader slots enforce diversity. The same person cannot occupy multiple protected slots in one run. Protected sources are priority candidates, not AI-relevance or publication-quality bypasses. They still cross normal deduplication, language, editorial-quality and delivery gates.
 
-The protected-source contract is intentionally declarative in this stage: it establishes identity, per-run cap, and selection semantics without introducing a second publication path. This keeps the production path single-pass while making the invariant testable.
-
-Andrew Ng is currently a Featured Tier-1 leader with priority 11. MIT CSAIL — Building 32 is a protected source with the same high priority.
+Protected classification and publication classification must remain aligned: a candidate marked Tier-0 by ranking must carry the same semantic status into the Publication Contract. A leader activity item is not automatically an interview; the interview/activity reason must remain explicit.
 
 ## Provider architecture
 
 The LLM router is provider-agnostic. A provider that reports quota exhaustion, payment exhaustion, or authentication failure is disabled for the remainder of the current run. This prevents repeated failed calls for every selected story.
 
 If all providers fail, the item is not published. Invalid LLM JSON and insufficient Persian-language output never reach Telegram.
+
+A failed transformation or editorial-quality check does not automatically fail the whole run. The candidate is blocked and the next ranked replacement candidate may be attempted, subject to the same publication contract. This is bounded replacement, not quality relaxation.
 
 ## Telegram delivery contract
 
@@ -94,9 +117,9 @@ News and education renderers use directional isolation around visual rows and is
 
 ## State and concurrency
 
-Runtime state includes seen URLs/signatures, Telegram feedback, educational progress and publication cadence. State is committed back to `main` only after a successful production run.
+Runtime state includes seen URLs/signatures, Telegram feedback, educational progress and publication cadence. State is currently persisted in Git after a production run. The workflow rebases the state commit against the latest `main` before pushing and retries the push.
 
-Because production state is persisted in Git, the workflow rebases the state commit against the latest `main` before pushing and retries the push. This prevents a successful bot run from being reported as failed solely because another commit reached `main` during execution.
+This Git-backed state is an explicit current-stage trade-off. The code/state separation should be revisited before treating the Radar as a high-concurrency multi-worker service.
 
 ## Observability
 
@@ -108,19 +131,22 @@ Every production run reports:
 - leader/protected-source discovery and diversity decisions
 - link and semantic deduplication
 - AI relevance gate
+- unified mission/source selection decisions and candidate-window size
 - provider success/fallback behavior
-- language/publication gates
+- language/editorial-quality/replacement decisions
 - Telegram message IDs and delivery mode
 - state persistence outcome
 
+Ranking audit artifacts should permit reconstruction of why each published or blocked candidate crossed each major boundary.
+
 ## Regression strategy
 
-The regression suite protects the production contracts rather than only unit-level helpers. It covers cadence, editorial selection, leader priority, MIT/Building 32 priority, canonical deduplication, YouTube resolution/fallback, image validation/delivery, Telegram formatting, educational RTL, language gates, source exclusion, and configuration invariants.
+The regression suite protects production contracts rather than only unit-level helpers. It covers cadence, editorial selection, leader priority, MIT/Building 32 priority, canonical deduplication, YouTube resolution/fallback, image validation/delivery, Telegram formatting, educational RTL, language gates, source exclusion, source diversity, mission coverage and configuration invariants.
 
-`tests/test_production_contract.py` additionally checks that the protected-source declaration, mission targets, quality thresholds, source boundary and this architecture document remain synchronized. A contract drift is a CI failure, not a silent editorial change.
+`tests/test_production_contract.py` checks that the protected-source declaration, mission targets, selection mechanics, quality thresholds, source boundary and architecture document remain synchronized. `tests/test_unified_editorial_selection.py` tests behavior, including distinct-source preference, adaptive backfill, mission coverage opportunities, community exclusion and hard caps.
 
-Any change to one of these contracts must update the corresponding regression test before production is considered ready.
+A contract drift is a CI failure, not a silent editorial change. Any change to a production contract must update the corresponding regression test before production is considered ready.
 
 ## Design boundary
 
-The pipeline remains batch-oriented. It does not require an agent loop, autonomous tool planning, or a permanent model server. Future extensions should be added behind discovery, editorial, transformation, delivery and state boundaries rather than inserting provider-specific logic throughout `main.py`.
+The pipeline remains batch-oriented. It does not require an agent loop, autonomous tool planning, or a permanent model server. Future extensions should be added behind discovery, editorial selection, transformation, delivery and state boundaries rather than inserting provider-specific logic throughout `main.py`.

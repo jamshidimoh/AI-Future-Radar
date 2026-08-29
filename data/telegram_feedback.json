@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787968630,
+  "updated_at": 1787969659,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5217,6 +5217,60 @@
       "why_it_matters": "این پژوهش نشان می‌دهد که اتوماسیون در فرآیند ارزیابی ایمنی می‌تواند به‌طور قابل‌Attentionی ریسک شکست‌های همسویی را کاهش دهد. با تکیه بر پژوهشگران خودکار، توسعه‌دهندگان می‌توانند با سرعت و دقت بیشتری نقاط ضعف مدل‌ها را شناسایی کنند. این رویکرد می‌تواند به‌عنوان یک لایه دفاعی موثر در برابر رفتارهای ناخواسته مدل‌های پیشرفته عمل کند.",
       "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQMm12QTFLek9sVlhENXNNaFlpUHlnbEl5dDRNZTBCbG1iSUtndjBhaUQ3UGl6N2VOWFppR19kbGhHWjlGaWRnby1BcHNlM0lNLUFaZXVrWV9MTFFOcjg0dmpFcWc0cHkyUTd1d2Z3bjNjaU9FeUQzUnpKbFloc1lRVDRPNjBHQ2JRVDh6cg?oc=5",
       "posted_at": 1787968630
+    },
+    "-1004482051328:1353": {
+      "chat_id": -1004482051328,
+      "message_id": 1353,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "اتوماسیون وظایف تکراری با قابلیت Scheduled Tasks در ChatGPT Work",
+      "summary": "قابلیت Scheduled Tasks در ChatGPT Work به کاربران امکان می‌دهد وظایف تکراری را بر اساس برنامه زمانی مشخص اجرا کنند. این ویژگی با یکپارچه‌سازی Gmail و Google Calendar، تهیه خلاصه جلسات، بررسی نتایج و زمان‌بندی اجرای هفتگی وظایف را تسهیل می‌کند. کاربران می‌توانند از طریق تب Scheduled، نتایج را مرور کرده، وظایف را تغییر یا متوقف کنند. همچنین استفاده از saved skill برای حفظ ثبات فرمت خروجی‌ها در طول زمان توصیه شده است.",
+      "why_it_matters": "این قابلیت با خودکارسازی کارهای اداری تکراری مانند تهیه گزارش‌های جلسه، بهره‌وری کاربران سازمانی را افزایش می‌دهد. یکپارچگی با سرویس‌های Google نشان‌دهنده حرکت به سمت اکوسیستم‌های متصل‌تر در ابزارهای هوش مصنوعی است. امکان مدیریت و توقف وظایف، کنترل بیشتری به کاربران می‌دهد و خطاهای انسانی را در فرآیندهای روتین کاهش می‌دهد.",
+      "link": "https://www.youtube.com/watch?v=urXc4xxixVU",
+      "posted_at": 1787969656
+    },
+    "-1004482051328:1354": {
+      "chat_id": -1004482051328,
+      "message_id": 1354,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "ChatGPT Work: کنترل اپلیکیشن‌های دسکتاپ و مرورگر با قابلیت Computer",
+      "summary": "قابلیت Computer در ChatGPT Work به کاربران اجازه می‌دهد وظایفی را در اپلیکیشن‌های دسکتاپ و مرورگر انجام دهند. این قابلیت امکان پخش موسیقی در Spotify و ترکیب Chrome با Google Calendar را برای تنظیم درخواست مرخصی و رویداد out-of-office فراهم می‌کند. کاربران می‌توانند با استفاده از Appshots، زمینه صفحه را به اشتراک بگذارند، دسترسی‌ها را مدیریت کنند و پیش از ذخیره یا ارسال نهایی، پیش‌نویس‌ها را بررسی کنند. این آموزش بر پایه اپلیکیشن دسکتاپ ChatGPT ارائه شده است.",
+      "why_it_matters": "این قابلیت نشان می‌دهد که هوش مصنوعی می‌تواند فراتر از تعامل متنی، کنترل عملیاتی مستقیم بر نرم‌افزارهای رایج کاربری داشته باشد. امکان بررسی پیش‌نویس‌ها قبل از اجرا، لایه‌ای از ایمنی و کنترل انسانی را در اتوماسیون وظایف اداری و شخصی ایجاد می‌کند. این رویکرد می‌تواند کارایی کاربران در مدیریت زمان و ابزارهای دیجیتال را با کاهش نیاز به جابجایی دستی بین برنامه‌ها افزایش دهد.",
+      "link": "https://www.youtube.com/watch?v=981SivztzOc",
+      "posted_at": 1787969658
+    },
+    "-1004482051328:1355": {
+      "chat_id": -1004482051328,
+      "message_id": 1355,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "این محتوا یک مصاحبه در دسته‌بندی AI است که Dylan Patel را به عنوان سخنران اصلی معرفی می‌کند",
+      "summary": "این محتوا یک مصاحبه در دسته‌بندی AI است که Dylan Patel را به عنوان سخنران اصلی معرفی می‌کند. منبع اصلی، یک اپیزود کامل در پلتفرم YouTube است. هیچ جزئیات خاصی درباره یافته‌ها، روش‌ها یا اعداد در متن منبع ارائه نشده است.",
+      "why_it_matters": "این مصاحبه به عنوان یک منبع سطح ۱ (Tier 1) طبقه‌بندی شده است که نشان‌دهنده اعتبار بالای محتوای آن است. دسترسی به اپیزود کامل در YouTube امکان بررسی دقیق‌تر دیدگاه‌های Dylan Patel را فراهم می‌کند.",
+      "link": "https://www.youtube.com/watch?v=RV6xtwEI3C4",
+      "posted_at": 1787969659
     }
   }
 }

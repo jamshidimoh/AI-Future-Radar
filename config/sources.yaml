@@ -57,6 +57,7 @@ action_policy:
     - {name: "Nature", match: ["Nature", "nature.com"], priority: 88, reason: "scientific research"}
     - {name: "Quanta Magazine", match: ["Quanta Magazine", "quantamagazine.org"], priority: 82, reason: "high-quality science reporting"}
     - {name: "CMU AI", match: ["Carnegie Mellon", "CMU", "cs.cmu.edu"], priority: 82, reason: "academic AI and robotics research"}
+    - {name: "David Senra", match: ["David Senra", "davidsenra.com", "feeds.megaphone.fm"], priority: 92, reason: "direct long-form founder interviews and AI leadership conversations"}
 
 rss_sources:
   - {name: "MIT Technology Review", url: "https://www.technologyreview.com/feed/", tier: 2, type: "specialist_media", content_type: "news", official: false}
@@ -71,6 +72,7 @@ rss_sources:
   - {name: "Google Research Blog", url: "https://research.google/blog/rss/", tier: 1, type: "research_lab", content_type: "research", official: true}
   - {name: "BAIR Blog", url: "https://bair.berkeley.edu/blog/feed.xml", tier: 1, type: "university_lab", content_type: "research", official: true}
   - {name: "Hugging Face Blog", url: "https://huggingface.co/blog/feed.xml", tier: 1, type: "ai_platform", content_type: "research", official: true}
+  - {name: "David Senra", url: "https://feeds.megaphone.fm/david-senra", tier: 1, type: "podcast", content_type: "interview", official: true}
 
 youtube_channels:
   - {name: "Lex Fridman Podcast", channel_id: "UCSHZKyawb77ixDdsGog4iWA", category: ai, tier: 1, type: "podcast", content_type: "podcast", official: true}
@@ -99,6 +101,8 @@ google_news_queries:
   - {query: "Google DeepMind AI research interview Demis Hassabis", category: ai, tier: 1, content_type: interview}
   - {query: "NVIDIA AI agents reasoning robotics Jensen Huang interview", category: ai, tier: 1, content_type: interview}
   - {query: "Sam Altman AI interview AGI", category: ai, tier: 1, content_type: interview}
+  - {query: "Sam Altman David Senra AGI", watch_person: "Sam Altman", category: ai, tier: 1, content_type: interview, preferred_source: "David Senra"}
+  - {query: "Sam Altman AI interview future AGI OpenAI", watch_person: "Sam Altman", category: ai, tier: 1, content_type: interview}
   - {query: "Dario Amodei AI interview", category: ai, tier: 1, content_type: interview}
   - {query: "Geoffrey Hinton Yann LeCun AI interview", category: ai, tier: 1, content_type: interview}
   - {query: "Stanford HAI artificial intelligence research", category: ai, tier: 1, content_type: research}

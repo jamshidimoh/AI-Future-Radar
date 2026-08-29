@@ -31,12 +31,14 @@ def test_direct_ai_evidence_stays_relevant_and_gets_confidence():
     assert result[0]["ai_relevance_confidence"] >= 0.9
 
 
-def test_curated_provenance_does_not_create_unbounded_relevance():
+def test_curated_provenance_remains_retained_but_low_confidence():
     result = filter_ai_relevance(
-        [_item("New approach to urban irrigation discussed by Stanford scientists", "Soil moisture control and irrigation scheduling for city gardens.", source_type="news_aggregator", preferred_source="Stanford HAI", curated_discovery=True)],
+        [_item("New approach to scientific discovery discussed by Stanford scientists", "Soil moisture control and irrigation scheduling for city gardens.", source_type="news_aggregator", preferred_source="Stanford HAI", curated_discovery=True)],
         ["AI"],
     )
-    assert result == []
+    assert len(result) == 1
+    assert result[0]["ai_relevance_quality"] == "bridge"
+    assert result[0]["ai_relevance_confidence"] < 0.75
 
 
 def test_curated_science_discovery_with_real_ai_method_evidence_is_retained():

@@ -5,6 +5,7 @@
 
 mission:
   max_posts: 4
+  operational_publication_capacity: 3
   min_unique_sources: 3
   max_same_source: 1
   max_same_mission_area: 2

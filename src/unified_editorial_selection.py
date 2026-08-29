@@ -11,21 +11,12 @@ MISSION_PATH = ROOT / "config" / "mission_policy.yaml"
 SELECTION_PATH = ROOT / "config" / "selection_policy.yaml"
 
 _AREA_MAP = {
-    "ai": "ai_core",
-    "ai_core": "ai_core",
-    "quantum": "convergence",
-    "genetics": "convergence",
-    "robotics": "convergence",
-    "humanoid": "convergence",
-    "bio": "convergence",
-    "bci": "convergence",
-    "future": "future_governance",
-    "future_governance": "future_governance",
-    "mind": "mind_cognition",
-    "mind_cognition": "mind_cognition",
-    "convergence": "convergence",
+    "ai": "ai_core", "ai_core": "ai_core", "quantum": "convergence",
+    "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence",
+    "bio": "convergence", "bci": "convergence", "future": "future_governance",
+    "future_governance": "future_governance", "mind": "mind_cognition",
+    "mind_cognition": "mind_cognition", "convergence": "convergence",
 }
-
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
 _COMMUNITY_MARKERS = ("reddit", "community", "aggregator")
 
@@ -76,6 +67,27 @@ def mission_area(item: dict[str, Any]) -> str:
     return "ai_core"
 
 
+def _mission_text(item: dict[str, Any]) -> str:
+    return " ".join(str(item.get(k) or "") for k in (
+        "title", "summary", "description", "category", "mission_area", "content_type", "tags", "keywords"
+    )).casefold()
+
+
+def is_mission_relevant(item: dict[str, Any]) -> bool:
+    """Hard relevance gate: generic stories must not become ai_core by fallback."""
+    explicit = str(item.get("mission_area") or "").strip().casefold()
+    if explicit in _AREA_MAP.values():
+        return True
+    keyword_map = _load_yaml(MISSION_PATH).get("areas", {})
+    text = _mission_text(item)
+    for area, cfg in keyword_map.items():
+        for keyword in cfg.get("keywords", []) or []:
+            if str(keyword).casefold() in text:
+                item["mission_area"] = area
+                return True
+    return item.get("_ai_link") is True or item.get("ai_relevance") is True
+
+
 def _source_tier(item: dict[str, Any]) -> int | None:
     raw = item.get("source_tier", item.get("tier"))
     if raw in (None, ""):
@@ -87,10 +99,7 @@ def _source_tier(item: dict[str, Any]) -> int | None:
 
 
 def _is_community(item: dict[str, Any]) -> bool:
-    value = " ".join(
-        str(item.get(key) or "").strip().casefold()
-        for key in ("source", "source_name", "source_type", "source_domain")
-    )
+    value = " ".join(str(item.get(key) or "").strip().casefold() for key in ("source", "source_name", "source_type", "source_domain"))
     if any(marker in value for marker in _COMMUNITY_MARKERS):
         return True
     tier = _source_tier(item)
@@ -110,128 +119,84 @@ def candidate_score(item: dict[str, Any]) -> float:
 
 def _rank_key(item: dict[str, Any], recent_source_counts: dict[str, int]) -> tuple:
     source = source_key(item)
-    recent_penalty = min(3, max(0, int(recent_source_counts.get(source, 0) or 0))) * 2.0
-    effective_score = candidate_score(item) - recent_penalty
-    return (
-        -effective_score,
-        -float(item.get("signal_score", 0) or 0),
-        -float(item.get("mission_score", 0) or 0),
-        recent_source_counts.get(source, 0),
-        str(item.get("published", "")),
-    )
+    penalty = min(3, max(0, int(recent_source_counts.get(source, 0) or 0))) * 2.0
+    return (-candidate_score(item) + penalty, -float(item.get("signal_score", 0) or 0), -float(item.get("mission_score", 0) or 0), recent_source_counts.get(source, 0), str(item.get("published", "")))
 
 
-def select_regular_portfolio(
-    candidates: Iterable[dict[str, Any]],
-    *,
-    max_posts: int,
-    max_per_source: int,
-    max_per_type: int,
-    recent_source_counts: dict[str, int] | None = None,
-    contract: dict[str, Any] | None = None,
-    mission_aware: bool = True,
-) -> list[dict[str, Any]]:
-    """Select a deterministic portfolio; optionally apply mission coverage before score fill."""
+def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True) -> list[dict[str, Any]]:
     contract = contract or load_editorial_contract()
     limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
     type_cap = max(1, int(max_per_type or 1))
     recent = recent_source_counts or {}
-
+    raw_candidates = list(candidates or [])
     eligible = []
-    for raw in candidates or []:
+    rejected_relevance = 0
+    for raw in raw_candidates:
         item = dict(raw)
         if _is_community(item) and contract["community_max"] <= 0:
             continue
+        if not is_mission_relevant(item):
+            rejected_relevance += 1
+            continue
         item["mission_area"] = mission_area(item)
         eligible.append(item)
+    print(f"[Hard Relevance Gate] input={len(raw_candidates)} rejected={rejected_relevance} retained={len(eligible)}", flush=True)
     ordered = sorted(eligible, key=lambda x: _rank_key(x, recent))
-
     selected: list[dict[str, Any]] = []
     selected_ids: set[int] = set()
     source_counts: dict[str, int] = {}
     type_counts: dict[str, int] = {}
 
     def admissible(item: dict[str, Any], *, repeat_source: bool) -> bool:
-        source = source_key(item)
-        ctype = content_type_key(item)
-        if type_counts.get(ctype, 0) >= type_cap:
+        source, ctype = source_key(item), content_type_key(item)
+        if type_counts.get(ctype, 0) >= type_cap or source_counts.get(source, 0) >= source_cap:
             return False
-        current_source = source_counts.get(source, 0)
-        if repeat_source:
-            if current_source >= source_cap:
-                return False
-        elif current_source:
+        if not repeat_source and source_counts.get(source, 0):
             return False
         return True
 
     def add(item: dict[str, Any], reason: str) -> None:
-        source, ctype = source_key(item), content_type_key(item)
         selected.append(item)
         selected_ids.add(id(item))
+        source = source_key(item); ctype = content_type_key(item)
         source_counts[source] = source_counts.get(source, 0) + 1
         type_counts[ctype] = type_counts.get(ctype, 0) + 1
         item["mission_selection_reason"] = reason
 
     if mission_aware:
         for area in ("convergence", "mind_cognition", "future_governance"):
-            if len(selected) >= limit:
-                break
+            if len(selected) >= limit: break
             pool = [x for x in ordered if mission_area(x) == area and admissible(x, repeat_source=False)]
-            if pool:
-                add(pool[0], f"mission_coverage:{area}")
-
+            if pool: add(pool[0], f"mission_coverage:{area}")
         if len(selected) < limit:
-            research_pool = [
-                x for x in ordered
-                if (content_type_key(x) in _RESEARCH_TYPES or x.get("research_signal"))
-                and admissible(x, repeat_source=False)
-            ]
-            if research_pool:
-                add(research_pool[0], "research_evidence")
+            research_pool = [x for x in ordered if (content_type_key(x) in _RESEARCH_TYPES or x.get("research_signal")) and admissible(x, repeat_source=False)]
+            if research_pool: add(research_pool[0], "research_evidence")
 
     for item in ordered:
-        if len(selected) >= limit:
-            break
-        if id(item) in selected_ids:
-            continue
-        if admissible(item, repeat_source=False):
-            add(item, "distinct_source_fill")
-
+        if len(selected) >= limit: break
+        if id(item) in selected_ids: continue
+        if admissible(item, repeat_source=False): add(item, "distinct_source_fill")
     if len(selected) < limit and source_cap > 1:
         for item in ordered:
-            if len(selected) >= limit:
-                break
-            if id(item) in selected_ids:
-                continue
-            if admissible(item, repeat_source=True):
-                add(item, "adaptive_source_backfill")
-
+            if len(selected) >= limit: break
+            if id(item) in selected_ids: continue
+            if admissible(item, repeat_source=True): add(item, "adaptive_source_backfill")
     return selected[:limit]
 
 
 def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: dict[str, Any] | None = None) -> None:
     contract = contract or load_editorial_contract()
     items = list(selected or [])
-    source_counts: dict[str, int] = {}
-    area_counts: dict[str, int] = {}
+    source_counts: dict[str, int] = {}; area_counts: dict[str, int] = {}
     for item in items:
         source_counts[source_key(item)] = source_counts.get(source_key(item), 0) + 1
-        area = mission_area(item)
-        area_counts[area] = area_counts.get(area, 0) + 1
+        area = mission_area(item); area_counts[area] = area_counts.get(area, 0) + 1
     assert max(source_counts.values(), default=0) <= contract["hard_max_same_source"]
     assert max(area_counts.values(), default=0) <= contract["max_same_mission_area"]
-    if len(items) >= contract["min_unique_sources"]:
-        assert len(source_counts) >= contract["min_unique_sources"]
+    if len(items) >= contract["min_unique_sources"]: assert len(source_counts) >= contract["min_unique_sources"]
     assert sum(1 for item in items if not _is_community(item)) == len(items)
+    assert all(is_mission_relevant(item) for item in items)
 
 
-__all__ = [
-    "assert_portfolio_contract",
-    "candidate_score",
-    "content_type_key",
-    "load_editorial_contract",
-    "mission_area",
-    "select_regular_portfolio",
-    "source_key",
-]
+__all__ = ["assert_portfolio_contract", "candidate_score", "content_type_key", "is_mission_relevant", "load_editorial_contract", "mission_area", "select_regular_portfolio", "source_key"]

@@ -45,7 +45,10 @@ def _has_explicit_interview_evidence(item): return has_interview_evidence(item)
 def _direct_interview_signal(item): return has_interview_evidence(item)
 
 def _leader_activity_signal(item):
-    ctype = str(item.get("content_type") or "").lower().strip(); text = _text(item)
+    ctype = str(item.get("content_type") or "").lower().strip()
+    if ctype == "interview":
+        return False
+    text = _text(item)
     activity_terms = ("launch", "launched", "release", "released", "unveil", "introduced", "product", "model", "platform", "startup", "company", "fund", "investment", "acquisition", "partnership", "appoint", "appointed", "research project", "initiative", "new course", "course", "paper", "project", "announcement", "funding", "raises", "raised", "joins", "founded", "founder", "ceo")
     return ctype in {"product_news", "official"} or bool(item.get("leader_activity_signal")) or any(term in text for term in activity_terms)
 

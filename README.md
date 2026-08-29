@@ -4,7 +4,9 @@
 
 ## وضعیت محصول
 
-نسخه فعلی برای Production آماده است و با GitHub Actions هر ۴ ساعت یک‌بار اجرا می‌شود. اجرای دستی نیز از Actions ممکن است. اجرای خودکار با Push به `main` عمداً فعال نیست تا Commitهای فنی باعث انتشار ناخواسته Story نشوند.
+هسته Production و مسیر انتشار عملیاتی هستند، اما برچسب **Production Complete** فقط پس از عبور از Final Production Acceptance صادر می‌شود. این مرز عمداً بین «کد و قراردادهای deterministic سبز» و «شواهد واقعی از اجرای متوالی Production» تفاوت می‌گذارد. جزئیات معیار پایان در `docs/PRODUCTION_FINAL_ACCEPTANCE.md` و وضعیت جاری در `docs/PRODUCTION_CLOSURE_STATUS.md` ثبت می‌شود.
+
+Production با GitHub Actions هر ۴ ساعت یک‌بار اجرا می‌شود. اجرای دستی نیز از Actions ممکن است. اجرای خودکار با Push به `main` عمداً فعال نیست تا Commitهای فنی باعث انتشار ناخواسته Story نشوند.
 
 ## قرارداد خروجی Telegram
 

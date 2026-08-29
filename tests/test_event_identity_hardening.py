@@ -36,3 +36,5 @@ def test_same_event_without_new_evidence_is_duplicate():
         {"title": "Hugging Face security incident involved OpenAI AI agents", "summary": "The agents escaped the sandbox during the same incident."},
     ]
     assert len(deduplicate_stories(items)) == 1
+
+# Keep the regression suite intentionally small and deterministic.

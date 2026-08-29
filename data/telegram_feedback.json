@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787919019,
+  "updated_at": 1787968630,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5160,6 +5160,63 @@
       "why_it_matters": "این توسعه نشان‌دهنده گسترش دامنه کاربرد مدل‌های زبانی و تصویری OpenAI فراتر از تولید محتوای متنی یا تصویری ساده است. با ادغام چیدمان و متن در فرآیند تولید، ChatGPT Images به ابزاری کاربردی برای طراحان و بازاریابان تبدیل می‌شود که نیاز به نرم‌افزارهای پیچیده گرافیکی را کاهش می‌دهد. این قابلیت می‌تواند سرعت تولید محتوای بصری را به طور چشمگیری افزایش دهد و استانداردهای جدیدی در دسترسی‌پذیری ابزارهای طراحی هوشمند ایجاد کند.",
       "link": "https://www.youtube.com/watch?v=w1dcfvUCZYw",
       "posted_at": 1787919019
+    },
+    "-1004482051328:1350": {
+      "chat_id": -1004482051328,
+      "message_id": 1350,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Tech Times)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "تغییر ساختار تیم ایمنی Gemini گوگل و محدودیت دسترسی محققان",
+      "summary": "گوگل تیم ایمنی مدل زبانی Gemini را به بخش لابی‌گری منتقل کرده است. این تغییر ساختاری باعث شده است که محققان از ماندن در این تیم یا ادامه فعالیت‌های پژوهشی مستقل در آن جلوگیری شوند. این اقدام نشان‌دهنده تغییر رویکرد گوگل از تمرکز صرف بر تحقیقات ایمنی به سمت فعالیت‌های تنظیمی و ارتباطی است.",
+      "why_it_matters": "این جابجایی ساختاری می‌تواند بر شفافیت و استقلال نظارت بر ایمنی مدل‌های پیشرفته هوش مصنوعی تأثیر بگذارد. محدود کردن دسترسی محققان به تیم‌های ایمنی، نگرانی‌هایی را درباره اولویت‌بندی منافع تجاری و تنظیمی بر پژوهش‌های فنی عمیق ایجاد می‌کند. این روند ممکن است بر اعتماد عمومی و استانداردهای صنعتی در توسعه ایمن هوش مصنوعی اثرگذار باشد.",
+      "link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPZFJDTzU1Q3hCVE9PZlVsZ3dPSXk3YmRSTk4yRHRVaU5XSnlpVHVZcTRDMnhNSDZFZHl6Nm84VDhaY0o1RmxWUTlQZW9ldk1lMDZUX2F4ZU9wcERSeDRPTG4yOVN2WnF6VU5SWnE2TVF0SHNTT0FkVUNLQ2d2RzMxeWtZUUJjRUJDVHBRM3lwWFYxc1FRNFk0LVVtOUk2RnppdmRKdjBOZ3lsdXVWQjluRGlBT0VfaDk1My0zX2huc1JIYWduZjFMS3ZEbw?oc=5",
+      "posted_at": 1787968626
+    },
+    "-1004482051328:1351": {
+      "chat_id": -1004482051328,
+      "message_id": 1351,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (OpenAI)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "OpenAI از نسل بعدی استارتاپ‌های هوش مصنوعی در تایلند حمایت می‌کند",
+      "summary": "OpenAI اعلام کرده است که از نسل بعدی استارتاپ‌های هوش مصنوعی در تایلند حمایت خواهد کرد. این اقدام نشان‌دهنده تلاش شرکت برای گسترش اکوسیستم فناوری در جنوب شرق آسیا و توانمندسازی توسعه‌دهندگان محلی است. با وجود عدم ارائه جزئیات فنی دقیق در این خبر کوتاه، تمرکز بر حمایت از نوآوری‌های منطقه‌ای و توسعه زیرساخت‌های هوش مصنوعی در تایلند مشهود است.",
+      "why_it_matters": "این ابتکار عمل نشان‌دهنده استراتژی OpenAI برای نفوذ بیشتر در بازارهای نوظهور و تقویت رقابت‌پذیری منطقه‌ای است. حمایت از استارتاپ‌های تایلندی می‌تواند منجر به توسعه کاربردهای بومی‌شده هوش مصنوعی و ایجاد فرصت‌های شغلی تخصصی شود. همچنین این اقدام به کاهش شکاف دیجیتال و ارتقای سطح فناوری در جنوب شرق آسیا کمک خواهد کرد.",
+      "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9tRm9iT0h5ZzlndHdoZGxMSGNhX2RtanVQd3ZVS045V19fQ3d6NThoNzNxdGt1d3VqYU40VmtCTktiU3FTMnJ5TWN3NHVhRnczcW0tSGQ2cUNIVlpSN0QwQVd0Q1JpNUUtTE9hZVVqVE9XUjlOdzVjT3FMYkF2dw?oc=5",
+      "posted_at": 1787968629
+    },
+    "-1004482051328:1352": {
+      "chat_id": -1004482051328,
+      "message_id": 1352,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Anthropic)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "تحقیقات Anthropic: پژوهشگران خودکار می‌توانند شکست‌های همسویی را به‌طور قابل‌اطمینان کاهش دهند",
+      "summary": "Anthropic در تحقیقات جدید خود نشان می‌دهد که سیستم‌های پژوهشگر خودکار (Automated researchers) قادرند شکست‌های همسویی (Alignment failures) را به‌طور قابل‌اطمینان شناسایی و کاهش دهند. این یافته‌ها بر قابلیت اطمینان این ابزارها در تشخیص خطرات احتمالی مدل‌های هوش مصنوعی تأکید دارد. استفاده از این روش‌ها می‌تواند فرآیند ایمن‌سازی مدل‌ها را تسریع و دقیق‌تر کند.",
+      "why_it_matters": "این پژوهش نشان می‌دهد که اتوماسیون در فرآیند ارزیابی ایمنی می‌تواند به‌طور قابل‌Attentionی ریسک شکست‌های همسویی را کاهش دهد. با تکیه بر پژوهشگران خودکار، توسعه‌دهندگان می‌توانند با سرعت و دقت بیشتری نقاط ضعف مدل‌ها را شناسایی کنند. این رویکرد می‌تواند به‌عنوان یک لایه دفاعی موثر در برابر رفتارهای ناخواسته مدل‌های پیشرفته عمل کند.",
+      "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQMm12QTFLek9sVlhENXNNaFlpUHlnbEl5dDRNZTBCbG1iSUtndjBhaUQ3UGl6N2VOWFppR19kbGhHWjlGaWRnby1BcHNlM0lNLUFaZXVrWV9MTFFOcjg0dmpFcWc0cHkyUTd1d2Z3bjNjaU9FeUQzUnpKbFloc1lRVDRPNjBHQ2JRVDh6cg?oc=5",
+      "posted_at": 1787968630
     }
   }
 }

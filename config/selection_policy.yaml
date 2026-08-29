@@ -1,6 +1,6 @@
 selection:
   max_posts: 4
-  max_items_per_source: 1
+  max_items_per_source: 2
   max_items_per_content_type: 2
   story_similarity_threshold: 0.45
 
@@ -16,6 +16,7 @@ editorial:
 # - Tier-0 substantive interviews/quotes are a separate, quota-exempt stream.
 # - Normal news uses normal_period_rank 1..4 and the 1+2 comparative policy.
 # - max_posts controls the normal candidate window only; it never caps Tier-0.
-# - max_items_per_source=1 keeps the normal publication set source-diverse.
+# - max_items_per_source=2 is an adaptive ceiling: prefer one item per source
+#   first, then allow a second only when needed to fill the normal window.
 # - Leader watchlist discovery is protected by a small explicit publication
 #   allowance; broad semantic history must not starve genuinely new leader stories.

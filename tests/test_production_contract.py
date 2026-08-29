@@ -54,7 +54,7 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert contract["min_authoritative_items"] == mission["min_authoritative_items"]
     assert contract["community_max"] == mission["community_max"]
     assert selection["diversity_mode"] == "adaptive"
-    assert selection["diverse_sources_first"] if "diverse_sources_first" in selection else selection["distinct_sources_first"]
+    assert selection["distinct_sources_first"] is True
 
 
 def test_mission_targets_are_not_allowed_to_drift():

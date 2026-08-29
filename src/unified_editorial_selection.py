@@ -1,12 +1,4 @@
-"""Unified, deterministic editorial portfolio selection contract.
-
-The selector separates three layers:
-1) mission invariants (what the Radar is trying to cover),
-2) selection mechanics (how candidates are diversified), and
-3) scoring (how strong an eligible candidate is).
-
-It deliberately does not call an LLM and does not publish anything.
-"""
+"""Unified, deterministic editorial portfolio selection contract."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -24,6 +16,7 @@ _AREA_MAP = {
     "quantum": "convergence",
     "genetics": "convergence",
     "robotics": "convergence",
+    "humanoid": "convergence",
     "bio": "convergence",
     "bci": "convergence",
     "future": "future_governance",
@@ -45,7 +38,6 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Build the executable contract from the two intentional policy layers."""
     mission = _load_yaml(MISSION_PATH).get("mission", {})
     selection_cfg = selection or _load_yaml(SELECTION_PATH).get("selection", {})
     return {
@@ -84,11 +76,14 @@ def mission_area(item: dict[str, Any]) -> str:
     return "ai_core"
 
 
-def _source_tier(item: dict[str, Any]) -> int:
+def _source_tier(item: dict[str, Any]) -> int | None:
+    raw = item.get("source_tier", item.get("tier"))
+    if raw in (None, ""):
+        return None
     try:
-        return int(item.get("source_tier", item.get("tier", 3)) or 3)
+        return int(raw)
     except (TypeError, ValueError):
-        return 3
+        return None
 
 
 def _is_community(item: dict[str, Any]) -> bool:
@@ -96,7 +91,10 @@ def _is_community(item: dict[str, Any]) -> bool:
         str(item.get(key) or "").strip().casefold()
         for key in ("source", "source_name", "source_type", "source_domain")
     )
-    return any(marker in value for marker in _COMMUNITY_MARKERS) or _source_tier(item) >= 3
+    if any(marker in value for marker in _COMMUNITY_MARKERS):
+        return True
+    tier = _source_tier(item)
+    return tier is not None and tier >= 3
 
 
 def candidate_score(item: dict[str, Any]) -> float:
@@ -132,7 +130,6 @@ def select_regular_portfolio(
     recent_source_counts: dict[str, int] | None = None,
     contract: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    """Select a diverse mission portfolio without LLM or publication side effects."""
     contract = contract or load_editorial_contract()
     limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
@@ -179,7 +176,6 @@ def select_regular_portfolio(
         area_counts[area] = area_counts.get(area, 0) + 1
         item["mission_selection_reason"] = reason
 
-    # Pass 1: satisfy portfolio coverage with distinct sources.
     for area in ("convergence", "mind_cognition", "future_governance"):
         if len(selected) >= limit:
             break
@@ -187,7 +183,6 @@ def select_regular_portfolio(
         if pool:
             add(pool[0], f"mission_coverage:{area}")
 
-    # Research evidence gets an explicit opportunity without source repetition.
     if len(selected) < limit:
         research_pool = [
             x for x in ordered
@@ -197,7 +192,6 @@ def select_regular_portfolio(
         if research_pool:
             add(research_pool[0], "research_evidence")
 
-    # Pass 2: strongest remaining distinct-source candidates.
     for item in ordered:
         if len(selected) >= limit:
             break
@@ -206,7 +200,6 @@ def select_regular_portfolio(
         if admissible(item, repeat_source=False):
             add(item, "distinct_source_fill")
 
-    # Pass 3: adaptive backfill only after the distinct-source pass is exhausted.
     if len(selected) < limit and source_cap > 1:
         for item in ordered:
             if len(selected) >= limit:
@@ -220,7 +213,6 @@ def select_regular_portfolio(
 
 
 def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: dict[str, Any] | None = None) -> None:
-    """Raise AssertionError for structural portfolio violations in tests/CI."""
     contract = contract or load_editorial_contract()
     items = list(selected or [])
     source_counts: dict[str, int] = {}

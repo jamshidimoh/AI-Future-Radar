@@ -247,7 +247,7 @@ def _eligibility_split(items, max_protected=2):
     for raw in items:
         item = dict(raw)
         is_interview = _pipeline._is_protected_leader_interview(item)
-        is_activity = _pipeline._is_protected_leader_activity(item)
+        is_activity = not is_interview and _pipeline._is_protected_leader_activity(item)
         if is_interview or is_activity:
             item["protected_content"] = True
             item["protected_reason"] = "leader_interview" if is_interview else "leader_activity"

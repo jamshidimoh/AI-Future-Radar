@@ -151,7 +151,6 @@ def select_regular_portfolio(
     selected_ids: set[int] = set()
     source_counts: dict[str, int] = {}
     type_counts: dict[str, int] = {}
-    area_counts: dict[str, int] = {}
 
     def admissible(item: dict[str, Any], *, repeat_source: bool) -> bool:
         source = source_key(item)
@@ -167,12 +166,11 @@ def select_regular_portfolio(
         return True
 
     def add(item: dict[str, Any], reason: str) -> None:
-        source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
+        source, ctype = source_key(item), content_type_key(item)
         selected.append(item)
         selected_ids.add(id(item))
         source_counts[source] = source_counts.get(source, 0) + 1
         type_counts[ctype] = type_counts.get(ctype, 0) + 1
-        area_counts[area] = area_counts.get(area, 0) + 1
         item["mission_selection_reason"] = reason
 
     if mission_aware:
@@ -222,8 +220,7 @@ def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: d
         area = mission_area(item)
         area_counts[area] = area_counts.get(area, 0) + 1
     assert max(source_counts.values(), default=0) <= contract["hard_max_same_source"]
-    if contract["max_same_mission_area"] > 0:
-        assert max(area_counts.values(), default=0) <= max(contract["max_same_mission_area"], contract["max_posts"] if contract["max_same_mission_area"] >= contract["max_posts"] else contract["max_same_mission_area"])
+    assert max(area_counts.values(), default=0) <= contract["max_same_mission_area"]
     if len(items) >= contract["min_unique_sources"]:
         assert len(source_counts) >= contract["min_unique_sources"]
     assert sum(1 for item in items if not _is_community(item)) == len(items)

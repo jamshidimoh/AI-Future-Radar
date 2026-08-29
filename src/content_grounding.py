@@ -52,29 +52,20 @@ def _tokens(text: str) -> set[str]:
 
 
 def deterministic_source_overlap(source_title: str, source_text: str, draft: dict) -> float:
-    title_tokens = _tokens(source_title)
-    draft_tokens = _tokens(" ".join(str(draft.get(k) or "") for k in ("title", "summary", "why_it_matters")))
-    if not title_tokens or not draft_tokens:
-        return 0.0
-    counts = Counter(draft_tokens)
-    return sum(1 for t in title_tokens if t in counts) / max(1, len(title_tokens))
+    title_tokens = _tokens(source_title); draft_tokens = _tokens(" ".join(str(draft.get(k) or "") for k in ("title", "summary", "why_it_matters")))
+    if not title_tokens or not draft_tokens: return 0.0
+    counts = Counter(draft_tokens); return sum(1 for t in title_tokens if t in counts) / max(1, len(title_tokens))
 
 
 def deterministic_source_evidence_overlap(source_text: str, draft: dict) -> float:
-    source_tokens = _tokens(source_text)
-    draft_tokens = _tokens(" ".join(str(draft.get(k) or "") for k in ("title", "summary", "why_it_matters")))
-    if not source_tokens or not draft_tokens:
-        return 0.0
+    source_tokens = _tokens(source_text); draft_tokens = _tokens(" ".join(str(draft.get(k) or "") for k in ("title", "summary", "why_it_matters")))
+    if not source_tokens or not draft_tokens: return 0.0
     return len(source_tokens & draft_tokens) / max(1, len(source_tokens))
 
 
 def _deterministic_anchor_ok(source_title: str, source_text: str, draft: dict) -> bool:
-    title_tokens = _tokens(source_title)
-    if not title_tokens:
-        return False
-    title_overlap = deterministic_source_overlap(source_title, source_text, draft)
-    evidence_overlap = deterministic_source_evidence_overlap(source_text, draft)
-    return title_overlap > 0.0 or evidence_overlap >= _EVIDENCE_THRESHOLD
+    if not _tokens(source_title): return False
+    return deterministic_source_overlap(source_title, source_text, draft) > 0.0 or deterministic_source_evidence_overlap(source_text, draft) >= _EVIDENCE_THRESHOLD
 
 
 def _llm_check(source_title: str, source_text: str, draft: dict) -> bool | None:
@@ -82,11 +73,8 @@ def _llm_check(source_title: str, source_text: str, draft: dict) -> bool | None:
     try:
         raw, _provider = call_llm_with_fallback(prompt, json.dumps({"source_title": source_title, "source_text": source_text[:5000], "draft": draft}, ensure_ascii=False), providers=get_quality_chain())
         data = json.loads(raw or "{}")
-        if isinstance(data, dict) and isinstance(data.get("grounded"), bool):
-            return bool(data["grounded"])
-    except Exception:
-        return None
-    return None
+        return bool(data["grounded"]) if isinstance(data, dict) and isinstance(data.get("grounded"), bool) else None
+    except Exception: return None
 
 
 def _repair(source_title: str, source_text: str, draft: dict) -> dict | None:
@@ -94,45 +82,48 @@ def _repair(source_title: str, source_text: str, draft: dict) -> dict | None:
     try:
         raw, _provider = call_llm_with_fallback(prompt, json.dumps({"source_title": source_title, "source_text": source_text[:5000], "draft": draft}, ensure_ascii=False), providers=get_quality_chain())
         value = json.loads(raw or "{}")
-        if isinstance(value, dict) and value.get("title") and value.get("summary"):
-            return value
-    except Exception:
-        return None
-    return None
+        return value if isinstance(value, dict) and value.get("title") and value.get("summary") else None
+    except Exception: return None
+
+
+def _accept(draft: dict, source_title: str, source_text: str, *, repaired: bool = False) -> dict:
+    draft["source_grounding_score"] = round(deterministic_source_overlap(source_title, source_text, draft), 3)
+    draft["source_grounding_evidence_overlap"] = round(deterministic_source_evidence_overlap(source_text, draft), 3)
+    draft["source_grounding_verified"] = True
+    if repaired: draft["source_grounding_repaired"] = True
+    return draft
 
 
 def ensure_source_grounding(draft: dict, item: dict) -> dict | None:
-    if not isinstance(draft, dict):
-        return None
-    source_title = normalize_editorial_text(str(item.get("title", "")).strip())
-    source_text = normalize_editorial_text(str(item.get("summary", "") or "").strip())
-    if not source_title or not source_text:
-        return None
+    if not isinstance(draft, dict): return None
+    source_title = normalize_editorial_text(str(item.get("title", "")).strip()); source_text = normalize_editorial_text(str(item.get("summary", "") or "").strip())
+    if not source_title or not source_text: return None
+    overlap = deterministic_source_overlap(source_title, source_text, draft); evidence_overlap = deterministic_source_evidence_overlap(source_text, draft)
 
-    overlap = deterministic_source_overlap(source_title, source_text, draft)
-    evidence_overlap = deterministic_source_evidence_overlap(source_text, draft)
+    # A deterministic failure is a repair trigger, not an immediate terminal reject.
+    # The repaired draft is always revalidated before acceptance.
     if not _deterministic_anchor_ok(source_title, source_text, draft):
-        print(f"[Source Grounding] hard-blocked deterministic topic drift title_overlap={overlap:.2f} evidence_overlap={evidence_overlap:.2f}", flush=True)
-        return None
+        print(f"[Source Grounding] topic drift; attempting repair title_overlap={overlap:.2f} evidence_overlap={evidence_overlap:.2f}", flush=True)
+        repaired = _repair(source_title, source_text, draft)
+        if repaired is None:
+            print("[Source Grounding] repair unavailable; blocked", flush=True); return None
+        repaired_overlap = deterministic_source_overlap(source_title, source_text, repaired); repaired_evidence = deterministic_source_evidence_overlap(source_text, repaired)
+        if not _deterministic_anchor_ok(source_title, source_text, repaired):
+            print(f"[Source Grounding] repaired draft still drifted overlap={repaired_overlap:.2f} evidence_overlap={repaired_evidence:.2f}", flush=True); return None
+        verdict = _llm_check(source_title, source_text, repaired)
+        if verdict is not True and repaired_overlap < _THRESHOLD:
+            print(f"[Source Grounding] repaired draft failed LLM validation verdict={verdict} overlap={repaired_overlap:.2f}", flush=True); return None
+        print(f"[Source Grounding] repaired and revalidated score={repaired_overlap:.2f} evidence_overlap={repaired_evidence:.2f}", flush=True)
+        return _accept(repaired, source_title, source_text, repaired=True)
 
     verdict = _llm_check(source_title, source_text, draft) if overlap < _THRESHOLD else True
-    if verdict is True:
-        draft["source_grounding_score"] = round(overlap, 3)
-        draft["source_grounding_evidence_overlap"] = round(evidence_overlap, 3)
-        draft["source_grounding_verified"] = True
-        return draft
+    if verdict is True: return _accept(draft, source_title, source_text)
 
     repaired = _repair(source_title, source_text, draft)
     if repaired is not None:
-        repaired_overlap = deterministic_source_overlap(source_title, source_text, repaired)
-        repaired_evidence_overlap = deterministic_source_evidence_overlap(source_text, repaired)
-        repaired_verdict = _llm_check(source_title, source_text, repaired)
+        repaired_overlap = deterministic_source_overlap(source_title, source_text, repaired); repaired_evidence = deterministic_source_evidence_overlap(source_text, repaired); repaired_verdict = _llm_check(source_title, source_text, repaired)
         if _deterministic_anchor_ok(source_title, source_text, repaired) and (repaired_verdict is True or repaired_overlap >= _THRESHOLD):
-            repaired["source_grounding_score"] = round(repaired_overlap, 3)
-            repaired["source_grounding_evidence_overlap"] = round(repaired_evidence_overlap, 3)
-            repaired["source_grounding_repaired"] = True
-            print(f"[Source Grounding] repaired score={repaired_overlap:.2f} evidence_overlap={repaired_evidence_overlap:.2f}", flush=True)
-            return repaired
-
+            print(f"[Source Grounding] repaired score={repaired_overlap:.2f} evidence_overlap={repaired_evidence:.2f}", flush=True)
+            return _accept(repaired, source_title, source_text, repaired=True)
     print(f"[Source Grounding] blocked overlap={overlap:.2f} evidence_overlap={evidence_overlap:.2f}", flush=True)
     return None

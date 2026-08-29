@@ -34,7 +34,7 @@ def test_source_cap_is_enforced():
     assert all(value <= 2 for value in counts.values())
 
 
-def test_recent_source_is_backfilled_only_after_fresh_sources():
+def test_recent_source_is_preferred_after_fresh_sources_but_can_backfill_when_needed():
     items = [
         _item("Reddit recent 1", "Reddit", 100),
         _item("Reddit recent 2", "Reddit", 99),
@@ -55,6 +55,8 @@ def test_recent_source_is_backfilled_only_after_fresh_sources():
             items, max_posts=4, max_per_source=2, max_per_type=4, policy={"rotation_days": 7}
         )
     sources = [item["source"] for item in selected]
-    assert "Reddit" not in sources
+    assert len(selected) == 4
+    assert sources[:2] == ["Research Institute", "University Lab"]
+    assert sources.count("Reddit") == 1
     assert sources.count("Research Institute") == 2
-    assert sources.count("University Lab") == 2
+    assert sources.count("University Lab") == 1

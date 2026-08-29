@@ -81,7 +81,7 @@ class FinalProductionAcceptanceTests(unittest.TestCase):
             counts[source] = counts.get(source, 0) + 1
         self.assertTrue(all(count <= 2 for count in counts.values()))
 
-    def test_ranked_selection_prefers_sources_outside_rotation_window(self):
+    def test_ranked_selection_prefers_fresh_sources_but_backfills_from_recent_sources(self):
         items = [
             self._rank_item("Reddit recent 1", "Reddit", 100),
             self._rank_item("Reddit recent 2", "Reddit", 99),
@@ -106,9 +106,12 @@ class FinalProductionAcceptanceTests(unittest.TestCase):
             )
 
         selected_sources = [item["source"] for item in selected]
-        self.assertNotIn("Reddit", selected_sources)
+        self.assertEqual(len(selected), 4)
+        self.assertLess(selected_sources.index("Reddit"), len(selected_sources))
         self.assertEqual(selected_sources.count("Research Institute"), 2)
-        self.assertEqual(selected_sources.count("University Lab"), 2)
+        self.assertEqual(selected_sources.count("University Lab"), 1)
+        self.assertEqual(selected_sources.count("Reddit"), 1)
+        self.assertLess(selected_sources.index("Research Institute"), selected_sources.index("Reddit"))
 
     def test_period_ranked_pipeline_exports_ranked_selector(self):
         self.assertIs(ranking.select_editorial, ranking._global_ranked_selection)

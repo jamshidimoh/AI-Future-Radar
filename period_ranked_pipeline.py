@@ -106,6 +106,15 @@ def _rotation_source_counts(history, rotation_days):
 
 
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
+    """Select normal stories with adaptive source diversity.
+
+    Historical source usage is a preference signal, not a hard exclusion.
+    Within the current run, the selector first prefers one item per distinct
+    source, then allows a second item up to the configured source ceiling only
+    when more posts are still needed. This prevents source concentration while
+    avoiding the failure mode where broadly-active sources all become
+    ineligible and the normal window collapses to one story.
+    """
     policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     try:
@@ -118,16 +127,45 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     limit = max(0, int(max_posts or 0))
     selected, selected_source_counts, selected_type_counts = [], {}, {}
 
-    def can_take(item):
+    ordered = sorted(
+        normal,
+        key=lambda item: (
+            recent_source_counts.get(_source_key(item), 0),
+            -_score(item),
+            -float(item.get("signal_score", 0) or 0),
+            str(item.get("published", "")),
+        ),
+    )
+
+    def can_take(item, allow_repeat_source):
         source = _source_key(item)
         content_type = _content_type_key(item)
-        return selected_source_counts.get(source, 0) < source_cap and selected_type_counts.get(content_type, 0) < type_cap
+        if selected_type_counts.get(content_type, 0) >= type_cap:
+            return False
+        current_count = selected_source_counts.get(source, 0)
+        if allow_repeat_source:
+            return current_count < source_cap
+        return current_count == 0
 
-    fresh = [x for x in normal if recent_source_counts.get(_source_key(x), 0) == 0]
-    recent = [x for x in normal if recent_source_counts.get(_source_key(x), 0) > 0]
-    for pool in (fresh, recent):
-        for item in pool:
-            if not can_take(item):
+    # Pass 1: maximize source diversity within this execution.
+    for item in ordered:
+        if not can_take(item, allow_repeat_source=False):
+            continue
+        selected.append(item)
+        source, content_type = _source_key(item), _content_type_key(item)
+        selected_source_counts[source] = selected_source_counts.get(source, 0) + 1
+        selected_type_counts[content_type] = selected_type_counts.get(content_type, 0) + 1
+        if len(selected) >= limit:
+            break
+
+    # Pass 2: fill remaining capacity from the best remaining candidates,
+    # respecting the configured adaptive ceiling per source and type.
+    if len(selected) < limit and source_cap > 1:
+        selected_ids = {id(item) for item in selected}
+        for item in ordered:
+            if id(item) in selected_ids:
+                continue
+            if not can_take(item, allow_repeat_source=True):
                 continue
             selected.append(item)
             source, content_type = _source_key(item), _content_type_key(item)
@@ -135,9 +173,13 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
             selected_type_counts[content_type] = selected_type_counts.get(content_type, 0) + 1
             if len(selected) >= limit:
                 break
-        if len(selected) >= limit:
-            break
-    print(f"[Source Diversity Gate] rotation_days={rotation_days} fresh_candidates={len(fresh)} recent_candidates={len(recent)} selected={len(selected)} source_counts={selected_source_counts} recent_source_counts={recent_source_counts}", flush=True)
+
+    print(
+        f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} "
+        f"selected={len(selected)} source_counts={selected_source_counts} "
+        f"recent_source_counts={recent_source_counts} adaptive=true source_cap={source_cap}",
+        flush=True,
+    )
     return selected
 
 
@@ -280,4 +322,3 @@ select_editorial = _global_ranked_selection
 for _name in ("load_yaml", "LEADER_CONFIG_PATH", "_direct_interview_signal", "summarize_item", "format_post", "mark_as_seen", "send_to_telegram_safe", "resolve_source_image", "_source_tier", "_persist_item_success"):
     if hasattr(_pipeline, _name):
         globals()[_name] = getattr(_pipeline, _name)
-

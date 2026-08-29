@@ -15,6 +15,8 @@ def _reset():
 
 def test_quota_failure_disables_provider_family(monkeypatch):
     _reset()
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     calls = []
 
     def groq_fail(*args, **kwargs):
@@ -36,8 +38,10 @@ def test_quota_failure_disables_provider_family(monkeypatch):
     assert calls == ["groq", "gemini"]
 
 
-def test_auth_failure_does_not_try_sibling_openrouter_model():
+def test_auth_failure_does_not_try_sibling_openrouter_model(monkeypatch):
     _reset()
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     calls = []
 
     def openrouter_fail(*args, **kwargs):

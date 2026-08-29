@@ -31,7 +31,7 @@ _ORIGINAL_PUBLISH_PRODUCTION_STORY = _publication_adapter.publish_production_sto
 
 DEFAULT_WATCHDOG_MINUTES = 22
 EDUCATION_LANGUAGE_MIN_RATIO = 0.70
-EDUCATION_WINDOWS_TEHRAN = (6, 20)
+EDUCATION_WINDOWS_TEHRAN = (5, 20)
 LESSON_41_CURRENT_SOURCES = [
     {
         "name": "Anthropic: Demystifying evals for AI agents",
@@ -58,13 +58,13 @@ def _watchdog_minutes() -> int:
 def _education_is_due_by_tehran_window(now: datetime | None, last_slot: str) -> tuple[bool, str | None]:
     """Return the education due state using the same tuple contract as production_entrypoint.
 
-    Education is eligible only in the 06:xx and 20:xx Tehran windows. The slot
+    Education is eligible only in the 05:xx and 20:xx Tehran windows. The slot
     identity prevents a manual retrigger from publishing the same lesson twice
     inside one window while allowing both intended daily windows.
     """
     now = now or datetime.now(ZoneInfo("Asia/Tehran"))
     slot = None
-    if now.hour == 6:
+    if now.hour == 5:
         slot = f"{now.date().isoformat()}:morning"
     elif now.hour == 20:
         slot = f"{now.date().isoformat()}:evening"

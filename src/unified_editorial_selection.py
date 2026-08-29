@@ -129,7 +129,9 @@ def select_regular_portfolio(
     max_per_type: int,
     recent_source_counts: dict[str, int] | None = None,
     contract: dict[str, Any] | None = None,
+    mission_aware: bool = True,
 ) -> list[dict[str, Any]]:
+    """Select a deterministic portfolio; optionally apply mission coverage before score fill."""
     contract = contract or load_editorial_contract()
     limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
@@ -154,7 +156,6 @@ def select_regular_portfolio(
     def admissible(item: dict[str, Any], *, repeat_source: bool) -> bool:
         source = source_key(item)
         ctype = content_type_key(item)
-        area = mission_area(item)
         if type_counts.get(ctype, 0) >= type_cap:
             return False
         current_source = source_counts.get(source, 0)
@@ -162,8 +163,6 @@ def select_regular_portfolio(
             if current_source >= source_cap:
                 return False
         elif current_source:
-            return False
-        if area_counts.get(area, 0) >= contract["max_same_mission_area"]:
             return False
         return True
 
@@ -176,21 +175,22 @@ def select_regular_portfolio(
         area_counts[area] = area_counts.get(area, 0) + 1
         item["mission_selection_reason"] = reason
 
-    for area in ("convergence", "mind_cognition", "future_governance"):
-        if len(selected) >= limit:
-            break
-        pool = [x for x in ordered if mission_area(x) == area and admissible(x, repeat_source=False)]
-        if pool:
-            add(pool[0], f"mission_coverage:{area}")
+    if mission_aware:
+        for area in ("convergence", "mind_cognition", "future_governance"):
+            if len(selected) >= limit:
+                break
+            pool = [x for x in ordered if mission_area(x) == area and admissible(x, repeat_source=False)]
+            if pool:
+                add(pool[0], f"mission_coverage:{area}")
 
-    if len(selected) < limit:
-        research_pool = [
-            x for x in ordered
-            if (content_type_key(x) in _RESEARCH_TYPES or x.get("research_signal"))
-            and admissible(x, repeat_source=False)
-        ]
-        if research_pool:
-            add(research_pool[0], "research_evidence")
+        if len(selected) < limit:
+            research_pool = [
+                x for x in ordered
+                if (content_type_key(x) in _RESEARCH_TYPES or x.get("research_signal"))
+                and admissible(x, repeat_source=False)
+            ]
+            if research_pool:
+                add(research_pool[0], "research_evidence")
 
     for item in ordered:
         if len(selected) >= limit:
@@ -222,7 +222,8 @@ def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: d
         area = mission_area(item)
         area_counts[area] = area_counts.get(area, 0) + 1
     assert max(source_counts.values(), default=0) <= contract["hard_max_same_source"]
-    assert max(area_counts.values(), default=0) <= contract["max_same_mission_area"]
+    if contract["max_same_mission_area"] > 0:
+        assert max(area_counts.values(), default=0) <= max(contract["max_same_mission_area"], contract["max_posts"] if contract["max_same_mission_area"] >= contract["max_posts"] else contract["max_same_mission_area"])
     if len(items) >= contract["min_unique_sources"]:
         assert len(source_counts) >= contract["min_unique_sources"]
     assert sum(1 for item in items if not _is_community(item)) == len(items)

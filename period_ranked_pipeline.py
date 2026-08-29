@@ -19,10 +19,8 @@ def _base_editorial_score(item):
     for key in ("editorial_score_pre_signal", "final_editorial_score", "editorial_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
-            if value:
-                return value
-        except (TypeError, ValueError):
-            continue
+            if value: return value
+        except (TypeError, ValueError): continue
     return 0.0
 
 
@@ -30,147 +28,83 @@ def canonical_rank_score(item):
     return round(_base_editorial_score(item) * EDITORIAL_WEIGHT + float(item.get("signal_score", 0) or 0) * SIGNAL_WEIGHT, 2)
 
 
-def _base_score(item):
-    return canonical_rank_score(item)
-
+def _base_score(item): return canonical_rank_score(item)
 
 def _is_priority_interview(item):
-    try:
-        return bool(priority_people_features(item)[1])
-    except Exception:
-        return False
-
+    try: return bool(priority_people_features(item)[1])
+    except Exception: return False
 
 def _is_protected_publication_story(item):
     return bool(item.get("protected_content") or item.get("_named_leader_interview") or _is_priority_interview(item))
 
-
 def _prepare_rank_features(items):
     for item in items:
-        model_bonus = model_release_bonus(item)
-        people, is_tier0, people_bonus = priority_people_features(item)
-        protected = _is_protected_publication_story(item)
-        leader = str(item.get("leader") or item.get("watch_person") or "").strip()
-        if protected and leader and leader not in people:
-            people = list(people or []) + [leader]
-        item["model_release_priority"] = bool(model_bonus)
-        item["model_release_bonus_legacy"] = model_bonus
-        item["priority_person_interview"] = bool(is_tier0 or protected)
-        item["priority_person_bonus_legacy"] = people_bonus
-        item["priority_story_people"] = people
-        item["_rank_is_tier0"] = bool(is_tier0 or protected)
+        model_bonus = model_release_bonus(item); people, is_tier0, people_bonus = priority_people_features(item)
+        protected = _is_protected_publication_story(item); leader = str(item.get("leader") or item.get("watch_person") or "").strip()
+        if protected and leader and leader not in people: people = list(people or []) + [leader]
+        item["model_release_priority"] = bool(model_bonus); item["model_release_bonus_legacy"] = model_bonus
+        item["priority_person_interview"] = bool(is_tier0 or protected); item["priority_person_bonus_legacy"] = people_bonus
+        item["priority_story_people"] = people; item["_rank_is_tier0"] = bool(is_tier0 or protected)
         item["final_editorial_score"] = canonical_rank_score(item)
     return items
 
-
-def _score(item):
-    return float(item.get("final_editorial_score", 0) or 0)
-
-
-def _source_key(item):
-    return str(item.get("source") or item.get("source_name") or "unknown").strip().lower() or "unknown"
-
-
-def _content_type_key(item):
-    return str(item.get("content_type") or "unknown").strip().lower() or "unknown"
-
+def _score(item): return float(item.get("final_editorial_score", 0) or 0)
+def _source_key(item): return str(item.get("source") or item.get("source_name") or "unknown").strip().lower() or "unknown"
 
 def _rotation_source_counts(history, rotation_days):
-    cutoff = time.time() - max(0, int(rotation_days)) * 86400
-    counts = {}
+    cutoff = time.time() - max(0, int(rotation_days)) * 86400; counts = {}
     for record in history or []:
-        if str(record.get("content_type") or "").strip().lower() == "education":
-            continue
-        try:
-            ts = float(record.get("ts", 0) or 0)
-        except (TypeError, ValueError):
-            continue
-        if ts < cutoff:
-            continue
-        source = str(record.get("source") or "unknown").strip().lower() or "unknown"
-        counts[source] = counts.get(source, 0) + 1
+        if str(record.get("content_type") or "").strip().lower() == "education": continue
+        try: ts = float(record.get("ts", 0) or 0)
+        except (TypeError, ValueError): continue
+        if ts < cutoff: continue
+        source = str(record.get("source") or "unknown").strip().lower() or "unknown"; counts[source] = counts.get(source, 0) + 1
     return counts
 
-
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
-    policy = policy or {}
-    rotation_days = int(policy.get("rotation_days", 7) or 7)
-    try:
-        source_history = _pipeline.load_source_history()
-    except Exception:
-        source_history = []
-    recent_source_counts = _rotation_source_counts(source_history, rotation_days)
-    contract = load_editorial_contract()
-    # Reserve an explicit replacement buffer. The buffer is consumed only when
-    # downstream editorial validation rejects a selected story.
-    requested = max(0, int(max_posts or 0))
-    buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
+    policy = policy or {}; rotation_days = int(policy.get("rotation_days", 7) or 7)
+    try: source_history = _pipeline.load_source_history()
+    except Exception: source_history = []
+    recent_source_counts = _rotation_source_counts(source_history, rotation_days); contract = load_editorial_contract()
+    requested = max(0, int(max_posts or 0)); buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
     limit = min(len(normal), max(requested + buffer, int(contract["candidate_window"] or 0)))
-    selected = select_regular_portfolio(
-        normal,
-        max_posts=limit,
-        max_per_source=max_per_source,
-        max_per_type=max_per_type,
-        recent_source_counts=recent_source_counts,
-        contract=contract,
-        mission_aware=bool(policy.get("mission_aware", False)),
-    )
+    selected = select_regular_portfolio(normal, max_posts=limit, max_per_source=max_per_source, max_per_type=max_per_type, recent_source_counts=recent_source_counts, contract=contract, mission_aware=bool(policy.get("mission_aware", False)), strict_relevance=True)
     source_counts = {}
     for item in selected:
-        key = _source_key(item)
-        source_counts[key] = source_counts.get(key, 0) + 1
-    print(
-        f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} "
-        f"source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true "
-        f"preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} "
-        f"candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))}", flush=True
-    )
+        key = _source_key(item); source_counts[key] = source_counts.get(key, 0) + 1
+    print(f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))}", flush=True)
     return selected
-
 
 def _exclude_published_candidates(items):
     records = _load_records()
-    if not records or not items:
-        return items
+    if not records or not items: return items
     kept, blocked = [], {"canonical_url": 0, "title": 0, "semantic": 0}
-    semantic_bypassed = protected_same_story_blocked = 0
     for item in items:
-        candidate_url = _canonical_url(item.get("canonical_url") or item.get("link") or item.get("url") or "")
-        title = _normalized_title(item.get("title") or "")
-        summary = str(item.get("summary") or item.get("description") or "")
-        protected = _is_protected_publication_story(item)
-        conflict = conflict_record = None
+        candidate_url = _canonical_url(item.get("canonical_url") or item.get("link") or item.get("url") or ""); title = _normalized_title(item.get("title") or ""); summary = str(item.get("summary") or item.get("description") or "")
+        protected = _is_protected_publication_story(item); conflict = conflict_record = None
         for record in records:
             record_url = _canonical_url(record.get("link", ""))
-            if candidate_url and record_url and candidate_url == record_url:
-                conflict, conflict_record = "canonical_url", record; break
+            if candidate_url and record_url and candidate_url == record_url: conflict, conflict_record = "canonical_url", record; break
             stored_title = _normalized_title(record.get("title", ""))
-            if title and stored_title and title == stored_title:
-                conflict, conflict_record = "title", record; break
+            if title and stored_title and title == stored_title: conflict, conflict_record = "title", record; break
         if conflict is None:
             for record in records:
                 if not str(record.get("title") or "").strip(): continue
-                if (probable_same_story(item, record) if protected else _semantic_conflict(title, summary, record) >= REGULAR_SAME_STORY_THRESHOLD):
-                    conflict, conflict_record = "semantic", record; break
+                if (probable_same_story(item, record) if protected else _semantic_conflict(title, summary, record) >= REGULAR_SAME_STORY_THRESHOLD): conflict, conflict_record = "semantic", record; break
         if conflict:
             blocked[conflict] += 1
-            if conflict == "semantic":
-                print(f"[Pre-Ranking Publication Guard] semantic block title={str(item.get('title',''))[:90]} matched={str((conflict_record or {}).get('title',''))[:90]}", flush=True)
+            if conflict == "semantic": print(f"[Pre-Ranking Publication Guard] semantic block title={str(item.get('title',''))[:90]} matched={str((conflict_record or {}).get('title',''))[:90]}", flush=True)
             continue
         kept.append(item)
     total_blocked = sum(blocked.values())
-    if total_blocked:
-        print(f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} remaining={len(kept)}", flush=True)
+    if total_blocked: print(f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} remaining={len(kept)}", flush=True)
     return kept
-
 
 def _priority_story_diversified(items):
     best_by_person = {}
     for item in items:
-        people = list(item.get("priority_story_people") or [])
-        if not people:
-            leader = str(item.get("leader") or item.get("watch_person") or "").strip()
-            people = [leader] if leader else [f"__item__{id(item)}"]
+        people = list(item.get("priority_story_people") or []); leader = str(item.get("leader") or item.get("watch_person") or "").strip()
+        if not people: people = [leader] if leader else [f"__item__{id(item)}"]
         for person in people:
             key = (_score(item), float(item.get("signal_score", 0) or 0), int(item.get("leader_source_authority", 0) or 0), str(item.get("published", "")))
             current = best_by_person.get(person)
@@ -178,63 +112,37 @@ def _priority_story_diversified(items):
     selected = {id(item): item for _, (_, item) in best_by_person.items()}
     return sorted(selected.values(), key=lambda x: (_score(x), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
 
-
 def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, policy):
-    started = time.monotonic()
-    eligible = [x for x in items if not x.get("duplicate") and not x.get("publication_blocked")]
-    eligible = _exclude_published_candidates(eligible)
-    _prepare_rank_features(eligible)
+    started = time.monotonic(); eligible = [x for x in items if not x.get("duplicate") and not x.get("publication_blocked")]; eligible = _exclude_published_candidates(eligible); _prepare_rank_features(eligible)
     print(f"[Ranking Timing] feature_cache items={len(eligible)} elapsed={time.monotonic()-started:.3f}s", flush=True)
     eligible.sort(key=lambda x: (int(bool(x.get("_rank_is_tier0"))), _score(x), int(bool(x.get("model_release_priority"))), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
-    priority_candidates = [x for x in eligible if x.get("_rank_is_tier0")]
-    normal = [x for x in eligible if not x.get("_rank_is_tier0")]
-    priority = _priority_story_diversified(priority_candidates)
-    priority_ids = {id(x) for x in priority}
-    normal = [x for x in normal if id(x) not in priority_ids]
-    contract = load_editorial_contract()
-    candidate_window = max(4, min(len(normal), int(contract["candidate_window"] or 6) + int(contract.get("replacement_buffer", 0) or 0)))
-    normal_window = _diversify_normal_candidates(normal, candidate_window, max_per_source, max_per_type, policy)
-    ranked = priority + normal_window
+    priority_candidates = [x for x in eligible if x.get("_rank_is_tier0")]; normal = [x for x in eligible if not x.get("_rank_is_tier0")]; priority = _priority_story_diversified(priority_candidates); priority_ids = {id(x) for x in priority}; normal = [x for x in normal if id(x) not in priority_ids]
+    contract = load_editorial_contract(); candidate_window = max(4, min(len(normal), int(contract["candidate_window"] or 6) + int(contract.get("replacement_buffer", 0) or 0))); normal_window = _diversify_normal_candidates(normal, candidate_window, max_per_source, max_per_type, policy); ranked = priority + normal_window
     normal_rank = tier0_rank = 0
     for global_rank, item in enumerate(ranked, 1):
         is_tier0 = bool(item.get("_rank_is_tier0")); item["period_rank"] = global_rank; item["publication_rank_assigned"] = True
-        if is_tier0:
-            tier0_rank += 1; item["tier0_rank"] = tier0_rank; item["normal_period_rank"] = None
-        else:
-            normal_rank += 1; item["normal_period_rank"] = normal_rank; item["tier0_rank"] = None
+        if is_tier0: tier0_rank += 1; item["tier0_rank"] = tier0_rank; item["normal_period_rank"] = None
+        else: normal_rank += 1; item["normal_period_rank"] = normal_rank; item["tier0_rank"] = None
     print("[Global Final Ranking] " + ", ".join(f"rank={x['period_rank']} normal_rank={x.get('normal_period_rank')} tier0_rank={x.get('tier0_rank')} score={x['final_editorial_score']} priority_person={x.get('priority_person_interview',False)} model_release={x.get('model_release_priority',False)} title={str(x.get('title',''))[:90]}" for x in ranked), flush=True)
-    print(f"[Tier0 Interview Priority] retained={len(priority)} quota_exempt=true unique_people=true", flush=True)
-    print(f"[Normal Ranking Window] retained={len(normal_window)} normal_candidate_window={candidate_window} replacement_buffer={contract.get('replacement_buffer',0)} publication_capacity={contract['max_posts']}", flush=True)
-    print(f"[Ranking Timing] total elapsed={time.monotonic()-started:.3f}s", flush=True)
+    print(f"[Tier0 Interview Priority] retained={len(priority)} quota_exempt=true unique_people=true", flush=True); print(f"[Normal Ranking Window] retained={len(normal_window)} normal_candidate_window={candidate_window} replacement_buffer={contract.get('replacement_buffer',0)} publication_capacity={contract['max_posts']}", flush=True); print(f"[Ranking Timing] total elapsed={time.monotonic()-started:.3f}s", flush=True)
     return ranked
-
 
 def _eligibility_split(items, max_protected=2):
     candidates, regular = [], []
     for raw in items:
-        item = dict(raw)
-        is_interview = _pipeline._is_protected_leader_interview(item)
-        is_activity = not is_interview and _pipeline._is_protected_leader_activity(item)
+        item = dict(raw); is_interview = _pipeline._is_protected_leader_interview(item); is_activity = not is_interview and _pipeline._is_protected_leader_activity(item)
         if is_interview or is_activity:
-            item["protected_content"] = True; item["protected_reason"] = "leader_interview" if is_interview else "leader_activity"; item["_ai_link"] = True; item["leader_watch_protected"] = True
-            item["leader_source_authority"] = _pipeline._leader_source_authority(item)
+            item["protected_content"] = True; item["protected_reason"] = "leader_interview" if is_interview else "leader_activity"; item["_ai_link"] = True; item["leader_watch_protected"] = True; item["leader_source_authority"] = _pipeline._leader_source_authority(item)
             leader = str(item.get("leader") or item.get("watch_person") or "").strip()
             if leader: item["priority_story_people"] = [leader]
             item["_rank_is_tier0"] = True; candidates.append(item)
         else: regular.append(item)
     candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _pipeline._direct_interview_signal(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
-    selected = candidates[:max(0, int(max_protected))]; regular.extend(candidates[len(selected):])
-    print(f"[Protected Leader Eligibility] candidates={len(candidates)} slots_reserved={len(selected)}", flush=True)
-    return selected, regular
-
+    selected = candidates[:max(0, int(max_protected))]; regular.extend(candidates[len(selected):]); print(f"[Protected Leader Eligibility] candidates={len(candidates)} slots_reserved={len(selected)}", flush=True); return selected, regular
 
 def main(hooks=None):
-    merged = dict(hooks or {})
-    merged.setdefault("select_editorial", _global_ranked_selection)
-    merged.setdefault("split_protected", _eligibility_split)
-    return _pipeline.main(hooks=merged)
+    merged = dict(hooks or {}); merged.setdefault("select_editorial", _global_ranked_selection); merged.setdefault("split_protected", _eligibility_split); return _pipeline.main(hooks=merged)
 
 select_editorial = _global_ranked_selection
-
 for _name in ("load_yaml", "LEADER_CONFIG_PATH", "_direct_interview_signal", "summarize_item", "format_post", "mark_as_seen", "send_to_telegram_safe", "resolve_source_image", "_source_tier", "_persist_item_success"):
     if hasattr(_pipeline, _name): globals()[_name] = getattr(_pipeline, _name)

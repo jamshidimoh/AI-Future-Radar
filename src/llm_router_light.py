@@ -40,6 +40,19 @@ def _provider_family(name: str) -> str:
     return str(name or "").split(":", 1)[0].strip().casefold()
 
 
+def _provider_credential_available(name: str) -> bool:
+    family = _provider_family(name)
+    if family == "groq":
+        return bool(os.getenv("GROQ_API_KEY"))
+    if family == "gemini":
+        return bool(os.getenv("GEMINI_API_KEY"))
+    if family == "openrouter":
+        return bool(os.getenv("OPENROUTER_API_KEY"))
+    if family == "huggingface":
+        return bool(os.getenv("HF_TOKEN"))
+    return True
+
+
 def _extract_message(payload):
     choices = payload.get("choices") or []
     if not choices:
@@ -244,6 +257,9 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
     for name, fn in providers:
         family = _provider_family(name)
         if name in _DISABLED or family in _DISABLED_FAMILIES:
+            continue
+        if not _provider_credential_available(name):
+            print(f"[Light Router] skipped={name} reason=missing_credential", flush=True)
             continue
         remaining = deadline - time.monotonic()
         if remaining <= 0:

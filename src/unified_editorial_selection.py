@@ -87,10 +87,7 @@ def _source_tier(item: dict[str, Any]) -> int | None:
 
 
 def _is_community(item: dict[str, Any]) -> bool:
-    value = " ".join(
-        str(item.get(key) or "").strip().casefold()
-        for key in ("source", "source_name", "source_type", "source_domain")
-    )
+    value = " ".join(str(item.get(key) or "").strip().casefold() for key in ("source", "source_name", "source_type", "source_domain"))
     if any(marker in value for marker in _COMMUNITY_MARKERS):
         return True
     tier = _source_tier(item)
@@ -108,14 +105,28 @@ def candidate_score(item: dict[str, Any]) -> float:
     return 0.0
 
 
+def _safe_float(item: dict[str, Any], key: str) -> float:
+    try:
+        return float(item.get(key, 0) or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def _rank_key(item: dict[str, Any], recent_source_counts: dict[str, int]) -> tuple:
     source = source_key(item)
     recent_penalty = min(3, max(0, int(recent_source_counts.get(source, 0) or 0))) * 2.0
     effective_score = candidate_score(item) - recent_penalty
+    confidence = max(0.0, min(1.0, _safe_float(item, "ai_relevance_confidence")))
+    evidence_strength = _safe_float(item, "evidence_strength")
+    source_tier = _source_tier(item)
+    authority = 0 if source_tier is None else max(0, 4 - source_tier)
     return (
         -effective_score,
-        -float(item.get("signal_score", 0) or 0),
-        -float(item.get("mission_score", 0) or 0),
+        -confidence,
+        -evidence_strength,
+        -authority,
+        -_safe_float(item, "signal_score"),
+        -_safe_float(item, "mission_score"),
         recent_source_counts.get(source, 0),
         str(item.get("published", "")),
     )

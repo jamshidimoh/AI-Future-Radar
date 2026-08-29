@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1787991068,
+  "updated_at": 1787996080,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5326,6 +5326,62 @@
       "why_it_matters": "درک مسیر تکاملی Nvidia برای سرمایه‌گذاران و تحلیلگران فناوری حیاتی است، زیرا نشان می‌دهد که چگونه شرکت‌ها می‌توانند با تمرکز بر زیرساخت‌های محاسباتی بنیادین، ارزش بلندمدت ایجاد کنند. این تحلیل همچنین به اهمیت صبر سرمایه‌گذاران و حمایت از نوآوری‌های پرریسک در مراحل اولیه اشاره دارد. پیامد این گزارش، تقویت دیدگاه‌ها درباره نقش حیاتی سخت‌افزارهای تخصصی در توسعه AI و نیاز به استراتژی‌های سرمایه‌گذاری بلندمدت است.",
       "link": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9sUU00Zms1cTRwTjdMbjdSc204OWdLMFJ0cm0tVWJuNUN3M05YbWp6Q3ZfTUFqNXJqRTZRSTBDZ3lVUkxNbnc3a3ZSSXFzMWZrS1daUTZUS0RlN1c3NGF2VFJkWjM?oc=5",
       "posted_at": 1787991068
+    },
+    "-1004482051328:1359": {
+      "chat_id": -1004482051328,
+      "message_id": 1359,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Singju Post)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Fei-Fei Li",
+      "watch_person": "Fei-Fei Li",
+      "title": "مصاحبه دکتر Fei-Fei Li در پادکست Huberman Lab: بررسی‌های جدید",
+      "summary": "این منبع به انتشار متن کامل (Transcript) مصاحبه دکتر Fei-Fei Li در پادکست Huberman Lab توسط رسانه The Singju Post اشاره دارد. دکتر Fei-Fei Li، پژوهشگر برجسته در حوزه AI و بینایی ماشین، در این گفتگو حضور داشته است. با Attention به ماهیت لینک ارائه‌شده، محتوای دقیق فنی، اعداد یا استدلال‌های خاص در متن ورودی گنجانده نشده است. بنابراین، این گزارش صرفاً به اطلاع‌رسانی درباره دسترسی به متن این مصاحبه می‌پردازد.",
+      "why_it_matters": "دسترسی به متن مصاحبه‌های تخصصی با چهره‌های کلیدی مانند Fei-Fei Li برای تحلیل‌گران فناوری و پژوهشگران حوزه AI اهمیت دارد. این منابع امکان بررسی دقیق‌تر دیدگاه‌ها، روش‌های تحقیق و پیش‌بینی‌های آینده را بدون وابستگی به فرمت صوتی فراهم می‌کنند. با این حال، بدون دسترسی به محتوای واقعی گفتگو، نمی‌توان پیامدهای فنی یا محدودیت‌های خاصی را استخراج کرد.",
+      "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOalIySF9aRV9ianVlM044QlZTeDB5bFdhUEJoZU1kUHVPRmZoQkZKdHlQSFp2c0FLSVdHWFowR3JuZFdkM0dheTBKYjJkUkZYWW5QQWhZX1dGTndWQTNVMnlrWmJTeDRmOEl5MlQ0Qm9fTmpKUWctc3p1SzhZRTQ4MDgwcw?oc=5",
+      "posted_at": 1787996077
+    },
+    "-1004482051328:1360": {
+      "chat_id": -1004482051328,
+      "message_id": 1360,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (tech-insider.org)",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "Ilya Sutskever",
+      "watch_person": "Ilya Sutskever",
+      "title": "احتمال ظهور محصول SSI پیش از ASI به ۸۲٪ رسید؛ اشاره آزمایشگاه Ilya Sutskever به مدل نخست",
+      "summary": "بر اساس گزارش‌های منتشر شده در پلتفرم Manifold، احتمال اینکه یک محصول مبتنی بر هوش مصنوعی تک‌عاملی (SSI) پیش از دستیابی به هوش مصنوعی فراانسانی (ASI) عرضه شود، به ۸۲ درصد افزایش یافته است. این تغییر چشمگیر در پیش‌بینی‌ها همزمان با شایعاتی رخ داده که آزمایشگاه Ilya Sutskever را در حال توسعه یا اشاره به اولین مدل در این راستا معرفی می‌کند. این رویداد نشان‌دهنده تغییر تمرکز صنعت از بحث‌های نظری درباره ASI به سمت توسعه کاربردهای عملی و محدودتر هوش مصنوعی است.",
+      "why_it_matters": "افزایش احتمال ظهور SSI پیش از ASI نشان می‌دهد که توسعه‌دهندگان و سرمایه‌گذاران بر ایجاد سیستم‌های هوشمند مستقل و کاربردی در کوتاه‌مدت تمرکز کرده‌اند. این روند می‌تواند چرخه‌های توسعه و پذیرش صنعت را تسریع کند، اما همزمان چالش‌های جدیدی در زمینه ایمنی و کنترل سیستم‌های تک‌عاملی ایجاد می‌نماید. Attention به فعالیت‌های آزمایشگاه Ilya Sutskever به عنوان یکی از چهره‌های کلیدی این حوزه، اهمیت استراتژیک این تغییر مسیر را برجسته می‌سازد.",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1VWHpYV1dHNUxqMmdWTjAwVDhoNE5JU0lGelgwR21rVnpxZElYeFJYdklIdHBpS1RuSVJ6WnBqX2hxb2pERXZkNEd6Szd2UHZ4b0hCYThLU0x6MFc2N0Fndjd2OGF1LWViemFCWFhMdlNyNjF2Ymc?oc=5",
+      "posted_at": 1787996078
+    },
+    "-1004482051328:1361": {
+      "chat_id": -1004482051328,
+      "message_id": 1361,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "این آموزش رسمی OpenAI نحوه استفاده از ChatGPT Work روی تلفن همراه برای به‌روزرسانی وضعیت کاری و انجام وظایف شخصی پیش از رسیدن به محل کار را نشان",
+      "summary": "این آموزش رسمی OpenAI نحوه استفاده از ChatGPT Work روی تلفن همراه برای به‌روزرسانی وضعیت کاری و انجام وظایف شخصی پیش از رسیدن به محل کار را نشان می‌دهد. کاربران می‌توانند با استفاده از این قابلیت، پیام‌های Slack و Gmail را مرور کنند و با بهره‌گیری از پلاگین Finances به‌صورت read-only هزینه‌های اخیر را بررسی نمایند. همچنین امکان جفت‌سازی تلفن همراه با ابزار Remote برای نظارت بر پیشرفت و هدایت وظایف در حال اجرا روی کامپیوتر فراهم می‌شود. برای عملکرد صحیح Remote، کامپیوتر میزبان باید در حالت بیدار و متصل به اینترنت باقی بماند.",
+      "why_it_matters": "این قابلیت با یکپارچه‌سازی سرویس‌های ارتباطی مانند Slack و Gmail و ابزارهای مالی، چرخه کاری کاربران را در محیط‌های سیار تسهیل می‌کند. امکان کنترل از راه دور کامپیوتر از طریق تلفن همراه، انعطاف‌پذیری بیشتری در مدیریت فرآیندهای طولانی‌مدت محاسباتی فراهم می‌آورد. با این حال، وابستگی به وضعیت روشن و آنلاین بودن کامپیوتر میزبان، یک محدودیت فنی برای استفاده در شرایطی است که دسترسی به دستگاه اصلی قطع باشد.",
+      "link": "https://www.youtube.com/watch?v=yfnh8SuMbNw",
+      "posted_at": 1787996080
     }
   }
 }

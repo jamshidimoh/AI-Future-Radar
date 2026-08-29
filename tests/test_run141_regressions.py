@@ -18,4 +18,4 @@ def test_leader_activity_does_not_enter_regular_ai_gate():
     assert len(protected) == 1
     assert regular == []
     assert protected[0]["protected_content"] is True
-    assert protected[0]["protected_reason"] == "leader_interview_or_activity"
+    assert protected[0]["protected_reason"] == "leader_activity"

@@ -1,6 +1,7 @@
 from editorial_clean import filter_ai_relevance as _filter_ai_relevance, enrich_items as _enrich_items, classify_editorial_item as _classify_editorial_item, contract_summary, filter_low_signal
 from interview_evidence import has_interview_evidence
-from mission_selector import mission_score, select_mission_portfolio
+from mission_selector import mission_score
+from portfolio_selection import select_normal_portfolio
 from strategic_signal import strategic_forecast_score
 
 
@@ -153,49 +154,31 @@ def _apply_strategic_signal(item):
     return item
 
 
-def _regular_portfolio(items, cap, max_per_source, max_per_type):
+def _regular_portfolio(items, cap, max_per_source, max_per_type, policy=None):
+    """Delegate normal-slot selection to the mission-aware, rotation-tracking
+    selector (``portfolio_selection.select_normal_portfolio``).
+
+    This replaces the previous ad-hoc "best research item, then best news
+    item, then fall back to select_mission_portfolio" logic, which duplicated
+    most of ``select_normal_portfolio``'s diversity handling without its
+    quality gate or 7-day source-rotation awareness. Named-leader items never
+    reach this path (see ``select_editorial``), so no extra leader filtering
+    is required here.
+    """
     if cap <= 0 or not items:
         return []
-    scored = []
-    for raw in items:
-        x = dict(raw)
-        mission_score(x)
-        _apply_strategic_signal(x)
-        scored.append(x)
-    result = []
-    used_sources = set()
-
-    def source_key(x):
-        return str(x.get("source") or x.get("source_domain") or "unknown").strip().casefold()
-
-    def add_best(predicate, reason):
-        candidates = [x for x in scored if source_key(x) not in used_sources and predicate(x)]
-        if not candidates:
-            return False
-        chosen = max(candidates, key=lambda x: float(x.get("mission_score", 0) or 0))
-        chosen["mission_selection_reason"] = reason
-        result.append(chosen)
-        used_sources.add(source_key(chosen))
-        return True
-
-    if len(result) < cap:
-        add_best(lambda x: str(x.get("content_type") or "").lower() in {"research", "paper", "study", "preprint"} or x.get("research_signal"), "research_evidence")
-    if len(result) < cap:
-        add_best(lambda x: str(x.get("content_type") or "").lower() in {"news", "official", "product_news"} or x.get("news_signal"), "major_industry_news")
-
-    remaining = [x for x in scored if source_key(x) not in used_sources]
-    if len(result) < cap and remaining:
-        extra = select_mission_portfolio(remaining, max_posts=cap - len(result), max_per_source=max_per_source, max_per_type=max_per_type)
-        for x in extra:
-            if source_key(x) in used_sources:
-                continue
-            if _leader_name(x) and (x.get("leader_watch_protected") or x.get("leader_signal") or x.get("leader_priority")):
-                continue
-            result.append(x)
-            used_sources.add(source_key(x))
-            if len(result) >= cap:
-                break
-    return result[:cap]
+    candidates = [dict(raw) for raw in items]
+    selected = select_normal_portfolio(
+        candidates,
+        max_posts=cap,
+        max_per_source=max_per_source,
+        max_per_type=max_per_type,
+        policy=policy,
+        post_score_hook=_apply_strategic_signal,
+    )
+    for item in selected:
+        item.setdefault("mission_selection_reason", item.get("portfolio_selection_reason", "mission_aware_portfolio"))
+    return selected[:cap]
 
 
 def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, policy=None):
@@ -226,7 +209,7 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
     selected_protected = [_mark_leader_slot(x) for x in protected[:protected_limit]]
 
     regular_cap = max(0, int(max_posts))
-    regular_selected = _regular_portfolio(regular, regular_cap, max_per_source, max_per_type)
+    regular_selected = _regular_portfolio(regular, regular_cap, max_per_source, max_per_type, policy=policy)
 
     selected = selected_protected + regular_selected
     for item in selected:

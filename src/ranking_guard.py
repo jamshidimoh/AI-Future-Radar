@@ -4,7 +4,7 @@ from __future__ import annotations
 
 def quality_threshold(item):
     content_type = str(item.get("content_type") or "news").lower()
-    if item.get("_named_leader_interview") or item.get("leader"):
+    if item.get("_named_leader_interview") or item.get("leader") or item.get("leader_signal") or item.get("is_leader_watch"):
         return 0.35
     if content_type in {"research", "paper", "study"}:
         return 0.45

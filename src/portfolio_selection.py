@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import time
 from collections import Counter
+from collections.abc import Callable
 
 from dedup import load_source_history
 from mission_selector import _source_tier, classify_area, mission_score
@@ -106,8 +107,15 @@ def select_normal_portfolio(
     max_per_source: int,
     max_per_type: int,
     policy: dict | None = None,
+    post_score_hook: Callable[[dict], dict] | None = None,
 ) -> list[dict]:
-    """Return a diverse normal portfolio without changing canonical score semantics."""
+    """Return a diverse normal portfolio without changing canonical score semantics.
+
+    ``post_score_hook`` runs once per candidate immediately after
+    :func:`mission_score`, so callers (e.g. the strategic-forecast booster in
+    ``editorial.py``) can adjust ``mission_score`` before ranking without this
+    module importing anything editorial-policy specific.
+    """
     policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     recent_sources = _recent_source_counts(rotation_days)
@@ -120,6 +128,8 @@ def select_normal_portfolio(
     prepared: list[dict] = []
     for item in quality_candidates:
         mission_score(item)
+        if post_score_hook is not None:
+            post_score_hook(item)
         item["mission_area"] = _area(item)
         item["source_rotation_count"] = int(recent_sources[_source_key(item)])
         prepared.append(item)

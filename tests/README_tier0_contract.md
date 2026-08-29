@@ -1,0 +1,1 @@
+This regression documents that protected leader activity classified as Tier-0 by ranking must remain eligible at publication even when normal_period_rank is null.

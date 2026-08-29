@@ -18,6 +18,16 @@ _AI_TAXONOMY_BRIDGE_TERMS = {
     "شبکه عصبی", "شبکه‌های عصبی", "خودکارسازی پژوهش", "اتوماسیون پژوهش", "مدل مولد",
 }
 
+_RELEVANCE_STRONG_TERMS = {
+    "artificial intelligence", "machine learning", "deep learning", "large language model", "llm",
+    "foundation model", "generative ai", "agentic ai", "ai agent", "reasoning model", "multimodal",
+    "computer vision", "ai coding", "llm inference", "llm training", "world model", "synthetic data",
+    "ai safety", "ai alignment", "ai governance", "ai policy", "ai for science", "ai research",
+    "ai benchmark", "physical ai", "embodied ai", "computer use", "هوش مصنوعی", "یادگیری ماشین",
+    "یادگیری عمیق", "مدل زبانی بزرگ", "مدل بنیادی", "هوش مصنوعی مولد", "مدل استدلالی", "بینایی ماشین",
+    "ایمنی هوش مصنوعی", "حکمرانی هوش مصنوعی", "سیاست‌گذاری هوش مصنوعی", "عامل هوشمند", "عامل‌های هوشمند",
+}
+
 _CURATED_DISCOVERY_CATEGORIES = {"ai", "quantum", "genetics", "mind", "future"}
 _CURATED_CONTENT_TYPES = {"research", "paper", "study", "preprint", "official", "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
 _TRUSTED_DISCOVERY_SOURCE_TYPES = {"youtube", "video", "podcast", "ai_lab", "research_lab", "university_lab", "university", "scientific_publisher", "science_media"}
@@ -53,8 +63,39 @@ def _curated_discovery_context(item):
     return f"Curated discovery policy category: {labels.get(category, category)}; source tier: {tier}; content type: {content_type}."
 
 
+def _relevance_confidence(item):
+    """Score actual source evidence separately from curated provenance markers.
+
+    This is metadata only at the gate boundary: it never removes an item that
+    the established relevance engine accepted, preventing false-negative drift.
+    """
+    title = str(item.get("title") or "").lower()
+    summary = str(item.get("summary") or "").lower()
+    evidence = str(item.get("evidence_text") or "").lower()
+    text = " ".join((title, summary, evidence))
+    strong_hits = sum(1 for term in _RELEVANCE_STRONG_TERMS if term in text)
+    bridge_hits = sum(1 for term in _AI_TAXONOMY_BRIDGE_TERMS if str(term).lower() in text)
+    research_signal = bool(item.get("research_signal")) or any(term in text for term in ("research", "study", "experiment", "benchmark", "findings", "آزمایش", "پژوهش", "مطالعه"))
+    source_tier = int(item.get("source_tier") or 3) if str(item.get("source_tier") or "").isdigit() else 3
+    direct = strong_hits > 0 or bridge_hits >= 2
+    confidence = 0.55
+    if direct:
+        confidence += 0.25
+    if strong_hits >= 2:
+        confidence += 0.10
+    if research_signal:
+        confidence += 0.05
+    if source_tier == 1:
+        confidence += 0.05
+    elif source_tier >= 3:
+        confidence -= 0.10
+    if item.get("curated_discovery") and not direct:
+        confidence -= 0.15
+    return max(0.0, min(1.0, round(confidence, 3)))
+
+
 def filter_ai_relevance(items, ai_keywords=None):
-    """Apply existing AI relevance semantics while retaining bounded discovery provenance."""
+    """Apply established AI relevance semantics and attach a bounded confidence score."""
     prepared = []
     context_used = 0
     for raw in items or []:
@@ -71,7 +112,19 @@ def filter_ai_relevance(items, ai_keywords=None):
         prepared.append(item)
     effective_keywords = list(dict.fromkeys(list(ai_keywords or []) + sorted(_AI_TAXONOMY_BRIDGE_TERMS)))
     result = _filter_ai_relevance(prepared, effective_keywords)
+    for item in result:
+        item["ai_relevance_confidence"] = _relevance_confidence(item)
+        item["ai_relevance_quality"] = (
+            "high" if item["ai_relevance_confidence"] >= 0.90
+            else "medium" if item["ai_relevance_confidence"] >= 0.75
+            else "bridge"
+        )
+    result.sort(key=lambda x: (float(x.get("ai_relevance_confidence", 0)), float(x.get("priority_score", 0) or 0)), reverse=True)
+    quality_counts = {"high": 0, "medium": 0, "bridge": 0}
+    for item in result:
+        quality_counts[item["ai_relevance_quality"]] += 1
     print(f"[AI Gate Context] curated_context={context_used} | input={len(prepared)} | output={len(result)}", flush=True)
+    print(f"[AI Gate Quality] high={quality_counts['high']} medium={quality_counts['medium']} bridge={quality_counts['bridge']}", flush=True)
     return result
 
 
@@ -173,7 +226,7 @@ def _regular_portfolio(items, cap, max_per_source, max_per_type):
         candidates = [x for x in scored if source_key(x) not in used_sources and predicate(x)]
         if not candidates:
             return False
-        chosen = max(candidates, key=lambda x: float(x.get("mission_score", 0) or 0))
+        chosen = max(candidates, key=lambda x: (float(x.get("mission_score", 0) or 0), float(x.get("ai_relevance_confidence", 0) or 0)))
         chosen["mission_selection_reason"] = reason
         result.append(chosen)
         used_sources.add(source_key(chosen))

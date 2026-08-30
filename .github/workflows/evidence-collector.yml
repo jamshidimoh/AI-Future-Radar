@@ -19,21 +19,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: evolution/trend-intelligence-council
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 1
 
-      - name: Determine evidence values
+      - name: Validate exact revision and gate criteria
         id: result
-        env:
-          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         shell: bash
         run: |
           set -euo pipefail
           gate=$(awk -F': ' '/^current_gate:/{print $2}' evolution/state.yaml)
           test_result=FAIL
-          if [[ "$CONCLUSION" == "success" ]]; then test_result=PASS; fi
+          acceptance_result=FAIL
+          if [[ '${{ github.event.workflow_run.conclusion }}' == 'success' ]]; then
+            if python scripts/validate_gate_state.py && python -m pytest -q tests/test_evidence_graph.py tests/test_temporal_trend.py tests/test_cross_domain_convergence.py; then
+              test_result=PASS
+              acceptance_result=PASS
+            fi
+          fi
           echo "gate=$gate" >> "$GITHUB_OUTPUT"
           echo "test_result=$test_result" >> "$GITHUB_OUTPUT"
+          echo "acceptance_result=$acceptance_result" >> "$GITHUB_OUTPUT"
 
       - name: Record workflow evidence
         env:
@@ -41,6 +46,7 @@ jobs:
           RUN_ID: ${{ github.event.workflow_run.id }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           TEST_RESULT: ${{ steps.result.outputs.test_result }}
+          ACCEPTANCE_RESULT: ${{ steps.result.outputs.acceptance_result }}
           CREATED_AT: ${{ github.event.workflow_run.updated_at }}
         shell: bash
         run: |
@@ -54,9 +60,9 @@ jobs:
               "commit_sha": os.environ["HEAD_SHA"],
               "workflow_run_id": int(os.environ["RUN_ID"]),
               "test_result": os.environ["TEST_RESULT"],
-              "acceptance_result": "PENDING",
+              "acceptance_result": os.environ["ACCEPTANCE_RESULT"],
               "timestamp_utc": os.environ["CREATED_AT"],
-              "notes": "Workflow evidence only. Gate acceptance requires gate-specific criteria and exact-revision verification."
+              "notes": "Acceptance is PASS only when gate criteria pass on the exact workflow head revision."
           }
           with Path("evolution/gate_evidence.jsonl").open("a", encoding="utf-8") as f:
               f.write(json.dumps(record, sort_keys=True) + "\n")
@@ -71,6 +77,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No evidence changes."
           else
-            git commit -m "ci(governance): record workflow evidence"
+            git commit -m "ci(governance): record gate evidence"
             git push origin evolution/trend-intelligence-council
           fi

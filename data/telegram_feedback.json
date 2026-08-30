@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788083527,
+  "updated_at": 1788084451,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5546,6 +5546,25 @@
       "why_it_matters": "طبقه‌بندی این محتوا در سیاست‌های Curated discovery با سطح اعتبار Tier 1، نشان‌دهنده اهمیت آن در اکوسیستم منابع هوش مصنوعی است. این طبقه‌بندی رسمی، اعتبار منبع را برای پژوهشگران و توسعه‌دهندگان حوزه AI تأیید می‌کند.",
       "link": "https://www.youtube.com/watch?v=NYFGCESmikA",
       "posted_at": 1788058669
+    },
+    "-1004482051328:1371": {
+      "chat_id": -1004482051328,
+      "message_id": 1371,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Fortune)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Amy Webb",
+      "watch_person": "Amy Webb",
+      "title": "Amy Webb: اقتصاد AI در باتلاق پایلوت‌ها و شبیه حباب دات‌کام اما وخیم‌تر",
+      "summary": "Amy Webb اقتصاد فعلی هوش مصنوعی را به اپلیکیشن‌های ناموفق جستجوی همسر تشبیه می‌کند که در آن حجم عظیمی از ارائه‌ها (decks) وجود دارد اما تعامل واقعی و پایدار شکل نمی‌گیرد. او اشاره می‌کند که بسیاری از پروژه‌ها در مرحله «مرگ‌زار پایلوت» (pilot purgatory) گیر کرده‌اند و به تولید محصول مقیاس‌پذیر یا درآمدزا نمی‌رسند. این وضعیت یادآور حباب دات‌کام است، اما با این تفاوت که چرخه‌های سرمایه‌گذاری و انتظارات در حوزه AI سریع‌تر و پرهزینه‌تر هستند. Webb هشدار می‌دهد که بدون گذار از مرحله آزمایشی به استقرار عملیاتی، این اکوسیستم با ریسک‌های جدی‌تری نسبت به بحران‌های قبلی فناوری مواجه است.",
+      "why_it_matters": "این تحلیل نشان می‌دهد که شکاف عمیقی بین هیجان سرمایه‌گذاری و ارزش آفرینی واقعی در صنعت هوش مصنوعی وجود دارد. گیر کردن شرکت‌ها در مرحله پایلوت به معنای اتلاف منابع عظیم و عدم تحقق وعده‌های اقتصادی است که می‌تواند منجر به تصحیر ناگهانی بازار شود. درک این الگو برای سرمایه‌گذاران و مدیران حیاتی است تا معیارهای موفقیت را از ارائه‌های جذاب به نتایج عملیاتی تغییر دهند.",
+      "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxNUDBuZTRSTzRRNEszeWx3MHhSQkdpeUl5VDdrSkhTUWNuMVB4MUJBYUhkUGs0SkNQQkpNVEw5WU5TX2wyY2x3b3ZHdDNQblNtTHBIRnZhUTFNek1uZlJRWkJvN0Y2OWpSQkJrLXBBYWUyTkZ0TEd3QlM4M2VxNEVNNjVnMmJILVNSQTd1YTUxemswYTA3UGhXamFB?oc=5",
+      "posted_at": 1788084451
     }
   }
 }

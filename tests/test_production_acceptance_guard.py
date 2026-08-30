@@ -9,6 +9,14 @@ Posts sent: 0/1
 """
 
 
+FAIL_CLOSED_PROTECTED_STORY = """
+[Production Selection] total=1
+[Dedup Evidence] protected_same_story_blocked=1
+Posts sent: 0/1
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+"""
+
+
 UNEXPECTED_ZERO_PUBLICATION = """
 [Production Selection] total=1
 Posts sent: 0/1
@@ -26,7 +34,13 @@ Posts sent: 1/2
 def test_all_selected_candidates_rejected_downstream_is_fail_closed_pass():
     ok, message = validate(FAIL_CLOSED_EDITORIAL_REJECTION)
     assert ok is True
-    assert "fail-closed editorial rejection" in message
+    assert "fail-closed downstream rejection" in message
+
+
+def test_protected_same_story_block_is_counted_as_downstream_rejection():
+    ok, message = validate(FAIL_CLOSED_PROTECTED_STORY)
+    assert ok is True
+    assert "protected_same_story_blocked=1" in message
 
 
 def test_zero_publication_without_rejection_evidence_is_failure():

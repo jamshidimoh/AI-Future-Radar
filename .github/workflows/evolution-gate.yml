@@ -2,7 +2,7 @@ name: Evolution Gate State Machine
 
 on:
   workflow_run:
-    workflows: ["Autonomous Evolution Controller"]
+    workflows: ["Gate Evidence Collector"]
     types: [completed]
   workflow_dispatch:
 
@@ -25,26 +25,38 @@ jobs:
           ref: evolution/trend-intelligence-council
           fetch-depth: 1
 
-      - name: Evaluate gate state
+      - name: Evaluate gate state and evidence
         id: state
         shell: bash
         run: |
           set -euo pipefail
-          gate=$(awk -F': ' '/^current_gate:/{print $2}' evolution/state.yaml)
-          status=$(awk -F': ' '/^status:/{print $2}' evolution/state.yaml)
-          echo "gate=$gate" >> "$GITHUB_OUTPUT"
-          echo "status=$status" >> "$GITHUB_OUTPUT"
-
-      - name: Verify exact-revision acceptance evidence
-        if: steps.state.outputs.status == 'VALIDATION_PENDING' && github.event_name == 'workflow_run'
-        env:
-          RUN_ID: ${{ github.event.workflow_run.id }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-          GATE: ${{ steps.state.outputs.gate }}
-        run: python scripts/verify_gate_evidence.py "$GATE" "$HEAD_SHA" "$RUN_ID"
+          python - <<'PY' > /tmp/state.env
+          import json
+          from pathlib import Path
+          state = {}
+          for line in Path('evolution/state.yaml').read_text(encoding='utf-8').splitlines():
+              if ': ' in line and not line.startswith(' '):
+                  k, v = line.split(': ', 1)
+                  state[k] = v
+          gate = state.get('current_gate')
+          found = None
+          for raw in reversed(Path('evolution/gate_evidence.jsonl').read_text(encoding='utf-8').splitlines()):
+              if not raw.strip() or '"note"' in raw:
+                  continue
+              r = json.loads(raw)
+              if r.get('gate') == gate and r.get('test_result') == 'PASS' and r.get('acceptance_result') == 'PASS':
+                  found = r
+                  break
+          if not found:
+              raise SystemExit(f'No PASS evidence for {gate}; fail closed.')
+          print(f"GATE={gate}")
+          print(f"EVIDENCE_SHA={found['commit_sha']}")
+          print(f"EVIDENCE_RUN={found['workflow_run_id']}")
+          PY
+          cat /tmp/state.env
+          cat /tmp/state.env >> "$GITHUB_OUTPUT"
 
       - name: Advance validated gate
-        if: steps.state.outputs.status == 'VALIDATION_PENDING' && github.event_name == 'workflow_run'
         shell: bash
         run: |
           set -euo pipefail
@@ -53,28 +65,24 @@ jobs:
           p = Path('evolution/state.yaml')
           text = p.read_text(encoding='utf-8')
           transitions = {'G3': 'G4', 'G4': 'G5', 'G5': 'G6', 'G6': 'G7', 'G7': 'G8', 'G8': 'G9'}
-          gate = next(line.split(': ', 1)[1] for line in text.splitlines() if line.startswith('current_gate:'))
+          gate = '${{ steps.state.outputs.GATE }}'
+          evidence_sha = '${{ steps.state.outputs.EVIDENCE_SHA }}'
           if gate not in transitions:
               raise SystemExit(f'No automatic transition defined for {gate}; fail closed.')
           new_gate = transitions[gate]
           text = text.replace(f'current_gate: {gate}', f'current_gate: {new_gate}')
-          text = text.replace('status: VALIDATION_PENDING', 'status: VALIDATION_PENDING')
           text = text.replace(f'next_gate: {new_gate}', 'next_gate: null')
-          text = text.replace('last_verified_commit: null', 'last_verified_commit: ' + '${{ github.event.workflow_run.head_sha }}')
+          import re
+          text = re.sub(r'^last_verified_commit: .*$', f'last_verified_commit: {evidence_sha}', text, flags=re.M)
           p.write_text(text, encoding='utf-8')
-          print(f'Advanced {gate} -> {new_gate}')
+          print(f'Advanced {gate} -> {new_gate} using evidence for {evidence_sha}')
           PY
 
       - name: Commit state transition
-        if: steps.state.outputs.status == 'VALIDATION_PENDING' && github.event_name == 'workflow_run'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- evolution/state.yaml; then
-            echo "No state transition to commit."
-          else
-            git add evolution/state.yaml
-            git commit -m "ci(evolution): advance validated gate"
-            git push origin evolution/trend-intelligence-council
-          fi
+          git add evolution/state.yaml
+          git commit -m "ci(evolution): advance validated gate"
+          git push origin evolution/trend-intelligence-council

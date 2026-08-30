@@ -31,22 +31,16 @@ jobs:
           set -euo pipefail
           gate=$(awk -F': ' '/^current_gate:/{print $2}' evolution/state.yaml)
           test_result=FAIL
-          acceptance_result=FAIL
-          if [[ "$CONCLUSION" == "success" ]]; then
-            test_result=PASS
-            acceptance_result=PASS
-          fi
+          if [[ "$CONCLUSION" == "success" ]]; then test_result=PASS; fi
           echo "gate=$gate" >> "$GITHUB_OUTPUT"
           echo "test_result=$test_result" >> "$GITHUB_OUTPUT"
-          echo "acceptance_result=$acceptance_result" >> "$GITHUB_OUTPUT"
 
-      - name: Record immutable workflow evidence
+      - name: Record workflow evidence
         env:
           GATE: ${{ steps.result.outputs.gate }}
           RUN_ID: ${{ github.event.workflow_run.id }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           TEST_RESULT: ${{ steps.result.outputs.test_result }}
-          ACCEPTANCE_RESULT: ${{ steps.result.outputs.acceptance_result }}
           CREATED_AT: ${{ github.event.workflow_run.updated_at }}
         shell: bash
         run: |
@@ -60,9 +54,9 @@ jobs:
               "commit_sha": os.environ["HEAD_SHA"],
               "workflow_run_id": int(os.environ["RUN_ID"]),
               "test_result": os.environ["TEST_RESULT"],
-              "acceptance_result": os.environ["ACCEPTANCE_RESULT"],
+              "acceptance_result": "PENDING",
               "timestamp_utc": os.environ["CREATED_AT"],
-              "notes": "Captured automatically from workflow_run; acceptance is provisional until gate-specific criteria are evaluated."
+              "notes": "Workflow evidence only. Gate acceptance requires gate-specific criteria and exact-revision verification."
           }
           with Path("evolution/gate_evidence.jsonl").open("a", encoding="utf-8") as f:
               f.write(json.dumps(record, sort_keys=True) + "\n")

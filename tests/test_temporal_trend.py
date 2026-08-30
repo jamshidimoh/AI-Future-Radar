@@ -32,3 +32,16 @@ def test_zero_evidence_is_disconfirmed():
         TrendObservation("2026-08", 0.0, 0, 0),
     ])
     assert result.state == TrendState.DISCONFIRMED
+
+
+def test_periods_must_be_strictly_increasing():
+    with pytest.raises(ValueError, match="strictly increasing"):
+        assess([
+            TrendObservation("2026-08", 0.4, 2, 2),
+            TrendObservation("2026-07", 0.5, 3, 2),
+        ])
+
+
+def test_invalid_period_is_rejected():
+    with pytest.raises(ValueError, match="YYYY-MM"):
+        assess([TrendObservation("August-2026", 0.4, 2, 2)])

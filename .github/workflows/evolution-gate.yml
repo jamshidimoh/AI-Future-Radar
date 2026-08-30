@@ -1,0 +1,81 @@
+name: Evolution Gate State Machine
+
+on:
+  workflow_run:
+    workflows: ["Autonomous Evolution Controller"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: evolution-gate-state
+  cancel-in-progress: false
+
+jobs:
+  advance:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: evolution/trend-intelligence-council
+          fetch-depth: 1
+
+      - name: Evaluate gate state
+        id: state
+        shell: bash
+        run: |
+          set -euo pipefail
+          gate=$(awk -F': ' '/^current_gate:/{print $2}' evolution/state.yaml)
+          status=$(awk -F': ' '/^status:/{print $2}' evolution/state.yaml)
+          echo "gate=$gate" >> "$GITHUB_OUTPUT"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "Current gate: $gate"
+          echo "Status: $status"
+
+      - name: Advance validated gate
+        if: steps.state.outputs.status == 'VALIDATION_PENDING'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('evolution/state.yaml')
+          text = p.read_text()
+          transitions = {
+              'G3': ('G4', 'G4'),
+              'G4': ('G5', 'G5'),
+              'G5': ('G6', 'G6'),
+              'G6': ('G7', 'G7'),
+              'G7': ('G8', 'G8'),
+              'G8': ('G9', 'G9'),
+          }
+          gate = next(line.split(': ', 1)[1] for line in text.splitlines() if line.startswith('current_gate:'))
+          if gate in transitions:
+              new_gate, next_gate = transitions[gate]
+              text = text.replace(f'current_gate: {gate}', f'current_gate: {new_gate}')
+              text = text.replace('status: VALIDATION_PENDING', 'status: VALIDATION_PENDING')
+              text = text.replace(f'next_gate: {next_gate}', 'next_gate: null')
+              p.write_text(text)
+              print(f'Advanced {gate} -> {new_gate}')
+          else:
+              print(f'No automatic transition defined for {gate}; fail closed.')
+          PY
+
+      - name: Commit state transition
+        if: steps.state.outputs.status == 'VALIDATION_PENDING'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- evolution/state.yaml; then
+            echo "No state transition to commit."
+          else
+            git add evolution/state.yaml
+            git commit -m "ci(evolution): advance validated gate"
+            git push origin evolution/trend-intelligence-council
+          fi

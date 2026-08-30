@@ -20,7 +20,10 @@ def parse_state(path: Path) -> dict[str, str]:
     values: dict[str, str] = {}
     for raw in path.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
-        if not line or line.startswith("#") or line.startswith("-") or line.endswith(":"):
+        if not line or line.startswith("#") or line.startswith("-"):
+            continue
+        if line.endswith(":"):
+            values[line[:-1].strip()] = "<mapping>"
             continue
         if ":" in line:
             key, value = line.split(":", 1)

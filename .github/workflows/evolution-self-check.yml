@@ -1,0 +1,48 @@
+name: Evolution Pipeline Self Check
+
+on:
+  push:
+    branches: ["evolution/trend-intelligence-council"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evolution-self-check
+  cancel-in-progress: false
+
+jobs:
+  self-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: evolution/trend-intelligence-council
+          fetch-depth: 1
+
+      - name: Validate gate state
+        run: python scripts/validate_gate_state.py
+
+      - name: Validate evidence schema
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('evolution/gate_evidence.jsonl')
+          for n, line in enumerate(p.read_text(encoding='utf-8').splitlines(), 1):
+              if not line.strip() or '"note"' in line:
+                  continue
+              r = json.loads(line)
+              required = {'schema_version','gate','commit_sha','workflow_run_id','test_result','acceptance_result','timestamp_utc','notes'}
+              missing = required - r.keys()
+              if missing:
+                  raise SystemExit(f'Line {n}: missing {sorted(missing)}')
+          print('Evidence schema valid')
+          PY
+
+      - name: Compile Python
+        run: python -m compileall -q scripts

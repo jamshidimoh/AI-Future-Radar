@@ -60,6 +60,9 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
 
+      - name: Enforce runtime production acceptance
+        run: python -u scripts/production_acceptance_guard.py run.log
+
       - name: Persist production state
         if: always()
         run: |

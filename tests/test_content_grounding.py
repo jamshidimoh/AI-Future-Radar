@@ -55,9 +55,9 @@ def test_source_grounding_repair_is_revalidated(monkeypatch):
         "summary": "Lex Fridman درباره تجربه دریافت کمربند مشکی و درس‌هایی که از سال‌ها تمرین گرفته صحبت می‌کند.",
     }
     draft = {
-        "title": "عنوان نادرست",
-        "summary": "موضوعی بی‌ربط به منبع.",
-        "why_it_matters": "ادعای بی‌ربط.",
+        "title": "Lex Fridman درباره یک تجربه",
+        "summary": "موضوع اولیه به‌درستی توضیح داده نشده است.",
+        "why_it_matters": "این متن نیاز به بازنویسی دارد.",
         "category": "ai",
     }
     repaired = {

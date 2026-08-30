@@ -44,6 +44,7 @@ jobs:
         env:
           GATE: ${{ steps.result.outputs.gate }}
           RUN_ID: ${{ github.event.workflow_run.id }}
+          COLLECTOR_RUN_ID: ${{ github.run_id }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           TEST_RESULT: ${{ steps.result.outputs.test_result }}
           ACCEPTANCE_RESULT: ${{ steps.result.outputs.acceptance_result }}
@@ -59,12 +60,14 @@ jobs:
               "gate": os.environ["GATE"],
               "commit_sha": os.environ["HEAD_SHA"],
               "workflow_run_id": int(os.environ["RUN_ID"]),
+              "collector_run_id": int(os.environ["COLLECTOR_RUN_ID"]),
               "test_result": os.environ["TEST_RESULT"],
               "acceptance_result": os.environ["ACCEPTANCE_RESULT"],
               "timestamp_utc": os.environ["CREATED_AT"],
               "notes": "Acceptance is PASS only when gate criteria pass on the exact workflow head revision."
           }
-          with Path("evolution/gate_evidence.jsonl").open("a", encoding="utf-8") as f:
+          path = Path("evolution/gate_evidence.jsonl")
+          with path.open("a", encoding="utf-8") as f:
               f.write(json.dumps(record, sort_keys=True) + "\n")
           PY
 

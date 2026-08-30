@@ -1,9 +1,4 @@
-"""Persistent, deterministic Trend Cluster registry.
-
-The registry gives candidate clusters a durable identity without making an LLM
-responsible for identity. It keeps lightweight signal fingerprints so recurring
-clusters can be reconciled even when an upstream signal receives a new ID.
-"""
+"""Persistent, deterministic Trend Cluster registry."""
 
 from __future__ import annotations
 
@@ -15,7 +10,6 @@ from pathlib import Path
 from typing import Iterable
 
 from .trend_intelligence import TrendCluster, TrendSignal, lexical_similarity
-
 
 SCHEMA_VERSION = 2
 RECONCILE_SIMILARITY = 0.72
@@ -49,11 +43,7 @@ class TrendRegistry:
 
     @staticmethod
     def _fingerprint(signal: TrendSignal) -> dict[str, object]:
-        return {
-            "tokens": sorted(signal.tokens),
-            "domain": signal.domain,
-            "source_id": signal.source_id,
-        }
+        return {"tokens": sorted(signal.tokens), "domain": signal.domain, "source_id": signal.source_id}
 
     @staticmethod
     def _signal_from_fingerprint(signal_id: str, fingerprint: dict[str, object]) -> TrendSignal:
@@ -73,9 +63,7 @@ class TrendRegistry:
         return cluster_id
 
     def _record_operation(self, record: ClusterRecord, operation: str, **payload: object) -> None:
-        record.operation_history.append(
-            {"operation": operation, "on": date.today().isoformat(), **payload}
-        )
+        record.operation_history.append({"operation": operation, "on": date.today().isoformat(), **payload})
 
     def _best_existing_match(self, candidate: TrendCluster) -> ClusterRecord | None:
         best_record: ClusterRecord | None = None
@@ -96,12 +84,6 @@ class TrendRegistry:
         return best_record if best_score >= RECONCILE_SIMILARITY else None
 
     def reconcile(self, candidates: Iterable[TrendCluster]) -> list[ClusterRecord]:
-        """Reconcile fresh candidates against durable identities.
-
-        Exact signal overlap is preferred. If an upstream signal receives a new
-        ID, a conservative lexical fingerprint match may reuse the existing
-        identity. No publication decision is made here.
-        """
         prior_by_signal: dict[str, ClusterRecord] = {}
         for record in self.clusters.values():
             if record.status != "active":
@@ -114,8 +96,9 @@ class TrendRegistry:
             if not candidate.signals:
                 continue
             candidate_ids = {s.signal_id for s in candidate.signals}
-            matched = {prior_by_signal[sid] for sid in candidate_ids if sid in prior_by_signal}
-            record = next(iter(matched)) if len(matched) == 1 else self._best_existing_match(candidate)
+            matched_records = [prior_by_signal[sid] for sid in candidate_ids if sid in prior_by_signal]
+            matched_ids = {record.cluster_id for record in matched_records}
+            record = matched_records[0] if len(matched_ids) == 1 else self._best_existing_match(candidate)
 
             if record is None:
                 record = ClusterRecord(cluster_id=self._new_id())
@@ -158,12 +141,13 @@ class TrendRegistry:
 
     def split(self, cluster_id: str, groups: list[list[str]]) -> list[ClusterRecord]:
         if len(groups) < 2:
-            raise ValueError("split requires at least two groups")
+            raise ValueError("split groups must cover every source signal and require at least two groups")
         source = self.clusters[cluster_id]
         source_ids = set(source.signal_ids)
         if any(not set(group) <= source_ids for group in groups):
             raise ValueError("split group contains an unknown signal")
-        if len(set().union(*(set(group) for group in groups))) != len(source_ids):
+        covered = set().union(*(set(group) for group in groups))
+        if covered != source_ids:
             raise ValueError("split groups must cover every source signal")
         records: list[ClusterRecord] = []
         for group in groups:
@@ -185,11 +169,7 @@ class TrendRegistry:
         return records
 
     def to_dict(self) -> dict[str, object]:
-        return {
-            "schema_version": self.schema_version,
-            "next_id": self.next_id,
-            "clusters": {key: asdict(value) for key, value in self.clusters.items()},
-        }
+        return {"schema_version": self.schema_version, "next_id": self.next_id, "clusters": {key: asdict(value) for key, value in self.clusters.items()}}
 
     @classmethod
     def from_dict(cls, payload: dict[str, object]) -> "TrendRegistry":

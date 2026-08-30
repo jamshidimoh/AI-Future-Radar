@@ -1,0 +1,86 @@
+version: 1
+enabled: true
+
+# Trend Intelligence is an evolution layer. It must not alter frozen publication quota.
+publication_decoupled: true
+
+# Individual signal dimensions.
+signal:
+  min_quality: 0.45
+  weak_signal_retention: true
+  novelty_weight: 0.20
+  evidence_weight: 0.25
+  source_diversity_weight: 0.15
+  temporal_weight: 0.15
+  mission_relevance_weight: 0.15
+  strategic_impact_weight: 0.10
+
+# Cluster formation is intentionally conservative.
+clustering:
+  similarity_threshold: 0.42
+  min_signals_for_emerging: 3
+  min_independent_sources_for_emerging: 2
+  min_signals_for_accelerating: 5
+  min_independent_sources_for_accelerating: 3
+  same_source_independence_cap: 1
+  max_cluster_age_days: 730
+  merge_similarity_threshold: 0.72
+  split_min_subcluster_size: 3
+
+# Trend score dimensions are separate from source tier and signal score.
+trend:
+  novelty_weight: 0.15
+  persistence_weight: 0.20
+  acceleration_weight: 0.20
+  source_independence_weight: 0.15
+  evidence_strength_weight: 0.15
+  cross_domain_weight: 0.10
+  counter_evidence_penalty_weight: 0.15
+  confidence_floor_for_forecast: 0.60
+
+# Required domains are tracked even when publication policy later filters them.
+domains:
+  - ai
+  - advanced_computing
+  - robotics
+  - quantum
+  - biotechnology
+  - brain_computer_interface
+  - consciousness_cognition
+  - philosophy_of_science
+  - futures_foresight
+  - digital_transformation
+  - emerging_technology
+
+# Prevent popularity from becoming the only emergence signal.
+weak_signal:
+  preserve_low_popularity: true
+  minimum_novelty: 0.55
+  mainstream_penalty_for_discovery: 0.10
+
+# Evidence labels are intentionally independent of source tier.
+evidence_levels:
+  - primary_research
+  - official_technical
+  - standards_institutional
+  - expert_testimony
+  - secondary_analysis
+  - community_discovery
+  - speculation
+
+# Cluster states are state-machine values, not editorial labels.
+states:
+  - weak_signal
+  - emerging
+  - accelerating
+  - established
+  - fading
+  - disconfirmed
+
+# LLMs may propose labels/hypotheses but cannot decide identity, evidence strength,
+# or publication eligibility by themselves.
+llm:
+  label_assistance: true
+  identity_authority: false
+  evidence_authority: false
+  publication_authority: false

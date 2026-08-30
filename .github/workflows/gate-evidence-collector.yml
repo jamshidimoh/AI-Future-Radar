@@ -18,6 +18,7 @@ jobs:
   collect:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.head_branch == 'evolution/trend-intelligence-council'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,7 +27,6 @@ jobs:
 
       - name: Collect immutable run evidence
         env:
-          GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ github.event.workflow_run.id }}
           RUN_SHA: ${{ github.event.workflow_run.head_sha }}
           RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
@@ -47,35 +47,20 @@ jobs:
           fi
           mkdir -p evolution
           printf '{"schema_version":1,"gate":"G5","commit_sha":"%s","workflow_run_id":"%s","test_result":"%s","acceptance_result":"%s","timestamp_utc":"%s","notes":"Autonomous Evolution Controller completed with conclusion=%s"}\n' "$RUN_SHA" "$RUN_ID" "$status" "$acceptance" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$RUN_CONCLUSION" >> evolution/gate_evidence.jsonl
-          if [[ "$RUN_CONCLUSION" == "success" ]]; then
-            python - <<'PY'
-            from pathlib import Path
-            p = Path('evolution/state.yaml')
-            text = p.read_text(encoding='utf-8')
-            text = text.replace('status: VALIDATION_PENDING', 'status: PASS')
-            text = text.replace('last_verified_commit: null', 'last_verified_commit: "' + __import__('os').environ['RUN_SHA'] + '"')
-            p.write_text(text, encoding='utf-8')
-            PY
-          else
-            python - <<'PY'
-            from pathlib import Path
-            p = Path('evolution/state.yaml')
-            text = p.read_text(encoding='utf-8')
-            text = text.replace('status: VALIDATION_PENDING', 'status: BLOCKED')
-            p.write_text(text, encoding='utf-8')
-            PY
-          fi
 
-      - name: Commit evidence and state
+      - name: Validate evidence ledger
+        run: python scripts/validate_gate_state.py
+
+      - name: Commit evidence only
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add evolution/gate_evidence.jsonl evolution/state.yaml
+          git add evolution/gate_evidence.jsonl
           if git diff --cached --quiet; then
             echo "No evidence changes."
             exit 0
           fi
-          git commit -m "ci(governance): record gate evidence"
+          git commit -m "ci(governance): record immutable gate evidence"
           git push origin evolution/trend-intelligence-council

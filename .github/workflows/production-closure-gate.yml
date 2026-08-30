@@ -1,0 +1,51 @@
+name: Production Closure Gate
+
+on:
+  workflow_run:
+    workflows: ["Run AI Future Radar Bot"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+jobs:
+  closure-evidence:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate final evidence window
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, sys, urllib.request
+          repo = os.environ['REPO']
+          token = os.environ['GH_TOKEN']
+          base = f'https://api.github.com/repos/{repo}'
+          headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json'}
+          def get(path):
+              req = urllib.request.Request(base + path, headers=headers)
+              with urllib.request.urlopen(req, timeout=20) as r:
+                  return json.load(r)
+          data = get('/actions/workflows/run.yml/runs?branch=main&per_page=10')
+          runs = [r for r in data.get('workflow_runs', []) if r.get('name') == 'Run AI Future Radar Bot']
+          if len(runs) < 3:
+              print(f'CLOSURE: IN PROGRESS — only {len(runs)} production runs observed; 3 required.')
+              sys.exit(0)
+          window = runs[:3]
+          conclusions = [r.get('conclusion') for r in window]
+          shas = [r.get('head_sha') for r in window]
+          print('Closure window:', [(r.get('run_number'), r.get('conclusion'), r.get('head_sha','')[:8]) for r in window])
+          if any(c != 'success' for c in conclusions):
+              print('CLOSURE: BLOCKED — one of the last three production runs failed.')
+              sys.exit(0)
+          # Success here is only the minimum operational evidence. The repository's
+          # final acceptance document remains authoritative for the deeper evidence
+          # items that cannot safely be inferred from workflow metadata alone.
+          print('CLOSURE: EVIDENCE WINDOW CANDIDATE — 3 consecutive successful production runs observed.')
+          print('Final human/maintainer verification remains required for the frozen evidence items.')
+          PY

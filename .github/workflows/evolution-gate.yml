@@ -49,7 +49,7 @@ jobs:
                   if not raw.strip() or '"note"' in raw:
                       continue
                   r = json.loads(raw)
-                  if (r.get('gate') == gate and r.get('collector_run_id') == collector_run
+                  if (r.get('gate') == gate and str(r.get('workflow_run_id')) == str(collector_run)
                       and r.get('test_result') == 'PASS' and r.get('acceptance_result') == 'PASS'):
                       found = r
           if not found:
@@ -79,6 +79,7 @@ jobs:
           new_gate = transitions[gate]
           text = text.replace(f'current_gate: {gate}', f'current_gate: {new_gate}')
           text = text.replace(f'next_gate: {new_gate}', 'next_gate: null')
+          text = text.replace('status: PASS', 'status: VALIDATED')
           text = re.sub(r'^last_verified_commit: .*$', f'last_verified_commit: {evidence_sha}', text, flags=re.M)
           p.write_text(text, encoding='utf-8')
           print(f'Advanced {gate} -> {new_gate}')

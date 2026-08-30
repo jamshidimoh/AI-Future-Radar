@@ -40,25 +40,25 @@ jobs:
           for line in Path('evolution/state.yaml').read_text(encoding='utf-8').splitlines():
               if ': ' in line and not line.startswith(' '):
                   k, v = line.split(': ', 1)
-                  state[k] = v
+                  state[k] = v.strip().strip('"')
           gate = state.get('current_gate')
-          collector_run = int(os.environ.get('COLLECTOR_RUN_ID', '0'))
+          collector_run = os.environ.get('COLLECTOR_RUN_ID', '').strip()
+          if not collector_run:
+              raise SystemExit('Missing completed collector run id; fail closed.')
           found = None
-          if collector_run:
-              for raw in Path('evolution/gate_evidence.jsonl').read_text(encoding='utf-8').splitlines():
-                  if not raw.strip() or '"note"' in raw:
-                      continue
-                  r = json.loads(raw)
-                  if (r.get('gate') == gate and str(r.get('workflow_run_id')) == str(collector_run)
-                      and r.get('test_result') == 'PASS' and r.get('acceptance_result') == 'PASS'):
-                      found = r
+          for raw in Path('evolution/gate_evidence.jsonl').read_text(encoding='utf-8').splitlines():
+              if not raw.strip() or '"note"' in raw:
+                  continue
+              r = json.loads(raw)
+              if (r.get('gate') == gate and str(r.get('workflow_run_id')) == collector_run
+                  and r.get('test_result') == 'PASS' and r.get('acceptance_result') == 'PASS'):
+                  found = r
           if not found:
               raise SystemExit(f'No PASS evidence bound to collector run {collector_run} for {gate}; fail closed.')
           print(f"GATE={gate}")
           print(f"EVIDENCE_SHA={found['commit_sha']}")
           print(f"EVIDENCE_RUN={found['workflow_run_id']}")
           PY
-          cat /tmp/state.env
           cat /tmp/state.env >> "$GITHUB_OUTPUT"
 
       - name: Advance validated gate
@@ -77,12 +77,13 @@ jobs:
           if gate not in transitions:
               raise SystemExit(f'No automatic transition defined for {gate}; fail closed.')
           new_gate = transitions[gate]
+          following = transitions.get(new_gate)
           text = text.replace(f'current_gate: {gate}', f'current_gate: {new_gate}')
-          text = text.replace(f'next_gate: {new_gate}', 'next_gate: null')
-          text = text.replace('status: PASS', 'status: VALIDATED')
+          text = re.sub(r'^next_gate: .*$', f'next_gate: {following if following else "null"}', text, flags=re.M)
+          text = re.sub(r'^status: .*$', 'status: VALIDATED', text, flags=re.M)
           text = re.sub(r'^last_verified_commit: .*$', f'last_verified_commit: {evidence_sha}', text, flags=re.M)
           p.write_text(text, encoding='utf-8')
-          print(f'Advanced {gate} -> {new_gate}')
+          print(f'Advanced {gate} -> {new_gate}; next={following}')
           PY
 
       - name: Commit state transition

@@ -7,3 +7,8 @@ max_auto_retries: 3
 production_promotion: G9_ONLY
 fail_closed: true
 last_verified_commit: null
+required_evidence:
+  - commit_sha
+  - workflow_run_id
+  - test_result
+  - acceptance_result

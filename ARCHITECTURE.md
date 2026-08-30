@@ -16,6 +16,13 @@ Discovery
   -> AI relevance gate
   -> semantic story clustering / canonical story
   -> editorial enrichment and scoring
+  -> Trend Intelligence sidecar
+       -> signal qualification
+       -> evidence annotation
+       -> trend clustering
+       -> temporal tracking
+       -> trend state / driver mapping
+       -> cross-domain convergence
   -> Unified Editorial Contract
        -> protected-stream eligibility
        -> mission coverage opportunities
@@ -32,9 +39,34 @@ Discovery
   -> persistent seen/history/cadence state
 ```
 
+Trend Intelligence is a decoupled evolution layer. It may observe and persist trend state without increasing publication capacity or bypassing any publication gate. Its reference design is `docs/TREND_INTELLIGENCE_ARCHITECTURE.md`; its initial policy is `config/trend_intelligence.yaml`; deterministic primitives live in `src/trend_intelligence.py`.
+
 Cross-cutting production invariants are declared in `config/production_contract.yaml`. Mission taxonomy and targets remain in `config/mission_policy.yaml`. Execution mechanics remain in `config/selection_policy.yaml`. `src/unified_editorial_selection.py` is the executable bridge: it resolves those layers into one deterministic portfolio contract.
 
-Collectors are not responsible for editorial selection. LLMs are not the sole authority for monitored-domain eligibility. The deterministic relevance, provenance, mission, diversity, quality and publication contracts remain authoritative; LLMs transform source material and may perform one bounded editorial repair.
+Collectors are not responsible for editorial selection. LLMs are not the sole authority for monitored-domain eligibility or Trend identity. The deterministic relevance, provenance, mission, diversity, quality, evidence and publication contracts remain authoritative; LLMs transform source material and may perform one bounded editorial repair.
+
+## Trend Intelligence
+
+The Radar maintains two separate objects: a `canonical story` for publication deduplication and a `trend cluster` for longitudinal intelligence. One cluster may contain many stories, sources and content types; one story may contribute to only the clusters supported by its evidence.
+
+Trend Intelligence keeps `source_tier`, `evidence_level`, `signal_score`, `trend_score` and `forecast_confidence` independent. A high-tier interview is a valuable discovery signal but is not automatically strong scientific evidence. Primary research can outrank expert commentary on evidence strength without receiving a higher discovery tier.
+
+The trend layer explicitly covers AI, emerging technologies, robotics, quantum, biotechnology, brain-computer interfaces, consciousness/cognition, philosophy of science and futures/foresight. The existing AI-first publication policy remains authoritative for normal news publication; tracking a non-AI cluster does not create a publication bypass.
+
+Weak signals are retained even when they are too early or too uncertain to publish. Repeated stories from the same source do not create independent evidence. Supporting evidence and counter-evidence are stored separately. Cluster state is longitudinal: `weak_signal`, `emerging`, `accelerating`, `established`, `fading`, or `disconfirmed`.
+
+The preferred future evolution is:
+
+```text
+Weak Signals
+   -> Emerging Trend Clusters
+   -> Drivers / Cross-domain Convergence
+   -> Three Horizons / Impact-Uncertainty
+   -> Scenarios / Opportunities / Risks
+   -> Strategic Technology Intelligence
+```
+
+Forecasts remain explicitly uncertain and cannot overwrite the evidence state.
 
 ## Unified editorial selection
 
@@ -47,7 +79,7 @@ The selector has four explicit objectives, in order:
 
 Normal publication capacity is `max_posts=3`. The selector constructs a six-item candidate window (`candidate_window=6`); candidates beyond the first three are replacement candidates and never increase the publication quota. Transformation, editorial QA, language and publication policy apply equally to primary and replacement candidates.
 
-`max_items_per_source=2` is the hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. This distinction prevents source concentration without collapsing the run when only a small set of sources is available.
+`max_items_per_source=2` is the hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. This distinction prevents source concentration without collapsing the run when only a small set of sources are available.
 
 Mission targets are opportunities, not fabricated quotas. When an eligible candidate for convergence, mind/cognition, future/governance or research exists, the selector gives it an explicit opportunity; when no eligible candidate exists, the system continues without inventing coverage.
 
@@ -121,6 +153,8 @@ Runtime state includes seen URLs/signatures, Telegram feedback, educational prog
 
 This Git-backed state is an explicit current-stage trade-off. The code/state separation should be revisited before treating the Radar as a high-concurrency multi-worker service.
 
+Trend state should eventually be persisted separately from publication state. It requires append-friendly signal history, stable cluster IDs, merge/split lineage and reproducible recomputation. Until that storage layer is introduced, the deterministic engine remains an evolution-sidecar and does not claim full longitudinal persistence.
+
 ## Observability
 
 Every production run reports:
@@ -132,16 +166,19 @@ Every production run reports:
 - link and semantic deduplication
 - AI relevance gate
 - unified mission/source selection decisions and candidate-window size
+- Trend Intelligence signal count, cluster count, state distribution and top cluster audit summaries when enabled
 - provider success/fallback behavior
 - language/editorial-quality/replacement decisions
 - Telegram message IDs and delivery mode
 - state persistence outcome
 
-Ranking audit artifacts should permit reconstruction of why each published or blocked candidate crossed each major boundary.
+Ranking and trend audit artifacts should permit reconstruction of why each published or blocked candidate crossed each major boundary and why a signal joined or did not join a cluster.
 
 ## Regression strategy
 
 The regression suite protects production contracts rather than only unit-level helpers. It covers cadence, editorial selection, leader priority, MIT/Building 32 priority, canonical deduplication, YouTube resolution/fallback, image validation/delivery, Telegram formatting, educational RTL, language gates, source exclusion, source diversity, mission coverage and configuration invariants.
+
+Trend Intelligence additionally requires deterministic clustering tests, source-independence tests, cross-domain convergence tests and explicit separation of source tier from evidence strength.
 
 `tests/test_production_contract.py` checks that the protected-source declaration, mission targets, selection mechanics, source registry, quality thresholds, source boundary and architecture document remain synchronized. `tests/test_unified_editorial_selection.py` tests behavior, including distinct-source preference, adaptive backfill, mission coverage opportunities, community exclusion and hard caps.
 
@@ -149,4 +186,4 @@ A contract drift is a CI failure, not a silent editorial change. Any change to a
 
 ## Design boundary
 
-The pipeline remains batch-oriented. It does not require an agent loop, autonomous tool planning, or a permanent model server. Future extensions should be added behind discovery, editorial selection, transformation, delivery and state boundaries rather than inserting provider-specific logic throughout `main.py`.
+The pipeline remains batch-oriented. It does not require an agent loop, autonomous tool planning, or a permanent model server. Future extensions should be added behind discovery, editorial selection, Trend Intelligence, transformation, delivery and state boundaries rather than inserting provider-specific logic throughout `main.py`.

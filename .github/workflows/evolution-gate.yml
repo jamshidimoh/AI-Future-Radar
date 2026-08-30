@@ -34,40 +34,39 @@ jobs:
           status=$(awk -F': ' '/^status:/{print $2}' evolution/state.yaml)
           echo "gate=$gate" >> "$GITHUB_OUTPUT"
           echo "status=$status" >> "$GITHUB_OUTPUT"
-          echo "Current gate: $gate"
-          echo "Status: $status"
+
+      - name: Verify exact-revision acceptance evidence
+        if: steps.state.outputs.status == 'VALIDATION_PENDING' && github.event_name == 'workflow_run'
+        env:
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          GATE: ${{ steps.state.outputs.gate }}
+        run: python scripts/verify_gate_evidence.py "$GATE" "$HEAD_SHA" "$RUN_ID"
 
       - name: Advance validated gate
-        if: steps.state.outputs.status == 'VALIDATION_PENDING'
+        if: steps.state.outputs.status == 'VALIDATION_PENDING' && github.event_name == 'workflow_run'
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
           p = Path('evolution/state.yaml')
-          text = p.read_text()
-          transitions = {
-              'G3': ('G4', 'G4'),
-              'G4': ('G5', 'G5'),
-              'G5': ('G6', 'G6'),
-              'G6': ('G7', 'G7'),
-              'G7': ('G8', 'G8'),
-              'G8': ('G9', 'G9'),
-          }
+          text = p.read_text(encoding='utf-8')
+          transitions = {'G3': 'G4', 'G4': 'G5', 'G5': 'G6', 'G6': 'G7', 'G7': 'G8', 'G8': 'G9'}
           gate = next(line.split(': ', 1)[1] for line in text.splitlines() if line.startswith('current_gate:'))
-          if gate in transitions:
-              new_gate, next_gate = transitions[gate]
-              text = text.replace(f'current_gate: {gate}', f'current_gate: {new_gate}')
-              text = text.replace('status: VALIDATION_PENDING', 'status: VALIDATION_PENDING')
-              text = text.replace(f'next_gate: {next_gate}', 'next_gate: null')
-              p.write_text(text)
-              print(f'Advanced {gate} -> {new_gate}')
-          else:
-              print(f'No automatic transition defined for {gate}; fail closed.')
+          if gate not in transitions:
+              raise SystemExit(f'No automatic transition defined for {gate}; fail closed.')
+          new_gate = transitions[gate]
+          text = text.replace(f'current_gate: {gate}', f'current_gate: {new_gate}')
+          text = text.replace('status: VALIDATION_PENDING', 'status: VALIDATION_PENDING')
+          text = text.replace(f'next_gate: {new_gate}', 'next_gate: null')
+          text = text.replace('last_verified_commit: null', 'last_verified_commit: ' + '${{ github.event.workflow_run.head_sha }}')
+          p.write_text(text, encoding='utf-8')
+          print(f'Advanced {gate} -> {new_gate}')
           PY
 
       - name: Commit state transition
-        if: steps.state.outputs.status == 'VALIDATION_PENDING'
+        if: steps.state.outputs.status == 'VALIDATION_PENDING' && github.event_name == 'workflow_run'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"

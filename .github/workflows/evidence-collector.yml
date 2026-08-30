@@ -1,0 +1,73 @@
+name: Gate Evidence Collector
+
+on:
+  workflow_run:
+    workflows: ["Autonomous Evolution Controller"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gate-evidence-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    if: github.event.workflow_run.head_branch == 'evolution/trend-intelligence-council'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: evolution/trend-intelligence-council
+          fetch-depth: 1
+
+      - name: Record immutable workflow evidence
+        env:
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          CREATED_AT: ${{ github.event.workflow_run.updated_at }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gate=$(awk -F': ' '/^current_gate:/{print $2}' evolution/state.yaml)
+          test_result=FAIL
+          acceptance_result=FAIL
+          if [[ "$CONCLUSION" == "success" ]]; then
+            test_result=PASS
+            acceptance_result=PASS
+          fi
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          record = {
+              "schema_version": 1,
+              "gate": os.environ["GATE"],
+              "commit_sha": os.environ["HEAD_SHA"],
+              "workflow_run_id": int(os.environ["RUN_ID"]),
+              "test_result": os.environ["TEST_RESULT"],
+              "acceptance_result": os.environ["ACCEPTANCE_RESULT"],
+              "timestamp_utc": os.environ["CREATED_AT"],
+              "notes": "Captured automatically from workflow_run; acceptance is provisional until gate-specific criteria are evaluated."
+          }
+          with Path("evolution/gate_evidence.jsonl").open("a", encoding="utf-8") as f:
+              f.write(json.dumps(record, sort_keys=True) + "\n")
+          PY
+        env:
+          GATE: ${{ steps.gate.outputs.gate }}
+          TEST_RESULT: ${{ steps.result.outputs.test_result }}
+          ACCEPTANCE_RESULT: ${{ steps.result.outputs.acceptance_result }}
+
+      - name: Commit evidence ledger
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evolution/gate_evidence.jsonl
+          if git diff --cached --quiet; then
+            echo "No evidence changes."
+          else
+            git commit -m "ci(governance): record workflow evidence"
+            git push origin evolution/trend-intelligence-council
+          fi

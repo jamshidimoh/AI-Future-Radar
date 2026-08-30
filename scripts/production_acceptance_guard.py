@@ -14,6 +14,7 @@ CONTRACT_PATTERN = re.compile(
 )
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
+PROTECTED_BLOCK_PATTERN = re.compile(r"protected_same_story_blocked\s*=\s*(\d+)")
 
 
 def _last_match(lines, patterns):
@@ -42,13 +43,20 @@ def validate(log_text: str) -> tuple[bool, str]:
     education = contract_match.group(3)
     published_news = normal_news + tier0_news
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
+    protected_blocked = sum(
+        int(match.group(1))
+        for line in lines
+        for match in PROTECTED_BLOCK_PATTERN.finditer(line)
+    )
+    downstream_rejections = editorial_rejections + protected_blocked
 
     if selected > 0 and published_news == 0 and education != "confirmed":
         posts_sent = int(posts_match.group(1)) if posts_match else None
-        if editorial_rejections >= selected and (posts_sent is None or posts_sent == 0):
+        if downstream_rejections >= selected and (posts_sent is None or posts_sent == 0):
             return True, (
-                "production acceptance PASS: fail-closed editorial rejection; "
+                "production acceptance PASS: fail-closed downstream rejection; "
                 f"selected={selected}, editorial_rejections={editorial_rejections}, "
+                f"protected_same_story_blocked={protected_blocked}, "
                 f"published_news={published_news}, education={education}"
             )
         return False, (
@@ -56,6 +64,7 @@ def validate(log_text: str) -> tuple[bool, str]:
             "news items were confirmed and the run did not provide evidence that "
             "all selected candidates were explicitly rejected downstream "
             f"(selected={selected}, editorial_rejections={editorial_rejections}, "
+            f"protected_same_story_blocked={protected_blocked}, "
             f"normal_news={normal_news}, tier0_news={tier0_news}, education={education})"
         )
 

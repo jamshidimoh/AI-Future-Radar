@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from src.editorial_quality_policy import normal_score_allowed
+from scripts.production_acceptance_guard import validate
 
 ROOT = Path(__file__).resolve().parents[1]
 MISSION_POLICY = ROOT / "config" / "mission_policy.yaml"
@@ -22,16 +23,34 @@ def test_mission_portfolio_is_explicit_and_not_generic_ai_only():
     assert "min_authoritative_items: 2" in text
 
 
-def test_acceptance_contract_allows_safe_zero_publication():
-    contract = (ROOT / "docs" / "PRODUCTION_FINAL_ACCEPTANCE.md").read_text(encoding="utf-8").casefold()
-    zero_publication = (
-        "publishes zero news items" in contract
-        or "zero news items" in contract
-        or "zero-publication" in contract
-    )
-    assert zero_publication
-    assert "normal_rank=1" in contract
-    assert "confirmed delivery" in contract
+def test_zero_publication_fails_when_candidates_were_selected():
+    log = """
+[Production Selection] canonical_period_rank=true total=2
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+"""
+    ok, reason = validate(log)
+    assert not ok
+    assert "zero news items" in reason
+
+
+def test_zero_publication_is_allowed_only_when_no_candidates_exist():
+    log = """
+[Production Selection] canonical_period_rank=true total=0
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+"""
+    ok, reason = validate(log)
+    assert ok
+    assert "selected=0" in reason
+
+
+def test_confirmed_education_can_satisfy_an_education_slot():
+    log = """
+[Production Selection] canonical_period_rank=true total=2
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=confirmed
+"""
+    ok, reason = validate(log)
+    assert ok
+    assert "education=confirmed" in reason
 
 
 def test_production_state_preserves_real_baseline_fields():

@@ -1,3 +1,5 @@
+import pytest
+
 from src.temporal_trend import TrendObservation, TrendState, assess
 
 
@@ -12,7 +14,7 @@ def test_growth_with_new_evidence_is_accelerating():
         TrendObservation("2026-08", 0.60, 4, 3),
     ])
     assert result.state == TrendState.ACCELERATING
-    assert result.acceleration == 0.20
+    assert result.acceleration == pytest.approx(0.20)
     assert result.evidence_growth == 2
 
 

@@ -12,6 +12,9 @@ concurrency:
   group: evolution-self-check
   cancel-in-progress: false
 
+env:
+  PYTHONUNBUFFERED: "1"
+
 jobs:
   self-check:
     runs-on: ubuntu-latest
@@ -21,6 +24,9 @@ jobs:
         with:
           ref: evolution/trend-intelligence-council
           fetch-depth: 1
+
+      - name: Install test dependencies
+        run: python -m pip install -r requirements.txt
 
       - name: Validate gate state
         run: python scripts/validate_gate_state.py

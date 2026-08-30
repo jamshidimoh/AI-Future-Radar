@@ -9,12 +9,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: read
 
 concurrency:
   group: autonomous-evolution-${{ github.ref }}
   cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
 
 jobs:
   controller:
@@ -38,11 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "Commit: $GITHUB_SHA"
-          if [[ -f evolution/state.yaml ]]; then
-            cat evolution/state.yaml
-          else
-            echo "evolution/state.yaml not present; using repository gates as source of truth."
-          fi
+          if [[ -f evolution/state.yaml ]]; then cat evolution/state.yaml; else echo "evolution/state.yaml not present; using repository gates as source of truth."; fi
 
       - name: Validate gate state
         run: python scripts/validate_gate_state.py
@@ -64,3 +63,23 @@ jobs:
         run: |
           echo "Autonomous controller validation completed."
           echo "Production promotion remains gated by G8/G9 and existing production protections."
+
+      - name: Record immutable controller evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          status="FAIL"
+          acceptance="FAIL"
+          if [[ "${{ success() }}" == "true" ]]; then
+            status="PASS"
+            acceptance="PASS"
+          fi
+          mkdir -p evolution
+          printf '{"schema_version":1,"gate":"G5","commit_sha":"%s","workflow_run_id":"%s","test_result":"%s","acceptance_result":"%s","timestamp_utc":"%s","notes":"Autonomous Evolution Controller result=%s"}\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" "$status" "$acceptance" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$status" >> evolution/gate_evidence.jsonl
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add evolution/gate_evidence.jsonl
+          git diff --cached --quiet && exit 0
+          git commit -m "ci(evolution): record controller evidence"
+          git push origin evolution/trend-intelligence-council

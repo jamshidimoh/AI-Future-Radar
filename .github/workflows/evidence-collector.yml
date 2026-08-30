@@ -22,12 +22,10 @@ jobs:
           ref: evolution/trend-intelligence-council
           fetch-depth: 1
 
-      - name: Record immutable workflow evidence
+      - name: Determine evidence values
+        id: result
         env:
-          RUN_ID: ${{ github.event.workflow_run.id }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-          CREATED_AT: ${{ github.event.workflow_run.updated_at }}
         shell: bash
         run: |
           set -euo pipefail
@@ -38,6 +36,21 @@ jobs:
             test_result=PASS
             acceptance_result=PASS
           fi
+          echo "gate=$gate" >> "$GITHUB_OUTPUT"
+          echo "test_result=$test_result" >> "$GITHUB_OUTPUT"
+          echo "acceptance_result=$acceptance_result" >> "$GITHUB_OUTPUT"
+
+      - name: Record immutable workflow evidence
+        env:
+          GATE: ${{ steps.result.outputs.gate }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          TEST_RESULT: ${{ steps.result.outputs.test_result }}
+          ACCEPTANCE_RESULT: ${{ steps.result.outputs.acceptance_result }}
+          CREATED_AT: ${{ github.event.workflow_run.updated_at }}
+        shell: bash
+        run: |
+          set -euo pipefail
           python - <<'PY'
           import json, os
           from pathlib import Path
@@ -54,10 +67,6 @@ jobs:
           with Path("evolution/gate_evidence.jsonl").open("a", encoding="utf-8") as f:
               f.write(json.dumps(record, sort_keys=True) + "\n")
           PY
-        env:
-          GATE: ${{ steps.gate.outputs.gate }}
-          TEST_RESULT: ${{ steps.result.outputs.test_result }}
-          ACCEPTANCE_RESULT: ${{ steps.result.outputs.acceptance_result }}
 
       - name: Commit evidence ledger
         shell: bash

@@ -3,6 +3,9 @@ name: Autonomous Evolution Controller
 on:
   push:
     branches: ["evolution/trend-intelligence-council"]
+    paths-ignore:
+      - "evolution/state.yaml"
+      - "evolution/gate_evidence.jsonl"
   workflow_dispatch:
 
 permissions:
@@ -31,6 +34,9 @@ jobs:
           else
             echo "evolution/state.yaml not present; using repository gates as source of truth."
           fi
+
+      - name: Validate gate state
+        run: python scripts/validate_gate_state.py
 
       - name: Compile Python
         run: python -m compileall -q .

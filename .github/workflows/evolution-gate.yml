@@ -25,13 +25,16 @@ jobs:
           ref: evolution/trend-intelligence-council
           fetch-depth: 1
 
-      - name: Evaluate gate state and evidence
+      - name: Evaluate gate state and current evidence
         id: state
         shell: bash
+        env:
+          COLLECTOR_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
           python - <<'PY' > /tmp/state.env
           import json
+          import os
           from pathlib import Path
           state = {}
           for line in Path('evolution/state.yaml').read_text(encoding='utf-8').splitlines():
@@ -39,16 +42,18 @@ jobs:
                   k, v = line.split(': ', 1)
                   state[k] = v
           gate = state.get('current_gate')
+          collector_run = int(os.environ.get('COLLECTOR_RUN_ID', '0'))
           found = None
-          for raw in reversed(Path('evolution/gate_evidence.jsonl').read_text(encoding='utf-8').splitlines()):
-              if not raw.strip() or '"note"' in raw:
-                  continue
-              r = json.loads(raw)
-              if r.get('gate') == gate and r.get('test_result') == 'PASS' and r.get('acceptance_result') == 'PASS':
-                  found = r
-                  break
+          if collector_run:
+              for raw in Path('evolution/gate_evidence.jsonl').read_text(encoding='utf-8').splitlines():
+                  if not raw.strip() or '"note"' in raw:
+                      continue
+                  r = json.loads(raw)
+                  if (r.get('gate') == gate and r.get('collector_run_id') == collector_run
+                      and r.get('test_result') == 'PASS' and r.get('acceptance_result') == 'PASS'):
+                      found = r
           if not found:
-              raise SystemExit(f'No PASS evidence for {gate}; fail closed.')
+              raise SystemExit(f'No PASS evidence bound to collector run {collector_run} for {gate}; fail closed.')
           print(f"GATE={gate}")
           print(f"EVIDENCE_SHA={found['commit_sha']}")
           print(f"EVIDENCE_RUN={found['workflow_run_id']}")
@@ -57,11 +62,13 @@ jobs:
           cat /tmp/state.env >> "$GITHUB_OUTPUT"
 
       - name: Advance validated gate
+        if: github.event_name == 'workflow_run'
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
+          import re
           p = Path('evolution/state.yaml')
           text = p.read_text(encoding='utf-8')
           transitions = {'G3': 'G4', 'G4': 'G5', 'G5': 'G6', 'G6': 'G7', 'G7': 'G8', 'G8': 'G9'}
@@ -72,13 +79,13 @@ jobs:
           new_gate = transitions[gate]
           text = text.replace(f'current_gate: {gate}', f'current_gate: {new_gate}')
           text = text.replace(f'next_gate: {new_gate}', 'next_gate: null')
-          import re
           text = re.sub(r'^last_verified_commit: .*$', f'last_verified_commit: {evidence_sha}', text, flags=re.M)
           p.write_text(text, encoding='utf-8')
-          print(f'Advanced {gate} -> {new_gate} using evidence for {evidence_sha}')
+          print(f'Advanced {gate} -> {new_gate}')
           PY
 
       - name: Commit state transition
+        if: github.event_name == 'workflow_run'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"

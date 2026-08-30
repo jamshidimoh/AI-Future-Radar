@@ -1,0 +1,1 @@
+{"schema_version":1,"note":"Append-only gate evidence ledger. A record is valid only when commit_sha, workflow_run_id, test_result and acceptance_result refer to the same evaluated revision."}

@@ -1,0 +1,51 @@
+name: Autonomous Evolution Controller
+
+on:
+  push:
+    branches: ["evolution/trend-intelligence-council"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: autonomous-evolution-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  controller:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inspect evolution state
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Commit: $GITHUB_SHA"
+          if [[ -f evolution/state.yaml ]]; then
+            cat evolution/state.yaml
+          else
+            echo "evolution/state.yaml not present; using repository gates as source of truth."
+          fi
+
+      - name: Compile Python
+        run: python -m compileall -q .
+
+      - name: Run targeted intelligence tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -d tests ]]; then
+            python -m pytest -q tests/test_evidence_graph.py tests/test_temporal_trend.py tests/test_cross_domain_convergence.py
+          else
+            echo "No tests directory found."
+          fi
+
+      - name: Enforce no automatic production promotion
+        run: |
+          echo "Autonomous controller validation completed."
+          echo "Production promotion remains gated by G8/G9 and existing production protections."

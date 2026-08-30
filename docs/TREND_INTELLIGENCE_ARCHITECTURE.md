@@ -157,7 +157,55 @@ Trend Intelligence must not bypass:
 
 The first implementation is deterministic and dependency-light. LLMs may later enrich cluster labels and hypotheses, but the LLM cannot be the sole authority for cluster identity, evidence strength or publication eligibility.
 
-## 11. Acceptance criteria
+## 11. Explicit end-state / Definition of Done
+
+The project has one terminal engineering objective for this evolution: **a continuously operating, auditable Technology Intelligence and Emerging Trend Radar that discovers weak signals, forms persistent multi-source trend clusters, validates evidence, tracks temporal state, connects cross-domain drivers, and produces calibrated foresight outputs without weakening the existing production publication contract.**
+
+The project is not considered complete merely because the clustering module passes unit tests or because a dashboard exists.
+
+Production completion requires all of the following:
+
+1. Deterministic unit and contract tests are green.
+2. Cluster identities remain stable across repeated executions and process restarts.
+3. Signal history is persisted separately from publication state and is append-friendly.
+4. Same-source repetition, syndication and copied reporting cannot manufacture source independence.
+5. Weak signals are retained even when they are below publication thresholds.
+6. Supporting evidence and counter-evidence are independently represented.
+7. Trend state is reproducible from persisted history.
+8. Merge, split, revive, decay and disconfirmation operations have lineage and audit records.
+9. Temporal acceleration and persistence are measured rather than inferred from raw popularity alone.
+10. Cross-domain convergence is explicit and cannot be fabricated by duplicate sources.
+11. `source_tier`, `evidence_level`, `signal_score`, `trend_score` and `forecast_confidence` remain independent fields and gates.
+12. LLMs remain bounded assistants rather than authorities for identity, evidence or publication.
+13. Foresight outputs explicitly preserve uncertainty, assumptions, drivers and counter-scenarios.
+14. Observability can reconstruct why each signal joined/rejected a cluster and why each cluster changed state.
+15. A shadow multi-run evaluation demonstrates stable cluster behavior over time.
+16. Production news quota, protected streams, source exclusions, quality gates and fail-closed behavior show zero regression.
+17. The Trend Intelligence layer can be enabled, disabled and degraded independently of normal publication.
+18. A final production acceptance run passes all quality, safety, state, evidence and publication invariants.
+
+## 12. Delivery gates
+
+Evolution proceeds through explicit gates; a later gate cannot be declared complete when an earlier gate is red:
+
+```text
+G0 Architecture Freeze
+   -> G1 Deterministic Signal/Cluster Engine
+   -> G2 Persistent Registry + Lineage
+   -> G3 Evidence Graph + Independence
+   -> G4 Temporal Trend State + Acceleration
+   -> G5 Cross-domain Convergence
+   -> G6 Foresight / Drivers / Impact-Uncertainty
+   -> G7 Shadow Production Multi-run Validation
+   -> G8 Controlled Production Integration
+   -> G9 Final Production Acceptance
+```
+
+G0 is already represented by the architecture and policy in this evolution branch. G1/G2 are implemented in the current PR. G3 onward remain implementation work until their acceptance criteria are demonstrably met.
+
+The target is therefore **G9**, not an arbitrary number of commits, PRs or features.
+
+## 13. Acceptance criteria
 
 The evolution is considered production-ready only when:
 
@@ -170,8 +218,9 @@ The evolution is considered production-ready only when:
 7. merge/split operations are auditable;
 8. no production frozen invariant regresses;
 9. observability can explain why a signal joined or rejected a cluster;
-10. a multi-run evidence window demonstrates stable behavior.
+10. a multi-run evidence window demonstrates stable behavior;
+11. all delivery gates G0-G9 are closed with recorded evidence.
 
-## 12. Methodological basis
+## 14. Methodological basis
 
 The design follows established horizon-scanning principles: continuous collection of weak signals, broad source diversity, clustering of recurring topics, and subsequent development of emerging trends. Government Office for Science guidance explicitly describes horizon scanning as systematic collection of weak signals and emerging trends, and its 2025 Defra case study describes ongoing clustering/tagging of scans into emerging trends. OECD's 2025 Science, Technology and Innovation Outlook similarly emphasizes continuous horizon scanning, structured analysis, diverse sources and expert consultation under uncertainty.

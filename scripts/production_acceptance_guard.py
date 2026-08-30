@@ -1,17 +1,9 @@
-"""Runtime acceptance guard for the production publication contract.
-
-The bot may complete without an exception when selected candidates are rejected
-by a downstream editorial/delivery gate. A production run is acceptable when
-that rejection is explicitly evidenced and therefore results in fail-closed
-zero publication. Unexpected zero publication after a candidate survives
-editorial gates remains a production failure.
-"""
+"""Runtime acceptance guard for the production publication contract."""
 from __future__ import annotations
 
 import re
 import sys
 from pathlib import Path
-
 
 CANDIDATE_PATTERNS = (
     re.compile(r"\[Production Selection\].*?total=(\d+)"),
@@ -39,7 +31,6 @@ def validate(log_text: str) -> tuple[bool, str]:
     candidate_match = _last_match(lines, CANDIDATE_PATTERNS)
     contract_match = _last_match(lines, (CONTRACT_PATTERN,))
     posts_match = _last_match(lines, (POSTS_SENT_PATTERN,))
-
     if candidate_match is None:
         return False, "missing production candidate-count evidence"
     if contract_match is None:
@@ -50,26 +41,20 @@ def validate(log_text: str) -> tuple[bool, str]:
     tier0_news = int(contract_match.group(2))
     education = contract_match.group(3)
     published_news = normal_news + tier0_news
-    editorial_rejections = sum(
-        1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line)
-    )
+    editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
 
-    # Zero publication is valid when every selected candidate is explicitly
-    # rejected by the downstream editorial gate: this is the required
-    # fail-closed behavior. Do not treat a generic zero-publication run as OK.
     if selected > 0 and published_news == 0 and education != "confirmed":
-        if editorial_rejections >= selected and (
-            posts_match is None or int(posts_match.group(1)) == 0
-        ):
+        posts_sent = int(posts_match.group(1)) if posts_match else None
+        if editorial_rejections >= selected and (posts_sent is None or posts_sent == 0):
             return True, (
                 "production acceptance PASS: fail-closed editorial rejection; "
                 f"selected={selected}, editorial_rejections={editorial_rejections}, "
                 f"published_news={published_news}, education={education}"
             )
         return False, (
-            "production contract violation: selected candidates existed but "
-            "zero news items were confirmed and the run did not provide evidence "
-            "that all selected candidates were explicitly rejected downstream "
+            "production contract violation: selected candidates existed but zero "
+            "news items were confirmed and the run did not provide evidence that "
+            "all selected candidates were explicitly rejected downstream "
             f"(selected={selected}, editorial_rejections={editorial_rejections}, "
             f"normal_news={normal_news}, tier0_news={tier0_news}, education={education})"
         )

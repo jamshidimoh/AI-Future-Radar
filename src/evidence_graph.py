@@ -1,7 +1,7 @@
 """Deterministic evidence graph primitives for Trend Intelligence.
 
 The graph deliberately separates source identity, claims, evidence and
-counter-evidence.  It does not infer scientific truth and does not use an
+counter-evidence. It does not infer scientific truth and does not use an
 LLM; downstream scoring can consume these auditable records.
 """
 
@@ -67,5 +67,5 @@ class EvidenceGraph:
     def net_evidence(self, claim_id: str | None = None) -> float:
         supporting = sum(e.strength for e in self.supporting(claim_id))
         counter = sum(e.strength for e in self.counter(claim_id))
-        total = supporting + counter
+        total = round(supporting + counter, 12)
         return 0.0 if total == 0 else (supporting - counter) / total

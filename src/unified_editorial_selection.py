@@ -28,6 +28,7 @@ _AREA_MAP = {
 
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
 _COMMUNITY_MARKERS = ("reddit", "community", "aggregator")
+_GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -76,6 +77,46 @@ def mission_area(item: dict[str, Any]) -> str:
     return "ai_core"
 
 
+def _mission_text(item: dict[str, Any]) -> str:
+    return " ".join(
+        str(item.get(k) or "")
+        for k in ("title", "summary", "description", "category", "mission_area", "content_type", "tags", "keywords")
+    ).casefold()
+
+
+def _keyword_match_area(item: dict[str, Any]) -> str | None:
+    text = _mission_text(item)
+    keyword_map = _load_yaml(MISSION_PATH).get("areas", {})
+    matches: list[tuple[int, str]] = []
+    for area, cfg in keyword_map.items():
+        for keyword in cfg.get("keywords", []) or []:
+            key = str(keyword).strip().casefold()
+            if not key or key not in text:
+                continue
+            if area == "ai_core" and key in _GENERIC_AI_TERMS:
+                continue
+            matches.append((len(key), area))
+    return max(matches, key=lambda x: x[0])[1] if matches else None
+
+
+def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
+    """Validate mission relevance; strict mode rejects unclassified material."""
+    explicit = str(item.get("mission_area") or "").strip().casefold()
+    if explicit in _AREA_MAP.values():
+        return True
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _AREA_MAP:
+        item["mission_area"] = _AREA_MAP[category]
+        return True
+    matched_area = _keyword_match_area(item)
+    if matched_area:
+        item["mission_area"] = matched_area
+        return True
+    if not strict:
+        return True
+    return item.get("_ai_link") is True or item.get("ai_relevance") is True
+
+
 def _source_tier(item: dict[str, Any]) -> int | None:
     raw = item.get("source_tier", item.get("tier"))
     if raw in (None, ""):
@@ -108,14 +149,28 @@ def candidate_score(item: dict[str, Any]) -> float:
     return 0.0
 
 
+def _safe_float(item: dict[str, Any], key: str) -> float:
+    try:
+        return float(item.get(key, 0) or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def _rank_key(item: dict[str, Any], recent_source_counts: dict[str, int]) -> tuple:
     source = source_key(item)
     recent_penalty = min(3, max(0, int(recent_source_counts.get(source, 0) or 0))) * 2.0
     effective_score = candidate_score(item) - recent_penalty
+    confidence = max(0.0, min(1.0, _safe_float(item, "ai_relevance_confidence")))
+    evidence_strength = _safe_float(item, "evidence_strength")
+    source_tier = _source_tier(item)
+    authority = 0 if source_tier is None else max(0, 4 - source_tier)
     return (
         -effective_score,
-        -float(item.get("signal_score", 0) or 0),
-        -float(item.get("mission_score", 0) or 0),
+        -confidence,
+        -evidence_strength,
+        -authority,
+        -_safe_float(item, "signal_score"),
+        -_safe_float(item, "mission_score"),
         recent_source_counts.get(source, 0),
         str(item.get("published", "")),
     )
@@ -130,21 +185,33 @@ def select_regular_portfolio(
     recent_source_counts: dict[str, int] | None = None,
     contract: dict[str, Any] | None = None,
     mission_aware: bool = True,
+    strict_relevance: bool = False,
 ) -> list[dict[str, Any]]:
-    """Select a deterministic portfolio; optionally apply mission coverage before score fill."""
+    """Select a deterministic portfolio with optional hard mission filtering."""
     contract = contract or load_editorial_contract()
     limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
     type_cap = max(1, int(max_per_type or 1))
     recent = recent_source_counts or {}
 
+    raw_candidates = list(candidates or [])
     eligible = []
-    for raw in candidates or []:
+    rejected_relevance = 0
+    for raw in raw_candidates:
         item = dict(raw)
         if _is_community(item) and contract["community_max"] <= 0:
             continue
+        if not is_mission_relevant(item, strict=strict_relevance):
+            rejected_relevance += 1
+            continue
         item["mission_area"] = mission_area(item)
         eligible.append(item)
+
+    print(
+        f"[Hard Relevance Gate] strict={strict_relevance} input={len(raw_candidates)} "
+        f"rejected={rejected_relevance} retained={len(eligible)}",
+        flush=True,
+    )
     ordered = sorted(eligible, key=lambda x: _rank_key(x, recent))
 
     selected: list[dict[str, Any]] = []
@@ -183,7 +250,8 @@ def select_regular_portfolio(
 
         if len(selected) < limit:
             research_pool = [
-                x for x in ordered
+                x
+                for x in ordered
                 if (content_type_key(x) in _RESEARCH_TYPES or x.get("research_signal"))
                 and admissible(x, repeat_source=False)
             ]
@@ -216,7 +284,8 @@ def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: d
     source_counts: dict[str, int] = {}
     area_counts: dict[str, int] = {}
     for item in items:
-        source_counts[source_key(item)] = source_counts.get(source_key(item), 0) + 1
+        source = source_key(item)
+        source_counts[source] = source_counts.get(source, 0) + 1
         area = mission_area(item)
         area_counts[area] = area_counts.get(area, 0) + 1
     assert max(source_counts.values(), default=0) <= contract["hard_max_same_source"]
@@ -230,6 +299,7 @@ __all__ = [
     "assert_portfolio_contract",
     "candidate_score",
     "content_type_key",
+    "is_mission_relevant",
     "load_editorial_contract",
     "mission_area",
     "select_regular_portfolio",

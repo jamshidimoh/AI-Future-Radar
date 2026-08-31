@@ -101,7 +101,7 @@ def _rotation_source_counts(history, rotation_days):
 
 
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
-    """Apply unified selection in production; retain legacy score-only ordering for direct callers."""
+    """Apply unified selection in production with an explicit relevance contract."""
     policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     try:
@@ -110,7 +110,10 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
         source_history = []
     recent_source_counts = _rotation_source_counts(source_history, rotation_days)
     contract = load_editorial_contract()
-    limit = min(max(0, int(max_posts or 0)), max(0, int(contract["candidate_window"] or max_posts or 0)))
+    requested = max(0, int(max_posts or 0))
+    buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
+    limit = min(len(normal), max(requested + buffer, int(contract["candidate_window"] or 0)))
+    strict_relevance = bool(policy.get("strict_relevance", False))
     selected = select_regular_portfolio(
         normal,
         max_posts=limit,
@@ -119,6 +122,7 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
         recent_source_counts=recent_source_counts,
         contract=contract,
         mission_aware=bool(policy.get("mission_aware", False)),
+        strict_relevance=strict_relevance,
     )
     source_counts = {}
     for item in selected:
@@ -128,7 +132,8 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
         f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} "
         f"source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true "
         f"preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} "
-        f"candidate_window={contract['candidate_window']} mission_aware={bool(policy.get('mission_aware', False))}", flush=True
+        f"candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))} "
+        f"strict_relevance={strict_relevance}", flush=True
     )
     return selected
 
@@ -213,7 +218,7 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     priority_ids = {id(x) for x in priority}
     normal = [x for x in normal if id(x) not in priority_ids]
     contract = load_editorial_contract()
-    candidate_window = max(4, min(len(normal), int(contract["candidate_window"] or 6)))
+    candidate_window = max(4, min(len(normal), int(contract["candidate_window"] or 6) + int(contract.get("replacement_buffer", 0) or 0)))
     normal_window = _diversify_normal_candidates(normal, candidate_window, max_per_source, max_per_type, policy)
     ranked = priority + normal_window
     normal_rank = tier0_rank = 0
@@ -231,7 +236,7 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
             item["tier0_rank"] = None
     print("[Global Final Ranking] " + ", ".join(f"rank={x['period_rank']} normal_rank={x.get('normal_period_rank')} tier0_rank={x.get('tier0_rank')} score={x['final_editorial_score']} priority_person={x.get('priority_person_interview',False)} model_release={x.get('model_release_priority',False)} title={str(x.get('title',''))[:90]}" for x in ranked), flush=True)
     print(f"[Tier0 Interview Priority] retained={len(priority)} quota_exempt=true unique_people=true", flush=True)
-    print(f"[Normal Ranking Window] retained={len(normal_window)} normal_candidate_window={candidate_window} publication_capacity={contract['max_posts']}", flush=True)
+    print(f"[Normal Ranking Window] retained={len(normal_window)} normal_candidate_window={candidate_window} replacement_buffer={contract.get('replacement_buffer',0)} publication_capacity={contract['max_posts']}", flush=True)
     print(f"[Ranking Timing] total elapsed={time.monotonic()-started:.3f}s", flush=True)
     return ranked
 

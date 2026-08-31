@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import Any
 
-from src.delivery_contract import DeliveryOutcome, DeliveryStatus, duplicate, policy_blocked, rejected, transport_failed
+from src.delivery_contract import DeliveryOutcome, DeliveryStatus, transport_failed
 
 
 Policy = Callable[[Mapping[str, Any]], DeliveryOutcome]

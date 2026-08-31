@@ -6,6 +6,7 @@ from editorial_clean import (
     filter_low_signal,
 )
 from interview_evidence import has_interview_evidence
+from strategic_signal import strategic_forecast_score
 from unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 
@@ -36,8 +37,16 @@ def filter_ai_relevance(items, ai_keywords=None):
     return _filter_ai_relevance(items, ai_keywords)
 
 
+def _apply_strategic_signal(item):
+    """Compatibility adapter to the canonical strategic signal scorer."""
+    strategic = strategic_forecast_score(item)
+    item["mission_score_base"] = round(float(item.get("mission_score", 0) or 0), 2)
+    item["mission_score"] = round(float(item.get("mission_score", 0) or 0) + strategic, 2)
+    return item
+
+
 def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, policy=None):
-    """Legacy compatibility adapter; canonical selection is unified_editorial_selection."""
+    """Legacy compatibility adapter; canonical portfolio selection is unified_editorial_selection."""
     policy = policy or {}
     return select_regular_portfolio(
         items,
@@ -51,10 +60,6 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
 
 
 __all__ = [
-    "classify_editorial_item",
-    "contract_summary",
-    "enrich_items",
-    "filter_ai_relevance",
-    "filter_low_signal",
-    "select_editorial",
+    "_apply_strategic_signal", "classify_editorial_item", "contract_summary", "enrich_items",
+    "filter_ai_relevance", "filter_low_signal", "select_editorial",
 ]

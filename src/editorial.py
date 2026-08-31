@@ -9,6 +9,14 @@ from interview_evidence import has_interview_evidence
 from strategic_signal import strategic_forecast_score
 from unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
+_AI_BRIDGE_TERMS = (
+    "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral",
+    "OpenAI", "Anthropic", "transformer", "neural network", "reasoning model",
+    "large language model", "artificial intelligence", "machine learning",
+    "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق",
+    "مدل زبانی بزرگ", "شبکه عصبی", "عامل هوشمند", "عامل‌های هوشمند",
+)
+
 
 def classify_editorial_item(item, prior=None):
     result = dict(_classify_editorial_item(item, prior or {}))
@@ -40,56 +48,71 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
 
 
 def filter_ai_relevance(items, ai_keywords=None):
-    bridge_keywords = [
-        "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral",
-        "OpenAI", "Anthropic", "transformer", "neural network", "reasoning model",
-        "large language model", "artificial intelligence", "machine learning",
-        "هوش مصنوعی", "یادگیری ماشین", "مدل زبانی بزرگ", "شبکه عصبی", "عامل هوشمند",
-    ]
     normalized = []
     for raw in items or []:
         item = dict(raw)
         title = str(item.get("title") or "")
         summary = str(item.get("summary") or "")
         evidence = str(item.get("evidence_text") or "").strip()
-        source = str(item.get("source") or "")
         preferred = str(item.get("preferred_source") or "")
-        bridge_parts = []
-        bridge_confidence = 0.0
-        direct_evidence = False
-        if evidence:
-            bridge_parts.append(evidence)
-            direct_evidence = True
-            bridge_confidence = 0.95
         combined = f"{title} {summary} {evidence}".casefold()
-        if any(term.casefold() in combined for term in bridge_keywords):
-            direct_evidence = True
-            bridge_confidence = max(bridge_confidence, 0.85)
-        if item.get("curated_discovery") and preferred:
-            bridge_parts.append("curated AI provenance")
-            bridge_confidence = max(bridge_confidence, 0.55)
-        if bridge_parts:
-            item["description"] = " ".join(bridge_parts)
-        if any(term.casefold() in combined for term in ("Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral", "OpenAI", "Anthropic", "transformer", "neural network", "reasoning model", "large language model")):
+        bridge_hits = [term for term in _AI_BRIDGE_TERMS if term.casefold() in combined]
+        curated_trusted = bool(item.get("curated_discovery") and preferred and int(item.get("source_tier") or 3) in {1, 2})
+
+        # Quantum content is not automatically AI-relevant merely because its category is quantum.
+        if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits:
+            item["_force_reject_ai_gate"] = True
+        if evidence:
+            item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
+        if bridge_hits:
             item["description"] = "artificial intelligence " + str(item.get("description") or "")
-        elif any(term in combined for term in ("هوش مصنوعی", "یادگیری ماشین", "مدل زبانی بزرگ", "شبکه عصبی", "عامل هوشمند")):
-            item["description"] = "artificial intelligence " + str(item.get("description") or "")
+        elif curated_trusted and not bridge_hits:
+            item["description"] = "artificial intelligence curated discovery " + str(item.get("description") or "")
+        item["_curated_trusted_ai_bridge"] = curated_trusted
         normalized.append(item)
 
-    keywords = list(ai_keywords or []) + bridge_keywords
-    result = _filter_ai_relevance(normalized, keywords)
+    keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
+    result = _filter_ai_relevance([x for x in normalized if not x.get("_force_reject_ai_gate")], keywords)
+
+    # Retain only the explicitly trusted curated-discovery bridge cases that have no literal AI hit.
+    trusted_curated = [
+        x for x in normalized
+        if x.get("_curated_trusted_ai_bridge") and not x.get("_force_reject_ai_gate") and not any(
+            term.casefold() in f"{x.get('title','')} {x.get('summary','')} {x.get('evidence_text','')}".casefold()
+            for term in _AI_BRIDGE_TERMS
+        )
+    ]
+    present = {str(x.get("title") or "") for x in result}
+    for item in trusted_curated:
+        if str(item.get("title") or "") in present:
+            continue
+        accepted = dict(item)
+        accepted.update(
+            _ai_link=True,
+            relevance_reason="curated_ai_provenance",
+            topic_family="ai_core",
+            relevance_evidence=["curated AI provenance"],
+            evidence_level="B",
+            ai_relevance_confidence=0.55,
+            evidence_strength=5.5,
+        )
+        result.append(accepted)
+
     for item in result:
+        if item.get("relevance_reason") == "curated_ai_provenance":
+            continue
         evidence = str(item.get("evidence_text") or "").strip()
-        curated = bool(item.get("curated_discovery"))
-        confidence = 0.55 if curated and not evidence else (0.95 if evidence else 0.85)
+        confidence = 0.95 if evidence else 0.85
         item["ai_relevance_confidence"] = confidence
         item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), confidence * 10.0)
-        item["relevance_reason"] = "ai_evidence" if evidence or confidence >= 0.85 else item.get("relevance_reason", "ai_evidence")
+        item["ai_relevance_quality"] = "high" if confidence >= 0.90 else "medium"
+    for item in result:
+        if "ai_relevance_quality" not in item:
+            item["ai_relevance_quality"] = "bridge"
     return result
 
 
 def _apply_strategic_signal(item):
-    """Compatibility adapter to the canonical strategic signal scorer."""
     strategic = strategic_forecast_score(item)
     item["mission_score_base"] = round(float(item.get("mission_score", 0) or 0), 2)
     item["mission_score"] = round(float(item.get("mission_score", 0) or 0) + strategic, 2)
@@ -105,7 +128,6 @@ def _leader_name(item):
 
 
 def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, policy=None):
-    """Deprecated compatibility adapter; production selection remains canonical."""
     policy = policy or {}
     protected_limit = int(policy.get("protected_slots", policy.get("leader_interview_slots", 2)) or 0)
     protected, regular = [], []
@@ -123,8 +145,9 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
     protected.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
     protected = protected[:protected_limit]
     for item in protected:
-        item["editorial_slot"] = "leader_interview" if has_interview_evidence(item) else "fallback"
-        item["editorial_class"] = "leader_interview" if has_interview_evidence(item) else item.get("editorial_class", "leader_activity")
+        interviewed = has_interview_evidence(item)
+        item["editorial_slot"] = "leader_interview" if interviewed else "fallback"
+        item["editorial_class"] = "leader_interview" if interviewed else item.get("editorial_class", "leader_activity")
         item["leader_watch_protected"] = True
         item["leader_signal"] = True
         item["selection_reason"] = f"protected:{_leader_name(item)}"

@@ -59,17 +59,14 @@ def filter_ai_relevance(items, ai_keywords=None):
         bridge_hits = [term for term in _AI_BRIDGE_TERMS if term.casefold() in combined]
         curated_trusted = bool(item.get("curated_discovery") and preferred and int(item.get("source_tier") or 3) in {1, 2})
 
-        # Quantum content is not automatically AI-relevant merely because its category is quantum.
         if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits:
             item["_force_reject_ai_gate"] = True
         if evidence:
             item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
-        # Do not inject an artificial AI phrase into the text passed to the canonical gate.
-        # Otherwise provenance-only items are incorrectly promoted from bridge to high quality.
         if bridge_hits:
             item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
-        elif curated_trusted and not bridge_hits:
-            item["description"] = " ".join(part for part in (item.get("description"), "curated AI provenance") if part).strip()
+        # Provenance-only bridge must remain free of AI keywords before the canonical gate.
+        # It is re-attached below using explicit bounded provenance metadata.
         item["_curated_trusted_ai_bridge"] = curated_trusted
         normalized.append(item)
 
@@ -78,7 +75,9 @@ def filter_ai_relevance(items, ai_keywords=None):
 
     trusted_curated = [
         x for x in normalized
-        if x.get("_curated_trusted_ai_bridge") and not x.get("_force_reject_ai_gate") and not any(
+        if x.get("_curated_trusted_ai_bridge")
+        and not x.get("_force_reject_ai_gate")
+        and not any(
             term.casefold() in f"{x.get('title','')} {x.get('summary','')} {x.get('evidence_text','')}".casefold()
             for term in _AI_BRIDGE_TERMS
         )
@@ -103,6 +102,7 @@ def filter_ai_relevance(items, ai_keywords=None):
     for item in result:
         if item.get("relevance_reason") == "curated_ai_provenance":
             item["ai_relevance_quality"] = "bridge"
+            item["ai_relevance_confidence"] = 0.55
             continue
         evidence = str(item.get("evidence_text") or "").strip()
         confidence = 0.95 if evidence else 0.85

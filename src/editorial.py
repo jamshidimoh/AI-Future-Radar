@@ -45,11 +45,50 @@ def _apply_strategic_signal(item):
     return item
 
 
+def _is_protected_leader(item):
+    return bool(item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("leader_signal"))
+
+
+def _leader_name(item):
+    return str(item.get("leader") or item.get("watch_person") or "").strip()
+
+
 def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, policy=None):
-    """Legacy compatibility adapter; canonical portfolio selection is unified_editorial_selection."""
+    """Deprecated compatibility adapter; production selection remains canonical."""
     policy = policy or {}
-    return select_regular_portfolio(
-        items,
+    protected_limit = int(policy.get("protected_slots", policy.get("leader_interview_slots", 2)) or 0)
+    protected = []
+    regular = []
+    seen = set()
+    for raw in items or []:
+        item = dict(raw)
+        name = _leader_name(item).casefold()
+        if _is_protected_leader(item) and name:
+            if name in seen:
+                continue
+            seen.add(name)
+            protected.append(item)
+        else:
+            regular.append(item)
+
+    protected.sort(
+        key=lambda x: (
+            int(x.get("leader_priority", 0) or 0),
+            float(x.get("editorial_score", 0) or 0),
+            str(x.get("published", "")),
+        ),
+        reverse=True,
+    )
+    protected = protected[:protected_limit]
+    for item in protected:
+        item["editorial_slot"] = "leader_interview" if has_interview_evidence(item) else "fallback"
+        item["editorial_class"] = "leader_interview" if has_interview_evidence(item) else item.get("editorial_class", "leader_activity")
+        item["leader_watch_protected"] = True
+        item["leader_signal"] = True
+        item["selection_reason"] = f"protected:{_leader_name(item)}"
+
+    selected_regular = select_regular_portfolio(
+        regular,
         max_posts=max_posts,
         max_per_source=max_per_source,
         max_per_type=max_per_type,
@@ -57,6 +96,7 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
         mission_aware=bool(policy.get("mission_aware", True)),
         strict_relevance=bool(policy.get("strict_relevance", False)),
     )
+    return protected + selected_regular
 
 
 __all__ = [

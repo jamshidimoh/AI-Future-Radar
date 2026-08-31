@@ -7,7 +7,8 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 from education_editor import normalize_editorial_text, normalize_education_text
-from educational_content import MIN_SOURCE_YEAR, format_educational_post, load_curriculum
+from educational_content import MIN_SOURCE_YEAR, load_curriculum
+from educational_telegram_style import format_educational_post
 
 RLI = "\u2067"
 PDI = "\u2069"

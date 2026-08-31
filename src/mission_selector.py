@@ -3,14 +3,20 @@ from __future__ import annotations
 
 
 def _source_tier(item: dict) -> int | None:
-    """Return the explicit source tier when present and valid."""
+    """Resolve source tier, correcting known aggregator metadata for reputable publishers."""
+    source = str(item.get("source") or "").casefold()
+    reputable = ("reuters", "forbes", "cnbc", "associated press", "bbc", "nature", "scientific american")
+    low_authority = ("bitcoin world", "tech-insider.org", "singju post", "startuphub.ai", "pulse 2.0")
     raw = item.get("source_tier", item.get("tier"))
-    if raw in (None, ""):
-        return None
     try:
-        return int(raw)
+        tier = int(raw) if raw not in (None, "") else None
     except (TypeError, ValueError):
-        return None
+        tier = None
+    if any(term in source for term in low_authority):
+        return 3
+    if any(term in source for term in reputable):
+        return 2 if tier is None or tier > 2 else tier
+    return tier
 
 
 __all__ = ["_source_tier"]

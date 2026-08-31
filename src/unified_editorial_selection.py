@@ -79,8 +79,8 @@ def _keyword_match_area(item: dict[str, Any]) -> str | None:
     return max(matches, key=lambda x: x[0])[1] if matches else None
 
 
-def is_mission_relevant(item: dict[str, Any], *, strict: bool = False) -> bool:
-    """Validate mission relevance; strict mode is used at the production boundary."""
+def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
+    """Validate mission relevance; strict validation is the safe public default."""
     explicit = str(item.get("mission_area") or "").strip().casefold()
     if explicit in _AREA_MAP.values(): return True
     category = str(item.get("category") or "").strip().casefold()

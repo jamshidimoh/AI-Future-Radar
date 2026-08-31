@@ -5,7 +5,6 @@ This module deliberately stays independent from editorial selection. It answers:
 """
 from __future__ import annotations
 
-import re
 from datetime import datetime, timezone
 
 INTERVIEW_TERMS = {"interview", "conversation", "fireside", "keynote", "podcast", "discussion", "q&a", "dialogue"}
@@ -165,9 +164,6 @@ def enrich_with_signal(item: dict) -> dict:
         str(enriched.get("content_type") or "").lower() in {"interview", "podcast", "talk", "lecture"}
         or any(term in _text(enriched) for term in INTERVIEW_TERMS)
     )
-    # Interview status is metadata for downstream policy/routing. It is deliberately
-    # not a ranking bonus: leader authority and protected-stream eligibility belong
-    # to the policy/ranking layers, preventing double counting.
     enriched["signal_vector"] = vector
     enriched["signal_score"] = round(score, 2)
     enriched["signal_class"] = classify_signal(score)

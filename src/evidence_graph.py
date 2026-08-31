@@ -1,7 +1,7 @@
 """Deterministic evidence graph primitives for Trend Intelligence.
 
 The graph deliberately separates source identity, claims, evidence and
-counter-evidence.  It does not infer scientific truth and does not use an
+counter-evidence. It does not infer scientific truth and does not use an
 LLM; downstream scoring can consume these auditable records.
 """
 

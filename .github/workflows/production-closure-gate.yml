@@ -22,30 +22,117 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import json, os, sys, urllib.request
-          repo = os.environ['REPO']
-          token = os.environ['GH_TOKEN']
-          base = f'https://api.github.com/repos/{repo}'
-          headers = {'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json'}
-          def get(path):
+          import json
+          import os
+          import re
+          import sys
+          import urllib.request
+
+          repo = os.environ["REPO"]
+          token = os.environ["GH_TOKEN"]
+          base = f"https://api.github.com/repos/{repo}"
+          headers = {
+              "Authorization": f"Bearer {token}",
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+          }
+
+          def get_json(path):
               req = urllib.request.Request(base + path, headers=headers)
-              with urllib.request.urlopen(req, timeout=20) as r:
-                  return json.load(r)
-          data = get('/actions/workflows/run.yml/runs?branch=main&per_page=10')
-          runs = [r for r in data.get('workflow_runs', []) if r.get('name') == 'Run AI Future Radar Bot']
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          def get_text(path):
+              req = urllib.request.Request(base + path, headers=headers)
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return response.read().decode("utf-8", errors="replace")
+
+          runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=10")
+          runs = [
+              r for r in runs_data.get("workflow_runs", [])
+              if r.get("name") == "Run AI Future Radar Bot"
+          ]
           if len(runs) < 3:
-              print(f'CLOSURE: IN PROGRESS — only {len(runs)} production runs observed; 3 required.')
+              print(f"CLOSURE: IN PROGRESS — only {len(runs)} production runs observed; 3 required.")
               sys.exit(0)
+
           window = runs[:3]
-          conclusions = [r.get('conclusion') for r in window]
-          shas = [r.get('head_sha') for r in window]
-          print('Closure window:', [(r.get('run_number'), r.get('conclusion'), r.get('head_sha','')[:8]) for r in window])
-          if any(c != 'success' for c in conclusions):
-              print('CLOSURE: BLOCKED — one of the last three production runs failed.')
+          print("Closure window:", [
+              (r.get("run_number"), r.get("conclusion"), r.get("head_sha", "")[:8])
+              for r in window
+          ])
+          if any(r.get("conclusion") != "success" for r in window):
+              print("CLOSURE: BLOCKED — one of the last three production runs failed.")
               sys.exit(0)
-          # Success here is only the minimum operational evidence. The repository's
-          # final acceptance document remains authoritative for the deeper evidence
-          # items that cannot safely be inferred from workflow metadata alone.
-          print('CLOSURE: EVIDENCE WINDOW CANDIDATE — 3 consecutive successful production runs observed.')
-          print('Final human/maintainer verification remains required for the frozen evidence items.')
+
+          logs = {}
+          for run in window:
+              run_id = run["id"]
+              jobs = get_json(f"/actions/runs/{run_id}/jobs?per_page=50").get("jobs", [])
+              bot_jobs = [j for j in jobs if j.get("name") == "run-bot"]
+              if not bot_jobs:
+                  logs[run["run_number"]] = ""
+                  continue
+              job_id = bot_jobs[0]["id"]
+              try:
+                  logs[run["run_number"]] = get_text(f"/actions/jobs/{job_id}/logs")
+              except Exception as exc:
+                  print(f"LOG_READ_FAILED run={run.get('run_number')} error={exc}")
+                  logs[run["run_number"]] = ""
+
+          combined = "\n".join(logs.values())
+
+          def has(pattern):
+              return re.search(pattern, combined, re.I | re.M) is not None
+
+          evidence = {
+              "01_three_successful_runs": all(r.get("conclusion") == "success" for r in window),
+              "02_publish_and_fail_closed_zero": (
+                  has(r"\[Telegram Published\]")
+                  and has(r"(?:Posts sent: 0/|normal_news=0[^\n]*tier0_news=0)")
+              ),
+              "03_no_duplicate_publication": (
+                  not has(r"duplicate publication")
+                  and not has(r"Telegram Published.*duplicate")
+                  and has(r"history_duplicates=0 current_run_duplicates=0")
+              ),
+              "04_image_preserves_full_text": has(r"full_text=\d+ photo=enabled single_message=true"),
+              "05_rank_within_window_no_bypass": (
+                  has(r"\[Normal Ranking Window\].*candidate_window=\d+")
+                  and not has(r"normal_rank=\d{2,}")
+              ),
+              "06_replacement_after_qa": (
+                  has(r"translation/QA failed|Editorial Value Gate.*rejected")
+                  and has(r"publishable candidate prepared")
+              ),
+              "07_leader_watch_eligible": (
+                  has(r"\[Protected Leader Eligibility\] candidates=\d+")
+                  and has(r"\[Leader Protection Audit\]")
+              ),
+              "08_provider_failure_isolated": (
+                  has(r"\[Light Router\] disabled=")
+                  and has(r"\[Light Router\] success=")
+                  and has(r"\[Telegram Published\]")
+              ),
+              "09_state_after_confirmed_delivery": (
+                  has(r"\[Telegram Delivery\]")
+                  and has(r"\[Publication Ledger\] message_id=.*published_news_score=")
+                  and has(r"Production state persisted")
+              ),
+              "10_mission_portfolio_not_generic": (
+                  has(r"mission_aware=true")
+                  and not has(r"generic low[- ]signal")
+              ),
+          }
+
+          for key, value in evidence.items():
+              print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
+
+          blocked = [key for key, value in evidence.items() if not value]
+          if blocked:
+              print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))
+              print("CLOSURE: ACCEPTANCE IN PROGRESS")
+              sys.exit(0)
+
+          print("CLOSURE: CLOSED — deterministic gates and production evidence checks passed.")
           PY

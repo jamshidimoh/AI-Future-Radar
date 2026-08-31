@@ -58,9 +58,7 @@ def recent_claims(conn: sqlite3.Connection, person: str, topic: str, limit: int 
         ORDER BY COALESCE(claim_date, '') DESC, id DESC LIMIT ?""",
         (person, topic, int(limit)),
     ).fetchall()
-    columns = [d[0] for d in conn.execute("PRAGMA table_info(claims_and_falsifications)").fetchall()]
-    # PRAGMA includes schema metadata, so use explicit names instead.
-    names = ["id","person","claim","topic","claim_date","source_url","status","evaluated_date","outcome","confidence","notes"]
+    names = ["id", "person", "claim", "topic", "claim_date", "source_url", "status", "evaluated_date", "outcome", "confidence", "notes"]
     return [dict(zip(names, row)) for row in rows]
 
 

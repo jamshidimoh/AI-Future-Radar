@@ -1,12 +1,7 @@
-import json
 import os
-import re
 import sys
-import time
-from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
@@ -14,7 +9,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
-from editorial import enrich_items, filter_ai_relevance, filter_low_signal
+from editorial import enrich_items, filter_ai_relevance
 from fetch_google_news import fetch_google_news_items
 from fetch_rss import fetch_rss_items
 from fetch_youtube import fetch_youtube_items
@@ -23,7 +18,6 @@ from mission_selector import _source_tier
 from send_telegram import format_post, resolve_source_image, send_to_telegram_safe
 from signal_engine import enrich_signal_items
 from summarize import summarize_item
-from semantic_dedup import deduplicate_semantically
 from story_gate import gate_story_candidates
 from publication_contract import unique_candidates, validate_publication_payload
 from unified_editorial_selection import load_editorial_contract, select_regular_portfolio
@@ -42,7 +36,6 @@ def load_yaml(path):
 
 def _text(item): return " ".join(str(item.get(k) or "") for k in ("title", "summary", "description")).lower()
 def _contains_person(text, name): return str(name or "").strip().lower() in str(text or "").lower()
-def _has_explicit_interview_evidence(item): return has_interview_evidence(item)
 def _direct_interview_signal(item): return has_interview_evidence(item)
 
 def _leader_activity_signal(item):

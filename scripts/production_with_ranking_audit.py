@@ -11,8 +11,11 @@ if str(ROOT) not in sys.path:
 import period_ranked_pipeline as pipeline
 from src.content_grounding import ensure_source_grounding
 from src.headline_grounding import ensure_headline_grounding
+from src.production_router_policy import apply as apply_production_router_policy
 from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
+
+apply_production_router_policy()
 
 _original_main = pipeline.main
 _original_rank = pipeline._global_ranked_selection
@@ -60,8 +63,6 @@ def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
         compact["title"] = title
         return force_rtl_blocks(formatter(compact, source_name, link, **kwargs))
 
-    # First reduce the two main generated prose blocks together. Binary search
-    # gives the maximum content that still fits, rather than an arbitrary cut.
     prose = original_summary + "\n\n" + original_why
     if prose:
         lo, hi, best = 0, len(prose), ""
@@ -84,9 +85,6 @@ def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
             print("[Telegram Payload Fit] compacted generated prose to single-message limit", flush=True)
             return best
 
-    # Extremely long metadata/quote/title cases: progressively compact fields
-    # while retaining the canonical source and ChatGPT links supplied by the
-    # formatter.
     for quote in (original_quote[:600], original_quote[:300], ""):
         for title in (original_title, original_title[:240], original_title[:160]):
             rendered = render(original_summary[:1200], original_why[:900], quote, title)
@@ -94,7 +92,6 @@ def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
                 print("[Telegram Payload Fit] applied fallback compacting", flush=True)
                 return rendered
 
-    # Last-resort safety: never pass an oversized payload to the transport.
     print(
         f"[Telegram Payload Fit] unable to fit payload length={len(post)}; publication blocked",
         flush=True,

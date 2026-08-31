@@ -3,7 +3,7 @@
 A selected candidate must end in an auditable terminal state: publication,
 explicit editorial rejection, or an upstream structural rejection such as
 canonical-story deduplication. Protected Tier-0 publication is a valid
-failover path only when the non-protected selected candidates are fully
+failover path only when every non-published selected candidate is fully
 accounted for as rejected upstream/editorially.
 """
 from __future__ import annotations
@@ -93,24 +93,24 @@ def validate(log_text: str) -> tuple[bool, str]:
         )
 
     if published_news > 0 and normal_news == 0 and tier0_news > 0:
-        normal_selected_estimate = max(0, selected - tier0_news)
-        normal_accounted = editorial_rejections + upstream_rejections
+        unaccounted_selected = max(0, selected - published_news)
+        rejection_accounting = editorial_rejections + upstream_rejections
         if (
             not tier0_quota_exempt
             or tier0_retained <= 0
             or not tier0_publish_policy
-            or normal_accounted < normal_selected_estimate
+            or rejection_accounting < unaccounted_selected
         ):
             return False, (
                 "production contract violation: Tier-0-only publication lacked complete fallback accounting; "
-                f"selected={selected}, normal_selected_estimate={normal_selected_estimate}, "
-                f"normal_accounted={normal_accounted}, tier0_news={tier0_news}, tier0_retained={tier0_retained}, "
+                f"selected={selected}, unaccounted_selected={unaccounted_selected}, "
+                f"rejection_accounting={rejection_accounting}, tier0_news={tier0_news}, tier0_retained={tier0_retained}, "
                 f"tier0_quota_exempt={tier0_quota_exempt}, tier0_publish_policy={tier0_publish_policy}"
             )
         return True, (
-            "production acceptance PASS: protected Tier-0 fallback with complete normal-candidate accounting; "
+            "production acceptance PASS: protected Tier-0 fallback with complete selected-set accounting; "
             f"selected={selected}, normal_news={normal_news}, tier0_news={tier0_news}, "
-            f"normal_max={normal_max}, normal_accounted={normal_accounted}, education={education}"
+            f"normal_max={normal_max}, rejection_accounting={rejection_accounting}, education={education}"
         )
 
     return True, f"production acceptance PASS: selected={selected}, published_news={published_news}, education={education}"

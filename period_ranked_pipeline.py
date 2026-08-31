@@ -68,11 +68,12 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     recent_source_counts = _rotation_source_counts(source_history, rotation_days); contract = load_editorial_contract()
     requested = max(0, int(max_posts or 0)); buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
     limit = min(len(normal), max(requested + buffer, int(contract["candidate_window"] or 0)))
-    selected = select_regular_portfolio(normal, max_posts=limit, max_per_source=max_per_source, max_per_type=max_per_type, recent_source_counts=recent_source_counts, contract=contract, mission_aware=bool(policy.get("mission_aware", False)), strict_relevance=True)
+    strict_relevance = bool(policy.get("strict_relevance", False))
+    selected = select_regular_portfolio(normal, max_posts=limit, max_per_source=max_per_source, max_per_type=max_per_type, recent_source_counts=recent_source_counts, contract=contract, mission_aware=bool(policy.get("mission_aware", False)), strict_relevance=strict_relevance)
     source_counts = {}
     for item in selected:
         key = _source_key(item); source_counts[key] = source_counts.get(key, 0) + 1
-    print(f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))}", flush=True)
+    print(f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))} strict_relevance={strict_relevance}", flush=True)
     return selected
 
 def _exclude_published_candidates(items):

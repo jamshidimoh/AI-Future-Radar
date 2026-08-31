@@ -6,6 +6,7 @@ from editorial_clean import (
     filter_low_signal,
 )
 from interview_evidence import has_interview_evidence
+from unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 
 _AI_TAXONOMY_BRIDGE_TERMS = {
@@ -162,10 +163,26 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
     return enriched
 
 
+def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, policy=None):
+    """Compatibility adapter; canonical selection lives in unified_editorial_selection."""
+    policy = policy or {}
+    contract = load_editorial_contract()
+    return select_regular_portfolio(
+        items,
+        max_posts=max_posts,
+        max_per_source=max_per_source,
+        max_per_type=max_per_type,
+        contract=contract,
+        mission_aware=bool(policy.get("mission_aware", True)),
+        strict_relevance=bool(policy.get("strict_relevance", False)),
+    )
+
+
 __all__ = [
     "classify_editorial_item",
     "contract_summary",
     "enrich_items",
     "filter_ai_relevance",
     "filter_low_signal",
+    "select_editorial",
 ]

@@ -27,6 +27,7 @@ _AREA_MAP = {
 }
 
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
+_INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
 _COMMUNITY_MARKERS = ("reddit", "community", "aggregator")
 _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
 
@@ -42,7 +43,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
     mission = _load_yaml(MISSION_PATH).get("mission", {})
     selection_cfg = selection or _load_yaml(SELECTION_PATH).get("selection", {})
     return {
-        "max_posts": int(selection_cfg.get("max_posts", 4) or 4),
+        "max_posts": int(selection_cfg.get("max_posts", mission.get("operational_publication_capacity", 4)) or 4),
         "candidate_window": int(selection_cfg.get("candidate_window", 6) or 6),
         "replacement_buffer": int(selection_cfg.get("replacement_buffer", 2) or 2),
         "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
@@ -53,6 +54,12 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "min_authoritative_items": int(mission.get("min_authoritative_items", 2) or 2),
         "community_max": int(mission.get("community_max", 0) or 0),
         "max_same_mission_area": int(mission.get("max_same_mission_area", 2) or 2),
+        "ai_core_target_min": int(mission.get("ai_core_target_min", 1) or 0),
+        "ai_core_target_max": int(mission.get("ai_core_target_max", 2) or 99),
+        "convergence_target": int(mission.get("convergence_target", 1) or 0),
+        "mind_future_target": int(mission.get("mind_future_target", 1) or 0),
+        "research_target": int(mission.get("research_target", 1) or 0),
+        "interview_target_max": int(mission.get("interview_target_max", 1) or 0),
         "required_areas": ("ai_core", "convergence", "mind_cognition", "future_governance"),
     }
 
@@ -176,6 +183,19 @@ def _rank_key(item: dict[str, Any], recent_source_counts: dict[str, int]) -> tup
     )
 
 
+def _is_research(item: dict[str, Any]) -> bool:
+    return content_type_key(item) in _RESEARCH_TYPES or bool(item.get("research_signal"))
+
+
+def _is_interview(item: dict[str, Any]) -> bool:
+    return content_type_key(item) in _INTERVIEW_TYPES or bool(item.get("interview_signal"))
+
+
+def _authority_ok(item: dict[str, Any]) -> bool:
+    tier = _source_tier(item)
+    return tier in {1, 2}
+
+
 def select_regular_portfolio(
     candidates: Iterable[dict[str, Any]],
     *,
@@ -187,7 +207,13 @@ def select_regular_portfolio(
     mission_aware: bool = True,
     strict_relevance: bool = False,
 ) -> list[dict[str, Any]]:
-    """Select a deterministic portfolio with optional hard mission filtering."""
+    """Select a deterministic portfolio from one canonical mission policy.
+
+    Mission targets are allocation priorities, not mutually exclusive hard slots:
+    ``mind_future_target`` is one shared target, and research can satisfy a target
+    simultaneously with its mission area. This keeps the policy feasible at the
+    normal three-post publication capacity.
+    """
     contract = contract or load_editorial_contract()
     limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
@@ -195,7 +221,7 @@ def select_regular_portfolio(
     recent = recent_source_counts or {}
 
     raw_candidates = list(candidates or [])
-    eligible = []
+    eligible: list[dict[str, Any]] = []
     rejected_relevance = 0
     for raw in raw_candidates:
         item = dict(raw)
@@ -218,54 +244,90 @@ def select_regular_portfolio(
     selected_ids: set[int] = set()
     source_counts: dict[str, int] = {}
     type_counts: dict[str, int] = {}
+    area_counts: dict[str, int] = {}
 
     def admissible(item: dict[str, Any], *, repeat_source: bool) -> bool:
         source = source_key(item)
         ctype = content_type_key(item)
+        area = mission_area(item)
         if type_counts.get(ctype, 0) >= type_cap:
+            return False
+        if _is_interview(item) and contract["interview_target_max"] > 0:
+            if type_counts.get("interview", 0) >= contract["interview_target_max"]:
+                return False
+        if area_counts.get(area, 0) >= contract["max_same_mission_area"]:
             return False
         current_source = source_counts.get(source, 0)
         if repeat_source:
-            if current_source >= source_cap:
-                return False
-        elif current_source:
-            return False
-        return True
+            return current_source < source_cap
+        return current_source == 0
 
     def add(item: dict[str, Any], reason: str) -> None:
-        source, ctype = source_key(item), content_type_key(item)
+        source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
         selected.append(item)
         selected_ids.add(id(item))
         source_counts[source] = source_counts.get(source, 0) + 1
         type_counts[ctype] = type_counts.get(ctype, 0) + 1
+        area_counts[area] = area_counts.get(area, 0) + 1
+        if _is_interview(item):
+            type_counts["interview"] = type_counts.get("interview", 0) + 1
         item["mission_selection_reason"] = reason
 
-    if mission_aware:
-        for area in ("convergence", "mind_cognition", "future_governance"):
-            if len(selected) >= limit:
+    def best(pool: list[dict[str, Any]], *, prefer_research: bool = False) -> dict[str, Any] | None:
+        eligible_pool = [x for x in pool if admissible(x, repeat_source=False)]
+        if not eligible_pool:
+            return None
+        if prefer_research:
+            research_first = [x for x in eligible_pool if _is_research(x)]
+            if research_first:
+                eligible_pool = research_first
+        return max(eligible_pool, key=lambda x: (-_rank_key(x, recent)[0], candidate_score(x)))
+
+    if mission_aware and limit > 0:
+        # 1) AI core floor: this is the primary editorial mission.
+        ai_min = min(contract["ai_core_target_min"], limit)
+        for _ in range(ai_min):
+            candidate = best([x for x in ordered if mission_area(x) == "ai_core"], prefer_research=True)
+            if candidate is None:
                 break
-            pool = [x for x in ordered if mission_area(x) == area and admissible(x, repeat_source=False)]
-            if pool:
-                add(pool[0], f"mission_coverage:{area}")
+            add(candidate, "mission_target:ai_core")
 
-        if len(selected) < limit:
-            research_pool = [
-                x
-                for x in ordered
-                if (content_type_key(x) in _RESEARCH_TYPES or x.get("research_signal"))
-                and admissible(x, repeat_source=False)
-            ]
-            if research_pool:
-                add(research_pool[0], "research_evidence")
+        # 2) One convergence target.
+        for _ in range(min(contract["convergence_target"], max(0, limit - len(selected)))):
+            candidate = best([x for x in ordered if mission_area(x) == "convergence"], prefer_research=True)
+            if candidate is None:
+                break
+            add(candidate, "mission_target:convergence")
 
+        # 3) One shared mind/future target, not two independent slots.
+        for _ in range(min(contract["mind_future_target"], max(0, limit - len(selected)))):
+            pool = [x for x in ordered if mission_area(x) in {"mind_cognition", "future_governance"}]
+            candidate = best(pool, prefer_research=True)
+            if candidate is None:
+                break
+            add(candidate, f"mission_target:{mission_area(candidate)}")
+
+        # 4) Research target is a preference. It may satisfy an earlier target
+        # simultaneously; otherwise it is added only while capacity remains.
+        for _ in range(min(contract["research_target"], max(0, limit - len(selected)))):
+            candidate = best([x for x in ordered if _is_research(x)], prefer_research=True)
+            if candidate is None:
+                break
+            add(candidate, "mission_target:research")
+
+    # Score-based fill, respecting configured area and source caps.
     for item in ordered:
         if len(selected) >= limit:
             break
         if id(item) in selected_ids:
             continue
         if admissible(item, repeat_source=False):
-            add(item, "distinct_source_fill")
+            # Enforce ai_core max target during generic fill when configured.
+            if mission_area(item) == "ai_core" and area_counts.get("ai_core", 0) >= contract["ai_core_target_max"]:
+                continue
+            add(item, "score_fill")
 
+    # Source-repeat backfill is explicitly last-resort.
     if len(selected) < limit and source_cap > 1:
         for item in ordered:
             if len(selected) >= limit:
@@ -274,6 +336,32 @@ def select_regular_portfolio(
                 continue
             if admissible(item, repeat_source=True):
                 add(item, "adaptive_source_backfill")
+
+    # Enforce the configured authority floor when feasible, without violating
+    # mission-area/source/type constraints.
+    auth_required = min(contract["min_authoritative_items"], len(selected))
+    while sum(_authority_ok(x) for x in selected) < auth_required:
+        replacement = next(
+            (
+                x for x in ordered
+                if id(x) not in selected_ids and _authority_ok(x) and admissible(x, repeat_source=False)
+            ),
+            None,
+        )
+        if replacement is None:
+            break
+        removable = [x for x in selected if not _authority_ok(x)]
+        if not removable:
+            break
+        victim = min(removable, key=lambda x: (_rank_key(x, recent), candidate_score(x)))
+        selected.remove(victim)
+        selected_ids.remove(id(victim))
+        source_counts[source_key(victim)] -= 1
+        type_counts[content_type_key(victim)] -= 1
+        area_counts[mission_area(victim)] -= 1
+        if _is_interview(victim):
+            type_counts["interview"] -= 1
+        add(replacement, "policy_repair:min_authoritative_items")
 
     return selected[:limit]
 
@@ -293,6 +381,9 @@ def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: d
     if len(items) >= contract["min_unique_sources"]:
         assert len(source_counts) >= contract["min_unique_sources"]
     assert sum(1 for item in items if not _is_community(item)) == len(items)
+    authoritative = sum(1 for item in items if _authority_ok(item))
+    if len(items) >= contract["min_authoritative_items"]:
+        assert authoritative >= contract["min_authoritative_items"]
 
 
 __all__ = [

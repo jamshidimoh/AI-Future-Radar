@@ -4,7 +4,7 @@ from unittest.mock import patch
 import period_ranked_pipeline as ranking
 
 
-def _item(title, source, score):
+def _item(title, source, score, category="ai"):
     return {
         "title": title,
         "summary": "A verified development in artificial intelligence research.",
@@ -12,14 +12,15 @@ def _item(title, source, score):
         "source": source,
         "editorial_score": score,
         "published": "2026-08-22",
+        "category": category,
     }
 
 
 def test_source_cap_is_enforced():
     items = [
-        *[_item(f"Community {i}", "Reddit", 100 - i) for i in range(5)],
-        *[_item(f"Research {i}", "Research Institute", 80 - i) for i in range(3)],
-        *[_item(f"University {i}", "University Lab", 70 - i) for i in range(3)],
+        *[_item(f"Community {i}", "Reddit", 100 - i, "ai") for i in range(5)],
+        *[_item(f"Research {i}", "Research Institute", 80 - i, "convergence") for i in range(3)],
+        *[_item(f"University {i}", "University Lab", 70 - i, "future") for i in range(3)],
     ]
     with patch.object(ranking, "_load_records", return_value=[]), patch.object(
         ranking._pipeline, "load_source_history", return_value=[]
@@ -37,12 +38,12 @@ def test_source_cap_is_enforced():
 
 def test_recent_community_source_is_excluded_while_fresh_authoritative_sources_backfill():
     items = [
-        _item("Community recent 1", "Reddit", 100),
-        _item("Community recent 2", "Reddit", 99),
-        _item("Research fresh 1", "Research Institute", 90),
-        _item("Research fresh 2", "Research Institute", 89),
-        _item("University fresh 1", "University Lab", 88),
-        _item("University fresh 2", "University Lab", 87),
+        _item("Community recent 1", "Reddit", 100, "ai"),
+        _item("Community recent 2", "Reddit", 99, "ai"),
+        _item("Research fresh 1", "Research Institute", 90, "convergence"),
+        _item("Research fresh 2", "Research Institute", 89, "convergence"),
+        _item("University fresh 1", "University Lab", 88, "future"),
+        _item("University fresh 2", "University Lab", 87, "future"),
     ]
     recent_ts = time.time() - 3600
     history = [

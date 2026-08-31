@@ -245,6 +245,7 @@ def select_regular_portfolio(
     source_counts: dict[str, int] = {}
     type_counts: dict[str, int] = {}
     area_counts: dict[str, int] = {}
+    interview_count = 0
 
     def admissible(item: dict[str, Any], *, repeat_source: bool) -> bool:
         source = source_key(item)
@@ -252,9 +253,8 @@ def select_regular_portfolio(
         area = mission_area(item)
         if type_counts.get(ctype, 0) >= type_cap:
             return False
-        if _is_interview(item) and contract["interview_target_max"] > 0:
-            if type_counts.get("interview", 0) >= contract["interview_target_max"]:
-                return False
+        if _is_interview(item) and interview_count >= contract["interview_target_max"] > 0:
+            return False
         if area_counts.get(area, 0) >= contract["max_same_mission_area"]:
             return False
         current_source = source_counts.get(source, 0)
@@ -263,6 +263,7 @@ def select_regular_portfolio(
         return current_source == 0
 
     def add(item: dict[str, Any], reason: str) -> None:
+        nonlocal interview_count
         source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
         selected.append(item)
         selected_ids.add(id(item))
@@ -270,8 +271,18 @@ def select_regular_portfolio(
         type_counts[ctype] = type_counts.get(ctype, 0) + 1
         area_counts[area] = area_counts.get(area, 0) + 1
         if _is_interview(item):
-            type_counts["interview"] = type_counts.get("interview", 0) + 1
+            interview_count += 1
         item["mission_selection_reason"] = reason
+
+    def remove(item: dict[str, Any]) -> None:
+        nonlocal interview_count
+        selected.remove(item)
+        selected_ids.remove(id(item))
+        source_counts[source_key(item)] -= 1
+        type_counts[content_type_key(item)] -= 1
+        area_counts[mission_area(item)] -= 1
+        if _is_interview(item):
+            interview_count -= 1
 
     def best(pool: list[dict[str, Any]], *, prefer_research: bool = False) -> dict[str, Any] | None:
         eligible_pool = [x for x in pool if admissible(x, repeat_source=False)]
@@ -284,7 +295,6 @@ def select_regular_portfolio(
         return max(eligible_pool, key=lambda x: (-_rank_key(x, recent)[0], candidate_score(x)))
 
     if mission_aware and limit > 0:
-        # 1) AI core floor: this is the primary editorial mission.
         ai_min = min(contract["ai_core_target_min"], limit)
         for _ in range(ai_min):
             candidate = best([x for x in ordered if mission_area(x) == "ai_core"], prefer_research=True)
@@ -292,14 +302,12 @@ def select_regular_portfolio(
                 break
             add(candidate, "mission_target:ai_core")
 
-        # 2) One convergence target.
         for _ in range(min(contract["convergence_target"], max(0, limit - len(selected)))):
             candidate = best([x for x in ordered if mission_area(x) == "convergence"], prefer_research=True)
             if candidate is None:
                 break
             add(candidate, "mission_target:convergence")
 
-        # 3) One shared mind/future target, not two independent slots.
         for _ in range(min(contract["mind_future_target"], max(0, limit - len(selected)))):
             pool = [x for x in ordered if mission_area(x) in {"mind_cognition", "future_governance"}]
             candidate = best(pool, prefer_research=True)
@@ -307,27 +315,22 @@ def select_regular_portfolio(
                 break
             add(candidate, f"mission_target:{mission_area(candidate)}")
 
-        # 4) Research target is a preference. It may satisfy an earlier target
-        # simultaneously; otherwise it is added only while capacity remains.
         for _ in range(min(contract["research_target"], max(0, limit - len(selected)))):
             candidate = best([x for x in ordered if _is_research(x)], prefer_research=True)
             if candidate is None:
                 break
             add(candidate, "mission_target:research")
 
-    # Score-based fill, respecting configured area and source caps.
     for item in ordered:
         if len(selected) >= limit:
             break
         if id(item) in selected_ids:
             continue
         if admissible(item, repeat_source=False):
-            # Enforce ai_core max target during generic fill when configured.
             if mission_area(item) == "ai_core" and area_counts.get("ai_core", 0) >= contract["ai_core_target_max"]:
                 continue
             add(item, "score_fill")
 
-    # Source-repeat backfill is explicitly last-resort.
     if len(selected) < limit and source_cap > 1:
         for item in ordered:
             if len(selected) >= limit:
@@ -337,8 +340,6 @@ def select_regular_portfolio(
             if admissible(item, repeat_source=True):
                 add(item, "adaptive_source_backfill")
 
-    # Enforce the configured authority floor when feasible, without violating
-    # mission-area/source/type constraints.
     auth_required = min(contract["min_authoritative_items"], len(selected))
     while sum(_authority_ok(x) for x in selected) < auth_required:
         replacement = next(
@@ -348,19 +349,12 @@ def select_regular_portfolio(
             ),
             None,
         )
-        if replacement is None:
-            break
         removable = [x for x in selected if not _authority_ok(x)]
-        if not removable:
+        if replacement is None or not removable:
             break
-        victim = min(removable, key=lambda x: (_rank_key(x, recent), candidate_score(x)))
-        selected.remove(victim)
-        selected_ids.remove(id(victim))
-        source_counts[source_key(victim)] -= 1
-        type_counts[content_type_key(victim)] -= 1
-        area_counts[mission_area(victim)] -= 1
-        if _is_interview(victim):
-            type_counts["interview"] -= 1
+        # Drop the lowest-quality non-authoritative item, not the highest-scoring one.
+        victim = max(removable, key=lambda x: (_rank_key(x, recent), -candidate_score(x)))
+        remove(victim)
         add(replacement, "policy_repair:min_authoritative_items")
 
     return selected[:limit]

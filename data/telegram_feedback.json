@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788158571,
+  "updated_at": 1788158995,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5601,6 +5601,25 @@
       "why_it_matters": "درک نحوه توزیع ارزش در AI برای پیش‌بینی روندهای اقتصادی و استراتژی‌های سرمایه‌گذاری حیاتی است. این تحلیل نشان می‌دهد که فناوری‌های پیشرفته تنها به رشد فنی محدود نمی‌شوند، بلکه ساختارهای بازار را نیز دگرگون می‌کنند. بررسی این موضوع به ذینفعان کمک می‌کند تا موقعیت‌های خود را در اکوسیستم نوظهور AI بهتر درک کنند.",
       "link": "https://www.youtube.com/watch?v=oey90iiw1kw",
       "posted_at": 1788126982
+    },
+    "-1004482051328:1374": {
+      "chat_id": -1004482051328,
+      "message_id": 1374,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Medium)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Ray Kurzweil",
+      "watch_person": "Ray Kurzweil",
+      "title": "تکینگی نزدیک‌تر است: گفتگوها با Ray Kurzweil",
+      "summary": "این مقاله گفتگویی با Ray Kurzweil را در پلتفرم Predict منتشر می‌کند که بر پیش‌بینی‌های او درباره نزدیک شدن به تکینگی تمرکز دارد. عنوان مقاله نشان می‌دهد که فاصله زمانی تا وقوع این رویداد فناوری به طور قابل Attentionی کاهش یافته است. نویسنده، Tim Ventura، این دیدگاه‌ها را در اوت ۲۰۲۶ به اشتراک گذاشته است. منبع اصلی انتشار این محتوا وب‌سایت Medium است.",
+      "why_it_matters": "این انتشار نشان‌دهنده تداوم و به‌روزرسانی مداوم نظریات Ray Kurzweil درباره شتاب پیشرفت فناوری و تأثیر آن بر آینده بشریت است. با Attention به تاریخ انتشار در اوت ۲۰۲۶، این متن بازتابی از ارزیابی‌های به‌روز او نسبت به پیش‌بینی‌های قبلی است. اهمیت این گفتگو در ارائه چشم‌اندازی از تغییرات سریع فناوری و نزدیک‌تر شدن به مرزهای هوش مصنوعی و ادغام انسان و ماشین نهفته است.",
+      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxQTDNzNWRRTjAwN2dxOFN2YXl3d1VrNGEzQUNwZ1NRWlZ6TTdXMEQ2WWRKRFpDWXdHdURsamloT0JaWV8yNy1wX25Tek9kRGZBRERlLVVxT2lZbVUxOFhQXzIxSS1FZjVqSVd0V3NtcDBxQTlmV3VUZ2ZjT2hMZmdXMVZDQzBGVFVtSTZWQjN5N3lUOU5Sdlc4QmMtQzFGZw?oc=5",
+      "posted_at": 1788158995
     }
   }
 }

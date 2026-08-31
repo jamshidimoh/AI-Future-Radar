@@ -20,6 +20,7 @@ class MITPriorityTests(unittest.TestCase):
                 "content_type": "research",
                 "source_tier": 1,
                 "research_signal": True,
+                "category": "ai",
             },
             {
                 "source": "MIT News",
@@ -30,6 +31,7 @@ class MITPriorityTests(unittest.TestCase):
                 "content_type": "research",
                 "source_tier": 1,
                 "research_signal": True,
+                "category": "ai",
             },
         ]
         selected = select_editorial(items, max_posts=1, max_per_source=2, max_per_type=2, policy={"leader_interview_slots": 0})
@@ -42,10 +44,15 @@ class MITPriorityTests(unittest.TestCase):
                 "source": "Leader Podcast",
                 "title": "Leader interview",
                 "leader": "Test Leader",
+                "watch_person": "Test Leader",
+                "is_leader_watch": True,
+                "leader_watch_protected": True,
                 "content_type": "interview",
                 "editorial_score": 100,
                 "signal_score": 10,
                 "editorial_confidence": 0.9,
+                "category": "ai",
+                "source_tier": 1,
             },
             {
                 "source": "MIT News",
@@ -55,6 +62,8 @@ class MITPriorityTests(unittest.TestCase):
                 "editorial_score": 10,
                 "signal_score": 10,
                 "editorial_confidence": 0.8,
+                "category": "ai",
+                "source_tier": 1,
             },
         ]
         selected = select_editorial(items, max_posts=1, max_per_source=2, max_per_type=2, policy={"leader_interview_slots": 1})

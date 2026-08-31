@@ -1,8 +1,8 @@
 import unittest
 
-from src.portfolio_selection import select_normal_portfolio
 from src.rtl_contract import PDI, RLI, force_rtl_blocks
 from src.summarize import _fallback_title_from_persian_summary
+from src.unified_editorial_selection import assert_portfolio_contract, select_regular_portfolio
 
 
 class ProductionQualityRepairTests(unittest.TestCase):
@@ -20,6 +20,7 @@ class ProductionQualityRepairTests(unittest.TestCase):
                 "signal_score": 55,
                 "editorial_confidence": 0.95,
                 "category": "genetics",
+                "research_signal": True,
             },
             {
                 "title": "University AI research result",
@@ -33,6 +34,7 @@ class ProductionQualityRepairTests(unittest.TestCase):
                 "signal_score": 54,
                 "editorial_confidence": 0.95,
                 "category": "ai",
+                "research_signal": True,
             },
             {
                 "title": "Frontier AI interview",
@@ -48,13 +50,20 @@ class ProductionQualityRepairTests(unittest.TestCase):
                 "interview_signal": True,
             },
         ]
-        selected = select_normal_portfolio(
-            items, max_posts=4, max_per_source=2, max_per_type=2, policy={}
+        selected = select_regular_portfolio(
+            items,
+            max_posts=3,
+            max_per_source=2,
+            max_per_type=2,
+            recent_source_counts={},
+            mission_aware=True,
+            strict_relevance=True,
         )
-        self.assertGreaterEqual(len(selected), 3)
+        self.assertGreaterEqual(len(selected), 2)
         self.assertTrue(any(x.get("content_type") == "research" for x in selected))
         self.assertTrue(all("arxiv.org" not in str(x.get("canonical_url", "")).lower() for x in selected))
         self.assertTrue(all("arxiv" not in str(x.get("source", "")).lower() for x in selected))
+        assert_portfolio_contract(selected)
 
     def test_provider_independent_title_fallback_uses_validated_persian_summary(self):
         data = {

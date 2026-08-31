@@ -14,7 +14,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
-from editorial import enrich_items, filter_ai_relevance, filter_low_signal, select_editorial
+from editorial import enrich_items, filter_ai_relevance, filter_low_signal
 from fetch_google_news import fetch_google_news_items
 from fetch_rss import fetch_rss_items
 from fetch_youtube import fetch_youtube_items
@@ -26,6 +26,7 @@ from summarize import summarize_item
 from semantic_dedup import deduplicate_semantically
 from story_gate import gate_story_candidates
 from publication_contract import unique_candidates, validate_publication_payload
+from unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 CONFIG_PATH = ROOT / "config" / "sources.yaml"
 LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
@@ -160,8 +161,21 @@ def _publication_text_within_limit(post):
     return True
 
 
+def _select_editorial_default(items, max_posts, max_per_source, max_per_type, policy):
+    contract = load_editorial_contract()
+    return select_regular_portfolio(
+        items,
+        max_posts=max_posts,
+        max_per_source=max_per_source,
+        max_per_type=max_per_type,
+        contract=contract,
+        mission_aware=bool(policy.get("mission_aware", True)),
+        strict_relevance=bool(policy.get("strict_relevance", False)),
+    )
+
+
 def main(hooks=None):
-    hooks = dict(hooks or {}); select_editorial_fn = hooks.get("select_editorial", select_editorial); split_protected_fn = hooks.get("split_protected", _split_protected); summarize_fn = hooks.get("summarize_item", summarize_item); format_fn = hooks.get("format_post", format_post); resolve_image_fn = hooks.get("resolve_source_image", resolve_source_image); deliver_fn = hooks.get("send_to_telegram_safe", send_to_telegram_safe); persist_fn = hooks.get("persist_item_success", _persist_item_success)
+    hooks = dict(hooks or {}); select_editorial_fn = hooks.get("select_editorial", _select_editorial_default); split_protected_fn = hooks.get("split_protected", _split_protected); summarize_fn = hooks.get("summarize_item", summarize_item); format_fn = hooks.get("format_post", format_post); resolve_image_fn = hooks.get("resolve_source_image", resolve_source_image); deliver_fn = hooks.get("send_to_telegram_safe", send_to_telegram_safe); persist_fn = hooks.get("persist_item_success", _persist_item_success)
     config = load_yaml(CONFIG_PATH); leader_config = load_yaml(LEADER_CONFIG_PATH); selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {}); policy = load_yaml(SELECTION_POLICY_PATH).get("editorial", {}); categories = config["categories"]; max_posts = int(selection.get("max_posts", 4)); max_per_source = int(selection.get("max_items_per_source", 2)); max_per_type = int(selection.get("max_items_per_content_type", 2)); leader_protected_max = int(policy.get("leader_protected_max", 2)); bridge_keywords = config.get("ai_bridge_keywords", []); story_threshold = float(selection.get("story_similarity_threshold", 0.45)); leader_people, leader_priorities = _leader_people(leader_config)
     youtube_channels = _merge_unique_dicts(config.get("youtube_channels", []), leader_config.get("youtube_channels", []), key="name"); leader_channel_names = {x.get("name") for x in leader_config.get("youtube_channels", [])}; base_youtube_channels = [x for x in youtube_channels if x.get("name") not in leader_channel_names]; leader_youtube_channels = [x for x in youtube_channels if x.get("name") in leader_channel_names]; base_queries = list(config.get("google_news_queries", [])); leader_queries = list(leader_config.get("google_news_queries", []))
     print("[1/7] Discovery: RSS / university / scientific / specialist sources"); rss_items = fetch_rss_items(config["rss_sources"], categories); print(f"RSS items: {len(rss_items)}")

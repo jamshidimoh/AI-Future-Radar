@@ -1,4 +1,8 @@
-from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
+from src.unified_editorial_selection import (
+    assert_portfolio_contract,
+    load_editorial_contract,
+    select_regular_portfolio,
+)
 
 
 def item(title, source, score, *, area="ai", content_type="news", tier=1, research_signal=False):
@@ -68,26 +72,60 @@ def test_community_sources_are_excluded_from_normal_portfolio():
     assert all("reddit" not in x["source"].casefold() for x in selected)
 
 
-def test_mission_coverage_gets_explicit_opportunities():
+def test_mission_targets_are_loaded_from_canonical_policy():
+    contract = load_editorial_contract()
+    assert contract["max_posts"] == 3
+    assert contract["ai_core_target_min"] == 1
+    assert contract["ai_core_target_max"] == 2
+    assert contract["convergence_target"] == 1
+    assert contract["mind_future_target"] == 1
+    assert contract["research_target"] == 1
+    assert contract["interview_target_max"] == 1
+    assert contract["min_authoritative_items"] == 2
+
+
+def test_mind_future_target_is_one_shared_allocation_not_two_slots():
     candidates = [
-        item("AI core", "OpenAI", 100, area="ai"),
-        item("Quantum", "IBM Quantum", 82, area="quantum"),
+        item("Core research", "Nature", 100, area="ai", content_type="research", research_signal=True),
+        item("Quantum", "IBM Research", 90, area="quantum", content_type="research", research_signal=True),
         item("Mind", "Stanford HAI", 80, area="mind"),
-        item("Future", "NIST", 78, area="future"),
-        item("Research", "Nature", 77, area="ai", content_type="research", research_signal=True),
+        item("Future", "NIST", 79, area="future"),
     ]
     selected = select_regular_portfolio(
         candidates,
-        max_posts=4,
-        max_per_source=2,
-        max_per_type=4,
+        max_posts=3,
+        max_per_source=1,
+        max_per_type=3,
         recent_source_counts={},
+        mission_aware=True,
+        strict_relevance=True,
     )
-    reasons = {x.get("mission_selection_reason") for x in selected}
-    assert "mission_coverage:convergence" in reasons
-    assert "mission_coverage:mind_cognition" in reasons
-    assert "mission_coverage:future_governance" in reasons
-    assert len(selected) == 4
+    assert len(selected) == 3
+    areas = [x["mission_area"] for x in selected]
+    assert "ai_core" in areas
+    assert "convergence" in areas
+    assert sum(area in {"mind_cognition", "future_governance"} for area in areas) == 1
+
+
+def test_min_authoritative_items_is_repaired_when_feasible():
+    candidates = [
+        item("AI unknown tier", "Independent Lab", 100, area="ai", tier=None),
+        item("Quantum authoritative", "IBM Research", 90, area="quantum", tier=1),
+        item("Future unknown tier", "Independent Policy Lab", 80, area="future", tier=None),
+        item("AI authoritative research", "Nature", 70, area="ai", content_type="research", tier=1, research_signal=True),
+    ]
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=3,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    assert sum(x.get("source_tier") in {1, 2} for x in selected) >= 2
+    assert any(x["source"] == "Nature" for x in selected)
+    assert_portfolio_contract(selected)
 
 
 def test_content_type_and_source_hard_caps_are_enforced():
@@ -116,7 +154,6 @@ def test_content_type_and_source_hard_caps_are_enforced():
 
 def test_contract_exposes_replacement_window_and_hard_ceiling():
     contract = load_editorial_contract()
-    assert contract["max_posts"] == 3
     assert contract["candidate_window"] == 6
     assert contract["replacement_buffer"] == 2
     assert contract["preferred_max_same_source"] == 1

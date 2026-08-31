@@ -1,9 +1,4 @@
-"""Legacy compatibility helper for source-tier normalization only.
-
-Editorial portfolio construction and mission scoring live in
-``unified_editorial_selection``. This module intentionally has no parallel
-selection engine.
-"""
+"""Legacy compatibility helpers; canonical portfolio selection lives elsewhere."""
 from __future__ import annotations
 
 

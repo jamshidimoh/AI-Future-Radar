@@ -1,1 +1,0 @@
-Temporary placeholder for repository-quality cleanup branch.

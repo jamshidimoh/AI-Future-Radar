@@ -1,12 +1,10 @@
 """Deterministic quality gates for source-grounded educational lessons."""
 from __future__ import annotations
 
-import re
 from typing import Any
 
 from education_source_policy import validate_current_sources
 
-# Common Persian transliterations that must never survive the final education draft.
 BANNED_TRANSLITERATIONS = {
     "پلی‌کریسیس", "پلی کریسیس", "پلی‌تونی‌تی", "پلی تونی تی",
     "دمیس هاسابیس", "جفری هینتون", "یوئن یوئن آنگ", "یوئن یوئن انگ",

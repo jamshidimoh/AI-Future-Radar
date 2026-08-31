@@ -64,17 +64,18 @@ def filter_ai_relevance(items, ai_keywords=None):
             item["_force_reject_ai_gate"] = True
         if evidence:
             item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
+        # Do not inject an artificial AI phrase into the text passed to the canonical gate.
+        # Otherwise provenance-only items are incorrectly promoted from bridge to high quality.
         if bridge_hits:
-            item["description"] = "artificial intelligence " + str(item.get("description") or "")
+            item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
         elif curated_trusted and not bridge_hits:
-            item["description"] = "artificial intelligence curated discovery " + str(item.get("description") or "")
+            item["description"] = " ".join(part for part in (item.get("description"), "curated AI provenance") if part).strip()
         item["_curated_trusted_ai_bridge"] = curated_trusted
         normalized.append(item)
 
     keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
     result = _filter_ai_relevance([x for x in normalized if not x.get("_force_reject_ai_gate")], keywords)
 
-    # Retain only the explicitly trusted curated-discovery bridge cases that have no literal AI hit.
     trusted_curated = [
         x for x in normalized
         if x.get("_curated_trusted_ai_bridge") and not x.get("_force_reject_ai_gate") and not any(
@@ -95,20 +96,19 @@ def filter_ai_relevance(items, ai_keywords=None):
             evidence_level="B",
             ai_relevance_confidence=0.55,
             evidence_strength=5.5,
+            ai_relevance_quality="bridge",
         )
         result.append(accepted)
 
     for item in result:
         if item.get("relevance_reason") == "curated_ai_provenance":
+            item["ai_relevance_quality"] = "bridge"
             continue
         evidence = str(item.get("evidence_text") or "").strip()
         confidence = 0.95 if evidence else 0.85
         item["ai_relevance_confidence"] = confidence
         item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), confidence * 10.0)
         item["ai_relevance_quality"] = "high" if confidence >= 0.90 else "medium"
-    for item in result:
-        if "ai_relevance_quality" not in item:
-            item["ai_relevance_quality"] = "bridge"
     return result
 
 

@@ -1,3 +1,4 @@
+# One-time production validation runner; self-removes after execution.
 name: One-Time Production Validation
 
 on:
@@ -73,12 +74,12 @@ jobs:
           git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
           if git diff --cached --quiet; then
             echo "No production state changes to commit."
-            exit 0
+          else
+            git commit -m "chore: persist one-time validation state [skip ci]"
+            git fetch origin main --depth=20
+            git rebase origin/main
+            git push origin HEAD:main
           fi
-          git commit -m "chore: persist one-time validation state [skip ci]"
-          git fetch origin main --depth=20
-          git rebase origin/main
-          git push origin HEAD:main
 
       - name: Upload diagnostics
         if: always()
@@ -97,11 +98,7 @@ jobs:
           set -euo pipefail
           rm -f .github/workflows/one-time-production-validation.yml
           git add .github/workflows/one-time-production-validation.yml
-          if git diff --cached --quiet; then
-            echo "Temporary workflow already removed."
-            exit 0
-          fi
-          git commit -m "chore: remove one-time production validation workflow [skip ci]"
+          git commit -m "chore: remove one-time production validation workflow [skip ci]" || true
           git fetch origin main --depth=20
           git rebase origin/main
           git push origin HEAD:main

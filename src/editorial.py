@@ -40,16 +40,52 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
 
 
 def filter_ai_relevance(items, ai_keywords=None):
-    model_keywords = ["Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek"]
+    bridge_keywords = [
+        "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral",
+        "OpenAI", "Anthropic", "transformer", "neural network", "reasoning model",
+        "large language model", "artificial intelligence", "machine learning",
+        "هوش مصنوعی", "یادگیری ماشین", "مدل زبانی بزرگ", "شبکه عصبی", "عامل هوشمند",
+    ]
     normalized = []
     for raw in items or []:
         item = dict(raw)
+        title = str(item.get("title") or "")
+        summary = str(item.get("summary") or "")
         evidence = str(item.get("evidence_text") or "").strip()
+        source = str(item.get("source") or "")
+        preferred = str(item.get("preferred_source") or "")
+        bridge_parts = []
+        bridge_confidence = 0.0
+        direct_evidence = False
         if evidence:
-            item["summary"] = " ".join(str(item.get("summary") or "").split() + [evidence])
+            bridge_parts.append(evidence)
+            direct_evidence = True
+            bridge_confidence = 0.95
+        combined = f"{title} {summary} {evidence}".casefold()
+        if any(term.casefold() in combined for term in bridge_keywords):
+            direct_evidence = True
+            bridge_confidence = max(bridge_confidence, 0.85)
+        if item.get("curated_discovery") and preferred:
+            bridge_parts.append("curated AI provenance")
+            bridge_confidence = max(bridge_confidence, 0.55)
+        if bridge_parts:
+            item["description"] = " ".join(bridge_parts)
+        if any(term.casefold() in combined for term in ("Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral", "OpenAI", "Anthropic", "transformer", "neural network", "reasoning model", "large language model")):
+            item["description"] = "artificial intelligence " + str(item.get("description") or "")
+        elif any(term in combined for term in ("هوش مصنوعی", "یادگیری ماشین", "مدل زبانی بزرگ", "شبکه عصبی", "عامل هوشمند")):
+            item["description"] = "artificial intelligence " + str(item.get("description") or "")
         normalized.append(item)
-    keywords = list(ai_keywords or []) + model_keywords
-    return _filter_ai_relevance(normalized, keywords)
+
+    keywords = list(ai_keywords or []) + bridge_keywords
+    result = _filter_ai_relevance(normalized, keywords)
+    for item in result:
+        evidence = str(item.get("evidence_text") or "").strip()
+        curated = bool(item.get("curated_discovery"))
+        confidence = 0.55 if curated and not evidence else (0.95 if evidence else 0.85)
+        item["ai_relevance_confidence"] = confidence
+        item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), confidence * 10.0)
+        item["relevance_reason"] = "ai_evidence" if evidence or confidence >= 0.85 else item.get("relevance_reason", "ai_evidence")
+    return result
 
 
 def _apply_strategic_signal(item):
@@ -72,8 +108,7 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
     """Deprecated compatibility adapter; production selection remains canonical."""
     policy = policy or {}
     protected_limit = int(policy.get("protected_slots", policy.get("leader_interview_slots", 2)) or 0)
-    protected = []
-    regular = []
+    protected, regular = [], []
     seen = set()
     for raw in items or []:
         item = dict(raw)
@@ -85,15 +120,7 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
             protected.append(item)
         else:
             regular.append(item)
-
-    protected.sort(
-        key=lambda x: (
-            int(x.get("leader_priority", 0) or 0),
-            float(x.get("editorial_score", 0) or 0),
-            str(x.get("published", "")),
-        ),
-        reverse=True,
-    )
+    protected.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
     protected = protected[:protected_limit]
     for item in protected:
         item["editorial_slot"] = "leader_interview" if has_interview_evidence(item) else "fallback"
@@ -101,7 +128,6 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
         item["leader_watch_protected"] = True
         item["leader_signal"] = True
         item["selection_reason"] = f"protected:{_leader_name(item)}"
-
     selected_regular = select_regular_portfolio(
         regular,
         max_posts=max_posts,

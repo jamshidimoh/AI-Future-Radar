@@ -15,17 +15,9 @@ CANDIDATE_PATTERNS = (
     re.compile(r"\[Production Selection\].*?total=(\d+)"),
     re.compile(r"\[Selection Timing\].*?candidates=(\d+)"),
 )
-CONTRACT_PATTERN = re.compile(
-    r"\[Production Contract\].*?normal_news=(\d+).*?tier0_news=(\d+).*?education=(\w+)"
-)
+CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*?normal_news=(\d+).*?tier0_news=(\d+).*?education=(\w+)")
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
-UPSTREAM_REJECTION_PATTERNS = (
-    re.compile(r"protected_same_story_blocked=(\d+)"),
-    re.compile(r"\[Canonical Story Gate\].*?story_rejected=(\d+)"),
-    re.compile(r"\[Canonical Story Gate\].*?semantic_rejected=(\d+)"),
-    re.compile(r"\[Canonical Story Gate\].*?url_rejected=(\d+)"),
-)
 
 
 def _last_match(lines, patterns):
@@ -66,51 +58,29 @@ def validate(log_text: str) -> tuple[bool, str]:
     published_news = normal_news + tier0_news
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
 
-    # Canonical Story Gate is terminal for a selected candidate that was
-    # subsequently blocked by the publication ledger. Prefer the explicit
-    # protected-story counter and otherwise use the aggregate canonical rejects.
-    protected_blocked = _last_group_int(
-        lines, re.compile(r"protected_same_story_blocked=(\d+)")
-    ) or 0
-    canonical_story_rejected = _last_group_int(
-        lines, re.compile(r"\[Canonical Story Gate\].*?story_rejected=(\d+)")
-    ) or 0
-    canonical_semantic_rejected = _last_group_int(
-        lines, re.compile(r"\[Canonical Story Gate\].*?semantic_rejected=(\d+)")
-    ) or 0
-    canonical_url_rejected = _last_group_int(
-        lines, re.compile(r"\[Canonical Story Gate\].*?url_rejected=(\d+)")
-    ) or 0
-    upstream_rejections = max(
-        protected_blocked,
-        canonical_story_rejected + canonical_semantic_rejected + canonical_url_rejected,
-    )
-
+    protected_blocked = _last_group_int(lines, re.compile(r"protected_same_story_blocked=(\d+)")) or 0
+    canonical_story_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?story_rejected=(\d+)")) or 0
+    canonical_semantic_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?semantic_rejected=(\d+)")) or 0
+    canonical_url_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?url_rejected=(\d+)")) or 0
+    upstream_rejections = max(protected_blocked, canonical_story_rejected + canonical_semantic_rejected + canonical_url_rejected)
     accounted = published_news + editorial_rejections + upstream_rejections
 
     if selected > 0 and published_news == 0 and education != "confirmed":
         posts_sent = int(posts_match.group(1)) if posts_match else None
         if accounted >= selected and (posts_sent is None or posts_sent == 0):
             return True, (
-                "production acceptance PASS: all selected candidates reached "
-                "auditable terminal states; "
-                f"selected={selected}, published={published_news}, "
-                f"editorial_rejections={editorial_rejections}, "
+                "production acceptance PASS: fail-closed editorial rejection/accounting verified; "
+                f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, "
                 f"upstream_rejections={upstream_rejections}, education={education}"
             )
         return False, (
-            "production contract violation: selected candidates were not fully "
-            "accounted for by publication or explicit rejection evidence "
-            f"(selected={selected}, published={published_news}, "
-            f"editorial_rejections={editorial_rejections}, "
-            f"upstream_rejections={upstream_rejections}, accounted={accounted}, "
-            f"education={education})"
+            "production contract violation: zero news items were published and the selected set "
+            "did not provide evidence of publication or explicit rejection; "
+            f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, "
+            f"upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
         )
 
-    return True, (
-        "production acceptance PASS: "
-        f"selected={selected}, published_news={published_news}, education={education}"
-    )
+    return True, f"production acceptance PASS: selected={selected}, published_news={published_news}, education={education}"
 
 
 def main() -> int:

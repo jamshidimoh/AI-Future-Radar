@@ -60,6 +60,7 @@ Status date: 2026-08-31
 - The production router has an explicit model-scoped quota policy with provider-family isolation for permanent/authentication failures.
 - The repository contains the frozen acceptance contracts, ranking audit, production acceptance tests and real publication baseline.
 - A fresh production run on the current `main` lineage is required to validate the stricter closure gate against current runtime evidence.
+- Run #176 on the current main lineage completed successfully with fail-closed editorial rejection and zero publication; state persistence and diagnostics upload both succeeded.
 
 ## Current declaration
 
@@ -70,3 +71,5 @@ The project must **not** be called `Production Complete` merely because the repo
 ## Project stop boundary
 
 Once the deterministic suite is green and the required production evidence window has been observed with no regression, the project is closed. No further architectural improvement is part of this project. New providers, new sources, ranking experiments, UI changes, model upgrades and optimization ideas become separate maintenance/evolution work.
+
+<!-- closure-validation-trigger: run production on current main -->

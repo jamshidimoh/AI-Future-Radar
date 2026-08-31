@@ -1,6 +1,5 @@
 from src.delivery_contract import (
     DeliveryStatus,
-    duplicate,
     from_legacy,
     policy_blocked,
     transport_failed,

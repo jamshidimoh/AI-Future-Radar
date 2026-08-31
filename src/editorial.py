@@ -20,6 +20,9 @@ def classify_editorial_item(item, prior=None):
             result["interview_signal"] = True
             result["editorial_class"] = "leader_interview"
             result["editorial_confidence"] = 1.0
+        elif not named:
+            result["editorial_class"] = "fallback"
+            result["editorial_confidence"] = 0.35
     return result
 
 
@@ -30,11 +33,23 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
             item["leader_signal"] = True
             if item.get("leader") and has_interview_evidence(item):
                 item["leader_watch_protected"] = True
+            elif not item.get("leader"):
+                item["editorial_slot"] = "fallback"
+                item["editorial_class"] = "fallback"
     return enriched
 
 
 def filter_ai_relevance(items, ai_keywords=None):
-    return _filter_ai_relevance(items, ai_keywords)
+    model_keywords = ["Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek"]
+    normalized = []
+    for raw in items or []:
+        item = dict(raw)
+        evidence = str(item.get("evidence_text") or "").strip()
+        if evidence:
+            item["summary"] = " ".join(str(item.get("summary") or "").split() + [evidence])
+        normalized.append(item)
+    keywords = list(ai_keywords or []) + model_keywords
+    return _filter_ai_relevance(normalized, keywords)
 
 
 def _apply_strategic_signal(item):
@@ -96,6 +111,10 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
         mission_aware=bool(policy.get("mission_aware", True)),
         strict_relevance=bool(policy.get("strict_relevance", False)),
     )
+    for item in selected_regular:
+        if item.get("is_leader_watch") and not _leader_name(item):
+            item["editorial_slot"] = "fallback"
+            item["editorial_class"] = "fallback"
     return protected + selected_regular
 
 

@@ -68,17 +68,24 @@ def filter_ai_relevance(items, ai_keywords=None):
         # Provenance-only curated items must not be modified with textual AI markers.
         # They are retained explicitly below at bridge confidence after canonical filtering.
         item["_curated_trusted_ai_bridge"] = curated_trusted
+        item["_has_direct_ai_evidence"] = bool(bridge_hits)
         normalized.append(item)
 
     keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
-    result = _filter_ai_relevance([x for x in normalized if not x.get("_force_reject_ai_gate") and not x.get("_curated_trusted_ai_bridge")], keywords)
+    result = _filter_ai_relevance(
+        [
+            x for x in normalized
+            if not x.get("_force_reject_ai_gate")
+            and (not x.get("_curated_trusted_ai_bridge") or x.get("_has_direct_ai_evidence"))
+        ],
+        keywords,
+    )
 
     trusted_curated = [
         x for x in normalized
-        if x.get("_curated_trusted_ai_bridge") and not x.get("_force_reject_ai_gate") and not any(
-            term.casefold() in f"{x.get('title','')} {x.get('summary','')} {x.get('evidence_text','')}".casefold()
-            for term in _AI_BRIDGE_TERMS
-        )
+        if x.get("_curated_trusted_ai_bridge")
+        and not x.get("_force_reject_ai_gate")
+        and not x.get("_has_direct_ai_evidence")
     ]
     present = {str(x.get("title") or "") for x in result}
     for item in trusted_curated:

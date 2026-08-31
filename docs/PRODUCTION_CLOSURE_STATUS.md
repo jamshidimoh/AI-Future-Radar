@@ -1,6 +1,6 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-08-29
+Status date: 2026-08-31
 
 ## Purpose
 
@@ -55,15 +55,17 @@ Status date: 2026-08-29
 ## Current evidence snapshot
 
 - Repository is public and the default branch is `main`.
-- Latest observed scheduled production run before this closure document: `Run AI Future Radar Bot #151`, run id `33266357330`, completed successfully on 2026-08-29. Its production job completed discovery, preflight, bot execution, state persistence and diagnostics upload successfully.
-- The repository already contains `tests/test_final_production_acceptance.py`, `tests/test_production_acceptance_contract.py`, and the frozen acceptance document.
-- A previous Quality run on commit `928d466...` failed only at the broad Ruff F-rule audit because of 23 pre-existing unused-import/local-variable diagnostics; the current `test-quality.yml` intentionally makes the repository-wide Ruff audit non-blocking and keeps a focused changed-surface Ruff gate. This historical failure must not be represented as a current Production failure.
+- Latest observed production evidence window: `Run AI Future Radar Bot #171`, `#172`, `#173`, all completed successfully.
+- Quality validation for the router-policy correction is green on commit `bdbbdb619366bce479df293a30f795dc34f983a2`.
+- The production router has an explicit model-scoped quota policy with provider-family isolation for permanent/authentication failures.
+- The repository contains the frozen acceptance contracts, ranking audit, production acceptance tests and real publication baseline.
+- A fresh production run on the current `main` lineage is required to validate the stricter closure gate against current runtime evidence.
 
 ## Current declaration
 
 `ACCEPTANCE IN PROGRESS`
 
-The project must **not** be called `Production Complete` merely because the repository is deployable or because one scheduled run passed. The final label is reserved for the evidence window above.
+The project must **not** be called `Production Complete` merely because the repository is deployable or because one scheduled run passed. The final label is reserved for the evidence window above and the deeper evidence checks.
 
 ## Project stop boundary
 

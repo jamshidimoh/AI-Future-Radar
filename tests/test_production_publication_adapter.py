@@ -1,4 +1,4 @@
-from src.delivery_contract import DeliveryStatus, delivered, policy_blocked, transport_failed
+from src.delivery_contract import DeliveryStatus, delivered, policy_blocked
 from src.production_publication_adapter import publish_production_story
 
 

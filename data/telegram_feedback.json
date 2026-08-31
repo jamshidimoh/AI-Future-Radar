@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788162295,
+  "updated_at": 1788168342,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5656,6 +5656,25 @@
       "why_it_matters": "با Attention به اینکه منبع فاقد داده‌های تحلیلی یا نتایج عملی است، پیامد مشخصی برای توسعه محصول، زیرساخت یا حکمرانی فناوری قابل Inference نیست. این محتوا صرفاً به عنوان یک ورودی در دسته‌بندی AI شناسایی شده و ارزش اطلاعاتی مستقلی برای تصمیم‌گیری فنی یا استراتژیک ندارد.",
       "link": "https://www.youtube.com/shorts/q44Cv40dwro",
       "posted_at": 1788162036
+    },
+    "-1004482051328:1377": {
+      "chat_id": -1004482051328,
+      "message_id": 1377,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Fortune)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Amy Webb",
+      "watch_person": "Amy Webb",
+      "title": "Amy Webb: اقتصاد AI در بن‌بست پایلوت‌ها و شباهت خطرناک به حباب دات‌کام",
+      "summary": "Amy Webb اقتصاد فعلی AI را به یک اپلیکیشن نامناسب آشنایی تشبیه می‌کند که در میان انبوهی از ارائه‌های تجاری (decks) و بن‌بست پروژه‌های آزمایشی (pilot purgatory) غرق شده است. او استدلال می‌کند که این وضعیت یادآور حباب دات‌کام است، اما با پیامدهای وخیم‌تر و پیچیده‌تر. تمرکز فعلی صنعت بر اسلایدهای جذاب به جای پیاده‌سازی عملیاتی، نشان‌دهنده شکاف عمیق بین هیاهوی تبلیغاتی و ارزش واقعی خلق‌شده است.",
+      "why_it_matters": "این تشبیه هشدار می‌دهد که سرمایه‌گذاری‌های کلان در AI ممکن است بدون زیرساخت اجرایی محکم، به بن‌بست تجاری تبدیل شوند. اگر شرکت‌ها نتوانند از فاز پایلوت عبور کرده و به مقیاس‌پذیری واقعی برسند، ریسک تصفیه بازار و از دست رفتن اعتماد سرمایه‌گذاران افزایش می‌یابد. درک این شکاف برای سیاست‌گذاران و مدیران حیاتی است تا از تکرار اشتباهات حباب‌های قبلی با شدت بیشتر جلوگیری کنند.",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQZnNFbHZXRVhTUVE1eldrRVFXVThtV3oxSlRybXdUenhMS09VT25ucVBNMEQtOThYSVJ0dzdJVHI3c1k0ZnEyTmtOaDYxMjFDcHZ0U0Jzd3pYOXMwWnBzZXdYZXFkbTdrRTZXaTduQ085dl85Y3FtRFZSVXRkLTZqTWkzczFqX0R4Vy1CaG52QVlOUzhFeHFVVA?oc=5",
+      "posted_at": 1788168342
     }
   }
 }

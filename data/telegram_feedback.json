@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788159609,
+  "updated_at": 1788160144,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5620,6 +5620,24 @@
       "why_it_matters": "این انتشار نشان‌دهنده تداوم و به‌روزرسانی مداوم نظریات Ray Kurzweil درباره شتاب پیشرفت فناوری و تأثیر آن بر آینده بشریت است. با Attention به تاریخ انتشار در اوت ۲۰۲۶، این متن بازتابی از ارزیابی‌های به‌روز او نسبت به پیش‌بینی‌های قبلی است. اهمیت این گفتگو در ارائه چشم‌اندازی از تغییرات سریع فناوری و نزدیک‌تر شدن به مرزهای هوش مصنوعی و ادغام انسان و ماشین نهفته است.",
       "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxQTDNzNWRRTjAwN2dxOFN2YXl3d1VrNGEzQUNwZ1NRWlZ6TTdXMEQ2WWRKRFpDWXdHdURsamloT0JaWV8yNy1wX25Tek9kRGZBRERlLVVxT2lZbVUxOFhQXzIxSS1FZjVqSVd0V3NtcDBxQTlmV3VUZ2ZjT2hMZmdXMVZDQzBGVFVtSTZWQjN5N3lUOU5Sdlc4QmMtQzFGZw?oc=5",
       "posted_at": 1788158995
+    },
+    "-1004482051328:1375": {
+      "chat_id": -1004482051328,
+      "message_id": 1375,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "تبدیل خودکار یادداشت جلسات به اسناد و ارائه‌ها با ChatGPT Work",
+      "summary": "ChatGPT Work قابلیت تبدیل یادداشت‌های جلسات به Google Doc ساختاریافته و ارائه‌های مدیریتی را فراهم می‌کند. کاربران می‌توانند Google Drive را متصل کرده، بخش‌های مورد نیاز را درخواست داده و سند را با متن اصلی تطبیق دهند. سپس می‌توانند یک ارائه Google Slides از سند ایجاد کرده و هر دو قالب را با Template Creator ذخیره کنند.",
+      "why_it_matters": "این قابلیت با یکپارچه‌سازی مستقیم با Google Drive، فرآیند مستندسازی و آماده‌سازی ارائه‌ها را به‌طور قابل‌Attentionی تسریع می‌کند. امکان بررسی سند در برابر متن اصلی، دقت خروجی را افزایش داده و خطای انسانی را کاهش می‌دهد. ذخیره قالب‌ها با Template Creator نیز امکان استفاده مجدد و استانداردسازی فرآیندهای اداری را فراهم می‌کند.",
+      "link": "https://www.youtube.com/watch?v=syML5KT-HzI",
+      "posted_at": 1788160144
     }
   }
 }

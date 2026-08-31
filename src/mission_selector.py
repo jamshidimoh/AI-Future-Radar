@@ -4,9 +4,9 @@ from __future__ import annotations
 
 def _source_tier(item: dict) -> int | None:
     """Resolve source tier, correcting known aggregator metadata for reputable publishers."""
-    source = str(item.get("source") or "").casefold()
-    reputable = ("reuters", "forbes", "cnbc", "associated press", "bbc", "nature", "scientific american")
-    low_authority = ("bitcoin world", "tech-insider.org", "singju post", "startuphub.ai", "pulse 2.0")
+    source = str(item.get("source") or item.get("source_name") or "").casefold()
+    reputable = ("reuters", "forbes", "cnbc", "associated press", "bbc", "nature", "scientific american", "mit technology review", "mit news", "stanford")
+    low_authority = ("bitcoin world", "tech-insider.org", "singju post", "startuphub.ai", "pulse 2.0", "medium")
     raw = item.get("source_tier", item.get("tier"))
     try:
         tier = int(raw) if raw not in (None, "") else None

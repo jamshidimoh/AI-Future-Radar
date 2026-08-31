@@ -12,7 +12,6 @@ import requests
 import yaml
 
 from education_editor import normalize_education_item, terminology_review_prompt
-from educational_telegram_style import format_educational_post
 from education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_current_sources
 from llm_router_light import call_llm_with_fallback, get_quality_chain
 
@@ -253,7 +252,7 @@ def _generate(lesson):
         print(f"[Education Source Gate] FAILED lesson={lesson.get('id')} reason={source_reason}", flush=True)
         return None, verified_sources
 
-    prompt = f"""تو ویراستار و نویسنده ارشد یک کانال آموزشی فارسی درباره هوش مصنوعی و فناوری هستی.
+    prompt = """تو ویراستار و نویسنده ارشد یک کانال آموزشی فارسی درباره هوش مصنوعی و فناوری هستی.
 قواعد سخت و غیرقابل مذاکره:
 1) دقیقاً فقط دو مفهوم اصلی را آموزش بده.
 2) متن اصلی فارسی، روان، دقیق و ساده باشد.
@@ -267,7 +266,7 @@ def _generate(lesson):
 10) رابطه، مثال و نکته باید با تعریف‌ها سازگار باشند.
 11) طول بیشتر فقط برای دو بخش توضیح هر مفهوم (تعریف علمی و به زبان ساده) مجاز است؛ رابطه، مثال، نکته، منابع، ساختار JSON و سایر اجزای پیام را تغییر نده.
 12) خروجی فقط JSON معتبر باشد.
-JSON: {{"term_a_definition":"...","term_a_simple":"...","term_b_definition":"...","term_b_simple":"...","relationship":"...","example":"...","takeaway":"..."}}
+JSON: {"term_a_definition":"...","term_a_simple":"...","term_b_definition":"...","term_b_simple":"...","relationship":"...","example":"...","takeaway":"..."}
 """
     user = (f"درس {lesson.get('id')}: {lesson.get('title')}\nحوزه: {lesson.get('domain', 'AI')}\nپیش‌نیازها: {lesson.get('prerequisites', [])}\nوضعیت: {status}\n"
             f"مفهوم اول: {a['term']} / معادل فارسی: {a['fa']}\nتعریف پایه: {a['seed']}\n"

@@ -65,19 +65,17 @@ def filter_ai_relevance(items, ai_keywords=None):
             item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
         if bridge_hits:
             item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
-        # Provenance-only bridge must remain free of AI keywords before the canonical gate.
-        # It is re-attached below using explicit bounded provenance metadata.
+        # Provenance-only curated items must not be modified with textual AI markers.
+        # They are retained explicitly below at bridge confidence after canonical filtering.
         item["_curated_trusted_ai_bridge"] = curated_trusted
         normalized.append(item)
 
     keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
-    result = _filter_ai_relevance([x for x in normalized if not x.get("_force_reject_ai_gate")], keywords)
+    result = _filter_ai_relevance([x for x in normalized if not x.get("_force_reject_ai_gate") and not x.get("_curated_trusted_ai_bridge")], keywords)
 
     trusted_curated = [
         x for x in normalized
-        if x.get("_curated_trusted_ai_bridge")
-        and not x.get("_force_reject_ai_gate")
-        and not any(
+        if x.get("_curated_trusted_ai_bridge") and not x.get("_force_reject_ai_gate") and not any(
             term.casefold() in f"{x.get('title','')} {x.get('summary','')} {x.get('evidence_text','')}".casefold()
             for term in _AI_BRIDGE_TERMS
         )
@@ -102,7 +100,6 @@ def filter_ai_relevance(items, ai_keywords=None):
     for item in result:
         if item.get("relevance_reason") == "curated_ai_provenance":
             item["ai_relevance_quality"] = "bridge"
-            item["ai_relevance_confidence"] = 0.55
             continue
         evidence = str(item.get("evidence_text") or "").strip()
         confidence = 0.95 if evidence else 0.85

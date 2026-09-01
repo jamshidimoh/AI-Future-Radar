@@ -23,7 +23,7 @@ def test_prepare_features_does_not_add_person_or_model_bonus_to_final_score(monk
 def test_tier0_remains_policy_routing_not_score_inflation(monkeypatch):
     monkeypatch.setattr(ranking, "model_release_bonus", lambda item: 0.0)
     monkeypatch.setattr(ranking, "priority_people_features", lambda item: (["Sam Altman"], True, 50.0))
-    item = {"title": "Sam Altman discusses future AI systems", "editorial_score_pre_signal": 55.0, "signal_score": 40.0, "leader": "Sam Altman", "content_type": "interview", "_named_leader_interview": True}
+    item = {"title": "Sam Altman discusses future AI systems", "editorial_score_pre_signal": 55.0, "signal_score": 40.0, "leader": "Sam Altman", "content_type": "interview", "_named_leader_interview": True, "protected_slot": True}
     ranking._prepare_rank_features([item])
     assert item["_rank_is_tier0"] is True
     assert item["final_editorial_score"] == 51.25
@@ -61,8 +61,7 @@ def test_protected_leader_capacity_demotes_overflow_candidates():
         {"title": "Leader two", "leader": "Sam Altman", "editorial_score": 89.0, "content_type": "interview"},
         {"title": "Leader three", "leader": "Jensen Huang", "editorial_score": 88.0, "content_type": "interview"},
     ]
-    monkey = ranking._eligibility_split
-    selected, regular = monkey(items, max_protected=2)
+    selected, regular = ranking._eligibility_split(items, max_protected=2)
     assert len(selected) == 2
     assert all(item.get("protected_slot") is True for item in selected)
     assert len(regular) == 1

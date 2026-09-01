@@ -44,6 +44,11 @@ LESSON_41_CURRENT_SOURCES = [
         "url": "https://openai.com/academy/workspace-agents/",
         "year": 2026,
     },
+    {
+        "name": "NIST: AI Agent Standards Initiative",
+        "url": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
+        "year": 2026,
+    },
 ]
 
 
@@ -57,12 +62,6 @@ def _watchdog_minutes() -> int:
 
 
 def _education_is_due_by_tehran_window(now: datetime | None, last_slot: str) -> tuple[bool, str | None]:
-    """Return the education due state using the same tuple contract as production_entrypoint.
-
-    Education is eligible only in the 05:xx and 20:xx Tehran windows. The slot
-    identity prevents a manual retrigger from publishing the same lesson twice
-    inside one window while allowing both intended daily windows.
-    """
     now = now or datetime.now(ZoneInfo("Asia/Tehran"))
     slot = None
     if now.hour == 5:
@@ -108,7 +107,12 @@ def _source_candidates_with_current_overrides(lesson: dict):
         "https://platform.openai.com/docs/guides/agents",
     }
     filtered = [x for x in candidates if str(x.get("url", "")).rstrip("/") not in {u.rstrip("/") for u in stale_urls}]
-    filtered.extend(LESSON_41_CURRENT_SOURCES)
+    seen = {str(x.get("url", "")).rstrip("/") for x in filtered}
+    for source in LESSON_41_CURRENT_SOURCES:
+        url = str(source["url"]).rstrip("/")
+        if url not in seen:
+            filtered.append(dict(source))
+            seen.add(url)
     print("[Education Source Gate] lesson=41 current-source override enabled", flush=True)
     return filtered
 
@@ -122,7 +126,6 @@ def _parse_education_json(raw):
 
 
 def _education_language_retry(item: dict, llm_call, providers) -> dict:
-    """Retry only the Persian-language rewrite; never relax the 70% gate."""
     payload = {k: str(item.get(k, "")) for k in production_entrypoint.EDU_FIELDS}
     prompt = """این متن آموزشی برای انتشار در یک رسانه تخصصی فارسی آماده شده اما بازنویسی قبلی از حداقل نسبت فارسی عبور نکرده است.
 آن را دوباره و دقیق‌تر به فارسی حرفه‌ای بازنویسی کن.
@@ -204,10 +207,9 @@ def _publish_education_after_news(run_number: int) -> bool:
 
 def main() -> int:
     _normal_fallback._NORMAL_DELIVERED = 0
-    # Keep the publication fallback and policy in lock-step with the same
-    # candidate window used by the unified editorial selection contract.
-    production_entrypoint.RANK_WINDOW = int(load_editorial_contract()["candidate_window"])
-    print(f"[Selection Contract] runtime_candidate_window={production_entrypoint.RANK_WINDOW} normal_capacity={load_editorial_contract()['max_posts']}", flush=True)
+    contract = load_editorial_contract()
+    production_entrypoint.RANK_WINDOW = int(contract["candidate_window"])
+    print(f"[Selection Contract] runtime_candidate_window={production_entrypoint.RANK_WINDOW} normal_capacity={contract['max_posts']}", flush=True)
 
     watchdog_seconds = _watchdog_minutes() * 60
     faulthandler.dump_traceback_later(watchdog_seconds, exit=False, file=sys.stderr)

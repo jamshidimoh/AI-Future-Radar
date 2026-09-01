@@ -23,6 +23,15 @@ Posts sent: 1/2
 """
 
 
+CONFIRMED_EDUCATION_RECOVERY = """
+[Production Selection] total=3
+Posts sent: 0/3
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+[Education Published] CONFIRMED lesson_slot=manual-validation:2026-09-01 run=345 telegram_delivery=successful
+[Education Recovery] CONFIRMED slot=manual-validation:2026-09-01 run=345 publication_attempt=successful
+"""
+
+
 PROTECTED_TIER0_FALLBACK = """
 [Production Selection] total=4
 [Tier0 Interview Priority] retained=2 quota_exempt=true unique_people=true
@@ -62,6 +71,12 @@ def test_successful_publication_remains_pass():
     ok, message = validate(SUCCESSFUL_PUBLICATION)
     assert ok is True
     assert "published_news=1" in message
+
+
+def test_confirmed_education_recovery_is_accounted_for():
+    ok, message = validate(CONFIRMED_EDUCATION_RECOVERY)
+    assert ok is True
+    assert "education=confirmed" in message
 
 
 def test_protected_tier0_fallback_requires_normal_candidate_accounting():

@@ -28,7 +28,7 @@ def test_selector_prefers_distinct_sources_before_repeating_a_source(monkeypatch
         {"title": "MIT alternative", "final_editorial_score": 90, "source": "MIT CSAIL", "content_type": "news"},
         {"title": "Nature alternative", "final_editorial_score": 89, "source": "Nature", "content_type": "news"},
     ]
-    selected = pipeline._diversify_normal_candidates(candidates, 4, 2, 4, policy={})
+    selected = pipeline._diversify_normal_candidates(candidates, 4, 2, 4, policy={"mission_aware": False})
     assert [item["source"] for item in selected] == ["OpenAI", "MIT CSAIL", "Nature", "OpenAI"]
 
 
@@ -52,5 +52,5 @@ def test_historical_source_usage_does_not_make_all_recent_sources_ineligible(mon
         {"title": "MIT alternative", "final_editorial_score": 90, "source": "MIT CSAIL", "content_type": "news"},
         {"title": "Nature alternative", "final_editorial_score": 80, "source": "Nature", "content_type": "news"},
     ]
-    selected = pipeline._diversify_normal_candidates(candidates, 3, 2, 3, policy={})
+    selected = pipeline._diversify_normal_candidates(candidates, 3, 2, 3, policy={"mission_aware": False})
     assert {item["source"] for item in selected} == {"OpenAI", "MIT CSAIL", "Nature"}

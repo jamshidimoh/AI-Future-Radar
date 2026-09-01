@@ -121,7 +121,7 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
         max_per_type=max_per_type,
         recent_source_counts=recent_source_counts,
         contract=contract,
-        mission_aware=bool(policy.get("mission_aware", False)),
+        mission_aware=bool(policy.get("mission_aware", True)),
         strict_relevance=strict_relevance,
     )
     source_counts = {}
@@ -132,7 +132,7 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
         f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} "
         f"source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true "
         f"preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} "
-        f"candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))} "
+        f"candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', True))} "
         f"strict_relevance={strict_relevance}", flush=True
     )
     return selected

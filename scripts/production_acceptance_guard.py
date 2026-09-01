@@ -23,6 +23,9 @@ POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
 TIER0_PRIORITY_PATTERN = re.compile(r"\[Tier0 Interview Priority\]\s+retained=(\d+).*?quota_exempt=true")
 TIER0_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH TIER0\b")
+EDUCATION_CONFIRMED_PATTERN = re.compile(
+    r"\[Education Published\]\s+CONFIRMED\b.*?telegram_delivery=successful"
+)
 
 
 def _last_match(lines, patterns):
@@ -62,6 +65,8 @@ def validate(log_text: str) -> tuple[bool, str]:
     tier0_news = int(contract_match.group(3))
     tier0_quota_exempt = contract_match.group(4).lower() == "true"
     education = contract_match.group(5)
+    if education != "confirmed" and _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
+        education = "confirmed"
     published_news = normal_news + tier0_news
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
 

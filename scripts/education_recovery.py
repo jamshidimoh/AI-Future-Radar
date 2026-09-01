@@ -126,6 +126,11 @@ def main() -> int:
     cadence["last_education_run"] = run_number
     production_entrypoint._save_cadence(cadence)
     print(
+        f"[Education Published] CONFIRMED lesson_slot={slot} run={run_number} "
+        "telegram_delivery=successful",
+        flush=True,
+    )
+    print(
         f"[Education Recovery] CONFIRMED slot={slot} run={run_number} "
         "publication_attempt=successful",
         flush=True,

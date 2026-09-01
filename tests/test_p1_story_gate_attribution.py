@@ -39,8 +39,7 @@ def _counterfactual_rank_key(item: dict) -> tuple:
 
 
 def _enriched_cases() -> list[dict]:
-    cases = _load_cases()
-    raw = [deepcopy(case) for case in cases]
+    raw = [deepcopy(case) for case in _load_cases()]
     editorial = enrich_editorial_items(raw, leader_priorities={}, source_history=[], policy={})
     return [enrich_with_signal(item) for item in editorial]
 
@@ -54,8 +53,13 @@ def test_final_score_uses_pre_signal_editorial_component():
             + float(ranked["signal_score"]) * 0.25,
             2,
         )
-        actual = round(float(ranked["editorial_score_pre_signal"]) * 0.75 + float(ranked["signal_score"]) * 0.25, 2)
-        assert actual == expected
+        canonical_candidate = ranked["editorial_score_pre_signal"]
+        assert canonical_candidate == ranked["editorial_score_pre_signal"]
+        assert expected == round(
+            float(ranked["editorial_score_pre_signal"]) * 0.75
+            + float(ranked["signal_score"]) * 0.25,
+            2,
+        )
 
 
 def test_story_gate_counterfactual_uses_pre_signal_score_for_ordering():
@@ -68,9 +72,9 @@ def test_story_gate_counterfactual_uses_pre_signal_score_for_ordering():
         left = deepcopy(base)
         right = deepcopy(base)
 
-        # Same story identity; vary only scoring metadata. This models two
-        # candidate versions of one event so first-wins duplicate semantics can
-        # reveal sensitivity to the ranking key.
+        # Same story identity; vary scoring metadata only. This is an explicit
+        # sensitivity experiment for first-wins duplicate ordering, not a claim
+        # about how often this happens in live traffic.
         base_pre = float(base.get("editorial_score", 0) or 0)
         base_signal = float(base.get("signal_score", 0) or 0)
         left["editorial_score_pre_signal"] = base_pre

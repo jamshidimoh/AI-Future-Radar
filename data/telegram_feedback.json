@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788279593,
+  "updated_at": 1788280026,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6227,6 +6227,25 @@
       "why_it_matters": "این اظهارنظر نشان می‌دهد که رهبران صنعت فناوری، هوش مصنوعی و اتوماسیون را نه تنها به‌عنوان ابزارهای تولید، بلکه به‌عنوان عوامل تعیین‌کننده برتری ژئواکونومیک می‌بینند. اگر این پیش‌بینی محقق شود، کشورهای اروپایی ممکن است با چالش‌های ساختاری در حفظ رقابت‌پذیری اقتصادی خود مواجه شوند. این موضوع لزوم بازنگری در استراتژی‌های سرمایه‌گذاری و سیاست‌گذاری فناوری در اروپا را برای جلوگیری از عقب‌ماندگی بیشتر برجسته می‌کند.",
       "link": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxOYk9KNEg3NjNPSEY4bUdtVXhEUjA2NnNGTzgzUG05bTVuTGRVaFA4ZTVEbTY4ME1YUU1KUlAxeDdDUmtvOHh4anBiQU5LRFNleDRCelBCTjJDdG5zQzY4b3l3RjV2MURwU2hXalMyTEQ5MnRFX1RrcHo0clRqa2dxQXJlNEl2YzlHQXN4clQxS2gxOHlVN0hZT182WElKMzZPbjJGZDRFWUwxWk41VEhtZTJtVnJXWjlVWVZzQ0R6U0RoenIwbm9wczQ1UFExejRPci11Q3hYR3V4bnFUOWp6OEwzYw?oc=5",
       "posted_at": 1788279593
+    },
+    "-1004482051328:1407": {
+      "chat_id": -1004482051328,
+      "message_id": 1407,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Kyiv Independent)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "بر اساس گزارش‌های اختصاصی The Kyiv Independent، منابع آگاه تأیید می‌کنند که Elon Musk با اجازه دادن به اوکراین برای استفاده از شبکه ماهواره‌ای",
+      "summary": "بر اساس گزارش‌های اختصاصی The Kyiv Independent، منابع آگاه تأیید می‌کنند که Elon Musk با اجازه دادن به اوکراین برای استفاده از شبکه ماهواره‌ای Starlink در حملات نظامی علیه روسیه مخالف است. این موضع‌گیری علیرغم گزارش‌های اخیر رسانه‌ای که برعکس را نشان می‌دادند، صورت گرفته است. این خبر نشان‌دهنده تداوم محدودیت‌های اعمال‌شده توسط مدیرعامل SpaceX بر نحوه استفاده نظامی از زیرساخت‌های ارتباطی تحت کنترل او در جنگ اوکراین است.",
+      "why_it_matters": "این گزارش تأیید می‌کند که Elon Musk همچنان کنترل استراتژیک بر کاربرد نظامی Starlink حفظ کرده و از تبدیل شدن آن به ابزار مستقیم حمله به خاک روسیه جلوگیری می‌کند. این محدودیت می‌تواند بر تاکتیک‌های نظامی اوکراین و وابستگی آن به زیرساخت‌های ارتباطی غیردولتی تأثیر مستقیم بگذارد. همچنین نشان‌دهنده تنش‌های بالقوه بین نیازهای عملیاتی ارتش اوکراین و سیاست‌های شرکت SpaceX برای پرهیز از تشدید مستقیم درگیری با روسیه است.",
+      "link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQancwSUd5NEdFWGtxb0JmMlY3eHZZNm5GNG5YQjREWjQ1TGJHZlo0eEZxcFVsTXE0dG9oNkRJazQweFNHajNlMGdkb2JoeFpKR1p2T1ZubjJGU0g0TDVMZVQxMWlJaU1LT09OSzFjOWM0NUhXSVRrdE9zbTJ4LVNwWmZpT2FGTXozRzJweWVFUklNajlpb1ZURk53UXp3MEhWTndQV0xreXdQMU1HM01CMzRBamlwb0wxcEkxMUJ3NTRabFY3LWxxTW1ZNUVZenhkMnc0?oc=5",
+      "posted_at": 1788280026
     }
   }
 }

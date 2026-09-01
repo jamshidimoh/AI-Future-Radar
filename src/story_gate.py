@@ -11,26 +11,32 @@ from technology_signal_v2 import calculate_technology_signal_score
 def _prepare_canonical_scores(item):
     candidate = dict(item)
     legacy_editorial = candidate.get("editorial_score")
+    legacy_signal = candidate.get("signal_score")
     v2_editorial, features = score_editorial_v2(candidate)
     candidate["editorial_score_legacy"] = legacy_editorial
+    candidate["signal_score_legacy"] = legacy_signal
     candidate["editorial_score_v2"] = v2_editorial
     candidate["editorial_features_v2"] = features
     candidate["editorial_score_pre_signal"] = v2_editorial
     vector = candidate.get("signal_vector") or {}
     if vector:
-        candidate["technology_signal_score"] = calculate_technology_signal_score(vector)
+        signal_v2 = calculate_technology_signal_score(vector)
     else:
         try:
-            candidate["technology_signal_score"] = float(candidate.get("signal_score", 0) or 0)
+            signal_v2 = float(legacy_signal or 0)
         except (TypeError, ValueError):
-            candidate["technology_signal_score"] = 0.0
+            signal_v2 = 0.0
+    candidate["technology_signal_score"] = round(signal_v2, 2)
+    # Compatibility alias: all downstream canonical ranking paths now consume
+    # the separated technology signal, while the legacy value is auditable.
+    candidate["signal_score"] = candidate["technology_signal_score"]
     return candidate
 
 
 def story_representative_rank_key(item):
     """Rank only by policy/authority/editorial publication value.
 
-    ``signal_score`` and signal-inflated legacy scores are intentionally absent.
+    Signal score and signal-inflated editorial score are intentionally absent.
     """
     try:
         representative_score = float(item.get("editorial_score_pre_signal", item.get("editorial_score", 0)) or 0)

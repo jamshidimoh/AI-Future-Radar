@@ -78,32 +78,6 @@ def _source_text(item, max_chars=3500):
     return "\n\n".join(parts)[:max_chars]
 
 
-def _source_text(item, max_chars=3500):
-    """Build the strongest available evidence context without duplicating identical fields."""
-    parts = []
-    seen = set()
-    for key in ("summary", "evidence_text", "description"):
-        value = str(item.get(key, "") or "").strip()
-        if not value or value in seen:
-            continue
-        seen.add(value)
-        parts.append(value)
-    return "\n\n".join(parts)[:max_chars]
-
-
-def _source_text(item, max_chars=3500):
-    """Build the strongest available evidence context without duplicating identical fields."""
-    parts = []
-    seen = set()
-    for key in ("summary", "evidence_text", "description"):
-        value = str(item.get(key, "") or "").strip()
-        if not value or value in seen:
-            continue
-        seen.add(value)
-        parts.append(value)
-    return "\n\n".join(parts)[:max_chars]
-
-
 def _normalize(data, item):
     if not isinstance(data, dict):
         raise TypeError("summary must be an object")
@@ -113,7 +87,7 @@ def _normalize(data, item):
     data["why_it_matters"] = normalize_editorial_text(str(data.get("why_it_matters", "")).strip())
     data["speakers"] = normalize_editorial_text(str(data.get("speakers", "")).strip())
     data["key_quote"] = normalize_editorial_text(str(data.get("key_quote", "")).strip()[:240])
-    source_text = str(item.get("summary", "") or "")
+    source_text = _source_text(item)
     if data["key_quote"] and data["key_quote"] not in source_text:
         data["key_quote"] = ""
     return data

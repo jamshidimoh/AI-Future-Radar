@@ -19,8 +19,12 @@ _RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 _CIRCUIT_BREAK_AFTER = 3
 _LEADER_SIGNAL_TERMS = (
     "statement", "says", "said", "post", "posts", "tweet", "tweets", "X post", "Twitter",
-    "interview", "podcast", "Europe", "EU", "European", "regulation", "policy", "government",
-    "technology", "AI", "future",
+    "interview", "podcast", "talk", "keynote", "conversation", "discussion", "Europe", "EU", "European",
+    "regulation", "policy", "government", "technology", "AI", "future",
+)
+_LEADER_INTERVIEW_EVIDENCE_TERMS = (
+    "interview", "podcast", "talk", "keynote", "conversation", "discussion", "fireside", "q&a",
+    "transcript", "in conversation", "speaks with", "talks with",
 )
 _LEADER_ACTIVITY_EVIDENCE_TERMS = (
     "statement", "say", "said", "says", "admits", "admitted", "admit", "criticiz", "criticis", "criticise", "criticize",
@@ -29,14 +33,16 @@ _LEADER_ACTIVITY_EVIDENCE_TERMS = (
     "reject", "rejects", "rejected", "deny", "denies", "denied", "defend", "defends", "defended", "announce", "announced",
     "launch", "launched", "release", "released", "unveil", "unveiled", "introduce", "introduced", "acquire", "acquired",
     "acquisition", "investment", "invested", "funding", "founded", "appointed", "appoints", "joins", "partnership",
-    "research project", "initiative", "product", "model", "platform",
+    "research project", "initiative", "product", "model", "platform", "steps down", "steps aside", "steps up",
+    "reshuffle", "reorganize", "reorganise", "vision", "outlook", "forecast", "predicts", "prediction", "timeline",
 )
 _LEADER_SIGNAL_CONTEXT_TERMS = (
     "ai", "artificial intelligence", "agi", "machine learning", "robot", "robotics", "chip", "chips", "semiconductor",
     "compute", "computing", "data center", "datacenter", "space", "spacex", "tesla", "xai", "openai", "anthropic",
     "deepmind", "nvidia", "meta", "google", "microsoft", "apple", "amazon", "technology", "tech", "europe", "eu",
     "european", "regulation", "regulatory", "policy", "government", "law", "legislation", "governance", "safety", "risk",
-    "future", "innovation",
+    "future", "innovation", "economy", "education", "jobs", "labor", "workforce", "health", "science", "research",
+    "infrastructure", "energy", "autonomy", "cybersecurity", "security",
 )
 _MAX_LEADER_SIGNAL_QUERIES = 24
 
@@ -75,9 +81,17 @@ def _expand_leader_signal_queries(queries):
     return expanded
 
 
-def _has_leader_signal_evidence(title, summary):
+def classify_leader_signal(title, summary):
+    """Classify broad Leader results by event type and technology context."""
     text = f"{title} {summary}".lower()
-    return any(term in text for term in _LEADER_ACTIVITY_EVIDENCE_TERMS) and any(term in text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
+    interview = any(term in text for term in _LEADER_INTERVIEW_EVIDENCE_TERMS)
+    activity = any(term in text for term in _LEADER_ACTIVITY_EVIDENCE_TERMS)
+    context = any(term in text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
+    return {"accepted": bool((interview or activity) and context), "interview": interview, "activity": activity, "context": context}
+
+
+def _has_leader_signal_evidence(title, summary):
+    return classify_leader_signal(title, summary)["accepted"]
 
 
 def _collect_query(q, cutoff):
@@ -98,9 +112,10 @@ def _collect_query(q, cutoff):
         source_title = entry.get("source", {}).get("title", "Google News") if hasattr(entry, "get") else "Google News"
         if is_excluded_source_url(link) or is_excluded_source_text(source_title) or is_excluded_source_text(title): continue
         watch_person = str(q.get("watch_person", "") or "").strip(); is_leader_watch = bool(watch_person)
-        if q.get("leader_discovery") and not _has_leader_signal_evidence(title, summary):
+        classification = classify_leader_signal(title, summary) if q.get("leader_discovery") else None
+        if q.get("leader_discovery") and not classification["accepted"]:
             print(f"[Leader Discovery Filter] dropped weak signal title={str(title)[:100]}", flush=True); continue
-        results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "_ai_link": True if is_leader_watch else None})
+        results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "_ai_link": True if is_leader_watch else None})
     return q, results, None
 
 _SERIAL_FETCH_BUDGET_SECONDS = 90

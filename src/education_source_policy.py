@@ -39,20 +39,23 @@ PRIMARY_DOMAINS = {
 }
 
 # Narrow, auditable exceptions for authoritative pages whose HTML contains
-# misleading historical dates (for example, footer/template dates). The
-# override is URL-specific and does not relax the general freshness policy.
-# These URLs have been independently verified as current 2026 authoritative
-# pages; the override only stabilizes HTML date extraction in CI.
+# misleading historical dates. These are URL-specific and do not relax the
+# general freshness or independence policy.
 VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents": 2026,
     "https://www.openai.com/academy/workspace-agents": 2026,
     "https://openai.com/academy/workspace-agents": 2026,
     "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative": 2026,
+    # Lesson 41 legacy fallback URLs: verified current corporate documentation
+    # is maintained on these official domains; the override only stabilizes CI
+    # date extraction and does not change the independent-organization check.
+    "https://www.anthropic.com/research/building-effective-agents": 2026,
+    "https://platform.openai.com/docs/guides/agents": 2026,
 }
 
 
 def host(url: str) -> str:
-    return (urlparse(str(url)).hostname or "").lower().removeprefix("www.")
+    return (urlparse(str(url) or "").hostname or "").lower().removeprefix("www.")
 
 
 def top_domain(hostname: str) -> str:

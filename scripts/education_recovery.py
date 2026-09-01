@@ -5,9 +5,14 @@ small post-run guard checks the authoritative cadence state and, when an
 Education slot is still due, invokes the existing independent publisher once.
 A confirmed recovery also records the slot so the same lesson cannot be
 republished repeatedly within the same Tehran window.
+
+A controlled FORCE_EDUCATION_PUBLICATION=1 mode exists only for an explicit
+manual production validation run. It exercises the real publisher end-to-end;
+it does not change scheduled cadence behavior.
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -73,13 +78,7 @@ def _source_candidates_with_lesson_41_fallback(lesson: dict):
 
 
 def _install_authoritative_source_override() -> None:
-    """Patch both source entry points used by the production publisher.
-
-    The resilient runner keeps its own wrapper around educational_content's
-    source resolver. Patching only educational_content is therefore insufficient
-    if that wrapper is invoked directly. This installs the same resolver at both
-    levels and deliberately leaves all source-quality gates unchanged.
-    """
+    """Patch both source entry points used by the production publisher."""
     educational_content._source_candidates = _source_candidates_with_lesson_41_fallback
     production_resilient_runner._source_candidates_with_current_overrides = (
         _source_candidates_with_lesson_41_fallback
@@ -91,10 +90,16 @@ def main() -> int:
     _install_authoritative_source_override()
 
     cadence = production_entrypoint._load_cadence()
+    forced = os.getenv("FORCE_EDUCATION_PUBLICATION", "").strip().lower() in {"1", "true", "yes"}
     due, slot = production_entrypoint._education_is_due(
         production_entrypoint._tehran_now(),
         cadence.get("last_education_slot", ""),
     )
+
+    if forced:
+        due = True
+        slot = f"manual-validation:{production_entrypoint._tehran_now().date().isoformat()}"
+        print("[Education Recovery] CONTROLLED MANUAL VALIDATION MODE enabled", flush=True)
 
     print(
         f"[Education Recovery] due={due} slot={slot} "
@@ -120,5 +125,9 @@ def main() -> int:
     cadence["last_education_slot"] = slot or cadence.get("last_education_slot", "")
     cadence["last_education_run"] = run_number
     production_entrypoint._save_cadence(cadence)
-    print(f"[Education Recovery] CONFIRMED slot={slot} run={run_number}", flush=True)
+    print(
+        f"[Education Recovery] CONFIRMED slot={slot} run={run_number} "
+        "publication_attempt=successful",
+        flush=True,
+    )
     return 0

@@ -46,6 +46,7 @@ _LEADER_ACTIVITY_EVIDENCE_TERMS = (
     "criticiz",
     "criticis",
     "criticise",
+    "criticize",
     "warn",
     "call for",
     "calls for",
@@ -83,6 +84,50 @@ _LEADER_ACTIVITY_EVIDENCE_TERMS = (
     "product",
     "model",
     "platform",
+)
+_LEADER_SIGNAL_CONTEXT_TERMS = (
+    "ai",
+    "artificial intelligence",
+    "agi",
+    "machine learning",
+    "robot",
+    "robotics",
+    "chip",
+    "chips",
+    "semiconductor",
+    "compute",
+    "computing",
+    "data center",
+    "datacenter",
+    "space",
+    "spacex",
+    "tesla",
+    "xai",
+    "openai",
+    "anthropic",
+    "deepmind",
+    "nvidia",
+    "meta",
+    "google",
+    "microsoft",
+    "apple",
+    "amazon",
+    "technology",
+    "tech",
+    "europe",
+    "eu",
+    "european",
+    "regulation",
+    "regulatory",
+    "policy",
+    "government",
+    "law",
+    "legislation",
+    "governance",
+    "safety",
+    "risk",
+    "future",
+    "innovation",
 )
 _MAX_LEADER_SIGNAL_QUERIES = 24
 
@@ -156,9 +201,11 @@ def _expand_leader_signal_queries(queries):
 
 
 def _has_leader_signal_evidence(title, summary):
-    """Require substantive leader action/statement evidence for broad signal queries."""
+    """Require substantive leader action/statement plus a relevant tech/future context."""
     text = f"{title} {summary}".lower()
-    return any(term in text for term in _LEADER_ACTIVITY_EVIDENCE_TERMS)
+    has_activity = any(term in text for term in _LEADER_ACTIVITY_EVIDENCE_TERMS)
+    has_context = any(term in text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
+    return has_activity and has_context
 
 
 def _collect_query(q, cutoff):

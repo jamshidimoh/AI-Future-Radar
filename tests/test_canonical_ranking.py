@@ -53,3 +53,19 @@ def test_substantive_priority_interview_stays_tier0():
     assert "mark zuckerberg" in people
     assert is_tier0 is True
     assert bonus == 50.0
+
+
+def test_protected_leader_capacity_demotes_overflow_candidates():
+    items = [
+        {"title": "Leader one", "leader": "Elon Musk", "editorial_score": 90.0, "content_type": "interview"},
+        {"title": "Leader two", "leader": "Sam Altman", "editorial_score": 89.0, "content_type": "interview"},
+        {"title": "Leader three", "leader": "Jensen Huang", "editorial_score": 88.0, "content_type": "interview"},
+    ]
+    monkey = ranking._eligibility_split
+    selected, regular = monkey(items, max_protected=2)
+    assert len(selected) == 2
+    assert all(item.get("protected_slot") is True for item in selected)
+    assert len(regular) == 1
+    assert regular[0].get("protected_slot") is False
+    assert regular[0].get("protected_content") is False
+    assert regular[0].get("_rank_is_tier0") is False

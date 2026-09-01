@@ -52,6 +52,8 @@ def test_story_gate_representative_is_sensitive_to_inflated_score():
         total += 1
         left = deepcopy(base)
         right = deepcopy(base)
+        left["variant"] = "left"
+        right["variant"] = "right"
 
         # Same story identity, intentionally different scoring metadata.
         # This is a bounded sensitivity experiment, not a live-frequency claim.
@@ -71,14 +73,14 @@ def test_story_gate_representative_is_sensitive_to_inflated_score():
 
         current_order = sorted([left, right], key=_current_rank_key, reverse=True)
         counterfactual_order = sorted([left, right], key=_counterfactual_rank_key, reverse=True)
-        changed = current_order[0] is not counterfactual_order[0]
+        changed = current_order[0]["variant"] != counterfactual_order[0]["variant"]
         per_case.append((str(base.get("id")), changed))
         sensitive += int(changed)
 
         current_survivor = deduplicate_stories(current_order)[0]
         counterfactual_survivor = deduplicate_stories(counterfactual_order)[0]
-        assert current_survivor is current_order[0]
-        assert counterfactual_survivor is counterfactual_order[0]
+        assert current_survivor["variant"] == current_order[0]["variant"]
+        assert counterfactual_survivor["variant"] == counterfactual_order[0]["variant"]
 
     print(f"P1_STORY_GATE_SENSITIVITY total={total} representative_order_changes={sensitive}")
     print("P1_STORY_GATE_CASES " + ", ".join(f"{case}={int(changed)}" for case, changed in per_case))

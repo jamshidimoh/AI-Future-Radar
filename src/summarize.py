@@ -91,6 +91,19 @@ def _source_text(item, max_chars=3500):
     return "\n\n".join(parts)[:max_chars]
 
 
+def _source_text(item, max_chars=3500):
+    """Build the strongest available evidence context without duplicating identical fields."""
+    parts = []
+    seen = set()
+    for key in ("summary", "evidence_text", "description"):
+        value = str(item.get(key, "") or "").strip()
+        if not value or value in seen:
+            continue
+        seen.add(value)
+        parts.append(value)
+    return "\n\n".join(parts)[:max_chars]
+
+
 def _normalize(data, item):
     if not isinstance(data, dict):
         raise TypeError("summary must be an object")

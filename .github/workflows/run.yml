@@ -67,6 +67,19 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
 
+      - name: Recover required Education publication
+        env:
+          PYTHONUNBUFFERED: "1"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: "-1004482051328"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_MODEL: ${{ vars.HF_MODEL }}
+          HF_POLICY: free-first
+        run: python -u scripts/education_recovery.py
+
       - name: Enforce runtime production acceptance
         run: python -u scripts/production_acceptance_guard.py run.log
 

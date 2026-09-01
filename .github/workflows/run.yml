@@ -84,7 +84,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
-          FORCE_EDUCATION_PUBLICATION: ${{ github.event_name == 'workflow_dispatch' && inputs.force_education || contains(github.event.head_commit.message, '[force-education]') }}
+          FORCE_EDUCATION_PUBLICATION: ${{ github.event_name == 'workflow_dispatch' && inputs.force_education || false }}
         run: python -u scripts/education_recovery.py
 
       - name: Enforce runtime production acceptance

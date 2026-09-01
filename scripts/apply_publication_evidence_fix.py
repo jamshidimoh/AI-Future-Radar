@@ -18,8 +18,6 @@ def replace_all(path: Path, old: str, new: str, minimum: int = 1) -> None:
     path.write_text(text.replace(old, new), encoding="utf-8")
 
 
-# YouTube: retain the real description, but enrich priority long-form channels with
-# transcript evidence instead of silently preferring one or the other.
 replace_once(
     ROOT / "src" / "fetch_youtube.py",
     '''    raw_summary = str(item.get("summary") or "").strip()\n    transcript = _get_transcript_snippet(video_id) if not raw_summary else ""\n    evidence_text = transcript or raw_summary\n    evidence_source = "transcript" if transcript else ("channel_page_description" if raw_summary else "none")\n''',
@@ -43,10 +41,11 @@ replace_all(
     '''        source=_source_text(item),\n''',
     minimum=2,
 )
-replace_once(
+replace_all(
     summarize,
     '''        json.dumps({"draft": data, "source": str(item.get("summary", "") or "")[:3500]}, ensure_ascii=False),\n''',
     '''        json.dumps({"draft": data, "source": _source_text(item)}, ensure_ascii=False),\n''',
+    minimum=2,
 )
 replace_once(
     summarize,
@@ -55,5 +54,3 @@ replace_once(
 )
 
 print("PUBLICATION_EVIDENCE_FIX_APPLIED")
-# Trigger marker: the temporary runner is intentionally idempotent.
-# Second trigger marker for the default-branch runner.

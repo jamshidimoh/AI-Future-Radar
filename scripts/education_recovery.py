@@ -11,17 +11,58 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# This script is under scripts/, while production modules live at repository
-# root. Explicitly add the root so direct GitHub Actions invocation works.
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+import educational_content
 import production_entrypoint
 import production_resilient_runner
 
 
+LESSON_41_CURRENT_SOURCES = [
+    {
+        "name": "Anthropic: Demystifying evals for AI agents",
+        "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+        "year": 2026,
+    },
+    {
+        "name": "OpenAI Academy: Workspace agents",
+        "url": "https://openai.com/academy/workspace-agents/",
+        "year": 2026,
+    },
+    {
+        "name": "Anthropic: Trustworthy agents in practice",
+        "url": "https://www.anthropic.com/research/trustworthy-agents",
+        "year": 2026,
+    },
+]
+
+_ORIGINAL_SOURCE_CANDIDATES = educational_content._source_candidates
+
+
+def _source_candidates_with_lesson_41_fallback(lesson: dict):
+    candidates = _ORIGINAL_SOURCE_CANDIDATES(lesson)
+    lesson_id = int(lesson.get("id", 0) or 0)
+    if lesson_id != 41:
+        return candidates
+
+    stale_urls = {
+        "https://www.anthropic.com/research/building-effective-agents",
+        "https://platform.openai.com/docs/guides/agents",
+    }
+    filtered = [
+        item for item in candidates
+        if str(item.get("url", "")).rstrip("/") not in {u.rstrip("/") for u in stale_urls}
+    ]
+    filtered.extend(LESSON_41_CURRENT_SOURCES)
+    print("[Education Recovery] lesson=41 current-source fallback enabled", flush=True)
+    return filtered
+
+
 def main() -> int:
+    educational_content._source_candidates = _source_candidates_with_lesson_41_fallback
+
     cadence = production_entrypoint._load_cadence()
     due, slot = production_entrypoint._education_is_due(
         production_entrypoint._tehran_now(),

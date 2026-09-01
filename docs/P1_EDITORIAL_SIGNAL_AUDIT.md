@@ -63,6 +63,8 @@ Expected labels are qualitative and do not prescribe a new score.
 
 `tests/test_p1_story_gate_attribution.py` is audit-only. It runs the 12 fixtures through the real editorial and signal enrichers, reproduces the production story-gate key and a counterfactual pre-signal key, then performs a bounded sensitivity experiment using identical story identity with controlled scoring perturbations.
 
+The harness uses a stable `variant` field when asserting the first-wins output because `deduplicate_stories()` returns copied dictionaries rather than preserving object identity.
+
 The sensitivity result is not a live-traffic frequency estimate. The appropriate next step is to compare it with a retained sample of actual duplicate/near-duplicate clusters.
 
 ## Next measurements

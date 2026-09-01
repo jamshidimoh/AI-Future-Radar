@@ -8,7 +8,7 @@ on:
       force_education:
         description: "Run a controlled end-to-end Education publication validation"
         required: false
-        default: false
+        default: true
         type: boolean
   schedule:
     # Tehran publication windows:

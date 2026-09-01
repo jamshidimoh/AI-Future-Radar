@@ -5,7 +5,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def replace_once(path: Path, old: str, new: str) -> None:
     text = path.read_text(encoding="utf-8")
-    if text.count(old) != 1:
+    old_count = text.count(old)
+    if old_count == 0:
+        if new in text:
+            return
+        raise SystemExit(f"expected one old match or an already-patched new value in {path}: {old[:80]!r}")
+    if old_count != 1:
         raise SystemExit(f"expected exactly one match in {path}: {old[:80]!r}")
     path.write_text(text.replace(old, new), encoding="utf-8")
 
@@ -13,6 +18,10 @@ def replace_once(path: Path, old: str, new: str) -> None:
 def replace_all(path: Path, old: str, new: str, minimum: int = 1) -> None:
     text = path.read_text(encoding="utf-8")
     count = text.count(old)
+    if count == 0:
+        if new in text:
+            return
+        raise SystemExit(f"expected at least {minimum} matches or an already-patched value in {path}: {old[:80]!r}")
     if count < minimum:
         raise SystemExit(f"expected at least {minimum} matches in {path}, found {count}: {old[:80]!r}")
     path.write_text(text.replace(old, new), encoding="utf-8")

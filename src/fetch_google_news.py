@@ -17,6 +17,29 @@ _MAX_WORKERS = 4
 _MAX_RETRIES = 1
 _RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 _CIRCUIT_BREAK_AFTER = 3
+_LEADER_SIGNAL_TERMS = (
+    "statement",
+    "says",
+    "said",
+    "post",
+    "posts",
+    "tweet",
+    "tweets",
+    "X post",
+    "Twitter",
+    "interview",
+    "podcast",
+    "Europe",
+    "EU",
+    "European",
+    "regulation",
+    "policy",
+    "government",
+    "technology",
+    "AI",
+    "future",
+)
+_MAX_LEADER_SIGNAL_QUERIES = 24
 
 
 def _parse_feed(url):
@@ -51,6 +74,40 @@ def _is_strong_curated_query(q: dict) -> bool:
     preferred_source = str(q.get("preferred_source") or "").strip()
     query_text = str(q.get("query") or "").strip().lower()
     return bool(preferred_source or query_text.startswith("site:"))
+
+
+def _expand_leader_signal_queries(queries):
+    """Add one broad signal query per leader without changing base discovery queries."""
+    expanded = list(queries or [])
+    existing = {str(q.get("query") or "").strip().lower() for q in expanded}
+    seen_people = set()
+    signal_terms = " OR ".join(_LEADER_SIGNAL_TERMS)
+
+    for q in queries or []:
+        person = str(q.get("watch_person") or "").strip()
+        if not person:
+            continue
+        person_key = person.lower()
+        if person_key in seen_people:
+            continue
+        if len(seen_people) >= _MAX_LEADER_SIGNAL_QUERIES:
+            break
+        seen_people.add(person_key)
+
+        companion_query = f'"{person}" ({signal_terms})'
+        companion_key = companion_query.lower()
+        if companion_key in existing:
+            continue
+
+        companion = dict(q)
+        companion["query"] = companion_query
+        companion["content_type"] = "leader_signal"
+        companion["leader_discovery"] = True
+        companion["curated_discovery"] = True
+        expanded.append(companion)
+        existing.add(companion_key)
+
+    return expanded
 
 
 def _collect_query(q, cutoff):
@@ -119,18 +176,31 @@ def fetch_google_news_items(queries, max_age_hours=36, max_workers=None, inter_q
     discovery channels remain available and the run can complete within CI's
     execution budget.
 
-    The consecutive-failure circuit breaker alone is not sufficient: if failures
-    are interspersed with occasional successes (common under soft rate-limiting),
-    the counter keeps resetting and the breaker never trips, letting a long serial
-    query list (e.g. the Leader Watchlist) consume the entire CI run budget.
-    A hard wall-clock budget guarantees this discovery step always terminates in
-    bounded time regardless of the failure pattern.
+    Leader queries receive an additional broad signal query so statements,
+    policy moves, social posts, Europe/EU developments, interviews, and podcasts
+    can be discovered even when they do not mention AI/AGI in the headline.
     """
     cutoff = time.time() - (max_age_hours * 3600)
     results = []
+    queries = list(queries or [])
     if not queries:
         return results
+
+    leader_query_mode = any(str(q.get("watch_person") or "").strip() for q in queries)
+    if leader_query_mode:
+        original_count = len(queries)
+        queries = _expand_leader_signal_queries(queries)
+        added = len(queries) - original_count
+        print(
+            f"[Leader Discovery Expansion] original={original_count} expanded={len(queries)} companion={added}",
+            flush=True,
+        )
+
     workers = min(max_workers or _MAX_WORKERS, max(1, len(queries)))
+    if leader_query_mode and workers == 1 and len(queries) > 1:
+        workers = min(_MAX_WORKERS, len(queries))
+        print(f"[Leader Discovery Parallel] workers={workers}", flush=True)
+
     budget_seconds = _SERIAL_FETCH_BUDGET_SECONDS if max_seconds is None else max_seconds
 
     if workers == 1:

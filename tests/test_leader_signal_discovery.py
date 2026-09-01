@@ -42,3 +42,10 @@ def test_substantive_leader_statement_is_signal_evidence():
         "Elon Musk criticizes EU technology regulation",
         "Musk said the policy could hinder technology development.",
     )
+
+
+def test_strategic_musk_eu_signal_is_kept():
+    assert _has_leader_signal_evidence(
+        "Musk defends AI data centers, slams EU rules at G20",
+        "Elon Musk criticized European regulation affecting AI data centers and technology companies.",
+    )

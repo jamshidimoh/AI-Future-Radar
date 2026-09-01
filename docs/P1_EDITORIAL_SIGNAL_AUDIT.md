@@ -94,7 +94,7 @@ The expected labels are qualitative and intentionally avoid prescribing new scor
 
 1. Runs the 12 fixtures through the real editorial and signal enrichers.
 2. Reproduces the production `story_gate.rank()` key and a counterfactual key that uses `editorial_score_pre_signal` instead of the inflated `editorial_score`.
-3. Applies a bounded deterministic perturbation grid to paired same-story variants.
+3. Applies a bounded deterministic perturbation to paired same-story variants.
 4. Reports how many of the 12 cases are structurally sensitive to the inflated upstream score and how often the representative ordering changes under the counterfactual key.
 
 The perturbation result is explicitly a **sensitivity measurement**, not a claim about production frequency. It must not be interpreted as evidence that all such changes occur in live traffic.

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788278218,
+  "updated_at": 1788278391,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5997,6 +5997,44 @@
       "why_it_matters": "ورود یک چهره علمی و فنی برجسته مانند Yann LeCun به دنیای سرمایه‌گذاری خطرپذیر، سیگنال مهمی برای بازار فناوری محسوب می‌شود. این اقدام می‌تواند باعث جذب سرمایه بیشتر به استارتاپ‌های حوزه هوش مصنوعی و تغییر اولویت‌های سرمایه‌گذاری بر اساس دیدگاه‌های فنی عمیق شود. همچنین، این حرکت نشان می‌دهد که مرزهای بین پژوهش آکادمیک/صنعتی و سرمایه‌گذاری مالی در حال کمرنگ شدن است.",
       "link": "https://news.google.com/rss/articles/CBMia0FVX3lxTE95U0xpWVBsY0tCM0NIWkdqVHFIbVUwbVVzVEJ0c3A3cndDdE5fTmNpUk1CNXdtRDBzYm1UamJwckkwRVRjR3p0dV8ySzcyVmdDMDFkN0NKaEM3RjY5eGxMZmlqbVZ4QnB4YkM4?oc=5",
       "posted_at": 1788278121
+    },
+    "-1004482051328:1395": {
+      "chat_id": -1004482051328,
+      "message_id": 1395,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CNBC)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "OpenAI دسترسی مدل‌های هوش مصنوعی خود را به Cursor پس از خرید توسط SpaceX قطع می‌کند",
+      "summary": "بر اساس گزارش CNBC، شرکت OpenAI دسترسی به مدل‌های هوش مصنوعی خود را برای پلتفرم Cursor پس از اکتساب این ابزار توسط SpaceX متعلق به Elon Musk قطع خواهد کرد. این تصمیم واکنش مستقیم OpenAI به تغییر مالکیت Cursor است که پیش‌تر از مدل‌های OpenAI استفاده می‌کرد. این اقدام نشان‌دهنده حساسیت استراتژیک OpenAI در مورد نحوه استفاده از مدل‌هایش توسط رقبا یا طرف‌های مرتبط با Elon Musk است.",
+      "why_it_matters": "این رویداد نشان می‌دهد که OpenAI سیاست‌های دسترسی به مدل‌های خود را بر اساس مالکیت و روابط تجاری شرکای خارجی مدیریت می‌کند. قطع دسترسی به Cursor می‌تواند بر توسعه‌دهندگانی که به این IDE وابسته هستند تأثیر بگذارد و نشان‌دهنده تنش‌های فزاینده در اکوسیستم هوش مصنوعی باشد. این اقدام همچنین تأکید می‌کند که OpenAI کنترل دقیقی بر نحوه استفاده از فناوری‌اش توسط شرکت‌های مرتبط با Elon Musk اعمال می‌کند.",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE90bmQ0enBvenh2RFZzWDJtV2FWRnFMVzNRMEJrbG1RSmtWbnZ6MU1XcHV0TUJ1dll3YkJJM1RSMUgyRWVsV3NTeHpUV1JOeEZVb01TRkctT0c0NjZIc0haWFVTdzVkSmFLM1htanRGeVJZMmxNb2NaWnBn0gF_QVVfeXFMTnNMYVB6Q3hkc1l0NnRTSVhOeU5uT21nbUxOZDZjU2ota0tocTk2a3JjOWdxeUp0M2ttVUpHNk1ZTlB5MWp6QkR5c21aUlduUERGbzRZenhNZ1ZIQVVWTWt6RmJJdW8xcVAtRW05NnIxVGI5UE1uaVA4Q0V6NWd4cw?oc=5",
+      "posted_at": 1788278389
+    },
+    "-1004482051328:1396": {
+      "chat_id": -1004482051328,
+      "message_id": 1396,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Fei-Fei Li",
+      "watch_person": "Fei-Fei Li",
+      "title": "Fei-Fei Li، بنیان‌گذار و مدیرعامل شرکت huggingface.co، در مصاحبه‌ای با Business Insider از سبک رهبری خود به عنوان «مادر ببر» (Tiger Mom) توصیف کرد",
+      "summary": "Fei-Fei Li، بنیان‌گذار و مدیرعامل شرکت huggingface.co، در مصاحبه‌ای با Business Insider از سبک رهبری خود به عنوان «مادر ببر» (Tiger Mom) توصیف کرد. او این رویکرد را به معنای ایجاد استانداردهای بسیار بالا، انتظارات سخت‌گیرانه و تمرکز بر عملکرد عالی در محیط کار تعریف می‌کند. Li تأکید می‌کند که این سبک مدیریت برای موفقیت در فضای رقابتی و پویای فناوری AI ضروری است.",
+      "why_it_matters": "این اظهارنظر نشان‌دهنده فشارهای روانی و مدیریتی بالای رهبران در اکوسیستم AI است که برای حفظ مزیت رقابتی نیازمند استانداردهای سخت‌گیرانه‌ای هستند. سبک «مادر ببر» اگرچه می‌تواند به نوآوری و سرعت توسعه کمک کند، اما ممکن است چالش‌هایی در حفظ تعادل کار و زندگی و سلامت روان کارکنان ایجاد نماید. این دیدگاه به بحث‌های جاری درباره فرهنگ سازمانی در استارتاپ‌های فناوری و تأثیر سبک رهبری بر پایداری تیم‌های فنی می‌پردازد.",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPa0N3aHlwelFJNVBvZmZZRmlhaG1aYXVTLWx3dnhiU0ZMZUYtWEVaNjJ6S2JobnRpdDRvZGNWS2daS0VWOWk0UWV2MWV4a0FNZlZHMGtibGg3eE5SeXA5Nm9kSG5VSjdfU3Ewbk9hUnRvZDJtaGF6X2llTkYwM0VUSldEVXJHZkV6Mkk0UUpn?oc=5",
+      "posted_at": 1788278391
     }
   }
 }

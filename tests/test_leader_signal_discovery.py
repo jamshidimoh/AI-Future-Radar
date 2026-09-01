@@ -42,9 +42,7 @@ def test_strategic_musk_eu_signal_is_kept():
         "Musk defends AI data centers, slams EU rules at G20",
         "Elon Musk criticized European regulation affecting AI data centers and technology companies.",
     )
-    assert result["accepted"] is True
-    assert result["activity"] is True
-    assert result["context"] is True
+    assert result == {"accepted": True, "interview": False, "activity": True, "context": True}
 
 
 def test_interview_signal_is_kept_with_technology_context():
@@ -54,6 +52,7 @@ def test_interview_signal_is_kept_with_technology_context():
     )
     assert result["accepted"] is True
     assert result["interview"] is True
+    assert result["context"] is True
 
 
 def test_non_substantive_ceo_story_is_rejected():
@@ -62,3 +61,13 @@ def test_non_substantive_ceo_story_is_rejected():
         "A list of executives and billionaires who attended the event.",
     )
     assert result["accepted"] is False
+
+
+def test_strategic_leader_outlook_signal_is_kept():
+    result = classify_leader_signal(
+        "Sam Altman says AI adoption is slower than expected",
+        "The OpenAI CEO says the economy is taking longer to adapt to artificial intelligence.",
+    )
+    assert result["accepted"] is True
+    assert result["activity"] is True
+    assert result["context"] is True

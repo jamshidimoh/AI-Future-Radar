@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788277594,
+  "updated_at": 1788277860,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5940,6 +5940,25 @@
       "why_it_matters": "مدل‌های دنیای هوش مصنوعی با توانایی شبیه‌سازی پیچیده واقعیت، مرزهای جدیدی در قابلیت‌های سیستم‌های خودمختار ایجاد کرده‌اند که نیازمند بازنگری در قوانین موجود است. عدم وجود چارچوب‌های نظارتی مشخص برای این فناوری‌ها می‌تواند منجر به سوءاستفاده‌های غیرقابل پیش‌بینی یا خطاهای سیستماتیک گسترده شود. بنابراین، تعیین استانداردهای حکمرانی برای World Models برای تضمین ایمنی و شفافیت در توسعه هوش مصنوعی ضروری است.",
       "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQQUExWUVqZURRbnlyNXhrRjdEcU1lX0JnVHAxdVFRTzhuMUw4YTRaeDJNS2xnclQyblFrb19kOVZkN0ZFN01ZVEdjc0RoLUJQUDdDWk8wMmkwY3AwQ1RCTFhxRG5PRGpsMS1qNWZXWDlLclo1Z0NYeGxTU0FSNGVOMHVIY28ybTBGV2NqREYwYVQ5VTg?oc=5",
       "posted_at": 1788277460
+    },
+    "-1004482051328:1392": {
+      "chat_id": -1004482051328,
+      "message_id": 1392,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (24/7 Wall St.)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "ایلان ماسک از آغاز «جریان کشنده هوش مصنوعی» خبر داد؛ کاتی وود رشد GDP را بالای ۶٪ پیش‌بینی می‌کند",
+      "summary": "ایلان ماسک با استفاده از استعاره «جریان کشنده» (Riptide) تأکید کرد که موج تحولات هوش مصنوعی در حال حاضر آغاز شده است. همزمان، کاتی وود پیش‌بینی می‌کند که رشد ناخالص داخلی (GDP) به بیش از ۶٪ خواهد رسید. این گزارش نشان‌دهنده همزمانی دو رویداد کلیدی است: شتاب گرفتن فناوری‌های هوش مصنوعی و انتظارات مثبت اقتصادی.",
+      "why_it_matters": "این بیانیه‌ها نشان می‌دهند که رهبران برجسته فناوری و مالی، هوش مصنوعی را نه تنها یک پدیده فنی، بلکه محرکی برای رشد اقتصادی کلان می‌دانند. پیش‌بینی رشد بالای ۶٪ توسط Cathie Wood در کنار هشدارهای Elon Musk، بر تأثیر شتاب‌دهنده AI بر اقتصاد جهانی تأکید دارد. این هم‌راستایی دیدگاه‌ها می‌تواند سیگنال مهمی برای سرمایه‌گذاران و سیاست‌گذاران در مورد آینده نزدیک فناوری و اقتصاد باشد.",
+      "link": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxOcGhnQXJRblJmTF9pdEF4dXI2N0Jid0RvajdRSGk1dG1ZWVFQdEx3OUhSaEtiQ0hwVmZPdnNEQjRNY19JZ180SVFpYUpVUm00dEZHVzN6UlphZHdwN2o3NjdSWnhNQWlEVGRBcWNyUTQtOVVaTlN3d0MwSlRqVmxJZDVPbHc0MkhMWUM3R0JBMzBNOFBtWlpReTdoRWxOd2RiYjhneDEwX05TY2ZOX3QyX0E3OHlUOU5COWhmZk8wcDNvTEJhcXlhYTlXdHpNc1VLeF9lMEpNbWdfRzcxbFlN?oc=5",
+      "posted_at": 1788277860
     }
   }
 }

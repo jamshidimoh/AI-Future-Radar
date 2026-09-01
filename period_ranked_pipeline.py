@@ -46,7 +46,7 @@ def _is_protected_publication_story(item):
     # Only stories explicitly admitted by the protected eligibility split can
     # become Tier-0. A leader mention or generic interview must not silently
     # bypass the reserved protected capacity.
-    return bool(item.get("protected_content") or item.get("_named_leader_interview"))
+    return bool(item.get("protected_slot") or item.get("_named_leader_interview") and item.get("protected_slot"))
 
 
 def _prepare_rank_features(items):
@@ -254,19 +254,14 @@ def _eligibility_split(items, max_protected=2):
     candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _pipeline._direct_interview_signal(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
     limit = max(0, int(max_protected))
     selected = candidates[:limit]
+    for item in selected:
+        item["protected_slot"] = True
+    for item in candidates[limit:]:
+        item["protected_slot"] = False
+        item["protected_content"] = False
+        item["leader_watch_protected"] = False
+        item["_rank_is_tier0"] = False
+        item["priority_person_interview"] = False
     regular.extend(candidates[limit:])
     print(f"[Protected Leader Eligibility] candidates={len(candidates)} slots_reserved={len(selected)}", flush=True)
     return selected, regular
-
-
-def main(hooks=None):
-    merged = dict(hooks or {})
-    merged.setdefault("select_editorial", _global_ranked_selection)
-    merged.setdefault("split_protected", _eligibility_split)
-    return _pipeline.main(hooks=merged)
-
-select_editorial = _global_ranked_selection
-
-for _name in ("load_yaml", "LEADER_CONFIG_PATH", "_direct_interview_signal", "summarize_item", "format_post", "mark_as_seen", "send_to_telegram_safe", "resolve_source_image", "_source_tier", "_persist_item_success"):
-    if hasattr(_pipeline, _name):
-        globals()[_name] = getattr(_pipeline, _name)

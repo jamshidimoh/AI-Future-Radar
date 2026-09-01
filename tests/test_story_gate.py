@@ -1,4 +1,6 @@
+from editorial_score_v2 import score_editorial_v2
 from story_gate import gate_story_candidates, story_representative_rank_key
+from technology_signal_v2 import calculate_technology_signal_score
 
 
 def test_cross_pool_duplicate_is_removed_once():
@@ -51,18 +53,23 @@ def test_representative_rank_ignores_signal_inflation():
     assert story_representative_rank_key(right) > story_representative_rank_key(left)
 
 
-def test_story_gate_sets_canonical_final_score_from_pre_signal_and_signal():
-    result = gate_story_candidates(
-        [],
-        [],
-        [{
-            "title": "Standalone AI story",
-            "editorial_score_pre_signal": 77.5,
-            "editorial_score": 93.09,
-            "signal_score": 51.95,
-        }],
-        [],
-    )
+def test_story_gate_sets_p3_canonical_final_score():
+    item = {
+        "title": "Standalone AI story",
+        "_ai_link": True,
+        "mission_area": "ai_core",
+        "source_tier": 1,
+        "evidence_text": "primary evidence",
+        "research_signal": True,
+        "content_type": "research",
+        "freshness_hours": 12,
+        "signal_vector": {"novelty": 10, "future_impact": 8, "technical_significance": 9, "strategic_relevance": 7, "trend_alignment": 6},
+    }
+    result = gate_story_candidates([], [], [item], [])
+    editorial, _ = score_editorial_v2(result[0])
+    signal = calculate_technology_signal_score(item["signal_vector"])
     assert len(result) == 1
-    assert result[0]["final_editorial_score"] == 71.11
-    assert result[0]["story_representative_score"] == 77.5
+    assert result[0]["editorial_score_pre_signal"] == editorial
+    assert result[0]["technology_signal_score"] == signal
+    assert result[0]["final_editorial_score"] == round(0.75 * editorial + 0.25 * signal, 2)
+    assert result[0]["story_representative_score"] == editorial

@@ -55,8 +55,6 @@ def test_story_gate_representative_is_sensitive_to_inflated_score():
         left["variant"] = "left"
         right["variant"] = "right"
 
-        # Same story identity, intentionally different scoring metadata.
-        # This is a bounded sensitivity experiment, not a live-frequency claim.
         base_pre = float(base.get("editorial_score", 0) or 0)
         base_signal = float(base.get("signal_score", 0) or 0)
 

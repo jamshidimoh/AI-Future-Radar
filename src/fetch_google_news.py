@@ -39,6 +39,51 @@ _LEADER_SIGNAL_TERMS = (
     "AI",
     "future",
 )
+_LEADER_ACTIVITY_EVIDENCE_TERMS = (
+    "statement",
+    "says",
+    "said",
+    "criticiz",
+    "criticis",
+    "criticise",
+    "warn",
+    "call for",
+    "calls for",
+    "urge",
+    "urges",
+    "oppose",
+    "opposes",
+    "support",
+    "supports",
+    "back",
+    "backs",
+    "announce",
+    "announced",
+    "launch",
+    "launched",
+    "release",
+    "released",
+    "unveil",
+    "unveiled",
+    "introduce",
+    "introduced",
+    "acquire",
+    "acquired",
+    "acquisition",
+    "investment",
+    "invested",
+    "funding",
+    "founded",
+    "appointed",
+    "appoints",
+    "joins",
+    "partnership",
+    "research project",
+    "initiative",
+    "product",
+    "model",
+    "platform",
+)
 _MAX_LEADER_SIGNAL_QUERIES = 24
 
 
@@ -110,6 +155,12 @@ def _expand_leader_signal_queries(queries):
     return expanded
 
 
+def _has_leader_signal_evidence(title, summary):
+    """Require substantive leader action/statement evidence for broad signal queries."""
+    text = f"{title} {summary}".lower()
+    return any(term in text for term in _LEADER_ACTIVITY_EVIDENCE_TERMS)
+
+
 def _collect_query(q, cutoff):
     query_text = str(q.get("query", ""))
     if is_excluded_source_text(query_text):
@@ -140,6 +191,13 @@ def _collect_query(q, cutoff):
             continue
         watch_person = str(q.get("watch_person", "") or "").strip()
         is_leader_watch = bool(watch_person)
+
+        if q.get("leader_discovery") and not _has_leader_signal_evidence(title, summary):
+            print(
+                f"[Leader Discovery Filter] dropped weak signal title={str(title)[:100]}",
+                flush=True,
+            )
+            continue
 
         results.append({
             "title": title,

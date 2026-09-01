@@ -1,0 +1,183 @@
+[
+  {
+    "id": "G01",
+    "title": "New reasoning model sets a major benchmark result",
+    "summary": "A new reasoning model reports measured benchmark results and introduces a new architecture.",
+    "description": "Research details include methodology, ablation, training and inference.",
+    "category": "ai",
+    "content_type": "research",
+    "source_tier": 1,
+    "published": "2026-08-31 10:00",
+    "expected": {
+      "editorial_family": "ai_core",
+      "signal_is_high_value": true,
+      "overlap_features": ["novelty", "technical/evidence", "future impact"]
+    }
+  },
+  {
+    "id": "G02",
+    "title": "Interview on the future of AI and long-horizon reasoning",
+    "summary": "An expert discusses strategic reasoning, long-context systems and the next five years of AI.",
+    "description": "The discussion covers deployment, autonomy and governance.",
+    "category": "ai",
+    "content_type": "interview",
+    "source_tier": 1,
+    "published": "2026-08-30 10:00",
+    "expected": {
+      "editorial_family": "ai_core",
+      "signal_is_high_value": true,
+      "overlap_features": ["future impact", "expert influence", "strategic relevance", "interview metadata"]
+    }
+  },
+  {
+    "id": "G03",
+    "title": "Quantum processor demonstrates error-corrected AI optimization",
+    "summary": "A quantum processor reports an experiment combining quantum optimization with machine learning.",
+    "description": "Measured results are reported for a hybrid quantum-classical method.",
+    "category": "quantum",
+    "content_type": "research",
+    "source_tier": 1,
+    "published": "2026-08-29 10:00",
+    "expected": {
+      "editorial_family": "quantum_ai",
+      "signal_is_high_value": true,
+      "overlap_features": ["technical/evidence", "future impact", "novelty"]
+    }
+  },
+  {
+    "id": "G04",
+    "title": "Study links predictive processing and machine consciousness",
+    "summary": "A scientific study examines cognition, awareness and computational models of consciousness.",
+    "description": "The paper reports experimental findings and discusses implications for AI systems.",
+    "category": "mind",
+    "content_type": "research",
+    "source_tier": 1,
+    "published": "2026-08-28 10:00",
+    "expected": {
+      "editorial_family": "consciousness_cognition",
+      "signal_is_high_value": true,
+      "overlap_features": ["future impact", "technical/evidence", "research credibility"]
+    }
+  },
+  {
+    "id": "G05",
+    "title": "Brain-computer interface decodes intended movement",
+    "summary": "Researchers report neural decoding with a brain-computer interface and measured performance.",
+    "description": "The work uses neural recording and a machine-learning decoder.",
+    "category": "bci",
+    "content_type": "research",
+    "source_tier": 1,
+    "published": "2026-08-27 10:00",
+    "expected": {
+      "editorial_family": "bci_neuro_ai",
+      "signal_is_high_value": true,
+      "overlap_features": ["technical/evidence", "novelty", "future impact"]
+    }
+  },
+  {
+    "id": "G06",
+    "title": "Humanoid robot learns household tasks with a vision-language-action model",
+    "summary": "A robot learning system reports new deployment results for embodied intelligence.",
+    "description": "The system combines perception, planning and action in physical environments.",
+    "category": "robotics",
+    "content_type": "research",
+    "source_tier": 2,
+    "published": "2026-08-26 10:00",
+    "expected": {
+      "editorial_family": "robotics_embodied",
+      "signal_is_high_value": true,
+      "overlap_features": ["novelty", "technical significance", "trend alignment", "future impact"]
+    }
+  },
+  {
+    "id": "G07",
+    "title": "AI-designed protein candidate enters preclinical testing",
+    "summary": "A biotechnology team reports a protein design workflow using AI and computational biology.",
+    "description": "The project combines generative models with laboratory validation.",
+    "category": "genetics",
+    "content_type": "research",
+    "source_tier": 1,
+    "published": "2026-08-25 10:00",
+    "expected": {
+      "editorial_family": "bio_ai",
+      "signal_is_high_value": true,
+      "overlap_features": ["technical/evidence", "future impact", "strategic relevance"]
+    }
+  },
+  {
+    "id": "G08",
+    "title": "AI data center deployment accelerates across enterprise infrastructure",
+    "summary": "Industry deployment expands AI accelerators and inference infrastructure.",
+    "description": "The trend highlights adoption, infrastructure investment and energy efficiency.",
+    "category": "ai",
+    "content_type": "news",
+    "source_tier": 2,
+    "published": "2026-08-31 08:00",
+    "expected": {
+      "editorial_family": "ai_core",
+      "signal_is_high_value": true,
+      "overlap_features": ["trend alignment", "strategic relevance", "source quality", "freshness"]
+    }
+  },
+  {
+    "id": "G09",
+    "title": "Long-range forecast on AI governance and national security",
+    "summary": "An analysis discusses strategic risk, regulation, governance and AI trajectories over the next decade.",
+    "description": "The article focuses on implications rather than a new technical result.",
+    "category": "future",
+    "content_type": "news",
+    "source_tier": 1,
+    "published": "2026-08-20 10:00",
+    "expected": {
+      "editorial_family": "future_technology",
+      "signal_is_high_value": true,
+      "overlap_features": ["future impact", "strategic relevance", "expert/risk signal"]
+    }
+  },
+  {
+    "id": "G10",
+    "title": "Community reaction to a popular AI product",
+    "summary": "Users discuss a recently released AI product and share personal reactions.",
+    "description": "The discussion contains little technical or measured evidence.",
+    "category": "ai",
+    "content_type": "community",
+    "source_tier": 3,
+    "published": "2026-08-31 09:00",
+    "expected": {
+      "editorial_family": "ai_core",
+      "signal_is_high_value": false,
+      "overlap_features": ["freshness", "trend alignment"],
+      "risk": "community/hype can inflate visible relevance without strong evidence"
+    }
+  },
+  {
+    "id": "G11",
+    "title": "Quantum hardware maintenance update",
+    "summary": "A vendor announces routine hardware maintenance and scheduling information.",
+    "description": "No AI, optimization or machine-learning connection is described.",
+    "category": "quantum",
+    "content_type": "news",
+    "source_tier": 1,
+    "published": "2026-08-31 07:00",
+    "expected": {
+      "editorial_family": "out_of_scope",
+      "signal_is_high_value": false,
+      "overlap_features": []
+    }
+  },
+  {
+    "id": "G12",
+    "title": "New multimodal model combines vision and reasoning",
+    "summary": "A model release introduces multimodal reasoning and reports benchmark improvements.",
+    "description": "The release includes deployment details and a new architecture.",
+    "category": "ai",
+    "content_type": "product_news",
+    "source_tier": 1,
+    "published": "2026-08-31 11:00",
+    "expected": {
+      "editorial_family": "ai_core",
+      "signal_is_high_value": true,
+      "overlap_features": ["novelty", "technical significance", "evidence strength", "freshness"]
+    }
+  }
+]

@@ -9,6 +9,13 @@ republished repeatedly within the same Tehran window.
 from __future__ import annotations
 
 import sys
+from pathlib import Path
+
+# This script is under scripts/, while production modules live at repository
+# root. Explicitly add the root so direct GitHub Actions invocation works.
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 import production_entrypoint
 import production_resilient_runner

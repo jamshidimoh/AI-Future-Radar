@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788277967,
+  "updated_at": 1788278121,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5978,6 +5978,25 @@
       "why_it_matters": "تأیید هشدارهای Jensen Huang توسط Fei-Fei Li، که از پیشگامان اخلاق و توسعه انسانی‌محور هوش مصنوعی است، اعتبار بالایی به نگرانی‌های مربوط به خطرات وجودی این فناوری می‌بخشد. این هم‌نوازی بین رهبران صنعت سخت‌افزار و پژوهش‌های آکادمیک، سیگنال قوی برای ض",
       "link": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxOby1WTXF0Ykc1ODNOeU4tRHdMYURfenFidXQ4X2dJVDJpYXgycXhOay1PYTg3TEYwODZHQTlNVTVLcXBaVlNuSDdPdW1XcUFoMk1pR0pIZWVRdThHTmxaUTVmUVNfQ0dIa29uUWJKZkJvUnJyTE42dmRXc1JGVmZpbTBCNkt6cTlBRWMzODJWUzdCRHpNZm9FQUttYktTdnJxc3UwdkZqVFlYc2JkWjIza05fV3lOcGkyNGJZYzNTNTZoSWJVME0zaFpzQ3FNRDM3ZDBRTXJ0RmphdFZfYUQzT0FVTXZVYkVHcXdVTXVSa0dOYWJJQWxnLWxkYVRkRDjSAYQCQVVfeXFMTVRTaklrTzFZTHl0SU1JajhKeDYwMklndWlCVXlXRzFxZXBSS0dlUEM4ZmpWS1BoOGNkNEhSRmplQkY5TnpFX3JGMWFoQXI0bDVFdjAxUXN6ZS1wdEhLUWk5cnlwa1RQMWJQeW1BVFhxdDFZWnU2dXlUQ0o5S1I4MWplQ2VjZEhUZ1JPU1pZUHpxSlRBZWJadURvbjdOSm5MaFNrXzRxTzB5NlVLMEQ2TjlGNVgxTjY5eGMzaTVid1lMMC1LcTFQTVlqeGRhSDJCOTUyeW9rODd4cFdYbkpVVFFRV0NmR0doazBkendVNl9lM0wxWVdWRjRxck9pNzh0ZWZ4bEM?oc=5",
       "posted_at": 1788277967
+    },
+    "-1004482051328:1394": {
+      "chat_id": -1004482051328,
+      "message_id": 1394,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Sifted)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Yann LeCun",
+      "watch_person": "Yann LeCun",
+      "title": "یون لکون به شرکت سرمایه‌گذاری خطرپذیر جدید پیوست",
+      "summary": "یون لکون، از چهره‌های برجسته در حوزه هوش مصنوعی، به یک شرکت سرمایه‌گذاری خطرپذیر (VC) جدید پیوسته است. این رویداد که توسط رسانه Sifted گزارش شده، نشان‌دهنده تغییر مسیر یا گسترش فعالیت‌های لکون فراتر از نقش‌های اجرایی یا پژوهشی سنتی اوست. این پیوستن احتمالاً تأثیر قابل Attentionی بر جهت‌گیری سرمایه‌گذاری‌های حوزه فناوری و هوش مصنوعی خواهد داشت.",
+      "why_it_matters": "ورود یک چهره علمی و فنی برجسته مانند Yann LeCun به دنیای سرمایه‌گذاری خطرپذیر، سیگنال مهمی برای بازار فناوری محسوب می‌شود. این اقدام می‌تواند باعث جذب سرمایه بیشتر به استارتاپ‌های حوزه هوش مصنوعی و تغییر اولویت‌های سرمایه‌گذاری بر اساس دیدگاه‌های فنی عمیق شود. همچنین، این حرکت نشان می‌دهد که مرزهای بین پژوهش آکادمیک/صنعتی و سرمایه‌گذاری مالی در حال کمرنگ شدن است.",
+      "link": "https://news.google.com/rss/articles/CBMia0FVX3lxTE95U0xpWVBsY0tCM0NIWkdqVHFIbVUwbVVzVEJ0c3A3cndDdE5fTmNpUk1CNXdtRDBzYm1UamJwckkwRVRjR3p0dV8ySzcyVmdDMDFkN0NKaEM3RjY5eGxMZmlqbVZ4QnB4YkM4?oc=5",
+      "posted_at": 1788278121
     }
   }
 }

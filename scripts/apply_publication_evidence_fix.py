@@ -10,6 +10,14 @@ def replace_once(path: Path, old: str, new: str) -> None:
     path.write_text(text.replace(old, new), encoding="utf-8")
 
 
+def replace_all(path: Path, old: str, new: str, minimum: int = 1) -> None:
+    text = path.read_text(encoding="utf-8")
+    count = text.count(old)
+    if count < minimum:
+        raise SystemExit(f"expected at least {minimum} matches in {path}, found {count}: {old[:80]!r}")
+    path.write_text(text.replace(old, new), encoding="utf-8")
+
+
 # YouTube: retain the real description, but enrich priority long-form channels with
 # transcript evidence instead of silently preferring one or the other.
 replace_once(
@@ -29,10 +37,11 @@ replace_once(
     '''def _normalize(data, item):\n''',
     '''def _source_text(item, max_chars=3500):\n    """Build the strongest available evidence context without duplicating identical fields."""\n    parts = []\n    seen = set()\n    for key in ("summary", "evidence_text", "description"):\n        value = str(item.get(key, "") or "").strip()\n        if not value or value in seen:\n            continue\n        seen.add(value)\n        parts.append(value)\n    return "\\n\\n".join(parts)[:max_chars]\n\n\ndef _normalize(data, item):\n''',
 )
-replace_once(
+replace_all(
     summarize,
     '''        source=str(item.get("summary", "") or "")[:3500],\n''',
     '''        source=_source_text(item),\n''',
+    minimum=2,
 )
 replace_once(
     summarize,

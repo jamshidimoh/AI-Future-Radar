@@ -9,7 +9,7 @@ def test_global_selection_assigns_ranks_to_candidate_window():
         {"title": "D", "editorial_score": 104, "source": "source-d", "content_type": "news"},
         {"title": "E", "editorial_score": 102, "source": "source-e", "content_type": "product_news"},
     ]
-    ranked = _global_ranked_selection(items, 4, 2, 2, {})
+    ranked = _global_ranked_selection(items, 4, 2, 2, {"mission_aware": False})
     assert [x["period_rank"] for x in ranked] == list(range(1, len(ranked) + 1))
     assert len(ranked) <= 6
     assert [x["final_editorial_score"] for x in ranked] == [82.5, 81.0, 79.5, 78.0, 76.5]

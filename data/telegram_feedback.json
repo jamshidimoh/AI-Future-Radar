@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788290080,
+  "updated_at": 1788299251,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6314,6 +6314,62 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788289356
+    },
+    "-1004482051328:1412": {
+      "chat_id": -1004482051328,
+      "message_id": 1412,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Analytics Insight)",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "Andrew Ng",
+      "watch_person": "Andrew Ng",
+      "title": "تحلیل‌های Analytics Insight نشان می‌دهد که یوتیوبرها در آموزش مفاهیم هوش مصنوعی، جایگزینی مؤثرتر از دوره‌های پولی شده‌اند",
+      "summary": "تحلیل‌های Analytics Insight نشان می‌دهد که یوتیوبرها در آموزش مفاهیم هوش مصنوعی، جایگزینی مؤثرتر از دوره‌های پولی شده‌اند. این پدیده نشان‌دهنده تغییر پارادایم در دسترسی به دانش فنی و کاهش هزینه‌های یادگیری برای توسعه‌دهندگان است. محتوای رایگان و باکیفیت در پلتفرم‌های ویدیویی، شکاف بین آموزش‌های رسمی و نیازهای عملی بازار را پر می‌کند.",
+      "why_it_matters": "این روند نشان می‌دهد که مدل‌های کسب‌وکار مبتنی بر دوره‌های پولی آموزشی با چالش جدی مواجه شده‌اند و دسترسی آزاد به دانش فنی در حال دموکراتیزه شدن است. برای شرکت‌های فناوری و آموزش‌دهندگان، این موضوع لزوم بازتعریف استراتژی‌های جذب مخاطب و ارائه ارزش افزوده فراتر از محتوای پایه را ایجاب می‌کند. همچنین، این تغییر می‌تواند سرعت پذیرش فناوری‌های جدید در جامعه توسعه‌دهندگان را افزایش دهد.",
+      "link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPUTdrMW56YW52T2twT2RUSFUyb2hoRnFDNVR2aE85UUR1NEtIaFhhOExRUFo1X0szMDVaMDVtQVNtbHZQR0F6R2stbEJfOEhHYXNmbHp2Zm1qMW9CLTRkY2dyQXlZYWN3cl93b05oZEQ0T3F1TGdvQm16ZlNkdmtYeDVnUnZlVDJFYl80ZHFSZy0tZmk2eHfSAZYBQVVfeXFMT1E3azFuemFudk9rcE9kVEhVMm9oaEZxQzVUdmhPOVFEdTRLSGhYYThMUVBaNV9LMzA1WjA1bUFTbWx2UEdBekdrLWxCXzhIR2FzZmx6dmZtajFvQi00ZGNnckF5WWFjd3Jfd29OaGRENE9xdUxnb0JtemZTZHZrWHg1Z1J2ZVQyRWJfNGRxUmctLWZpNnh3?oc=5",
+      "posted_at": 1788299249
+    },
+    "-1004482051328:1413": {
+      "chat_id": -1004482051328,
+      "message_id": 1413,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "Sam Altman، مدیرعامل OpenAI، در مصاحبه‌ای با Business Insider عدم علاقه خود به استفاده از عینک‌های هوشمند را ابراز کرد",
+      "summary": "Sam Altman، مدیرعامل OpenAI، در مصاحبه‌ای با Business Insider عدم علاقه خود به استفاده از عینک‌های هوشمند را ابراز کرد. او دلیل اصلی این نارضایتی را احساس ناراحتی و عدم راحتی در هنگام گفتگو با افرادی می‌داند که عینکی مجهز به دوربین و چراغ بر چشم دارند. این اظهارنظر نشان‌دهنده نگرانی‌های او درباره جنبه‌های روانی و اجتماعی تعاملات چهره‌به‌چهره در حضور فناوری‌های نظارتی پوشیدنی است.",
+      "why_it_matters": "این موضع‌گیری از سوی یکی از تأثیرگذارترین چهره‌های صنعت هوش مصنوعی، چالش‌های پذیرش اجتماعی فناوری‌های پوشیدنی را برجسته می‌کند. وجود دوربین و چراغ در عینک‌های هوشمند می‌تواند حس ناامنی و نظارت را در تعاملات روزمره ایجاد کند که مانعی برای نفوذ گسترده این محصولات است. این دیدگاه نشان می‌دهد که حتی پیشگامان فناوری نیز به پیامدهای روانی و حریم خصوصی در طراحی سخت‌افزار Attention دارند.",
+      "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOcGpRdzk2R19NZkZ0b3FKaXh6Z2lHNHBmcFY4T2l0c0hQN0ZTWnVrQTJfaHJWRm9lQWVuYjc5UlVHblpHX040OVJ1a1hXQlVwMWttcktKQ01UZ04yU2RHMUM5al9WcUppejY2cXdCUXhZbUNhNlZ0Qy03ZUxoeUhSb3JtWQ?oc=5",
+      "posted_at": 1788299250
+    },
+    "-1004482051328:1414": {
+      "chat_id": -1004482051328,
+      "message_id": 1414,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Hugging Face Blog",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "مقاله BenchMIRT در وبلاگ Hugging Face به بررسی عمیق این سوال می‌پردازد که بنچمارک‌های رایج مدل‌های زبانی بزرگ (LLM) دقیقاً چه چیزی را اندازه‌گیری",
+      "summary": "مقاله BenchMIRT در وبلاگ Hugging Face به بررسی عمیق این سوال می‌پردازد که بنچمارک‌های رایج مدل‌های زبانی بزرگ (LLM) دقیقاً چه چیزی را اندازه‌گیری می‌کنند. این پژوهش نشان می‌دهد که بسیاری از معیارهای فعلی ممکن است به جای توانایی واقعی استدلال یا درک مدل، بر روی حافظه کوتاه‌مدت یا الگوهای آماری سطحی تمرکز داشته باشند. نویسندگان با تحلیل ساختاری این بنچمارک‌ها، شکاف بین نمرات گزارش‌شده و عملکرد واقعی مدل‌ها در سناریوهای پیچیده را برجسته می‌کنند. این مطالعه لزوم بازنگری در پروتکل‌های ارزیابی برای جلوگیری از سنجش‌های گمراه‌کننده را مطرح می‌کند.",
+      "why_it_matters": "درک دقیق محدودیت‌های بنچمارک‌های فعلی برای توسعه‌دهندگان و محققان حیاتی است، زیرا تکیه بر معیارهای نادرست می‌تواند منجر به انتخاب مدل‌های ناکارآمد برای کاربردهای حساس شود. اگر بنچمارک‌ها توانایی‌های واقعی استدلال را بسنجند، اعتماد به سیستم‌های هوش مصنوعی در حوزه‌هایی مانند پزشکی یا حقوق افزایش می‌یابد. این تحلیل هشدار می‌دهد که بهبود نمرات در تست‌های استاندارد لزوماً به معنای افزایش هوشمندی یا ایمنی مدل نیست. بنابراین، جامعه فناوری نیازمند معیارهای جدیدی است که چالش‌های شناختی واقعی را بازتاب دهند.",
+      "link": "https://huggingface.co/blog/allenai/benchmirt",
+      "posted_at": 1788299251
     }
   }
 }

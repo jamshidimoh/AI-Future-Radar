@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788278391,
+  "updated_at": 1788278713,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6035,6 +6035,44 @@
       "why_it_matters": "این اظهارنظر نشان‌دهنده فشارهای روانی و مدیریتی بالای رهبران در اکوسیستم AI است که برای حفظ مزیت رقابتی نیازمند استانداردهای سخت‌گیرانه‌ای هستند. سبک «مادر ببر» اگرچه می‌تواند به نوآوری و سرعت توسعه کمک کند، اما ممکن است چالش‌هایی در حفظ تعادل کار و زندگی و سلامت روان کارکنان ایجاد نماید. این دیدگاه به بحث‌های جاری درباره فرهنگ سازمانی در استارتاپ‌های فناوری و تأثیر سبک رهبری بر پایداری تیم‌های فنی می‌پردازد.",
       "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPa0N3aHlwelFJNVBvZmZZRmlhaG1aYXVTLWx3dnhiU0ZMZUYtWEVaNjJ6S2JobnRpdDRvZGNWS2daS0VWOWk0UWV2MWV4a0FNZlZHMGtibGg3eE5SeXA5Nm9kSG5VSjdfU3Ewbk9hUnRvZDJtaGF6X2llTkYwM0VUSldEVXJHZkV6Mkk0UUpn?oc=5",
       "posted_at": 1788278391
+    },
+    "-1004482051328:1397": {
+      "chat_id": -1004482051328,
+      "message_id": 1397,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Free Malaysia Today)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "ایلان ماسک در نشست گروه بیست (G20) از ضرورت توسعه زیرساخت‌های دیتاسنتر برای هوش مصنوعی دفاع کرد",
+      "summary": "ایلان ماسک در نشست گروه بیست (G20) از ضرورت توسعه زیرساخت‌های دیتاسنتر برای هوش مصنوعی دفاع کرد. او مقررات اتحادیه اروپا را مورد انتقاد شدید قرار داد و آن‌ها را مانعی برای پیشرفت فناوری دانست. این اظهارات نشان‌دهنده تنش فزاینده بین رهبران صنعت فناوری و نهادهای تنظیم‌گر اروپایی است. ماسک بر اهمیت تسهیل سرمایه‌گذاری در زیرساخت‌های محاسباتی برای رقابت جهانی تأکید ورزید.",
+      "why_it_matters": "این موضع‌گیری نشان می‌دهد که چارچوب‌های نظارتی اتحادیه اروپا ممکن است با سرعت توسعه زیرساخت‌های هوش مصنوعی همخوانی نداشته باشند. اگر قوانین سخت‌گیرانه ادامه یابد، خطر کاهش سرمایه‌گذاری در اروپا و انتقال مرکز ثقل نوآوری به مناطق با مقررات منعطف‌تر وجود دارد. این تنش‌ها می‌تواند بر آینده حکمرانی فناوری و رقابت‌پذیری اقتصادی اروپا در عصر هوش مصنوعی تأثیر عمیقی بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPNlozS3RNOHYzR3V5dzlMOWRycTFlSlhPUHJYcU5DalI3aG1hWmVhaTk5WjJHVWlzSUFnVlkxUEVRRENydHRXc1NlQ3hERHQ2aExfUHBRWVFMdjhrUHpEcU1wdldzNUl6dWpOa1VxLUQ2Uy1sTWFqYUVJSWI0U3RYend2ZTcyTGhlV3dDNVFES2xONEU1OUhxbGN2ZXpTOUJCaWlWRjBvY0RUWmxPMkRiNUxwRQ?oc=5",
+      "posted_at": 1788278712
+    },
+    "-1004482051328:1398": {
+      "chat_id": -1004482051328,
+      "message_id": 1398,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (TradingView)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "title": "سهام شرکت NVIDIA (NVDA) در آستانه ثبت بهترین عملکرد ماهانه خود از ماه مه قرار دارد",
+      "summary": "سهام شرکت NVIDIA (NVDA) در آستانه ثبت بهترین عملکرد ماهانه خود از ماه مه قرار دارد. جین‌سن هوانگ، مدیرعامل این شرکت، اعلام کرده که رونق دیتاسنترهای هوش مصنوعی فرآیند بازصنعتی‌سازی آمریکا را به راه انداخته است. این دیدگاه نشان‌دهنده تأثیر عمیق زیرساخت‌های AI بر اقتصاد کلان و صنعتی کشور است.",
+      "why_it_matters": "این اظهارات نشان می‌دهد که سرمایه‌گذاری‌های عظیم در زیرساخت‌های AI فراتر از یک ترند فناوری، به محرکی برای بازسازی بنیان‌های صنعتی آمریکا تبدیل شده است. همبستگی این روایت با عملکرد مثبت سهام NVIDIA، نشان‌دهنده اعتماد بازار به نقش محوری این شرکت در این تحول ساختاری است. این روند می‌تواند الگوی جدیدی برای سیاست‌گذاری‌های صنعتی و جذب سرمایه در بخش فناوری ایجاد کند.",
+      "link": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxNVE9hbU1NdXB1OUpxSTlPN3c2UjQ5MHNLclRRSW5uTXB0bzRZcDRoTVVaR0ZrMGtOSXdDMno4MTk2LTBWRmxoWEVnS0tFakxKQk1PYmdGa0dGVWRoWE5sdkNzbHliRGNtR2FyblR6Vm94VGhPeWtJMkVMNWtOaTU5ZnZpQWFTNGF6S0pGQXpFWnpRcnhhS1k2VmFRLXY4eVdMU1pKT2hkX0x1SzJ6TEdoOXJQYmpnZE1qUzFfU3YxUFdCSDliQjBnWE9MWHZ6TkxNXzhNdHVnZkdiUGNwRHNQQXYyWDdCVUh2ZmZDcG1rSldwSVVyMUE?oc=5",
+      "posted_at": 1788278713
     }
   }
 }

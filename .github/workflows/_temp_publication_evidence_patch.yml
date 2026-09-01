@@ -2,9 +2,9 @@ name: Temporary Publication Evidence Patch
 
 on:
   push:
-    branches: [fix/publication-evidence-recovery]
+    branches: [main]
     paths:
-      - scripts/apply_publication_evidence_fix.py
+      - .github/workflows/_temp_publication_evidence_patch.yml
 
 permissions:
   contents: write

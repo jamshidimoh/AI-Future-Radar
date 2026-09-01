@@ -7,7 +7,7 @@ def test_rank_news_orders_by_final_score_and_assigns_period_rank():
         {"id": "a", "editorial_score": 95, "title": "A", "summary": "متن فارسی", "why_it_matters": "اهمیت", "content_type": "news", "source": "source-a"},
         {"id": "c", "editorial_score": 88, "title": "C", "summary": "متن فارسی", "why_it_matters": "اهمیت", "content_type": "research", "source": "source-c"},
     ]
-    ranked = _global_ranked_selection(items, 4, 2, 2, {})
+    ranked = _global_ranked_selection(items, 4, 2, 2, {"mission_aware": False})
     assert [x["id"] for x in ranked] == ["a", "c", "b"]
     assert [x["period_rank"] for x in ranked] == [1, 2, 3]
     assert [x["normal_period_rank"] for x in ranked] == [1, 2, 3]

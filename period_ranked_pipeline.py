@@ -42,31 +42,27 @@ def _base_score(item):
     return canonical_rank_score(item)
 
 
-def _is_priority_interview(item):
-    try:
-        return bool(priority_people_features(item)[1])
-    except Exception:
-        return False
-
-
 def _is_protected_publication_story(item):
-    return bool(item.get("protected_content") or item.get("_named_leader_interview") or _is_priority_interview(item))
+    # Only stories explicitly admitted by the protected eligibility split can
+    # become Tier-0. A leader mention or generic interview must not silently
+    # bypass the reserved protected capacity.
+    return bool(item.get("protected_content") or item.get("_named_leader_interview"))
 
 
 def _prepare_rank_features(items):
     for item in items:
         model_bonus = model_release_bonus(item)
-        people, is_tier0, people_bonus = priority_people_features(item)
+        people, _person_tier0, people_bonus = priority_people_features(item)
         protected = _is_protected_publication_story(item)
         leader = str(item.get("leader") or item.get("watch_person") or "").strip()
         if protected and leader and leader not in people:
             people = list(people or []) + [leader]
         item["model_release_priority"] = bool(model_bonus)
         item["model_release_bonus_legacy"] = model_bonus
-        item["priority_person_interview"] = bool(is_tier0 or protected)
-        item["priority_person_bonus_legacy"] = people_bonus
+        item["priority_person_interview"] = bool(protected)
+        item["priority_person_bonus_legacy"] = people_bonus if protected else 0.0
         item["priority_story_people"] = people
-        item["_rank_is_tier0"] = bool(is_tier0 or protected)
+        item["_rank_is_tier0"] = protected
         item["final_editorial_score"] = canonical_rank_score(item)
     return items
 
@@ -77,10 +73,6 @@ def _score(item):
 
 def _source_key(item):
     return str(item.get("source") or item.get("source_name") or "unknown").strip().lower() or "unknown"
-
-
-def _content_type_key(item):
-    return str(item.get("content_type") or "unknown").strip().lower() or "unknown"
 
 
 def _rotation_source_counts(history, rotation_days):
@@ -101,7 +93,6 @@ def _rotation_source_counts(history, rotation_days):
 
 
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
-    """Apply unified selection in production with an explicit relevance contract."""
     policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     try:

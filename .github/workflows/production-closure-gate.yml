@@ -26,6 +26,7 @@ jobs:
           import os
           import re
           import sys
+          import urllib.error
           import urllib.request
 
           repo = os.environ["REPO"]
@@ -42,10 +43,27 @@ jobs:
               with urllib.request.urlopen(req, timeout=30) as response:
                   return json.load(response)
 
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  return None
+
+          no_redirect_opener = urllib.request.build_opener(NoRedirect)
+
           def get_text(path):
               req = urllib.request.Request(base + path, headers=headers)
-              with urllib.request.urlopen(req, timeout=30) as response:
-                  return response.read().decode("utf-8", errors="replace")
+              try:
+                  with no_redirect_opener.open(req, timeout=30) as response:
+                      return response.read().decode("utf-8", errors="replace")
+              except urllib.error.HTTPError as exc:
+                  if exc.code not in (301, 302, 303, 307, 308):
+                      raise
+                  location = exc.headers.get("Location")
+                  if not location:
+                      raise RuntimeError("GitHub log redirect did not include a Location header") from exc
+                  # The redirect target is a short-lived blob URL; do not forward
+                  # the GitHub bearer token to the storage host.
+                  with urllib.request.urlopen(urllib.request.Request(location), timeout=30) as response:
+                      return response.read().decode("utf-8", errors="replace")
 
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=10")
           runs = [
@@ -63,37 +81,43 @@ jobs:
           ])
           if any(r.get("conclusion") != "success" for r in window):
               print("CLOSURE: BLOCKED — one of the last three production runs failed.")
-              sys.exit(0)
+              sys.exit(1)
 
           logs = {}
+          log_errors = {}
           for run in window:
               jobs = get_json(f"/actions/runs/{run['id']}/jobs?per_page=50").get("jobs", [])
               bot_jobs = [j for j in jobs if j.get("name") == "run-bot"]
               if not bot_jobs:
-                  logs[run["run_number"]] = ""
+                  log_errors[run["run_number"]] = "run-bot job not found"
                   continue
               job_id = bot_jobs[0]["id"]
               try:
                   logs[run["run_number"]] = get_text(f"/actions/jobs/{job_id}/logs")
               except Exception as exc:
-                  print(f"LOG_READ_FAILED run={run.get('run_number')} error={exc}")
-                  logs[run["run_number"]] = ""
+                  log_errors[run["run_number"]] = f"{type(exc).__name__}: {exc}"
+
+          if log_errors or len(logs) != len(window):
+              for run_number, error in sorted(log_errors.items()):
+                  print(f"LOG_READ_FAILED run={run_number} error={error}")
+              print("CLOSURE: BLOCKED — production evidence logs are incomplete; cannot certify closure.")
+              sys.exit(1)
 
           def has(text, pattern):
               return re.search(pattern, text, re.I | re.M) is not None
 
           def any_run(pattern):
-              return any(has(text, pattern) for text in logs.values() if text)
+              return any(has(text, pattern) for text in logs.values())
 
           def all_runs(pattern):
-              return all(has(text, pattern) for text in logs.values() if text)
+              return len(logs) == len(window) and all(has(logs[r.get("run_number")], pattern) for r in window)
 
           published_run = any_run(r"\[Telegram Published\]")
           zero_publish_run = any_run(r"Posts sent: 0/") and any_run(r"normal_news=0[^\n]*tier0_news=0")
           duplicate_free = all_runs(r"history_duplicates=0 current_run_duplicates=0") and not any_run(r"duplicate publication")
           image_contract = any_run(r"full_text=\d+ photo=enabled single_message=true")
           ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_run(r"normal_rank=\d{2,}")
-          qa_replacement = all_runs(r"(?:translation/QA failed|Editorial Value Gate.*rejected)|publishable candidate prepared")
+          qa_replacement = all_runs(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
           leader_watch = all_runs(r"\[Protected Leader Eligibility\] candidates=\d+") and all_runs(r"\[Leader Protection Audit\]")
           provider_success = any_run(r"\[Light Router\] success=")
           provider_failure_observed = any_run(r"\[Light Router\] disabled=") or any_run(r"(?:429|quota|timeout|5\d{2}|401|403)")
@@ -121,7 +145,7 @@ jobs:
           if blocked:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))
               print("CLOSURE: ACCEPTANCE IN PROGRESS")
-              sys.exit(0)
+              sys.exit(1)
 
           print("CLOSURE: CLOSED — deterministic gates and production evidence checks passed.")
           PY

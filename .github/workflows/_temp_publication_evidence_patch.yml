@@ -1,0 +1,34 @@
+name: Temporary Publication Evidence Patch
+
+on:
+  push:
+    branches: [fix/publication-evidence-recovery]
+    paths:
+      - scripts/apply_publication_evidence_fix.py
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/publication-evidence-recovery
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - run: python scripts/apply_publication_evidence_fix.py
+      - name: Commit patched files
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/fetch_youtube.py src/summarize.py
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "fix: recover publication evidence context [skip ci]"
+          git push origin HEAD:fix/publication-evidence-recovery

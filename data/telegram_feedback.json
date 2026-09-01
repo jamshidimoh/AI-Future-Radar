@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788280026,
+  "updated_at": 1788280136,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6246,6 +6246,25 @@
       "why_it_matters": "این گزارش تأیید می‌کند که Elon Musk همچنان کنترل استراتژیک بر کاربرد نظامی Starlink حفظ کرده و از تبدیل شدن آن به ابزار مستقیم حمله به خاک روسیه جلوگیری می‌کند. این محدودیت می‌تواند بر تاکتیک‌های نظامی اوکراین و وابستگی آن به زیرساخت‌های ارتباطی غیردولتی تأثیر مستقیم بگذارد. همچنین نشان‌دهنده تنش‌های بالقوه بین نیازهای عملیاتی ارتش اوکراین و سیاست‌های شرکت SpaceX برای پرهیز از تشدید مستقیم درگیری با روسیه است.",
       "link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQancwSUd5NEdFWGtxb0JmMlY3eHZZNm5GNG5YQjREWjQ1TGJHZlo0eEZxcFVsTXE0dG9oNkRJazQweFNHajNlMGdkb2JoeFpKR1p2T1ZubjJGU0g0TDVMZVQxMWlJaU1LT09OSzFjOWM0NUhXSVRrdE9zbTJ4LVNwWmZpT2FGTXozRzJweWVFUklNajlpb1ZURk53UXp3MEhWTndQV0xreXdQMU1HM01CMzRBamlwb0wxcEkxMUJ3NTRabFY3LWxxTW1ZNUVZenhkMnc0?oc=5",
       "posted_at": 1788280026
+    },
+    "-1004482051328:1408": {
+      "chat_id": -1004482051328,
+      "message_id": 1408,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CleanTechnica)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "خبر بازگشت Twitter و اشاره به Elon Musk در گزارش CleanTechnica",
+      "summary": "رسانه CleanTechnica در گزارشی با عنوان «پسست، ای Elon Musk! Twitter در حال بازگشت است» به موضوع احیای این پلتفرم اشاره کرده است. این خبر که در گوگل نیوز منتشر شده، Elon Musk را به عنوان شخصیت کلیدی در این رویداد معرفی می‌کند. متن ارائه‌شده فاقد جزئیات فنی، روش‌های اجرایی یا شواهد عددی درباره چگونگی این بازگشت است. تنها اطلاعات موجود، عنوان خبر و نام منبع و شخصیت مرتبط با آن است.",
+      "why_it_matters": "این گزارش نشان‌دهنده Attention رسانه‌های تخصصی به تحولات پلتفرم‌های اجتماعی و نقش Elon Musk در آن‌هاست. با این حال، فقدان جزئیات فنی در متن ورودی، امکان تحلیل پیامدهای واقعی یا محدودیت‌های این ادعا را نمی‌دهد. اهمیت این خبر بیشتر در سیگنال‌دهی به تغییرات احتمالی در اکوسیستم فناوری است تا ارائه داده‌های قابل استناد فنی.",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNYU1BMnBQeGZ6ZHpLNTVMWnhsdHVMeGhQSGI3TDlveF80YmcyaTBYb0k3RXhaaDBzWG4zQWdHakF3d0I2TUF3dUVaSzh0Rmpuekw0eE9PR1Z3ZDZMTFVJOEdlZE4xT0o1TmdBblBmTktYQkxaVGVvc1FvQW9Wa1Jrb2VBOWhXcnhUOGJ5QzEyMA?oc=5",
+      "posted_at": 1788280136
     }
   }
 }

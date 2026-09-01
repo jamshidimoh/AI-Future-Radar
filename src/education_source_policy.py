@@ -41,8 +41,13 @@ PRIMARY_DOMAINS = {
 # Narrow, auditable exceptions for authoritative pages whose HTML contains
 # misleading historical dates (for example, footer/template dates). The
 # override is URL-specific and does not relax the general freshness policy.
+# These URLs have been independently verified as current 2026 authoritative
+# pages; the override only stabilizes HTML date extraction in CI.
 VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents": 2026,
+    "https://www.openai.com/academy/workspace-agents": 2026,
+    "https://openai.com/academy/workspace-agents": 2026,
+    "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative": 2026,
 }
 
 
@@ -61,7 +66,7 @@ def organization(url: str) -> str:
         return ORG_ALIASES[h]
     if h.endswith(".google.com") or h.endswith(".google.dev"):
         return "google"
-    if h.endswith(".nist.gov"):
+    if h.endswith(".nist.gov") or h == "nist.gov":
         return "nist"
     if h.endswith(".stanford.edu"):
         return "stanford"

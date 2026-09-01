@@ -51,17 +51,42 @@ def _source_candidates_with_lesson_41_fallback(lesson: dict):
         "https://www.anthropic.com/research/building-effective-agents",
         "https://platform.openai.com/docs/guides/agents",
     }
+    stale_normalized = {u.rstrip("/") for u in stale_urls}
     filtered = [
         item for item in candidates
-        if str(item.get("url", "")).rstrip("/") not in {u.rstrip("/") for u in stale_urls}
+        if str(item.get("url", "")).rstrip("/") not in stale_normalized
     ]
-    filtered.extend(LESSON_41_CURRENT_SOURCES)
-    print("[Education Recovery] lesson=41 current-source fallback enabled", flush=True)
+    seen = {str(item.get("url", "")).rstrip("/") for item in filtered}
+    for source in LESSON_41_CURRENT_SOURCES:
+        url = str(source["url"]).rstrip("/")
+        if url not in seen:
+            filtered.append(dict(source))
+            seen.add(url)
+    print(
+        "[Education Recovery] lesson=41 authoritative current-source fallback enabled "
+        f"sources={[item['url'] for item in filtered if int(item.get('year', 0) or 0) >= 2026]}",
+        flush=True,
+    )
     return filtered
 
 
-def main() -> int:
+def _install_authoritative_source_override() -> None:
+    """Patch both source entry points used by the production publisher.
+
+    The resilient runner keeps its own wrapper around educational_content's
+    source resolver. Patching only educational_content is therefore insufficient
+    if that wrapper is invoked directly. This installs the same resolver at both
+    levels and deliberately leaves all source-quality gates unchanged.
+    """
     educational_content._source_candidates = _source_candidates_with_lesson_41_fallback
+    production_resilient_runner._source_candidates_with_current_overrides = (
+        _source_candidates_with_lesson_41_fallback
+    )
+    print("[Education Recovery] authoritative source override installed", flush=True)
+
+
+def main() -> int:
+    _install_authoritative_source_override()
 
     cadence = production_entrypoint._load_cadence()
     due, slot = production_entrypoint._education_is_due(

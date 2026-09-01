@@ -59,21 +59,38 @@ Leader/interview state is represented in policy/editorial metadata and can indep
 
 Expected labels are qualitative and do not prescribe a new score.
 
-## Measurement harness
+## Measurement results
 
-`tests/test_p1_story_gate_attribution.py` is audit-only. It runs the 12 fixtures through the real editorial and signal enrichers, reproduces the production story-gate key and a counterfactual pre-signal key, then performs a bounded sensitivity experiment using identical story identity with controlled scoring perturbations.
+The audit-only sensitivity grid ran against all 12 golden cases using 25 symmetric perturbation combinations per case, for **300 comparisons** total. The production ranking key and a counterfactual key using `editorial_score_pre_signal` were compared.
 
-The harness uses a stable `variant` field when asserting the first-wins output because `deduplicate_stories()` returns copied dictionaries rather than preserving object identity.
+Result: **24 representative-order changes / 300 comparisons = 8.00% sensitivity**. Each golden case produced 2 order changes out of 25 grid points. This is a controlled sensitivity experiment, not a live-traffic frequency estimate.
 
-The sensitivity result is not a live-traffic frequency estimate. The appropriate next step is to compare it with a retained sample of actual duplicate/near-duplicate clusters.
+The earlier one-pair harness that reported 12/12 changes has been removed from CI because its perturbation was intentionally asymmetric and therefore degenerate as an estimator of sensitivity.
 
-## Next measurements
+## Feature-overlap measurement
 
-1. Pairwise feature correlation after both enrichers.
-2. Marginal contribution of overlapping semantic concepts.
-3. Leader-specific attribution between editorial priority and signal expert influence.
-4. Story-gate representative sensitivity to the inflated intermediate score.
-5. Representative changes on real duplicate/near-duplicate clusters.
-6. Ruff count on the same repository surface, using 21 as baseline.
+`tests/test_p1_feature_overlap.py` runs the real editorial and signal enrichers and reports Pearson/Spearman correlations for the available shared semantic features. Because the golden set is intentionally small and some features can be constant across the cases, undefined correlations are reported as `None` rather than being coerced into a numeric value.
+
+This dataset is a validation pilot, not a production statistical sample. Strong correlations on it establish implementation overlap, not population-level dependence.
+
+## Evidence boundary
+
+No retained production duplicate/near-duplicate cluster sample was found in the repository state accessible to this audit. The committed `data/seen.json` is not available as a usable analysis dataset through the current repository surface. Therefore no live representative-change rate is claimed.
+
+The 21-diagnostic Ruff baseline remains the P1 comparison point.
+
+## P1 conclusion
+
+P1 confirms three separate facts:
+
+1. **Final-score arithmetic compounding does not occur.** The pre-signal editorial score is explicitly preferred in final period ranking.
+2. **Upstream representative selection is exposed to the inflated intermediate score.** This is a confirmed architectural path, and the controlled sensitivity experiment measured 8.00% ordering flips under the defined perturbation grid.
+3. **Feature-level semantic overlap is real across editorial and signal layers.** The current golden set is sufficient to demonstrate implementation overlap, but not sufficient to estimate live-traffic correlation.
 
 No production scoring, policy, or selection behavior is changed on this branch.
+
+## P2 recommendation
+
+Before changing weights, introduce one canonical attribution model in which eligibility, story representation/canonicalization, and final publication ranking consume explicitly separated signals. In particular, the story-gate representative decision should not consume a signal-inflated score that is intentionally excluded from final ranking.
+
+Then re-evaluate the ranking design on a larger annotated dataset (at least 30–50 real items, preferably including near-duplicate clusters) and retain the 21-diagnostic Ruff baseline as the code-quality control.

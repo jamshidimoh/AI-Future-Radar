@@ -346,9 +346,20 @@ def _normalize_video_result(channel: dict, item: dict) -> dict | None:
         return None
     video_id = str(item.get("video_id") or "").strip()
     raw_summary = str(item.get("summary") or "").strip()
-    transcript = _get_transcript_snippet(video_id) if not raw_summary else ""
-    evidence_text = transcript or raw_summary
-    evidence_source = "transcript" if transcript else ("channel_page_description" if raw_summary else "none")
+    channel_name = str(channel.get("name") or "").strip()
+    priority_transcript = channel_name in {
+        "Lex Fridman Podcast",
+        "Dwarkesh Patel",
+        "No Priors Podcast",
+        "Sean Carroll's Mindscape",
+    }
+    transcript = _get_transcript_snippet(video_id) if priority_transcript and video_id else ""
+    if transcript and raw_summary:
+        evidence_text = f"{raw_summary}\n\n[Transcript evidence]\n{transcript}"
+        evidence_source = "channel_page_description+transcript"
+    else:
+        evidence_text = transcript or raw_summary
+        evidence_source = "transcript" if transcript else ("channel_page_description" if raw_summary else "none")
     return {
         "title": title,
         "link": item.get("link", ""),

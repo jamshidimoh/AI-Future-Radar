@@ -1,0 +1,21 @@
+name: P1 Audit Measurement
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p1-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -r requirements.txt
+      - name: Run P1 sensitivity and overlap audits
+        run: python -m pytest -q -s tests/test_p1_story_gate_sensitivity_grid.py tests/test_p1_feature_overlap.py

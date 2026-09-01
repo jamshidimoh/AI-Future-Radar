@@ -1,4 +1,4 @@
-from src.fetch_google_news import _expand_leader_signal_queries
+from src.fetch_google_news import _expand_leader_signal_queries, _has_leader_signal_evidence
 
 
 def test_leader_signal_expansion_adds_one_companion_per_person():
@@ -28,3 +28,17 @@ def test_base_queries_without_leaders_are_unchanged():
     expanded = _expand_leader_signal_queries(queries)
 
     assert expanded == queries
+
+
+def test_weak_leader_mention_is_not_signal_evidence():
+    assert not _has_leader_signal_evidence(
+        "List of the Famous CEOs and Billionaires Who Have Attended Burning Man",
+        "A list of executives and billionaires who attended the event.",
+    )
+
+
+def test_substantive_leader_statement_is_signal_evidence():
+    assert _has_leader_signal_evidence(
+        "Elon Musk criticizes EU technology regulation",
+        "Musk said the policy could hinder technology development.",
+    )

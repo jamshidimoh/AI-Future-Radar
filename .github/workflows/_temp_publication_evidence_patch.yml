@@ -2,9 +2,9 @@ name: Temporary Publication Evidence Patch
 
 on:
   push:
-    branches: [main]
+    branches: [fix/publication-evidence-recovery]
     paths:
-      - .github/workflows/_temp_publication_evidence_patch.yml
+      - scripts/apply_publication_evidence_fix.py
 
 permissions:
   contents: write
@@ -32,4 +32,3 @@ jobs:
           fi
           git commit -m "fix: recover publication evidence context [skip ci]"
           git push origin HEAD:fix/publication-evidence-recovery
-          echo "PUBLICATION_EVIDENCE_FIX_PUSHED_V2"

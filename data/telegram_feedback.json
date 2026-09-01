@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788266274,
+  "updated_at": 1788276093,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -5807,6 +5807,62 @@
       "why_it_matters": "این موضوع نشان‌دهنده ریسک عمیق اجتماعی و فرهنگی ناشی از تکیه گسترده بر مدل‌های زبانی بزرگ است که بر اساس داده‌های میانگین‌گیری شده آموزش می‌بینند. اگر Generative AI به جای تقویت خلاقیت، منجر به همگرایی افکار شود، تنوع زبانی، هنری و شناختی که پایه‌های نوآوری انسانی هستند، تضعیف خواهند شد. درک این پیامد برای سیاست‌گذاران و توسعه‌دهندگان ضروری است تا راهکارهایی برای حفظ تنوع در خروجی‌های الگوریتمی طراحی کنند.",
       "link": "https://www.nature.com/articles/d41586-026-02682-3",
       "posted_at": 1788266274
+    },
+    "-1004482051328:1385": {
+      "chat_id": -1004482051328,
+      "message_id": 1385,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CNBC)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "title": "گسترش همکاری Salesforce و Anthropic در پاسخ به نگرانی‌ها درباره «SaaSpocalypse»",
+      "summary": "شرکت Salesforce همکاری خود را با Anthropic گسترش داده است تا در برابر نگرانی‌های پیرامون «SaaSpocalypse» یا پایان عصر نرم‌افزار به‌عنوان سرویس، موضع‌گیری کند. Marc Benioff، مدیرعامل Salesforce، به این نگرانی‌ها پاسخ داده و بر اهمیت ادغام AI در پلتفرم‌های سازمانی تأکید کرده است. این همکاری نشان‌دهنده تلاش شرکت‌های فناوری برای حفظ رقابت‌پذیری در برابر مدل‌های جدید AI است. با این حال، جزئیات فنی دقیق این همکاری در متن ارائه‌شده ذکر نشده است.",
+      "why_it_matters": "این همکاری می‌تواند تأثیر قابل‌Attentionی بر بازار نرم‌افزارهای سازمانی داشته باشد و نشان‌دهنده تغییر استراتژی شرکت‌های بزرگ فناوری در مواجهه با AI باشد. ادغام مدل‌های Anthropic در پلتفرم Salesforce می‌تواند به بهبود قابلیت‌های هوشمند این شرکت کمک کند. با این حال، موفقیت این همکاری به توانایی Salesforce در ارائه ارزش افزوده به مشتریان بستگی دارد.",
+      "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNeDU0UHo4UERDMHZlcjVyV1I4S0dWWEQ1SGhYOXFURmJmZUJiZHpud1pGVXRKQmx1ZXl6Sy01NjBkTlkyQXFRWEJfeTVkYXVHODNvZ0p3YTVudnVSNEN4WTJQLWpad0JJa09WZ1Roay1JZ3JUZDlNdFJNRGNZYzMyNHd1TmRzTVJQ0gGOAUFVX3lxTE5oWUF2YXIzVjUzOE5zUzVNT05nemItSm9rdm1OMmRvQWFPc05NRWVteG5mNnM3dmtzSHZOYlowYTNFTnNFT0M0UmY3ZTRhN1FGTUV1U1NKcnZhcUp0LUpVU2dMa1ZCazZvSUFWNTNBNWhzNlUtekUwR1J1a2UtZ25wT3JaVzUzZGFWV1BpX1E?oc=5",
+      "posted_at": 1788276090
+    },
+    "-1004482051328:1386": {
+      "chat_id": -1004482051328,
+      "message_id": 1386,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature News",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "چالش حفظ پاسخگویی در پژوهش‌های علمی با گسترش Generative AI",
+      "summary": "با ادغام روزافزون Generative AI در فرآیندهای پژوهشی و انتشارات علمی، چالش عمیق‌تری برای حفظ پاسخگویی در کارهای دانشگاهی پدید آمده است. این مقاله در Nature به بررسی پیامدهای استفاده از هوش مصنوعی در نگارش مقالات علمی می‌پردازد. تمرکز اصلی بر این است که چگونه می‌توان در عصر جدید، مسئولیت‌پذیری و شفافیت را در تولید دانش علمی تضمین کرد.",
+      "why_it_matters": "ادغام Generative AI در پژوهش‌ها اگرچه سرعت تولید محتوا را افزایش می‌دهد، اما مرزهای مسئولیت‌پذیری علمی را مبهم می‌کند. حفظ پاسخگویی برای صحت و اصالت کارهای دانشگاهی در این شرایط حیاتی است. عدم شفافیت در استفاده از این ابزارها می‌تواند به اعتبار سیستم انتشارات علمی آسیب جدی برساند.",
+      "link": "https://www.nature.com/articles/d41586-026-02686-z",
+      "posted_at": 1788276092
+    },
+    "-1004482051328:1387": {
+      "chat_id": -1004482051328,
+      "message_id": 1387,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - NVIDIA",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "NVIDIA با معرفی DLSS 5، فناوری 3D-Guided Neural Rendering را ارائه کرده که از هوش مصنوعی برای تزریق نورپردازی و متریال‌های طبیعی‌تر به صحنه‌های بازی",
+      "summary": "NVIDIA با معرفی DLSS 5، فناوری 3D-Guided Neural Rendering را ارائه کرده که از هوش مصنوعی برای تزریق نورپردازی و متریال‌های طبیعی‌تر به صحنه‌های بازی استفاده می‌کند. توسعه‌دهندگان می‌توانند خروجی نهایی را برای هر بازی تنظیم کنند تا با چشم‌انداز هنری خود همسو شود. این فناوری بر تمام کارت‌های گرافیک GeForce RTX 50 Series، لپ‌تاپ‌های مجهز به آن و سرویس استریم GeForce NOW Ultimate پشتیبانی می‌شود. سرورهای ابری GeForce NOW Ultimate از پردازنده‌های GeForce RTX 5080 برای اجرای این قابلیت استفاده می‌کنند.",
+      "description": "Learn more about DLSS 5: https://www.nvidia.com/en-us/geforce/news/dlss-5-3d-guided-neural-rendering\n \nNVIDIA DLSS 5 introduces 3D-Guided Neural Rendering, which uses AI to infuse game scenes with lifelike lighting and materials. Developers tune the final output for each game to bring their artistic vision to life. \n \nDLSS 5 is supported on all GeForce RTX 50 Series graphics cards, laptops, and GeForce NOW Ultimate streaming from devices on GeForce RTX 5080-powered servers in the cloud.\n \nNVIDIA’s Edward Liu and Gabriele Leone walk you through how DLSS 5 and its developer controls work.\n\nSubscribe to @NVIDIAGeForce today!\nGeForce Twitch: https://www.twitch.tv/nvidia\nGeForce Instagram: https://www.instagram.com/nvidiageforce/\nGeForce TikTok: https://www.tiktok.com/@nvidiageforce/\nGeForce X: https://x.com/NVIDIAGeForce\nGeForce Facebook: https://www.facebook.com/NVIDIAGeForce/\nGeForce Community Portal: https://www.nvidia.com/en-us/geforce/community-portal/\n\n#RTXOn",
+      "why_it_matters": "ورود DLSS 5 نشان‌دهنده گذار NVIDIA از صرفاً افزایش نرخ فریم به سمت بهبود کیفی رندرینگ با استفاده از هوش مصنوعی است. پشتیبانی انحصاری از سری RTX 50 و سرورهای RTX 5080 در ابر، این فناوری را به یک مزیت رقابتی سخت‌افزاری برای نسل جدید تبدیل می‌کند. کنترل‌های توسعه‌دهنده تضمین می‌کند که خروجی نهایی با استانداردهای هنری سازندگان بازی همخوانی دارد، هرچند این موضوع وابستگی به سخت‌افزارهای جدید را افزایش می‌دهد.",
+      "link": "https://www.youtube.com/watch?v=58FagrSqC4M",
+      "posted_at": 1788276093
     }
   }
 }

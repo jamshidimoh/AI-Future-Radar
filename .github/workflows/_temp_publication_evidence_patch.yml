@@ -32,3 +32,4 @@ jobs:
           fi
           git commit -m "fix: recover publication evidence context [skip ci]"
           git push origin HEAD:fix/publication-evidence-recovery
+          echo "PUBLICATION_EVIDENCE_FIX_PUSHED"

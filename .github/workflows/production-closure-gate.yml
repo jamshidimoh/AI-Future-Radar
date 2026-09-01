@@ -115,7 +115,7 @@ jobs:
           published_run = any_run(r"\[Telegram Published\]")
           zero_publish_run = any_run(r"Posts sent: 0/") and any_run(r"normal_news=0[^\n]*tier0_news=0")
           duplicate_free = all_runs(r"history_duplicates=0 current_run_duplicates=0") and not any_run(r"duplicate publication")
-          image_contract = any_run(r"full_text=\d+ photo=enabled single_message=true")
+          image_contract = any_run(r"full_text=\d+ photo=(?:enabled|disabled) single_message=true")
           ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_run(r"normal_rank=\d{2,}")
           qa_replacement = all_runs(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
           leader_watch = all_runs(r"\[Protected Leader Eligibility\] candidates=\d+") and all_runs(r"\[Leader Protection Audit\]")

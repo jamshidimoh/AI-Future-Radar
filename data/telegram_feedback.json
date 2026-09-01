@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788278948,
+  "updated_at": 1788279362,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6111,6 +6111,45 @@
       "why_it_matters": "این هشدار نشان می‌دهد که چالش اصلی AI در آموزش، صرفاً تقلب یا دقت فنی نیست، بلکه تغییر بنیادین در روانشناسی یادگیری و انگیزه درونی است. اگر دانش‌آموزان عادت کنند که AI کارهای سخت فکری را انجام دهد، ممکن است تاب‌آوری و کنجکاوی علمی خود را از دست بدهند. این موضوع نیازمند بازنگری در روش‌های تدریس است تا بر فرآیند تفکر به جای صرفاً نتیجه نهایی تمرکز شود.",
       "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5tcmpTUDgyOVI2NlMtZklxX3djV083NVY1S0QzbVNZbmxfTWhJOTNoaF9tUF9fRnVQZEc2MVpnR19YMDZLX2tXd1ZUdzIzclZYdVEzaXRFUklVMHVXSUR1dmk2OXFBTFlzLWJjSGRMbUVnVUxabWc?oc=5",
       "posted_at": 1788278948
+    },
+    "-1004482051328:1401": {
+      "chat_id": -1004482051328,
+      "message_id": 1401,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (36 Kr)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "سام آلتمن، مدیرعامل OpenAI، در یک اپودکست اعلام کرد که مدل Astra توانایی عملکرد در سطح انسانی را در زمینه کار با کامپیوترها کسب کرده است",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در یک اپودکست اعلام کرد که مدل Astra توانایی عملکرد در سطح انسانی را در زمینه کار با کامپیوترها کسب کرده است. این ادعا نشان‌دهنده پیشرفت قابل Attentionی در قابلیت‌های عامل‌های هوش مصنوعی برای تعامل مستقیم با رابط‌های کاربری و سیستم‌عامل‌هاست. این خبر توسط منبع 36 Kr منتشر شده و به عنوان یک رویداد مهم در توسعه فناوری‌های خودکار شناخته می‌شود.",
+      "why_it_matters": "دستیابی به عملکرد سطح انسانی در کار با کامپیوتر، مرز جدیدی در خودکارسازی وظایف پیچیده دیجیتال ایجاد می‌کند که فراتر از پردازش متن یا تصویر است. این قابلیت می‌تواند تأثیر عمیقی بر بهره‌وری سازمانی و نحوه تعامل انسان‌ها با نرم‌افزارها داشته باشد. با این حال، این ادعا نیازمند بررسی دقیق‌تر محدودیت‌های فنی و دقت مدل در سناریوهای واقعی است تا پیامدهای امنیتی و عملیاتی آن مشخص شود.",
+      "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE9IUE1mM3hKa29JbmRBV2ZLSnd3a0VpZlRIWlBTUFV3aXAxWmpad3YxTEJMRGZ0ZV83QjdKVmEtT2N2WjJaMV9wU1ZMZTItcGR5bU9v?oc=5",
+      "posted_at": 1788279360
+    },
+    "-1004482051328:1402": {
+      "chat_id": -1004482051328,
+      "message_id": 1402,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (IFLScience)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "پیشنهاد سام آلتمن برای کاربرد جدید ChatGPT و واکنش‌های منفی کاربران",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، کاربرد جدیدی برای مدل زبانی ChatGPT پیشنهاد داده است که با واکنش‌های شدیداً منفی و ناامیدکننده کاربران مواجه شده است. کاربران در شبکه‌های اجتماعی با عباراتی مانند «عیسی‌الله این چقدر ناامیدکننده است» به این پیشنهاد واکنش نشان داده‌اند. این واکنش‌ها نشان‌دهنده شکاف عمیق بین چشم‌انداز توسعه‌دهندگان هوش مصنوعی و انتظارات یا نگرانی‌های عمومی نسبت به جهت‌گیری این فناوری است. منبع خبر به نقل از IFLScience، بر جنبه روانی و اجتماعی این واکنش‌ها تمرکز دارد تا جزئیات فنی دقیق پیشنهاد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "واکنش‌های احساسی شدید کاربران به پیشنهادات رهبران صنعت هوش مصنوعی، نشان‌دهنده حساسیت بالای جامعه نسبت به جهت‌گیری‌های اخلاقی و کاربردی این فناوری‌هاست. این شکاف بین توسعه‌دهندگان و کاربران می‌تواند بر پذیرش عمومی و اعتماد به سیستم‌های هوش مصنوعی تأثیر بگذارد. درک این نگرانی‌ها برای شرکت‌هایی مانند OpenAI حیاتی است تا بتوانند استراتژی‌های خود را با انتظارات اجتماعی همسو کنند و از بحران‌های اعتماد جلوگیری نمایند.",
+      "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPcjA2OGxRZ0tjdF8yVHVtOTgzQjRROTE3VlBUYWZYX3M2SVZJcUJUWlczLU90LWZsODFqYmNaWkh6RDJ0bW9GTE1Iakd0V2xuQVRfd2tLOHR1VklXNzg4S2NfYW9fUGFzYjVacnZyUzdPUGt4d05OVTNhYmJHWXExUHJQY0F2ODlMcmEtVHJxMHVPWmNLck1aWVhzZDJfR2FwTkFGb0h2bXRSb0h6MklSQlJXeUNudXlMTnZNNQ?oc=5",
+      "posted_at": 1788279362
     }
   }
 }

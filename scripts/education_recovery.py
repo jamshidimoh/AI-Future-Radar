@@ -26,7 +26,6 @@ import educational_content
 import production_entrypoint
 import production_resilient_runner
 
-
 LESSON_41_CURRENT_SOURCES = [
     {
         "name": "Anthropic: Demystifying evals for AI agents",
@@ -39,8 +38,8 @@ LESSON_41_CURRENT_SOURCES = [
         "year": 2026,
     },
     {
-        "name": "Anthropic: Trustworthy agents in practice",
-        "url": "https://www.anthropic.com/research/trustworthy-agents",
+        "name": "NIST: AI Agent Standards Initiative",
+        "url": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
         "year": 2026,
     },
 ]
@@ -57,6 +56,7 @@ def _source_candidates_with_lesson_41_fallback(lesson: dict):
     stale_urls = {
         "https://www.anthropic.com/research/building-effective-agents",
         "https://platform.openai.com/docs/guides/agents",
+        "https://www.anthropic.com/research/trustworthy-agents",
     }
     stale_normalized = {u.rstrip("/") for u in stale_urls}
     filtered = [
@@ -78,7 +78,6 @@ def _source_candidates_with_lesson_41_fallback(lesson: dict):
 
 
 def _install_authoritative_source_override() -> None:
-    """Patch both source entry points used by the production publisher."""
     educational_content._source_candidates = _source_candidates_with_lesson_41_fallback
     production_resilient_runner._source_candidates_with_current_overrides = (
         _source_candidates_with_lesson_41_fallback

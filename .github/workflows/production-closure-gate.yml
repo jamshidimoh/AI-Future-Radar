@@ -60,24 +60,18 @@ jobs:
                   location = exc.headers.get("Location")
                   if not location:
                       raise RuntimeError("GitHub log redirect did not include a Location header") from exc
-                  # The redirect target is a short-lived blob URL; do not forward
-                  # the GitHub bearer token to the storage host.
                   with urllib.request.urlopen(urllib.request.Request(location), timeout=30) as response:
                       return response.read().decode("utf-8", errors="replace")
 
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=10")
-          runs = [
-              r for r in runs_data.get("workflow_runs", [])
-              if r.get("name") == "Run AI Future Radar Bot"
-          ]
+          runs = [r for r in runs_data.get("workflow_runs", []) if r.get("name") == "Run AI Future Radar Bot"]
           if len(runs) < 3:
               print(f"CLOSURE: IN PROGRESS — only {len(runs)} production runs observed; 3 required.")
               sys.exit(0)
 
           window = runs[:3]
           print("Closure window:", [
-              (r.get("run_number"), r.get("conclusion"), r.get("head_sha", "")[:8])
-              for r in window
+              (r.get("run_number"), r.get("conclusion"), r.get("head_sha", "")[:8]) for r in window
           ])
           if any(r.get("conclusion") != "success" for r in window):
               print("CLOSURE: BLOCKED — one of the last three production runs failed.")
@@ -125,6 +119,13 @@ jobs:
           state_persisted = all_runs(r"Production state persisted")
           mission_portfolio = all_runs(r"mission_aware=true") and not any_run(r"generic low[- ]signal")
 
+          # Critical product-level proof: closure is not valid merely because the
+          # recovery script returned success or because Education was "not_due".
+          # At least one observed production run must contain explicit evidence
+          # that an Education lesson was actually delivered to Telegram.
+          education_published = any_run(r"\[Education Published\].*telegram_delivery=successful")
+          education_recovery_confirmed = any_run(r"\[Education Recovery\] CONFIRMED")
+
           evidence = {
               "01_three_successful_runs": True,
               "02_publish_and_fail_closed_zero": published_run and zero_publish_run,
@@ -136,6 +137,7 @@ jobs:
               "08_provider_failure_isolated": provider_isolated,
               "09_state_after_confirmed_delivery": state_persisted,
               "10_mission_portfolio_not_generic": mission_portfolio,
+              "11_real_education_publication": education_published and education_recovery_confirmed,
           }
 
           for key, value in evidence.items():

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788278713,
+  "updated_at": 1788278948,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6073,6 +6073,44 @@
       "why_it_matters": "این اظهارات نشان می‌دهد که سرمایه‌گذاری‌های عظیم در زیرساخت‌های AI فراتر از یک ترند فناوری، به محرکی برای بازسازی بنیان‌های صنعتی آمریکا تبدیل شده است. همبستگی این روایت با عملکرد مثبت سهام NVIDIA، نشان‌دهنده اعتماد بازار به نقش محوری این شرکت در این تحول ساختاری است. این روند می‌تواند الگوی جدیدی برای سیاست‌گذاری‌های صنعتی و جذب سرمایه در بخش فناوری ایجاد کند.",
       "link": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxNVE9hbU1NdXB1OUpxSTlPN3c2UjQ5MHNLclRRSW5uTXB0bzRZcDRoTVVaR0ZrMGtOSXdDMno4MTk2LTBWRmxoWEVnS0tFakxKQk1PYmdGa0dGVWRoWE5sdkNzbHliRGNtR2FyblR6Vm94VGhPeWtJMkVMNWtOaTU5ZnZpQWFTNGF6S0pGQXpFWnpRcnhhS1k2VmFRLXY4eVdMU1pKT2hkX0x1SzJ6TEdoOXJQYmpnZE1qUzFfU3YxUFdCSDliQjBnWE9MWHZ6TkxNXzhNdHVnZkdiUGNwRHNQQXYyWDdCVUh2ZmZDcG1rSldwSVVyMUE?oc=5",
       "posted_at": 1788278713
+    },
+    "-1004482051328:1399": {
+      "chat_id": -1004482051328,
+      "message_id": 1399,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Fortune)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Mark Zuckerberg",
+      "watch_person": "Mark Zuckerberg",
+      "title": "نویسنده برنده پولیتزر: مارک زاکربرگ نیز مانند چنگیزخان از شانس آب‌وهوایی بهره‌مند شد",
+      "summary": "یک نویسنده برنده جایزه پولیتزر در مقاله‌ای برای Fortune، موفقیت مارک زاکربرگ را در کنار چنگیزخان قرار داده و تأکید می‌کند که هر دو از شرایط آب‌وهوایی مساعد بهره‌مند شدند. این تحلیل نشان می‌دهد که عوامل محیطی و شانس در شکل‌گیری موفقیت‌های بزرگ تاریخی و فناوری نقش تعیین‌کننده‌ای داشته‌اند. نویسنده با مقایسه این دو شخصیت، بر اهمیت متغیرهای غیرقابل پیش‌بینی در مسیر پیشرفت تأکید ورزیده است.",
+      "why_it_matters": "این دیدگاه با برجسته کردن نقش شانس و شرایط محیطی، روایت رایج مبنی بر اینکه موفقیت‌های بزرگ صرفاً حاصل تلاش فردی یا نبوغ است را به چالش می‌کشد. درک این موضوع برای تحلیل‌گران فناوری و مدیران استارتاپی حیاتی است، زیرا نشان می‌دهد که عوامل بیرونی غیرقابل کنترل می‌توانند مسیر رشد شرکت‌های بزرگ را تغییر دهند. این تحلیل هشدار می‌دهد که نباید نقش متغیرهای خارجی را در ارزیابی عملکرد رهبران فناوری نادیده گرفت.",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQUWNOWTY4MGQwZmlUM0pLeWo3WVpfZGtQbGhkb3ExbXZIdjFLb2lRaENGMVNIdHVzOVZKSEdRN0MtRG1Zb3N1MUIzSWdNcGZsdTFZUkRGSjRBaGZScFB3d1BOZGlWQkY1WDhOcW03dFNUWWxSbjV0MldmVHM1b0otWA?oc=5",
+      "posted_at": 1788278947
+    },
+    "-1004482051328:1400": {
+      "chat_id": -1004482051328,
+      "message_id": 1400,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (finance.biggo.com)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Fei-Fei Li",
+      "watch_person": "Fei-Fei Li",
+      "title": "Fei-Fei Li، متخصص برجسته هوش مصنوعی، هشدار می‌دهد که بزرگترین تهدید ناشی از ادغام AI در محیط‌های آموزشی، کاهش تمایل و انگیزه دانش‌آموزان برای یادگیری",
+      "summary": "Fei-Fei Li، متخصص برجسته هوش مصنوعی، هشدار می‌دهد که بزرگترین تهدید ناشی از ادغام AI در محیط‌های آموزشی، کاهش تمایل و انگیزه دانش‌آموزان برای یادگیری است. او استدلال می‌کند که دسترسی آسان به پاسخ‌ها توسط مدل‌های زبانی، فرآیند تفکر انتقادی و تلاش ذهنی لازم برای درک عمیق مطالب را تضعیف می‌کند. این پدیده می‌تواند منجر به وابستگی بیش از حد به ابزارهای خودکار و کاهش مهارت‌های شناختی پایه در نسل آینده شود.",
+      "why_it_matters": "این هشدار نشان می‌دهد که چالش اصلی AI در آموزش، صرفاً تقلب یا دقت فنی نیست، بلکه تغییر بنیادین در روانشناسی یادگیری و انگیزه درونی است. اگر دانش‌آموزان عادت کنند که AI کارهای سخت فکری را انجام دهد، ممکن است تاب‌آوری و کنجکاوی علمی خود را از دست بدهند. این موضوع نیازمند بازنگری در روش‌های تدریس است تا بر فرآیند تفکر به جای صرفاً نتیجه نهایی تمرکز شود.",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5tcmpTUDgyOVI2NlMtZklxX3djV083NVY1S0QzbVNZbmxfTWhJOTNoaF9tUF9fRnVQZEc2MVpnR19YMDZLX2tXd1ZUdzIzclZYdVEzaXRFUklVMHVXSUR1dmk2OXFBTFlzLWJjSGRMbUVnVUxabWc?oc=5",
+      "posted_at": 1788278948
     }
   }
 }

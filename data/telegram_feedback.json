@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788279362,
+  "updated_at": 1788279477,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6150,6 +6150,45 @@
       "why_it_matters": "واکنش‌های احساسی شدید کاربران به پیشنهادات رهبران صنعت هوش مصنوعی، نشان‌دهنده حساسیت بالای جامعه نسبت به جهت‌گیری‌های اخلاقی و کاربردی این فناوری‌هاست. این شکاف بین توسعه‌دهندگان و کاربران می‌تواند بر پذیرش عمومی و اعتماد به سیستم‌های هوش مصنوعی تأثیر بگذارد. درک این نگرانی‌ها برای شرکت‌هایی مانند OpenAI حیاتی است تا بتوانند استراتژی‌های خود را با انتظارات اجتماعی همسو کنند و از بحران‌های اعتماد جلوگیری نمایند.",
       "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPcjA2OGxRZ0tjdF8yVHVtOTgzQjRROTE3VlBUYWZYX3M2SVZJcUJUWlczLU90LWZsODFqYmNaWkh6RDJ0bW9GTE1Iakd0V2xuQVRfd2tLOHR1VklXNzg4S2NfYW9fUGFzYjVacnZyUzdPUGt4d05OVTNhYmJHWXExUHJQY0F2ODlMcmEtVHJxMHVPWmNLck1aWVhzZDJfR2FwTkFGb0h2bXRSb0h6MklSQlJXeUNudXlMTnZNNQ?oc=5",
       "posted_at": 1788279362
+    },
+    "-1004482051328:1403": {
+      "chat_id": -1004482051328,
+      "message_id": 1403,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (fortune.com)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "پیشنهاد سام آلتمن درباره پادکست هوش مصنوعی کودکان و واکنش‌های تند کاربران",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در توییتر پیشنهاد کرد که یکی از کاربردهای جذاب ChatGPT، تولید یک پادکست روزانه هوش مصنوعی درباره کودکان کاربران است. این پیشنهاد بلافاصله با واکنش‌های شدید و انتقاداتی همراه شد که آن را «وحشتناک» و «خفقان‌آور» توصیف کردند. کاربران نگرانی‌های عمیقی را درباره حریم خصوصی، نظارت الگوریتمی و پیامدهای روانی چنین نظارتی بر کودکان ابراز کردند. این بحث نشان‌دهنده شکاف عمیق بین دیدگاه‌های توسعه‌دهندگان فناوری و نگرانی‌های اخلاقی جامعه کاربری است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این واکنش نشان می‌دهد که حتی پیشنهاداتی که به عنوان «کاربردهای جذاب» معرفی می‌شوند، می‌توانند چالش‌های اخلاقی و حریم خصوصی جدی را در ذهن کاربران برانگیزند. نگرانی از نظارت مداوم و تحلیل رفتار کودکان توسط الگوریتم‌ها، یک خط قرمز مهم برای بسیاری از والدین و متخصصان اخلاق فناوری است. این بحث تأکید می‌کند که پذیرش عمومی فناوری‌های هوش مصنوعی نه تنها به قابلیت‌های فنی، بلکه به حساسیت‌های اخلاقی و فرهنگی نیز بستگی دارد.",
+      "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNbW4zdEllZkZvSlJBLVlsTlYtSXlzeHNlV2g0V21vT190Ym52OHFGQWt4Tm9rTGpCN1lRazZiWDNPdEhBSGttcWZ6bDQ4dWxJa3RRZHQ4cEstSU40V1Mxa3RCbGFXSm9sWTJ5ckl2UmlmSGpla1diOHhra1ZsMWJPNTFHVWE1UnV6VjNMdng5WjNmcE9lemo3bjNmQk8zYmFTTmNENlBjRG0?oc=5",
+      "posted_at": 1788279476
+    },
+    "-1004482051328:1404": {
+      "chat_id": -1004482051328,
+      "message_id": 1404,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CBS News)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Mark Zuckerberg",
+      "watch_person": "Mark Zuckerberg",
+      "title": "۵ نکته کلیدی از مقاله مارک زاکربرگ درباره چشم‌انداز سوپر اینتلیجنس",
+      "summary": "مارک زاکربرگ در مقاله‌ای جدید، چشم‌انداز خود را پیرامون توسعه و آینده سوپر اینتلیجنس (Superintelligence) تشریح کرده است. این تحلیل بر اساس گزارش CBS News، پنج پیام اصلی و راهبردی از این نوشته را استخراج می‌کند که نشان‌دهنده اولویت‌های فنی و فلسفی او در این حوزه است. متن مقاله به بررسی نحوه تعامل انسان با هوش مصنوعی پیشرفته و نقش آن در تحول تکنولوژی می‌پردازد.",
+      "why_it_matters": "بیانیه‌های رهبران شرکت‌های بزرگ فناوری مانند Meta، جهت‌گیری سرمایه‌گذاری‌ها و استانداردهای ایمنی در توسعه مدل‌های زبانی بزرگ را تعیین می‌کنند. درک این چشم‌اندازها برای تحلیل‌گران بازار و توسعه‌دهندگان حیاتی است، زیرا نشان می‌دهد که چگونه غول‌های فناوری تعادل بین نوآوری سریع و مدیریت ریسک‌های وجودی را می‌سنجند. این رویکرد می‌تواند بر سیاست‌گذاری‌های نظارتی آینده و رقابت در اکوسیستم هوش مصنوعی تأثیر مستقیم بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE5qa1RyZUFfLXB5SV9qT1R1bk1CVW1HUUdYeEM5YlNMM213d0twTHpCRjJjaXVaOWZlQWlUaksyQXY4cXpIZVFyOE94ZktuSmpPcWc1YmZFVjBJaFQxTUM5RVRDdUgyMFFOT2lCSThfaENDZw?oc=5",
+      "posted_at": 1788279477
     }
   }
 }

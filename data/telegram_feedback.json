@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788280985,
+  "updated_at": 1788281101,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6265,6 +6265,25 @@
       "why_it_matters": "این گزارش نشان‌دهنده Attention رسانه‌های تخصصی به تحولات پلتفرم‌های اجتماعی و نقش Elon Musk در آن‌هاست. با این حال، فقدان جزئیات فنی در متن ورودی، امکان تحلیل پیامدهای واقعی یا محدودیت‌های این ادعا را نمی‌دهد. اهمیت این خبر بیشتر در سیگنال‌دهی به تغییرات احتمالی در اکوسیستم فناوری است تا ارائه داده‌های قابل استناد فنی.",
       "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNYU1BMnBQeGZ6ZHpLNTVMWnhsdHVMeGhQSGI3TDlveF80YmcyaTBYb0k3RXhaaDBzWG4zQWdHakF3d0I2TUF3dUVaSzh0Rmpuekw0eE9PR1Z3ZDZMTFVJOEdlZE4xT0o1TmdBblBmTktYQkxaVGVvc1FvQW9Wa1Jrb2VBOWhXcnhUOGJ5QzEyMA?oc=5",
       "posted_at": 1788280136
+    },
+    "-1004482051328:1409": {
+      "chat_id": -1004482051328,
+      "message_id": 1409,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Florida Politics)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "دونالدز: دیتاسنترهای هوش مصنوعی پیروزی ایلان ماسک و فلوریدا در رقابت فضایی تجاری را تضمین می‌کنند",
+      "summary": "بایرون دونالدز (Byron Donalds) ادعا می‌کند که دیتاسنترهای هوش مصنوعی عامل کلیدی در موفقیت ایلان ماسک (Elon Musk) و ایالت فلوریدا در رقابت فضایی تجاری هستند. او توسعه این زیرساخت‌های محاسباتی را به عنوان مزیت رقابتی فلوریدا برای جذب سرمایه‌گذاری‌های فناوری و فضایی معرفی می‌کند. دونالدز ارتباط مستقیمی بین قدرت پردازشی هوش مصنوعی و پیشرفت‌های عملیاتی در این صنعت برقرار می‌داند.",
+      "why_it_matters": "این دیدگاه نشان می‌دهد که رقابت در صنعت فضایی تجاری از تمرکز صرف بر سخت‌افزار موشکی به سمت زیرساخت‌های داده و هوش مصنوعی گسترش یافته است. تأکید بر دیتاسنترها به عنوان عامل پیروزی، استراتژی‌های ایالتی برای جذب شرکت‌های فناوری را تغییر می‌دهد و قدرت محاسباتی را به یک دارایی استراتژیک در اقتصاد فضایی تبدیل می‌کند. این رویکرد می‌تواند الگوی جدیدی برای رقابت بین‌ایالتی در جذب سرمایه‌گذاری‌های کلان فناوری ایجاد کند.",
+      "link": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNU25ZVGtndXhIU09UWFJpM1hXZ21CWm5jendWeTJuVWhpRGNCQU5NaGlVakV4QlBqQlR3ZWY0WF85dnpRN1FSVDVDWFdIbTZxWUNOX25SRmZDMUxYdW83a3lVMHlRZXlWanpMSzVPX1VJNWVIY3ZUY2NvbVRpOERjTWN2dkpLbFNETWxfbVFPLWszazJ1dWZkS2YyUjFwRTYxVHd6REhmeVNyX0tXeTk3X1BVT1JQRVhOMzdjT0RNdHp5WnRHVkNtZFNLaGRfMXRBVnc?oc=5",
+      "posted_at": 1788281101
     }
   }
 }

@@ -59,7 +59,7 @@ class FinalProductionAcceptanceTests(unittest.TestCase):
         recent_ts = time.time() - 3600
         history = [{"ts": recent_ts, "source": "Reddit", "content_type": "news"}, {"ts": recent_ts + 1, "source": "Reddit", "content_type": "news"}]
         with patch.object(ranking, "_load_records", return_value=[]), patch.object(ranking._pipeline, "load_source_history", return_value=history):
-            selected = ranking._global_ranked_selection(items, 4, 2, 4, {"rotation_days": 7})
+            selected = ranking._global_ranked_selection(items, 4, 2, 4, {"rotation_days": 7, "mission_aware": False})
         selected_sources = [item["source"] for item in selected]
         self.assertLessEqual(len(selected), 4)
         self.assertNotIn("Reddit", selected_sources)

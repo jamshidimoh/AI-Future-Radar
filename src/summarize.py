@@ -37,9 +37,9 @@ summary باید 3 تا 5 جمله کامل و اطلاعات مهم منبع ر
 
 _VALUE_REPAIR_PROMPT = """تو ویراستار ارشد محتوای یک رسانه تخصصی فناوری هستی. پیش‌نویس زیر از نظر زبان معتبر است اما از نظر ارزش اطلاعاتی ضعیف است.
 فقط با استفاده از متن منبع آن را اصلاح کن.
-summary: دو تا چهار جمله که مشخصاً بگوید چه اتفاقی افتاده، مهم‌ترین روش/یافته/قابلیت/عدد یا محدودیت چیست. کلی‌گویی و تکرار عنوان ممنوع.
-why_it_matters: دو یا سه جمله که یک پیامد مشخص برای پژوهش، محصول، زیرساخت، بازار، ایمنی، حکمرانی یا مسیر آینده فناوری توضیح دهد. از کلیشه‌هایی مانند «این موضوع آینده AI را تغییر می‌دهد» بدون سازوکار مشخص استفاده نکن.
-summary و why_it_matters نباید یکدیگر را تکرار کنند. هیچ ادعایی خارج از منبع اضافه نکن. نام رسمی افراد، شرکت‌ها، مدل‌ها و پروژه‌ها Latin بماند.
+summary باید 3 تا 5 جمله کامل باشد و مشخصاً بگوید چه اتفاقی افتاده، مهم‌ترین روش/یافته/قابلیت/عدد یا محدودیت چیست. کلی‌گویی و تکرار عنوان ممنوع.
+why_it_matters باید 3 تا 4 جمله کامل باشد و یک پیامد مشخص برای پژوهش، محصول، زیرساخت، بازار، ایمنی، حکمرانی یا مسیر آینده فناوری توضیح دهد. از کلیشه‌هایی مانند «این موضوع آینده AI را تغییر می‌دهد» بدون سازوکار مشخص استفاده نکن.
+summary و why_it_matters نباید یکدیگر را تکرار کنند. هیچ ادعایی خارج از منبع اضافه نکن. جزئیات فنی، اعداد، نام مدل/سیستم و محدودیت‌های صریح منبع را در صورت وجود حفظ کن. نام رسمی افراد، شرکت‌ها، مدل‌ها و پروژه‌ها Latin بماند.
 خروجی فقط JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 
 پیش‌نویس: {draft}
@@ -63,6 +63,19 @@ def _extract_json(raw):
     if isinstance(data, list) and data and isinstance(data[0], dict):
         return data[0]
     raise TypeError(f"Expected JSON object, got {type(data).__name__}")
+
+
+def _source_text(item, max_chars=3500):
+    """Build the strongest available evidence context without duplicating identical fields."""
+    parts = []
+    seen = set()
+    for key in ("summary", "evidence_text", "description"):
+        value = str(item.get(key, "") or "").strip()
+        if not value or value in seen:
+            continue
+        seen.add(value)
+        parts.append(value)
+    return "\n\n".join(parts)[:max_chars]
 
 
 def _normalize(data, item):
@@ -169,11 +182,11 @@ def _repair_persian_draft(data, item):
     """
     prompt = _DRAFT_REPAIR_PROMPT.format(
         draft=json.dumps(data, ensure_ascii=False),
-        source=str(item.get("summary", "") or "")[:3500],
+        source=_source_text(item),
     )
     raw, provider = call_llm_with_fallback(
         prompt,
-        json.dumps({"draft": data, "source": str(item.get("summary", "") or "")[:3500]}, ensure_ascii=False),
+        json.dumps({"draft": data, "source": _source_text(item)}, ensure_ascii=False),
         providers=get_quality_chain(),
     )
     try:
@@ -208,11 +221,11 @@ def _repair_persian_draft(data, item):
 def _repair_editorial_value(data, item):
     prompt = _VALUE_REPAIR_PROMPT.format(
         draft=json.dumps(data, ensure_ascii=False),
-        source=str(item.get("summary", "") or "")[:3500],
+        source=_source_text(item),
     )
     raw, provider = call_llm_with_fallback(
         prompt,
-        json.dumps({"draft": data, "source": str(item.get("summary", "") or "")[:3500]}, ensure_ascii=False),
+        json.dumps({"draft": data, "source": _source_text(item)}, ensure_ascii=False),
         providers=get_quality_chain(),
     )
     try:
@@ -250,7 +263,7 @@ def _editorial_review(data):
 def summarize_item(item):
     category = item.get("category", "ai")
     prompt = _PROMPT.format(depth=_DEPTH.get(category, _DEPTH["ai"]))
-    raw_text = str(item.get("summary", "")).strip()
+    raw_text = _source_text(item)
     user = (
         f"عنوان: {item.get('title','')}\n"
         f"منبع: {item.get('source','')}\n"

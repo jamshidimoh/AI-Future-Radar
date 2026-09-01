@@ -1,23 +1,39 @@
-"""Canonical Story Gate.
+"""Canonical Story Gate and canonical score boundary.
 
-Selection priority is preserved here; duplicate identity is delegated to the
-single Story Identity boundary. Representative ranking must not consume the
-signal-inflated intermediate editorial score or signal_score twice.
+Representative selection uses publication-value score only. Technology signal is
+computed independently and combined once after deduplication.
 """
+from editorial_score_v2 import score_editorial_v2
 from story_identity import deduplicate_stories
+from technology_signal_v2 import calculate_technology_signal_score
+
+
+def _prepare_canonical_scores(item):
+    candidate = dict(item)
+    legacy_editorial = candidate.get("editorial_score")
+    v2_editorial, features = score_editorial_v2(candidate)
+    candidate["editorial_score_legacy"] = legacy_editorial
+    candidate["editorial_score_v2"] = v2_editorial
+    candidate["editorial_features_v2"] = features
+    candidate["editorial_score_pre_signal"] = v2_editorial
+    vector = candidate.get("signal_vector") or {}
+    if vector:
+        candidate["technology_signal_score"] = calculate_technology_signal_score(vector)
+    else:
+        try:
+            candidate["technology_signal_score"] = float(candidate.get("signal_score", 0) or 0)
+        except (TypeError, ValueError):
+            candidate["technology_signal_score"] = 0.0
+    return candidate
 
 
 def story_representative_rank_key(item):
-    """Return the ranking key used only to choose a story representative.
+    """Rank only by policy/authority/editorial publication value.
 
-    The representative decision is intentionally independent of the signal
-    score. ``editorial_score_pre_signal`` is preferred when available; legacy
-    callers without it fall back to ``editorial_score``.
+    ``signal_score`` and signal-inflated legacy scores are intentionally absent.
     """
     try:
-        representative_score = float(
-            item.get("editorial_score_pre_signal", item.get("editorial_score", 0)) or 0
-        )
+        representative_score = float(item.get("editorial_score_pre_signal", item.get("editorial_score", 0)) or 0)
     except (TypeError, ValueError):
         representative_score = 0.0
     return (
@@ -30,38 +46,24 @@ def story_representative_rank_key(item):
 
 
 def _canonical_final_editorial_score(item):
-    """Compute the canonical final score used by portfolio selection."""
+    """Combine canonical editorial and technology scores exactly once."""
     try:
-        pre_signal = float(
-            item.get("editorial_score_pre_signal", item.get("editorial_score", 0)) or 0
-        )
+        editorial = float(item.get("editorial_score_pre_signal", 0) or 0)
     except (TypeError, ValueError):
-        pre_signal = 0.0
+        editorial = 0.0
     try:
-        signal = float(item.get("signal_score", 0) or 0)
+        signal = float(item.get("technology_signal_score", item.get("signal_score", 0)) or 0)
     except (TypeError, ValueError):
         signal = 0.0
-    if "editorial_score_pre_signal" not in item and "signal_score" not in item:
-        return round(pre_signal, 2)
-    return round(0.75 * pre_signal + 0.25 * signal, 2)
+    return round(0.75 * editorial + 0.25 * signal, 2)
 
 
 def gate_story_candidates(protected_items, leader_items, regular_items, seen_signatures, threshold=0.45):
-    """Order candidates once, then apply one conservative identity policy.
-
-    ``threshold`` is retained for backwards compatibility with existing
-    callers/configuration, but duplicate identity is no longer controlled by a
-    broad semantic threshold. Related stories must remain eligible for ranking.
-    """
+    """Prepare canonical scores, rank representatives once, then deduplicate."""
     ordered = []
     for pool in (protected_items or [], leader_items or [], regular_items or []):
-        ordered.extend(
-            sorted(
-                (dict(item) for item in pool),
-                key=story_representative_rank_key,
-                reverse=True,
-            )
-        )
+        prepared = (_prepare_canonical_scores(item) for item in pool)
+        ordered.extend(sorted(prepared, key=story_representative_rank_key, reverse=True))
 
     survivors = deduplicate_stories(ordered, history=list(seen_signatures or []))
     for item in survivors:

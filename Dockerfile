@@ -13,12 +13,13 @@ WORKDIR /app
 
 RUN groupadd --system radar && useradd --system --gid radar --create-home radar
 
-COPY requirements.txt ./
+COPY requirements-runtime.txt ./requirements.txt
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 COPY . ./
+RUN mkdir -p /app/data && chown -R radar:radar /app
 
-RUN chown -R radar:radar /app
 USER radar
+VOLUME ["/app/data"]
 
 CMD ["python", "-u", "scripts/production_with_ranking_audit.py"]

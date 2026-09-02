@@ -10,6 +10,7 @@ if str(SRC) not in sys.path:
 from educational_telegram_style import (
     MAX_DEFINITION,
     MAX_EXAMPLE,
+    MAX_MESSAGE,
     MAX_RELATION,
     MAX_SIMPLE,
     MAX_TAKEAWAY,
@@ -31,6 +32,9 @@ class ExpandedSectionBudgetTests(unittest.TestCase):
         self.assertEqual(MAX_RELATION, 360)
         self.assertEqual(MAX_EXAMPLE, 380)
         self.assertEqual(MAX_TAKEAWAY, 240)
+
+    def test_education_renderer_matches_canonical_telegram_safe_limit(self):
+        self.assertEqual(MAX_MESSAGE, 3900)
 
     def test_education_still_fails_closed_above_single_message_budget(self):
         sources = [
@@ -57,7 +61,7 @@ class ExpandedSectionBudgetTests(unittest.TestCase):
             "education_sources": sources,
         }
         text = format_educational_post(item)
-        self.assertLessEqual(len(text), 3900)
+        self.assertLessEqual(len(text), MAX_MESSAGE)
 
 
 if __name__ == "__main__":

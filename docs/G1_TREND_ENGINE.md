@@ -1,6 +1,6 @@
 # G1 — Deterministic Signal and Trend Engine
 
-Status: IMPLEMENTED — VALIDATION PENDING
+Status: VALIDATED — GREEN
 
 G1 is publication-decoupled and remains isolated from `main` until controlled integration is accepted.
 
@@ -38,6 +38,16 @@ G1 does not implement persistent registry/lineage, evidence graphs, temporal sta
 
 ## Acceptance evidence
 
-Tests cover repeatability, bounded similarity, anti-chain clustering, weak-signal retention, source independence, Source Tier independence, non-destructive enrichment, and fail-closed configuration validation. Final acceptance requires the full CI suite to pass on the immutable PR revision.
+Final immutable-HEAD validation completed successfully on `a4e2d07b8f156eacd516805ede27103fab5e9203`:
+
+- Production Quality Gate: 474/474 tests passed.
+- Final Production Acceptance: 474/474 regression tests passed.
+- Final production acceptance suite: 6/6 passed.
+- Frozen production acceptance contract: 6/6 passed.
+- Production state contract: PASS (`run_number=269`, `last_published_news_score=64.0`, `last_published_normal_news_score=64.0`).
+
+These runs checked out the exact G1 HEAD. The tested implementation therefore has revision-specific CI/acceptance evidence. Repeated execution determinism is also covered by the G1 test suite.
 
 Production publication behavior remains unchanged pending G8 controlled integration.
+
+G1 is validated. This does not imply overall project completion; G2 through G9 remain outstanding.

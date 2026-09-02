@@ -1,0 +1,8 @@
+convergence_intelligence:
+  version: 1
+  enabled: false
+  publication_decoupled: true
+  minimum_domains: 2
+  minimum_shared_claims: 1
+  minimum_independent_sources: 2
+  convergence_threshold: 0.50

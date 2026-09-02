@@ -1,0 +1,55 @@
+name: G7 Shadow Measurement Validation
+
+on:
+  push:
+    branches:
+      - evolution/technology-intelligence-g7
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g7-validation
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run full regression suite
+        run: python -m pytest -q
+
+      - name: Run G7 focused contract
+        run: python -m pytest -q tests/test_intelligence_measurement_v1.py
+
+      - name: Validate frozen production acceptance
+        run: python -m pytest -q tests/test_final_production_acceptance.py tests/test_production_acceptance_contract.py
+
+      - name: Validate G7 shadow safety contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          data = yaml.safe_load(Path("config/intelligence_measurement.yaml").read_text(encoding="utf-8"))
+          cfg = data["intelligence_measurement"]
+          assert cfg["version"] == 1
+          assert cfg["enabled"] is True
+          assert cfg["shadow_only"] is True
+          assert cfg["publication_decoupled"] is True
+          assert cfg["require_determinism"] is True
+          print("G7 shadow safety contract: PASS")
+          PY

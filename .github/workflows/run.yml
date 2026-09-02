@@ -1,14 +1,12 @@
 name: Run AI Future Radar Bot
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       force_education:
         description: "Run a controlled end-to-end Education publication validation"
         required: false
-        default: true
+        default: false
         type: boolean
   schedule:
     # Tehran publication windows:

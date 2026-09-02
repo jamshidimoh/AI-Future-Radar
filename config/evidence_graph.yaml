@@ -1,0 +1,6 @@
+evidence_graph:
+  version: 1
+  enabled: false
+  publication_decoupled: true
+  retain_contradictions: true
+  minimum_edge_confidence: 0.0

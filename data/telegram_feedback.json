@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788332628,
+  "updated_at": 1788350879,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6400,6 +6400,25 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788332091
+    },
+    "-1004482051328:1417": {
+      "chat_id": -1004482051328,
+      "message_id": 1417,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (France 24)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "Elon Musk در G20 از دیتاسنترهای هوش مصنوعی دفاع کرد و قوانین اتحادیه اروپا را محکوم نمود",
+      "summary": "Elon Musk در نشست G20 موضع خود را در مورد زیرساخت‌های هوش مصنوعی تشریح کرد. او از ضرورت توسعه دیتاسنترهای AI دفاع نمود و بر اهمیت این فناوری‌ها تأکید ورزید. در مقابل، Musk قوانین و مقررات اتحادیه اروپا را به شدت سرزنش کرد. این اظهارات نشان‌دهنده تنش فزاینده بین رهبران فناوری و نهادهای تنظیم‌گر اروپایی است.",
+      "why_it_matters": "این موضع‌گیری نشان می‌دهد که رهبران صنعت فناوری، مقررات اتحادیه اروپا را مانعی برای نوآوری و توسعه زیرساخت‌های حیاتی AI می‌دانند. درگیری کلامی Musk در چنین محفلی جهانی، احتمال تشدید اختلافات بین بازارهای آزاد فناوری و رویکردهای محافظه‌کارانه اروپا را افزایش می‌دهد. این موضوع می‌تواند بر آینده سرمایه‌گذاری‌های زیرساختی و چارچوب‌های نظارتی جهانی هوش مصنوعی تأثیر مستقیم بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOU3ZoM1Zfb3FuNHBUUkZRY29ISFU5VU8wX01QRHNab3JtbjZHOFgwei1xRi1iaTRCb1BkTkZlbGFwbl9fN0dKYVVndkQ0YU05TzA3M2hNYVN3MXVONmdIMkR6MHpSeWFzQWticHVLMkMxTEd6SEVTa3RwUFJVcy1jT1dqYl9XZGRiVTZrWnliUFU0cGxLS1E?oc=5",
+      "posted_at": 1788350879
     }
   }
 }

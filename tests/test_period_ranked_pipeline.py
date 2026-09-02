@@ -31,7 +31,7 @@ def test_protected_leader_is_reserved_and_selected():
 
 
 def test_protected_leader_enters_tier0_ranking():
-    items = [{"leader":"Leader A","protected_content":True,"leader_watch_protected":True,"leader_source_authority":3,"editorial_score":80,"title":"Leader interview"},{"editorial_score":100,"title":"Regular top","source":"source-regular"}]
+    items = [{"leader":"Leader A","protected_content":True,"leader_watch_protected":True,"leader_source_authority":3,"editorial_score":80,"title":"Leader interview","protected_slot":True},{"editorial_score":100,"title":"Regular top","source":"source-regular"}]
     ranked = pipeline._global_ranked_selection(items, 1, 2, 2, {})
     assert ranked[0]["title"] == "Leader interview"
     assert ranked[0]["_rank_is_tier0"] is True
@@ -40,7 +40,7 @@ def test_protected_leader_enters_tier0_ranking():
 
 def test_tier0_interview_is_not_blocked_by_semantic_similarity(monkeypatch):
     record = {"title": "Jensen Huang discusses AI infrastructure", "link": "https://example.com/old-interview"}
-    candidate = {"title": "Jensen Huang on the future of AI computing", "link": "https://example.com/new-interview", "content_type": "interview", "summary": "Jensen Huang gives a substantive interview about AI infrastructure, accelerated computing, agents, robotics and the future of technology."}
+    candidate = {"title": "Jensen Huang on the future of AI computing", "link": "https://example.com/new-interview", "content_type": "interview", "summary": "Jensen Huang gives a substantive interview about AI infrastructure, accelerated computing, agents, robotics and the future of technology.", "protected_slot": True}
     monkeypatch.setattr(pipeline, "_load_records", lambda: [record])
     monkeypatch.setattr(pipeline, "_semantic_conflict", lambda *args, **kwargs: 0.95)
     assert pipeline._exclude_published_candidates([candidate]) == [candidate]
@@ -48,7 +48,7 @@ def test_tier0_interview_is_not_blocked_by_semantic_similarity(monkeypatch):
 
 def test_protected_leader_story_bypasses_semantic_history(monkeypatch):
     record = {"title": "Dario Amodei discusses AI safety and model development", "link": "https://example.com/old"}
-    candidate = {"title": "Dario Amodei on the next phase of AI safety", "link": "https://example.com/new", "content_type": "interview", "protected_content": True, "leader_watch_protected": True, "summary": "A substantive interview about AI safety, frontier models and deployment risks."}
+    candidate = {"title": "Dario Amodei on the next phase of AI safety", "link": "https://example.com/new", "content_type": "interview", "protected_content": True, "leader_watch_protected": True, "summary": "A substantive interview about AI safety, frontier models and deployment risks.", "protected_slot": True}
     monkeypatch.setattr(pipeline, "_load_records", lambda: [record])
     monkeypatch.setattr(pipeline, "_semantic_conflict", lambda *args, **kwargs: 0.99)
     assert pipeline._exclude_published_candidates([candidate]) == [candidate]

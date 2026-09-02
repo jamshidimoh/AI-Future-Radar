@@ -12,11 +12,11 @@ Each item may provide:
 
 - `id` or `story_id`
 - `title`, with optional `summary`, `description`, and `category`
-- `signal_score` in the existing 0–100 scale, or a numeric `signal_vector`
+- `signal_score` as a caller-supplied intrinsic 0–100 score, or a `signal_vector`
 - source identity through `source_id`, `source`, `source_name`, or `publisher`
 - optional novelty through `signal_vector.novelty` or `novelty`
 
-Missing optional values are handled deterministically; invalid configuration fails closed.
+When a signal vector is supplied, G1 derives an intrinsic technology signal only from novelty, future impact, technical significance, strategic relevance and trend alignment. Source Tier, source quality and evidence strength are not used to derive that intrinsic value.
 
 ## Deterministic clustering
 
@@ -33,27 +33,18 @@ Every emitted cluster contains:
 - `cluster_id`: deterministic hash-based identifier for the current member set;
 - `member_ids`: sorted stable member identifiers;
 - `cluster_size`;
-- `representative_id`: highest signal member with deterministic tie-breaking;
+- `representative_id`: highest intrinsic signal member with deterministic tie-breaking;
 - `mean_signal_score`;
 - `mean_novelty_score`;
 - `coherence`: mean pairwise similarity;
 - `source_independence`: distinct source ratio;
-- `trend_score`: deterministic weighted aggregate distinct from `signal_score`;
+- `trend_score`: deterministic weighted aggregate distinct from intrinsic signal;
 - `trend_confidence` in `[0,1]`;
 - `trend_class`: `candidate` or `high` according to configured confidence.
 
-Source Tier is intentionally excluded from the G1 trend score. Source authority and evidence quality remain separate semantic dimensions for later gates.
-
 ## Configuration
 
-`config/trend_engine.yaml` defines the similarity threshold, minimum cluster size, confidence boundary and score weights. The four score dimensions are:
-
-- mean signal;
-- cluster coherence;
-- source independence;
-- mean novelty.
-
-Weights must be non-negative and sum to `1.0`.
+`config/trend_engine.yaml` defines the similarity threshold, minimum cluster size, confidence boundary and score weights. The four trend dimensions are mean intrinsic signal, coherence, source independence and mean novelty. Weights must be non-negative and sum to `1.0`.
 
 ## Non-goals
 
@@ -61,6 +52,6 @@ G1 does not provide persistent IDs across runs, merge/split lineage, evidence gr
 
 ## Acceptance evidence
 
-The G1 test suite covers deterministic repeatability, bounded similarity, complete-link anti-chain behavior, weak-signal retention, source-independence effects, separation from Source Tier, safe unclustered enrichment, and fail-closed configuration validation.
+The G1 test suite covers deterministic repeatability, bounded similarity, complete-link anti-chain behavior, weak-signal retention, source-independence effects, independence from Source Tier when a vector is supplied, safe unclustered enrichment, and fail-closed configuration validation.
 
 Production publication remains unchanged until a later controlled integration gate explicitly adopts the intelligence outputs.

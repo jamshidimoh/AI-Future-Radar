@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.title="AI Future Radar"
 LABEL org.opencontainers.image.description="AI-first future technology intelligence and publication pipeline"
 LABEL org.opencontainers.image.source="https://github.com/jamshidimoh/AI-Future-Radar"
 LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.licenses="MIT"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1

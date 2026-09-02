@@ -1,0 +1,6 @@
+# G2 persistent trend registry policy. Publication-decoupled.
+trend_registry:
+  version: 2
+  identity_overlap_threshold: 0.50
+  minimum_shared_members: 1
+  decay_after_missed_runs: 1

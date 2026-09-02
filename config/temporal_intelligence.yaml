@@ -1,0 +1,10 @@
+temporal_intelligence:
+  version: 1
+  enabled: false
+  publication_decoupled: true
+  recent_window: 4
+  transient_spike_ratio: 0.75
+  acceleration_threshold: 0.05
+  weakening_threshold: -0.05
+  minimum_periodic_observations: 6
+  max_period: 12

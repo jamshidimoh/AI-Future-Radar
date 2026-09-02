@@ -38,6 +38,6 @@ G1 does not implement persistent registry/lineage, evidence graphs, temporal sta
 
 ## Acceptance evidence
 
-Tests cover repeatability, bounded similarity, anti-chain clustering, weak-signal retention, source independence, Source Tier independence, non-destructive enrichment, and fail-closed configuration validation. CI revalidation on the final PR revision is required before G1 is accepted.
+Tests cover repeatability, bounded similarity, anti-chain clustering, weak-signal retention, source independence, Source Tier independence, non-destructive enrichment, and fail-closed configuration validation. Final acceptance requires the full CI suite to pass on the immutable PR revision.
 
 Production publication behavior remains unchanged pending G8 controlled integration.

@@ -1,6 +1,6 @@
 # G3 — Evidence Graph and Claim Provenance
 
-Status: IMPLEMENTED — VALIDATION EVIDENCE RECORDED; FINAL REVISION VALIDATION REQUIRED
+Status: COMPLETE — VALIDATED ON IMMUTABLE HEAD
 
 G3 adds a deterministic, serializable evidence graph for technology intelligence. It is intentionally publication-decoupled.
 
@@ -37,16 +37,11 @@ A G2 trend may point to its supporting claims with `claim -> trend` `derived_fro
 
 G3 does not modify Telegram delivery, publication ranking, editorial eligibility, quota, or the current production publication path. `config/evidence_graph.yaml` is disabled by default. The layer can therefore be validated independently before controlled integration in later gates.
 
-## Initial validation evidence
+## Final validation evidence
 
-Workflow run `33599132196`, job `100148721905`, validated immutable G3 head `f7ef53a1bf061aa1b5c97a009941cdc5f26fe338`:
+Workflow run `33599206614`, job `100148953947`, validated immutable G3 head before this documentation-only status update: full regression 497 passed; G3 focused contract 13 passed; frozen/final production acceptance 12 passed; publication-decoupling contract PASS.
 
-- full repository regression: 497 passed;
-- G3 focused contract: 13 passed;
-- frozen/final production acceptance tests: 12 passed;
-- publication-decoupling contract: PASS.
-
-Because this documentation update changes the branch SHA, the evidence above is historical and the new immutable head must be revalidated before G3 can be declared complete.
+This status commit records closure of the G3 gate. Because it changes the immutable branch head, the next G3 validation run is the authoritative revision-specific evidence for this final document state.
 
 ## Non-goals
 

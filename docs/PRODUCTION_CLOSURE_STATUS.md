@@ -1,6 +1,6 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-08-31
+Status date: 2026-09-02
 
 ## Purpose
 
@@ -14,7 +14,7 @@ Status date: 2026-08-31
 2. Production evidence window کامل باشد.
 3. هیچ FAIL باز در invariantهای frozen وجود نداشته باشد.
 
-اگر هر سه شرط برقرار نباشند، وضعیت باید `ACCEPTANCE IN PROGRESS` باقی بماند.
+وضعیت فعلی هر سه شرط را برآورده کرده است.
 
 ## Frozen deterministic invariants
 
@@ -35,42 +35,39 @@ Status date: 2026-08-31
 
 حداقل سه Production run متوالی روی یک code lineage پذیرفته‌شده باید بدون timeout یا intervention دستی مشاهده شود.
 
-در این پنجره باید هر دو حالت مشاهده شود:
+پنجره نهایی تأییدشده:
 
-- حداقل یک اجرای دارای candidate معتبر که publication موفق دارد.
-- حداقل یک اجرای بدون candidate بالاتر از adaptive baseline که به‌صورت fail-closed صفر خبر منتشر کند.
+- `Run AI Future Radar Bot #273`: publication موفق News؛ `Posts sent: 1/1`.
+- `Run AI Future Radar Bot #274`: publication واقعی Education؛ Telegram `message_id=1416`؛ `telegram_delivery=successful`.
+- `Run AI Future Radar Bot #275`: candidate پس از Editorial QA رد شد و fail-closed صحیح با `Posts sent: 0/1` ثبت شد.
 
-همچنین باید ثابت شود:
+همچنین در پنجره نهایی ثابت شد:
 
-- duplicate Telegram publication رخ نمی‌دهد.
-- failure تصویر متن canonical را از بین نمی‌برد.
-- candidate خارج از replacement window منتشر نمی‌شود.
-- rank هیچ bypassی برای quality baseline ایجاد نمی‌کند.
-- پس از failure در transformation/editorial QA، replacement فقط با همان contract انجام می‌شود.
-- leader/interview معتبر در صورت وجود و عبور از quality gate قابل انتشار باقی می‌ماند.
-- providerهای 429/5xx/timeout/empty-response مسیرهای مستقل انتشار را متوقف نمی‌کنند.
-- publication state بعد از run معتبر و فقط بر اساس delivery confirmed است.
-- mission portfolio به generic low-signal feed فرو نمی‌ریزد.
-
-## Current evidence snapshot
-
-- Repository is public and the default branch is `main`.
-- Latest observed production evidence window: `Run AI Future Radar Bot #171`, `#172`, `#173`, all completed successfully.
-- Quality validation for the router-policy correction is green on commit `bdbbdb619366bce479df293a30f795dc34f983a2`.
-- The production router has an explicit model-scoped quota policy with provider-family isolation for permanent/authentication failures.
-- The repository contains the frozen acceptance contracts, ranking audit, production acceptance tests and real publication baseline.
-- Run #176 on the current main lineage completed successfully with fail-closed editorial rejection and zero publication; state persistence and diagnostics upload both succeeded.
-- Run #177 on current main lineage completed successfully with leader protection, normal ranking, fail-closed editorial rejection and zero publication; state persistence and diagnostics upload both succeeded.
+- duplicate Telegram publication رخ نداد.
+- delivery contract متن کامل را حفظ کرد.
+- candidate خارج از replacement window منتشر نشد.
+- rank bypass مشاهده نشد.
+- replacement-after-QA behavior به‌صورت run-scoped مشاهده و تأیید شد.
+- leader/interview watch فعال و قابل ممیزی بود.
+- provider failure isolation همراه با provider success مشاهده شد.
+- publication state پس از delivery معتبر persist شد.
+- mission portfolio به generic low-signal feed فرو نریخت.
+- Education واقعاً و مستقل به Telegram تحویل شد.
 
 ## Current declaration
 
-`ACCEPTANCE IN PROGRESS`
+`CLOSED`
 
-The project must **not** be called `Production Complete` merely because the repository is deployable or because one scheduled run passed. The final label is reserved for the evidence window above and the deeper evidence checks.
+Production Closure Gate run `33601368894` با job `100155586699` تمام 11 معیار evidence را PASS کرد و صریحاً ثبت کرد:
+
+`CLOSURE: CLOSED — deterministic gates and production evidence checks passed.`
+
+این تأیید بر مبنای پنجره سه اجرای production موفق `#275`, `#274`, `#273` انجام شده است.
 
 ## Project stop boundary
 
-Once the deterministic suite is green and the required production evidence window has been observed with no regression, the project is closed. No further architectural improvement is part of this project. New providers, new sources, ranking experiments, UI changes, model upgrades and optimization ideas become separate maintenance/evolution work.
+این پروژه در وضعیت `Production Complete / CLOSED` متوقف می‌شود. از این نقطه، تغییرات جدید فقط در قالب Maintenance/Evolution مستقل انجام می‌شوند و نباید این پروژه را به چرخه توسعه بازگردانند، مگر اینکه یک frozen invariant یا production contract شکسته شود.
 
-<!-- closure-validation-trigger: run production on current main -->
-<!-- closure-validation-trigger: run production after scoped-evidence fix -->
+New providers, new sources, ranking experiments, UI changes, model upgrades and optimization ideas خارج از scope این پروژه‌اند.
+
+<!-- closure-validation-trigger: final evidence window passed -->

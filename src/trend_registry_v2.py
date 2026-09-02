@@ -1,8 +1,4 @@
-"""G2 persistent trend registry and deterministic lineage reconciliation.
-
-The registry is publication-decoupled. It stores trend identity, observations,
-and lineage; it does not modify publication eligibility or ranking.
-"""
+"""G2 persistent trend registry and deterministic lineage reconciliation."""
 from __future__ import annotations
 
 import hashlib
@@ -18,6 +14,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
 
 SCHEMA_VERSION = 2
 ACTIVE_STATES = {"active", "revived"}
+NON_MATCHABLE_STATES = {"disconfirmed", "merged"}
 
 
 def validate_config(config: Mapping[str, Any] | None = None) -> dict[str, Any]:
@@ -71,15 +68,11 @@ def member_overlap(left: Sequence[str], right: Sequence[str]) -> float:
     return len(a & b) / len(union) if union else 0.0
 
 
-def _eligible_previous(
-    current: Mapping[str, Any],
-    previous_clusters: Mapping[str, Any],
-    cfg: Mapping[str, Any],
-) -> list[tuple[float, int, str]]:
+def _eligible_previous(current: Mapping[str, Any], previous_clusters: Mapping[str, Any], cfg: Mapping[str, Any]) -> list[tuple[float, int, str]]:
     current_ids = _member_set(current)
     candidates: list[tuple[float, int, str]] = []
     for cluster_id, previous in previous_clusters.items():
-        if previous.get("state") == "disconfirmed":
+        if previous.get("state") in NON_MATCHABLE_STATES:
             continue
         previous_ids = _member_set(previous)
         shared = len(current_ids & previous_ids)
@@ -89,28 +82,29 @@ def _eligible_previous(
     return sorted(candidates, key=lambda x: (-x[0], -x[1], x[2]))
 
 
+def _disconfirmed_matches(current: Mapping[str, Any], previous_clusters: Mapping[str, Any], cfg: Mapping[str, Any]) -> list[tuple[float, int, str]]:
+    current_ids = _member_set(current)
+    matches: list[tuple[float, int, str]] = []
+    for cluster_id, previous in previous_clusters.items():
+        if previous.get("state") != "disconfirmed":
+            continue
+        previous_ids = _member_set(previous)
+        shared = len(current_ids & previous_ids)
+        overlap = member_overlap(current_ids, previous_ids)
+        if shared >= cfg["minimum_shared_members"] and overlap >= cfg["identity_overlap_threshold"]:
+            matches.append((overlap, shared, str(cluster_id)))
+    return sorted(matches, key=lambda x: (-x[0], -x[1], x[2]))
+
+
 def _choose_primary(candidates: Sequence[tuple[float, int, str]], previous_clusters: Mapping[str, Any]) -> str:
     ranked = []
     for overlap, shared, cluster_id in candidates:
         previous = previous_clusters[cluster_id]
-        ranked.append(
-            (
-                overlap,
-                shared,
-                -int(previous.get("first_seen_run", 0) or 0),
-                cluster_id,
-            )
-        )
+        ranked.append((overlap, shared, -int(previous.get("first_seen_run", 0) or 0), cluster_id))
     return max(ranked)[3]
 
 
-def _record_observation(
-    run_id: str,
-    run_index: int,
-    cluster_id: str,
-    cluster: Mapping[str, Any],
-    state: str,
-) -> dict[str, Any]:
+def _record_observation(run_id: str, run_index: int, cluster_id: str, cluster: Mapping[str, Any], state: str) -> dict[str, Any]:
     return {
         "run_id": str(run_id),
         "run_index": int(run_index),
@@ -161,8 +155,7 @@ def load_registry(path: str | Path) -> dict[str, Any]:
     target = Path(path)
     if not target.exists():
         return empty_registry()
-    data = json.loads(target.read_text(encoding="utf-8"))
-    return validate_registry(data)
+    return validate_registry(json.loads(target.read_text(encoding="utf-8")))
 
 
 def save_registry(path: str | Path, registry: Mapping[str, Any]) -> None:
@@ -178,26 +171,7 @@ def registry_snapshot(registry: Mapping[str, Any]) -> dict[str, Any]:
     return json.loads(_canonical_json(registry))
 
 
-def reconcile_registry(
-    registry: Mapping[str, Any] | None,
-    current_clusters: Sequence[Mapping[str, Any]],
-    *,
-    run_id: str,
-    run_index: int,
-    config: Mapping[str, Any] | None = None,
-    disconfirmed_ids: Sequence[str] | None = None,
-) -> dict[str, Any]:
-    """Reconcile current G1 clusters with persistent G2 identity and lineage.
-
-    Existing identities are retained on sufficient member overlap. One previous
-    cluster can split into several current clusters; the best child retains the
-    parent ID and the others receive new IDs linked by split lineage. Several
-    previous clusters can merge into one current cluster; the strongest prior ID
-    is retained and the others are recorded in merge lineage. Replayed signals
-    preserve identity. Missing clusters decay; a later match revives them.
-    Explicit disconfirmation is terminal and a later reappearance receives a
-    fresh identity linked to the disconfirmed record.
-    """
+def reconcile_registry(registry: Mapping[str, Any] | None, current_clusters: Sequence[Mapping[str, Any]], *, run_id: str, run_index: int, config: Mapping[str, Any] | None = None, disconfirmed_ids: Sequence[str] | None = None) -> dict[str, Any]:
     cfg = validate_config(config)
     result = registry_snapshot(registry or empty_registry())
     validate_registry(result)
@@ -206,137 +180,89 @@ def reconcile_registry(
 
     result["last_run_id"] = str(run_id)
     result["last_run_index"] = int(run_index)
-    result.setdefault("clusters", {})
-    result.setdefault("signal_history", [])
-    result.setdefault("lineage", [])
-
     previous_clusters = dict(result["clusters"])
     disconfirmed = {str(x) for x in (disconfirmed_ids or [])}
-    ordered_current = sorted(
-        (dict(cluster) for cluster in current_clusters),
-        key=lambda cluster: (
-            sorted(str(x) for x in cluster.get("member_ids", [])),
-            str(cluster.get("cluster_id", "")),
-        ),
-    )
+    ordered_current = sorted((dict(cluster) for cluster in current_clusters), key=lambda cluster: (sorted(str(x) for x in cluster.get("member_ids", [])), str(cluster.get("cluster_id", ""))))
 
-    candidates_by_index = {
-        index: _eligible_previous(current, previous_clusters, cfg)
-        for index, current in enumerate(ordered_current)
-    }
+    candidates_by_index = {index: _eligible_previous(current, previous_clusters, cfg) for index, current in enumerate(ordered_current)}
     parent_to_indices: dict[str, list[int]] = {}
     for index, candidates in candidates_by_index.items():
-        if not candidates:
-            continue
-        parent = _choose_primary(candidates, previous_clusters)
-        parent_to_indices.setdefault(parent, []).append(index)
+        if candidates:
+            parent = _choose_primary(candidates, previous_clusters)
+            parent_to_indices.setdefault(parent, []).append(index)
 
     keep_parent_index: dict[str, int] = {}
     for parent, indices in parent_to_indices.items():
-        ranked = []
-        for index in indices:
-            overlap, shared, _ = next(
-                candidate for candidate in candidates_by_index[index] if candidate[2] == parent
-            )
-            members = tuple(sorted(_member_set(ordered_current[index])))
-            ranked.append((overlap, shared, tuple(-ord(char) for char in "".join(members)), -index, index))
-        keep_parent_index[parent] = max(ranked)[-1]
+        keep_parent_index[parent] = max(
+            indices,
+            key=lambda index: (
+                next(candidate[0] for candidate in candidates_by_index[index] if candidate[2] == parent),
+                next(candidate[1] for candidate in candidates_by_index[index] if candidate[2] == parent),
+                tuple(sorted(_member_set(ordered_current[index]))),
+                -index,
+            ),
+        )
 
     seen_ids: set[str] = set()
-    reconciled: list[dict[str, Any]] = []
-    split_events: list[tuple[str, str]] = []
+    split_events: set[tuple[str, str]] = set()
 
     for index, current in enumerate(ordered_current):
         current_members = sorted(str(x) for x in current.get("member_ids", []))
         candidates = candidates_by_index[index]
         parent_id = _choose_primary(candidates, previous_clusters) if candidates else None
-        use_parent = parent_id is not None and keep_parent_index.get(parent_id) == index
+        disconfirmed_candidates = _disconfirmed_matches(current, previous_clusters, cfg)
 
-        if use_parent:
-            cluster_id = parent_id
-        else:
+        if disconfirmed_candidates:
+            old_id = disconfirmed_candidates[0][2]
             cluster_id = _stable_new_id(current_members, run_index)
             while cluster_id in result["clusters"] or cluster_id in seen_ids:
                 cluster_id = _stable_new_id(current_members + [cluster_id], run_index)
-
-        previous = previous_clusters.get(cluster_id)
-        if parent_id and not use_parent:
-            split_events.append((parent_id, cluster_id))
-
-        if previous and previous.get("state") != "disconfirmed":
-            state = "revived" if previous.get("state") == "decayed" else "active"
-            record = dict(previous)
-            observation = _record_observation(run_id, run_index, cluster_id, current, state)
-            history = list(record.get("observations") or [])
-            history.append(observation)
-            record.update(
-                {
-                    "last_seen_run": int(run_index),
-                    "last_run_id": str(run_id),
-                    "state": state,
-                    "missed_runs": 0,
-                    "member_ids": current_members,
-                    "last_observation": observation,
-                    "observations": history,
-                }
-            )
-            if state == "revived":
-                record["revival_count"] = int(record.get("revival_count", 0)) + 1
-                _append_lineage(result, run_id, run_index, "revival", cluster_id=cluster_id)
-            result["clusters"][cluster_id] = record
-        else:
             result["clusters"][cluster_id] = _new_cluster_record(cluster_id, current, run_id, run_index)
-            _append_lineage(
-                result,
-                run_id,
-                run_index,
-                "created",
-                cluster_id=cluster_id,
-                reason="split_child" if parent_id else "new",
-            )
+            _append_lineage(result, run_id, run_index, "reappeared_after_disconfirmation", source_cluster_id=old_id, cluster_id=cluster_id)
+        else:
+            use_parent = parent_id is not None and keep_parent_index.get(parent_id) == index
+            if use_parent:
+                cluster_id = parent_id
+            else:
+                cluster_id = _stable_new_id(current_members, run_index)
+                while cluster_id in result["clusters"] or cluster_id in seen_ids:
+                    cluster_id = _stable_new_id(current_members + [cluster_id], run_index)
+                if parent_id:
+                    split_events.add((parent_id, cluster_id))
+
+            previous = previous_clusters.get(cluster_id)
+            if previous and previous.get("state") != "disconfirmed":
+                state = "revived" if previous.get("state") == "decayed" else "active"
+                record = dict(previous)
+                observation = _record_observation(run_id, run_index, cluster_id, current, state)
+                record.update({"last_seen_run": int(run_index), "last_run_id": str(run_id), "state": state, "missed_runs": 0, "member_ids": current_members, "last_observation": observation, "observations": list(record.get("observations") or []) + [observation]})
+                if state == "revived":
+                    record["revival_count"] = int(record.get("revival_count", 0)) + 1
+                    _append_lineage(result, run_id, run_index, "revival", cluster_id=cluster_id)
+                result["clusters"][cluster_id] = record
+            else:
+                result["clusters"][cluster_id] = _new_cluster_record(cluster_id, current, run_id, run_index)
+                _append_lineage(result, run_id, run_index, "created", cluster_id=cluster_id, reason="split_child" if parent_id else "new")
+
+            if parent_id and len(candidates) > 1 and use_parent:
+                merged_from = sorted(candidate[2] for candidate in candidates if candidate[2] != parent_id)
+                for merged_id in merged_from:
+                    merged_record = dict(result["clusters"].get(merged_id, previous_clusters.get(merged_id, {})))
+                    if merged_record.get("state") not in NON_MATCHABLE_STATES:
+                        merged_record["state"] = "merged"
+                        merged_record["merged_into"] = cluster_id
+                        merged_record["missed_runs"] = 0
+                        result["clusters"][merged_id] = merged_record
+                _append_lineage(result, run_id, run_index, "merge", cluster_id=cluster_id, merged_from=merged_from)
 
         seen_ids.add(cluster_id)
-        reconciled_cluster = dict(current)
-        reconciled_cluster["cluster_id"] = cluster_id
-        reconciled_cluster["member_ids"] = current_members
-        reconciled_cluster["registry_state"] = result["clusters"][cluster_id]["state"]
-        reconciled.append(reconciled_cluster)
+        result["signal_history"].append(_record_observation(run_id, run_index, cluster_id, current, result["clusters"][cluster_id]["state"]))
 
-        if parent_id and len(candidates) > 1 and use_parent:
-            merged_from = sorted(
-                candidate[2] for candidate in candidates if candidate[2] != parent_id
-            )
-            _append_lineage(
-                result,
-                run_id,
-                run_index,
-                "merge",
-                cluster_id=cluster_id,
-                merged_from=merged_from,
-            )
-
-        result["signal_history"].append(
-            _record_observation(
-                run_id,
-                run_index,
-                cluster_id,
-                current,
-                result["clusters"][cluster_id]["state"],
-            )
-        )
-
-    for parent_id, child_id in sorted(set(split_events)):
-        _append_lineage(
-            result,
-            run_id,
-            run_index,
-            "split",
-            parent_cluster_id=parent_id,
-            child_cluster_id=child_id,
-        )
+    for parent_id, child_id in sorted(split_events):
+        _append_lineage(result, run_id, run_index, "split", parent_cluster_id=parent_id, child_cluster_id=child_id)
 
     for cluster_id, record in list(result["clusters"].items()):
-        if cluster_id in seen_ids:
+        if cluster_id in seen_ids or record.get("state") in NON_MATCHABLE_STATES:
             continue
         updated = dict(record)
         if cluster_id in disconfirmed:
@@ -350,14 +276,7 @@ def reconcile_registry(
         updated["missed_runs"] = int(updated.get("missed_runs", 0)) + 1
         if updated["missed_runs"] >= cfg["decay_after_missed_runs"] and updated.get("state") in ACTIVE_STATES:
             updated["state"] = "decayed"
-            _append_lineage(
-                result,
-                run_id,
-                run_index,
-                "decay",
-                cluster_id=cluster_id,
-                missed_runs=updated["missed_runs"],
-            )
+            _append_lineage(result, run_id, run_index, "decay", cluster_id=cluster_id, missed_runs=updated["missed_runs"])
         result["clusters"][cluster_id] = updated
 
     for cluster_id in sorted(disconfirmed):
@@ -366,33 +285,16 @@ def reconcile_registry(
             if record.get("state") != "disconfirmed":
                 record["state"] = "disconfirmed"
                 record["disconfirmation_count"] = int(record.get("disconfirmation_count", 0)) + 1
+                record["missed_runs"] = 0
                 _append_lineage(result, run_id, run_index, "disconfirmation", cluster_id=cluster_id)
             result["clusters"][cluster_id] = record
 
-    result["signal_history"] = sorted(
-        result["signal_history"],
-        key=lambda observation: (
-            int(observation["run_index"]),
-            str(observation["cluster_id"]),
-            tuple(observation["member_ids"]),
-        ),
-    )
-    result["lineage"] = sorted(
-        result["lineage"],
-        key=lambda event: (
-            int(event["run_index"]),
-            str(event["event"]),
-            _canonical_json(event),
-        ),
-    )
+    result["signal_history"] = sorted(result["signal_history"], key=lambda observation: (int(observation["run_index"]), str(observation["cluster_id"]), tuple(observation["member_ids"])))
+    result["lineage"] = sorted(result["lineage"], key=lambda event: (int(event["run_index"]), str(event["event"]), _canonical_json(event)))
     return result
 
 
-def apply_registry_ids(
-    current_clusters: Sequence[Mapping[str, Any]],
-    registry: Mapping[str, Any],
-) -> list[dict[str, Any]]:
-    """Return current clusters annotated with persisted registry metadata."""
+def apply_registry_ids(current_clusters: Sequence[Mapping[str, Any]], registry: Mapping[str, Any]) -> list[dict[str, Any]]:
     clusters = dict(registry.get("clusters") or {})
     output = []
     for cluster in current_clusters:

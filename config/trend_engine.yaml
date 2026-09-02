@@ -1,0 +1,34 @@
+# G1 deterministic signal/trend engine policy.
+# This configuration is publication-decoupled and must not affect main production
+# selection until G8 controlled integration.
+
+trend_engine:
+  version: 1
+  similarity_threshold: 0.45
+  minimum_cluster_size: 2
+  high_confidence_threshold: 0.70
+  score_weights:
+    mean_signal: 0.45
+    coherence: 0.25
+    source_independence: 0.20
+    mean_novelty: 0.10
+  stopwords:
+    - a
+    - an
+    - and
+    - are
+    - as
+    - at
+    - for
+    - from
+    - in
+    - is
+    - of
+    - on
+    - or
+    - the
+    - to
+    - with
+    - this
+    - that
+    - about

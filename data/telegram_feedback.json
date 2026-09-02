@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788375082,
+  "updated_at": 1788385815,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6525,6 +6525,44 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788375082
+    },
+    "-1004482051328:1424": {
+      "chat_id": -1004482051328,
+      "message_id": 1424,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Times of India)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "سام آلتمن، مدیرعامل OpenAI، در واکنش به استراتژی‌های اخیر شرکت Meta، احساس ناراحتی شدید و عدم رضایت خود را ابراز کرده است",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در واکنش به استراتژی‌های اخیر شرکت Meta، احساس ناراحتی شدید و عدم رضایت خود را ابراز کرده است. این اظهارنظر نشان‌دهنده تنش‌های فزاینده در رقابت بین دو غول فناوری در حوزه هوش مصنوعی است. آلتمن صراحتاً اعلام کرده که با رویکردهای فعلی Meta راحت نیست و آن‌ها را نمی‌پسندد.",
+      "why_it_matters": "این بیانیه نشان‌دهنده عمق شکاف ایدئولوژیک و استراتژیک بین رهبران صنعت هوش مصنوعی است که می‌تواند بر آینده توسعه مدل‌های زبانی",
+      "link": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxPQXl4VTExZm5WQWdtal90SlczdWRfXzYyWmcxZ3E4WEpaRnI4d0N2T05nRnJpNzVUZVRQSEVHVHFIb3MyTDNjdW9jdzlha1NDOTVob1pqZno3VEJtdjJuVEg4cEJDOExwdUEzS1BHRGs2a3laNE9nY3IxOWM5VkJDSVZ0bnRHUXFReXRPVVdTMGtwcFNndW1WYW5fcVh2bXZ2T3hkQnczVTFSZ2dtdWpPVTJaMXZ4eGdLNUxVVWZqblJaTzVqWExfTUY5QmtLck1QQWNYNHphbUZFSndlUDB0THprdmtOal9admdkdzFlbmJZbE0wRTgwblZWajVjajDSAYQCQVVfeXFMT0RManFrSzduVkpaVjJUa0RvYmFFdktOQU1aOHc3R0tJNDcxRkU3UV9VOVpPa2xiRjZhcTVlSVJTSkU0V242T2JCYUVUOGhqdlNjdUR0aHdTRjQxN3hlQWVNbExfUmZVVnFFWFoxOS1kdXllc3RnOFVCcHdSRllYMVlucG1rWWxoOFp1dzZ3WXpwczZEZGx0aXVQWGxaSmV4cDNNWXN3T1VPQkE0bU1CcGZCZGp2Qk1PZlZHZmwzQmdNdWJ4Z05fS19GZHpCZER5RlZBTGFvREZsMHFuOU1Ib1QyOFZCSVJ4VlJ4dXkxMFUwMllRUVFjb3NGOXhqcVdEeTFGMzg?oc=5",
+      "posted_at": 1788385813
+    },
+    "-1004482051328:1425": {
+      "chat_id": -1004482051328,
+      "message_id": 1425,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MIT Technology Review",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "خبرنامه The Download از MIT Technology Review به بررسی عملکرد مدل‌های AI در آزمون‌های هوشی و حل معما می‌پردازد",
+      "summary": "خبرنامه The Download از MIT Technology Review به بررسی عملکرد مدل‌های AI در آزمون‌های هوشی و حل معما می‌پردازد. این گزارش اشاره می‌کند که با وجود پیشرفت‌های اخیر، مدل‌های AI همچنان در حل برخی پازل‌ها و بازی‌ها دچار خطا می‌شوند. همچنین به تاریخچه اصطلاح Machine Learning که در مقاله‌ای سال ۱۹۵۹ رواج یافت، و نقش محوری بازی‌ها در توسعه هوش مصنوعی پرداخته شده است. این مطلب ضمن سنجش توانایی انسان در مقایسه با ماشین‌ها، به مسیرهای فنی برای دستیابی به نزدیک‌ترین سیستم ستاره‌ای نیز می‌پردازد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این گزارش نشان می‌دهد که معماها و بازی‌ها همچنان شاخص‌های حیاتی برای سنجش مرزهای واقعی AI و شناسایی نقاط کور آن هستند. شکست مدل‌های فعلی در این آزمون‌ها، محدودیت‌های موجود در استدلال منطقی و درک عمیق ماشین‌ها را آشکار می‌سازد. درک این شکاف بین عملکرد نظری و عملی، برای توسعه‌دهندگان جهت بهبود قابلیت‌های شناختی سیستم‌های AI ضروری است. همچنین، پیوند این بحث با مباحث فضایی، اهمیت فناوری‌های پیشرفته در چالش‌های بزرگ علمی را برجسته می‌کند.",
+      "link": "https://www.technologyreview.com/2026/09/02/1143283/the-download-ai-puzzles-alpha-centauri-mission/",
+      "posted_at": 1788385815
     }
   }
 }

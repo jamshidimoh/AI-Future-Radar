@@ -1,7 +1,7 @@
 import period_ranked_pipeline as pipeline
 
 
-def test_global_ranking_returns_current_mission_aware_candidate_window():
+def test_global_ranking_returns_current_portfolio_candidate_window():
     items = [
         {"title":"A","editorial_score":91,"source":"source-a","content_type":"research","category":"ai"},
         {"title":"B","editorial_score":95,"source":"source-b","content_type":"news","category":"quantum"},
@@ -10,8 +10,8 @@ def test_global_ranking_returns_current_mission_aware_candidate_window():
         {"title":"E","editorial_score":99,"source":"source-e","content_type":"news","category":"robotics"},
     ]
     ranked = pipeline._global_ranked_selection(items, 5, 2, 2, {})
-    assert [x["title"] for x in ranked] == ["A","E","D","C","B"]
-    assert [x["period_rank"] for x in ranked] == [1,2,3,4,5]
+    assert [x["title"] for x in ranked] == ["E","B","A","D"]
+    assert [x["period_rank"] for x in ranked] == [1,2,3,4]
 
 
 def test_protected_leader_is_reserved_and_selected():

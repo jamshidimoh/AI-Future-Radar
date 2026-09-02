@@ -1,7 +1,7 @@
 {
   "version": 5,
-  "next_lesson": 43,
-  "next_slot": 42,
+  "next_lesson": 44,
+  "next_slot": 43,
   "completed": [
     1,
     2,
@@ -44,7 +44,8 @@
     39,
     40,
     41,
-    42
+    42,
+    43
   ],
-  "updated_at": 1788332091
+  "updated_at": 1788375082
 }

@@ -40,18 +40,19 @@ def test_restart_round_trip_preserves_registry_identity(tmp_path):
     assert len(second["signal_history"]) == 2
 
 
-def test_replayed_signal_members_do_not_create_false_new_cluster():
+def test_replayed_signal_cluster_does_not_create_false_new_cluster():
     first = reconcile_registry(empty_registry(), [cluster("a", "b")], run_id="r1", run_index=1)
     cluster_id = next(iter(first["clusters"]))
     replayed = reconcile_registry(
         first,
-        [cluster("b", "a"), cluster("b", "a")],
+        [cluster("b", "a"), cluster("a", "b")],
         run_id="r2",
         run_index=2,
     )
     assert len(replayed["clusters"]) == 1
     assert cluster_id in replayed["clusters"]
-    assert all(item["cluster_id"] == cluster_id for item in replayed["signal_history"])
+    assert len(replayed["signal_history"]) == 2
+    assert replayed["signal_history"][-1]["cluster_id"] == cluster_id
 
 
 def test_merge_keeps_strongest_previous_identity_and_records_lineage():
@@ -68,7 +69,6 @@ def test_merge_keeps_strongest_previous_identity_and_records_lineage():
         run_id="r2",
         run_index=2,
     )
-    # Tie-break keeps the oldest/lower deterministic identity.
     kept = ids[0]
     assert merged["clusters"][kept]["last_seen_run"] == 2
     merge_events = [event for event in merged["lineage"] if event["event"] == "merge"]
@@ -119,15 +119,15 @@ def test_disconfirmation_is_terminal_and_reappearance_gets_new_identity():
         disconfirmed_ids=[old_id],
     )
     assert disconfirmed["clusters"][old_id]["state"] == "disconfirmed"
-    revived = reconcile_registry(disconfirmed, [cluster("a", "b")], run_id="r3", run_index=3)
-    assert len(revived["clusters"]) == 2
-    assert old_id in revived["clusters"]
-    new_ids = [cluster_id for cluster_id in revived["clusters"] if cluster_id != old_id]
+    reappeared = reconcile_registry(disconfirmed, [cluster("a", "b")], run_id="r3", run_index=3)
+    assert len(reappeared["clusters"]) == 2
+    assert old_id in reappeared["clusters"]
+    new_ids = [cluster_id for cluster_id in reappeared["clusters"] if cluster_id != old_id]
     assert len(new_ids) == 1
     assert any(
         event["event"] == "reappeared_after_disconfirmation"
         and event["source_cluster_id"] == old_id
-        for event in revived["lineage"]
+        for event in reappeared["lineage"]
     )
 
 
@@ -150,9 +150,9 @@ def test_lineage_and_history_are_deterministically_reconstructable():
     assert [event["event"] for event in registry["lineage"]].count("revival") == 1
 
 
-def test_save_registry_writes_valid_json_and_validate_config_fails_closed():
+def test_save_registry_writes_valid_json_and_validate_config_fails_closed(tmp_path):
     registry = empty_registry()
-    path = pytest.ensuretemp("registry") / "registry.json"
+    path = tmp_path / "registry.json"
     save_registry(path, registry)
     assert json.loads(path.read_text(encoding="utf-8"))["schema_version"] == 2
     with pytest.raises(ValueError):

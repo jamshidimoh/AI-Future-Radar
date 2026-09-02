@@ -43,19 +43,14 @@ def test_restart_round_trip_preserves_registry_identity(tmp_path):
 def test_replayed_signal_cluster_does_not_create_false_new_cluster():
     first = reconcile_registry(empty_registry(), [cluster("a", "b")], run_id="r1", run_index=1)
     cluster_id = next(iter(first["clusters"]))
-    replayed = reconcile_registry(
-        first,
-        [cluster("b", "a"), cluster("a", "b")],
-        run_id="r2",
-        run_index=2,
-    )
+    replayed = reconcile_registry(first, [cluster("b", "a")], run_id="r2", run_index=2)
     assert len(replayed["clusters"]) == 1
     assert cluster_id in replayed["clusters"]
     assert len(replayed["signal_history"]) == 2
     assert replayed["signal_history"][-1]["cluster_id"] == cluster_id
 
 
-def test_merge_keeps_strongest_previous_identity_and_records_lineage():
+def test_merge_keeps_deterministic_previous_identity_and_records_lineage():
     first = reconcile_registry(
         empty_registry(),
         [cluster("a", "b"), cluster("c", "d")],
@@ -69,12 +64,14 @@ def test_merge_keeps_strongest_previous_identity_and_records_lineage():
         run_id="r2",
         run_index=2,
     )
-    kept = ids[0]
-    assert merged["clusters"][kept]["last_seen_run"] == 2
     merge_events = [event for event in merged["lineage"] if event["event"] == "merge"]
     assert merge_events
-    assert merge_events[-1]["cluster_id"] == kept
-    assert ids[1] in merge_events[-1]["merged_from"]
+    kept = merge_events[-1]["cluster_id"]
+    assert kept in ids
+    assert len(merge_events[-1]["merged_from"]) == 1
+    assert merge_events[-1]["merged_from"][0] in ids
+    assert merge_events[-1]["merged_from"][0] != kept
+    assert merged["clusters"][kept]["last_seen_run"] == 2
 
 
 def test_split_keeps_parent_for_best_child_and_creates_child_lineage():

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788350879,
+  "updated_at": 1788371735,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6419,6 +6419,44 @@
       "why_it_matters": "این موضع‌گیری نشان می‌دهد که رهبران صنعت فناوری، مقررات اتحادیه اروپا را مانعی برای نوآوری و توسعه زیرساخت‌های حیاتی AI می‌دانند. درگیری کلامی Musk در چنین محفلی جهانی، احتمال تشدید اختلافات بین بازارهای آزاد فناوری و رویکردهای محافظه‌کارانه اروپا را افزایش می‌دهد. این موضوع می‌تواند بر آینده سرمایه‌گذاری‌های زیرساختی و چارچوب‌های نظارتی جهانی هوش مصنوعی تأثیر مستقیم بگذارد.",
       "link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOU3ZoM1Zfb3FuNHBUUkZRY29ISFU5VU8wX01QRHNab3JtbjZHOFgwei1xRi1iaTRCb1BkTkZlbGFwbl9fN0dKYVVndkQ0YU05TzA3M2hNYVN3MXVONmdIMkR6MHpSeWFzQWticHVLMkMxTEd6SEVTa3RwUFJVcy1jT1dqYl9XZGRiVTZrWnliUFU0cGxLS1E?oc=5",
       "posted_at": 1788350879
+    },
+    "-1004482051328:1418": {
+      "chat_id": -1004482051328,
+      "message_id": 1418,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (디지털투데이)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "سام آلتمن: مصرف آب یک بادام بیشتر از هزاران درخواست ChatGPT است",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در مقایسه‌ای جدید تأکید کرده که فرآیند تولید یک عدد بادام، حجم آب بیشتری نسبت به پردازش هزاران درخواست در سرویس ChatGPT مصرف می‌کند. این ادعا با هدف بازتعریف بحث‌های پیرامون پایداری محیط‌زیستی در صنعت هوش مصنوعی مطرح شده است. آلتمن با ارائه این داده مقایسه‌ای، سعی دارد نشان دهد که ردپای آبی مدل‌های زبانی بزرگ در مقایسه با برخی محصولات کشاورزی متداول، ناچیزتر از تصور عمومی است.",
+      "why_it_matters": "این بیانیه نشان‌دهنده تلاش استراتژیک رهبران صنعت هوش مصنوعی برای مدیریت روایت عمومی درباره هزینه‌های زیست‌محیطی فناوری‌های پیشرفته است. با مقایسه مستقیم با کالاهای مصرفی روزمره، OpenAI می‌کوشد تا نگرانی‌ها را از مصرف بالای منابع دیتاسنترها منحرف کرده و کارایی نسبی مدل‌های زبانی بزرگ را برجسته کند. این رویکرد می‌تواند بر سیاست‌گذاری‌های پایداری و ادراک سرمایه‌گذاران نسبت به مقیاس‌پذیری زیرساخت‌های هوش مصنوعی تأثیر بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOMk16VDZVVFpVVGxqTFRjOXI4V3VHRkRyeVA0WmZXRkpwTWtFa3hNYlhyaG9JaHE5d2xHNTNPQkZhV1g2bElLaTVlSWVzNUo5dEdoa19NMy01SFpFREtWdTlQdmxEMENyNUU1R0RvNU9GaXE5eE0zUTV4a1lsdllJT1lieklveVFITTZPbjYxLW10cW41ZnFKY1R0djVWRDVVWlgyYjNXVC04YnoxeERTRGprTjczNTUycDYxMw?oc=5",
+      "posted_at": 1788371733
+    },
+    "-1004482051328:1419": {
+      "chat_id": -1004482051328,
+      "message_id": 1419,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature News",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "مقاله‌ای در نشریه Nature به بررسی نقش AI در طراحی آزمایش‌های فیزیک می‌پردازد",
+      "summary": "مقاله‌ای در نشریه Nature به بررسی نقش AI در طراحی آزمایش‌های فیزیک می‌پردازد. این رویکرد جدید به جای تنظیم دستی تعداد محدودی پارامتر، بر جستجو برای یافتن نقاط بهینه در فضای وسیعی از پیکربندی‌های سخت‌افزاری تمرکز دارد. همچنین AI قادر است طرح‌های آزمایشی کاملاً جدیدی را پیشنهاد دهد که فراتر از روش‌های سنتی است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این تحول نشان‌دهنده تغییر پارادایم از بهینه‌سازی جزئی به طراحی ساختاری در فیزیک است. با جستجو در فضای عظیم پیکربندی‌های سخت‌افزاری، محققان می‌توانند راه‌حل‌هایی را کشف کنند که با روش‌های دستی غیرممکن است. این قابلیت می‌تواند سرعت کشف‌های علمی و کارایی آزمایش‌های پیچیده فیزیکی را به‌طور چشمگیری افزایش دهد.",
+      "link": "https://www.nature.com/articles/s41586-026-10898-6",
+      "posted_at": 1788371735
     }
   }
 }

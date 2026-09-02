@@ -1,0 +1,8 @@
+controlled_intelligence_bridge:
+  version: 1
+  mode: shadow
+  apply: false
+  rollback_enabled: true
+  publication_side_effect: false
+  require_shadow_pass: true
+  require_explicit_controlled_mode: true

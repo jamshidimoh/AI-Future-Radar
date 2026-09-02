@@ -14,7 +14,10 @@ PDI = "\u2069"
 RLM = "\u200f"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 SHORT_DIVIDER = "──────────────"
-MAX_MESSAGE = 4090
+# Keep the educational renderer aligned with the canonical single-message
+# delivery guard. This leaves no gap where the renderer can produce a message
+# that telegram_single_delivery.py will reject at the same 3900-char budget.
+MAX_MESSAGE = 3900
 # Expanded educational budgets are intentionally limited to the educational
 # renderer. The renderer still has deterministic fallback budgets for Telegram's
 # single-message ceiling.

@@ -55,7 +55,10 @@ def test_substantive_priority_interview_stays_tier0():
     assert bonus == 50.0
 
 
-def test_protected_leader_capacity_demotes_overflow_candidates():
+def test_protected_leader_capacity_demotes_overflow_candidates(monkeypatch):
+    monkeypatch.setattr(ranking._pipeline, "_is_protected_leader_interview", lambda item: item.get("content_type") == "interview" and bool(item.get("leader")))
+    monkeypatch.setattr(ranking._pipeline, "_is_protected_leader_activity", lambda item: False)
+    monkeypatch.setattr(ranking._pipeline, "_leader_source_authority", lambda item: 3)
     items = [
         {"title": "Leader one", "leader": "Elon Musk", "editorial_score": 90.0, "content_type": "interview"},
         {"title": "Leader two", "leader": "Sam Altman", "editorial_score": 89.0, "content_type": "interview"},

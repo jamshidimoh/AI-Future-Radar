@@ -79,6 +79,31 @@ def test_source_independence_changes_trend_score_but_source_tier_does_not_define
     assert tier_variant["trend_score"] == independent["trend_score"]
 
 
+def test_source_tier_inside_signal_vector_cannot_change_intrinsic_signal():
+    vector = {
+        "novelty": 8.0,
+        "future_impact": 7.0,
+        "technical_significance": 9.0,
+        "strategic_relevance": 6.0,
+        "trend_alignment": 7.0,
+        "evidence_strength": 10.0,
+        "source_quality": 10.0,
+    }
+    low_tier = dict(vector, source_quality=3.0)
+    high_tier_items = [
+        {"id": "a", "title": "AI agents enable scientific discovery", "source": "one", "signal_vector": vector},
+        {"id": "b", "title": "AI agents enable scientific discovery", "source": "two", "signal_vector": vector},
+    ]
+    low_tier_items = [
+        {"id": "a", "title": "AI agents enable scientific discovery", "source": "one", "signal_vector": low_tier},
+        {"id": "b", "title": "AI agents enable scientific discovery", "source": "two", "signal_vector": low_tier},
+    ]
+    high = build_trend_clusters(high_tier_items, BASE_CONFIG)[0]
+    low = build_trend_clusters(low_tier_items, BASE_CONFIG)[0]
+    assert high["mean_signal_score"] == low["mean_signal_score"]
+    assert high["trend_score"] == low["trend_score"]
+
+
 def test_enrichment_marks_unclustered_items_without_touching_publication_fields():
     items = [
         {"id": "a", "title": "AI agents improve research workflows", "signal_score": 70, "source": "a"},

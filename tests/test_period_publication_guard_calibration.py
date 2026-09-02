@@ -9,6 +9,8 @@ def _candidate(title="A new AI story", protected=False):
     }
     if protected:
         item["protected_content"] = True
+        item["protected_slot"] = True
+        item["leader_watch_protected"] = True
         item["leader"] = "Example Leader"
     return item
 

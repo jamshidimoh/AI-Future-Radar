@@ -1,0 +1,7 @@
+foresight_intelligence:
+  version: 1
+  enabled: false
+  publication_decoupled: true
+  scenario_count: 3
+  minimum_evidence: 1
+  uncertainty_weight: 0.35

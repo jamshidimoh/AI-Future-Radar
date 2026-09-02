@@ -57,9 +57,9 @@ def test_substantive_priority_interview_stays_tier0():
 
 def test_protected_leader_capacity_demotes_overflow_candidates():
     items = [
-        {"title": "Leader one", "leader": "Elon Musk", "editorial_score": 90.0, "content_type": "interview"},
-        {"title": "Leader two", "leader": "Sam Altman", "editorial_score": 89.0, "content_type": "interview"},
-        {"title": "Leader three", "leader": "Jensen Huang", "editorial_score": 88.0, "content_type": "interview"},
+        {"title": "Leader one", "leader": "Elon Musk", "editorial_score": 90.0, "content_type": "interview", "leader_watch_protected": True},
+        {"title": "Leader two", "leader": "Sam Altman", "editorial_score": 89.0, "content_type": "interview", "leader_watch_protected": True},
+        {"title": "Leader three", "leader": "Jensen Huang", "editorial_score": 88.0, "content_type": "interview", "leader_watch_protected": True},
     ]
     selected, regular = ranking._eligibility_split(items, max_protected=2)
     assert len(selected) == 2

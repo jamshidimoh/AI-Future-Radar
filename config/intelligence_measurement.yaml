@@ -1,0 +1,7 @@
+intelligence_measurement:
+  version: 1
+  enabled: true
+  shadow_only: true
+  publication_decoupled: true
+  max_contradiction_rate_delta: 0.20
+  require_determinism: true

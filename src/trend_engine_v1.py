@@ -25,6 +25,13 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "stopwords": [],
 }
 
+_INTRINSIC_SIGNAL_WEIGHTS = {
+    "novelty": 0.25,
+    "future_impact": 0.25,
+    "technical_significance": 0.20,
+    "strategic_relevance": 0.15,
+    "trend_alignment": 0.15,
+}
 _TOKEN_RE = re.compile(r"[\w\u0600-\u06FF]+", re.UNICODE)
 
 
@@ -156,12 +163,27 @@ def _score_0_100(value: Any) -> float:
 
 
 def _signal_score(item: Mapping[str, Any]) -> float:
+    """Return an intrinsic technology signal without Source Tier dependence."""
+    for field in ("intrinsic_signal_score", "technology_signal_score"):
+        if item.get(field) is not None:
+            return _score_0_100(item.get(field))
+
+    vector = item.get("signal_vector") or {}
+    intrinsic = [
+        float(vector[key]) * weight
+        for key, weight in _INTRINSIC_SIGNAL_WEIGHTS.items()
+        if isinstance(vector.get(key), (int, float))
+    ]
+    if intrinsic:
+        total_weight = sum(
+            weight for key, weight in _INTRINSIC_SIGNAL_WEIGHTS.items() if isinstance(vector.get(key), (int, float))
+        )
+        return max(0.0, min(100.0, sum(intrinsic) / total_weight * 10.0))
+
+    # Explicit signal_score is accepted as a caller-supplied intrinsic score.
+    # The G1 engine itself never derives that value from Source Tier.
     if item.get("signal_score") is not None:
         return _score_0_100(item.get("signal_score"))
-    vector = item.get("signal_vector") or {}
-    values = [float(value) for value in vector.values() if isinstance(value, (int, float))]
-    if values:
-        return max(0.0, min(100.0, sum(values) / len(values) * 10.0))
     return 0.0
 
 

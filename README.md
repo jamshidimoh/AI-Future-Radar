@@ -10,6 +10,18 @@
 
 مسیر تولید اصلی با GitHub Actions فقط در زمان‌بندی مشخص یا با اجرای دستی فعال است؛ Push به `main` باعث اجرای ناخواسته Production نمی‌شود. پس از بسته‌شدن پروژه، تغییرات جدید باید در مسیر مستقل Maintenance/Evolution انجام شوند، مگر اینکه یک frozen invariant یا production contract شکسته باشد.
 
+## استفاده دیگران
+
+راهنمای کامل اجرای نسخه منتشرشده، تنظیم environment، اجرای Docker، نگهداری state، اتصال Telegram، ارتقا و rollback در `docs/USER_GUIDE.md` قرار دارد.
+
+برای شروع سریع، image رسمی را دریافت کنید:
+
+```bash
+docker pull ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
+```
+
+سپس container را با یک فایل `.env` و یک دایرکتوری persistent برای `/app/data` اجرا کنید. در صورت عمومی بودن Package، pull از GHCR بدون authentication امکان‌پذیر است.
+
 ## انتشار و Packages
 
 بسته توزیعی رسمی پروژه، یک OCI container برای GitHub Container Registry است:

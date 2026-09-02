@@ -1,0 +1,54 @@
+name: G6 Foresight Intelligence Validation
+
+on:
+  push:
+    branches:
+      - evolution/technology-intelligence-g6
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: g6-validation
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run full regression suite
+        run: python -m pytest -q
+
+      - name: Run G6 focused contract
+        run: python -m pytest -q tests/test_foresight_intelligence_v1.py
+
+      - name: Validate frozen production acceptance
+        run: python -m pytest -q tests/test_final_production_acceptance.py tests/test_production_acceptance_contract.py
+
+      - name: Validate G6 config is publication-decoupled
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          data = yaml.safe_load(Path("config/foresight_intelligence.yaml").read_text(encoding="utf-8"))
+          cfg = data["foresight_intelligence"]
+          assert cfg["version"] == 1
+          assert cfg["enabled"] is False
+          assert cfg["publication_decoupled"] is True
+          assert 2 <= cfg["scenario_count"] <= 5
+          print("G6 publication-decoupling contract: PASS")
+          PY

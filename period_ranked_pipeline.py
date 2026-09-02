@@ -43,6 +43,7 @@ def _base_score(item):
 
 
 def _is_priority_interview(item):
+    """Return intrinsic Tier-0 classification without granting publication protection."""
     try:
         return bool(priority_people_features(item)[1])
     except Exception:
@@ -50,7 +51,13 @@ def _is_priority_interview(item):
 
 
 def _is_protected_publication_story(item):
-    return bool(item.get("protected_content") or item.get("_named_leader_interview") or _is_priority_interview(item))
+    """Publication protection is an eligibility/routing contract, not a person bonus.
+
+    Only an explicit protected-slot decision (or an already materialized protected
+    content contract) may elevate a story into the protected publication path.
+    Merely mentioning a watched/priority person is insufficient.
+    """
+    return bool(item.get("protected_slot")) or bool(item.get("protected_content")) and bool(item.get("leader_watch_protected"))
 
 
 def _prepare_rank_features(items):
@@ -63,10 +70,10 @@ def _prepare_rank_features(items):
             people = list(people or []) + [leader]
         item["model_release_priority"] = bool(model_bonus)
         item["model_release_bonus_legacy"] = model_bonus
-        item["priority_person_interview"] = bool(is_tier0 or protected)
-        item["priority_person_bonus_legacy"] = people_bonus
-        item["priority_story_people"] = people
-        item["_rank_is_tier0"] = bool(is_tier0 or protected)
+        item["priority_person_interview"] = bool(protected)
+        item["priority_person_bonus_legacy"] = people_bonus if protected else 0.0
+        item["priority_story_people"] = people if protected else []
+        item["_rank_is_tier0"] = bool(protected)
         item["final_editorial_score"] = canonical_rank_score(item)
     return items
 
@@ -256,14 +263,23 @@ def _eligibility_split(items, max_protected=2):
             leader = str(item.get("leader") or item.get("watch_person") or "").strip()
             if leader:
                 item["priority_story_people"] = [leader]
-            item["_rank_is_tier0"] = True
             candidates.append(item)
         else:
+            item["protected_slot"] = False
             regular.append(item)
     candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _pipeline._direct_interview_signal(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
     limit = max(0, int(max_protected))
     selected = candidates[:limit]
-    regular.extend(candidates[limit:])
+    overflow = candidates[limit:]
+    for item in selected:
+        item["protected_slot"] = True
+        item["_rank_is_tier0"] = True
+    for item in overflow:
+        item["protected_slot"] = False
+        item["protected_content"] = False
+        item["leader_watch_protected"] = False
+        item["_rank_is_tier0"] = False
+    regular.extend(overflow)
     print(f"[Protected Leader Eligibility] candidates={len(candidates)} slots_reserved={len(selected)}", flush=True)
     return selected, regular
 
@@ -276,6 +292,6 @@ def main(hooks=None):
 
 select_editorial = _global_ranked_selection
 
-for _name in ("load_yaml", "LEADER_CONFIG_PATH", "_direct_interview_signal", "summarize_item", "format_post", "mark_as_seen", "send_to_telegram_safe", "resolve_source_image", "_source_tier", "_persist_item_success"):
+for _name in ("load_yaml", "LEADER_CONFIG_PATH", "_direct_interview_signal", "summarize_item", "format_post", "mark_as_seen", "send_to_telegram_safe", "resolve_source_image", "_source_tier", "summarize_item", "_persist_item_success"):
     if hasattr(_pipeline, _name):
         globals()[_name] = getattr(_pipeline, _name)

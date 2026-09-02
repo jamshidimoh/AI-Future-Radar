@@ -83,7 +83,7 @@ Router مدل نیز در صورت `429` یا خطای provider به مدل بع
 
 Quality CI روی تغییرات Repository قراردادهای compile، YAML، AI-first، Leader slot، Story dedup، quote evidence و Telegram formatting را کنترل می‌کند. Production فقط طبق Schedule چهار‌ساعته یا اجرای دستی اجرا می‌شود.
 
-Workflow تولیدی concurrency دارد تا دو Run همزمان روی state اشتراکی اجرا نشوند. Diagnostics هر Run برای ۷ روز به‌عنوان Artifact نگهداری می‌شوند.
+Workflow تولیدی concurrency دارد تا دو Run همزمان روی state اشتراکی اجرا نشوند. Diagnostics هر Run برای ۷ روز به‌عنوان Artifact نگهداری می‌شود.
 
 ## Secrets
 

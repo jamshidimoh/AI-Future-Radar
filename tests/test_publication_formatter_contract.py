@@ -5,6 +5,9 @@ def test_production_format_hook_preserves_main_formatter_contract(monkeypatch):
     module = importlib.import_module("scripts.production_with_ranking_audit")
     captured = {}
 
+    def fake_formatter(*args, **kwargs):
+        return "PAYLOAD"
+
     def fake_pipeline_main(hooks=None):
         captured["hooks"] = hooks or {}
         formatter = captured["hooks"]["format_post"]
@@ -18,9 +21,9 @@ def test_production_format_hook_preserves_main_formatter_contract(monkeypatch):
             source_tier=1,
             leader="",
         )
-        assert payload
+        assert payload == "PAYLOAD"
 
     monkeypatch.setattr(module, "_original_main", fake_pipeline_main)
-    module._audited_main(hooks={})
+    module._audited_main(hooks={"format_post": fake_formatter})
 
     assert "format_post" in captured["hooks"]

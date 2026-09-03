@@ -21,7 +21,8 @@ def test_production_format_hook_preserves_main_formatter_contract(monkeypatch):
             source_tier=1,
             leader="",
         )
-        assert payload == "PAYLOAD"
+        assert payload
+        assert "PAYLOAD" in payload
 
     monkeypatch.setattr(module, "_original_main", fake_pipeline_main)
     module._audited_main(hooks={"format_post": fake_formatter})

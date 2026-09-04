@@ -7,9 +7,9 @@ channel feed atomic and prevents duplicate text/photo publication.
 from __future__ import annotations
 
 import html
-import json
 import os
 import re
+from urllib.parse import urlencode
 
 import requests
 import send_telegram
@@ -17,6 +17,8 @@ import send_telegram
 SAFE_TEXT_LIMIT = 3900
 CHATGPT_LABEL = "بررسی بیشتر با ChatGPT"
 _BIDI_MARKS = "\u2066\u2069\u2067\u200f\u200e"
+_SHORTENER_URL = "https://is.gd/create.php"
+_MAX_TELEGRAM_NAV_URL = 512
 
 
 def _visible_length(text: str) -> int:
@@ -28,12 +30,7 @@ def _visible_length(text: str) -> int:
 
 
 def _extract_chatgpt_anchor(text: str):
-    """Extract the ChatGPT URL from its HTML anchor and replace the anchor.
-
-    Matching is deliberately based on the rendered button label after removing
-    Unicode bidi isolation marks. This avoids brittle assumptions about whether
-    the formatter placed LRI/PDI or other directionality marks around ChatGPT.
-    """
+    """Extract the ChatGPT URL from its HTML anchor and replace the anchor."""
     raw = str(text or "")
     anchor_re = re.compile(
         r'<a\s+href=["\']([^"\']+)["\']>\s*<b>(.*?)</b>\s*</a>',
@@ -48,6 +45,32 @@ def _extract_chatgpt_anchor(text: str):
         cleaned = raw[:match.start()] + replacement + raw[match.end():]
         return cleaned, url
     return raw, ""
+
+
+def _shorten_navigation_url(url: str) -> str:
+    """Return a bounded navigation URL; fail closed if shortening is unavailable."""
+    raw = str(url or "").strip()
+    if not raw:
+        return ""
+    if len(raw) <= _MAX_TELEGRAM_NAV_URL:
+        return raw
+    try:
+        response = requests.post(
+            _SHORTENER_URL,
+            data={"format": "simple", "url": raw},
+            timeout=20,
+        )
+        if response.status_code != 200:
+            print(f"[Telegram Delivery] navigation shortener failed: {response.status_code}", flush=True)
+            return ""
+        short = response.text.strip()
+        if not re.fullmatch(r"https://is\.gd/[A-Za-z0-9_-]+", short):
+            print("[Telegram Delivery] navigation shortener returned invalid URL", flush=True)
+            return ""
+        return short
+    except requests.RequestException as exc:
+        print(f"[Telegram Delivery] navigation shortener unavailable: {exc}", flush=True)
+        return ""
 
 
 def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
@@ -65,19 +88,27 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
     if not send_telegram._telegram_preflight(token, channel):
         return False
 
+    if chatgpt_url:
+        navigation_url = _shorten_navigation_url(chatgpt_url)
+        if not navigation_url:
+            print("[Telegram Delivery] ChatGPT navigation unavailable; refusing publication rather than emitting a broken CTA", flush=True)
+            return False
+        escaped_nav = html.escape(navigation_url, quote=True)
+        cleaned_text = cleaned_text.replace(
+            f"<b>{CHATGPT_LABEL}</b>",
+            f'<b><a href="{escaped_nav}">{CHATGPT_LABEL}</a></b>',
+            1,
+        )
+        if len(navigation_url) > _MAX_TELEGRAM_NAV_URL:
+            print("[Telegram Delivery] bounded navigation URL invariant violated", flush=True)
+            return False
+
     data = {
         "chat_id": channel,
         "text": cleaned_text,
         "parse_mode": "HTML",
         "disable_web_page_preview": not bool(str(source_link or "").strip()),
     }
-    if chatgpt_url:
-        data["reply_markup"] = json.dumps(
-            {"inline_keyboard": [[{"text": CHATGPT_LABEL, "url": chatgpt_url}]]},
-            ensure_ascii=False,
-            separators=(",", ":"),
-        )
-        print("[Telegram Delivery] ChatGPT navigation moved to inline keyboard", flush=True)
 
     response = requests.post(
         f"https://api.telegram.org/bot{token}/sendMessage",

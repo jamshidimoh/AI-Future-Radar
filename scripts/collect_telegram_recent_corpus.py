@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 from datetime import datetime, timedelta, timezone
 from html import unescape
 from pathlib import Path
@@ -12,15 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "msa_v1_telegram_channels.json"
 OUT = ROOT / "data" / "msa_v1_telegram_recent.jsonl"
 
-POST_RE = re.compile(r'<div class="tgme_widget_message[^>]*data-post="([^"]+)"[^>]*>(.*?)</div>\\s*</div>', re.S)
+POST_RE = re.compile(r'<div class="tgme_widget_message[^>]*data-post="([^"]+)"[^>]*>(.*?)</div>\s*</div>', re.S)
 TEXT_RE = re.compile(r'<div class="tgme_widget_message_text[^>]*>(.*?)</div>', re.S)
 DATE_RE = re.compile(r'<time[^>]+datetime="([^"]+)"')
 
 
 def clean_html(value: str) -> str:
-    value = re.sub(r'<br\\s*/?>', '\\n', value, flags=re.I)
+    value = re.sub(r'<br\s*/?>', '\n', value, flags=re.I)
     value = re.sub(r'<[^>]+>', ' ', value)
-    return re.sub(r'\\s+', ' ', unescape(value)).strip()
+    return re.sub(r'\s+', ' ', unescape(value)).strip()
 
 
 def fetch_channel(channel: str, cutoff: datetime) -> list[dict]:
@@ -71,7 +70,7 @@ def main() -> int:
     all_rows.sort(key=lambda r: r["published_at"], reverse=True)
     with OUT.open("w", encoding="utf-8") as fh:
         for row in all_rows:
-            fh.write(json.dumps(row, ensure_ascii=False) + "\\n")
+            fh.write(json.dumps(row, ensure_ascii=False) + "\n")
     print(f"TELEGRAM_CORPUS records={len(all_rows)} channels={len(config['channels'])} failures={len(failures)}")
     print(f"TELEGRAM_CORPUS_OUTPUT={OUT.relative_to(ROOT)}")
     if failures:

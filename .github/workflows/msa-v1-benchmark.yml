@@ -1,0 +1,24 @@
+name: MSA V1 Benchmark
+
+on:
+  push:
+    branches:
+      - vnext/msa-v1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Run MSA V1 structural benchmark
+        run: python -u scripts/msa_v1_benchmark.py

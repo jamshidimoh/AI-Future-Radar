@@ -8,11 +8,11 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    paths:
+      - 'scripts/production_with_ranking_audit.py'
+      - '.github/workflows/run.yml'
   schedule:
-    # Tehran publication windows:
-    # 05:17, 10:47, 13:47, 17:47, 20:47, 22:47.
-    # Tehran is UTC+3:30. The first window needs :47 UTC;
-    # the remaining windows map from :17 UTC to :47 Tehran.
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
 

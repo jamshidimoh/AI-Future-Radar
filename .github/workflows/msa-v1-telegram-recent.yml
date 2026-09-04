@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: vnext/msa-v1
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -30,8 +32,11 @@ jobs:
       - name: Evaluation completion marker
         run: echo "MSA_V1_REAL_CORPUS_EVALUATION_COMPLETED=true"
       - name: Upload recent corpus
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: msa-v1-telegram-recent-corpus
-          path: data/msa_v1_telegram_recent.jsonl
+          path: |
+            data/msa_v1_telegram_recent.jsonl
+            data/msa_v1_telegram_manifest.json
           if-no-files-found: error

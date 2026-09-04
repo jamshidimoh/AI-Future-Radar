@@ -1,6 +1,6 @@
 {
   "version": "msa-v1-telegram-20",
-  "window_days": 30,
+  "window_days": 90,
   "channels": [
     "science",
     "aipost",

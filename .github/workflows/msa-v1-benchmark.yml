@@ -6,6 +6,8 @@ on:
       - vnext/msa-v1
   workflow_dispatch:
 
+run-name: MSA V1 Benchmark — ${{ github.sha }}
+
 permissions:
   contents: read
 

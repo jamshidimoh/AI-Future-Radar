@@ -10,6 +10,7 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "msa_v1_telegram_channels.json"
 OUT = ROOT / "data" / "msa_v1_telegram_recent.jsonl"
+MANIFEST = ROOT / "data" / "msa_v1_telegram_manifest.json"
 
 POST_RE = re.compile(r'<div class="tgme_widget_message[^>]*data-post="([^"]+)"[^>]*>(.*?)</div>\s*</div>', re.S)
 TEXT_RE = re.compile(r'<div class="tgme_widget_message_text[^>]*>(.*?)</div>', re.S)
@@ -59,20 +60,25 @@ def main() -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     all_rows: list[dict] = []
     failures = []
+    channel_status = []
     for channel in config["channels"]:
         try:
             rows = fetch_channel(channel, cutoff)
             all_rows.extend(rows)
+            channel_status.append({"channel": channel, "status": "OK", "records": len(rows)})
             print(f"TELEGRAM_CHANNEL channel={channel} records={len(rows)} status=OK")
         except Exception as exc:
             failures.append(channel)
+            channel_status.append({"channel": channel, "status": "ERROR", "records": 0})
             print(f"TELEGRAM_CHANNEL channel={channel} records=0 status=ERROR error={type(exc).__name__}")
     all_rows.sort(key=lambda r: r["published_at"], reverse=True)
     with OUT.open("w", encoding="utf-8") as fh:
         for row in all_rows:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+    MANIFEST.write_text(json.dumps({"window_days": int(config.get("window_days", 30)), "channels": channel_status, "failures": failures}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"TELEGRAM_CORPUS records={len(all_rows)} channels={len(config['channels'])} failures={len(failures)}")
     print(f"TELEGRAM_CORPUS_OUTPUT={OUT.relative_to(ROOT)}")
+    print(f"TELEGRAM_CORPUS_MANIFEST={MANIFEST.relative_to(ROOT)}")
     if failures:
         print("TELEGRAM_CORPUS_PARTIAL=true")
     return 0 if all_rows else 1

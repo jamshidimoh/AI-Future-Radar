@@ -6,10 +6,11 @@ on:
     paths:
       - 'config/msa_v1_telegram_channels.json'
       - 'scripts/collect_telegram_recent_corpus.py'
+      - 'scripts/msa_v1_real_corpus_eval.py'
       - '.github/workflows/msa-v1-telegram-recent.yml'
 
 jobs:
-  collect:
+  collect-and-evaluate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,6 +25,8 @@ jobs:
         run: |
           test -s data/msa_v1_telegram_recent.jsonl
           wc -l data/msa_v1_telegram_recent.jsonl
+      - name: Evaluate real corpus with MSA V1
+        run: python scripts/msa_v1_real_corpus_eval.py
       - name: Upload recent corpus
         uses: actions/upload-artifact@v4
         with:

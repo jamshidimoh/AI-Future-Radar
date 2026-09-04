@@ -1,0 +1,36 @@
+name: MSA V1 Historical Readiness
+
+on:
+  push:
+    branches:
+      - vnext/msa-v1
+  workflow_dispatch:
+
+run-name: MSA V1 Historical Readiness — ${{ github.sha }}
+
+permissions:
+  contents: read
+
+jobs:
+  historical-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Audit real historical corpus
+        run: python -u scripts/historical_corpus_audit.py
+      - name: Build annotation-ready seed
+        if: ${{ always() }}
+        run: python -u tools/build_golden_seed.py --limit 200
+      - name: Upload annotation seed
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: msa-v1-historical-annotation-seed
+          path: data/golden_dataset_seed.jsonl
+          if-no-files-found: error

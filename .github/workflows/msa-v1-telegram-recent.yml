@@ -27,6 +27,8 @@ jobs:
           wc -l data/msa_v1_telegram_recent.jsonl
       - name: Evaluate real corpus with MSA V1
         run: python scripts/msa_v1_real_corpus_eval.py
+      - name: Evaluation completion marker
+        run: echo "MSA_V1_REAL_CORPUS_EVALUATION_COMPLETED=true"
       - name: Upload recent corpus
         uses: actions/upload-artifact@v4
         with:

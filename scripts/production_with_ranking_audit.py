@@ -40,57 +40,68 @@ def _production_select(items, max_posts, max_per_source, max_per_type, policy):
 
 
 def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
-    """Keep one story inside Telegram's safe limit without invoking transport chunking.
+    """Fit one complete Telegram story while preserving the full publication contract.
 
-    Editorial structure is preserved first; only generated prose fields are
-    compacted when necessary. This is intentionally production-only.
+    The ChatGPT navigation link is intentionally preserved. Only generated
+    editorial prose is compacted; transport chunking is not used here.
     """
     candidate = dict(item or {})
     post = force_rtl_blocks(formatter(candidate, source_name, link, **kwargs))
     if len(post) <= TELEGRAM_SAFE_TEXT_LIMIT:
         return post
 
-    original_summary = str(candidate.get("summary") or "")
-    original_why = str(candidate.get("why_it_matters") or "")
-    original_quote = str(candidate.get("key_quote") or "")
-    original_title = str(candidate.get("title") or "")
+    original = {
+        "title": str(candidate.get("title") or ""),
+        "summary": str(candidate.get("summary") or ""),
+        "why": str(candidate.get("why_it_matters") or ""),
+        "quote": str(candidate.get("key_quote") or ""),
+    }
 
-    def render(summary, why, quote, title):
+    def render(title, summary, why, quote):
         compact = dict(candidate)
+        compact["title"] = title
         compact["summary"] = summary
         compact["why_it_matters"] = why
         compact["key_quote"] = quote
-        compact["title"] = title
         return force_rtl_blocks(formatter(compact, source_name, link, **kwargs))
 
-    prose = original_summary + "\n\n" + original_why
-    if prose:
-        lo, hi, best = 0, len(prose), ""
-        while lo <= hi:
-            mid = (lo + hi) // 2
-            sample = prose[:mid].rstrip()
-            split_at = sample.rfind("\n\n")
-            if split_at > 0:
-                summary = sample[:split_at].rstrip()
-                why = sample[split_at + 2:].strip()
-            else:
-                summary, why = sample, ""
-            rendered = render(summary, why, original_quote, original_title)
-            if len(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
-                best = rendered
-                lo = mid + 1
-            else:
-                hi = mid - 1
-        if best:
-            print("[Telegram Payload Fit] compacted generated prose to single-message limit", flush=True)
-            return best
+    # Fast deterministic compaction ladder. Keep title + summary first;
+    # remove optional quote/why before touching the ChatGPT/source navigation.
+    attempts = [
+        (original["title"][:180], original["summary"][:800], original["why"][:300], ""),
+        (original["title"][:160], original["summary"][:650], original["why"][:200], ""),
+        (original["title"][:140], original["summary"][:500], original["why"][:120], ""),
+        (original["title"][:120], original["summary"][:350], "", ""),
+        (original["title"][:100], original["summary"][:250], "", ""),
+    ]
+    for title, summary, why, quote in attempts:
+        rendered = render(title, summary, why, quote)
+        if len(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
+            print(
+                f"[Telegram Payload Fit] compacted generated prose length={len(rendered)} limit={TELEGRAM_SAFE_TEXT_LIMIT}",
+                flush=True,
+            )
+            return rendered
 
-    for quote in (original_quote[:600], original_quote[:300], ""):
-        for title in (original_title, original_title[:240], original_title[:160]):
-            rendered = render(original_summary[:1200], original_why[:900], quote, title)
-            if len(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
-                print("[Telegram Payload Fit] applied fallback compacting", flush=True)
-                return rendered
+    # Final adaptive pass: preserve title and all mandatory navigation, and
+    # find the largest summary that fits. This avoids false failure when the
+    # fixed ChatGPT URL consumes most of Telegram's message budget.
+    title = original["title"][:100]
+    lo, hi, best = 0, len(original["summary"]), ""
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        rendered = render(title, original["summary"][:mid], "", "")
+        if len(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
+            best = rendered
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    if best:
+        print(
+            f"[Telegram Payload Fit] adaptive summary compaction length={len(best)} limit={TELEGRAM_SAFE_TEXT_LIMIT}",
+            flush=True,
+        )
+        return best
 
     print(
         f"[Telegram Payload Fit] unable to fit payload length={len(post)}; publication blocked",

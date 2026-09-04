@@ -16,6 +16,7 @@ import send_telegram
 
 SAFE_TEXT_LIMIT = 3900
 CHATGPT_LABEL = "بررسی بیشتر با ChatGPT"
+_BIDI_MARKS = "\u2066\u2069\u2067\u200f\u200e"
 
 
 def _visible_length(text: str) -> int:
@@ -27,22 +28,26 @@ def _visible_length(text: str) -> int:
 
 
 def _extract_chatgpt_anchor(text: str):
-    """Extract the ChatGPT URL from its HTML anchor and replace the anchor."""
+    """Extract the ChatGPT URL from its HTML anchor and replace the anchor.
+
+    Matching is deliberately based on the rendered button label after removing
+    Unicode bidi isolation marks. This avoids brittle assumptions about whether
+    the formatter placed LRI/PDI or other directionality marks around ChatGPT.
+    """
     raw = str(text or "")
-    pattern = re.compile(
-        r'<a\s+href=["\']([^"\']+)["\']>\s*<b>\s*'
-        + r'(?:\u2066)?'
-        + re.escape(CHATGPT_LABEL)
-        + r'(?:\u2069)?\s*</b>\s*</a>',
-        flags=re.I,
+    anchor_re = re.compile(
+        r'<a\s+href=["\']([^"\']+)["\']>\s*<b>(.*?)</b>\s*</a>',
+        flags=re.I | re.S,
     )
-    match = pattern.search(raw)
-    if not match:
-        return raw, ""
-    url = html.unescape(match.group(1))
-    replacement = f"<b>{CHATGPT_LABEL}</b>"
-    cleaned = raw[:match.start()] + replacement + raw[match.end():]
-    return cleaned, url
+    for match in anchor_re.finditer(raw):
+        label = re.sub("[" + re.escape(_BIDI_MARKS) + "]", "", html.unescape(match.group(2)))
+        if label.strip() != CHATGPT_LABEL:
+            continue
+        url = html.unescape(match.group(1))
+        replacement = f"<b>{CHATGPT_LABEL}</b>"
+        cleaned = raw[:match.start()] + replacement + raw[match.end():]
+        return cleaned, url
+    return raw, ""
 
 
 def _send_html_without_raw_length_guard(text: str, source_link: str = ""):

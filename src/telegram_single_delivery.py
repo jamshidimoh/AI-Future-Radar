@@ -27,19 +27,13 @@ def _visible_length(text: str) -> int:
 
 
 def _extract_chatgpt_anchor(text: str):
-    """Extract the long ChatGPT URL and remove its HTML link entity.
-
-    Telegram's message entity parser can reject a very long text-link entity
-    with ENTITIES_TOO_LONG even when the visible message is within 4096 chars.
-    The Radar's prefilled ChatGPT URL is intentionally long because it carries
-    the complete analysis prompt. Keep that URL, but move it to an inline
-    keyboard button so the message body contains no oversized link entity.
-    """
+    """Extract the ChatGPT URL from its HTML anchor and replace the anchor."""
     raw = str(text or "")
     pattern = re.compile(
-        r'<a\s+href=["\']([^"\']+)["\']>\s*<b>(?:\u2066)?'
+        r'<a\s+href=["\']([^"\']+)["\']>\s*<b>\s*'
+        + r'(?:\u2066)?'
         + re.escape(CHATGPT_LABEL)
-        + r'(?:\u2069)?</b>\s*</a>',
+        + r'(?:\u2069)?\s*</b>\s*</a>',
         flags=re.I,
     )
     match = pattern.search(raw)
@@ -52,12 +46,7 @@ def _extract_chatgpt_anchor(text: str):
 
 
 def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
-    """Send one HTML message when raw markup exceeds the limit but visible text fits.
-
-    Telegram applies its text limit after entity parsing. The canonical Radar
-    post contains long href attributes (notably the ChatGPT navigation URL),
-    so rejecting based on raw HTML length incorrectly blocks valid messages.
-    """
+    """Send one HTML message when raw markup exceeds the limit but visible text fits."""
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     channel = os.environ.get("TELEGRAM_CHANNEL")
     if not token or not channel:
@@ -83,7 +72,7 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
             ensure_ascii=False,
             separators=(",", ":"),
         )
-        print("[Telegram Delivery] ChatGPT navigation moved to inline keyboard to avoid oversized HTML link entity", flush=True)
+        print("[Telegram Delivery] ChatGPT navigation moved to inline keyboard", flush=True)
 
     response = requests.post(
         f"https://api.telegram.org/bot{token}/sendMessage",
@@ -102,20 +91,13 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
 
 
 def _send_text_only(text: str, source_link: str = ""):
-    """Publish exactly one canonical full-text Telegram message.
-
-    Oversized visible stories are rejected before transport. HTML markup such
-    as href attributes does not count toward the Telegram-visible limit.
-    """
+    """Publish exactly one canonical full-text Telegram message."""
     raw_text = str(text or "")
     visible = _visible_length(raw_text)
     if visible > SAFE_TEXT_LIMIT:
         print(f"[Telegram Delivery] rejected oversized single-message story: visible_chars={visible} limit={SAFE_TEXT_LIMIT}", flush=True)
         return False
 
-    # Preserve the established sender path for ordinary messages. When HTML
-    # markup itself makes the raw string large, use the direct HTML transport
-    # above so the sender's raw-length chunker cannot split href attributes.
     if len(raw_text) > SAFE_TEXT_LIMIT:
         result = _send_html_without_raw_length_guard(raw_text, source_link=source_link)
     else:

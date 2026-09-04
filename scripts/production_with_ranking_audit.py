@@ -1,6 +1,8 @@
 """Production launcher with canonical period ranking and audit."""
 from __future__ import annotations
 
+import html
+import re
 import sys
 from pathlib import Path
 
@@ -23,6 +25,13 @@ _original_summarize = pipeline.summarize_item
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 
 
+def _telegram_visible_length(text):
+    """Measure the post-entity text Telegram actually counts for sendMessage."""
+    raw = str(text or "")
+    raw = re.sub(r"<[^>]*>", "", raw)
+    return len(html.unescape(raw))
+
+
 def _production_select(items, max_posts, max_per_source, max_per_type, policy):
     """Use the canonical period ranking implementation for production."""
     selected = _original_rank(
@@ -40,14 +49,14 @@ def _production_select(items, max_posts, max_per_source, max_per_type, policy):
 
 
 def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
-    """Fit one complete Telegram story while preserving the full publication contract.
-
-    The ChatGPT navigation link is intentionally preserved. Only generated
-    editorial prose is compacted; transport chunking is not used here.
-    """
+    """Fit one complete Telegram story while preserving the full publication contract."""
     candidate = dict(item or {})
     post = force_rtl_blocks(formatter(candidate, source_name, link, **kwargs))
-    if len(post) <= TELEGRAM_SAFE_TEXT_LIMIT:
+    if _telegram_visible_length(post) <= TELEGRAM_SAFE_TEXT_LIMIT:
+        print(
+            f"[Telegram Payload Fit] visible_length={_telegram_visible_length(post)} limit={TELEGRAM_SAFE_TEXT_LIMIT}; href attributes excluded",
+            flush=True,
+        )
         return post
 
     original = {
@@ -65,8 +74,6 @@ def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
         compact["key_quote"] = quote
         return force_rtl_blocks(formatter(compact, source_name, link, **kwargs))
 
-    # Fast deterministic compaction ladder. Keep title + summary first;
-    # remove optional quote/why before touching the ChatGPT/source navigation.
     attempts = [
         (original["title"][:180], original["summary"][:800], original["why"][:300], ""),
         (original["title"][:160], original["summary"][:650], original["why"][:200], ""),
@@ -76,35 +83,33 @@ def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
     ]
     for title, summary, why, quote in attempts:
         rendered = render(title, summary, why, quote)
-        if len(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
+        visible_length = _telegram_visible_length(rendered)
+        if visible_length <= TELEGRAM_SAFE_TEXT_LIMIT:
             print(
-                f"[Telegram Payload Fit] compacted generated prose length={len(rendered)} limit={TELEGRAM_SAFE_TEXT_LIMIT}",
+                f"[Telegram Payload Fit] compacted visible_length={visible_length} limit={TELEGRAM_SAFE_TEXT_LIMIT}; href attributes excluded",
                 flush=True,
             )
             return rendered
 
-    # Final adaptive pass: preserve title and all mandatory navigation, and
-    # find the largest summary that fits. This avoids false failure when the
-    # fixed ChatGPT URL consumes most of Telegram's message budget.
     title = original["title"][:100]
     lo, hi, best = 0, len(original["summary"]), ""
     while lo <= hi:
         mid = (lo + hi) // 2
         rendered = render(title, original["summary"][:mid], "", "")
-        if len(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
+        if _telegram_visible_length(rendered) <= TELEGRAM_SAFE_TEXT_LIMIT:
             best = rendered
             lo = mid + 1
         else:
             hi = mid - 1
     if best:
         print(
-            f"[Telegram Payload Fit] adaptive summary compaction length={len(best)} limit={TELEGRAM_SAFE_TEXT_LIMIT}",
+            f"[Telegram Payload Fit] adaptive summary compaction visible_length={_telegram_visible_length(best)} limit={TELEGRAM_SAFE_TEXT_LIMIT}; href attributes excluded",
             flush=True,
         )
         return best
 
     print(
-        f"[Telegram Payload Fit] unable to fit payload length={len(post)}; publication blocked",
+        f"[Telegram Payload Fit] unable to fit visible payload length={_telegram_visible_length(post)}; publication blocked",
         flush=True,
     )
     return ""
@@ -153,13 +158,13 @@ def _audited_main(hooks=None):
         return _fit_formatted_payload(formatter, item, source_name, link, kwargs)
 
     def single_message_deliver(text, image_url="", source_link=""):
-        text_length = len(str(text or ""))
+        text_length = _telegram_visible_length(text)
         if not text.strip():
             print("[Telegram Delivery Guard] blocked empty publication payload", flush=True)
             return False
         if text_length > TELEGRAM_SAFE_TEXT_LIMIT:
             print(
-                f"[Telegram Delivery Guard] blocked oversized single-story payload length={text_length} limit={TELEGRAM_SAFE_TEXT_LIMIT}; no chunking/no partial publication",
+                f"[Telegram Delivery Guard] blocked oversized visible single-story payload length={text_length} limit={TELEGRAM_SAFE_TEXT_LIMIT}; href attributes excluded; no chunking/no partial publication",
                 flush=True,
             )
             return False

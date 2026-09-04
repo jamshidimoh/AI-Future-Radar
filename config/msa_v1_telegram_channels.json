@@ -1,0 +1,26 @@
+{
+  "version": "msa-v1-telegram-20",
+  "window_days": 30,
+  "channels": [
+    "science",
+    "aipost",
+    "NextBrain_ir",
+    "hiaimedia",
+    "DeepLearning_ai",
+    "ai_machinelearning_big_data",
+    "computer_science_and_programming",
+    "CodeProgrammer",
+    "machinelearningresearchnews",
+    "AI_QC_Chronicle",
+    "alwebbci",
+    "wall_e",
+    "onlinebme",
+    "Neuroscience_New",
+    "Technology_News_Updates",
+    "aifuturetechnews",
+    "mlresearch",
+    "Machinelearning_Kartal",
+    "machinelearning_deeplearning",
+    "AI_Future_Tech"
+  ]
+}

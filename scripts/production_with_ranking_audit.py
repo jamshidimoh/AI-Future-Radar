@@ -32,6 +32,11 @@ def _telegram_visible_length(text):
     return len(html.unescape(raw))
 
 
+def _publication_contract_visible_length(post):
+    """Keep the publication contract consistent with Telegram's visible text budget."""
+    return _telegram_visible_length(post)
+
+
 def _production_select(items, max_posts, max_per_source, max_per_type, policy):
     """Use the canonical period ranking implementation for production."""
     selected = _original_rank(
@@ -121,6 +126,23 @@ def _audited_main(hooks=None):
     original_format = merged.get("format_post")
     original_summarize = merged.get("summarize_item") or _original_summarize
     original_deliver = merged.get("send_to_telegram_safe") or pipeline.send_to_telegram_safe
+
+    # The publication contract is shared with main.py. Patch its validator at
+    # runtime so the final pre-transport gate uses exactly the same visible-text
+    # semantics as the production payload fitter. HTML href attributes are not
+    # Telegram-visible message text and must not consume the 3900-char budget.
+    import publication_contract as _publication_contract
+
+    def visible_publication_validator(post, *, content_type="news"):
+        text = str(post or "")
+        if not text.strip():
+            return False, "empty_payload"
+        visible_length = _publication_contract_visible_length(text)
+        if visible_length > TELEGRAM_SAFE_TEXT_LIMIT:
+            return False, f"oversized_payload:{visible_length}>{TELEGRAM_SAFE_TEXT_LIMIT}"
+        return True, "ok"
+
+    _publication_contract.validate_publication_payload = visible_publication_validator
 
     def production_select(items, max_posts, max_per_source, max_per_type, policy):
         if explicit_select is not None:

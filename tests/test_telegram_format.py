@@ -74,6 +74,27 @@ class TelegramFormatTests(unittest.TestCase):
         text_sender.assert_called_once_with("token", "-100123", "متن آزمون", preview_url="https://example.com/article", preflight=False)
         photo_sender.assert_not_called()
 
+    def test_long_chatgpt_anchor_moves_to_keyboard_and_preserves_url(self):
+        long_url = "https://chatgpt.com/?q=" + ("A" * 12000)
+        text = '<a href="https://example.com/source">مطالعه منبع اصلی</a>\n\n<a href="' + long_url + '"><b>بررسی بیشتر با \u2066ChatGPT\u2069</b></a>'
+        cleaned, extracted = telegram_single_delivery._extract_chatgpt_anchor(text)
+        self.assertEqual(extracted, long_url)
+        self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", cleaned)
+        self.assertNotIn(long_url, cleaned)
+
+        response = Mock(status_code=200)
+        response.json.return_value = {"ok": True, "result": {"message_id": 456, "chat": {"id": -100123}}}
+        with patch.object(telegram_single_delivery.send_telegram, "_telegram_preflight", return_value=True), \
+             patch("telegram_single_delivery.requests.post", return_value=response) as poster, \
+             patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHANNEL": "-100123"}, clear=False):
+            result = telegram_single_delivery._send_html_without_raw_length_guard(text, source_link="https://example.com/source")
+
+        self.assertEqual(result["message_id"], 456)
+        sent_data = poster.call_args.kwargs["data"]
+        self.assertNotIn(long_url, sent_data["text"])
+        self.assertIn("reply_markup", sent_data)
+        self.assertIn(long_url, sent_data["reply_markup"])
+
     def test_long_content_is_chunked_without_truncation(self):
         text = "A" * 10000
         chunks = _chunk_text(text)

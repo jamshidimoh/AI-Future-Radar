@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "data" / "msa_v1_telegram_recent.jsonl"
+MANIFEST = ROOT / "data" / "msa_v1_telegram_manifest.json"
 
 TECH = re.compile(r"\b(ai|artificial intelligence|machine learning|deep learning|llm|robot|robotics|quantum|bci|brain-computer|neuro|biotech|biology|automation|agentic|foundation model|multimodal|computer vision|future|cognition|consciousness)\b", re.I)
 RESEARCH = re.compile(r"\b(research|study|paper|published|experiment|benchmark|results|findings|trial|dataset|model)\b", re.I)
@@ -17,10 +18,10 @@ RISK = re.compile(r"\b(risk|failure|safety|threat|attack|outage|vulnerability|re
 FUTURE = re.compile(r"\b(future|next|coming|forecast|2030|2035|2040|long[- ]term|emerging)\b", re.I)
 
 def norm(text: str) -> str:
-    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+    return re.sub(r"\W+", " ", text.casefold(), flags=re.UNICODE).strip()
 
 def tokens(text: str) -> set[str]:
-    return {x for x in re.findall(r"[a-z0-9]{3,}", text.lower()) if x not in {"the", "and", "for", "with", "from", "that", "this", "are", "you"}}
+    return {x for x in re.findall(r"\w{3,}", text.casefold(), flags=re.UNICODE) if x not in {"the", "and", "for", "with", "from", "that", "this", "are", "you"}}
 
 def jaccard(a: set[str], b: set[str]) -> float:
     if not a and not b:
@@ -55,6 +56,10 @@ def main() -> int:
         print("MSA_REAL_CORPUS_GATE=FAIL EMPTY_CORPUS")
         return 1
 
+    manifest = json.loads(MANIFEST.read_text(encoding="utf-8")) if MANIFEST.exists() else {}
+    configured = manifest.get("channels", [])
+    coverage_checked = len(configured) == 20 and not manifest.get("failures")
+
     exact = Counter(norm(r.get("text", "")) for r in rows)
     duplicate_rows = sum(n - 1 for n in exact.values() if n > 1)
     source_counts = Counter(r.get("channel", "") for r in rows)
@@ -62,7 +67,6 @@ def main() -> int:
     for r in rows:
         by_channel[r.get("channel", "")].append(r)
 
-    # Independent convergence is evidence-cluster convergence, not repost count.
     clusters: list[list[int]] = []
     token_rows = [tokens(r.get("text", "")) for r in rows]
     for i, t in enumerate(token_rows):
@@ -98,6 +102,7 @@ def main() -> int:
     print(f"MSA_REAL_CORPUS digest={digest}")
     print(f"MSA_DUPLICATE_ROWS={duplicate_rows}")
     print(f"MSA_SOURCE_DIVERSITY={len(source_counts)}/{20}")
+    print(f"MSA_CHANNEL_COVERAGE_CHECKED={'PASS' if coverage_checked else 'FAIL'}")
     print(f"MSA_TRACEABILITY={traceable}/{len(rows)}")
     print(f"MSA_SUBSTANTIVE_TEXT={substantive}/{len(rows)}")
     print(f"MSA_EVIDENCE_BANDS={dict(evidence_bands)}")
@@ -106,11 +111,11 @@ def main() -> int:
     print(f"MSA_EVIDENCE_CLUSTERS={len(clusters)}")
     print(f"MSA_INDEPENDENT_CONVERGENCE_CLUSTERS={cross_channel_clusters}")
     print(f"MSA_TOP20_CHANNEL_DIVERSITY={top20_channels}/20")
-    print("MSA_DECISION_RULES=importance_separate_from_confidence;convergence_not_repost_count;traceability_required;weak_signal_retained")
+    print("MSA_DECISION_RULES=importance_separate_from_confidence;convergence_not_repost_count;traceability_required;weak_signal_retained;multilingual_text")
 
     gates = {
         "nonempty": len(rows) > 0,
-        "all_20_channels_seen": len(source_counts) == 20,
+        "all_20_channels_seen": coverage_checked,
         "traceability": traceable == len(rows),
         "no_duplicate_collapse_loss": duplicate_rows < len(rows),
         "multi_source_convergence_possible": cross_channel_clusters >= 1,

@@ -74,32 +74,45 @@ class TelegramFormatTests(unittest.TestCase):
         text_sender.assert_called_once_with("token", "-100123", "متن آزمون", preview_url="https://example.com/article", preflight=False)
         photo_sender.assert_not_called()
 
-    def test_long_chatgpt_anchor_moves_to_keyboard_and_preserves_url(self):
+    def test_long_chatgpt_anchor_is_shortened_before_telegram_transport(self):
         long_url = "https://chatgpt.com/?q=" + ("A" * 12000)
+        short_url = "https://is.gd/AbCd12"
         text = '<a href="https://example.com/source">مطالعه منبع اصلی</a>\n\n<a href="' + long_url + '"><b>بررسی بیشتر با \u2066ChatGPT\u2069</b></a>'
         cleaned, extracted = telegram_single_delivery._extract_chatgpt_anchor(text)
         self.assertEqual(extracted, long_url)
         self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", cleaned)
         self.assertNotIn(long_url, cleaned)
 
-        response = Mock(status_code=200)
-        response.json.return_value = {"ok": True, "result": {"message_id": 456, "chat": {"id": -100123}}}
+        shortener_response = Mock(status_code=200, text=short_url)
+        telegram_response = Mock(status_code=200)
+        telegram_response.json.return_value = {"ok": True, "result": {"message_id": 456, "chat": {"id": -100123}}}
         with patch.object(telegram_single_delivery.send_telegram, "_telegram_preflight", return_value=True), \
-             patch("telegram_single_delivery.requests.post", return_value=response) as poster, \
+             patch("telegram_single_delivery.requests.post", side_effect=[shortener_response, telegram_response]) as poster, \
              patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHANNEL": "-100123"}, clear=False):
             result = telegram_single_delivery._send_html_without_raw_length_guard(text, source_link="https://example.com/source")
 
         self.assertEqual(result["message_id"], 456)
-        sent_data = poster.call_args.kwargs["data"]
+        self.assertEqual(poster.call_count, 2)
+        short_call = poster.call_args_list[0]
+        telegram_call = poster.call_args_list[1]
+        self.assertEqual(short_call.args[0], telegram_single_delivery._SHORTENER_URL)
+        self.assertEqual(short_call.kwargs["data"]["url"], long_url)
+        sent_data = telegram_call.kwargs["data"]
         self.assertNotIn(long_url, sent_data["text"])
-        self.assertIn("reply_markup", sent_data)
-        self.assertIn(long_url, sent_data["reply_markup"])
+        self.assertIn(short_url, sent_data["text"])
+        self.assertNotIn("reply_markup", sent_data)
+        self.assertLessEqual(len(short_url), telegram_single_delivery._MAX_TELEGRAM_NAV_URL)
 
-    def test_long_content_is_chunked_without_truncation(self):
-        text = "A" * 10000
-        chunks = _chunk_text(text)
-        self.assertEqual("".join(chunks), text)
-        self.assertTrue(all(len(chunk) <= 4096 for chunk in chunks))
+    def test_long_chatgpt_navigation_fails_closed_if_shortener_unavailable(self):
+        long_url = "https://chatgpt.com/?q=" + ("A" * 12000)
+        text = '<a href="' + long_url + '"><b>بررسی بیشتر با ChatGPT</b></a>'
+        shortener_response = Mock(status_code=503, text="unavailable")
+        with patch.object(telegram_single_delivery.send_telegram, "_telegram_preflight", return_value=True), \
+             patch("telegram_single_delivery.requests.post", return_value=shortener_response) as poster, \
+             patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHANNEL": "-100123"}, clear=False):
+            result = telegram_single_delivery._send_html_without_raw_length_guard(text)
+        self.assertFalse(result)
+        poster.assert_called_once()
 
     def test_gregorian_date_parser(self):
         self.assertEqual(_gregorian_date("2026-08-13 10:30"), "2026/08/13")

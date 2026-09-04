@@ -7,6 +7,7 @@ channel feed atomic and prevents duplicate text/photo publication.
 from __future__ import annotations
 
 import html
+import json
 import os
 import re
 
@@ -14,6 +15,7 @@ import requests
 import send_telegram
 
 SAFE_TEXT_LIMIT = 3900
+CHATGPT_LABEL = "بررسی بیشتر با ChatGPT"
 
 
 def _visible_length(text: str) -> int:
@@ -22,6 +24,31 @@ def _visible_length(text: str) -> int:
     raw = re.sub(r"<[^>]*>", "", raw)
     raw = html.unescape(raw)
     return len(raw)
+
+
+def _extract_chatgpt_anchor(text: str):
+    """Extract the long ChatGPT URL and remove its HTML link entity.
+
+    Telegram's message entity parser can reject a very long text-link entity
+    with ENTITIES_TOO_LONG even when the visible message is within 4096 chars.
+    The Radar's prefilled ChatGPT URL is intentionally long because it carries
+    the complete analysis prompt. Keep that URL, but move it to an inline
+    keyboard button so the message body contains no oversized link entity.
+    """
+    raw = str(text or "")
+    pattern = re.compile(
+        r'<a\\s+href=["\\\']([^"\\\']+)["\\\']>\\s*<b>(?:\\u2066)?'
+        + re.escape(CHATGPT_LABEL)
+        + r'(?:\\u2069)?</b>\\s*</a>',
+        flags=re.I,
+    )
+    match = pattern.search(raw)
+    if not match:
+        return raw, ""
+    url = html.unescape(match.group(1))
+    replacement = f"<b>{CHATGPT_LABEL}</b>"
+    cleaned = raw[:match.start()] + replacement + raw[match.end():]
+    return cleaned, url
 
 
 def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
@@ -36,21 +63,31 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
     if not token or not channel:
         raise RuntimeError("TELEGRAM_BOT_TOKEN یا TELEGRAM_CHANNEL تنظیم نشده است.")
 
-    visible = _visible_length(text)
+    cleaned_text, chatgpt_url = _extract_chatgpt_anchor(text)
+    visible = _visible_length(cleaned_text)
     if visible > SAFE_TEXT_LIMIT:
         print(f"[Telegram Delivery] rejected oversized visible story: visible_chars={visible} limit={SAFE_TEXT_LIMIT}", flush=True)
         return False
     if not send_telegram._telegram_preflight(token, channel):
         return False
 
+    data = {
+        "chat_id": channel,
+        "text": cleaned_text,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": not bool(str(source_link or "").strip()),
+    }
+    if chatgpt_url:
+        data["reply_markup"] = json.dumps(
+            {"inline_keyboard": [[{"text": CHATGPT_LABEL, "url": chatgpt_url}]]},
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+        print("[Telegram Delivery] ChatGPT navigation moved to inline keyboard to avoid oversized HTML link entity", flush=True)
+
     response = requests.post(
         f"https://api.telegram.org/bot{token}/sendMessage",
-        data={
-            "chat_id": channel,
-            "text": str(text or ""),
-            "parse_mode": "HTML",
-            "disable_web_page_preview": not bool(str(source_link or "").strip()),
-        },
+        data=data,
         timeout=20,
     )
     if response.status_code != 200:

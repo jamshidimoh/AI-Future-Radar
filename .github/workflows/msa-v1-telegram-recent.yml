@@ -1,0 +1,32 @@
+name: MSA V1 Recent Telegram Corpus
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'config/msa_v1_telegram_channels.json'
+      - 'scripts/collect_telegram_recent_corpus.py'
+      - '.github/workflows/msa-v1-telegram-recent.yml'
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Collect recent public Telegram posts
+        run: python scripts/collect_telegram_recent_corpus.py
+      - name: Corpus summary
+        run: |
+          test -s data/msa_v1_telegram_recent.jsonl
+          wc -l data/msa_v1_telegram_recent.jsonl
+      - name: Upload recent corpus
+        uses: actions/upload-artifact@v4
+        with:
+          name: msa-v1-telegram-recent-corpus
+          path: data/msa_v1_telegram_recent.jsonl
+          if-no-files-found: error

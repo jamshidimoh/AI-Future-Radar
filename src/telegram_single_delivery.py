@@ -37,9 +37,9 @@ def _extract_chatgpt_anchor(text: str):
     """
     raw = str(text or "")
     pattern = re.compile(
-        r'<a\\s+href=["\\\']([^"\\\']+)["\\\']>\\s*<b>(?:\\u2066)?'
+        r'<a\s+href=["\']([^"\']+)["\']>\s*<b>(?:\u2066)?'
         + re.escape(CHATGPT_LABEL)
-        + r'(?:\\u2069)?</b>\\s*</a>',
+        + r'(?:\u2069)?</b>\s*</a>',
         flags=re.I,
     )
     match = pattern.search(raw)

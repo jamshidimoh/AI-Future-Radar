@@ -127,10 +127,6 @@ def _audited_main(hooks=None):
     original_summarize = merged.get("summarize_item") or _original_summarize
     original_deliver = merged.get("send_to_telegram_safe") or pipeline.send_to_telegram_safe
 
-    # The publication contract is shared with main.py. Patch its validator at
-    # runtime so the final pre-transport gate uses exactly the same visible-text
-    # semantics as the production payload fitter. HTML href attributes are not
-    # Telegram-visible message text and must not consume the 3900-char budget.
     import publication_contract as _publication_contract
 
     def visible_publication_validator(post, *, content_type="news"):
@@ -142,7 +138,14 @@ def _audited_main(hooks=None):
             return False, f"oversized_payload:{visible_length}>{TELEGRAM_SAFE_TEXT_LIMIT}"
         return True, "ok"
 
+    # main.py imported validate_publication_payload directly with
+    # ``from publication_contract import ...``. Patching only the module
+    # attribute is therefore insufficient: main.py retains its local binding.
+    # Patch both boundaries so the production contract and Telegram fitter
+    # share exactly one visible-text interpretation.
     _publication_contract.validate_publication_payload = visible_publication_validator
+    import main as _radar_main
+    _radar_main.validate_publication_payload = visible_publication_validator
 
     def production_select(items, max_posts, max_per_source, max_per_type, policy):
         if explicit_select is not None:

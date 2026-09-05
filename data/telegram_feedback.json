@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788635023,
+  "updated_at": 1788642905,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7047,6 +7047,63 @@
       "why_it_matters": "قابلیت چندمنظوره GPT-6 Astra به توسعه‌دهندگان اجازه می‌دهد تا در حوزه‌های خلاقیت، تجارت و امنیت سایبری به‌سرعت نمونه‌سازی کنند و نیاز به تیم‌های بزرگ و زمان‌بر را کاهش دهند. این سرعت‌بخشی می‌تواند هزینه‌های توسعه را پایین آورده و نوآوری را در بازارهای مختلف تسریع کند، در حالی که هزینه‌های محاسباتی و محدودیت‌های عملیاتی همچنان چالش‌برانگیز باقی می‌مانند.",
       "link": "https://www.youtube.com/watch?v=-TTyyY3VWh8",
       "posted_at": 1788635023
+    },
+    "-1004482051328:1459": {
+      "chat_id": -1004482051328,
+      "message_id": 1459,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Next Web)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "Sam Altman خود را طرفدار بزرگ Apple می‌داند و از دعوای حقوقی ناراحت است",
+      "summary": "Sam Altman در اظهاراتی جدید، خود را یک طرفدار بسیار بزرگ (mega fanboy) از برند Apple معرفی کرد. او همچنین بیان کرد که دعوای حقوقی اخیر با این شرکت باعث ناراحتی‌اش شده است. این اظهارات نشان‌دهنده نگاه شخصی مدیرعامل OpenAI به رابطه‌اش با غول فناوری سیلیکون‌ولی است.",
+      "why_it_matters": "این اظهارات نشان می‌دهد که تنش‌های حقوقی بین OpenAI و Apple فراتر از مسائل تجاری، بار عاطفی و شخصی برای رهبران این شرکت‌ها نیز دارد. نگاه مثبت Altman به Apple می‌تواند بر آینده همکاری‌های احتمالی یا رقابت‌های فناورانه بین این دو غول تأثیر بگذارد و نشان‌دهنده پیچیدگی روابط در اکوسیستم هوش مصنوعی باشد.",
+      "link": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxNVGQtM2hhU1FybmF2eUNqMzNFcnJNbWtxQkFEcTR4NmZKdHZvaWhvY2hZYVQwYm04S1dhdzl0SnBKY1hsMDFHWENYYVpRdEhxb2lrX003RWJfaE5ST1F1SjRXV2lJQVVKa1RTQ1FPeFB3b29Db2VscnFBdUFGQXROLU1Za0h5YjVkUFZ4QXFEYWZBQzVIeDItMTZDcmIzOVc1ZS1wa3ZnVVVpbGFSRGdfYTZwaWQxTTBVTUdfWTRvaFVKTUtVTFNDVGwwOHNkQl9iTmxBZ0dJRmtpTFk?oc=5",
+      "posted_at": 1788642901
+    },
+    "-1004482051328:1460": {
+      "chat_id": -1004482051328,
+      "message_id": 1460,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "نقشه داخلی مغز: کشف سلول‌های شبکه‌ای و نقش آن در جهت‌یابی و حافظه",
+      "summary": "در این گفت‌وگو، Brian Greene با Edvard Moser، برنده جایزه نوبل و مدیر Kavli Institute for Systems Neuroscience، دربارهٔ سلول‌های شبکه‌ای (grid cells) که یک سامانهٔ مختصات داخلی برای فضا در مغز فراهم می‌کنند، صحبت می‌کند. Moser توضیح می‌دهد این سلول‌ها به‌صورت الگوی شش‌ضلعی دقیق فعال می‌شوند و به‌صورت ریاضیاتی یک توروس تشکیل می‌دهند، و این نقشهٔ داخلی پیش از یادگیری حیوانات وجود دارد. تاریخچهٔ کشف سلول‌های مکان (place cells) در دههٔ ۱۹۷۰، شواهد حضور این سامانه در مگس‌ها، خفاش‌ها و انسان‌ها، و ارتباط آن با حافظه، بیماری آلزایمر و مرزهای هوش مصنوعی بررسی می‌شود.",
+      "description": "How does your brain know where you are, even in the dark? Brian Greene speaks with Edvard Moser, Nobel laureate and director of the Kavli Institute for Systems Neuroscience, about the discovery of grid cells, the brain's internal coordinate system for space.\n\nMoser explains how these cells fire in a precise hexagonal pattern that mathematically forms a torus, and why this internal map exists before an animal ever learns to use it. They trace the story from the discovery of place cells in the 1970s through evidence that the same system appears in flies, bats, and humans, and explore why Moser believes our sense of space itself may be a construct the brain imposes on the world. The conversation closes on what this internal mapping system reveals about memory, Alzheimer's disease, and the far edges of artificial intelligence.\n\n#worldsciencefestival #briangreene #edvardmoser #mathematics \n\nParticipant: Edvard Moser\nModerator: Brian Greene\n\nDon't miss a video! Subscribe NOW:\nhttps://www.youtube.com/worldsciencefestival?sub_confirmation=1 \n\nABOUT WORLD SCIENCE FESTIVAL: \nThe World Science Festival (WSF) is a multimedia organization bringing the most transformative ideas in science to global audiences. Through long- and short-form videos spanning physics, cosmology, quantum mechanics, biology, neuroscience, consciousness, medicine, space exploration, the dilemma of free will, artificial intelligence, engineering, robotics, and beyond. WSF gathers world-renowned scientists, artists, and thinkers for dynamic discussions, debates, lectures, performances, films, and immersive live experiences. \n\nFounded in 2008 and headquartered in New York City, the World Science Festival is a production of the World Science Foundation, a 501(c)(3) nonprofit organization. Our mission is to cultivate a public informed by science, inspired by its wonder, convinced of its value, and prepared to engage with its implications for the future. With live events reaching millions worldwide and hundreds of millions of digital views, WSF continues to expand its global impact through festivals, educational initiatives like World Science U, and digital content that explores the near and far future of our world. \n\nFOLLOW WORLD SCIENCE FESTIVAL:\nWebsite: https://worldsciencefestival.com/\nInstagram: https://www.instagram.com/worldscifest/\nTikTok: https://www.tiktok.com/@worldscifest\nX(Twitter): https://twitter.com/worldscifest\nFacebook: https://www.facebook.com/worldsciencefestival\nLinkedIn: https://www.linkedin.com/company/world-science-festival\n\nChapters:\n00:00 Welcome, Edvard Moser\n05:06 Place Cells: The Discovery That Started It All\n07:57 Can a Rat Navigate in Complete Darkness?\n08:53 An Internal Map the Brain Is Born With\n12:06 Head Direction Cells: The Brain's Built-In Compass\n14:50 Grid Cells: What They Are and How Moser Found Them\n17:27 The Accidental Discovery in a Large Arena\n20:12 The Grid Cell Hierarchy\n25:10 Three-Dimensional Navigation\n27:31 Have Grid Cells Been Studied in Hu artificial intelligence",
+      "why_it_matters": "سلول‌های شبکه‌ای نشان می‌دهند که مغز یک سیستم مختصات ریاضیاتی برای فضا دارد که پیش از تجربهٔ مستقیم شکل می‌گیرد؛ این درک می‌تواند به توضیح چگونگی تشکیل حافظه فضایی و اختلالات مرتبط مانند Alzheimer کمک کند. همچنین، شناخت این مکانیزم می‌تواند الگویی برای توسعهٔ سامانه‌های AI با توانایی مسیریابی و درک فضایی مشابه انسان فراهم آورد. در نهایت، نشان می‌دهد که ادراک فضایی ممکن است ساختگی باشد و نه صرفاً بازتابی از محیط، که پیامدهای عمیقی برای فلسفهٔ ذهن و نظریهٔ شناخت دارد.",
+      "link": "https://www.youtube.com/watch?v=DB5YEPnyQA8",
+      "posted_at": 1788642903
+    },
+    "-1004482051328:1461": {
+      "chat_id": -1004482051328,
+      "message_id": 1461,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "استفاده از ChatGPT Work برای تحلیل عملکرد تبلیغات و بهینه‌سازی خلاقیت",
+      "summary": "این دمو از OpenAI فرآیند تبدیل بینش‌های تبلیغاتی به ایده‌های خلاقانه جدید را با استفاده از ChatGPT Work نشان می‌دهد. در این نمایش، مسیری از کشف محصول توسط خریدار تا مشاهده یک تبلیغ مشخص‌شده دنبال می‌شود. تیم بازاریابی از این ابزار برای مقایسه عملکرد کمپین فرضی NOVA و بررسی گزینه‌های خلاقانه بعدی بهره می‌برد. این رویکرد نشان‌دهنده کاربرد عملی هوش مصنوعی در چرخه تصمیم‌گیری بازاریابی است.",
+      "description": "Turn ad insights into your next creative idea.\n\nThis demo follows a shopper from product discovery to a clearly labeled ad, then shows how our marketing team uses ChatGPT Work to compare the fictional NOVA campaign’s performance and explore what creative to try next.\n\nWatch the full webinar: https://goldcast.registration.public-pr50.goldcast.io/on-demand/d863a2bc-77cf-4197-8ba4-b4a8b837c0b3?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing\n\nLearn more: https://openai.com/business/solutions/marketing/?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing artificial intelligence",
+      "why_it_matters": "این قابلیت به تیم‌های بازاریابی امکان می‌دهد تا به‌صورت مستقیم از داده‌های عملکردی برای تولید خلاقیت‌های هدفمند استفاده کنند. با مقایسه خودکار کمپین‌ها، فرآیند تصمیم‌گیری از حالت حدسی به داده‌محور تغییر می‌کند. این امر می‌تواند سرعت تکرار و اصلاح استراتژی‌های تبلیغاتی را افزایش دهد و هزینه‌های آزمایش‌وخطا را کاهش دهد.",
+      "link": "https://www.youtube.com/watch?v=5iu0nY9lIy8",
+      "posted_at": 1788642905
     }
   }
 }

@@ -4,11 +4,13 @@
 
 ## وضعیت محصول
 
-**Final Acceptance / In Progress**
+**Production Complete / CLOSED — 2026-09-05**
 
-Production هنوز رسماً **CLOSED** اعلام نشده است. پنجره فعلی شامل سه اجرای متوالی موفق Production است و شواهد انتشار واقعی News و Education، تحویل کامل Telegram، کنترل تکرار، پنجره رتبه‌بندی، ایزوله‌سازی خطای Provider و persistence وضعیت ثبت شده‌اند. بسته‌شدن نهایی فقط پس از عبور معتبر `Production Closure Gate` از تمام معیارهای پذیرش مجاز است.
+Production Closure Gate با workflow run `33948969943` و job `101260038926` با موفقیت کامل اجرا شد. هر ۱۱ معیار پذیرش نهایی `PASS` شدند و Gate صراحتاً ثبت کرد: `CLOSURE: CLOSED — deterministic gates and production evidence checks passed.`
 
-وضعیت دقیق پذیرش و آخرین شواهد در `docs/PRODUCTION_CLOSURE_STATUS.md` ثبت می‌شود. مسیر تولید اصلی با GitHub Actions فقط در زمان‌بندی مشخص یا با اجرای دستی فعال است؛ Push به `main` باعث اجرای ناخواسته Production نمی‌شود.
+پنجره نهایی شامل سه اجرای متوالی موفق Production، شواهد انتشار واقعی News و Education، تحویل full-text به Telegram، کنترل duplicate، ranking window، ایزوله‌سازی خطای Provider، leader watch، mission-aware portfolio و persistence وضعیت است. از این نقطه پروژه در مرز **Production Maintenance / Evolution** قرار دارد.
+
+وضعیت تفصیلی و شواهد نهایی در `docs/PRODUCTION_CLOSURE_STATUS.md` ثبت شده است. مسیر تولید اصلی با GitHub Actions فقط در زمان‌بندی مشخص یا با اجرای دستی فعال است؛ Push به `main` باعث اجرای ناخواسته Production نمی‌شود.
 
 ## استفاده دیگران
 

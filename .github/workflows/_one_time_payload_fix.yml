@@ -1,0 +1,59 @@
+name: One-time Telegram payload repair
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.event.head_commit.message != 'fix: repair telegram payload contract [skip ci]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Patch compact ChatGPT link and add contract regression
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('src/send_telegram.py')
+          text = path.read_text(encoding='utf-8')
+          pattern = re.compile(r"def _chatgpt_link\(title, link\):\n.*?\n\ndef _gregorian_date", re.S)
+          replacement = '''def _chatgpt_link(title, link):
+              compact_prompt = (
+                  "این مطلب را به فارسی تحلیل آموزشی کن؛ مفاهیم پایه، موضوع اصلی، اهمیت، پیامدها و مسیر آینده را روشن و اختصاصی توضیح بده. "
+                  f"عنوان: {str(title or '').strip()}\nمنبع: {str(link or '').strip()}"
+              )
+              return "https://chatgpt.com/?q=" + quote(compact_prompt, safe="")
+
+
+def _gregorian_date'''
+          new_text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit('target _chatgpt_link function not found exactly once')
+          path.write_text(new_text, encoding='utf-8')
+
+          test_path = Path('tests/test_telegram_format.py')
+          test_text = test_path.read_text(encoding='utf-8')
+          marker = '\n\ndef test_chatgpt_link_is_bounded_and_payload_fits_telegram():\n'
+          if 'test_chatgpt_link_is_bounded_and_payload_fits_telegram' not in test_text:
+              addition = marker + '''    from src.send_telegram import _chatgpt_link, format_post, TELEGRAM_TEXT_LIMIT\n    title = "معرفی یک مدل Multimodal جدید برای هوش مصنوعی"\n    link = "https://example.com/source"\n    chat_url = _chatgpt_link(title, link)\n    assert len(chat_url) < 1200\n    payload = format_post(\n        {\n            "title": title,\n            "summary": "این خلاصه برای آزمون قرارداد اندازه پیام تولید شده است. " * 8,\n            "why_it_matters": "اهمیت موضوع برای مسیر فناوری در این آزمون بررسی می‌شود. " * 5,\n            "_provider": "Groq:test",\n        },\n        "Example Source",\n        link,\n        published="2026-09-05",\n    )\n    assert payload\n    assert len(payload) <= TELEGRAM_TEXT_LIMIT\n'''
+              test_path.write_text(test_text.rstrip() + addition + '\n', encoding='utf-8')
+          PY
+          python -m compileall -q scripts src *.py
+          python -m pytest -q tests/test_telegram_format.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_production_router_policy.py
+      - name: Commit repair and remove one-time workflow
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/_one_time_payload_fix.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/send_telegram.py tests/test_telegram_format.py .github/workflows/_one_time_payload_fix.yml
+          git commit -m "fix: repair telegram payload contract [skip ci]"
+          git push origin HEAD:main

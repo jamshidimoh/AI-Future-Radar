@@ -4,7 +4,7 @@ Status date: 2026-09-05
 
 ## Purpose
 
-این سند مرز پایان پروژه را ثابت می‌کند. پروژه فقط وقتی `Production Complete` اعلام می‌شود که همه قراردادهای deterministic و همه شواهد عملیاتی لازم سبز باشند. تا زمانی که Closure Gate صریحاً `CLOSURE: CLOSED` ثبت نکرده باشد، پروژه در وضعیت پذیرش نهایی باقی می‌ماند.
+این سند مرز پایان پروژه را ثابت می‌کند. پروژه فقط وقتی `Production Complete` اعلام می‌شود که همه قراردادهای deterministic و همه شواهد عملیاتی لازم سبز باشند.
 
 ## Closure rule
 
@@ -14,7 +14,11 @@ Status date: 2026-09-05
 2. Production evidence window کامل باشد.
 3. هیچ FAIL باز در invariantهای frozen وجود نداشته باشد.
 
-در وضعیت فعلی، deterministic production runs موفق هستند، اما Closure نهایی هنوز باید با پنجره سه Production run موفق متوالی و تمام شواهد موردنیاز Gate تأیید شود.
+**وضعیت نهایی: `CLOSED`**
+
+Production Closure Gate با workflow run `33948969943` و job `101260038926` در تاریخ 2026-09-05 با موفقیت کامل اجرا شد و صراحتاً ثبت کرد:
+
+`CLOSURE: CLOSED — deterministic gates and production evidence checks passed.`
 
 ## Frozen deterministic invariants
 
@@ -31,45 +35,44 @@ Status date: 2026-09-05
 - education stream مستقل است و failure آن نباید news orchestration را دوباره اجرا کند.
 - language, editorial quality, evidence و terminology gates برای publication الزامی‌اند.
 
-## Current operational evidence
+## Final operational evidence
 
-آخرین Production runهای معتبر پس از اصلاح Telegram payload و Closure evidence به‌صورت زیر ثبت شده‌اند:
+پنجره نهایی Production که توسط Closure Gate بررسی شد:
 
-- `Run AI Future Radar Bot #374` — Production Acceptance `PASS`؛ News `3/4`؛ Education Lesson `51` با `telegram_delivery=successful` و `Education Recovery CONFIRMED`؛ state persistence موفق.
-- `Run AI Future Radar Bot #375` — Production Acceptance `PASS`؛ News `2/3`؛ Education Lesson `52` با `telegram_delivery=successful` و `Education Recovery CONFIRMED`؛ provider quota/failover، Editorial QA rejection، duplicate-free، ranking window و state persistence مشاهده و ثبت شد.
+- Production workflow #329 با head `5f3775c1` — success.
+- Production workflow #328 با head `fca900b7` — success.
+- Production workflow #327 با head `9ac374ac` — success.
 
-در #375، سیستم با یک provider quota failure مواجه شد و با provider جایگزین ادامه داد؛ یک candidate نیز پس از repair توسط Editorial Gate رد شد و سیستم بدون انتشار آن ادامه داد. دو خبر معتبر به Telegram تحویل شدند (`message_id=1441`, `1442`) و Education نیز با `message_id=1443` تأیید شد.
+Closure Gate هر ۱۱ معیار را `PASS` ثبت کرد:
 
-## Closure evidence requirements
-
-Closure Gate یازده معیار زیر را بررسی می‌کند:
-
-1. سه Production run موفق متوالی در پنجره نهایی.
-2. انتشار واقعی یا fail-closed معتبر.
-3. نبود duplicate publication در پنجره نهایی.
+1. سه Production run موفق متوالی.
+2. انتشار واقعی و fail-closed معتبر.
+3. نبود duplicate publication.
 4. حفظ full-text delivery contract.
 5. رعایت ranking window بدون bypass.
-6. مشاهده رفتار replacement/QA ایمن در evidence window.
+6. مشاهده رفتار امن QA/rejection در evidence window.
 7. فعال و قابل‌ممیزی بودن leader watch.
-8. مشاهده provider failure isolation همراه با provider success.
-9. persistence موفق state در هر سه Production run نهایی.
+8. ایزوله‌سازی provider failure همراه با provider success.
+9. persistence موفق state.
 10. حفظ mission-aware portfolio و جلوگیری از generic low-signal output.
-11. حداقل یک Education publication واقعی با `telegram_delivery=successful` و `Education Recovery CONFIRMED`.
+11. انتشار واقعی Education با `telegram_delivery=successful` و `Education Recovery CONFIRMED`.
 
-## Current declaration
+در آخرین Production execution نیز News واقعاً به Telegram تحویل شد و Education Lesson 54 با `message_id=1448` منتشر و توسط Recovery تأیید شد. State با commit `39dc3779d79797e38167f18e3d15c351cdb694cd` روی `main` پایدار شد.
 
-`ACCEPTANCE IN PROGRESS`
+## Closure verification
 
-آخرین Production run معتبر: `#375` با workflow run `33948390679` و job `101258489290`.
+Production Closure Gate:
+- workflow run: `33948969943`
+- job: `101260038926`
+- job conclusion: `success`
+- final declaration: `CLOSURE: CLOSED`
 
-این ران موفق است، اما به‌تنهایی برای اعلام `Production Complete / CLOSED` کافی نیست. Closure فقط پس از عبور صریح `Production Closure Gate` از پنجره نهایی شواهد معتبر اعلام خواهد شد.
+پس از این نقطه، پروژه از فاز `Final Acceptance` خارج شده و وارد مرز **Production Maintenance / Evolution** می‌شود.
 
 ## Project stop boundary
 
-تا زمان صدور `CLOSURE: CLOSED`، وضعیت پروژه `Final Acceptance` است و فقط اصلاحات مستقیم مرتبط با شکست‌های واقعی، ناهماهنگی مستندات و frozen production contracts مجاز هستند.
-
-پس از ثبت `CLOSED`، تغییرات جدید باید در قالب Maintenance/Evolution مستقل انجام شوند و نباید این پروژه را به چرخه توسعه عادی بازگردانند، مگر اینکه یک frozen invariant یا production contract شکسته شود.
+پذیرش نهایی پایان یافته است. تغییرات بعدی باید در قالب Maintenance/Evolution مستقل انجام شوند و نباید پروژه را بدون شکست اثبات‌شده در frozen invariant یا production contract دوباره وارد چرخه پذیرش کنند.
 
 New providers, new sources, ranking experiments, UI changes, model upgrades and optimization ideas خارج از scope پذیرش نهایی‌اند مگر آنکه مستقیماً برای رفع یک شکست اثبات‌شده لازم باشند.
 
-<!-- closure-validation-trigger: acceptance evidence updated -->
+<!-- closure-validation-trigger: CLOSED 2026-09-05 -->

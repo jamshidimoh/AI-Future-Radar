@@ -12,23 +12,25 @@ The canonical distributable package is the OCI container published to GitHub Con
 
 `ghcr.io/jamshidimoh/ai-future-radar`
 
-The package workflow is `.github/workflows/publish-container.yml` and publishes only from semantic version tags matching `v*.*.*`, or by an explicit manual workflow dispatch with an existing release tag.
+The package workflow is `.github/workflows/publish-container.yml` and publishes semantic version tags matching `v*.*.*`, or by an explicit manual workflow dispatch with an existing release tag.
 
 The image contains the application source and Python dependencies. The normal GitHub Actions production workflow remains the authoritative stateful publication path because it persists production state back to the repository. Container use therefore requires an external persistent `data/` volume when stateful execution is desired.
 
-## Recommended first release
+## Current published release
 
-Use `v1.0.0` for the first public production package. The tag should point to the intended `main` commit containing the final release metadata and package workflow.
+The latest GitHub Release currently recorded for the repository is `V1.0.1.On.Publish` (`AI Future Radar V1.0.1`). It is a published, non-draft, non-prerelease release targeting `main`.
 
-After the tag is pushed, the package workflow builds the image, attaches OCI metadata, publishes semantic tags, and emits SBOM/provenance attestations.
+Use the corresponding semantic image tag only when the GHCR package contains that tag; otherwise use `latest` or the immutable image digest retained by the publish workflow. The repository does not currently expose a GitHub Release named `v1.0.0`, so documentation must not present `v1.0.0` as the published reference release.
 
 ## Local container check
 
-Before a release, verify locally with:
+Before running a release image locally, build or pull the exact published tag you intend to validate. For the current release, the repository release identifier is `V1.0.1.On.Publish`; the container workflow derives image tags from semantic `v*.*.*` refs.
+
+Example local build:
 
 ```bash
-docker build --build-arg VERSION=v1.0.0 -t ghcr.io/jamshidimoh/ai-future-radar:v1.0.0 .
-docker run --rm --env-file .env -v "$(pwd)/data:/app/data" ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
+docker build --build-arg VERSION=V1.0.1.On.Publish -t ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish .
+docker run --rm --env-file .env -v "$(pwd)/data:/app/data" ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish
 ```
 
 Do not place credentials in the image, Dockerfile, or repository. Use GitHub Actions secrets for CI/CD and an external secret mechanism for deployed containers.
@@ -43,5 +45,5 @@ The first GHCR publication may require setting the package visibility to public 
 2. No obsolete acceptance/evolution PR is treated as part of the production release.
 3. The release tag is created on the intended `main` commit.
 4. `Publish AI Future Radar Container` completes successfully.
-5. The GHCR package contains both the semantic version tag and `latest` for the first stable release.
+5. The GHCR package contains the semantic version tag and, for a tag-triggered stable release, `latest`.
 6. The image digest from the workflow is retained as the immutable release reference.

@@ -81,7 +81,6 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
     channel = os.environ.get("TELEGRAM_CHANNEL")
     if not token or not channel:
         raise RuntimeError("TELEGRAM_BOT_TOKEN یا TELEGRAM_CHANNEL تنظیم نشده است.")
-
     cleaned_text, chatgpt_url = _extract_chatgpt_anchor(text)
     visible = _visible_length(cleaned_text)
     if visible > SAFE_TEXT_LIMIT:
@@ -89,28 +88,19 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
         return False
     if not send_telegram._telegram_preflight(token, channel):
         return False
-
     if chatgpt_url:
         navigation_url = _resolver_navigation_url(chatgpt_url)
         if not navigation_url:
             print("[Telegram Delivery] Radar ChatGPT resolver unavailable; refusing publication rather than emitting a broken CTA", flush=True)
             return False
-        escaped_nav = html.escape(navigation_url, quote=True)
         cleaned_text = cleaned_text.replace(
             f"<b>{CHATGPT_LABEL}</b>",
-            f'<b><a href="{escaped_nav}">{CHATGPT_LABEL}</a></b>',
+            f'<b><a href="{html.escape(navigation_url, quote=True)}">{CHATGPT_LABEL}</a></b>',
             1,
         )
-
-    data = {
-        "chat_id": channel,
-        "text": cleaned_text,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": not bool(str(source_link or "").strip()),
-    }
     response = requests.post(
         f"https://api.telegram.org/bot{token}/sendMessage",
-        data=data,
+        data={"chat_id": channel, "text": cleaned_text, "parse_mode": "HTML", "disable_web_page_preview": not bool(str(source_link or "").strip())},
         timeout=20,
     )
     if response.status_code != 200:

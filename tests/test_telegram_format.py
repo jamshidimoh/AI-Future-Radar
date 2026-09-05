@@ -2,6 +2,7 @@ import sys
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -74,45 +75,46 @@ class TelegramFormatTests(unittest.TestCase):
         text_sender.assert_called_once_with("token", "-100123", "متن آزمون", preview_url="https://example.com/article", preflight=False)
         photo_sender.assert_not_called()
 
-    def test_long_chatgpt_anchor_is_shortened_before_telegram_transport(self):
-        long_url = "https://chatgpt.com/?q=" + ("A" * 12000)
-        short_url = "https://is.gd/AbCd12"
-        text = '<a href="https://example.com/source">مطالعه منبع اصلی</a>\n\n<a href="' + long_url + '"><b>بررسی بیشتر با \u2066ChatGPT\u2069</b></a>'
-        cleaned, extracted = telegram_single_delivery._extract_chatgpt_anchor(text)
-        self.assertEqual(extracted, long_url)
-        self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", cleaned)
-        self.assertNotIn(long_url, cleaned)
+    def test_long_chatgpt_url_is_converted_to_radar_owned_bounded_url(self):
+        title = "خبر آزمایشی درباره یک فناوری بسیار مهم"
+        source = "https://example.com/research/article"
+        prompt = "عنوان: " + title + "\nمنبع: " + source
+        chatgpt_url = "https://chatgpt.com/?q=" + quote(prompt, safe="")
+        navigation = telegram_single_delivery._resolver_navigation_url(chatgpt_url)
+        self.assertTrue(navigation.startswith(telegram_single_delivery._RADAR_RESOLVER_URL + "?"))
+        self.assertLessEqual(len(navigation), telegram_single_delivery._MAX_TELEGRAM_NAV_URL)
+        self.assertIn("t=" + quote(title, safe=""), navigation)
+        self.assertIn("u=" + quote(source, safe=""), navigation)
 
-        shortener_response = Mock(status_code=200, text=short_url)
+    def test_long_chatgpt_anchor_uses_radar_resolver_without_third_party_shortener(self):
+        title = "خبر آزمایشی درباره یک فناوری بسیار مهم"
+        source = "https://example.com/research/article"
+        prompt = "عنوان: " + title + "\nمنبع: " + source
+        long_url = "https://chatgpt.com/?q=" + quote(prompt, safe="") + ("A" * 9000)
+        text = '<a href="' + long_url + '"><b>بررسی بیشتر با ChatGPT</b></a>'
         telegram_response = Mock(status_code=200)
-        telegram_response.json.return_value = {"ok": True, "result": {"message_id": 456, "chat": {"id": -100123}}}
+        telegram_response.json.return_value = {"ok": True, "result": {"message_id": 456, "chat": {"id": -100123}}
         with patch.object(telegram_single_delivery.send_telegram, "_telegram_preflight", return_value=True), \
-             patch("telegram_single_delivery.requests.post", side_effect=[shortener_response, telegram_response]) as poster, \
+             patch("telegram_single_delivery.requests.post", return_value=telegram_response) as poster, \
              patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHANNEL": "-100123"}, clear=False):
             result = telegram_single_delivery._send_html_without_raw_length_guard(text, source_link="https://example.com/source")
-
         self.assertEqual(result["message_id"], 456)
-        self.assertEqual(poster.call_count, 2)
-        short_call = poster.call_args_list[0]
-        telegram_call = poster.call_args_list[1]
-        self.assertEqual(short_call.args[0], telegram_single_delivery._SHORTENER_URL)
-        self.assertEqual(short_call.kwargs["data"]["url"], long_url)
-        sent_data = telegram_call.kwargs["data"]
+        poster.assert_called_once()
+        sent_data = poster.call_args.kwargs["data"]
         self.assertNotIn(long_url, sent_data["text"])
-        self.assertIn(short_url, sent_data["text"])
-        self.assertNotIn("reply_markup", sent_data)
-        self.assertLessEqual(len(short_url), telegram_single_delivery._MAX_TELEGRAM_NAV_URL)
+        self.assertIn(telegram_single_delivery._RADAR_RESOLVER_URL, sent_data["text"])
+        self.assertNotIn("is.gd", sent_data["text"])
+        self.assertLessEqual(len(telegram_single_delivery._resolver_navigation_url(chatgpt_url), telegram_single_delivery._MAX_TELEGRAM_NAV_URL), True)
 
-    def test_long_chatgpt_navigation_fails_closed_if_shortener_unavailable(self):
-        long_url = "https://chatgpt.com/?q=" + ("A" * 12000)
-        text = '<a href="' + long_url + '"><b>بررسی بیشتر با ChatGPT</b></a>'
-        shortener_response = Mock(status_code=503, text="unavailable")
+    def test_long_chatgpt_navigation_fails_closed_if_request_is_malformed(self):
+        text = '<a href="https://chatgpt.com/?q=not-a-canonical-request"><b>بررسی بیشتر با ChatGPT</b></a>'
+        response = Mock(status_code=200)
         with patch.object(telegram_single_delivery.send_telegram, "_telegram_preflight", return_value=True), \
-             patch("telegram_single_delivery.requests.post", return_value=shortener_response) as poster, \
+             patch("telegram_single_delivery.requests.post", return_value=response) as poster, \
              patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHANNEL": "-100123"}, clear=False):
             result = telegram_single_delivery._send_html_without_raw_length_guard(text)
         self.assertFalse(result)
-        poster.assert_called_once()
+        poster.assert_not_called()
 
     def test_gregorian_date_parser(self):
         self.assertEqual(_gregorian_date("2026-08-13 10:30"), "2026/08/13")

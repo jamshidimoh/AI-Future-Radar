@@ -1,6 +1,7 @@
 """Production launcher with canonical period ranking and audit."""
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -39,14 +40,35 @@ def _production_select(items, max_posts, max_per_source, max_per_type, policy):
     return selected
 
 
-def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
-    """Keep one story inside Telegram's safe limit without invoking transport chunking.
+def _without_expensive_chatgpt_row(post):
+    """Remove the verbose inline ChatGPT deep-analysis URL from production payloads.
 
-    Editorial structure is preserved first; only generated prose fields are
+    The formatter embeds a long prompt inside the query URL. It is useful for
+    interactive readers but can consume most of Telegram's single-message
+    budget before editorial prose is included. The source link remains intact.
+    """
+    compact = re.sub(
+        r"[^\n]*🧠[^\n]*بررسی بیشتر با ChatGPT[^\n]*(?:\n|$)",
+        "",
+        str(post or ""),
+    )
+    compact = re.sub(r"\n{3,}", "\n\n", compact).strip()
+    if compact != str(post or "").strip():
+        print("[Telegram Payload Fit] removed verbose ChatGPT deep-analysis row", flush=True)
+    return compact
+
+
+def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
+    """Keep one story inside Telegram's safe limit without transport chunking.
+
+    Editorial structure is preserved first; the verbose inline ChatGPT row is
+    removed from production messages, then only generated prose fields are
     compacted when necessary. This is intentionally production-only.
     """
     candidate = dict(item or {})
-    post = force_rtl_blocks(formatter(candidate, source_name, link, **kwargs))
+    post = _without_expensive_chatgpt_row(
+        force_rtl_blocks(formatter(candidate, source_name, link, **kwargs))
+    )
     if len(post) <= TELEGRAM_SAFE_TEXT_LIMIT:
         return post
 
@@ -61,7 +83,9 @@ def _fit_formatted_payload(formatter, item, source_name, link, kwargs):
         compact["why_it_matters"] = why
         compact["key_quote"] = quote
         compact["title"] = title
-        return force_rtl_blocks(formatter(compact, source_name, link, **kwargs))
+        return _without_expensive_chatgpt_row(
+            force_rtl_blocks(formatter(compact, source_name, link, **kwargs))
+        )
 
     prose = original_summary + "\n\n" + original_why
     if prose:

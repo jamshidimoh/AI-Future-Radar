@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788587787,
+  "updated_at": 1788588085,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6783,6 +6783,56 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788587787
+    },
+    "-1004482051328:1444": {
+      "chat_id": -1004482051328,
+      "message_id": 1444,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - No Priors Podcast",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "Rene Haas: گذار Arm از لایسنس IP به تولید CPU فیزیکی برای Meta و آینده هوش مصنوعی",
+      "summary": "Rene Haas، CEO Arm، در این مصاحبه توضیح می‌دهد که چگونه شرکت از مدل لایسنس‌دهی IP به تولید چیپ‌های فیزیکی مانند Arm AGI CPU برای Meta تغییر مسیر داده است. او به گلوگاه‌های زنجیره تأمین سخت‌افزار و استراتژی سرمایه‌گذاری SoftBank اشاره می‌کند و بر اهمیت استقلال تولید نیمه‌رسانا در ایالات متحده تأکید دارد. Haas همچنین استدلال می‌کند که CPUها همچنان قلب محاسبات مدرن هستند و برای اجرای کارلودهای AI، رباتیک و AGI حیاتی باقی می‌مانند.",
+      "description": "From data center orchestrators to AGI and robotics, CPUs remain the heart of modern computing. Arm CEO Rene Haas joins Elad Gil and Sarah Guo to explore how Arm is positioned at the epicenter of AI-driven demands for compute. Rene explains Arm’s position in the chip supply chain, and how Arm transitioned from an IP licensing model to producing physical chips like the Arm AGI CPU for Meta. He also discusses bottlenecks in hardware supply chains, SoftBank’s ecosystem and capital strategy, why US semiconductor manufacturing independence is critical, the future of robotics, and why CPUs remain crucial for executing AI workloads.\n\nSign up for new podcasts every week. Email feedback to show@no-priors.com\n\nFollow us on Twitter: @NoPriorsPod | @Saranormous | @EladGil | @renehaas237 | @Arm\n\nChapters:\n00:00 – Cold Open Trailer\n00:49 – Rene Haas Introduction\n01:14 – Arm and Chip Supply Chain\n02:37 – Shift from IP to Manufacturing CPUs\n04:23 – CPU IP and Customers\n06:55 – AI Adoption at Arm\n10:15 – Changes in Chip Time to Market\n13:27 – Data Center Buildout Bottleneck\n15:13 – Softbank Leverage and Capital Strategy\n17:43 – Softbank Portfolio Overview\n20:13 – Robotics Opportunities for Arm\n24:49 – US Manufacturing Protectionism\n28:59 – Data Center Backlash\n32:30 – Arm Outlook\n33:31 – CPU Opportunity\n37:06 – Conclusion",
+      "why_it_matters": "این تغییر استراتژیک نشان می‌دهد که Arm دیگر صرفاً یک تأمین‌کننده طرح‌های مدار نیست، بلکه بازیگری فعال در تولید سخت‌افزار نهایی برای کلان‌شرکت‌های فناوری است. تمرکز بر تولید داخلی در آمریکا و حل گلوگاه‌های زنجیره تأمین، ریسک‌های ژئوپلیتیک را کاهش می‌دهد و دسترسی به منابع محاسباتی برای توسعه AGI را تسهیل می‌کند. باقی ماندن نقش محوری CPUها در کنار GPUها، نشان‌دهنده پیچیدگی زیرساخت‌های مورد نیاز برای هوش مصنوعی پیشرفته است.",
+      "link": "https://www.youtube.com/watch?v=85Y6h_jbRfs",
+      "posted_at": 1788588079
+    },
+    "-1004482051328:1445": {
+      "chat_id": -1004482051328,
+      "message_id": 1445,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "OpenAI News",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی GPT-6 Astra؛ نسل جدید هوش مصنوعی از OpenAI",
+      "summary": "شرکت OpenAI مدل جدید خود به نام GPT-6 Astra را معرفی کرد که به عنوان هوشمندترین و همسو‌ترین مدل تاکنون شناخته می‌شود. این مدل دارای قابلیت‌های پیشرفته در حوزه‌های Computer Use، برنامه‌نویسی، امنیت سایبری و علوم است. OpenAI تأکید کرده که GPT-6 Astra دارای قابلیت‌های state-of-the-art در این بخش‌ها است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "معرفی GPT-6 Astra نشان‌دهنده گامی مهم در توسعه مدل‌های زبانی بزرگ با تمرکز بر همسویی و دقت فنی است. قابلیت‌های ذکرشده در امنیت سایبری و علوم می‌تواند کاربرد‌های عملی گسترده‌ای در صنایع مختلف ایجاد کند. این پیشرفت رقابت در حوزه AI را تشدید کرده و استانداردهای جدیدی برای عملکرد مدل‌ها تعیین می‌کند.",
+      "link": "https://openai.com/index/gpt-6-astra",
+      "posted_at": 1788588080
+    },
+    "-1004482051328:1446": {
+      "chat_id": -1004482051328,
+      "message_id": 1446,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788588085
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788588085,
+  "updated_at": 1788588445,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6833,6 +6833,37 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788588085
+    },
+    "-1004482051328:1447": {
+      "chat_id": -1004482051328,
+      "message_id": 1447,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "OpenAI News",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "Playco با GPT-6 Astra، اصلاحات دستی در پروتوتایپ بازی را ۵۰ درصد کاهش داد",
+      "summary": "شرکت Playco با استفاده از مدل GPT-6 Astra، سه پروتوتایپ بازی با تم‌های مختلف را از روی یک پایه grey box ایجاد کرد. این شرکت گزارش داد که در مقایسه با مدل قبلی، ۵۰ درصد کمتر به اصلاحات دستی نیاز داشت. این فرآیند نشان‌دهنده بهبود قابلیت‌های مدل در تولید محتوای بازی‌سازی از یک پایه مشترک است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "کاهش ۵۰ درصدی اصلاحات دستی در توسعه بازی‌ها می‌تواند هزینه‌ها و زمان ساخت را به‌طور قابل‌Attentionی کاهش دهد. این پیشرفت نشان می‌دهد که مدل‌های هوش مصنوعی جدیدتر مانند GPT-6 Astra در تولید کد و محتوای بازی با دقت بالاتری عمل می‌کنند. چنین بهبودهایی می‌توانند چرخه توسعه بازی‌ها را تسریع کرده و دسترسی به ابزارهای پیشرفته را برای استودیوهای کوچک‌تر آسان‌تر کنند.",
+      "link": "https://openai.com/index/playco-game-prototyping-with-astra",
+      "posted_at": 1788588436
+    },
+    "-1004482051328:1448": {
+      "chat_id": -1004482051328,
+      "message_id": 1448,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788588445
     }
   }
 }

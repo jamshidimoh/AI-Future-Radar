@@ -250,13 +250,28 @@ def _disable(name: str, reason: str) -> None:
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
+    """Call providers with request-local failover state.
+
+    Permanent authentication/configuration failures remain globally scoped so
+    a broken provider family is not retried by every concurrent worker. Quota,
+    transient, timeout, and ordinary failures are local to this request so
+    one story cannot starve sibling models or unrelated concurrent stories.
+    """
     providers = providers or get_quality_chain()
     last = None
     deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS
     transient_retries = {}
+    local_disabled_names = set()
+    local_disabled_families = set()
+
     for name, fn in providers:
         family = _provider_family(name)
-        if name in _DISABLED or family in _DISABLED_FAMILIES:
+        if name in local_disabled_names or family in local_disabled_families:
+            continue
+        # Only provider-family failures that are known to be permanent are
+        # shared between concurrent calls. Model-level quota state is retained
+        # for observability but intentionally ignored here.
+        if family in _DISABLED_FAMILIES:
             continue
         if not _provider_credential_available(name):
             print(f"[Light Router] skipped={name} reason=missing_credential", flush=True)
@@ -273,15 +288,21 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                 return result, name
         except concurrent.futures.TimeoutError:
             last = TimeoutError(f"{name}: exceeded provider timeout of {timeout:.1f}s")
+            local_disabled_names.add(name)
             _disable(name, "transient")
         except QuotaExceeded as exc:
             last = exc
-            _disable(name, _failure_class(str(exc)))
+            reason = _failure_class(str(exc))
+            local_disabled_names.add(name)
+            if reason == "permanent":
+                local_disabled_families.add(family)
+            _disable(name, reason)
         except Exception as exc:
             last = exc
             reason = _failure_class(str(exc))
             print(f"[Light Router] error={name} reason={reason} | {exc}", flush=True)
-            if reason in {"permanent", "quota"}:
+            if reason == "permanent":
+                local_disabled_families.add(family)
                 _disable(name, reason)
             elif reason == "transient" and transient_retries.get(family, 0) < _MAX_TRANSIENT_RETRIES:
                 transient_retries[family] = transient_retries.get(family, 0) + 1
@@ -293,8 +314,10 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                         return retry_result, name
                 except Exception as retry_exc:
                     last = retry_exc
+                    local_disabled_names.add(name)
                     _disable(name, _failure_class(str(retry_exc)))
             else:
+                local_disabled_names.add(name)
                 _disable(name, reason)
         if deadline - time.monotonic() <= 0:
             break

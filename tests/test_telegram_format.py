@@ -104,7 +104,8 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertNotIn(long_url, sent_data["text"])
         self.assertIn(telegram_single_delivery._RADAR_RESOLVER_URL, sent_data["text"])
         self.assertNotIn("is.gd", sent_data["text"])
-        self.assertLessEqual(len(telegram_single_delivery._resolver_navigation_url(chatgpt_url)), telegram_single_delivery._MAX_TELEGRAM_NAV_URL)
+        navigation = telegram_single_delivery._resolver_navigation_url(long_url, fallback_source="https://example.com/source")
+        self.assertLessEqual(len(navigation), telegram_single_delivery._MAX_TELEGRAM_NAV_URL)
 
     def test_long_chatgpt_navigation_fails_closed_if_request_is_malformed(self):
         text = '<a href="https://chatgpt.com/?q=not-a-canonical-request"><b>بررسی بیشتر با ChatGPT</b></a>'

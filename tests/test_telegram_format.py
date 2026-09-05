@@ -104,13 +104,12 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertNotIn(long_url, sent_data["text"])
         self.assertIn(telegram_single_delivery._RADAR_RESOLVER_URL, sent_data["text"])
         self.assertNotIn("is.gd", sent_data["text"])
-        self.assertLessEqual(len(telegram_single_delivery._resolver_navigation_url(chatgpt_url), telegram_single_delivery._MAX_TELEGRAM_NAV_URL), True)
+        self.assertLessEqual(len(telegram_single_delivery._resolver_navigation_url(chatgpt_url)), telegram_single_delivery._MAX_TELEGRAM_NAV_URL)
 
     def test_long_chatgpt_navigation_fails_closed_if_request_is_malformed(self):
         text = '<a href="https://chatgpt.com/?q=not-a-canonical-request"><b>بررسی بیشتر با ChatGPT</b></a>'
-        response = Mock(status_code=200)
         with patch.object(telegram_single_delivery.send_telegram, "_telegram_preflight", return_value=True), \
-             patch("telegram_single_delivery.requests.post", return_value=response) as poster, \
+             patch("telegram_single_delivery.requests.post") as poster, \
              patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHANNEL": "-100123"}, clear=False):
             result = telegram_single_delivery._send_html_without_raw_length_guard(text)
         self.assertFalse(result)

@@ -2,7 +2,7 @@ name: Deploy AI Future Radar Feedback Page
 
 on:
   push:
-    branches: [main]
+    branches: [main, fix/radar-owned-chatgpt-resolver]
     paths:
       - 'docs/**'
       - '.github/workflows/pages.yml'

@@ -4,11 +4,11 @@
 
 ## وضعیت محصول
 
-**Production Complete / CLOSED**
+**Final Acceptance / In Progress**
 
-مرز پایان پروژه در `docs/PRODUCTION_CLOSURE_STATUS.md` ثبت شده است. پنجره نهایی شواهد شامل انتشار موفق News، انتشار واقعی Education و یک رد کامل fail-closed در Editorial QA بود و Production Closure Gate نیز هر ۱۱ معیار خود را PASS کرد.
+Production هنوز رسماً **CLOSED** اعلام نشده است. پنجره فعلی شامل سه اجرای متوالی موفق Production است و شواهد انتشار واقعی News و Education، تحویل کامل Telegram، کنترل تکرار، پنجره رتبه‌بندی، ایزوله‌سازی خطای Provider و persistence وضعیت ثبت شده‌اند. بسته‌شدن نهایی فقط پس از عبور معتبر `Production Closure Gate` از تمام معیارهای پذیرش مجاز است.
 
-مسیر تولید اصلی با GitHub Actions فقط در زمان‌بندی مشخص یا با اجرای دستی فعال است؛ Push به `main` باعث اجرای ناخواسته Production نمی‌شود. پس از بسته‌شدن پروژه، تغییرات جدید باید در مسیر مستقل Maintenance/Evolution انجام شوند، مگر اینکه یک frozen invariant یا production contract شکسته باشد.
+وضعیت دقیق پذیرش و آخرین شواهد در `docs/PRODUCTION_CLOSURE_STATUS.md` ثبت می‌شود. مسیر تولید اصلی با GitHub Actions فقط در زمان‌بندی مشخص یا با اجرای دستی فعال است؛ Push به `main` باعث اجرای ناخواسته Production نمی‌شود.
 
 ## استفاده دیگران
 

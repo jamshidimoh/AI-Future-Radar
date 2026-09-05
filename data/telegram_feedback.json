@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788587194,
+  "updated_at": 1788587787,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6734,6 +6734,55 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788587194
+    },
+    "-1004482051328:1441": {
+      "chat_id": -1004482051328,
+      "message_id": 1441,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Hugging Face Blog",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی NeoMME: کدکننده Multimodal و چندزبانه بومی و کارآمد",
+      "summary": "مقاله‌ای در وبلاگ Hugging Face به معرفی NeoMME می‌پردازد که یک Encoder Multimodal و Multilingual بومی است. این مدل با تمرکز بر کارایی بالا طراحی شده تا پردازش همزمان داده‌های متن و تصویر را در چارچوبی یکپارچه انجام دهد. رویکرد بومی این Encoder به معنای یکپارچگی ذاتی در معماری مدل برای درک روابط بین‌حسی است، نه صرفاً اتصال ماژول‌های جداگانه. این پژوهش بر بهبود دقت و سرعت پردازش در مدل‌های زبانی بزرگ Multimodal تأکید دارد.",
+      "why_it_matters": "توسعه Encoderهای بومی Multimodal و Multilingual مانند NeoMME، موانع فنی در یکپارچه‌سازی داده‌های متن و تصویر را کاهش می‌دهد و به توسعه مدل‌های هوش مصنوعی دقیق‌تر و سریع‌تر کمک می‌کند. این پیشرفت برای کاربردهایی که نیاز به درک عمیق و همزمان از محتوای چندزبانه و Multimodal دارند، اهمیت حیاتی دارد و می‌تواند هزینه‌های محاسباتی را کاهش دهد.",
+      "link": "https://huggingface.co/blog/Hcompany/neomme",
+      "posted_at": 1788587779
+    },
+    "-1004482051328:1442": {
+      "chat_id": -1004482051328,
+      "message_id": 1442,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Y Combinator",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "Ollama, که توسط ۹ میلیون توسعه‌دهنده و ۸۵٪ شرکت‌های Fortune 500 استفاده می‌شود، به‌واسطهٔ Jeff Morgan، هم‌بنیان‌گذار و CEO، بینش عمیقی از مدل‌های AI",
+      "summary": "Ollama, که توسط ۹ میلیون توسعه‌دهنده و ۸۵٪ شرکت‌های Fortune 500 استفاده می‌شود، به‌واسطهٔ Jeff Morgan، هم‌بنیان‌گذار و CEO، بینش عمیقی از مدل‌های AI مورد استفاده واقعی کاربران ارائه می‌دهد. او بیان می‌کند که بزرگ‌ترین تغییر فعلی به سمت مدل‌های باز است؛ این روند توسط عوامل کدنویسی، کاهش هزینه‌ها و پیشرفت‌های سریع قابلیت‌ها پیش‌برده می‌شود. در Ollama Cloud، استفاده از توکن‌ها ۱۵۰ برابر شده است؛ نشان‌دهندهٔ رشد انفجاری تقاضا برای مدل‌های باز از ابتدای سال می‌باشد. مصاحبه به بررسی مزایای مدل‌های باز نسبت به Claude، مقیاس‌پذیری، نقش محلی‌سازی و چالش‌های ژئوپولیتیک می‌پردازد.",
+      "description": "Ollama (YC W21) is used by 9 million developers and 85% of the Fortune 500, giving co-founder and CEO Jeffrey Morgan a unique view into which AI models people are actually using and how that’s changing.\n\nRight now, the biggest shift he sees is toward open models, driven by coding agents, falling costs, and capabilities that are rapidly catching up to the frontier labs. On Ollama Cloud, that shift has driven a 150x increase in token usage since the start of the year.\n\nIn this episode of the Lightcone, Jeff joins us to talk about the future of open models and the story behind Ollama, from two years of searching for the right idea to building one of the most widely used AI developer tools in the world.\n\nApply to Y Combinator: https://www.ycombinator.com/apply\nWork at a startup: https://www.ycombinator.com/jobs\n\n00:00 — Intro\n01:16 — Who's Actually Using Open Models?\n02:13 — Is It All About Cost?\n03:31 — The Token Usage Explosion\n05:31 — Fine Tuning: Hype Cycle or Here to Stay?\n07:27 — Where Open Models Beat Claude\n08:26 — Launching Models at Scale\n11:31 — Olama as the OS Layer\n13:58 — Hidden Layers Between Model and App\n17:28 — Open vs. Closed: The Steady State\n20:41 — Local vs. Cloud Models\n23:12 — Why Chinese Models Dominate Cloud\n24:00 — NVIDIA's Open Source Play\n26:03 — The Return to Local\n27:15 — Getting GPUs Is Hard\n29:16 — The Flash Model Revolution\n31:35 — God Model vs. Orchestration\n33:37 — The Geopolitics Question\n36:14 — From Docker to Ollama\n37:12 — Applied to YC With the Wrong Idea\n40:36 — Lost in the Wilderness for Two Years\n42:15 — The Pivot That Changed Everything\n44:49 — 100K GitHub Stars, No Revenue\n47:40 — How Do You Monetize Open Source?\n49:43 — Why Do YC as a Second-Time Founder?\n51:49 — What Seeing \"Good\" Actually Does for You\n53:38 — Old DevOps Rules That Don't Apply Anymore artificial intelligence",
+      "why_it_matters": "مدل‌های باز نه تنها هزینهٔ پردازش را برای شرکت‌ها کاهش می‌دهند، بلکه امکان سفارشی‌سازی و ادغام عمیق‌تر در ابزارهای توسعه را فراهم می‌آورند؛ این امر می‌تواند سرعت نوآوری را در حوزهٔ نرم‌افزارهای هوشمند تسریع کند. افزایش ۱۵۰× توکن مصرفی نشان می‌دهد که سازمان‌ها به‌سرعت به جای مدل‌های بسته، زیرساخت‌های باز را برای برنامه‌های کدنویسی و هوش مصنوعی انتخاب می‌کنند. این تغییر، فشار بر ارائه‌دهندگان مدل‌های بسته مانند Claude را افزایش می‌دهد و رقابت را به سمت شفافیت و دسترس‌پذیری بیشتر سوق می‌دهد. در نهایت، پذیرش گستردهٔ مدل‌های باز می‌تواند ساختار هزینه‌ای و استراتژیک بازار AI را بازتعریف کند.",
+      "link": "https://www.youtube.com/watch?v=rY0wnfFHYbs",
+      "posted_at": 1788587781
+    },
+    "-1004482051328:1443": {
+      "chat_id": -1004482051328,
+      "message_id": 1443,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788587787
     }
   }
 }

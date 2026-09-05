@@ -6,7 +6,7 @@
   const p = new URLSearchParams(location.search);
   const title = (p.get('t') || '').trim();
   const source = (p.get('u') || '').trim();
-  if (!title || !source) {
+  if (!title || !source || !/^https?:\/\//i.test(source)) {
     document.body.innerHTML = '<p>پیوند ChatGPT ناقص است.</p>';
     return;
   }

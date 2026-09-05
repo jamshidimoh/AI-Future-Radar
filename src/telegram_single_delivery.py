@@ -6,9 +6,12 @@ carries the large ChatGPT query URL and no third-party URL shortener is needed.
 """
 from __future__ import annotations
 
+import base64
 import html
+import json
 import os
 import re
+import zlib
 from urllib.parse import parse_qs, quote, urlparse
 
 import requests
@@ -61,9 +64,18 @@ def _resolver_navigation_url(chatgpt_url: str) -> str:
         source = source_match.group(1).strip()
         if not title or not source:
             return ""
-        resolver = _RADAR_RESOLVER_URL + "?t=" + quote(title, safe="") + "&u=" + quote(source, safe="")
+
+        # The resolver is a static GitHub Pages application, so it cannot keep
+        # server-side state. Pack the canonical title/source into a compact,
+        # URL-safe deflate payload instead of putting them verbatim in query
+        # parameters. This keeps Telegram navigation URLs bounded even when a
+        # source/title is long and avoids every external URL shortener.
+        payload = json.dumps({"t": title, "u": source}, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        compressed = zlib.compress(payload, level=9)
+        token = base64.urlsafe_b64encode(compressed).rstrip(b"=").decode("ascii")
+        resolver = _RADAR_RESOLVER_URL + "?d=" + token
         if len(resolver) > _MAX_TELEGRAM_NAV_URL:
-            print(f"[Telegram Delivery] Radar resolver URL exceeds bound: {len(resolver)}", flush=True)
+            print(f"[Telegram Delivery] Compact Radar resolver URL exceeds bound: {len(resolver)}", flush=True)
             return ""
         return resolver
     except Exception as exc:

@@ -30,23 +30,18 @@ def _visible_length(text: str) -> int:
 
 def _extract_chatgpt_anchor(text: str):
     raw = str(text or "")
-    anchor_re = re.compile(
-        r'<a\s+href=["\']([^"\']+)["\']>\s*<b>(.*?)</b>\s*</a>',
-        flags=re.I | re.S,
-    )
+    anchor_re = re.compile(r'<a\s+href=["\']([^"\']+)["\']>\s*<b>(.*?)</b>\s*</a>', flags=re.I | re.S)
     for match in anchor_re.finditer(raw):
         label = re.sub("[" + re.escape(_BIDI_MARKS) + "]", "", html.unescape(match.group(2)))
         if label.strip() != CHATGPT_LABEL:
             continue
         url = html.unescape(match.group(1))
         replacement = f"<b>{CHATGPT_LABEL}</b>"
-        cleaned = raw[:match.start()] + replacement + raw[match.end():]
-        return cleaned, url
+        return raw[:match.start()] + replacement + raw[match.end():], url
     return raw, ""
 
 
 def _resolver_navigation_url(chatgpt_url: str) -> str:
-    """Convert the canonical ChatGPT request into a bounded Radar-owned URL."""
     raw = str(chatgpt_url or "").strip()
     if not raw:
         return ""
@@ -93,16 +88,8 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
         if not navigation_url:
             print("[Telegram Delivery] Radar ChatGPT resolver unavailable; refusing publication rather than emitting a broken CTA", flush=True)
             return False
-        cleaned_text = cleaned_text.replace(
-            f"<b>{CHATGPT_LABEL}</b>",
-            f'<b><a href="{html.escape(navigation_url, quote=True)}">{CHATGPT_LABEL}</a></b>',
-            1,
-        )
-    response = requests.post(
-        f"https://api.telegram.org/bot{token}/sendMessage",
-        data={"chat_id": channel, "text": cleaned_text, "parse_mode": "HTML", "disable_web_page_preview": not bool(str(source_link or "").strip())},
-        timeout=20,
-    )
+        cleaned_text = cleaned_text.replace(f"<b>{CHATGPT_LABEL}</b>", f'<b><a href="{html.escape(navigation_url, quote=True)}">{CHATGPT_LABEL}</a></b>', 1)
+    response = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data={"chat_id": channel, "text": cleaned_text, "parse_mode": "HTML", "disable_web_page_preview": not bool(str(source_link or "").strip())}, timeout=20)
     if response.status_code != 200:
         print(f"[ERROR] Telegram HTML transport failed: {response.status_code} - {response.text}", flush=True)
         return False

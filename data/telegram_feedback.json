@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788585811,
+  "updated_at": 1788587194,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6665,6 +6665,75 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788585811
+    },
+    "-1004482051328:1437": {
+      "chat_id": -1004482051328,
+      "message_id": 1437,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Axios)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "مصاحبه Axios با Sam Altman: هشدار جدی درباره آینده هوش مصنوعی",
+      "summary": "در این مصاحبه با Axios، Sam Altman به عنوان رهبر OpenAI به موضوعات کلیدی و چالش‌های پیش‌رو در حوزه هوش مصنوعی می‌پردازد. عنوان خبر با اشاره به «هشدار جدی» (sobering siren) او، بر لحن محتاطانه و واقع‌بینانه‌ای که در مورد پیامدهای فنی و اجتماعی توسعه مدل‌های پیشرفته دارد، تأکید می‌کند. این گفتگو احتمالاً به بررسی محدودیت‌های فعلی، نیازهای زیرساختی و مسئولیت‌های اخلاقی در مسیر رسیدن به هوش مصنوعی عمومی (AGI) اختصاص دارد. با وجود نبود متن کامل در ورودی، تمرکز اصلی بر سیگنال‌های رهبری Altman در جهت‌دهی به صنعت و مدیریت انتظارات عمومی است.",
+      "why_it_matters": "بیانیه‌ها و مواضع Sam Altman به عنوان چهره شاخص صنعت هوش مصنوعی، تأثیر مستقیمی بر سیاست‌گذاری‌های شرکت‌های رقیب، سرمایه‌گذاران و نهادهای نظارتی دارد. هشدارهای او معمولاً نشان‌دهنده درک عمیق از شکاف‌های فنی و ریسک‌های عملیاتی در توسعه مدل‌های بزرگ زبانی است. Attention به این سیگنال‌ها برای درک جهت‌گیری آینده فناوری و آماده‌سازی برای چالش‌های اخلاقی و فنی ضروری است.",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQMHZBeVd5THV6ZUdVem9qbk1IZDRFbWlIWndheEFDblBQLXgxODAycEYxeHZkRGFfSmdBZF8wYWlHaVRMaUxVd2prMHk0NGhwS1ZjQU4tZWZyMVRKcy1XNnZfX2pxYlJOejBhRk5RV2hyUW12akl4bGVILThFMFliNw?oc=5",
+      "posted_at": 1788587184
+    },
+    "-1004482051328:1438": {
+      "chat_id": -1004482051328,
+      "message_id": 1438,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Yahoo Finance)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "Elon Musk: طوفان Cybercab در Austin و کارایی عملیاتی بالاتر از Waymo",
+      "summary": "Elon Musk اعلام کرد که موجی از خودروهای خودران Tesla Cybercab به‌زودی در شهر Austin فعال خواهند شد. او مدعی است که این ناوگان از نظر «کارایی عملیاتی» (Operational Efficiency) عملکرد بهتری نسبت به رقیب اصلی، Waymo، دارد. این اظهارات نشان‌دهنده آمادگی Tesla برای گسترش تجاری سرویس رباتاکسی در مقیاس بزرگ است.",
+      "why_it_matters": "این ادعا رقابت مستقیم بین دو غول خودروهای خودران را تشدید می‌کند و تمرکز بر کارایی عملیاتی می‌تواند عامل تعیین‌کننده در جذب کاربران و کاهش هزینه‌های سرویس باشد. موفقیت Cybercab در Austin می‌تواند به‌عنوان نقطه عطفی برای مقیاس‌پذیری تجاری فناوری خودران Tesla عمل کند و فشار رقابتی بر Waymo را افزایش دهد.",
+      "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQbHA4d0pJTkhCQWhIYXVFdkdweHNhYWl6aGlBOHFBTjlkTkJLOW9kOEtmZEJRZFpMVEtRcWQ1Z09uMGR3cURvSGgwbDRMTl9SVzNMaVFoOEI2QWwxSGQwX2dxT2VNc0E5ZHF1SUwyYW9IcC1oLU02YUFUMG44X0l5UUk2VDI2a3cyT3pGWVdHLUdKQQ?oc=5",
+      "posted_at": 1788587186
+    },
+    "-1004482051328:1439": {
+      "chat_id": -1004482051328,
+      "message_id": 1439,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Google DeepMind",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "WeatherNext 3: پیش‌بینی‌های دقیق‌تر، به‌موقع و محلی هواشناسی",
+      "summary": "WeatherNext 3، مدل جدید پیش‌بینی هواشناسی DeepMind، به‌جای روش‌های عددی سنتی، مستقیم از داده‌های مشاهداتی زنده شامل تصاویر ماهواره‌ای و ایستگاه‌های زمینی یاد می‌گیرد. این سامانه هر ساعت یک پیش‌بینی تازه ارائه می‌دهد و با وضوح بومی 5 km برای دما و رطوبت، جزئیات بهتری برای مناطق ساحلی، کوهستانی و شهری فراهم می‌کند. علاوه بر دما و رطوبت، داده‌های عملی مانند سرعت باد در ارتفاع 100 m و معیارهای ابر/تابش برای مدیریت انرژی بادی و خورشیدی در دسترس است. دسترسی به پیش‌بینی‌ها از طریق Google Search، Gemini و Google Maps امکان‌پذیر است و پوشش جهانی دارد، هرچند برای هشدارهای رسمی باید به سازمان‌های هواشناسی ملی مراجعه کرد.",
+      "description": "WeatherNext 3: More accurate, timely, and local weather forecasts \n\nPredicting the weather is one of the oldest, most complex challenges we face. Traditional numerical weather prediction models are powerful, but they can be slow to run and costly at a global scale. WeatherNext 3 takes a different approach. Built on a fundamentally different architecture, WeatherNext 3 learns directly from real-world observations, including live satellite feeds and ground-level weather station data.\n\n\nWhat makes WeatherNext 3 different?\nHourly refresh: While traditional models typically refresh every six hours, WN3 produces a fresh forecast every single hour.\nHyper-Local resolution: Native 5km resolution for temperature and humidity, enabling better detail for coastal regions, mountains, and urban areas.\nActionable data: Includes variables like 100m wind speeds for wind energy management and detailed cloud/radiation metrics for solar energy planning.\nGlobal reach: Delivering high-resolution insights everywhere.\nYou can now use WeatherNext 3 through Google Search, Gemini, Google Maps and more. \n\nLearn more: https://blog.google/innovation-and-ai/models-and-research/google-deepmind/introducing-weathernext-3/\nRead the full paper: https://storage.googleapis.com/deepmind-media/papers/weathernext_3.pdf\nDisclaimer: For official weather forecasts, severe weather warnings, and public safety advisories, please refer to your local meteorological agency or national weather service.\n\n___\n\nSubscribe to our channel https://www.youtube.com/@googledeepmind \nFind us on X https://x.com/GoogleDeepMind\nFollow us on Instagram https://instagram.com/googledeepmind \nAdd us on Linkedin https://www.linkedin.com/company/deepmind/ artificial intelligence",
+      "why_it_matters": "پیش‌بینی‌های ساعتی و با وضوح 5 km می‌توانند به‌طور قابل‌Attentionی دقت برنامه‌ریزی‌های انرژی بادی و خورشیدی، مدیریت بحران‌های محلی و بهبود خدمات شهری را ارتقا دهند. با حذف نیاز به محاسبات سنگین عددی، هزینه و زمان پردازش کاهش می‌یابد، که امکان ارائه پیش‌بینی‌های به‌روز در مقیاس جهانی را فراهم می‌کند. با این حال، این مدل جایگزین پیش‌بینی‌های رسمی نمی‌شود و برای هشدارهای اضطراری باید به مراجع ملی مراجعه کرد.",
+      "link": "https://www.youtube.com/watch?v=_6jZlnRsXXQ",
+      "posted_at": 1788587187
+    },
+    "-1004482051328:1440": {
+      "chat_id": -1004482051328,
+      "message_id": 1440,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788587194
     }
   }
 }

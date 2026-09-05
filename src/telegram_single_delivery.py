@@ -9,7 +9,7 @@ from __future__ import annotations
 import html
 import os
 import re
-from urllib.parse import parse_qs, quote, unquote, urlparse
+from urllib.parse import parse_qs, quote, urlparse
 
 import requests
 import send_telegram
@@ -54,8 +54,7 @@ def _resolver_navigation_url(chatgpt_url: str) -> str:
         parsed = urlparse(raw)
         if parsed.scheme != "https" or parsed.netloc.lower() not in {"chatgpt.com", "www.chatgpt.com"}:
             return ""
-        prompt = parse_qs(parsed.query, keep_blank_values=True).get("q", [""])[0]
-        prompt = unquote(prompt).strip()
+        prompt = parse_qs(parsed.query, keep_blank_values=True).get("q", [""])[0].strip()
         if not prompt:
             return ""
         title_match = re.search(r"(?:^|\n)عنوان:\s*(.*?)(?:\n|$)", prompt)

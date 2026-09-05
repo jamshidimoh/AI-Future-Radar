@@ -27,7 +27,9 @@ _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
 _MAX_TRANSIENT_RETRIES = 1
 
-GROQ_MODELS = ("qwen/qwen3.6-27b", "openai/gpt-oss-120b")
+# Current production-capable Groq models. Qwen 3.8 27B and GPT-OSS 120B both
+# support JSON output; Qwen 3.8 additionally supports tunable reasoning.
+GROQ_MODELS = ("qwen/qwen3.8-27b", "openai/gpt-oss-120b")
 OPENROUTER_MODELS = ("openai/gpt-oss-120b:free", "openai/gpt-oss-20b:free")
 GEMINI_DEFAULT_MODEL = "gemini-3.7-flash"
 _HF_MODEL_CACHE = None
@@ -105,11 +107,12 @@ def _gemini(system_prompt, user_content):
     model = (os.getenv("GEMINI_MODEL") or GEMINI_DEFAULT_MODEL).strip()
     client = genai.Client(api_key=key, http_options={"timeout": 8_000})
     try:
-        response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", temperature=0.15, max_output_tokens=900))
+        # Gemini 3.x does not accept legacy temperature/top-p/top-k controls.
+        response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", max_output_tokens=900))
         return response.text
     except Exception as exc:
         msg = str(exc).lower()
-        if any(token in msg for token in ("401", "403", "404", "429", "quota", "resource_exhausted", "unauthenticated")):
+        if any(token in msg for token in ("401", "403", "404", "429", "quota", "resource_exhausted", "unauthenticated", "invalid argument")):
             raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
         raise
 
@@ -244,19 +247,33 @@ def _provider_timeout(name: str, remaining: float) -> float:
 def _disable(name: str, reason: str) -> None:
     family = _provider_family(name)
     _DISABLED.add(name)
-    if reason in {"permanent", "quota"}:
+    # Only permanent authentication/configuration failures are shared across
+    # requests. Quota/rate-limit and transient failures are model/request local.
+    if reason == "permanent":
         _DISABLED_FAMILIES.add(family)
     print(f"[Light Router] disabled={name} family={family} reason={reason}", flush=True)
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
+    """Call providers with request-local failover state.
+
+    Permanent authentication/configuration failures remain globally scoped so
+    a broken provider family is not retried by every concurrent worker. Quota,
+    transient, timeout, and ordinary failures are local to this request so
+    one story cannot starve sibling models or unrelated concurrent stories.
+    """
     providers = providers or get_quality_chain()
     last = None
     deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS
     transient_retries = {}
+    local_disabled_names = set()
+    local_disabled_families = set()
+
     for name, fn in providers:
         family = _provider_family(name)
-        if name in _DISABLED or family in _DISABLED_FAMILIES:
+        if name in local_disabled_names or family in local_disabled_families:
+            continue
+        if family in _DISABLED_FAMILIES:
             continue
         if not _provider_credential_available(name):
             print(f"[Light Router] skipped={name} reason=missing_credential", flush=True)
@@ -273,15 +290,21 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                 return result, name
         except concurrent.futures.TimeoutError:
             last = TimeoutError(f"{name}: exceeded provider timeout of {timeout:.1f}s")
+            local_disabled_names.add(name)
             _disable(name, "transient")
         except QuotaExceeded as exc:
             last = exc
-            _disable(name, _failure_class(str(exc)))
+            reason = _failure_class(str(exc))
+            local_disabled_names.add(name)
+            if reason == "permanent":
+                local_disabled_families.add(family)
+            _disable(name, reason)
         except Exception as exc:
             last = exc
             reason = _failure_class(str(exc))
             print(f"[Light Router] error={name} reason={reason} | {exc}", flush=True)
-            if reason in {"permanent", "quota"}:
+            if reason == "permanent":
+                local_disabled_families.add(family)
                 _disable(name, reason)
             elif reason == "transient" and transient_retries.get(family, 0) < _MAX_TRANSIENT_RETRIES:
                 transient_retries[family] = transient_retries.get(family, 0) + 1
@@ -293,8 +316,10 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                         return retry_result, name
                 except Exception as retry_exc:
                     last = retry_exc
+                    local_disabled_names.add(name)
                     _disable(name, _failure_class(str(retry_exc)))
             else:
+                local_disabled_names.add(name)
                 _disable(name, reason)
         if deadline - time.monotonic() <= 0:
             break

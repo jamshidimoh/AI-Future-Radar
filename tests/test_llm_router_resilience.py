@@ -13,29 +13,30 @@ def _reset():
     router._CHAIN_CACHE = None
 
 
-def test_quota_failure_disables_provider_family(monkeypatch):
+def test_quota_failure_is_model_scoped_and_sibling_can_failover(monkeypatch):
     _reset()
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     calls = []
 
-    def groq_fail(*args, **kwargs):
-        calls.append("groq")
-        raise router.QuotaExceeded("Groq qwen/qwen3.6-27b: HTTP 429")
+    def groq_qwen_quota(*args, **kwargs):
+        calls.append("qwen")
+        raise router.QuotaExceeded("Groq qwen/qwen3.8-27b: HTTP 429")
 
-    def gemini_ok(*args, **kwargs):
-        calls.append("gemini")
+    def groq_sibling_ok(*args, **kwargs):
+        calls.append("gpt-oss")
         return '{"title":"ok"}'
 
     providers = [
-        ("Groq:qwen/qwen3.6-27b", groq_fail),
-        ("Groq:openai/gpt-oss-120b", groq_fail),
-        ("Gemini", gemini_ok),
+        ("Groq:qwen/qwen3.8-27b", groq_qwen_quota),
+        ("Groq:openai/gpt-oss-120b", groq_sibling_ok),
+        ("Gemini", lambda *args, **kwargs: '{"title":"unexpected"}'),
     ]
     result, provider = router.call_llm_with_fallback("system", "user", providers=providers)
     assert result == '{"title":"ok"}'
-    assert provider == "Gemini"
-    assert calls == ["groq", "gemini"]
+    assert provider == "Groq:openai/gpt-oss-120b"
+    assert calls == ["qwen", "gpt-oss"]
+    assert "groq" not in router._DISABLED_FAMILIES
 
 
 def test_auth_failure_does_not_try_sibling_openrouter_model(monkeypatch):
@@ -55,12 +56,13 @@ def test_auth_failure_does_not_try_sibling_openrouter_model(monkeypatch):
     providers = [
         ("OpenRouter:openai/gpt-oss-120b:free", openrouter_fail),
         ("OpenRouter:openai/gpt-oss-20b:free", openrouter_fail),
-        ("Groq:qwen/qwen3.6-27b", other_ok),
+        ("Groq:qwen/qwen3.8-27b", other_ok),
     ]
     result, provider = router.call_llm_with_fallback("system", "user", providers=providers)
     assert result == '{"title":"ok"}'
-    assert provider == "Groq:qwen/qwen3.6-27b"
+    assert provider == "Groq:qwen/qwen3.8-27b"
     assert calls == ["openrouter", "other"]
+    assert "openrouter" in router._DISABLED_FAMILIES
 
 
 def test_current_default_chain_uses_supported_gemini_model(monkeypatch):
@@ -72,4 +74,5 @@ def test_current_default_chain_uses_supported_gemini_model(monkeypatch):
     names = [name for name, _ in chain]
     assert "Gemini" in names
     assert router.GEMINI_DEFAULT_MODEL == "gemini-3.7-flash"
+    assert "Groq:qwen/qwen3.8-27b" in names
     assert "OpenRouter:openai/gpt-oss-120b:free" in names

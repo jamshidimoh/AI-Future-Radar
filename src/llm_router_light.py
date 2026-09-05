@@ -27,8 +27,8 @@ _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
 _MAX_TRANSIENT_RETRIES = 1
 
-# Current production-capable Groq models. Qwen 3.8 27B is current and
-# supports JSON Schema/JSON Object mode plus hidden reasoning.
+# Current production-capable Groq models. Qwen 3.8 27B and GPT-OSS 120B both
+# support JSON output; Qwen 3.8 additionally supports tunable reasoning.
 GROQ_MODELS = ("qwen/qwen3.8-27b", "openai/gpt-oss-120b")
 OPENROUTER_MODELS = ("openai/gpt-oss-120b:free", "openai/gpt-oss-20b:free")
 GEMINI_DEFAULT_MODEL = "gemini-3.7-flash"
@@ -107,8 +107,7 @@ def _gemini(system_prompt, user_content):
     model = (os.getenv("GEMINI_MODEL") or GEMINI_DEFAULT_MODEL).strip()
     client = genai.Client(api_key=key, http_options={"timeout": 8_000})
     try:
-        # Gemini 3.x no longer accepts legacy temperature/top-p/top-k sampling
-        # controls. Keep the request on supported production parameters.
+        # Gemini 3.x does not accept legacy temperature/top-p/top-k controls.
         response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", max_output_tokens=900))
         return response.text
     except Exception as exc:
@@ -248,7 +247,9 @@ def _provider_timeout(name: str, remaining: float) -> float:
 def _disable(name: str, reason: str) -> None:
     family = _provider_family(name)
     _DISABLED.add(name)
-    if reason in {"permanent", "quota"}:
+    # Only permanent authentication/configuration failures are shared across
+    # requests. Quota/rate-limit and transient failures are model/request local.
+    if reason == "permanent":
         _DISABLED_FAMILIES.add(family)
     print(f"[Light Router] disabled={name} family={family} reason={reason}", flush=True)
 
@@ -272,9 +273,6 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
         family = _provider_family(name)
         if name in local_disabled_names or family in local_disabled_families:
             continue
-        # Only provider-family failures that are known to be permanent are
-        # shared between concurrent calls. Model-level quota state is retained
-        # for observability but intentionally ignored here.
         if family in _DISABLED_FAMILIES:
             continue
         if not _provider_credential_available(name):

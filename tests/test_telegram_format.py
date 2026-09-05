@@ -7,7 +7,7 @@ from urllib.parse import quote
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
+from send_telegram import _gregorian_date, _source_page_image, format_post
 import telegram_single_delivery
 
 
@@ -93,7 +93,7 @@ class TelegramFormatTests(unittest.TestCase):
         long_url = "https://chatgpt.com/?q=" + quote(prompt, safe="") + ("A" * 9000)
         text = '<a href="' + long_url + '"><b>بررسی بیشتر با ChatGPT</b></a>'
         telegram_response = Mock(status_code=200)
-        telegram_response.json.return_value = {"ok": True, "result": {"message_id": 456, "chat": {"id": -100123}}
+        telegram_response.json.return_value = {"ok": True, "result": {"message_id": 456, "chat": {"id": -100123}}}
         with patch.object(telegram_single_delivery.send_telegram, "_telegram_preflight", return_value=True), \
              patch("telegram_single_delivery.requests.post", return_value=telegram_response) as poster, \
              patch.dict("os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHANNEL": "-100123"}, clear=False):

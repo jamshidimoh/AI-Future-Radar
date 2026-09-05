@@ -1,15 +1,15 @@
 """Canonical Telegram publication orchestration.
 
 The editorial story is published as exactly one canonical full-text message.
-Images are intentionally not published as companion messages. This keeps the
-channel feed atomic and prevents duplicate text/photo publication.
+ChatGPT navigation uses a Radar-owned GitHub Pages resolver so Telegram never
+carries the large ChatGPT query URL and no third-party URL shortener is needed.
 """
 from __future__ import annotations
 
 import html
 import os
 import re
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, quote, unquote, urlparse
 
 import requests
 import send_telegram
@@ -17,12 +17,11 @@ import send_telegram
 SAFE_TEXT_LIMIT = 3900
 CHATGPT_LABEL = "بررسی بیشتر با ChatGPT"
 _BIDI_MARKS = "\u2066\u2069\u2067\u200f\u200e"
-_SHORTENER_URL = "https://is.gd/create.php"
 _MAX_TELEGRAM_NAV_URL = 512
+_RADAR_RESOLVER_URL = "https://jamshidimoh.github.io/AI-Future-Radar/chatgpt/"
 
 
 def _visible_length(text: str) -> int:
-    """Measure Telegram-visible text, excluding HTML tags and escaped markup."""
     raw = str(text or "")
     raw = re.sub(r"<[^>]*>", "", raw)
     raw = html.unescape(raw)
@@ -30,7 +29,6 @@ def _visible_length(text: str) -> int:
 
 
 def _extract_chatgpt_anchor(text: str):
-    """Extract the ChatGPT URL from its HTML anchor and replace the anchor."""
     raw = str(text or "")
     anchor_re = re.compile(
         r'<a\s+href=["\']([^"\']+)["\']>\s*<b>(.*?)</b>\s*</a>',
@@ -47,34 +45,39 @@ def _extract_chatgpt_anchor(text: str):
     return raw, ""
 
 
-def _shorten_navigation_url(url: str) -> str:
-    """Return a bounded navigation URL; fail closed if shortening is unavailable."""
-    raw = str(url or "").strip()
+def _resolver_navigation_url(chatgpt_url: str) -> str:
+    """Convert the canonical ChatGPT request into a bounded Radar-owned URL."""
+    raw = str(chatgpt_url or "").strip()
     if not raw:
         return ""
-    if len(raw) <= _MAX_TELEGRAM_NAV_URL:
-        return raw
     try:
-        response = requests.post(
-            _SHORTENER_URL,
-            data={"format": "simple", "url": raw},
-            timeout=20,
-        )
-        if response.status_code != 200:
-            print(f"[Telegram Delivery] navigation shortener failed: {response.status_code}", flush=True)
+        parsed = urlparse(raw)
+        if parsed.scheme != "https" or parsed.netloc.lower() not in {"chatgpt.com", "www.chatgpt.com"}:
             return ""
-        short = response.text.strip()
-        if not re.fullmatch(r"https://is\.gd/[A-Za-z0-9_-]+", short):
-            print("[Telegram Delivery] navigation shortener returned invalid URL", flush=True)
+        prompt = parse_qs(parsed.query, keep_blank_values=True).get("q", [""])[0]
+        prompt = unquote(prompt).strip()
+        if not prompt:
             return ""
-        return short
-    except requests.RequestException as exc:
-        print(f"[Telegram Delivery] navigation shortener unavailable: {exc}", flush=True)
+        title_match = re.search(r"(?:^|\n)عنوان:\s*(.*?)(?:\n|$)", prompt)
+        source_match = re.search(r"(?:^|\n)منبع:\s*(https?://\S+)(?:\n|$)", prompt)
+        if not title_match or not source_match:
+            print("[Telegram Delivery] ChatGPT request missing canonical title/source", flush=True)
+            return ""
+        title = title_match.group(1).strip()
+        source = source_match.group(1).strip()
+        if not title or not source:
+            return ""
+        resolver = _RADAR_RESOLVER_URL + "?t=" + quote(title, safe="") + "&u=" + quote(source, safe="")
+        if len(resolver) > _MAX_TELEGRAM_NAV_URL:
+            print(f"[Telegram Delivery] Radar resolver URL exceeds bound: {len(resolver)}", flush=True)
+            return ""
+        return resolver
+    except Exception as exc:
+        print(f"[Telegram Delivery] Radar resolver construction failed: {exc}", flush=True)
         return ""
 
 
 def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
-    """Send one HTML message when raw markup exceeds the limit but visible text fits."""
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     channel = os.environ.get("TELEGRAM_CHANNEL")
     if not token or not channel:
@@ -89,9 +92,9 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
         return False
 
     if chatgpt_url:
-        navigation_url = _shorten_navigation_url(chatgpt_url)
+        navigation_url = _resolver_navigation_url(chatgpt_url)
         if not navigation_url:
-            print("[Telegram Delivery] ChatGPT navigation unavailable; refusing publication rather than emitting a broken CTA", flush=True)
+            print("[Telegram Delivery] Radar ChatGPT resolver unavailable; refusing publication rather than emitting a broken CTA", flush=True)
             return False
         escaped_nav = html.escape(navigation_url, quote=True)
         cleaned_text = cleaned_text.replace(
@@ -99,9 +102,6 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
             f'<b><a href="{escaped_nav}">{CHATGPT_LABEL}</a></b>',
             1,
         )
-        if len(navigation_url) > _MAX_TELEGRAM_NAV_URL:
-            print("[Telegram Delivery] bounded navigation URL invariant violated", flush=True)
-            return False
 
     data = {
         "chat_id": channel,
@@ -109,7 +109,6 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
         "parse_mode": "HTML",
         "disable_web_page_preview": not bool(str(source_link or "").strip()),
     }
-
     response = requests.post(
         f"https://api.telegram.org/bot{token}/sendMessage",
         data=data,
@@ -127,13 +126,11 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
 
 
 def _send_text_only(text: str, source_link: str = ""):
-    """Publish exactly one canonical full-text Telegram message."""
     raw_text = str(text or "")
     visible = _visible_length(raw_text)
     if visible > SAFE_TEXT_LIMIT:
         print(f"[Telegram Delivery] rejected oversized single-message story: visible_chars={visible} limit={SAFE_TEXT_LIMIT}", flush=True)
         return False
-
     if len(raw_text) > SAFE_TEXT_LIMIT:
         result = _send_html_without_raw_length_guard(raw_text, source_link=source_link)
     else:
@@ -144,10 +141,8 @@ def _send_text_only(text: str, source_link: str = ""):
         if not send_telegram._telegram_preflight(token, channel):
             return False
         result = send_telegram._send_text_full(token, channel, raw_text, preview_url=source_link, preflight=False)
-
     if not isinstance(result, dict) or result.get("message_id") is None:
         return False
-
     result = dict(result)
     result["photo_message_id"] = None
     result["delivery_complete"] = True
@@ -156,7 +151,6 @@ def _send_text_only(text: str, source_link: str = ""):
 
 
 def send(text: str, image_url: str = "", source_link: str = ""):
-    """Publish exactly one Telegram message; never publish a photo companion."""
     try:
         _ = image_url
         return _send_text_only(text, source_link=source_link)

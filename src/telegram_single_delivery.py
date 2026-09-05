@@ -41,7 +41,7 @@ def _extract_chatgpt_anchor(text: str):
     return raw, ""
 
 
-def _resolver_navigation_url(chatgpt_url: str) -> str:
+def _resolver_navigation_url(chatgpt_url: str, fallback_source: str = "") -> str:
     raw = str(chatgpt_url or "").strip()
     if not raw:
         return ""
@@ -54,18 +54,30 @@ def _resolver_navigation_url(chatgpt_url: str) -> str:
             return ""
         title_match = re.search(r"(?:^|\n)عنوان:\s*(.*?)(?:\n|$)", prompt)
         source_match = re.search(r"(?:^|\n)منبع:\s*(https?://\S+)(?:\n|$)", prompt)
-        if not title_match or not source_match:
-            print("[Telegram Delivery] ChatGPT request missing canonical title/source", flush=True)
+        if not title_match:
+            print("[Telegram Delivery] ChatGPT request missing canonical title", flush=True)
             return ""
         title = title_match.group(1).strip()
-        source = source_match.group(1).strip()
-        if not title or not source:
+        source = source_match.group(1).strip() if source_match else ""
+        if not title:
+            return ""
+        if not source:
+            source = str(fallback_source or "").strip()
+        if not source:
+            print("[Telegram Delivery] ChatGPT request missing canonical source", flush=True)
             return ""
         resolver = (
             _RADAR_RESOLVER_URL
             + "?t=" + quote(title, safe="")
             + "&u=" + quote(source, safe="")
         )
+        if len(resolver) > _MAX_TELEGRAM_NAV_URL and fallback_source:
+            source = str(fallback_source).strip()
+            resolver = (
+                _RADAR_RESOLVER_URL
+                + "?t=" + quote(title, safe="")
+                + "&u=" + quote(source, safe="")
+            )
         if len(resolver) > _MAX_TELEGRAM_NAV_URL:
             print(f"[Telegram Delivery] Radar resolver URL exceeds bound: {len(resolver)}", flush=True)
             return ""
@@ -88,7 +100,7 @@ def _send_html_without_raw_length_guard(text: str, source_link: str = ""):
     if not send_telegram._telegram_preflight(token, channel):
         return False
     if chatgpt_url:
-        navigation_url = _resolver_navigation_url(chatgpt_url)
+        navigation_url = _resolver_navigation_url(chatgpt_url, fallback_source=source_link)
         if not navigation_url:
             print("[Telegram Delivery] Radar ChatGPT resolver unavailable; refusing publication rather than emitting a broken CTA", flush=True)
             return False

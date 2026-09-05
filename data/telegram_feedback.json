@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788627094,
+  "updated_at": 1788635023,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6990,6 +6990,63 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788627094
+    },
+    "-1004482051328:1456": {
+      "chat_id": -1004482051328,
+      "message_id": 1456,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Stocktwits)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Satya Nadella",
+      "watch_person": "Satya Nadella",
+      "title": "Satya Nadella: مشتریان Azure از مدل جدید Astra AI شرکت OpenAI استفاده می‌کنند",
+      "summary": "بر اساس گزارش Stocktwits، Satya Nadella، مدیرعامل Microsoft، اعلام کرده است که مشتریان سرویس ابری Azure از مدل هوش مصنوعی جدید Astra AI متعلق به OpenAI استفاده می‌کنند. این خبر در حالی منتشر شده که سهم MSFT در آستانه یک افت هفتگی قرار دارد. متن منبع جزئیات فنی بیشتری درباره معماری یا عملکرد مدل Astra ارائه نکرده و صرفاً بر ادعای مدیرعامل مبنی بر پذیرش اولیه این مدل توسط مشتریان ابری تأکید دارد.",
+      "why_it_matters": "این اظهارات نشان می‌دهد که همکاری عمیق بین Microsoft و OpenAI فراتر از سطح تبلیغاتی رفته و به مرحله استقرار عملیاتی در زیرساخت‌های ابری رسیده است. وجود مدل‌های جدیدی مانند Astra در اکوسیستم Azure می‌تواند مزیت رقابتی Microsoft را در بازار هوش مصنوعی تقویت کند، هرچند نگرانی‌های بازار درباره هزینه‌های بالای این همکاری همچنان بر قیمت سهام سایه انداخته است.",
+      "link": "https://news.google.com/rss/articles/CBMijwJBVV95cUxOMnNMMTdtUmxLRWVfV2U0MF94RTN3LVZ5Q1N1T202X290dTFGUDRDS2hkZWRRLVpidmhXcV8yN00wbEtrWWUxenRRelNpVVpxVVFhTXVBdmJIc0tNWGpyU0hDY3QwV0t5bmhrMUtVNjk4NGlUQ0dFQnU2Q2xVX1JoSWtWbFpNMENxeHc3ZTBGeWlZTk5GSkJ0QUxqamdrZms1djRTQjJXQ2pINHJmb0NRNnVUNzdYWE5xbjRGX1JLN0hSN1prOEtHbVhrNERkRU40VWNYRFg2Sy1MaFNlaWpfclJhenYzNkltWE41cE5ZdmFmOUdjUlhxNmZHV2JLX2FscVZ3Q0pKQkJ4eVlVNHZB?oc=5",
+      "posted_at": 1788635021
+    },
+    "-1004482051328:1457": {
+      "chat_id": -1004482051328,
+      "message_id": 1457,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "استفاده از ChatGPT Work برای شبیه‌سازی بحث‌های خریدار و بهینه‌سازی بریف‌های بازاریابی",
+      "summary": "تیم بازاریابی OpenAI از ChatGPT Work برای شبیه‌سازی بحث‌های خریدار بر اساس تحقیقات موجود مشتریان استفاده می‌کند. این رویکرد به تیم‌ها کمک می‌کند تا قبل از ورود به بازار، موقعیت‌دهی (positioning) خود را دقیق‌تر کنند. همچنین این ابزار امکان آماده‌سازی سؤالات بهتری برای تحقیقات واقعی مشتری را فراهم می‌آورد. هدف اصلی، پالایش بریف‌های کمپین بازاریابی پیش از اجراست تا از اتلاف منابع جلوگیری شود.",
+      "description": "Sharpen your campaign brief before you go to market.\n\nThis is how our marketing team uses ChatGPT Work to simulate buyer discussions using existing customer research—so we can sharpen positioning and prepare better questions for real customer research.\n\nWatch the full webinar: https://goldcast.registration.public-pr50.goldcast.io/on-demand/d863a2bc-77cf-4197-8ba4-b4a8b837c0b3?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing\n\nLearn more: https://openai.com/business/solutions/marketing/?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing artificial intelligence",
+      "why_it_matters": "این روش امکان استرس‌تست (pressure-test) بریف‌های بازاریابی را پیش از هزینه‌های سنگین اجرایی فراهم می‌کند. با شبیه‌سازی واکنش‌های خریدار بر پایه داده‌های موجود، ریسک‌های مربوط به موقعیت‌دهی محصول کاهش می‌یابد. همچنین کیفیت سؤالات در مرحله تحقیقات میدانی واقعی بهبود می‌یابد که منجر به درک عمیق‌تر از نیازهای بازار می‌شود.",
+      "link": "https://www.youtube.com/watch?v=HHt8CPJRviA",
+      "posted_at": 1788635022
+    },
+    "-1004482051328:1458": {
+      "chat_id": -1004482051328,
+      "message_id": 1458,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "GPT-6 Astra: تولید تاریخ‌نگاری تعاملی سه‌بعدی لندن، ارائه ایده‌های وب‌سایت ماچا و حل معمای DEF CON",
+      "summary": "در ویدئوی رسمی OpenAI، بن دیویس، پیتر گوستِف و تام کرچا نشان دادند که GPT-6 Astra می‌تواند یک تاریخ‌نگاری تعاملی سه‌بعدی از لندن تولید کند، ایده‌های جدید برای وب‌سایت فروشگاه ماچا ارائه دهد و با استفاده از عوامل موازی یک معمای DEF CON را حل کند. این مدل به تیم‌ها امکان می‌دهد ایده‌ها را سریع‌تر بررسی کنند، مسیر کار را ثابت نگه دارند و مسائلی را که پیش‌تر دست‌نیافتنی به نظر می‌رسیدند، حل کنند.",
+      "description": "See what Ben Davis, Peter Gostev, and Tom Krcha are building with GPT-6 Astra, from a playable 3D history of London to new directions for a matcha shop website to solving a DEF CON puzzle with parallel agents.\n\nGPT-6 Astra helps them explore ideas, stay on track, and tackle problems that previously felt out of reach. artificial intelligence",
+      "why_it_matters": "قابلیت چندمنظوره GPT-6 Astra به توسعه‌دهندگان اجازه می‌دهد تا در حوزه‌های خلاقیت، تجارت و امنیت سایبری به‌سرعت نمونه‌سازی کنند و نیاز به تیم‌های بزرگ و زمان‌بر را کاهش دهند. این سرعت‌بخشی می‌تواند هزینه‌های توسعه را پایین آورده و نوآوری را در بازارهای مختلف تسریع کند، در حالی که هزینه‌های محاسباتی و محدودیت‌های عملیاتی همچنان چالش‌برانگیز باقی می‌مانند.",
+      "link": "https://www.youtube.com/watch?v=-TTyyY3VWh8",
+      "posted_at": 1788635023
     }
   }
 }

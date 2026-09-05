@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788588445,
+  "updated_at": 1788589330,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -6864,6 +6864,44 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788588445
+    },
+    "-1004482051328:1449": {
+      "chat_id": -1004482051328,
+      "message_id": 1449,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "ارزیابی GPT-6 Astra در چالش‌های امنیتی DEF CON",
+      "summary": "بن دیویس (Ben Davis) تجربیات اولیه خود از GPT-6 Astra را پس از آزمایش آن در سخت‌ترین چالش‌های پازل DEF CON به اشتراک گذاشت. او توضیح داد که parallel research branches چگونه به مدل کمک می‌کنند تا فرضیه‌ها را آزمایش کرده، روی مسیر بمانند و مسائل پیچیده را حل کنند. این مدل موفق شد یک چالش را حل کند که تاکنون توسط هیچ‌کس دیگری حل نشده بود. این ارزیابی بر قابلیت‌های مدل در مدیریت فرآیندهای تحقیقاتی همزمان و حل مسائل نوین تأکید دارد.",
+      "description": "Ben Davis shares his first impressions of GPT-6 Astra after testing it on some of DEF CON's hardest puzzle challenges. He explains how parallel research branches help the model test theories, stay on track, and solve complex problems, including one no one else had solved. artificial intelligence",
+      "why_it_matters": "این گزارش نشان می‌دهد که GPT-6 Astra با استفاده از معماری parallel research branches، می‌تواند در مسائل امنیتی و پازل‌های پیچیده عملکردی فراتر از انتظار داشته باشد. توانایی حل چالشی که پیش‌تر بی‌پاسخ مانده بود، نشان‌دهنده پیشرفت معنادار در استدلال چندمرحله‌ای و پایداری مدل در شرایط نامشخص است. این قابلیت‌ها می‌توانند کاربرد مدل را در حوزه‌های امنیت سایبری و حل مسائل تحقیقاتی دشوار گسترش دهند.",
+      "link": "https://www.youtube.com/watch?v=B-jjnydci50",
+      "posted_at": 1788589328
+    },
+    "-1004482051328:1450": {
+      "chat_id": -1004482051328,
+      "message_id": 1450,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - No Priors Podcast",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "Rene Haas: قطع دسترسی به AI در طراحی تراشه‌ها به آشوب منجر می‌شود",
+      "summary": "Rene Haas، مدیرعامل Arm، توضیح می‌دهد که امروزه ۸۰ تا ۹۰ درصد مهندسان این شرکت از AI برای تأیید و عیب‌یابی تراشه‌ها استفاده روزمره می‌کنند. او تأکید می‌کند که قطع دسترسی به این ابزارها در فرآیند طراحی چرخه‌های سخت‌افزاری، به دلیل وابستگی شدید تیم‌های فنی، منجر به وضعیتی مشابه آشوب خواهد شد. این اظهارنظر نشان‌دهنده جایگاه حیاتی AI در زنجیره تأمین و توسعه نیمه‌هادی‌ها است.",
+      "description": "80–90% of Arm engineers now use AI daily for chip verification and debug.\n\nArm CEO Rene Haas explains why shutting off AI in chip design today would cause \"anarchy\":",
+      "why_it_matters": "این ادعا نشان می‌دهد که AI دیگر یک ابزار اختیاری، بلکه زیرساختی ضروری برای مقیاس‌پذیری و دقت در طراحی تراشه‌های پیچیده است. وابستگی ۸۰ تا ۹۰ درصدی نیروی کار فنی به AI برای عیب‌یابی و تأیید، ریسک‌های عملیاتی و زنجیره‌ای بالایی را در صورت اختلال در این خدمات ایجاد می‌کند. این موضوع اهمیت سرمایه‌گذاری در زیرساخت‌های AI برای صنایع سخت‌افزاری را برجسته می‌سازد.",
+      "link": "https://www.youtube.com/shorts/AOFLdJOCJSk",
+      "posted_at": 1788589330
     }
   }
 }

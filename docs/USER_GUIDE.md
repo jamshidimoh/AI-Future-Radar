@@ -4,19 +4,15 @@
 
 ## 1. آنچه دریافت می‌کنید
 
-بسته رسمی پروژه یک OCI container است که در GitHub Container Registry منتشر شده است:
+بسته رسمی پروژه یک OCI container است که در GitHub Container Registry منتشر شده است.
 
-```text
-ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
-```
-
-برای دریافت آخرین نسخه stable می‌توانید از `latest` استفاده کنید:
+آخرین GitHub Release ثبت‌شده `V1.0.1.On.Publish` است. Workflow انتشار image را از tagهای semantic تولید می‌کند؛ برای اجرای قابل تکرار، از tag دقیق image یا digest همان artifact استفاده کنید.
 
 ```text
 ghcr.io/jamshidimoh/ai-future-radar:latest
 ```
 
-برای اجرای قابل بازتولید، استفاده از `v1.0.0` یا digest توصیه می‌شود. GitHub Container Registry از pull عمومی بدون احراز هویت پشتیبانی می‌کند فقط وقتی Package عمومی باشد؛ Package خصوصی نیازمند احراز هویت مناسب است. [GitHub Container Registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
+در صورتی که tag semantic مربوط به Release فعلی در GHCR موجود باشد، همان tag دقیق را به‌جای `latest` استفاده کنید. GitHub Container Registry از pull عمومی بدون احراز هویت پشتیبانی می‌کند فقط وقتی Package عمومی باشد؛ Package خصوصی نیازمند احراز هویت مناسب است.
 
 ## 2. پیش‌نیازها
 
@@ -30,25 +26,19 @@ ghcr.io/jamshidimoh/ai-future-radar:latest
 
 ## 3. دریافت image
 
-برای نسخه پایدار:
-
-```bash
-docker pull ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
-```
-
-یا برای آخرین نسخه:
+برای آخرین نسخه stable:
 
 ```bash
 docker pull ghcr.io/jamshidimoh/ai-future-radar:latest
 ```
 
-برای بررسی digest:
+برای اجرای قابل بازتولید، از tag دقیق موجود در GHCR یا digest استفاده کنید. Release repository فعلی `V1.0.1.On.Publish` است؛ موجودبودن دقیق همین نام به‌عنوان image tag باید در GHCR بررسی شود، زیرا workflow tag container را از semantic `v*.*.*` می‌سازد.
+
+برای بررسی digest محلی:
 
 ```bash
-docker image inspect ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
+docker image inspect ghcr.io/jamshidimoh/ai-future-radar:latest
 ```
-
-GitHub توصیه می‌کند برای تضمین استفاده از همان artifact، image را با digest مشخص اجرا کنید. [GitHub Container Registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
 
 ## 4. تنظیم متغیرهای محیطی
 
@@ -79,16 +69,16 @@ AI_RADAR_EDITORIAL_REVIEW=1
 docker run --rm \
   --env-file .env \
   -v "$(pwd)/data:/app/data" \
-  ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
+  ghcr.io/jamshidimoh/ai-future-radar:latest
 ```
 
-در Windows PowerShell می‌توانید از مسیر مطلق استفاده کنید:
+در Windows PowerShell:
 
 ```powershell
 docker run --rm `
   --env-file .env `
   -v "${PWD}\data:/app/data" `
-  ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
+  ghcr.io/jamshidimoh/ai-future-radar:latest
 ```
 
 دایرکتوری `data/` را حذف نکنید اگر می‌خواهید حافظه اجرایی، deduplication و state بین اجراها حفظ شود.
@@ -140,11 +130,7 @@ Google News یک منبع اختیاری است و خطاهای آن نباید 
 
 ## 12. ارتقای نسخه
 
-نسخه image را صریح تعیین کنید:
-
-```bash
-docker pull ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
-```
+نسخه image را صریح تعیین کنید. برای production توصیه می‌شود از tag دقیق موجود در GHCR یا digest استفاده شود، نه صرفاً `latest`.
 
 قبل از ارتقای نسخه:
 
@@ -170,7 +156,7 @@ cp -a data data-backup
 
 Credentialها فقط باید از environment، secret manager یا CI/CD secrets تأمین شوند. فایل `.env` را commit نکنید.
 
-اگر Package عمومی باشد، image قابل pull است، ولی این به معنی عمومی بودن secrets یا داده‌های runtime نیست. Secrets و `data/` باید خارج از image نگهداری شوند. GitHub نیز برای Container Registry استفاده از authentication مناسب برای packageهای خصوصی را الزامی می‌داند. [GitHub Container Registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
+اگر Package عمومی باشد، image قابل pull است، ولی این به معنی عمومی بودن secrets یا داده‌های runtime نیست. Secrets و `data/` باید خارج از image نگهداری شوند. GitHub نیز برای Container Registry استفاده از authentication مناسب برای packageهای خصوصی را الزامی می‌داند.
 
 ## 15. معماری عملیاتی مرجع
 
@@ -205,8 +191,4 @@ Persistent state in /app/data
 
 ## وضعیت نسخه مرجع
 
-این راهنما برای `v1.0.0` نوشته شده و container مرجع آن به commit منتشرشده `8d266ccea873397ff593d29c4cc24c8322e51d8b` متصل است. انتشار واقعی GHCR با workflow موفق `33602480170` انجام شده و digest آن:
-
-```text
-sha256:9def32c3c7017c2dcdd7cfb01f5ae113d2a402ee53cb96b0e3591cf1b8795a8c
-```
+این راهنما از وضعیت `Production Complete / CLOSED` در تاریخ 2026-09-05 تبعیت می‌کند. آخرین GitHub Release ثبت‌شده `V1.0.1.On.Publish` است. برای image باید tag semantic یا digest واقعی موجود در GHCR را ملاک قرار داد؛ این راهنما عمداً `v1.0.0` را به‌عنوان release مرجع اعلام نمی‌کند، چون چنین GitHub Releaseای در repository ثبت نشده است.

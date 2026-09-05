@@ -16,10 +16,10 @@ Production Closure Gate با workflow run `33948969943` و job `101260038926` ب
 
 راهنمای کامل اجرای نسخه منتشرشده، تنظیم environment، اجرای Docker، نگهداری state، اتصال Telegram، ارتقا و rollback در `docs/USER_GUIDE.md` قرار دارد.
 
-برای شروع سریع، image رسمی را دریافت کنید:
+برای شروع سریع، release مرجع ثبت‌شده فعلی `V1.0.1.On.Publish` است:
 
 ```bash
-docker pull ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
+docker pull ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish
 ```
 
 سپس container را با یک فایل `.env` و یک دایرکتوری persistent برای `/app/data` اجرا کنید. در صورت عمومی بودن Package، pull از GHCR بدون authentication امکان‌پذیر است.
@@ -30,7 +30,7 @@ docker pull ghcr.io/jamshidimoh/ai-future-radar:v1.0.0
 
 `ghcr.io/jamshidimoh/ai-future-radar`
 
-Workflow انتشار در `.github/workflows/publish-container.yml` قرار دارد و فقط با tagهای semantic مانند `v1.0.0` یا با اجرای دستی یک tag موجود image را build، validate و publish می‌کند. Image دارای OCI source metadata، SBOM و provenance است.
+آخرین GitHub Release ثبت‌شده `V1.0.1.On.Publish` است. Workflow انتشار در `.github/workflows/publish-container.yml` قرار دارد و tagهای semantic را build، validate و publish می‌کند. Image دارای OCI source metadata، SBOM و provenance است.
 
 راهنمای انتشار در `docs/RELEASE.md` قرار دارد. قالب متغیرهای محیطی نمونه نیز در `.env.example` موجود است.
 

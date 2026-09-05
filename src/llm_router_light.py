@@ -27,7 +27,9 @@ _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
 _MAX_TRANSIENT_RETRIES = 1
 
-GROQ_MODELS = ("qwen/qwen3.6-27b", "openai/gpt-oss-120b")
+# Current production-capable Groq models. Qwen 3.8 27B is current and
+# supports JSON Schema/JSON Object mode plus hidden reasoning.
+GROQ_MODELS = ("qwen/qwen3.8-27b", "openai/gpt-oss-120b")
 OPENROUTER_MODELS = ("openai/gpt-oss-120b:free", "openai/gpt-oss-20b:free")
 GEMINI_DEFAULT_MODEL = "gemini-3.7-flash"
 _HF_MODEL_CACHE = None
@@ -105,11 +107,13 @@ def _gemini(system_prompt, user_content):
     model = (os.getenv("GEMINI_MODEL") or GEMINI_DEFAULT_MODEL).strip()
     client = genai.Client(api_key=key, http_options={"timeout": 8_000})
     try:
-        response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", temperature=0.15, max_output_tokens=900))
+        # Gemini 3.x no longer accepts legacy temperature/top-p/top-k sampling
+        # controls. Keep the request on supported production parameters.
+        response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", max_output_tokens=900))
         return response.text
     except Exception as exc:
         msg = str(exc).lower()
-        if any(token in msg for token in ("401", "403", "404", "429", "quota", "resource_exhausted", "unauthenticated")):
+        if any(token in msg for token in ("401", "403", "404", "429", "quota", "resource_exhausted", "unauthenticated", "invalid argument")):
             raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
         raise
 

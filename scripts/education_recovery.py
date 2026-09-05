@@ -25,7 +25,7 @@ for path in (ROOT, SRC):
 import educational_content
 import production_entrypoint
 import production_resilient_runner
-from education_source_policy import validate_current_sources
+from education_source_policy import assess_source, validate_current_sources
 
 LESSON_41_CURRENT_SOURCES = [
     {
@@ -61,7 +61,8 @@ def _source_candidates_with_lesson_41_fallback(lesson: dict):
     }
     stale_normalized = {u.rstrip("/") for u in stale_urls}
     filtered = [
-        item for item in candidates
+        item
+        for item in candidates
         if str(item.get("url", "")).rstrip("/") not in stale_normalized
     ]
     seen = {str(item.get("url", "")).rstrip("/") for item in filtered}
@@ -87,13 +88,7 @@ def _install_authoritative_source_override() -> None:
 
 
 def _deterministic_lesson_41_item(lesson: dict, verified_sources: list[dict]) -> dict:
-    """Build a bounded, source-grounded lesson without an LLM.
-
-    This is used only after the normal generator has satisfied the source
-    contract and then failed because the model quality chain is exhausted.
-    It deliberately uses the curriculum's authored definitions and relation;
-    it does not invent claims or bypass source validation.
-    """
+    """Build a bounded, source-grounded lesson without an LLM."""
     a = lesson["a"]
     b = lesson["b"]
     return {
@@ -119,44 +114,64 @@ def _deterministic_lesson_41_item(lesson: dict, verified_sources: list[dict]) ->
     }
 
 
+def _collect_verified_current_sources(lesson: dict) -> list[dict]:
+    """Collect and validate current sources without invoking any LLM provider."""
+    verified_sources: list[dict] = []
+    for source in _source_candidates_with_lesson_41_fallback(lesson):
+        url = str(source.get("url", "")).strip()
+        if not url:
+            continue
+        excerpt, detected_year = educational_content._fetch_reference(url)
+        if not excerpt:
+            print(f"[Education Recovery] deterministic source retrieval failed url={url}", flush=True)
+            continue
+        declared = source.get("year")
+        declared_year = int(declared) if str(declared or "").isdigit() else None
+        assessment = assess_source(
+            url=url,
+            reachable=True,
+            detected_year=detected_year,
+            declared_year=declared_year,
+        )
+        if not assessment.get("current"):
+            print(
+                f"[Education Recovery] deterministic source rejected status={assessment.get('status')} url={url}",
+                flush=True,
+            )
+            continue
+        verified_sources.append(
+            {
+                **source,
+                "year": assessment.get("year", detected_year if detected_year is not None else declared_year),
+                "current_verified": True,
+                "current_status": assessment.get("status"),
+                "organization": assessment.get("organization"),
+                "authority_tier": assessment.get("authority_tier"),
+                "authority_score": assessment.get("authority_score"),
+            }
+        )
+
+    ok, verified, reason = validate_current_sources(verified_sources)
+    print(
+        f"[Education Recovery] deterministic source contract ok={ok} verified={len(verified)} reason={reason}",
+        flush=True,
+    )
+    return verified if ok else []
+
+
 def _build_with_deterministic_recovery() -> dict | None:
     lesson, lesson_id, total = educational_content._next_lesson()
     if not lesson or int(lesson_id) != 41:
         return None
 
-    # _generate already performs the real source retrieval and source policy
-    # validation. A None generated value can therefore be an LLM/QA failure;
-    # preserve and re-check the verified source set before falling back.
-    generated, verified_sources = educational_content._generate(lesson)
-    if generated:
-        return {
-            "content_type": "education",
-            "category": "ai",
-            "education_id": lesson_id,
-            "education_total": total,
-            "education_track": "foundation",
-            "education_track_label": "مفاهیم پایه و بنیادی",
-            "education_number": lesson_id,
-            "education_status": lesson.get("status", "established"),
-            "education_title": lesson.get("title", ""),
-            "education_term_a": lesson["a"]["term"],
-            "education_term_a_fa": lesson["a"]["fa"],
-            "education_term_b": lesson["b"]["term"],
-            "education_term_b_fa": lesson["b"]["fa"],
-            "education_sources": verified_sources,
-            **generated,
-        }
-
-    ok, verified, reason = validate_current_sources(verified_sources)
-    print(
-        f"[Education Recovery] deterministic eligibility lesson={lesson_id} "
-        f"source_contract={ok} verified={len(verified)} reason={reason}",
-        flush=True,
-    )
-    if not ok:
+    # The deterministic path is deliberately independent from the LLM quality
+    # chain. It re-checks the same live source policy and only then builds from
+    # authored curriculum definitions.
+    verified_sources = _collect_verified_current_sources(lesson)
+    if len(verified_sources) < 2:
         return None
 
-    item = _deterministic_lesson_41_item(lesson, verified)
+    item = _deterministic_lesson_41_item(lesson, verified_sources)
     item["education_total"] = total
     item["education_track"] = "foundation"
     item["education_track_label"] = "مفاهیم پایه و بنیادی"

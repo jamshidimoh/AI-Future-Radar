@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788694823,
+  "updated_at": 1788714194,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7192,6 +7192,56 @@
       "why_it_matters": "این قابلیت با تبدیل ورودی‌های ساختاریافته مانند بریف و قالب‌های طراحی به پیش‌نویس‌های قابل ویرایش، زمان صرفه‌جویی‌شده در تولید اولیه را به سمت بهبود کیفیت محتوا و هماهنگی برند هدایت می‌کند. تمرکز بر پیام‌رسانی به جای فرآیندهای دستی، کارایی تیم‌های بازاریابی را افزایش می‌دهد و اطمینان می‌بخشد که خروجی نهایی با استانداردهای خلاقانه و برندسازی سازمانی همسو باشد.",
       "link": "https://www.youtube.com/watch?v=N-MJ1W8Vj9E",
       "posted_at": 1788694823
+    },
+    "-1004482051328:1467": {
+      "chat_id": -1004482051328,
+      "message_id": 1467,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (AP News)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "موسک سرویس تاکسی بدون فرمان را راه‌اندازی کرد؛ مسافران از حس «بی‌کنترل» رهایی می‌یابند",
+      "summary": "Elon Musk با معرفی سرویس تاکسی بدون فرمان، گامی بزرگ در جهت خودران‌سازی کامل وسایل نقلیه برداشت. این سرویس جدید، به مسافران این امکان را می‌دهد که بدون نیاز به درایور یا فرمان، داخل خودرو سوار شوند و به مقصد برسند. آزمایش‌های اولیه نشان می‌دهد که حس اضطراب ناشی از عدم کنترل بر خودرو به‌طور قابل‌Attentionی کاهش یافته است. این پیشرفت، نشانگر پیشرفت فناوری خودران در مقیاس تجاری و نزدیک شدن به تحقق تاکسی‌های کاملاً خودکار است.",
+      "why_it_matters": "راه‌اندازی سرویس تاکسی بدون فرمان توسط Musk نشان می‌دهد که فناوری خودران به مرحله‌ای رسیده که می‌تواند به‌صورت تجاری و در مقیاس وسیع مورد استفاده قرار گیرد. این امر می‌تواند هزینه حمل‌ونقل را کاهش داده، ترافیک شهری را بهبود بخشد و دسترسی به خدمات حمل‌ونقل را برای افراد کم‌تحرک یا در مناطق دورافتاده افزایش دهد. در عین حال، حذف فرمان و درایور چالش‌های جدیدی در زمینه امنیت، مسئولیت‌پذیری و پذیرش عمومی ایجاد می‌کند که باید با چارچوب‌های قانونی و فنی مناسب مدیریت شوند.",
+      "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOaU13a2R4d2xXRjFlaF9hVk44UGpLWHlHMVBvZzVZOUxiMUVsTzRVa1NxUGNLZkFrU2k0eVpZbi1ieUg2YWdLclVONnlJSk5yalYyYURpLUUwZl80UmdEZkJXRTdmTXNfSEJadmdUS040ZG1tOEIzbWRQdWV3ZWdyemE3NmhIOHIwMk9lVnhrbHBLUUpkdzVoSEFZYVZKYm80TTNyWg?oc=5",
+      "posted_at": 1788714184
+    },
+    "-1004482051328:1468": {
+      "chat_id": -1004482051328,
+      "message_id": 1468,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "ChatGPT Work: تبدیل ایده‌های بازاریابی به محتوای نهایی برای تیم",
+      "summary": "OpenAI در وبینار جدید خود نشان داد که تیم بازاریابی چگونه با استفاده از ChatGPT Work می‌تواند فایل‌ها و ابزارهای مختلف را به‌هم متصل کرده و ارائه‌ها، اسناد و دارایی‌های خلاقانه تولید کند. این پلتفرم به بازاریابان اجازه می‌دهد تا ایده‌ها را به کارهای قابل بررسی تبدیل کرده و تصمیم بگیرند کدام موارد نهایی و ارسال شوند. لینک‌های وبینار و صفحهٔ راهنمایی‌های بیشتر در وب‌سایت OpenAI در دسترس هستند. این رویکرد به‌صورت مستقیم بر سرعت تولید محتوا و هماهنگی تیمی تأثیر می‌گذارد.",
+      "description": "Turn marketing ideas into work your team can review.\n\nThis is how our marketing team uses ChatGPT Work to connect its files and tools and build presentations, docs and creative assets—with marketers deciding what to refine and ship.\n\nWatch the full webinar: https://goldcast.registration.public-pr50.goldcast.io/on-demand/d863a2bc-77cf-4197-8ba4-b4a8b837c0b3?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing\n\nLearn more: https://openai.com/business/solutions/marketing/?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing artificial intelligence",
+      "why_it_matters": "ChatGPT Work با یکپارچه‌سازی هوش مصنوعی در جریان کاری بازاریابی، زمان صرف‌شده برای تبدیل ایده به محصول نهایی را به‌طور قابل‌Attentionی کاهش می‌دهد و امکان بازبینی همزمان توسط اعضای تیم را فراهم می‌کند. این قابلیت به‌ویژه برای شرکت‌های بزرگ که نیاز به تولید سریع محتوا دارند، ارزش افزوده‌ای اساسی ایجاد می‌کند؛ اما همچنان به تصمیم‌گیری انسانی برای انتخاب نهایی محتوا وابسته است. در نتیجه، بهره‌وری تیمی ارتقا می‌یابد در حالی که کنترل کیفیت حفظ می‌شود.",
+      "link": "https://www.youtube.com/watch?v=NSqlZ1L81nQ",
+      "posted_at": 1788714185
+    },
+    "-1004482051328:1469": {
+      "chat_id": -1004482051328,
+      "message_id": 1469,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788714194
     }
   }
 }

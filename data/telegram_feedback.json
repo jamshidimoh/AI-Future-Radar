@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788714194,
+  "updated_at": 1788721869,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7242,6 +7242,44 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788714194
+    },
+    "-1004482051328:1470": {
+      "chat_id": -1004482051328,
+      "message_id": 1470,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CNBC)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Sundar Pichai",
+      "watch_person": "Sundar Pichai",
+      "title": "Google با شتاب AI سپتامبر را آغاز می‌کند؛ پایان طولانی‌ترین رکورد افت ماهانه در بیش از یک دهه",
+      "summary": "Google پس از تجربه طولانی‌ترین رکورد افت ماهانه سهام در بیش از یک دهه، با شتاب‌گیری در حوزه AI وارد سپتامبر شده است. این بازگشت به رشد، نشان‌دهنده تغییر روند بازار و بازگشت اعتماد سرمایه‌گذاران به استراتژی‌های AI شرکت است. Sundar Pichai به عنوان رهبر کلیدی، نقش محوری در هدایت این تغییر مسیر دارد. این خبر تأیید می‌کند که تمرکز بر AI به عامل اصلی محرک ارزش‌آفرینی Google تبدیل شده است.",
+      "why_it_matters": "این رویداد نشان می‌دهد که بازار سرمایه‌گذاری، استراتژی‌های AI Google را به عنوان عامل اصلی بازگشت به رشد و شکستن رکوردهای منفی تاریخی می‌پذیرد. برای رقبا، این شتاب‌گیری فشار رقابتی را در حوزه‌های کلیدی AI افزایش می‌دهد. همچنین، این روند تأیید می‌کند که سرمایه‌گذاران به دنبال شواهد عملیاتی از بازدهی سرمایه‌گذاری‌های سنگین در AI هستند و Google موفق به ارائه این شواهد شده است.",
+      "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNekV4X2IzT2hRdElVbXlXa0pVY3B0cE9va0tNYlNMMDJmb1I0NUxSellhbUs1TUw5aFBlZmtrdlB2bVV4ZW54VkNrOEs2Wkh5VGF5dUNadjlCQ3hqaUhVd1RSaDdyYXp2Qmx6YWN3WTF4blhhT3piSGJuMzF3UE83Z0lWOWVlVDVCRWtEZFJLVzRPdTdIRUw0OHdqbGFNbUxHVTNGRdIBqgFBVV95cUxOWnZTc0wtbjlNdi1FYUtpc19zWVpfVUxVZnJtSlpid0hTTUhnM1FZMmNyeVlXV0VCeEhHTi1WVE1QNzg4N0d6aDZ3b09xd2stRjljSU1ONXVsb1RTWWF2VWg4ZXMtQUVmR2lCb2dLM1dFT3l0R0VGNUo3S1FmZi01MzRHSU52NmNoaEpQSWdFWkp2Vk51Rk10Y0kyTmY4WW1nbWRGY0lETmpLUQ?oc=5",
+      "posted_at": 1788721867
+    },
+    "-1004482051328:1471": {
+      "chat_id": -1004482051328,
+      "message_id": 1471,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "GPT-6 Astra: قابلیت‌های پیشرفته در توسعه نرم‌افزار و تولید محتوای سه‌بعدی",
+      "summary": "Peter Gostev در این ویدیو تجربیات اولیه خود از GPT-6 Astra را به اشتراک می‌گذارد. او از ساخت مدل سه‌بعدی لندن که در دوره‌های تاریخی مختلف حرکت می‌کند و بهبود یک اپلیکیشن با حدود ۱۵۰,۰۰۰ خط کد به عنوان نمونه‌های عملی استفاده کرده است. نکات کلیدی مطرح‌شده شامل بازخورد طبیعی‌تر، افزایش قابلیت اطمینان و توانایی مدل در انجام وظایف پیچیده با نظارت کمتر است.",
+      "description": "Peter Gostev shares his first impressions of GPT-6 Astra, from building a 3D London that moves through different historical eras to improving an app with around 150,000 lines of code. He discusses more natural feedback, greater reliability, and taking on complex tasks with less supervision. artificial intelligence",
+      "why_it_matters": "این پیشرفت‌ها نشان می‌دهند که GPT-6 Astra می‌تواند در پروژه‌های مهندسی بزرگ با حجم کد بالا و تولید محتوای بصری پیچیده، خودکفایی بیشتری داشته باشد. کاهش نیاز به نظارت انسانی و افزایش قابلیت اطمینان، هزینه‌های توسعه را کاهش داده و سرعت تحویل محصولات نرم‌افزاری را افزایش می‌دهد. این قابلیت‌ها مرزهای کاربرد AI را از چت‌بات‌های ساده به سمت ابزارهای اجرایی قدرتمند برای توسعه‌دهندگان گسترش می‌دهند.",
+      "link": "https://www.youtube.com/watch?v=A4BUbpKdenc",
+      "posted_at": 1788721869
     }
   }
 }

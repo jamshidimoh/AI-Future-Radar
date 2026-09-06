@@ -1,10 +1,16 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-09-05
+Status date: 2026-09-06
 
 ## Purpose
 
 این سند مرز پایان پروژه را ثابت می‌کند. پروژه فقط وقتی `Production Complete` اعلام می‌شود که همه قراردادهای deterministic و همه شواهد عملیاتی لازم سبز باشند.
+
+## Current status
+
+**وضعیت فعلی: `CLOSURE PENDING`**
+
+پذیرش قبلی در تاریخ 2026-09-05 با workflow run `33948969943` سبز شده بود، اما اجرای بعدی Production Closure Gate در تاریخ 2026-09-06 با workflow run `34016810047` به علت unresolved بودن evidence معیار `02_publish_and_fail_closed_zero` متوقف شد. بنابراین closure قبلی باید به‌عنوان یک پذیرش تاریخی ثبت شود، نه وضعیت جاری محصول.
 
 ## Closure rule
 
@@ -14,11 +20,7 @@ Status date: 2026-09-05
 2. Production evidence window کامل باشد.
 3. هیچ FAIL باز در invariantهای frozen وجود نداشته باشد.
 
-**وضعیت نهایی: `CLOSED`**
-
-Production Closure Gate با workflow run `33948969943` و job `101260038926` در تاریخ 2026-09-05 با موفقیت کامل اجرا شد و صراحتاً ثبت کرد:
-
-`CLOSURE: CLOSED — deterministic gates and production evidence checks passed.`
+تا زمانی که Closure Gate جدید هر سه شرط را تأیید نکرده است، سند نباید `CLOSED` اعلام کند.
 
 ## Frozen deterministic invariants
 
@@ -34,45 +36,33 @@ Production Closure Gate با workflow run `33948969943` و job `101260038926` د
 - publication state فقط پس از confirmed delivery جلو می‌رود.
 - education stream مستقل است و failure آن نباید news orchestration را دوباره اجرا کند.
 - language, editorial quality, evidence و terminology gates برای publication الزامی‌اند.
+- provenance authority باید مستقل از discovery query tier باشد؛ ناشر ناشناخته نباید با Tier پرس‌وجو ارتقا یابد.
 
-## Final operational evidence
+## Remediation completed before re-acceptance
 
-پنجره نهایی Production که توسط Closure Gate بررسی شد:
+یک نقص provenance در Google News اصلاح شد. در ingestion، `source_tier` دیگر مستقیماً از `q["tier"]` گرفته نمی‌شود. هویت ناشر و دامنه برای تعیین Tier مؤثر بررسی می‌شود؛ ناشر ناشناخته در Google News Tier-3 باقی می‌ماند و Tier پرس‌وجو فقط به‌عنوان `discovery_query_tier` حفظ می‌شود. برای این قرارداد، regression test نیز اضافه شده است.
+
+## Historical operational evidence
+
+پنجره‌ای که در پذیرش قبلی با موفقیت بررسی شده بود:
 
 - Production workflow #329 با head `5f3775c1` — success.
 - Production workflow #328 با head `fca900b7` — success.
 - Production workflow #327 با head `9ac374ac` — success.
 
-Closure Gate هر ۱۱ معیار را `PASS` ثبت کرد:
+Closure Gate قبلی هر ۱۱ معیار را `PASS` ثبت کرده بود. این شواهد همچنان به‌عنوان سابقه معتبرند، اما برای اعلام closure جاری کافی نیستند؛ چون اجرای جدید Gate در 2026-09-06 معیار 02 را حل‌نشده گزارش کرده است.
 
-1. سه Production run موفق متوالی.
-2. انتشار واقعی و fail-closed معتبر.
-3. نبود duplicate publication.
-4. حفظ full-text delivery contract.
-5. رعایت ranking window بدون bypass.
-6. مشاهده رفتار امن QA/rejection در evidence window.
-7. فعال و قابل‌ممیزی بودن leader watch.
-8. ایزوله‌سازی provider failure همراه با provider success.
-9. persistence موفق state.
-10. حفظ mission-aware portfolio و جلوگیری از generic low-signal output.
-11. انتشار واقعی Education با `telegram_delivery=successful` و `Education Recovery CONFIRMED`.
+## Current acceptance boundary
 
-در آخرین Production execution نیز News واقعاً به Telegram تحویل شد و Education Lesson 54 با `message_id=1448` منتشر و توسط Recovery تأیید شد. State با commit `39dc3779d79797e38167f18e3d15c351cdb694cd` روی `main` پایدار شد.
+تا تولید یک پنجره شواهد جدید و سبز:
 
-## Closure verification
+- `CLOSED` اعلام نشود.
+- Gate یا تست‌ها برای حذف blocker تضعیف نشوند.
+- provenance/authority regression حفظ شود.
+- هر انتشار جدید همچنان fail-closed و evidence-driven باقی بماند.
 
-Production Closure Gate:
-- workflow run: `33948969943`
-- job: `101260038926`
-- job conclusion: `success`
-- final declaration: `CLOSURE: CLOSED`
+## Next closure condition
 
-پس از این نقطه، پروژه از فاز `Final Acceptance` خارج شده و وارد مرز **Production Maintenance / Evolution** می‌شود.
+پس از merge اصلاحات، باید Acceptance دوباره اجرا شود و فقط در صورت ثبت شواهد کامل برای publish و zero-publish/fail-closed، همراه با سه اجرای متوالی موفق و بدون invariant failure، وضعیت به `CLOSED` برگردد.
 
-## Project stop boundary
-
-پذیرش نهایی پایان یافته است. تغییرات بعدی باید در قالب Maintenance/Evolution مستقل انجام شوند و نباید پروژه را بدون شکست اثبات‌شده در frozen invariant یا production contract دوباره وارد چرخه پذیرش کنند.
-
-New providers, new sources, ranking experiments, UI changes, model upgrades and optimization ideas خارج از scope پذیرش نهایی‌اند مگر آنکه مستقیماً برای رفع یک شکست اثبات‌شده لازم باشند.
-
-<!-- closure-validation-trigger: CLOSED 2026-09-05 -->
+<!-- closure-validation-trigger: PENDING 2026-09-06 -->

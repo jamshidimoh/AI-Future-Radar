@@ -4,13 +4,15 @@
 
 ## وضعیت محصول
 
-**Production Complete / CLOSED — 2026-09-05**
+**Production hardening / CLOSURE PENDING — 2026-09-06**
 
-Production Closure Gate با workflow run `33948969943` و job `101260038926` با موفقیت کامل اجرا شد. هر ۱۱ معیار پذیرش نهایی `PASS` شدند و Gate صراحتاً ثبت کرد: `CLOSURE: CLOSED — deterministic gates and production evidence checks passed.`
+پذیرش قبلی در `2026-09-05` با workflow run `33948969943` سبز شده بود، اما اجرای بعدی Production Closure Gate در `2026-09-06` با run `34016810047` به دلیل ناقص بودن شواهد معیار `02_publish_and_fail_closed_zero` متوقف شد. بنابراین برچسب `CLOSED` فعلاً معتبر نیست و تا تولید یک پنجره شواهد جدید و سبز نباید دوباره اعلام شود.
 
-پنجره نهایی شامل سه اجرای متوالی موفق Production، شواهد انتشار واقعی News و Education، تحویل full-text به Telegram، کنترل duplicate، ranking window، ایزوله‌سازی خطای Provider، leader watch، mission-aware portfolio و persistence وضعیت است. از این نقطه پروژه در مرز **Production Maintenance / Evolution** قرار دارد.
+در همین بازنگری، یک نقص واقعی در provenance نیز اصلاح شد: Google News دیگر نمی‌تواند Tier پرس‌وجو را به ناشر ناشناخته منتقل کند؛ Tier مؤثر از هویت ناشر/دامنه تعیین می‌شود و ناشر ناشناخته در Google News حداکثر Tier-3 باقی می‌ماند. تست‌های regression مربوط به این قاعده نیز اضافه شده‌اند.
 
-وضعیت تفصیلی و شواهد نهایی در `docs/PRODUCTION_CLOSURE_STATUS.md` ثبت شده است. مسیر تولید اصلی با GitHub Actions فقط در زمان‌بندی مشخص یا با اجرای دستی فعال است؛ Push به `main` باعث اجرای ناخواسته Production نمی‌شود.
+پروژه اکنون در مرز **Production Hardening** قرار دارد. هیچ Gate برای سبز شدن مصنوعی ضعیف نشده است؛ ابتدا نقص‌های داده، provenance و شواهد اصلاح و سپس Acceptance دوباره اجرا می‌شود.
+
+وضعیت تفصیلی در `docs/PRODUCTION_CLOSURE_STATUS.md` ثبت شده است. مسیر تولید اصلی با GitHub Actions طبق زمان‌بندی یا اجرای دستی فعال است و Push به `main` نباید به‌تنهایی Production را اجرا کند.
 
 ## استفاده دیگران
 
@@ -33,82 +35,3 @@ docker pull ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish
 آخرین GitHub Release ثبت‌شده `V1.0.1.On.Publish` است. Workflow انتشار در `.github/workflows/publish-container.yml` قرار دارد و tagهای semantic را build، validate و publish می‌کند. Image دارای OCI source metadata، SBOM و provenance است.
 
 راهنمای انتشار در `docs/RELEASE.md` قرار دارد. قالب متغیرهای محیطی نمونه نیز در `.env.example` موجود است.
-
-## قرارداد خروجی Telegram
-
-عنوان خبر برجسته است و خلاصه و «چرا مهم است؟» جداگانه ارائه می‌شوند. منبع و دسترسی به منبع اصلی در بلوک مستقل قرار دارند و «بررسی بیشتر با ChatGPT» در ردیف جداگانه نمایش داده می‌شود. Model و Date به‌عنوان metadata کم‌اهمیت در پایین کارت قرار می‌گیرند.
-
-برای RTL/LTR از فاصله‌های ثابت یا Directional Mark استفاده نمی‌شود و چیدمان عمودی برای سازگاری بهتر با کلاینت‌های Telegram استفاده می‌شود. Native Reactions و Channel Comments نیز تعامل اصلی هستند.
-
-## پیکربندی کانال
-
-1. یک Discussion Group به کانال متصل باشد.
-2. قابلیت Comments فعال باشد.
-3. Reactionهای Native فعال باشند.
-4. Bot ارسال‌کننده Administrator کانال باشد.
-
-## قرارداد محتوایی
-
-- حداقل ۷۵٪ ظرفیت هر اجرا باید AI یا موضوعی با پیوند مستقیم و قابل اثبات با AI باشد.
-- کوانتوم، ژنتیک، ذهن/آگاهی و آینده‌پژوهی فقط در صورت وجود ارتباط روشن با AI/AGI منتشر می‌شوند.
-- مصاحبه، پادکست، سخنرانی و دیدگاه افراد اثرگذار در صورت کیفیت کافی کلاس مستقل محتوا هستند.
-- Reddit و منابع community برای discovery مجازند، اما برای انتشار به کیفیت بالاتر نیاز دارند.
-- از هر منبع در هر اجرا حداکثر یک Story انتخاب می‌شود و مصرف منبع در بازه ۷ روزه جریمه می‌شود.
-- Storyهای تکراری در اجرا و نسبت به تاریخچه حذف می‌شوند و بهترین روایت حفظ می‌شود.
-- نقل‌قول فقط در صورت وجود عبارت واقعی در متن منبع نمایش داده می‌شود.
-
-## People & Ideas Radar
-
-Watchlist مستقل شامل رهبران AI، آینده‌پژوهان، متفکران بلندمدت و پژوهشگران ذهن/آگاهی مرتبط با AI است. برای افراد مهم query اختصاصی و پنجره کشف ۷روزه وجود دارد و candidate معتبر Leader/Thinker جایگاه انتخابی دریافت می‌کند.
-
-نمونه شخصیت‌ها: Sam Altman، Dario Amodei، Demis Hassabis، Jensen Huang، Elon Musk، Geoffrey Hinton، Yann LeCun، Yuval Noah Harari، Nick Bostrom، Max Tegmark، David Chalmers، Anil Seth، Joscha Bach، Christof Koch و Murray Shanahan.
-
-## معماری
-
-```text
-RSS / YouTube / Google News / Leader Watchlist
-                    ↓
-          Discovery + Fail-safe Sources
-                    ↓
-             Canonical URL Dedup
-                    ↓
-             Canonical Story Dedup
-                    ↓
-        AI Policy + Low-Signal Gate
-                    ↓
-      Leader / Interview Protection
-                    ↓
-      Quality + Freshness + Rotation
-                    ↓
-        AI-first / Diversity Selection
-                    ↓
-       Draft JSON → Editorial JSON
-                    ↓
-          Evidence-safe Validation
-                    ↓
-             LLM Router/Fallback
-                    ↓
-              Telegram HTML
-                    ↓
- Telegram Native Reactions + Comments
-                    ↓
-       seen.json + source memory
-```
-
-## Resilience و LLM Router
-
-Google News منبع اختیاری است و خطاهای `429/5xx` با retry محدود و circuit-breaker مدیریت می‌شوند؛ شکست آن نباید کل Radar را متوقف کند. YouTube و RSS مسیرهای جایگزین Discovery هستند.
-
-Router مدل نیز در خطاهای provider به مدل بعدی سوئیچ می‌کند. سیاست Hugging Face `free-first` است.
-
-## CI/CD
-
-Quality CI قراردادهای compile، YAML، AI-first، Leader slot، Story dedup، quote evidence و Telegram formatting را کنترل می‌کند. Production طبق Schedule یا اجرای دستی اجرا می‌شود و state مشترک با concurrency محافظت شده است.
-
-Diagnostics هر Production Run به‌عنوان Artifact نگهداری می‌شوند.
-
-## Secrets
-
-`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL`, `TELEGRAM_CHANNEL_USERNAME`, `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY`, `HF_TOKEN`, `YOUTUBE_API_KEY`
-
-متغیرهای اختیاری: `HF_MODEL`, `HF_POLICY`, `AI_RADAR_EDITORIAL_REVIEW`.

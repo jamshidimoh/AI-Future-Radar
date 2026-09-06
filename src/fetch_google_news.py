@@ -9,8 +9,10 @@ from datetime import datetime
 
 try:
     from .source_exclusions import is_excluded_source_text, is_excluded_source_url
+    from .source_authority import resolve_google_news_tier
 except ImportError:
     from source_exclusions import is_excluded_source_text, is_excluded_source_url
+    from source_authority import resolve_google_news_tier
 
 _FEED_TIMEOUT_SECONDS = 8
 _MAX_WORKERS = 4
@@ -109,13 +111,16 @@ def _collect_query(q, cutoff):
             if published_ts < cutoff: continue
             published_str = datetime.fromtimestamp(published_ts).strftime("%Y-%m-%d %H:%M")
         title = entry.get("title", ""); summary = entry.get("summary", ""); link = entry.get("link", "")
-        source_title = entry.get("source", {}).get("title", "Google News") if hasattr(entry, "get") else "Google News"
+        source_obj = entry.get("source", {}) if hasattr(entry, "get") else {}
+        source_title = source_obj.get("title", "Google News") if hasattr(source_obj, "get") else "Google News"
+        source_href = source_obj.get("href", "") if hasattr(source_obj, "get") else ""
         if is_excluded_source_url(link) or is_excluded_source_text(source_title) or is_excluded_source_text(title): continue
+        effective_tier = resolve_google_news_tier(source_title, source_href or link)
         watch_person = str(q.get("watch_person", "") or "").strip(); is_leader_watch = bool(watch_person)
         classification = classify_leader_signal(title, summary) if q.get("leader_discovery") else None
         if q.get("leader_discovery") and not classification["accepted"]:
             print(f"[Leader Discovery Filter] dropped weak signal title={str(title)[:100]}", flush=True); continue
-        results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "leader_activity_signal": bool(classification and classification.get("accepted") and (classification.get("activity") or classification.get("interview"))), "_ai_link": True if is_leader_watch else None})
+        results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "source_name": source_title, "source_domain": source_href, "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": effective_tier, "discovery_query_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "leader_activity_signal": bool(classification and classification.get("accepted") and (classification.get("activity") or classification.get("interview"))), "_ai_link": True if is_leader_watch else None})
     return q, results, None
 
 _SERIAL_FETCH_BUDGET_SECONDS = 90

@@ -8,7 +8,6 @@ from __future__ import annotations
 import re
 from urllib.parse import urlparse
 
-# Canonical high-authority publishers and first-party sources.
 _TIER1_DOMAIN_MARKERS = (
     "openai.com", "anthropic.com", "deepmind.google", "blog.google", "research.google",
     "hai.stanford.edu", "stanford.edu", "csail.mit.edu", "news.mit.edu", "mit.edu",
@@ -40,12 +39,16 @@ def _host(url: object) -> str:
     if not value:
         return ""
     try:
-        return urlparse(value if "://" in value else f"https://{value}").netloc.removeprefix("www.")
+        return urlparse(value if "://" in value else f"https://{value}").netloc.removeprefix("www.").split(":", 1)[0]
     except Exception:
         return ""
 
 
-def _marker_match(value: str, markers: tuple[str, ...]) -> bool:
+def _domain_match(host: str, markers: tuple[str, ...]) -> bool:
+    return any(host == marker or host.endswith(f".{marker}") for marker in markers)
+
+
+def _name_match(value: str, markers: tuple[str, ...]) -> bool:
     return any(marker in value for marker in markers)
 
 
@@ -53,11 +56,10 @@ def resolve_source_tier(*, source_name: object = "", source_url: object = "", co
     """Return effective authority tier; unknown Google News publishers stay Tier-3."""
     name = _clean(source_name)
     host = _host(source_url)
-    if _marker_match(host, _TIER1_DOMAIN_MARKERS) or _marker_match(name, _TIER1_NAME_MARKERS):
+    if _domain_match(host, _TIER1_DOMAIN_MARKERS) or _name_match(name, _TIER1_NAME_MARKERS):
         return 1
-    if _marker_match(host, _TIER2_DOMAIN_MARKERS) or _marker_match(name, _TIER2_NAME_MARKERS):
+    if _domain_match(host, _TIER2_DOMAIN_MARKERS) or _name_match(name, _TIER2_NAME_MARKERS):
         return 2
-    # Preserve explicit tier only when it came from a configured/direct source.
     try:
         tier = int(configured_tier)
     except (TypeError, ValueError):

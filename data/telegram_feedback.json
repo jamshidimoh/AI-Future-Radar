@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788676417,
+  "updated_at": 1788689263,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7123,6 +7123,56 @@
       "why_it_matters": "این روش نشان می‌دهد که ابزارهای تولید تصویر می‌توانند در مراحل اولیه طراحی تبلیغاتی، هزینه و زمان صرف‌شده برای تولید نمونه‌های اولیه را کاهش دهند. با امکان iteration سریع و مقایسه بصری، تیم‌های بازاریابی می‌توانند با اطمینان بیشتری تصمیم‌گیری نهایی کنند. این قابلیت به ویژه برای کمپین‌های بصری مانند billboard که نیاز به تطبیق با محیط فیزیکی دارند، ارزشمند است.",
       "link": "https://www.youtube.com/watch?v=Ez-anO32D_s",
       "posted_at": 1788676417
+    },
+    "-1004482051328:1463": {
+      "chat_id": -1004482051328,
+      "message_id": 1463,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - TED",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "Jonathan Haidt: اصول تکنوسپکتیسیسم و تأثیر فناوری بر نسل نگران",
+      "summary": "روان‌شناس اجتماعی Jonathan Haidt در این سخنرانی TED، انسان‌ها را موجوداتی «ultrasocial» توصیف می‌کند که مانند زنبورها و مورچه‌ها برای ارتباطات عمیق سیم‌کشی شده‌اند. او به بررسی پیامدهای جایگزینی کتاب‌های درسی با tablets، تسلط AI بر زندگی کودکان و اختلال smartphones در دوران کودکی می‌پردازد. Haidt سه اصل technoskepticism را تبیین می‌کند و توضیح می‌دهد که چرا دو سال پس از انتشار کتاب \"The Anxious Generation\"، نگرانی‌های او نسبت به اثرات فناوری بر سلامت روان نسل جدید عمیق‌تر شده است.",
+      "description": "Humans aren't just social — we're ultrasocial, wired like bees and ants for deep connection. So what happens when smartphones take over childhood, tablets replace textbooks and AI companies infiltrate our kids’ lives? Social psychologist Jonathan Haidt lays out three principles of technoskepticism — and explains why, two years after sounding the alarm in \"The Anxious Generation,\" he's more concerned (and hopeful) than ever before.",
+      "why_it_matters": "این تحلیل اهمیت بازنگری در سیاست‌های استفاده از فناوری در دوران کودکی را برجسته می‌کند، زیرا تداخل ابزارهای دیجیتال با نیازهای ذاتی ارتباطی انسان می‌تواند پیامدهای بلندمدت روان‌شناختی داشته باشد. ارائه چارچوبی مبتنی بر technoskepticism توسط یک متخصص شناخته‌شده، به والدین و سیاست‌گذاران کمک می‌کند تا با دیدی انتقادی‌تر به نفوذ شرکت‌های AI و دستگاه‌های دیجیتال در آموزش و پرورش نگاه کنند.",
+      "link": "https://www.youtube.com/shorts/HL9pJtDtt2A",
+      "posted_at": 1788689253
+    },
+    "-1004482051328:1464": {
+      "chat_id": -1004482051328,
+      "message_id": 1464,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "OpenAI معرفی می‌کند: ساخت ابزارهای خلاقانه سفارشی با ChatGPT Work",
+      "summary": "تیم بازاریابی OpenAI در این وبینار نشان می‌دهد که چگونه از ChatGPT Work برای تبدیل خلاصه‌ای (brief)، کتاب برند و وایرفریم به یک ابزار طراحی سفارشی برای برند خیالی NOVA استفاده می‌کند. فرآیند ادامه می‌یابد تا تصاویر کمپین و یک وب‌سایت محصول کامل ساخته شود. این رویکرد نشان‌دهنده کاربرد عملی هوش مصنوعی در چرخه تولید محتوای بصری و دیجیتال است. لینک‌های مربوط به وبینار کامل و راهکارهای بازاریابی OpenAI در متن ارائه شده است.",
+      "description": "Build the creative tools your team needs.\n\nThis is how our marketing team uses ChatGPT Work to turn a brief, brand book and wireframe into a custom design tool for fictional brand NOVA, then build campaign imagery and a product website.\n\nWatch the full webinar: https://goldcast.registration.public-pr50.goldcast.io/on-demand/d863a2bc-77cf-4197-8ba4-b4a8b837c0b3?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing\n\nLearn more: https://openai.com/business/solutions/marketing/?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing artificial intelligence",
+      "why_it_matters": "این قابلیت به تیم‌های بازاریابی اجازه می‌دهد بدون نیاز به توسعه‌دهندگان متخصص، ابزارهای طراحی اختصاصی و یکپارچه با هویت برند خود بسازند. اتوماسیون فرآیند تبدیل مستندات اولیه به خروجی‌های بصری و وب، سرعت تولید کمپین‌ها را افزایش می‌دهد. این روش می‌تواند هزینه‌های طراحی را کاهش داده و انعطاف‌پذیری بیشتری در تست ایده‌های خلاقانه فراهم کند.",
+      "link": "https://www.youtube.com/watch?v=D-QteDHdHes",
+      "posted_at": 1788689255
+    },
+    "-1004482051328:1465": {
+      "chat_id": -1004482051328,
+      "message_id": 1465,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788689263
     }
   }
 }

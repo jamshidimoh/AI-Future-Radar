@@ -14,8 +14,9 @@ def test_closure_gate_does_not_certify_when_logs_are_unavailable():
 
 def test_closure_gate_requires_complete_window_for_all_run_checks():
     text = WORKFLOW.read_text(encoding="utf-8")
-    assert 'return len(logs) == len(window) and all(' in text
-    assert "if log_errors or len(logs) != len(window):" in text
+    assert "if log_errors or len(logs) < 3:" in text
+    assert "def all_runs(pattern):" in text
+    assert "return all(r.get(\"run_number\") in logs and has(logs[r.get(\"run_number\")], pattern) for r in window)" in text
 
 
 def test_closure_gate_blocks_unresolved_evidence_with_failure_status():

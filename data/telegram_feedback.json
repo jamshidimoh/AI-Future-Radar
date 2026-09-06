@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788721869,
+  "updated_at": 1788729704,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7280,6 +7280,25 @@
       "why_it_matters": "این پیشرفت‌ها نشان می‌دهند که GPT-6 Astra می‌تواند در پروژه‌های مهندسی بزرگ با حجم کد بالا و تولید محتوای بصری پیچیده، خودکفایی بیشتری داشته باشد. کاهش نیاز به نظارت انسانی و افزایش قابلیت اطمینان، هزینه‌های توسعه را کاهش داده و سرعت تحویل محصولات نرم‌افزاری را افزایش می‌دهد. این قابلیت‌ها مرزهای کاربرد AI را از چت‌بات‌های ساده به سمت ابزارهای اجرایی قدرتمند برای توسعه‌دهندگان گسترش می‌دهند.",
       "link": "https://www.youtube.com/watch?v=A4BUbpKdenc",
       "posted_at": 1788721869
+    },
+    "-1004482051328:1472": {
+      "chat_id": -1004482051328,
+      "message_id": 1472,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "GPT-6 Astra حل‌کننده پازل‌های DEF CON شد",
+      "summary": "Ben Davis مدل GPT-6 Astra را با پازل‌هایی که او و دوستانش روزها در DEF CON روی آن‌ها کار کرده بودند، آزمایش کرد. با دریافت همان راهنمای رسمی که تیم او دریافت کرده بود، این مدل یک پازل مکعب روبیک را در سه از سه بار موفق به حل آن شد. این آزمایش نشان‌دهنده توانایی مدل در پردازش چالش‌های منطقی پیچیده با استفاده از اطلاعات محدود است.",
+      "description": "Ben Davis put GPT-6 Astra to the test with puzzles he and his friends spent days working on at DEF CON. Given the same official hint his team received, it solved a Rubik’s cube puzzle three out of three times. artificial intelligence",
+      "why_it_matters": "این دستاورد نشان می‌دهد که GPT-6 Astra می‌تواند در حل مسائل ترکیبی و منطقی که نیاز به استدلال چندمرحله‌ای دارند، عملکردی برابری با تلاش انسانی چندروزه داشته باشد. موفقیت ۱۰۰ درصدی در این آزمایش خاص، قابلیت‌های مدل را در زمینه‌های ایمنی سایبری و حل معماهای فنی تقویت می‌کند. با این حال، این نتیجه تنها بر اساس یک سناریوی خاص با راهنمای مشخص است و تعمیم‌پذیری آن به سایر انواع پازل‌ها نیازمند ارزیابی‌های بیشتر است.",
+      "link": "https://www.youtube.com/shorts/J2nV3d_A1f0",
+      "posted_at": 1788729704
     }
   }
 }

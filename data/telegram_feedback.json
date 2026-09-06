@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788689263,
+  "updated_at": 1788694823,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7173,6 +7173,25 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788689263
+    },
+    "-1004482051328:1466": {
+      "chat_id": -1004482051328,
+      "message_id": 1466,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "استفاده از ChatGPT Work برای تولید ایمیل‌های کمپینی از روی بریف و قالب‌های Figma",
+      "summary": "تیم بازاریابی OpenAI از ChatGPT Work برای ایجاد کتابخانه مشترک موارد استفاده و تدوین پیش‌نویس ایمیل‌های کمپینی بر اساس بریف‌ها، قالب‌های Figma و راهنمای برند استفاده می‌کند. این رویکرد فرآیند تولید محتوا را خودکار می‌کند و امکان ویرایش نهایی توسط تیم را فراهم می‌آورد. هدف اصلی این است که تمرکز جلسات بازبینی از ساختار فنی به سمت پیام‌رسانی و جنبه‌های خلاقانه انتقال یابد. این روش بخشی از راهکارهای سازمانی OpenAI برای بهینه‌سازی عملیات بازاریابی است.",
+      "description": "Turn a brief into campaign emails your team can refine.\n\nThis is how our marketing team uses ChatGPT Work to build a shared library of use cases and draft emails from briefs, Figma templates and brand guidance—so reviews can focus on messaging and creative.\n\nWatch the full webinar: https://goldcast.registration.public-pr50.goldcast.io/on-demand/d863a2bc-77cf-4197-8ba4-b4a8b837c0b3?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing\n\nLearn more: https://openai.com/business/solutions/marketing/?utm_medium=social&amp;utm_source=youtube&amp;utm_campaign=WBR-ChatGPT-Work-Series-Marketing artificial intelligence",
+      "why_it_matters": "این قابلیت با تبدیل ورودی‌های ساختاریافته مانند بریف و قالب‌های طراحی به پیش‌نویس‌های قابل ویرایش، زمان صرفه‌جویی‌شده در تولید اولیه را به سمت بهبود کیفیت محتوا و هماهنگی برند هدایت می‌کند. تمرکز بر پیام‌رسانی به جای فرآیندهای دستی، کارایی تیم‌های بازاریابی را افزایش می‌دهد و اطمینان می‌بخشد که خروجی نهایی با استانداردهای خلاقانه و برندسازی سازمانی همسو باشد.",
+      "link": "https://www.youtube.com/watch?v=N-MJ1W8Vj9E",
+      "posted_at": 1788694823
     }
   }
 }

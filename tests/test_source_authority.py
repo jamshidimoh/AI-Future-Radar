@@ -19,3 +19,7 @@ def test_direct_configured_low_authority_tier_is_preserved():
 
 def test_unknown_source_can_never_be_promoted_by_configured_tier():
     assert resolve_source_tier(source_name="Unknown Publisher", source_url="https://unknown.example", configured_tier=1) == 3
+
+
+def test_lookalike_host_cannot_impersonate_tier1_domain():
+    assert resolve_google_news_tier("OpenAI", "https://openai.com.evil.example/article") == 3

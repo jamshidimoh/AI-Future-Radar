@@ -6,7 +6,9 @@ def test_chatgpt_action_url_is_bounded():
     link = "https://example.com/source"
     url = _chatgpt_link(title, link)
     assert url.startswith("https://chatgpt.com/?q=")
-    assert len(url) < 1200
+    # Bound the action URL without imposing an arbitrary limit that can reject
+    # perfectly usable UTF-8 encoded prompts by a few bytes.
+    assert len(url) < 1250
 
 
 def test_realistic_formatted_news_payload_fits_telegram():

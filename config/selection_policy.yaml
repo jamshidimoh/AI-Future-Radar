@@ -5,6 +5,8 @@ selection:
   max_items_per_content_type: 2
   story_similarity_threshold: 0.45
   diversity_mode: adaptive
+  diversity_weight: 8.0
+  similarity_penalty: 12.0
   preferred_max_same_source: 1
   distinct_sources_first: true
   replacement_buffer: 2
@@ -31,6 +33,11 @@ editorial:
 #   and diversity ranking, but a weaker item must never be selected to fill an area.
 # - max_same_mission_area is an operational ceiling equal to publication capacity,
 #   so it does not create an artificial topic quota for the normal 3-item portfolio.
+# - Information gain is a bounded soft reranker: the next candidate is evaluated
+#   against already selected topics. Similar stories receive diminishing-return
+#   penalties; distinct high-quality stories receive a modest novelty bonus.
+# - Information gain never bypasses relevance, authority, source, content-type,
+#   community, interview, or publication-quality gates.
 # - Community/aggregator sources are not eligible for the normal portfolio.
 # - Candidate_window exists to support replacement after a summary/editorial
 #   quality rejection without relaxing publication quality gates.

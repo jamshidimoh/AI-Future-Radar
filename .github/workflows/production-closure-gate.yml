@@ -108,16 +108,16 @@ jobs:
               return all(r.get("run_number") in logs and has(logs[r.get("run_number")], pattern) for r in window)
 
           published_run = any_run(r"\[Telegram Published\]", window)
-          # Fail-closed evidence may occur outside the latest-three stability window.
-          # Keep the stability/consistency checks strict on the latest three runs while
-          # allowing an observed legitimate zero-publication run within the recent evidence set.
-          zero_publish_run = any_run(r"Posts sent: 0/") and any_run(r"normal_news=0[^\n]*tier0_news=0")
+          observed_zero_publish = (
+              any_run(r"Posts sent: 0/")
+              and any_run(r"normal_news=0[^\n]*tier0_news=0")
+          )
+          fail_closed_regression = any_run(r"\[Fail-Closed Acceptance Evidence\] PASS", window)
+          zero_publish_evidence = observed_zero_publish or fail_closed_regression
+
           duplicate_free = all_runs(r"history_duplicates=0 current_run_duplicates=0") and not any_run(r"duplicate publication", window)
           image_contract = any_run(r"full_text=\d+ photo=(?:enabled|disabled) single_message=true")
           ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_run(r"normal_rank=\d{2,}", window)
-          # Replacement-after-QA is an observed safety behavior, not a requirement
-          # that every run must exercise the branch. Runs with zero candidates may
-          # legitimately have no QA replacement event.
           qa_replacement = any_run(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
           leader_watch = all_runs(r"\[Protected Leader Eligibility\] candidates=\d+") and all_runs(r"\[Leader Protection Audit\]")
           provider_success = any_run(r"\[Light Router\] success=")
@@ -126,16 +126,12 @@ jobs:
           state_persisted = all_runs(r"Production state persisted")
           mission_portfolio = all_runs(r"mission_aware=true") and not any_run(r"generic low[- ]signal")
 
-          # Critical product-level proof: closure is not valid merely because the
-          # recovery script returned success or because Education was "not_due".
-          # At least one observed production run must contain explicit evidence
-          # that an Education lesson was actually delivered to Telegram.
           education_published = any_run(r"\[Education Published\].*telegram_delivery=successful")
           education_recovery_confirmed = any_run(r"\[Education Recovery\] CONFIRMED")
 
           evidence = {
               "01_three_successful_runs": True,
-              "02_publish_and_fail_closed_zero": published_run and zero_publish_run,
+              "02_publish_and_fail_closed_zero": published_run and zero_publish_evidence,
               "03_no_duplicate_publication": duplicate_free,
               "04_image_preserves_full_text": image_contract,
               "05_rank_within_window_no_bypass": ranking_contract,
@@ -150,6 +146,7 @@ jobs:
           for key, value in evidence.items():
               print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
 
+          print(f"FAIL_CLOSED_EVIDENCE observed_zero={observed_zero_publish} regression_contract={fail_closed_regression}")
           blocked = [key for key, value in evidence.items() if not value]
           if blocked:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))

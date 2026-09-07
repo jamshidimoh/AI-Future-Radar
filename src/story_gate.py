@@ -1,8 +1,11 @@
 """Canonical Story Gate and canonical score boundary.
 
 Representative selection uses publication-value score only. Technology signal is
-computed independently and combined once after deduplication.
+computed independently and combined once after deduplication. Future-significance
+is applied here, at the canonical production boundary, so every production path
+sees the same trajectory-value score before portfolio selection.
 """
+from future_significance import annotate_future_significance, is_low_future_value
 from editorial_score_v2 import score_editorial_v2
 from story_identity import deduplicate_stories
 from technology_signal_v2 import calculate_technology_signal_score
@@ -27,8 +30,6 @@ def _prepare_canonical_scores(item):
         except (TypeError, ValueError):
             signal_v2 = 0.0
     candidate["technology_signal_score"] = round(signal_v2, 2)
-    # Compatibility alias: all downstream canonical ranking paths now consume
-    # the separated technology signal, while the legacy value is auditable.
     candidate["signal_score"] = candidate["technology_signal_score"]
     return candidate
 
@@ -65,13 +66,26 @@ def _canonical_final_editorial_score(item):
 
 
 def gate_story_candidates(protected_items, leader_items, regular_items, seen_signatures, threshold=0.45):
-    """Prepare canonical scores, rank representatives once, then deduplicate."""
+    """Prepare canonical scores, remove low-information stories, then deduplicate.
+
+    The low-information gate is deliberately narrow: it rejects only explicit
+    utility/tutorial content when the item has no compensating research,
+    capability, convergence, strategic, societal, or future-horizon signal.
+    It does not blacklist ChatGPT, OpenAI, product news, or model releases.
+    """
     ordered = []
     for pool in (protected_items or [], leader_items or [], regular_items or []):
         prepared = (_prepare_canonical_scores(item) for item in pool)
         ordered.extend(sorted(prepared, key=story_representative_rank_key, reverse=True))
 
-    survivors = deduplicate_stories(ordered, history=list(seen_signatures or []))
+    filtered = []
+    for item in ordered:
+        if is_low_future_value(item):
+            continue
+        annotate_future_significance(item)
+        filtered.append(item)
+
+    survivors = deduplicate_stories(filtered, history=list(seen_signatures or []))
     for item in survivors:
         item["final_editorial_score"] = _canonical_final_editorial_score(item)
         item["story_representative_score"] = story_representative_rank_key(item)[3]

@@ -71,7 +71,7 @@ Posts sent: 1/3
 def test_all_selected_candidates_rejected_downstream_is_fail_closed_pass():
     ok, message = validate(FAIL_CLOSED_EDITORIAL_REJECTION)
     assert ok is True
-    assert "fail-closed editorial rejection" in message
+    assert "fail-closed editorial/policy rejection" in message
 
 
 def test_zero_publication_without_rejection_evidence_is_failure():

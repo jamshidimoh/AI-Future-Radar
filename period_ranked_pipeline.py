@@ -22,7 +22,17 @@ SIGNAL_WEIGHT = 0.25
 
 
 def _base_editorial_score(item):
-    for key in ("editorial_score_pre_signal", "final_editorial_score", "editorial_score", "score"):
+    # Future-significance is materialized by the canonical story gate as
+    # radar_composite_score. Production ranking must consume that adjusted
+    # value; otherwise the gate only annotates stories and the later period
+    # ranking silently discards the future-intelligence improvement.
+    for key in (
+        "radar_composite_score",
+        "editorial_score_pre_signal",
+        "final_editorial_score",
+        "editorial_score",
+        "score",
+    ):
         try:
             value = float(item.get(key, 0) or 0)
             if value:

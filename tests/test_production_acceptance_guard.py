@@ -44,6 +44,19 @@ Posts sent: 1/3
 """
 
 
+PROTECTED_TIER0_WITH_POLICY_BLOCKS = """
+[Production Selection] total=4
+[Tier0 Interview Priority] retained=1 quota_exempt=true unique_people=true
+[Canonical Story Gate] kept=4 url_rejected=0 story_rejected=0 semantic_rejected=0 protected_semantic_bypassed=0 protected_same_story_blocked=0
+[Publication Policy] normal candidate one: normal_score_policy_blocked:62.11<=80.50
+[Publication Policy] normal candidate two: normal_score_policy_blocked:59.68<=80.50
+[Publication Policy] normal candidate three: normal_score_policy_blocked:53.20<=80.50
+[Publication Policy] PUBLISH TIER0 interview/quote global_rank=4 tier0_rank=1 score=0.11 quota_exempt=true
+Posts sent: 1/4
+[Production Contract] normal_news=0 normal_max=3 tier0_news=1 tier0_quota_exempt=true education=not_due
+"""
+
+
 INVALID_TIER0_FALLBACK = """
 [Production Selection] total=4
 [Tier0 Interview Priority] retained=0 quota_exempt=true unique_people=true
@@ -81,6 +94,12 @@ def test_confirmed_education_recovery_is_accounted_for():
 
 def test_protected_tier0_fallback_requires_normal_candidate_accounting():
     ok, message = validate(PROTECTED_TIER0_FALLBACK)
+    assert ok is True
+    assert "protected Tier-0 fallback" in message
+
+
+def test_tier0_fallback_accounts_explicit_policy_blocks():
+    ok, message = validate(PROTECTED_TIER0_WITH_POLICY_BLOCKS)
     assert ok is True
     assert "protected Tier-0 fallback" in message
 

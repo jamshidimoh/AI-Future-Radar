@@ -5,7 +5,7 @@ future_significance:
   editorial_weight: 0.65
   future_weight: 0.35
   minimum_candidate_score: 0.0
-  low_value_penalty_cap: 0.20
+  low_value_penalty_cap: 0.30
   dimensions:
     capability_shift: 0.18
     breakthrough: 0.16
@@ -15,21 +15,33 @@ future_significance:
     human_societal_impact: 0.10
     future_horizon: 0.08
     insight_density: 0.08
+  # These are deliberately broad indicators, not a blacklist. A story that
+  # contains one of them can still pass when it also carries substantive
+  # research, capability, convergence, strategic, societal, or future value.
   low_value_markers:
     - "how to use chatgpt"
+    - "how to use chat gpt"
     - "chatgpt tips"
     - "prompt collection"
+    - "prompt pack"
     - "best ai tools"
     - "top 10 ai tools"
     - "10 ai tools"
     - "productivity tips"
-    - "new feature"
+    - "productivity hacks"
+    - "tutorial"
+    - "step-by-step guide"
+    - "prompt engineering tips"
+    - "ترفندهای chatgpt"
+    - "نکات chatgpt"
+    - "ابزارهای برتر هوش مصنوعی"
+    - "آموزش استفاده از chatgpt"
   high_value_markers:
-    capability_shift: ["new capability", "capability", "autonomous", "agentic", "reasoning", "world model", "multimodal", "long context", "scientific discovery"]
-    breakthrough: ["breakthrough", "state of the art", "first", "record", "new architecture", "new model", "novel method", "discovery"]
-    cross_domain_impact: ["robotics", "humanoid", "quantum", "genomics", "crispr", "protein", "neuroscience", "brain-computer", "materials", "energy", "space", "biology"]
-    strategic_implication: ["infrastructure", "semiconductor", "investment", "adoption", "deployment", "commercialized", "platform", "ecosystem", "standard", "geopolitics", "policy", "regulation"]
-    research_depth: ["research", "paper", "study", "preprint", "peer-reviewed", "experiment", "benchmark", "laboratory", "university"]
-    human_societal_impact: ["jobs", "future of work", "education", "healthcare", "society", "economy", "safety", "alignment", "governance", "consciousness", "cognition"]
-    future_horizon: ["future", "roadmap", "trajectory", "long-term", "next decade", "next generation", "foresight", "transform"]
-    insight_density: ["why it matters", "implications", "analysis", "explains", "evidence", "findings", "lessons", "what changes"]
+    capability_shift: ["new capability", "capability", "autonomous", "agentic", "reasoning", "world model", "multimodal", "long context", "scientific discovery", "قابلیت جدید", "استدلال", "عامل خودمختار", "مدل جهان"]
+    breakthrough: ["breakthrough", "state of the art", "first", "record", "new architecture", "new model", "novel method", "discovery", "دستاورد", "کشف", "معماری جدید", "روش نوین"]
+    cross_domain_impact: ["robotics", "humanoid", "quantum", "genomics", "crispr", "protein", "neuroscience", "brain-computer", "materials", "energy", "space", "biology", "robotیک", "ربات", "کوانتوم", "ژنتیک", "علوم اعصاب", "رابط مغز و رایانه", "زیست فناوری", "انرژی", "فضا"]
+    strategic_implication: ["infrastructure", "semiconductor", "investment", "adoption", "deployment", "commercialized", "platform", "ecosystem", "standard", "geopolitics", "policy", "regulation", "زیرساخت", "تراشه", "سرمایه گذاری", "استقرار", "اکوسیستم", "استاندارد", "ژئوپلیتیک", "سیاست", "مقررات"]
+    research_depth: ["research", "paper", "study", "preprint", "peer-reviewed", "experiment", "benchmark", "laboratory", "university", "پژوهش", "مقاله", "مطالعه", "پیش چاپ", "آزمایش", "بنچمارک", "آزمایشگاه", "دانشگاه"]
+    human_societal_impact: ["jobs", "future of work", "education", "healthcare", "society", "economy", "safety", "alignment", "governance", "consciousness", "cognition", "اشتغال", "آینده کار", "آموزش", "سلامت", "جامعه", "اقتصاد", "ایمنی", "همسویی", "حکمرانی", "آگاهی", "شناخت"]
+    future_horizon: ["future", "roadmap", "trajectory", "long-term", "next decade", "next generation", "foresight", "transform", "آینده", "نقشه راه", "مسیر", "بلندمدت", "دهه آینده", "نسل بعد", "آینده پژوهی", "تحول"]
+    insight_density: ["why it matters", "implications", "analysis", "explains", "evidence", "findings", "lessons", "what changes", "اهمیت", "پیامد", "تحلیل", "شواهد", "یافته", "چه چیزی تغییر می کند"]

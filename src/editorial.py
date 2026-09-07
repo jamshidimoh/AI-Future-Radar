@@ -7,6 +7,7 @@ from editorial_clean import (
 )
 from interview_evidence import has_interview_evidence
 from strategic_signal import strategic_forecast_score
+from future_significance import annotate_future_significance
 from unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 _AI_BRIDGE_TERMS = (
@@ -65,8 +66,6 @@ def filter_ai_relevance(items, ai_keywords=None):
             item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
         if bridge_hits:
             item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
-        # Provenance-only curated items must not be modified with textual AI markers.
-        # They are retained explicitly below at bridge confidence after canonical filtering.
         item["_curated_trusted_ai_bridge"] = curated_trusted
         item["_has_direct_ai_evidence"] = bool(bridge_hits)
         normalized.append(item)
@@ -131,6 +130,16 @@ def _leader_name(item):
     return str(item.get("leader") or item.get("watch_person") or "").strip()
 
 
+def _annotate_selection_value(item):
+    """Add future-significance value without changing any hard quality gate."""
+    annotate_future_significance(item)
+    # Existing selector already treats final_editorial_score as its canonical
+    # ranking value. Feed the new composite through that explicit field rather
+    # than changing the established editorial_score contract.
+    item["final_editorial_score"] = item["radar_composite_score"]
+    return item
+
+
 def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, policy=None):
     policy = policy or {}
     protected_limit = int(policy.get("protected_slots", policy.get("leader_interview_slots", 2)) or 0)
@@ -155,6 +164,8 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
         item["leader_watch_protected"] = True
         item["leader_signal"] = True
         item["selection_reason"] = f"protected:{_leader_name(item)}"
+    for item in regular:
+        _annotate_selection_value(item)
     selected_regular = select_regular_portfolio(
         regular,
         max_posts=max_posts,

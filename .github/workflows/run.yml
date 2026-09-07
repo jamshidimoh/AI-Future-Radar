@@ -52,6 +52,11 @@ jobs:
           python -m compileall -q scripts src *.py
           python -m pytest -q tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py
 
+      - name: Emit fail-closed closure evidence
+        run: |
+          python -m pytest -q tests/test_production_acceptance_guard.py -k "all_selected_candidates_rejected_downstream_is_fail_closed_pass or zero_publication_without_rejection_evidence_is_failure"
+          echo "[Fail-Closed Acceptance Evidence] PASS"
+
       - name: Telegram production preflight
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

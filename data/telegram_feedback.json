@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788806705,
+  "updated_at": 1788818526,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7530,6 +7530,25 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788803211
+    },
+    "-1004482051328:1487": {
+      "chat_id": -1004482051328,
+      "message_id": 1487,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Guardian)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "پیروزی AfD در آلمان؛ هشدار سیاستمداران از لحظه‌ای تاریک برای اروپا",
+      "summary": "بر اساس گزارش The Guardian، پیروزی حزب راست‌گرای افراطی AfD در آلمان به عنوان یک «لحظه جدی» برای آینده اروپا توصیف شده است. سیاستمداران ابراز نگرانی کرده‌اند که این نتیجه انتخابات می‌تواند پیامدهای عمیقی بر پویایی سیاسی قاره داشته باشد. متن ارائه‌شده جزئیات فنی یا آماری خاصی درباره نحوه پیروزی یا واکنش‌های فنی ارائه نمی‌دهد، بلکه بر ابعاد سیاسی و هشدارهای مقامات تمرکز دارد.",
+      "why_it_matters": "این رویداد نشان‌دهنده تغییرات بنیادین در طیف سیاسی اروپا است که می‌تواند بر سیاست‌های اتحادیه اروپا، همکاری‌های بین‌المللی و ثبات اقتصادی منطقه تأثیر بگذارد. هشدار سیاستمداران از «لحظه جدی» بودن این پیروزی، اهمیت استراتژیک آلمان در ساختار قدرت اروپا و چالش‌های پیش‌رو برای احزاب سنتی را برجسته می‌کند. بدون در نظر گرفتن جزئیات فنی، این خبر سیگنالی از افزایش نفوذ جریان‌های راست‌گرا در قلب اروپا است.",
+      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQdDBvY1BwR2xpOTJxUy1yQXRMeGg2Y0pZeURLY0d2Rm9KZVpnNllsSGxqWl9lVHVWa2JZWG9WZmNQaGI2UGI1bWNHZGcyRERId3lya3lXdGRraUdRc0tTNXZNSHZOcWFuMHNNWmFjOXBGazc5LW5BNEsxV1lsYURRNVl3MTZkWUw2ZGlfSk1YOXF1ZGdFamxESlI4UFRycDQ?oc=5",
+      "posted_at": 1788818526
     }
   }
 }

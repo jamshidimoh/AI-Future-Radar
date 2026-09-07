@@ -72,24 +72,25 @@ def test_community_sources_are_excluded_from_normal_portfolio():
     assert all("reddit" not in x["source"].casefold() for x in selected)
 
 
-def test_mission_targets_are_loaded_from_canonical_policy():
+def test_mission_diversity_targets_are_soft_not_mandatory():
     contract = load_editorial_contract()
     assert contract["max_posts"] == 3
-    assert contract["ai_core_target_min"] == 1
-    assert contract["ai_core_target_max"] == 2
-    assert contract["convergence_target"] == 1
-    assert contract["mind_future_target"] == 1
-    assert contract["research_target"] == 1
+    assert contract["ai_core_target_min"] == 0
+    assert contract["ai_core_target_max"] == 3
+    assert contract["convergence_target"] == 0
+    assert contract["mind_future_target"] == 0
+    assert contract["research_target"] == 0
     assert contract["interview_target_max"] == 1
     assert contract["min_authoritative_items"] == 2
 
 
-def test_mind_future_target_is_one_shared_allocation_not_two_slots():
+def test_mind_future_items_are_not_forced_when_their_quality_is_lower():
     candidates = [
-        item("Core research", "Nature", 100, area="ai", content_type="research", research_signal=True),
-        item("Quantum", "IBM Research", 90, area="quantum", content_type="research", research_signal=True),
-        item("Mind", "Stanford HAI", 80, area="mind"),
-        item("Future", "NIST", 79, area="future"),
+        item("Exceptional AI capability", "OpenAI", 100, area="ai"),
+        item("Second exceptional AI capability", "Anthropic", 99, area="ai"),
+        item("Third exceptional AI capability", "MIT CSAIL", 98, area="ai"),
+        item("Weak future item", "NIST", 35, area="future"),
+        item("Weak mind item", "Stanford HAI", 30, area="mind"),
     ]
     selected = select_regular_portfolio(
         candidates,
@@ -101,10 +102,32 @@ def test_mind_future_target_is_one_shared_allocation_not_two_slots():
         strict_relevance=True,
     )
     assert len(selected) == 3
-    areas = [x["mission_area"] for x in selected]
-    assert "ai_core" in areas
-    assert "convergence" in areas
-    assert sum(area in {"mind_cognition", "future_governance"} for area in areas) == 1
+    assert [x["title"] for x in selected] == [
+        "Exceptional AI capability",
+        "Second exceptional AI capability",
+        "Third exceptional AI capability",
+    ]
+
+
+def test_high_value_convergence_can_win_on_score_without_a_mandatory_slot():
+    candidates = [
+        item("AI core", "OpenAI", 100, area="ai"),
+        item("Transformative robotics breakthrough", "MIT CSAIL", 96, area="robotics", content_type="research", research_signal=True),
+        item("AI core second", "Anthropic", 95, area="ai"),
+        item("Weak policy commentary", "NIST", 40, area="future"),
+    ]
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=3,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    titles = [x["title"] for x in selected]
+    assert "Transformative robotics breakthrough" in titles
+    assert "Weak policy commentary" not in titles
 
 
 def test_min_authoritative_items_is_repaired_when_feasible():

@@ -53,9 +53,9 @@ def story_representative_rank_key(item):
 
 
 def _canonical_final_editorial_score(item):
-    """Combine canonical editorial and technology scores exactly once."""
+    """Combine future-adjusted editorial value and technology signal exactly once."""
     try:
-        editorial = float(item.get("editorial_score_pre_signal", 0) or 0)
+        editorial = float(item.get("radar_composite_score", item.get("editorial_score_pre_signal", 0)) or 0)
     except (TypeError, ValueError):
         editorial = 0.0
     try:

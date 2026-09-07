@@ -1,10 +1,10 @@
 """Runtime acceptance guard for the production publication contract.
 
 A selected candidate must end in an auditable terminal state: publication,
-explicit editorial rejection, or an upstream structural rejection such as
-canonical-story deduplication. Protected Tier-0 publication is a valid
+explicit editorial/policy rejection, or an upstream structural rejection such
+as canonical-story deduplication. Protected Tier-0 publication is a valid
 failover path only when every non-published selected candidate is fully
-accounted for as rejected upstream/editorially.
+accounted for as rejected upstream/editorially/by policy.
 """
 from __future__ import annotations
 
@@ -21,6 +21,7 @@ CONTRACT_PATTERN = re.compile(
 )
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
+POLICY_REJECTION_PATTERN = re.compile(r"normal_score_policy_blocked:\s*[^\s]+<=\s*[^\s]+")
 TIER0_PRIORITY_PATTERN = re.compile(r"\[Tier0 Interview Priority\]\s+retained=(\d+).*?quota_exempt=true")
 TIER0_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH TIER0\b")
 EDUCATION_CONFIRMED_PATTERN = re.compile(
@@ -69,6 +70,7 @@ def validate(log_text: str) -> tuple[bool, str]:
         education = "confirmed"
     published_news = normal_news + tier0_news
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
+    policy_rejections = sum(1 for line in lines if POLICY_REJECTION_PATTERN.search(line))
 
     protected_blocked = _last_group_int(lines, re.compile(r"protected_same_story_blocked=(\d+)")) or 0
     canonical_story_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?story_rejected=(\d+)")) or 0
@@ -78,7 +80,7 @@ def validate(log_text: str) -> tuple[bool, str]:
         protected_blocked,
         canonical_story_rejected + canonical_semantic_rejected + canonical_url_rejected,
     )
-    accounted = published_news + editorial_rejections + upstream_rejections
+    accounted = published_news + editorial_rejections + policy_rejections + upstream_rejections
     posts_sent = int(posts_match.group(1)) if posts_match else None
     tier0_retained = _last_group_int(lines, TIER0_PRIORITY_PATTERN) or 0
     tier0_publish_policy = bool(_last_match(lines, (TIER0_PUBLICATION_PATTERN,)))
@@ -86,20 +88,21 @@ def validate(log_text: str) -> tuple[bool, str]:
     if selected > 0 and published_news == 0 and education != "confirmed":
         if accounted >= selected and (posts_sent is None or posts_sent == 0):
             return True, (
-                "production acceptance PASS: fail-closed editorial rejection/accounting verified; "
+                "production acceptance PASS: fail-closed editorial/policy rejection/accounting verified; "
                 f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, "
-                f"upstream_rejections={upstream_rejections}, education={education}"
+                f"policy_rejections={policy_rejections}, upstream_rejections={upstream_rejections}, education={education}"
             )
         return False, (
             "production contract violation: zero news items were published and the selected set "
             "did not provide evidence of publication or explicit rejection; "
             f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, "
-            f"upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
+            f"policy_rejections={policy_rejections}, upstream_rejections={upstream_rejections}, "
+            f"accounted={accounted}, education={education}"
         )
 
     if published_news > 0 and normal_news == 0 and tier0_news > 0:
         unaccounted_selected = max(0, selected - published_news)
-        rejection_accounting = editorial_rejections + upstream_rejections
+        rejection_accounting = editorial_rejections + policy_rejections + upstream_rejections
         if (
             not tier0_quota_exempt
             or tier0_retained <= 0

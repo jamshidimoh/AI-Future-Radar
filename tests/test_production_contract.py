@@ -45,8 +45,6 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     contract = load_editorial_contract()
     selection = _load(SELECTION)["selection"]
     mission = _load(MISSION)["mission"]
-    # Mission max_posts is a broader portfolio ceiling; selection.max_posts is
-    # the actual production normal-news publication capacity.
     assert contract["max_posts"] == selection["max_posts"] == 3
     assert mission["max_posts"] >= contract["max_posts"]
     assert contract["candidate_window"] == 6
@@ -60,23 +58,24 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert selection["distinct_sources_first"] is True
 
 
-def test_mission_targets_are_not_allowed_to_drift():
+def test_mission_diversity_is_soft_and_canonical():
     contract = _load(CONTRACT)["mission"]
     mission = _load(MISSION)["mission"]
-    assert set(contract["required_areas"]) == {
+    assert set(contract["supported_areas"]) == {
         "ai_core", "convergence", "mind_cognition", "future_governance"
     }
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
     assert contract["preferred_max_same_source_per_run"] == mission["max_same_source"]
     assert contract["hard_max_same_source_per_run"] == _load(SELECTION)["selection"]["max_items_per_source"]
+    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 3
     assert contract["min_authoritative_items"] == mission["min_authoritative_items"]
     assert contract["community_max"] == mission["community_max"]
     assert contract["ai_core_target"] == [
         mission["ai_core_target_min"], mission["ai_core_target_max"]
-    ]
-    assert contract["convergence_target"] == mission["convergence_target"]
-    assert contract["mind_future_target"] == mission["mind_future_target"]
-    assert contract["research_target"] == mission["research_target"]
+    ] == [0, 3]
+    assert contract["convergence_target"] == mission["convergence_target"] == 0
+    assert contract["mind_future_target"] == mission["mind_future_target"] == 0
+    assert contract["research_target"] == mission["research_target"] == 0
     assert contract["interview_target_max"] == mission["interview_target_max"]
 
 

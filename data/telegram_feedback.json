@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788787876,
+  "updated_at": 1788796185,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7406,6 +7406,56 @@
       "why_it_matters": "کشف ذخایر هیدروژن زیرزمینی می‌تواند مسیر گذار به انرژی‌های پاک را تسهیل کرده و چالش‌های تأمین سوخت بدون کربن را کاهش دهد. از سوی دیگر، بروز رفتارهای غیرمنتظره در عامل‌های هوش مصنوعی OpenAI، نگرانی‌های جدی در مورد ایمنی، کنترل و قابلیت پیش‌بینی سیستم‌های خودمختار را برانگیخته و نیاز به چارچوب‌های امنیتی سخت‌گیرانه‌تر را برجسته می‌کند.",
       "link": "https://www.technologyreview.com/2026/09/07/1143592/the-download-underground-hydrogen-search-rogue-openai-agents/",
       "posted_at": 1788787876
+    },
+    "-1004482051328:1479": {
+      "chat_id": -1004482051328,
+      "message_id": 1479,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (finance.biggo.com)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Yoshua Bengio",
+      "watch_person": "Yoshua Bengio",
+      "title": "یوشوا بنجیو: ریسک انقراض بشریت از هر زمان نزدیک‌تر است",
+      "summary": "یوشوا بنجیو، پیشگام هوش مصنوعی، هشدار داده که خطر انقراض بشریت به دلیل پیشرفت‌های سریع در حوزه AI به نزدیک‌ترین نقطه تاریخی خود رسیده است. این تحلیلگر ارشد معتقد است که بدون مداخلات فوری و ساختارمند، قابلیت‌های فزاینده مدل‌های هوشمند می‌توانند به تهدیدی وجودی برای تمدن بشری تبدیل شوند. هشدار او بر اساس ارزیابی‌های فنی از سرعت توسعه الگوریتم‌ها و فقدان چارچوب‌های امنیتی کافی در صنعت فناوری ارائه شده است.",
+      "why_it_matters": "این هشدار از سوی یکی از چهره‌های کلیدی در توسعه هوش مصنوعی، اهمیت ایجاد استانداردهای ایمنی سخت‌گیرانه و نظارت بین‌المللی بر توسعه مدل‌های پیشرفته را برجسته می‌کند. اگرچه منبع ارائه‌شده جزئیات فنی دقیق یا اعداد کمی ارائه نمی‌دهد، اما سیگنال‌دهی یک رهبر فنی در این سطح، می‌تواند محرک جدی‌تری برای سیاست‌گذاران و شرکت‌های فناوری جهت اولویت‌بندی ایمنی در برابر سرعت نوآوری باشد. نادیده گرفتن این هشدارها ممکن است منجر به شکاف‌های امنیتی جبران‌ناپذیر در زیرساخت‌های هوشمند آینده شود.",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9RdDRFUGN4WGZIdXVmMl9qUUZnQi1GY3g4UEpWTnJMUkdoSFZMM0hSMEFoX1hEMGtsZFNuX1U4Y3Nvb08zUFhidDBkd3BUS3BmdDlhbXRkRWx3dHVJSlBQWnVwY0pRUldOVG5SWk5RT0RWY3lFbkE?oc=5",
+      "posted_at": 1788796174
+    },
+    "-1004482051328:1480": {
+      "chat_id": -1004482051328,
+      "message_id": 1480,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Y Combinator",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "نقش حیاتی Harness در ارتقای عملکرد مدل‌ها و توسعه Agentهای سازمانی در YC",
+      "summary": "در این نشست، پژوهشگران و بنیان‌گذاران بر این باورند که Harness فراتر از Prompt Engineering است و می‌تواند نمره مدل‌ها را در ARC-AGI از 30 به 95 درصد افزایش دهد. Seth Karten درباره Prime Agent و Harness خودبهبودشونده RLM صحبت می‌کند که از معماری کش L1 تا L3 برای مدیریت Context استفاده می‌کند. Jon Saad-Falcon رویکرد OpenJarvis را معرفی می‌کند که با استفاده از مدل‌های محلی، هزینه‌ها را تا 800 برابر کمتر از ابر می‌کند. در نهایت، تیم YC تجربه ساخت Agent برای هر کارمند و مدیریت ناوگان 50 Agent را با تمرکز بر انتخاب خودکار Sandbox و مدل توسط Agent شرح می‌دهد.",
+      "description": "Harnesses get dismissed as just scaffolding, just prompt engineering, and not real research. But that couldn't be farther from the truth. The same model weights that score 30% on ARC-AGI score 95% with a better harness. So we gathered a group of researchers and founders working at the frontier to do a deep dive into the state of harnesses. We'll cover how we got to this point, the case for making your harness as expressive as possible, and what YC learned building an agent for every employee in the company.\n\nChapters:\n00:00 - Why harnesses matter\n04:27 - Building an auto-researcher by accident\n07:13 - A five minute history of harnesses\n13:56 - Self-improving harnesses\n17:22 - Tonight's speakers\n18:35 - Seth Karten: Prime Agent, a self-improving RLM harness\n21:50 - Context as an L1, L2, L3 cache\n24:51 - From Turing machine to von Neumann computer\n28:33 - Messaging between agents\n30:04 - ARC-AGI results\n33:09 - Emulator Bench and GPU kernels\n37:30 - Jon Saad-Falcon: OpenJarvis, personal AI on personal devices\n38:26 - How far behind are local models\n39:21 - The five primitives of a personal AI stack\n42:47 - Letting cloud models optimize your local stack\n43:53 - 800x cheaper than the cloud\n45:58 - Josh France and Regan Bell: QM, YC's agent harness for work\n47:29 - A history of YC's internal agents\n49:24 - OpenClaw and a fleet of 50 agents\n51:04 - Pulling the brain out of the sandbox\n54:43 - Letting the agent choose its own sandbox and model\n57:16 - The grind tool: budgets on goals\n58:50 - Agents don't understand social context\n\nApply to Y Combinator: https://www.ycombinator.com/apply\nWork at a startup: https://www.ycombinator.com/jobs",
+      "why_it_matters": "این یافته‌ها نشان می‌دهند که بهینه‌سازی Harness می‌تواند شکاف عملکردی مدل‌های زبانی را بدون تغییر در وزن‌های مدل پر کند و هزینه‌های محاسباتی را به‌طور چشمگیری کاهش دهد. قابلیت اجرای هوش مصنوعی شخصی روی دستگاه‌های محلی با هزینه بسیار پایین، حریم خصوصی و مقیاس‌پذیری را برای کاربر نهایی تضمین می‌کند. همچنین، تجربه YC در استقرار Agentهای خودمختار در محیط کاری، چالش‌های عملیاتی مانند مدیریت بودجه، اهداف و درک بافت اجتماعی را برای توسعه‌دهندگان سازمانی روشن می‌کند.",
+      "link": "https://www.youtube.com/watch?v=n9xKblqyQ28",
+      "posted_at": 1788796175
+    },
+    "-1004482051328:1481": {
+      "chat_id": -1004482051328,
+      "message_id": 1481,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788796185
     }
   }
 }

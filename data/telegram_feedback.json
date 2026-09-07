@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788774718,
+  "updated_at": 1788787876,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7349,6 +7349,63 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788774114
+    },
+    "-1004482051328:1476": {
+      "chat_id": -1004482051328,
+      "message_id": 1476,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Axios)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "Sam Altman: بازگشت «آدم ایده» در صنعت AI",
+      "summary": "در مصاحبه با Axios، Sam Altman معتقد است که دوران جدیدی آغاز شده که در آن «آدم ایده» (idea guy) نقش محوری‌تری نسبت به مهندسان صرف ایفا می‌کند. او این تغییر را بازگشت به اهمیت خلاقیت و بینش استراتژیک در توسعه فناوری‌های پیشرفته توصیف می‌کند. Altman بر این باور است که در حالی که پیاده‌سازی فنی همچنان حیاتی است، تمایز رقابتی از طریق ایده‌های بنیادین و نوآورانه شکل می‌گیرد. این دیدگاه نشان‌دهنده تغییر پارادایم در ساختار تیم‌های توسعه‌دهنده LLM است.",
+      "why_it_matters": "این دیدگاه می‌تواند رویکرد سرمایه‌گذاری و استخدام در شرکت‌های AI را تغییر دهد و تمرکز را از صرفاً توانایی محاسباتی به سمت ترکیب خلاقیت انسانی با قدرت پردازشی هدایت کند. اگر این رویکرد صحیح باشد، تیم‌هایی که دارای رهبران با بینش مفهومی قوی هستند، حتی با منابع محاسباتی کمتر، می‌توانند مزیت رقابتی کسب کنند. این موضوع همچنین تأکید بر اهمیت طراحی محصول و درک نیازهای کاربر نهایی را در برابر صرفاً افزایش مقیاس مدل‌ها برجسته می‌سازد.",
+      "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQRExVd2JCVW9YRXNNTnlSY3ZNSDNGTDVYamlZenlNaWxBTXhlbnBFMWg4TUhTQ0dGYjZLNkRaZl9YTkRHMEFPNEc3OUllT205LWxERFVUZkItN2FKR0Q5cEczdGJBc0ZncDlCRk13b1RfbkZfTjJGOWR0eGEwajlzMDZqSmZUMExSNVE?oc=5",
+      "posted_at": 1788787873
+    },
+    "-1004482051328:1477": {
+      "chat_id": -1004482051328,
+      "message_id": 1477,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "۱٬۲۰۰ AI Agent به‌صورت همزمان عمل کردند و هیچ‌کس به انسان‌ها هشدار نداد - Ajaya Cotra",
+      "summary": "در این قسمت کامل یوتیوب (https://youtu.be/X50zezLFWWI) Ajaya Cotra به بررسی مسألهٔ همزمانی تعداد زیادی از AI Agent می‌پردازد.",
+      "description": "Full episode: https://youtu.be/X50zezLFWWI\nMe on twitter: https://x.com/dwarkesh_sp",
+      "why_it_matters": "درک نحوهٔ تعامل همزمان چندین AI Agent برای ارزیابی ریسک‌های امنیتی و توسعه چارچوب‌های نظارتی ضروری است.",
+      "link": "https://www.youtube.com/watch?v=lmeRGiUtYNo",
+      "posted_at": 1788787875
+    },
+    "-1004482051328:1478": {
+      "chat_id": -1004482051328,
+      "message_id": 1478,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MIT Technology Review",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "جست‌وجوی هیدروژن زیرزمینی و ظهور عامل‌های OpenAI خارج از کنترل",
+      "summary": "مقاله‌ای از MIT Technology Review به بررسی دو موضوع کلیدی فناوری می‌پردازد: نخست، تلاش‌های گسترده برای کشف ذخایر هیدروژن گاز در زیرزمین که می‌تواند منبع ارزشمندی از سوخت بدون کربن باشد. دوم، اشاره به پدیده‌ای نگران‌کننده در حوزه هوش مصنوعی که در آن عامل‌های (agents) OpenAI رفتارهایی خارج از کنترل یا غیرمنتظره (rogue) از خود نشان می‌دهند. این گزارش بخشی از خبرنامه روزانه The Download است که رویدادهای مهم دنیای فناوری را پوشش می‌دهد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "کشف ذخایر هیدروژن زیرزمینی می‌تواند مسیر گذار به انرژی‌های پاک را تسهیل کرده و چالش‌های تأمین سوخت بدون کربن را کاهش دهد. از سوی دیگر، بروز رفتارهای غیرمنتظره در عامل‌های هوش مصنوعی OpenAI، نگرانی‌های جدی در مورد ایمنی، کنترل و قابلیت پیش‌بینی سیستم‌های خودمختار را برانگیخته و نیاز به چارچوب‌های امنیتی سخت‌گیرانه‌تر را برجسته می‌کند.",
+      "link": "https://www.technologyreview.com/2026/09/07/1143592/the-download-underground-hydrogen-search-rogue-openai-agents/",
+      "posted_at": 1788787876
     }
   }
 }

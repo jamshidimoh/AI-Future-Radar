@@ -1,0 +1,35 @@
+# Future-significance contract: this is NOT a relevance or evidence gate.
+# It estimates whether a story changes our understanding of technological trajectory.
+future_significance:
+  enabled: true
+  editorial_weight: 0.65
+  future_weight: 0.35
+  minimum_candidate_score: 0.0
+  low_value_penalty_cap: 0.20
+  dimensions:
+    capability_shift: 0.18
+    breakthrough: 0.16
+    cross_domain_impact: 0.14
+    strategic_implication: 0.14
+    research_depth: 0.12
+    human_societal_impact: 0.10
+    future_horizon: 0.08
+    insight_density: 0.08
+  low_value_markers:
+    - "how to use chatgpt"
+    - "chatgpt tips"
+    - "prompt collection"
+    - "best ai tools"
+    - "top 10 ai tools"
+    - "10 ai tools"
+    - "productivity tips"
+    - "new feature"
+  high_value_markers:
+    capability_shift: ["new capability", "capability", "autonomous", "agentic", "reasoning", "world model", "multimodal", "long context", "scientific discovery"]
+    breakthrough: ["breakthrough", "state of the art", "first", "record", "new architecture", "new model", "novel method", "discovery"]
+    cross_domain_impact: ["robotics", "humanoid", "quantum", "genomics", "crispr", "protein", "neuroscience", "brain-computer", "materials", "energy", "space", "biology"]
+    strategic_implication: ["infrastructure", "semiconductor", "investment", "adoption", "deployment", "commercialized", "platform", "ecosystem", "standard", "geopolitics", "policy", "regulation"]
+    research_depth: ["research", "paper", "study", "preprint", "peer-reviewed", "experiment", "benchmark", "laboratory", "university"]
+    human_societal_impact: ["jobs", "future of work", "education", "healthcare", "society", "economy", "safety", "alignment", "governance", "consciousness", "cognition"]
+    future_horizon: ["future", "roadmap", "trajectory", "long-term", "next decade", "next generation", "foresight", "transform"]
+    insight_density: ["why it matters", "implications", "analysis", "explains", "evidence", "findings", "lessons", "what changes"]

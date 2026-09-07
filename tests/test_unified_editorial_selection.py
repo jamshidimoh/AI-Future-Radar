@@ -24,13 +24,7 @@ def test_distinct_sources_are_preferred_before_source_repeat():
         item("MIT A", "MIT CSAIL", 92, area="convergence"),
         item("Nature A", "Nature", 90, area="mind"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=4,
-        max_per_source=2,
-        max_per_type=4,
-        recent_source_counts={},
-    )
+    selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={})
     sources = [x["source"] for x in selected]
     assert set(sources[:3]) == {"OpenAI", "MIT CSAIL", "Nature"}
     assert sources.count("OpenAI") <= 2
@@ -40,35 +34,17 @@ def test_distinct_sources_are_preferred_before_source_repeat():
 
 def test_recent_source_history_is_preference_not_exclusion():
     candidates = [
-        item("OpenAI A", "OpenAI", 100, area="ai"),
-        item("MIT A", "MIT CSAIL", 95, area="convergence"),
-        item("Nature A", "Nature", 90, area="mind"),
-        item("Anthropic A", "Anthropic", 80, area="future"),
+        item("OpenAI A", "OpenAI", 100, area="ai"), item("MIT A", "MIT CSAIL", 95, area="convergence"),
+        item("Nature A", "Nature", 90, area="mind"), item("Anthropic A", "Anthropic", 80, area="future"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=4,
-        max_per_source=2,
-        max_per_type=4,
-        recent_source_counts={"OpenAI": 10, "MIT CSAIL": 0, "Nature": 0, "Anthropic": 0},
-    )
+    selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={"OpenAI": 10, "MIT CSAIL": 0, "Nature": 0, "Anthropic": 0})
     assert any(x["source"] == "OpenAI" for x in selected)
     assert len(selected) == 4
 
 
 def test_community_sources_are_excluded_from_normal_portfolio():
-    candidates = [
-        item("Reddit story", "Reddit - r/artificial", 120, tier=3),
-        item("MIT story", "MIT CSAIL", 90, area="convergence"),
-        item("Nature story", "Nature", 80, area="mind"),
-    ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=4,
-        max_per_source=2,
-        max_per_type=4,
-        recent_source_counts={},
-    )
+    candidates = [item("Reddit story", "Reddit - r/artificial", 120, tier=3), item("MIT story", "MIT CSAIL", 90, area="convergence"), item("Nature story", "Nature", 80, area="mind")]
+    selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={})
     assert all("reddit" not in x["source"].casefold() for x in selected)
 
 
@@ -82,49 +58,26 @@ def test_mission_diversity_targets_are_soft_not_mandatory():
     assert contract["research_target"] == 0
     assert contract["interview_target_max"] == 1
     assert contract["min_authoritative_items"] == 2
+    assert contract["diversity_weight"] == 8.0
+    assert contract["similarity_penalty"] == 12.0
 
 
 def test_mind_future_items_are_not_forced_when_their_quality_is_lower():
     candidates = [
-        item("Exceptional AI capability", "OpenAI", 100, area="ai"),
-        item("Second exceptional AI capability", "Anthropic", 99, area="ai"),
-        item("Third exceptional AI capability", "MIT CSAIL", 98, area="ai"),
-        item("Weak future item", "NIST", 35, area="future"),
-        item("Weak mind item", "Stanford HAI", 30, area="mind"),
+        item("Exceptional AI capability", "OpenAI", 100, area="ai"), item("Second exceptional AI capability", "Anthropic", 99, area="ai"),
+        item("Third exceptional AI capability", "MIT CSAIL", 98, area="ai"), item("Weak future item", "NIST", 35, area="future"), item("Weak mind item", "Stanford HAI", 30, area="mind"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=3,
-        max_per_source=1,
-        max_per_type=3,
-        recent_source_counts={},
-        mission_aware=True,
-        strict_relevance=True,
-    )
+    selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, mission_aware=True, strict_relevance=True)
     assert len(selected) == 3
-    assert [x["title"] for x in selected] == [
-        "Exceptional AI capability",
-        "Second exceptional AI capability",
-        "Third exceptional AI capability",
-    ]
+    assert [x["title"] for x in selected] == ["Exceptional AI capability", "Second exceptional AI capability", "Third exceptional AI capability"]
 
 
 def test_high_value_convergence_can_win_on_score_without_a_mandatory_slot():
     candidates = [
-        item("AI core", "OpenAI", 100, area="ai"),
-        item("Transformative robotics breakthrough", "MIT CSAIL", 96, area="robotics", content_type="research", research_signal=True),
-        item("AI core second", "Anthropic", 95, area="ai"),
-        item("Weak policy commentary", "NIST", 40, area="future"),
+        item("AI core", "OpenAI", 100, area="ai"), item("Transformative robotics breakthrough", "MIT CSAIL", 96, area="robotics", content_type="research", research_signal=True),
+        item("AI core second", "Anthropic", 95, area="ai"), item("Weak policy commentary", "NIST", 40, area="future"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=3,
-        max_per_source=1,
-        max_per_type=3,
-        recent_source_counts={},
-        mission_aware=True,
-        strict_relevance=True,
-    )
+    selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, mission_aware=True, strict_relevance=True)
     titles = [x["title"] for x in selected]
     assert "Transformative robotics breakthrough" in titles
     assert "Weak policy commentary" not in titles
@@ -132,20 +85,10 @@ def test_high_value_convergence_can_win_on_score_without_a_mandatory_slot():
 
 def test_min_authoritative_items_is_repaired_when_feasible():
     candidates = [
-        item("AI unknown tier", "Independent Lab", 100, area="ai", tier=None),
-        item("Quantum authoritative", "IBM Research", 90, area="quantum", tier=1),
-        item("Future unknown tier", "Independent Policy Lab", 80, area="future", tier=None),
-        item("AI authoritative research", "Nature", 70, area="ai", content_type="research", tier=1, research_signal=True),
+        item("AI unknown tier", "Independent Lab", 100, area="ai", tier=None), item("Quantum authoritative", "IBM Research", 90, area="quantum", tier=1),
+        item("Future unknown tier", "Independent Policy Lab", 80, area="future", tier=None), item("AI authoritative research", "Nature", 70, area="ai", content_type="research", tier=1, research_signal=True),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=3,
-        max_per_source=1,
-        max_per_type=3,
-        recent_source_counts={},
-        mission_aware=True,
-        strict_relevance=True,
-    )
+    selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, mission_aware=True, strict_relevance=True)
     assert sum(x.get("source_tier") in {1, 2} for x in selected) >= 2
     assert any(x["source"] == "Nature" for x in selected)
     assert_portfolio_contract(selected)
@@ -153,21 +96,11 @@ def test_min_authoritative_items_is_repaired_when_feasible():
 
 def test_content_type_and_source_hard_caps_are_enforced():
     candidates = [
-        item("A1", "OpenAI", 100, area="ai", content_type="news"),
-        item("A2", "OpenAI", 99, area="convergence", content_type="news"),
-        item("A3", "OpenAI", 98, area="mind", content_type="news"),
-        item("B1", "Nature", 97, area="future", content_type="research"),
-        item("C1", "MIT", 96, area="ai", content_type="research"),
+        item("A1", "OpenAI", 100, area="ai", content_type="news"), item("A2", "OpenAI", 99, area="convergence", content_type="news"), item("A3", "OpenAI", 98, area="mind", content_type="news"),
+        item("B1", "Nature", 97, area="future", content_type="research"), item("C1", "MIT", 96, area="ai", content_type="research"),
     ]
-    selected = select_regular_portfolio(
-        candidates,
-        max_posts=5,
-        max_per_source=2,
-        max_per_type=2,
-        recent_source_counts={},
-    )
-    counts = {}
-    types = {}
+    selected = select_regular_portfolio(candidates, max_posts=5, max_per_source=2, max_per_type=2, recent_source_counts={})
+    counts, types = {}, {}
     for x in selected:
         counts[x["source"]] = counts.get(x["source"], 0) + 1
         types[x["content_type"]] = types.get(x["content_type"], 0) + 1
@@ -181,3 +114,24 @@ def test_contract_exposes_replacement_window_and_hard_ceiling():
     assert contract["replacement_buffer"] == 2
     assert contract["preferred_max_same_source"] == 1
     assert contract["hard_max_same_source"] == 2
+
+
+def test_information_gain_reduces_diminishing_returns_for_near_duplicate_topics():
+    candidates = [
+        item("New reasoning benchmark for frontier models", "OpenAI", 100),
+        item("Frontier model reasoning benchmark shows improved reasoning", "Anthropic", 99),
+        item("Brain computer interface restores speech after paralysis", "Nature", 94, area="bci", content_type="research", research_signal=True),
+    ]
+    selected = select_regular_portfolio(candidates, max_posts=2, max_per_source=1, max_per_type=2, recent_source_counts={}, mission_aware=True, strict_relevance=True)
+    titles = [x["title"] for x in selected]
+    assert "Brain computer interface restores speech after paralysis" in titles
+    assert all("information_gain_score" in x for x in selected)
+
+
+def test_information_gain_never_overrides_a_large_quality_gap():
+    candidates = [
+        item("Major verified frontier model capability breakthrough", "OpenAI", 100),
+        item("Minor unrelated tooling update", "Nature", 60, area="convergence"),
+    ]
+    selected = select_regular_portfolio(candidates, max_posts=1, max_per_source=1, max_per_type=1, recent_source_counts={}, mission_aware=True, strict_relevance=True)
+    assert selected[0]["title"] == "Major verified frontier model capability breakthrough"

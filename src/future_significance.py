@@ -1,8 +1,8 @@
 """Future-significance scoring for AI Future Radar.
 
-This layer is deliberately separate from mission relevance, evidence quality,
-and technology signal scoring. It estimates whether a candidate contributes
-meaningful information about technological trajectory and future change.
+This layer is deliberately separate from mission relevance and evidence quality.
+It estimates whether a candidate contributes meaningful information about
+technological trajectory, capability change, and future impact.
 """
 from __future__ import annotations
 
@@ -23,7 +23,11 @@ def _load_policy() -> dict[str, Any]:
 
 
 def _text(item: dict[str, Any]) -> str:
-    fields = ("title", "summary", "description", "content_type", "editorial_class", "category", "mission_area", "tags", "keywords")
+    fields = (
+        "title", "summary", "description", "why_it_matters", "evidence_text",
+        "content_type", "editorial_class", "category", "mission_area",
+        "topic_family", "tags", "keywords",
+    )
     return " ".join(str(item.get(k) or "") for k in fields).casefold()
 
 
@@ -41,23 +45,56 @@ def build_future_features(item: dict[str, Any]) -> dict[str, float]:
     text = _text(item)
     features = {name: _norm_dimension(_hits(text, values or [])) for name, values in markers.items()}
 
-    # Evidence-backed research and authoritative content get a modest floor,
-    # but evidence itself remains owned by the evidence/editorial layers.
-    if item.get("research_signal") or str(item.get("content_type") or "").casefold() in {"research", "paper", "study", "preprint"}:
-        features["research_depth"] = max(features.get("research_depth", 0.0), 0.67)
+    content_type = str(item.get("content_type") or "").casefold()
+    editorial_class = str(item.get("editorial_class") or "").casefold()
+    topic_family = str(item.get("topic_family") or "").casefold()
 
-    # Explicit editorial classes are useful semantic hints already produced by
-    # the existing classifier; they do not bypass quality gates.
-    cls = str(item.get("editorial_class") or "").casefold()
-    if cls in {"research_breakthrough", "convergence_signal"}:
+    if item.get("research_signal") or content_type in {"research", "paper", "study", "preprint"}:
+        features["research_depth"] = max(features.get("research_depth", 0.0), 0.67)
+    if editorial_class in {"research_breakthrough", "convergence_signal"}:
         features["breakthrough"] = max(features.get("breakthrough", 0.0), 0.67)
-    if cls == "major_industry_news":
+    if editorial_class == "major_industry_news":
+        features["strategic_implication"] = max(features.get("strategic_implication", 0.0), 0.67)
+    if topic_family in {"quantum_ai", "consciousness_cognition", "future_technology", "bio_ai", "bci_neuro_ai", "robotics_embodied", "computing_infrastructure"}:
+        features["cross_domain_impact"] = max(features.get("cross_domain_impact", 0.0), 0.67)
+    if item.get("strategic_forecast_signal"):
+        features["future_horizon"] = max(features.get("future_horizon", 0.0), 0.67)
         features["strategic_implication"] = max(features.get("strategic_implication", 0.0), 0.67)
 
     low_markers = cfg.get("low_value_markers", []) or []
     low_hits = _hits(text, low_markers)
-    features["low_value_penalty"] = min(float(cfg.get("low_value_penalty_cap", 0.20) or 0.20), low_hits * 0.08)
+    features["low_value_hits"] = float(low_hits)
+    features["low_value_penalty"] = min(float(cfg.get("low_value_penalty_cap", 0.30) or 0.30), low_hits * 0.10)
+
+    high_signal_dimensions = (
+        "capability_shift", "breakthrough", "cross_domain_impact",
+        "strategic_implication", "research_depth", "human_societal_impact",
+        "future_horizon", "insight_density",
+    )
+    features["substantive_signal"] = max((features.get(k, 0.0) for k in high_signal_dimensions), default=0.0)
     return features
+
+
+def is_low_future_value(item: dict[str, Any]) -> bool:
+    """Reject only explicit utility/tutorial stories lacking a compensating signal.
+
+    This is intentionally narrow. It does not reject ChatGPT/OpenAI/product news
+    merely because of the product name; a capability shift, research result,
+    strategic consequence, convergence signal, or strong future implication keeps
+    the story eligible.
+    """
+    cfg = _load_policy().get("future_significance", {})
+    if not bool(cfg.get("enabled", True)):
+        return False
+    features = build_future_features(item)
+    if features.get("low_value_hits", 0) <= 0:
+        return False
+    protected_classes = {"leader_interview", "research_breakthrough", "convergence_signal"}
+    if str(item.get("editorial_class") or "").casefold() in protected_classes:
+        return False
+    if item.get("research_signal") or item.get("interview_signal"):
+        return False
+    return features.get("substantive_signal", 0.0) < 0.34
 
 
 def score_future_significance(item: dict[str, Any]) -> tuple[float, dict[str, float]]:
@@ -86,7 +123,6 @@ def future_topic_fingerprint(item: dict[str, Any]) -> str:
     text = _text(item)
     stop = {"the", "and", "for", "with", "from", "that", "this", "about", "into", "new", "ai", "model", "models"}
     tokens = [t for t in re.findall(r"[a-z0-9][a-z0-9_-]{2,}", text) if t not in stop]
-    # Stable, compact fingerprint: top recurring tokens plus mission area.
     counts: dict[str, int] = {}
     for token in tokens:
         counts[token] = counts.get(token, 0) + 1

@@ -6,8 +6,8 @@ slot is still due, invokes the existing independent publisher once.
 
 Education generation prefers the normal LLM path. If the source contract has
 already been satisfied but every LLM provider is unavailable, a bounded
- deterministic fallback can build from the authored lesson plus verified
- current sources. This is a resilience path, not a relaxation of the source or
+deterministic fallback can build from the authored lesson plus verified
+current sources. This is a resilience path, not a relaxation of the source or
 publication gates.
 """
 from __future__ import annotations
@@ -108,7 +108,7 @@ def _deterministic_education_item(lesson: dict, verified_sources: list[dict]) ->
         "term_b_simple": f"{b['fa']} را می‌توان به‌صورت ساده این‌گونه دید: {b['seed']}",
         "relationship": lesson.get("relation", ""),
         "example": (
-            f"در یک سامانه مرتبط با «{lesson.get('title', '').strip() or a['term']}", "
+            f"در یک سامانه مرتبط با «{lesson.get('title', '').strip() or a['term']}»، "
             f"مفهوم {a['term']} می‌تواند بخش نخست مسئله را پوشش دهد و {b['term']} نقش مکمل آن را در اجرای سامانه ایفا کند؛ "
             "ترکیب این دو باید با هدف، محدودیت‌ها و شیوه ارزیابی سامانه سازگار باشد."
         ),

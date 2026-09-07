@@ -27,6 +27,9 @@ def _num(value):
 
 def _record(item: dict, audit_index: int) -> dict:
     vector = item.get("signal_vector") or {}
+    pre_signal = item.get("editorial_score_pre_signal", item.get("editorial_score"))
+    future_score = item.get("future_significance_score")
+    radar_composite = item.get("radar_composite_score")
     return {
         "schema_version": "ranking-audit.v1",
         "run_id": os.getenv("GITHUB_RUN_ID") or "local",
@@ -42,8 +45,13 @@ def _record(item: dict, audit_index: int) -> dict:
         "source": str(item.get("source") or item.get("source_name") or ""),
         "source_type": str(item.get("source_type") or ""),
         "source_tier": item.get("source_tier"),
-        "content_type": str(item.get("content_type") or "unknown"),
-        "editorial_score": _num(item.get("editorial_score_pre_signal", item.get("editorial_score"))),
+        # Keep the historical editorial_score field stable as the pre-signal
+        # publication-value score, but expose every future-adjustment component
+        # explicitly so a production rank can be reconstructed from the audit.
+        "editorial_score": _num(pre_signal),
+        "editorial_score_pre_signal": _num(pre_signal),
+        "future_significance_score": _num(future_score),
+        "radar_composite_score": _num(radar_composite),
         "signal_score": _num(item.get("signal_score")),
         "canonical_rank_score": _num(item.get("final_editorial_score")),
         "signal_class": item.get("signal_class"),

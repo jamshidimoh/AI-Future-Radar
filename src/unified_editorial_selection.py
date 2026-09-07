@@ -15,7 +15,7 @@ SELECTION_PATH = ROOT / "config" / "selection_policy.yaml"
 _AREA_MAP = {"ai": "ai_core", "ai_core": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "future": "future_governance", "future_governance": "future_governance", "mind": "mind_cognition", "mind_cognition": "mind_cognition", "convergence": "convergence"}
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
 _INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
-_COMMUNITY_MARKERS = ("reddit", "community", "aggregator")
+_COMMUNITY_MARKERS = ("reddit", "community")
 _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
 
 
@@ -119,15 +119,19 @@ def _source_tier(item: dict[str, Any]) -> int | None:
 
 
 def _is_community(item: dict[str, Any]) -> bool:
+    """Identify actual community sources, not merely low-authority publishers.
+
+    Tier-3 means unverified/lower authority; it is not synonymous with Reddit or
+    another community source. Treating every Tier-3 Google News publisher as a
+    community source previously collapsed the normal portfolio to a single item
+    even when the candidate was a legitimate news publisher.
+    """
     value = " ".join(str(item.get(k) or "").strip().casefold() for k in ("source", "source_name", "source_type", "source_domain"))
-    if any(m in value for m in _COMMUNITY_MARKERS):
-        return True
-    tier = _source_tier(item)
-    return tier is not None and tier >= 3
+    return any(m in value for m in _COMMUNITY_MARKERS)
 
 
 def candidate_score(item: dict[str, Any]) -> float:
-    for key in ("final_editorial_score", "editorial_score", "mission_score", "signal_score", "score"):
+    for key in ("final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
         except (TypeError, ValueError):
@@ -252,8 +256,6 @@ def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts:
                 candidates2 = research_first
         return max(candidates2, key=lambda x: (portfolio_value(x, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]), -_rank_key(x, recent)[0], candidate_score(x)))
 
-    # Mission targets are intentionally soft. With the production contract their values are zero;
-    # this block remains only for backwards-compatible policy configurations.
     if mission_aware and limit > 0:
         for _ in range(min(contract["ai_core_target_min"], limit)):
             c = best([x for x in ordered if mission_area(x) == "ai_core"], prefer_research=True)
@@ -276,8 +278,6 @@ def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts:
                 break
             add(c, "mission_target:research")
 
-    # Greedy portfolio construction: each next item is judged against what is already selected.
-    # This is the actual information-gain/diminishing-return step; it is not a quota.
     while len(selected) < limit:
         pool = [x for x in eligible if id(x) not in selected_ids and admissible(x, repeat_source=False)]
         if not pool:
@@ -294,7 +294,6 @@ def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts:
             ),
         )
         if mission_aware and mission_area(best_item) == "ai_core" and area_counts.get("ai_core", 0) >= contract["ai_core_target_max"]:
-            # ai_core_target_max is a legacy hard ceiling only when explicitly configured below capacity.
             alternative = [x for x in pool if mission_area(x) != "ai_core"]
             if alternative:
                 best_item = max(alternative, key=lambda x: (portfolio_value(x, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]), candidate_score(x)))
@@ -302,7 +301,6 @@ def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts:
                 break
         add(best_item, "portfolio_value")
 
-    # If source repetition is permitted, use remaining capacity only after distinct-source candidates.
     if len(selected) < limit and source_cap > 1:
         while len(selected) < limit:
             pool = [x for x in eligible if id(x) not in selected_ids and admissible(x, repeat_source=True)]

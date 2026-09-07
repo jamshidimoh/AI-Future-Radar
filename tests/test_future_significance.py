@@ -1,7 +1,8 @@
 import unittest
 
-from src.future_significance import annotate_future_significance, score_future_significance
+from src.future_significance import annotate_future_significance, is_low_future_value, score_future_significance
 from src.editorial import select_editorial
+from src.story_gate import gate_story_candidates
 
 
 class FutureSignificanceTests(unittest.TestCase):
@@ -28,6 +29,20 @@ class FutureSignificanceTests(unittest.TestCase):
         b, _ = score_future_significance(breakthrough)
         g, _ = score_future_significance(generic)
         self.assertGreater(b, g)
+        self.assertTrue(is_low_future_value(generic))
+        self.assertFalse(is_low_future_value(breakthrough))
+
+    def test_capability_story_about_chatgpt_is_not_blacklisted(self):
+        item = {
+            "title": "How to use ChatGPT for autonomous scientific discovery",
+            "summary": "A new capability enables long-horizon reasoning and autonomous research.",
+            "content_type": "news",
+            "category": "ai",
+            "editorial_class": "ai_signal",
+        }
+        self.assertFalse(is_low_future_value(item))
+        score, _ = score_future_significance(item)
+        self.assertGreater(score, 0)
 
     def test_annotation_preserves_editorial_score(self):
         item = {"title": "New AI capability", "summary": "research breakthrough", "editorial_score": 80}
@@ -73,6 +88,32 @@ class FutureSignificanceTests(unittest.TestCase):
         self.assertNotIn("How to use ChatGPT: 10 productivity tips", titles)
         self.assertEqual(len(selected), 2)
         self.assertTrue(all("future_significance_score" in x for x in selected))
+
+    def test_canonical_story_gate_applies_future_value_before_portfolio_selection(self):
+        candidates = [
+            {
+                "title": "How to use ChatGPT: 20 productivity tips",
+                "summary": "prompt collection and productivity hacks",
+                "content_type": "news",
+                "source": "A",
+                "source_tier": 1,
+                "category": "ai",
+            },
+            {
+                "title": "BCI restores speech through neural decoding",
+                "summary": "University research demonstrates a new brain-computer capability and clinical implications.",
+                "content_type": "research",
+                "source": "University Lab",
+                "source_tier": 1,
+                "category": "bci",
+                "research_signal": True,
+            },
+        ]
+        survivors = gate_story_candidates([], [], candidates, [], threshold=0.45)
+        titles = [x["title"] for x in survivors]
+        self.assertNotIn("How to use ChatGPT: 20 productivity tips", titles)
+        self.assertIn("BCI restores speech through neural decoding", titles)
+        self.assertTrue(all("future_significance_score" in x for x in survivors))
 
 
 if __name__ == "__main__":

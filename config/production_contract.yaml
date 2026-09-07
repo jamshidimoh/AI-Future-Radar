@@ -24,16 +24,19 @@ protected:
       duplicate_key: "source"
 
 mission:
-  required_areas: [ai_core, convergence, mind_cognition, future_governance]
+  supported_areas: [ai_core, convergence, mind_cognition, future_governance]
   min_unique_sources: 3
   preferred_max_same_source_per_run: 1
   hard_max_same_source_per_run: 2
+  max_same_mission_area_per_run: 3
   min_authoritative_items: 2
   community_max: 0
-  ai_core_target: [1, 2]
-  convergence_target: 1
-  mind_future_target: 1
-  research_target: 1
+  # Area/research targets are intentionally zero: coverage is a soft preference,
+  # never a reason to publish a weaker item.
+  ai_core_target: [0, 3]
+  convergence_target: 0
+  mind_future_target: 0
+  research_target: 0
   interview_target_max: 1
 
 selection:

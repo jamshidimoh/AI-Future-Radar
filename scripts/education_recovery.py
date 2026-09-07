@@ -5,15 +5,16 @@ post-run guard checks the authoritative cadence state and, when an Education
 slot is still due, invokes the existing independent publisher once.
 
 Education generation prefers the normal LLM path. If the source contract has
-already been satisfied but every LLM provider is unavailable, Lesson 41 has a
-bounded deterministic fallback built from its curriculum definitions and the
-verified current sources. This is a resilience path, not a relaxation of the
-source or publication gates.
+already been satisfied but every LLM provider is unavailable, a bounded
+ deterministic fallback can build from the authored lesson plus verified
+ current sources. This is a resilience path, not a relaxation of the source or
+publication gates.
 """
 from __future__ import annotations
 
 import os
 import sys
+import traceback
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -87,27 +88,34 @@ def _install_authoritative_source_override() -> None:
     print("[Education Recovery] authoritative source override installed", flush=True)
 
 
-def _deterministic_lesson_41_item(lesson: dict, verified_sources: list[dict]) -> dict:
+def _deterministic_education_item(lesson: dict, verified_sources: list[dict]) -> dict:
     """Build a bounded, source-grounded lesson without an LLM."""
     a = lesson["a"]
     b = lesson["b"]
     return {
         "content_type": "education",
         "category": "ai",
-        "education_id": int(lesson.get("id", 41) or 41),
+        "education_id": int(lesson.get("id", 0) or 0),
         "education_status": lesson.get("status", "established"),
-        "education_title": lesson.get("title", "Agent Architecture، Planning و State"),
+        "education_title": lesson.get("title", ""),
         "education_term_a": a["term"],
         "education_term_a_fa": a["fa"],
         "education_term_b": b["term"],
         "education_term_b_fa": b["fa"],
         "term_a_definition": a["seed"],
-        "term_a_simple": "معماری عامل، نقشه ساختاری سامانه است: مشخص می‌کند مدل، وضعیت، ابزارها، حافظه و چرخه اجرای عامل چگونه کنار هم کار کنند.",
+        "term_a_simple": f"{a['fa']} را می‌توان به‌صورت ساده این‌گونه دید: {a['seed']}",
         "term_b_definition": b["seed"],
-        "term_b_simple": "برنامه‌ریزی یعنی شکستن یک هدف به گام‌ها یا تصمیم‌های میانی تا عامل بتواند مسیر رسیدن به نتیجه را دنبال کند.",
-        "relationship": lesson.get("relation", "Agent معماری سامانه است و planning یکی از قابلیت‌های تصمیم‌گیری در آن معماری است."),
-        "example": "در یک عامل پژوهشی، معماری می‌تواند مدل، حافظه، ابزار جست‌وجو و وضعیت اجرای کار را به هم متصل کند؛ برنامه‌ریزی مشخص می‌کند برای رسیدن به هدف، چه گام‌هایی باید اجرا و در چه نقاطی وضعیت دوباره ارزیابی شود.",
-        "takeaway": "معماری عامل چارچوب کل سامانه را مشخص می‌کند و برنامه‌ریزی یکی از قابلیت‌های درون آن برای تبدیل هدف به مسیر اجرایی است. هرچه کار طولانی‌تر و ابزارمحورتر باشد، تفکیک معماری، وضعیت و برنامه‌ریزی اهمیت بیشتری پیدا می‌کند.",
+        "term_b_simple": f"{b['fa']} را می‌توان به‌صورت ساده این‌گونه دید: {b['seed']}",
+        "relationship": lesson.get("relation", ""),
+        "example": (
+            f"در یک سامانه مرتبط با «{lesson.get('title', '').strip() or a['term']}", "
+            f"مفهوم {a['term']} می‌تواند بخش نخست مسئله را پوشش دهد و {b['term']} نقش مکمل آن را در اجرای سامانه ایفا کند؛ "
+            "ترکیب این دو باید با هدف، محدودیت‌ها و شیوه ارزیابی سامانه سازگار باشد."
+        ),
+        "takeaway": (
+            f"نکته کلیدی این درس این است که {a['term']} و {b['term']} دو مفهوم متمایزند اما در طراحی و اجرای سامانه‌های AI می‌توانند مکمل یکدیگر باشند؛ "
+            "مرزبندی دقیق آن‌ها باعث می‌شود معماری، اجرا و ارزیابی با هم اشتباه نشوند."
+        ),
         "education_sources": verified_sources,
         "_provider": "deterministic curriculum fallback",
         "_review_provider": "source-grounded deterministic QA",
@@ -161,22 +169,25 @@ def _collect_verified_current_sources(lesson: dict) -> list[dict]:
 
 def _build_with_deterministic_recovery() -> dict | None:
     lesson, lesson_id, total = educational_content._next_lesson()
-    if not lesson or int(lesson_id) != 41:
+    if not lesson or not int(lesson_id):
         return None
 
     # The deterministic path is deliberately independent from the LLM quality
     # chain. It re-checks the same live source policy and only then builds from
-    # authored curriculum definitions.
+    # the authored curriculum definition of the lesson that is actually due.
     verified_sources = _collect_verified_current_sources(lesson)
     if len(verified_sources) < 2:
         return None
 
-    item = _deterministic_lesson_41_item(lesson, verified_sources)
+    item = _deterministic_education_item(lesson, verified_sources)
     item["education_total"] = total
-    item["education_track"] = "foundation"
-    item["education_track_label"] = "مفاهیم پایه و بنیادی"
-    item["education_number"] = lesson_id
-    print("[Education Recovery] deterministic Lesson 41 fallback selected", flush=True)
+    item["education_track"] = "emerging" if lesson_id >= 101 else "foundation"
+    item["education_track_label"] = "ترمینولوژی روز و فناوری‌های نو" if lesson_id >= 101 else "مفاهیم پایه و بنیادی"
+    item["education_number"] = lesson_id - 100 if lesson_id >= 101 else lesson_id
+    print(
+        f"[Education Recovery] deterministic lesson fallback selected lesson={lesson_id}",
+        flush=True,
+    )
     return item
 
 
@@ -245,7 +256,8 @@ def main() -> int:
                     )
                     ok = True
         except Exception as exc:
-            print(f"[Education Recovery] deterministic fallback failed: {exc}", flush=True)
+            print(f"[Education Recovery] deterministic fallback failed: {exc!r}", flush=True)
+            traceback.print_exc()
 
     if not ok:
         print(

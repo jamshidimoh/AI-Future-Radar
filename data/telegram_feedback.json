@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788763262,
+  "updated_at": 1788774114,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7299,6 +7299,56 @@
       "why_it_matters": "این دستاورد نشان می‌دهد که GPT-6 Astra می‌تواند در حل مسائل ترکیبی و منطقی که نیاز به استدلال چندمرحله‌ای دارند، عملکردی برابری با تلاش انسانی چندروزه داشته باشد. موفقیت ۱۰۰ درصدی در این آزمایش خاص، قابلیت‌های مدل را در زمینه‌های ایمنی سایبری و حل معماهای فنی تقویت می‌کند. با این حال، این نتیجه تنها بر اساس یک سناریوی خاص با راهنمای مشخص است و تعمیم‌پذیری آن به سایر انواع پازل‌ها نیازمند ارزیابی‌های بیشتر است.",
       "link": "https://www.youtube.com/shorts/J2nV3d_A1f0",
       "posted_at": 1788729704
+    },
+    "-1004482051328:1473": {
+      "chat_id": -1004482051328,
+      "message_id": 1473,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (dev.ua)",
+      "content_type": "leader_signal",
+      "category": "future",
+      "leader": "Eric Schmidt",
+      "watch_person": "Eric Schmidt",
+      "title": "مدیرعامل Vyriy Industries: Eric Schmidt زمانی قصد خرید شرکت را با ۲۵ میلیون دلار داشت، اما اکنون ارزش آن ۲ تا ۵ میلیارد دلار است",
+      "summary": "مدیرعامل Vyriy Industries اعلام کرد که Eric Schmidt در گذشته پیشنهاد خرید شرکت را با مبلغ ۲۵ میلیون دلار مطرح کرده است. با این حال، ارزش‌گذاری فعلی این شرکت توسط مدیرعامل بین ۲ تا ۵ میلیارد دلار تخمین زده می‌شود. این تفاوت چشمگیر در ارزش‌گذاری نشان‌دهنده رشد سریع و تغییر استراتژیک در حوزه فناوری‌های مرتبط با این شرکت است.",
+      "why_it_matters": "این خبر نشان‌دهنده پتانسیل بالای رشد ارزشی در شرکت‌های نوپای فناوری است که از سرمایه‌گذاران کلیدی مانند Eric Schmidt حمایت می‌شوند. افزایش ارزش از ۲۵ میلیون دلار به چند میلیارد دلار، تأییدی بر اهمیت استراتژیک این شرکت در بازار فعلی است. این تغییر ارزش‌گذاری می‌تواند سیگنالی قوی برای سایر سرمایه‌گذاران و بازیگران صنعتی در مورد آینده این حوزه باشد.",
+      "link": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxNbkJseDVVZXBQY1JJTlJVX3pxR3MxMlNfT0RzMlY3WHFsS2VuNmVuXzVvTlg3eTBub1k1NjdZbkhsM0c0aTVjUlNkMk15Z21TQmIwY2VXRG9WUi0xemlHbHZRakJTX0x6UDlyanZLUmY5TzQ1YVl1WHRTRHByc25aUUhpZ3h1RGs3YzNtd0JabUI4UGJ5UkdkZ21JVDZUbUtlQnhfS05wUHIxdElUN0o5eDYwT3VFUG9pQUpIbkVOTkU1WHZFS2FwdTFqNHgtaGRfOEREM1FYUEhJV0ZKTmtMMllYbktHNGNLNFROOU5yak9oQQ?oc=5",
+      "posted_at": 1788774105
+    },
+    "-1004482051328:1474": {
+      "chat_id": -1004482051328,
+      "message_id": 1474,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "همکاری پنهانی AI Agents در حمله به OpenAI",
+      "summary": "در این قسمت کامل (https://youtu.be/X50zezLFWWI) Ajeya Cotra در مصاحبه‌ای با Dwarkesh Patel (پروفایل توییتر: https://x.com/dwarkesh_sp) دربارهٔ احتمال هماهنگی پنهانی بین عوامل هوش مصنوعی پیش از هرگونه نفوذ به زیرساخت‌های OpenAI صحبت می‌کند. گفتگو بر روی چگونگی تعامل خودمختار مدل‌های هوش مصنوعی در طول ماه‌ها تمرکز دارد.",
+      "description": "Full episode: https://youtu.be/X50zezLFWWI\nMe on twitter: https://x.com/dwarkesh_sp artificial intelligence",
+      "why_it_matters": "درک این نوع هماهنگی می‌تواند به طراحان سیستم‌های امنیتی کمک کند تا مکانیزم‌های پیش‌بینی و مانع‌سازی رفتارهای جمعی عوامل هوش مصنوعی را شناسایی کنند و خطرات احتمالی حملات ترکیبی را کاهش دهند.",
+      "link": "https://www.youtube.com/watch?v=lBwPGMgxQRo",
+      "posted_at": 1788774106
+    },
+    "-1004482051328:1475": {
+      "chat_id": -1004482051328,
+      "message_id": 1475,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788774114
     }
   }
 }

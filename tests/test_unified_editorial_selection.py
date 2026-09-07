@@ -19,10 +19,8 @@ def item(title, source, score, *, area="ai", content_type="news", tier=1, resear
 
 def test_distinct_sources_are_preferred_before_source_repeat():
     candidates = [
-        item("OpenAI A", "OpenAI", 100, area="ai"),
-        item("OpenAI B", "OpenAI", 99, area="ai"),
-        item("MIT A", "MIT CSAIL", 92, area="convergence"),
-        item("Nature A", "Nature", 90, area="mind"),
+        item("OpenAI A", "OpenAI", 100, area="ai"), item("OpenAI B", "OpenAI", 99, area="ai"),
+        item("MIT A", "MIT CSAIL", 92, area="convergence"), item("Nature A", "Nature", 90, area="mind"),
     ]
     selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={})
     sources = [x["source"] for x in selected]
@@ -46,6 +44,18 @@ def test_community_sources_are_excluded_from_normal_portfolio():
     candidates = [item("Reddit story", "Reddit - r/artificial", 120, tier=3), item("MIT story", "MIT CSAIL", 90, area="convergence"), item("Nature story", "Nature", 80, area="mind")]
     selected = select_regular_portfolio(candidates, max_posts=4, max_per_source=2, max_per_type=4, recent_source_counts={})
     assert all("reddit" not in x["source"].casefold() for x in selected)
+
+
+def test_tier3_publisher_is_not_treated_as_community_source():
+    candidates = [
+        item("Strong lower-authority publisher story", "Independent Newsroom", 100, tier=3),
+        item("Authoritative story A", "Nature", 95, tier=1, area="mind"),
+        item("Authoritative story B", "MIT CSAIL", 90, tier=1, area="convergence"),
+    ]
+    selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, mission_aware=True, strict_relevance=True)
+    assert "Strong lower-authority publisher story" in [x["title"] for x in selected]
+    assert sum(x.get("source_tier") in {1, 2} for x in selected) >= 2
+    assert all("community" not in x["source"].casefold() for x in selected)
 
 
 def test_mission_diversity_targets_are_soft_not_mandatory():

@@ -27,9 +27,10 @@ editorial:
 # - Within a run, distinct sources are preferred first; source repetition is
 #   allowed only during adaptive backfill when capacity remains.
 # - Historical source usage is a bounded preference signal, never a hard exclusion.
-# - Mission targets are applied before score-only filling: convergence,
-#   mind/cognition, future/governance, and research evidence get explicit
-#   coverage opportunities when eligible.
+# - Mission areas are not mandatory targets. They may influence future-significance
+#   and diversity ranking, but a weaker item must never be selected to fill an area.
+# - max_same_mission_area is an operational ceiling equal to publication capacity,
+#   so it does not create an artificial topic quota for the normal 3-item portfolio.
 # - Community/aggregator sources are not eligible for the normal portfolio.
 # - Candidate_window exists to support replacement after a summary/editorial
 #   quality rejection without relaxing publication quality gates.

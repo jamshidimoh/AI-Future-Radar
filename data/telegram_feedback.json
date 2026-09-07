@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788799057,
+  "updated_at": 1788800440,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7487,6 +7487,37 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788799057
+    },
+    "-1004482051328:1484": {
+      "chat_id": -1004482051328,
+      "message_id": 1484,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CNBC)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "OpenAI آغاز می‌کند: مدل Astra با هشدار درباره قابلیت‌های پیشرفته سایبری",
+      "summary": "OpenAI فرآیند انتشار تدریجی مدل زبانی جدید خود به نام Astra را آغاز کرده است. این اقدام پس از هشدار صریح شرکت درباره قابلیت‌های پیشرفته و خطرناک این مدل در حوزه سایبری صورت گرفته است. OpenAI تأکید کرده که دسترسی به Astra به‌صورت محدود و تحت نظارت ارائه می‌شود تا ریسک‌های امنیتی مرتبط با آن مدیریت شود.",
+      "why_it_matters": "هشدار OpenAI درباره قابلیت‌های سایبری Astra نشان می‌دهد که مرز بین نوآوری در هوش مصنوعی و ریسک‌های امنیتی فزاینده در حال نزدیک شدن است. این رویکرد تدریجی در انتشار مدل‌های پیشرفته، الگویی برای مدیریت ریسک‌های ناشی از قابلیت‌های تخریبی احتمالی در زیرساخت‌های دیجیتال ایجاد می‌کند. سازمان‌ها و نهادهای نظارتی باید با در نظر گرفتن این هشدارها، چارچوب‌های امنیتی خود را برای مقابله با تهدیدات سایبری مبتنی بر AI به‌روزرسانی کنند.",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTE1iUlVPODl5bTBweko3Y1pHY1Y3RzZua3FHak9hVm5aa3hZWmNQcmVrVW1VMHdXME04cDJITVM4TmlBdUZWZ3JIQlgtdUZPMjlEd3pUdmNkV3BsT3FRMTEwNm1GcnRJU2NXeElBYVZhc9IBdEFVX3lxTE9NYUtIZlJ6NHoxSGladzc0bkc5Tm8xWjJkcHdJeHJHeUVfUlZ4b2ZoTC1ueE9HaEI4ZFZoUXAxUldGZHYweTd2ZEhtUkJiaFFid0FZdkdRS2Z1OV9NY2tzb3BKQW5wZGh0SER5aTlOdm9sbWVD?oc=5",
+      "posted_at": 1788800435
+    },
+    "-1004482051328:1485": {
+      "chat_id": -1004482051328,
+      "message_id": 1485,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788800440
     }
   }
 }

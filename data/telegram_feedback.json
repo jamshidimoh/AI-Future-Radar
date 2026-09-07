@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788796185,
+  "updated_at": 1788799057,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7456,6 +7456,37 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788796185
+    },
+    "-1004482051328:1482": {
+      "chat_id": -1004482051328,
+      "message_id": 1482,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (AI Insider)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "title": "هفته پیش‌رو در هوش مصنوعی: ادعای رسیدن به AGI توسط Jensen Huang و هشدارهای OpenAI",
+      "summary": "این گزارش هفتگی به بررسی رویدادهای کلیدی پیش‌رو در حوزه هوش مصنوعی می‌پردازد که شامل ادعای Jensen Huang مبنی بر \"AGI\" است. همچنین به هشدارهای مطرح‌شده توسط OpenAI، تأثیرات ساخت دیتاسنترها بر زمین‌های روستایی و ممنوعیت استفاده از هوش مصنوعی در مدارس دولتی نیویورک اشاره دارد. در بخش پایانی، به گزارش‌های مالی و رویدادهای آینده در این صنعت پرداخته می‌شود.",
+      "why_it_matters": "ادعای رسیدن به AGI توسط رهبر NVIDIA می‌تواند انتظارات بازار و مسیر تحقیقاتی صنعت را تغییر دهد، در حالی که هشدارهای OpenAI و محدودیت‌های قانونی در مدارس نیویورک نشان‌دهنده افزایش نظارت بر اخلاق و کاربرد این فناوری‌هاست. از سوی دیگر، تأثیرات زیست‌محیطی و زمینی دیتاسنترها به چالشی فزاینده برای توسعه زیرساخت‌های هوش مصنوعی تبدیل شده است.",
+      "link": "https://news.google.com/rss/articles/CBMioAJBVV95cUxNN2c5X01MdGMtQzF1N1FRd2ZhX3hFcnQwSWNFbDk3eEV4WjJlcVBjSVVoX3UwRzJKc2ZSbm1NZUwwLXluNEN1TlprZUZGOEtWVDlaWG1yMExqSjUwRmprUFFtVTFVbE8yM1M3c0RBYUVoR1RjcmJPUnRxbDZlTzQwNVZsSFpNRzZMX1lkT2dQRldTQlpzSzkyTENuQkJhVGxWU2l6ZnhnQUJ1UTNJcVh4Rjc5VXdBZlBJMmJvakMzZFNYY2pQTVExMUswejFhdzkxZ3pqbmhkaDgzQlEwT1VBcTlhSTRkMnRvZXAwbjVUQUVLY0paUTkxSWFwLU4zR3dwTGpGQWY0cEgtQjJvWV8td3piTlNZQmVuVnZBTzI0eVo?oc=5",
+      "posted_at": 1788799050
+    },
+    "-1004482051328:1483": {
+      "chat_id": -1004482051328,
+      "message_id": 1483,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788799057
     }
   }
 }

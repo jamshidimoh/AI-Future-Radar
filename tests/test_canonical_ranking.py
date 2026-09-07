@@ -7,6 +7,29 @@ def test_canonical_rank_combines_editorial_and_signal_once():
     assert ranking.canonical_rank_score(item) == 75.0
 
 
+def test_canonical_rank_uses_future_adjusted_editorial_value_when_present():
+    item = {
+        "editorial_score_pre_signal": 60.0,
+        "radar_composite_score": 90.0,
+        "editorial_score": 110.0,
+        "signal_score": 40.0,
+    }
+    assert ranking.canonical_rank_score(item) == 77.5
+
+
+def test_future_adjusted_value_can_change_period_ordering():
+    future_story = {
+        "editorial_score_pre_signal": 70.0,
+        "radar_composite_score": 92.0,
+        "signal_score": 50.0,
+    }
+    generic_story = {
+        "editorial_score_pre_signal": 88.0,
+        "signal_score": 50.0,
+    }
+    assert ranking.canonical_rank_score(future_story) > ranking.canonical_rank_score(generic_story)
+
+
 def test_prepare_features_does_not_add_person_or_model_bonus_to_final_score(monkeypatch):
     monkeypatch.setattr(ranking, "model_release_bonus", lambda item: 32.0)
     monkeypatch.setattr(ranking, "priority_people_features", lambda item: (["Sam Altman"], True, 50.0))

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788863204,
+  "updated_at": 1788864112,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7719,6 +7719,25 @@
       "why_it_matters": "این اظهارنظر نشان می‌دهد که شکاف بین قابلیت‌های فنی پیشرفته و درک عمومی آن‌ها همچنان پابرجاست. عدم موفقیت در ارتباط‌دهی می‌تواند منجر به سوءتفاهم‌ها، مقاومت‌های اجتماعی و کندی پذیرش فناوری در بخش‌های کلیدی اقتصاد شود. بنابراین، تمرکز بر شفافیت و آموزش کاربردی، به‌عنوان یک اولویت استراتژیک برای رهبران صنعت AI مطرح می‌شود تا اعتماد عمومی و کاربردپذیری افزایش یابد.",
       "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxORzluU3ZZbkUxU2JYUzViMVduZGh4UkQwVG84MUp2b19YOWpzNFNrQmxRQzFqTGhJQXJPLUJxNmh1YjFmWlNJMEZTeWNXZFlGbDg0WWNjY0lFMF9GZXNLay02b041dEt0ZkV2cmFhbmdCNk1raDR0NDdwb2tYTllXYTBlUFVZZ2F0RnEyNWduODhjQ1lTSHRONkZRekRsTWRVUTBIV0NINVdJaXY2OW5PTzNKc0dibVl0VlIwWEtVN2hyeUkyUDVlYg?oc=5",
       "posted_at": 1788861498
+    },
+    "-1004482051328:1498": {
+      "chat_id": -1004482051328,
+      "message_id": 1498,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (politico.com)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Mark Zuckerberg",
+      "watch_person": "Mark Zuckerberg",
+      "title": "زاکربرگ در تماس خصوصی با ترامپ، مخالفت خود را با طرح هوش مصنوعی کاخ سفید اعلام کرد",
+      "summary": "بر اساس گزارش Politico، Mark Zuckerberg در یک تماس خصوصی با Donald Trump، موضع خود را در مخالفت با پیشنهاد هوش مصنوعی کاخ سفید اعلام کرده است. این خبر نشان‌دهنده یک شکاف احتمالی در دیدگاه‌های رهبران فناوری و دولت در مورد چارچوب‌های نظارتی یا توسعه‌ای AI است. متن ارائه‌شده جزئیات فنی یا محتوای دقیق طرح مورد بحث را ذکر نکرده و صرفاً بر وجود این اختلاف‌نظر در سطح بالا تأکید دارد.",
+      "why_it_matters": "این تعامل مستقیم بین یک رهبر کلیدی صنعت فناوری و رئیس‌جمهور، سیگنال مهمی از پیچیدگی‌های سیاسی در تنظیم‌گری هوش مصنوعی ارسال می‌کند. مخالفت Zuckerberg می‌تواند فرآیند تصویب یا اجرای طرح‌های دولتی را تحت تأثیر قرار دهد و نشان دهد که حتی در سطح بالاترین تصمیم‌گیری‌ها، اجماعی بین بخش خصوصی و عمومی وجود ندارد. این موضوع اهمیت دیپلماسی فناوری و تأثیرگذاری شرکت‌های بزرگ بر سیاست‌گذاری‌های ملی را برجسته می‌سازد.",
+      "link": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxNX05ZdHdWOW1wVXU1My11RHBMX3Z1Q19STWRjVkpRemFrQmhqRkI3UnlXQVRscnA0SjRTSTdWOVhKQ3ZKUzkwX2J4Z0YwVW9yNXZpRnRwZGFNREpoUW1KeG11OF82c3VOeEg3QjAweWp5WHlGclRFVU9lSl9JZ19QWWM1OEtkOHptTTR3N1hENmZsam9oaGFYaC1aSE53SHpDTF8xcEpDdHFGWmhwdzdqU0hLSTUzaWFBYTNhQ0haMU1CSnRBMzVTV3diQ3RDWUJ4eEs0Wmg2SkM4eWk5enBFRFdsYkc?oc=5",
+      "posted_at": 1788864112
     }
   }
 }

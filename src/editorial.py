@@ -18,6 +18,49 @@ _AI_BRIDGE_TERMS = (
     "مدل زبانی بزرگ", "شبکه عصبی", "عامل هوشمند", "عامل‌های هوشمند",
 )
 
+_EARLY_STRATEGIC_TERMS = (
+    "ai governance", "ai policy", "ai regulation", "artificial intelligence regulation",
+    "technology policy", "digital policy", "frontier model", "ai safety", "ai security",
+    "ai agents", "agentic ai", "ai infrastructure", "ai chip", "ai data center",
+    "هوش مصنوعی", "حکمرانی هوش مصنوعی", "سیاست‌گذاری هوش مصنوعی", "تنظیم‌گری هوش مصنوعی",
+)
+_CONSEQUENTIAL_TERMS = (
+    "breach", "hack", "hacked", "security incident", "safety incident", "rogue agent",
+    "misuse", "shutdown", "recall", "regulator", "regulatory action", "lawsuit",
+    "ban", "sanction", "critical vulnerability", "data leak", "agent hijack",
+)
+_EMERGING_TERMS = (
+    "quantum computing", "quantum computer", "quantum chip", "qubit", "brain-computer interface",
+    "bci", "neurotechnology", "humanoid robot", "physical ai", "robot foundation model",
+    "ai accelerator", "gpu", "npu", "tpu", "photonic computing", "neuromorphic",
+    "synthetic biology", "protein design", "computational biology",
+)
+
+
+def _contains_any(text, terms):
+    return any(str(term).casefold() in text for term in terms)
+
+
+def _early_inclusion_reason(item, combined):
+    leader = bool(item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("is_leader"))
+    interview = has_interview_evidence(item)
+    if leader and interview:
+        return "leader_interview"
+    if leader and str(item.get("leader") or item.get("watch_person") or "").strip():
+        return "key_actor"
+    if _contains_any(combined, _CONSEQUENTIAL_TERMS) and _contains_any(combined, _AI_BRIDGE_TERMS + _EARLY_STRATEGIC_TERMS):
+        return "consequential_ai_or_tech"
+    if _contains_any(combined, _EARLY_STRATEGIC_TERMS) and (_contains_any(combined, _AI_BRIDGE_TERMS) or str(item.get("category") or "").casefold() in {"ai", "future"}):
+        return "strategic_ai_or_tech"
+    if _contains_any(combined, _EMERGING_TERMS):
+        try:
+            tier = int(item.get("source_tier") or 3)
+        except (TypeError, ValueError):
+            tier = 3
+        if tier in {1, 2} or item.get("curated_discovery"):
+            return "emerging_technology"
+    return ""
+
 
 def classify_editorial_item(item, prior=None):
     result = dict(_classify_editorial_item(item, prior or {}))
@@ -50,6 +93,7 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
 
 def filter_ai_relevance(items, ai_keywords=None):
     normalized = []
+    rescue = []
     for raw in items or []:
         item = dict(raw)
         title = str(item.get("title") or "")
@@ -59,8 +103,9 @@ def filter_ai_relevance(items, ai_keywords=None):
         combined = f"{title} {summary} {evidence}".casefold()
         bridge_hits = [term for term in _AI_BRIDGE_TERMS if term.casefold() in combined]
         curated_trusted = bool(item.get("curated_discovery") and preferred and int(item.get("source_tier") or 3) in {1, 2})
+        early_reason = _early_inclusion_reason(item, combined)
 
-        if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits:
+        if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits and not early_reason:
             item["_force_reject_ai_gate"] = True
         if evidence:
             item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
@@ -68,7 +113,18 @@ def filter_ai_relevance(items, ai_keywords=None):
             item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
         item["_curated_trusted_ai_bridge"] = curated_trusted
         item["_has_direct_ai_evidence"] = bool(bridge_hits)
-        normalized.append(item)
+        if early_reason and not bridge_hits:
+            item["early_inclusion"] = True
+            item["early_inclusion_reason"] = early_reason
+            item["relevance_reason"] = f"early_inclusion:{early_reason}"
+            item["_ai_link"] = True
+            item["ai_relevance"] = True
+            item["ai_relevance_confidence"] = 0.55 if early_reason in {"key_actor", "emerging_technology"} else 0.65
+            item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), 5.5)
+            item["ai_relevance_quality"] = "early_inclusion"
+            rescue.append(item)
+        else:
+            normalized.append(item)
 
     keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
     result = _filter_ai_relevance(
@@ -103,15 +159,16 @@ def filter_ai_relevance(items, ai_keywords=None):
         )
         result.append(accepted)
 
+    result.extend(rescue)
     for item in result:
-        if item.get("relevance_reason") == "curated_ai_provenance":
-            item["ai_relevance_quality"] = "bridge"
+        if item.get("relevance_reason") == "curated_ai_provenance" or item.get("early_inclusion"):
             continue
         evidence = str(item.get("evidence_text") or "").strip()
         confidence = 0.95 if evidence else 0.85
         item["ai_relevance_confidence"] = confidence
         item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), confidence * 10.0)
         item["ai_relevance_quality"] = "high" if confidence >= 0.90 else "medium"
+    print(f"[Early Inclusion] rescued={len(rescue)} | direct/curated={len(result) - len(rescue)}", flush=True)
     return result
 
 
@@ -133,9 +190,6 @@ def _leader_name(item):
 def _annotate_selection_value(item):
     """Add future-significance value without changing any hard quality gate."""
     annotate_future_significance(item)
-    # Existing selector already treats final_editorial_score as its canonical
-    # ranking value. Feed the new composite through that explicit field rather
-    # than changing the established editorial_score contract.
     item["final_editorial_score"] = item["radar_composite_score"]
     return item
 

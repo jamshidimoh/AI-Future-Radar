@@ -12,13 +12,18 @@ permissions:
 
 jobs:
   closure-evidence:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Evaluate every completed production workflow. A failed upstream run is
+    # intentionally visible as IN PROGRESS/BLOCKED rather than being silently
+    # represented as a skipped closure job.
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'cancelled' || github.event.workflow_run.conclusion == 'timed_out' }}
     runs-on: ubuntu-latest
     steps:
       - name: Evaluate final evidence window
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          TRIGGER_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          TRIGGER_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -31,6 +36,8 @@ jobs:
 
           repo = os.environ["REPO"]
           token = os.environ["GH_TOKEN"]
+          trigger_conclusion = os.environ.get("TRIGGER_CONCLUSION", "unknown")
+          trigger_run_number = os.environ.get("TRIGGER_RUN_NUMBER", "unknown")
           base = f"https://api.github.com/repos/{repo}"
           headers = {
               "Authorization": f"Bearer {token}",
@@ -62,6 +69,8 @@ jobs:
                       raise RuntimeError("GitHub log redirect did not include a Location header") from exc
                   with urllib.request.urlopen(urllib.request.Request(location), timeout=30) as response:
                       return response.read().decode("utf-8", errors="replace")
+
+          print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
 
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=10")
           runs = [r for r in runs_data.get("workflow_runs", []) if r.get("name") == "Run AI Future Radar Bot"]

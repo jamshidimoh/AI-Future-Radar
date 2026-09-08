@@ -24,12 +24,46 @@ def test_protected_leader_is_reserved_and_selected():
         monkeypatch.setattr(pipeline._pipeline, "_is_protected_leader_interview", lambda item: item.get("leader") == "Leader A")
         monkeypatch.setattr(pipeline._pipeline, "_is_protected_leader_activity", lambda item: False)
         monkeypatch.setattr(pipeline._pipeline, "_leader_source_authority", lambda item: 3)
-        protected, regular = pipeline._eligibility_split([{"leader":"Leader A","title":"Important interview"},{"title":"Regular story"}], 2)
+        protected, regular = pipeline._eligibility_split([{"leader":"Leader A","title":"Important interview","summary":"Discusses AI agents and frontier models."},{"title":"Regular story"}], 2)
         assert len(protected) == 1
         assert len(regular) == 1
         assert protected[0]["protected_content"] is True
         assert protected[0]["_rank_is_tier0"] is True
         assert protected[0]["priority_story_people"] == ["Leader A"]
+    finally:
+        monkeypatch.undo()
+
+
+def test_non_technology_leader_does_not_get_tier0_reservation():
+    monkeypatch = __import__("pytest").MonkeyPatch()
+    try:
+        monkeypatch.setattr(pipeline._pipeline, "_is_protected_leader_interview", lambda item: item.get("leader") == "Leader A")
+        monkeypatch.setattr(pipeline._pipeline, "_is_protected_leader_activity", lambda item: False)
+        monkeypatch.setattr(pipeline._pipeline, "_leader_source_authority", lambda item: 3)
+        protected, regular = pipeline._eligibility_split([
+            {"leader":"Leader A","title":"Why gravity is changing our understanding of fundamental physics","summary":"A discussion about fundamental physics and scientific discovery.","content_type":"interview","_ai_link":True},
+        ], 2)
+        assert protected == []
+        assert len(regular) == 1
+        assert regular[0]["protected_content"] is False
+        assert regular[0]["_rank_is_tier0"] is False
+    finally:
+        monkeypatch.undo()
+
+
+def test_protected_leader_with_ai_signal_still_gets_tier0_reservation():
+    monkeypatch = __import__("pytest").MonkeyPatch()
+    try:
+        monkeypatch.setattr(pipeline._pipeline, "_is_protected_leader_interview", lambda item: item.get("leader") == "Leader A")
+        monkeypatch.setattr(pipeline._pipeline, "_is_protected_leader_activity", lambda item: False)
+        monkeypatch.setattr(pipeline._pipeline, "_leader_source_authority", lambda item: 3)
+        protected, regular = pipeline._eligibility_split([
+            {"leader":"Leader A","title":"Dario Amodei on the next phase of AI safety","summary":"A substantive interview about frontier models, AI safety and deployment risks.","content_type":"interview"},
+        ], 2)
+        assert len(protected) == 1
+        assert regular == []
+        assert protected[0]["protected_content"] is True
+        assert protected[0]["_rank_is_tier0"] is True
     finally:
         monkeypatch.undo()
 

@@ -26,8 +26,8 @@ _EARLY_STRATEGIC_TERMS = (
 )
 _CONSEQUENTIAL_TERMS = (
     "breach", "hack", "hacked", "security incident", "safety incident", "rogue agent",
-    "misuse", "shutdown", "recall", "regulator", "regulatory action", "lawsuit",
-    "ban", "sanction", "critical vulnerability", "data leak", "agent hijack",
+    "misuse", "shutdown", "recall", "regulatory action", "critical vulnerability",
+    "data leak", "agent hijack",
 )
 _EMERGING_TERMS = (
     "quantum computing", "quantum computer", "quantum chip", "qubit", "brain-computer interface",
@@ -48,10 +48,12 @@ def _early_inclusion_reason(item, combined):
         return "leader_interview"
     if leader and str(item.get("leader") or item.get("watch_person") or "").strip():
         return "key_actor"
-    if _contains_any(combined, _CONSEQUENTIAL_TERMS) and _contains_any(combined, _AI_BRIDGE_TERMS + _EARLY_STRATEGIC_TERMS):
-        return "consequential_ai_or_tech"
+    # Strategic signals take precedence over generic consequence language such as
+    # "regulator" when an item is explicitly about AI/technology policy.
     if _contains_any(combined, _EARLY_STRATEGIC_TERMS) and (_contains_any(combined, _AI_BRIDGE_TERMS) or str(item.get("category") or "").casefold() in {"ai", "future"}):
         return "strategic_ai_or_tech"
+    if _contains_any(combined, _CONSEQUENTIAL_TERMS) and _contains_any(combined, _AI_BRIDGE_TERMS + _EARLY_STRATEGIC_TERMS):
+        return "consequential_ai_or_tech"
     if _contains_any(combined, _EMERGING_TERMS):
         try:
             tier = int(item.get("source_tier") or 3)
@@ -94,6 +96,7 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
 def filter_ai_relevance(items, ai_keywords=None):
     normalized = []
     rescue = []
+    supplied_keywords = tuple(str(term) for term in (ai_keywords or ()) if str(term).strip())
     for raw in items or []:
         item = dict(raw)
         title = str(item.get("title") or "")
@@ -102,18 +105,29 @@ def filter_ai_relevance(items, ai_keywords=None):
         preferred = str(item.get("preferred_source") or "")
         combined = f"{title} {summary} {evidence}".casefold()
         bridge_hits = [term for term in _AI_BRIDGE_TERMS if term.casefold() in combined]
+        direct_keyword_hits = [term for term in supplied_keywords if term.casefold() in combined]
         curated_trusted = bool(item.get("curated_discovery") and preferred and int(item.get("source_tier") or 3) in {1, 2})
         early_reason = _early_inclusion_reason(item, combined)
 
-        if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits and not early_reason:
+        if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits and not direct_keyword_hits and not early_reason:
             item["_force_reject_ai_gate"] = True
         if evidence:
             item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
         if bridge_hits:
             item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
         item["_curated_trusted_ai_bridge"] = curated_trusted
-        item["_has_direct_ai_evidence"] = bool(bridge_hits)
-        if early_reason and not bridge_hits:
+        item["_has_direct_ai_evidence"] = bool(bridge_hits or direct_keyword_hits)
+
+        # Existing AI evidence remains on the normal relevance path for generic
+        # interviews; this preserves the established ai_evidence contract. For
+        # substantive strategic/news signals, early inclusion can still annotate
+        # the item even when "AI" appears as a generic keyword.
+        generic_interview_with_ai_evidence = bool(
+            str(item.get("content_type") or "").casefold() == "interview"
+            and not (item.get("is_leader_watch") or item.get("leader_watch_protected"))
+            and direct_keyword_hits
+        )
+        if early_reason and not bridge_hits and not generic_interview_with_ai_evidence:
             item["early_inclusion"] = True
             item["early_inclusion_reason"] = early_reason
             item["relevance_reason"] = f"early_inclusion:{early_reason}"

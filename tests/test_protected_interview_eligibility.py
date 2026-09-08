@@ -17,6 +17,8 @@ def test_new_evidenced_leader_interview_is_reserved_before_normal_pool():
         "_named_leader_interview": True,
         "content_type": "interview",
         "source": "Lex Fridman Podcast",
+        "title": "Christof Koch on consciousness and neurotechnology",
+        "summary": "A substantive interview about consciousness, brain-computer interfaces and neurotechnology.",
         "editorial_score": 10,
         "published": "2026-08-24T19:00:00Z",
         "interview_evidence": {"explicit": True},

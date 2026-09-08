@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788885320,
+  "updated_at": 1788885614,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7947,28 +7947,9 @@
       "link": "https://www.youtube.com/watch?v=U0aToL5C-bQ",
       "posted_at": 1788878838
     },
-    "-1004482051328:1516": {
+    "-1004482051328:1519": {
       "chat_id": -1004482051328,
-      "message_id": 1516,
-      "reaction_counts": {},
-      "reaction_events": 0,
-      "comment_count": 0,
-      "comment_events": 0,
-      "last_comment_at": 0,
-      "source": "Google News (Screen Daily)",
-      "content_type": "leader_signal",
-      "category": "ai",
-      "leader": "Elon Musk",
-      "watch_person": "Elon Musk",
-      "title": "Ashley St. Clair: رد پیشنهاد ۴۰ میلیون دلاری Elon Musk برای ترک فیلم Musk",
-      "summary": "Ashley St. Clair، یکی از مشارکت‌کنندگان اصلی در پروژه فیلم مستند با عنوان Musk، اعلام کرد که پیشنهاد ۴۰ میلیون دلاری از سوی Elon Musk برای ترک این پروژه را رد کرده است. این خبر توسط Screen Daily منتشر شده و نشان‌دهنده تمسک این تهیه‌کننده به ادامه کار روی مستندی است که به احتمال زیاد به چالش‌ها و جنبه‌های مختلف شخصیت و فعالیت‌های Musk می‌پردازد. تصمیم St. Clair برای نپذیرفتن این مبلغ کلان، سیگنالی قوی از تعهد او به روایت مستقل و بدون تأثیرپذیری مالی از سوژه اصلی فیلم است.",
-      "why_it_matters": "این رویداد اهمیت بالایی در حوزه رسانه و مستندسازی دارد، زیرا نشان می‌دهد که حتی با وجود فشارهای مالی سنگین از سوی شخصیت‌های تأثیرگذار مانند Elon Musk، برخی از تولیدکنندگان محتوا بر استقلال حرفه‌ای و صداقت روایت خود پافشاری می‌کنند. رد این پیشنهاد می‌تواند به اعتبار مستند و درک مخاطبان از انگیزه‌های پشت‌صحنه آن بیافزاید و نشان دهد که تلاش برای کنترل روایت توسط سوژه‌ها همیشه موفقیت‌آمیز نیست. این موضوع همچنین به بحث‌های پیرامون اخلاق حرفه‌ای در مستندسازی و مرزهای بین حمایت مالی و سانسور یا تغییر جهت روایت دامن می‌زند.",
-      "link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxNTGhDYnZqVXBuSFZzQWlhRi15YmZZTnluNE9qZ0Nnb3BVN0UzSFR2VlhPOUY5V0pubEg4cGpjT2QzX0hVa1ptQXptUUZ4aWNUMENrcHpIZy1Jd0JTMFMwWUx1TGstdXh3Z0EtMFVnbVgzZVFDUlFyRlUtRkd3VlNDRXFqTFZZMVdDX0NnRUN0eFRNaFFKc2hiSGt6Z2EzM21SanhLTUNhSnpRMXMyeTFlSXBrV3l5LWVwT2djcUJsRUNVNUJxZTRqb1ZpdGc4aF9h?oc=5",
-      "posted_at": 1788885317
-    },
-    "-1004482051328:1517": {
-      "chat_id": -1004482051328,
-      "message_id": 1517,
+      "message_id": 1519,
       "reaction_counts": {},
       "reaction_events": 0,
       "comment_count": 0,
@@ -7978,15 +7959,15 @@
       "content_type": "research",
       "category": "ai",
       "leader": "",
-      "title": "Axis Robotics با معرفی AXIS، یک data engine مبتنی بر مرورگر، فرآیند جمع‌آوری داده‌های رباتیک را از سخت‌افزارهای آزمایشگاهی به وب منتقل کرده است",
-      "summary": "Axis Robotics با معرفی AXIS، یک data engine مبتنی بر مرورگر، فرآیند جمع‌آوری داده‌های رباتیک را از سخت‌افزارهای آزمایشگاهی به وب منتقل کرده است. این پلتفرم توانسته 207 task رباتیک و 50,129 verified Franka trajectories را به‌صورت تأییدشده جمع‌آوری کند و با پیش‑آموزش مستمر، عملکرد مدل بر روی مجموعه LIBERO‑Plus را از 83.9 به 88.8 ارتقا دهد، در حالی که یک مدل مقایسه‌ای با حجم مشابه در RoboCasa365 تنها به 57.5 می‌رسد. تمام محاسبات سنگین به GPUهای بک‌اند واگذار شده‌اند، که امکان مقیاس‌پذیری و دسترسی آسان‌تر برای پژوهشگران را فراهم می‌کند.",
-      "why_it_matters": "AXIS با حذف نیاز به سخت‌افزارهای اختصاصی برای جمع‌آوری داده، موانع ورود به پژوهش‌های رباتیک را به‌طور قابل‌Attentionی کاهش می‌دهد و امکان تولید داده‌های بزرگ‌مقیاس را برای جامعهٔ علمی فراهم می‌کند. ارتقای قابل‌مشاهدهٔ دقت مدل‌ها (π0.5 از 83.9 به 88.8) نشان می‌دهد که حجم و تنوع داده‌های جمع‌آوری‌شده می‌تواند عملکرد ربات‌ها را به‌طور مستقیم بهبود بخشد. این رویکرد همچنین هزینه‌های زیرساختی را به‌دلیل انتقال پردازش به سرورهای ابری کاهش می‌دهد و می‌تواند به تسریع توسعهٔ الگوریتم‌های کنترل و Reinforcement Learning در رباتیک منجر شود.",
+      "title": "Axis Robotics: ارائه AXIS، موتور داده‌محور مبتنی بر مرورگر با 207 کار رباتیک و 50,129 مسیر",
+      "summary": "شرکت Axis Robotics با معرفی AXIS، سامانه‌ای مبتنی بر مرورگر برای جمع‌آوری داده‌های رباتیک، امکان ثبت 207 کار دست‌کاری ربات و 50,129 مسیر تأییدشدهٔ Franka را فراهم کرده است. این پلتفرم تمام پردازش‌های سنگین را به GPUهای بک‌اند منتقل می‌کند و نیازی به سخت‌افزار آزمایشگاهی ندارد. با استفاده از Pre‑training مستمر، عملکرد مدل بر روی مجموعه LIBERO‑Plus از 83.9 به 88.8 درصد ارتقا یافت، در حالی که یک مدل مقایسه‌ای با حجم مشابه در RoboCasa365 تنها به 57.5 درصد رسید. این پیشرفت نشان‌دهندهٔ توانمندی AXIS در گسترش سریع دیتاست‌های رباتیک و بهبود قابل‌Attention دقت مدل‌هاست.",
+      "why_it_matters": "AXIS با حذف نیاز به سخت‌افزارهای آزمایشگاهی و انتقال محاسبات به سرورهای GPU، فرآیند جمع‌آوری داده‌های رباتیک را برای پژوهشگران و توسعه‌دهندگان ساده می‌کند؛ این امر سرعت تولید دیتاست‌های بزرگ و متنوع را افزایش می‌دهد. بهبود عملکرد مدل بر روی LIBERO‑Plus (از 83.9 به 88.8 درصد) نشان می‌دهد که داده‌های بیشتر و با کیفیت می‌توانند به‌طور مستقیم دقت وظایف رباتیک را ارتقا دهند، در حالی که روش‌های سنتی همچنان محدود به 57.5 درصد هستند. بنابراین، AXIS می‌تواند به‌عنوان زیرساختی مقیاس‌پذیر برای پیشرفت Reinforcement Learning و مهندسی رفتار ربات‌ها عمل کند و موانع هزینه‌ای و زمانی جمع‌آوری داده را کاهش دهد.",
       "link": "https://www.marktechpost.com/2026/09/07/axis-robotics-releases-axis-a-browser-based-data-engine-with-207-robot-manipulation-tasks-and-50129-trajectories/",
-      "posted_at": 1788885318
+      "posted_at": 1788885611
     },
-    "-1004482051328:1518": {
+    "-1004482051328:1520": {
       "chat_id": -1004482051328,
-      "message_id": 1518,
+      "message_id": 1520,
       "reaction_counts": {},
       "reaction_events": 0,
       "comment_count": 0,
@@ -7996,12 +7977,12 @@
       "content_type": "talk",
       "category": "ai",
       "leader": "",
-      "title": "Cory Doctorow در این سخنرانی به این نکته می‌پردازد که اینترنت که روزگاری به عنوان ابزار برابرسازی قدرت و دموکراتیک‌سازی فرهنگ شناخته می‌شد، امروز",
-      "summary": "Cory Doctorow در این سخنرانی به این نکته می‌پردازد که اینترنت که روزگاری به عنوان ابزار برابرسازی قدرت و دموکراتیک‌سازی فرهنگ شناخته می‌شد، امروز به‌جای آن به تقویت Big Tech منجر شده است. او استدلال می‌کند که مسیر تکامل پلتفرم‌ها از خدمت به کاربران، سپس به کسب‌وکارها و نهایتاً به خودشان، نتیجهٔ ساختارهای انحصاری و نظارت ناکافی است. بر این باور است که آیندهٔ فناوری نه تنها به نوآوری، بلکه به توزیع قدرت و مالکیت وابسته است و برای بازگرداندن کنترل به کاربران باید اینترنتی جدید ساخته شود. این سخنرانی توسط Institute of Art and Ideas منتشر شده و شامل دعوت به تماشای کامل و اشتراک‌گذاری لینک‌های مرتبط است.",
+      "title": "Cory Doctorow: بازسازی اینترنت و چالش‌های قدرت در عصر Big Tech",
+      "summary": "Cory Doctorow استدلال می‌کند که اینترنت به‌جای دموکراتیک‌سازی قدرت، مسیر پیش‌بینی‌پذیری را طی کرده و از خدمت به کاربران به سمت منافع کسب‌وکارها و در نهایت خود پلتفرم‌ها حرکت کرده است. او این روند را نتیجه اجتناب‌ناپذیر ساختاری انحصارطلبی و ضعف در تنظیم‌گری می‌داند و تأکید می‌کند که آینده فناوری نه صرفاً توسط نوآوری، بلکه توسط توزیع قدرت و مالکیت تعیین خواهد شد. Doctorow بر ضرورت بازسازی اینترنتی تأکید دارد که در آن کاربران نه پلتفرم‌ها، شرایط تعامل را تعیین کنند. این تحلیل در کنار بحران‌های اقلیمی و الیگارشی فناوری، به‌عنوان چارچوبی برای درک شکست‌های ساختاری شبکه‌های اجتماعی ارائه شده است.",
       "description": "Cory Doctorow lays out the reasons to be cheerful for the future, despite the looming crises around climate change and tech oligarchy.\n\nIs it too late to save the internet?\n\nWith a free trial, you can watch the full talk NOW at https://iai.tv/video/the-future-of-the-tech-crisis?utm_source=YouTube&amp;utm_medium=description\n\nWe once believed the internet would flatten power, democratise culture, and make gatekeepers obsolete. But today it doesn't look like that, and arguably did the opposite. Internet platforms followed a predictable arc: serve users, then businesses, then themselves. Cory Doctorow — award-winning writer, technology critic, and long-time digital rights activist — has spent decades arguing that this trajectory is a structural inevitability of monopoly and weak regulation. Join Doctorow as he makes the case that the future of technology will be decided not by innovation alone, but by power and ownership. We must rebuild an internet where users, not platforms, finally set the terms. \n\n\"Far enough ahead of the game to give you that authentic chill of the future.\" — Warren Ellis\n\n#bigtech  #politics  #trump #billionaire \n\nCory Doctorow is a Canadian-British author and digital rights activist who has served as European Director of the Electronic Frontier Foundation. He is the author of several books including Enshittification.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=the-future-of-the-tech-crisis\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
-      "why_it_matters": "این تحلیل نشان می‌دهد که بدون تغییر در چارچوب‌های قانونی و ساختاری، اینترنت به‌عنوان بستر قدرت‌نمایی شرکت‌های بزرگ باقی می‌ماند و فرصت‌های دموکراتیک و فرهنگی را محدود می‌کند. بازسازی اینترنت می‌تواند به بازگرداندن کنترل به کاربران، تقویت حریم خصوصی و جلوگیری از انحصارهای دیجیتال منجر شود؛ مسأله‌ای که در مواجهه با سیاست‌های تجاری مانند تعرفه‌های ترامپ و نفوذ Big Tech اهمیت ویژه‌ای دارد. در غیر این صورت، روند فعلی می‌تواند به تشدید نابرابری‌های دیجیتال و کاهش نوآوری منجر شود.",
+      "why_it_matters": "این دیدگاه نشان می‌دهد که بدون اصلاحات ساختاری در مالکیت و تنظیم‌گری، نوآوری‌های فنی نمی‌توانند از غلبه منافع پلتفرم‌ها بر کاربران جلوگیری کنند. درک این الگوی Enshittification برای سیاست‌گذاران و توسعه‌دهندگان حیاتی است تا از تکرار چرخه انحصار جلوگیری کنند. تمرکز بر قدرت و مالکیت به‌جای صرفاً تکنولوژی، مسیرهای عملی برای بازگرداندن کنترل به کاربران را روشن می‌کند.",
       "link": "https://www.youtube.com/watch?v=azJia30ulng",
-      "posted_at": 1788885319
+      "posted_at": 1788885614
     }
   }
 }

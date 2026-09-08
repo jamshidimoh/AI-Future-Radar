@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788861311,
+  "updated_at": 1788861498,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7700,6 +7700,25 @@
       "why_it_matters": "این رویکرد می‌تواند اعتماد عمومی به سیستم‌های سلامت مبتنی بر AI را افزایش دهد و شکاف بین توسعه تکنولوژی و نیازهای واقعی بیماران را پر کند. تمرکز بر حکمرانی بیمارمحور، ریسک‌های اخلاقی و انحراف‌های بالینی را کاهش می‌دهد. با این حال، بدون جزئیات اجرایی در متن اصلی، اثربخشی عملی این چارچوب‌ها نیازمند بررسی‌های تکمیلی است.",
       "link": "https://www.nature.com/articles/d41586-026-02796-8",
       "posted_at": 1788861311
+    },
+    "-1004482051328:1497": {
+      "chat_id": -1004482051328,
+      "message_id": 1497,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Next Web)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "Sam Altman: توسعه‌دهندگان هوش مصنوعی در انتقال مزایای فناوری ناکام بوده‌اند",
+      "summary": "Sam Altman معتقد است که توسعه‌دهندگان هوش مصنوعی در ارتباط‌دهی مؤثر درباره مزایای این فناوری دچار خطا شده‌اند. او اشاره می‌کند که این ناکامی در انتقال پیام‌های کلیدی، مانعی برای درک صحیح ظرفیت‌های واقعی AI توسط عموم مردم و صنایع مختلف شده است. این دیدگاه تأکید بر نیاز به استراتژی‌های ارتباطی شفاف‌تر و دقیق‌تر برای نشان دادن ارزش‌های عملی هوش مصنوعی دارد.",
+      "why_it_matters": "این اظهارنظر نشان می‌دهد که شکاف بین قابلیت‌های فنی پیشرفته و درک عمومی آن‌ها همچنان پابرجاست. عدم موفقیت در ارتباط‌دهی می‌تواند منجر به سوءتفاهم‌ها، مقاومت‌های اجتماعی و کندی پذیرش فناوری در بخش‌های کلیدی اقتصاد شود. بنابراین، تمرکز بر شفافیت و آموزش کاربردی، به‌عنوان یک اولویت استراتژیک برای رهبران صنعت AI مطرح می‌شود تا اعتماد عمومی و کاربردپذیری افزایش یابد.",
+      "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxORzluU3ZZbkUxU2JYUzViMVduZGh4UkQwVG84MUp2b19YOWpzNFNrQmxRQzFqTGhJQXJPLUJxNmh1YjFmWlNJMEZTeWNXZFlGbDg0WWNjY0lFMF9GZXNLay02b041dEt0ZkV2cmFhbmdCNk1raDR0NDdwb2tYTllXYTBlUFVZZ2F0RnEyNWduODhjQ1lTSHRONkZRekRsTWRVUTBIV0NINVdJaXY2OW5PTzNKc0dibVl0VlIwWEtVN2hyeUkyUDVlYg?oc=5",
+      "posted_at": 1788861498
     }
   }
 }

@@ -20,12 +20,14 @@ _TECH_SIGNAL_TERMS = (
 
 
 def _technology_relevant(item):
-    # Protected leader stories may carry _ai_link for routing, but that flag
-    # must never bypass the actual technology-relevance gate. Genuine AI
-    # evidence or explicit technology signals must remain sufficient.
+    # Leader/watchlist routing metadata is not itself technology evidence.
+    # A leader item must contain independent AI/technology evidence before it
+    # can qualify for protected Tier-0 reservation. The _ai_link shortcut is
+    # still allowed for non-leader/cross-domain candidates.
     if item.get("ai_relevance") is True:
         return True
-    if item.get("_ai_link") is True and not item.get("protected_content"):
+    leader_routed = bool(item.get("leader") or item.get("watch_person") or item.get("leader_watch_protected"))
+    if item.get("_ai_link") is True and not item.get("protected_content") and not leader_routed:
         return True
     text = " ".join(
         str(item.get(k) or "")

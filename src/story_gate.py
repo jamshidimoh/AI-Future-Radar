@@ -1,10 +1,4 @@
-"""Canonical Story Gate and canonical score boundary.
-
-Representative selection uses publication-value score only. Technology signal is
-computed independently and combined once after deduplication. Future-significance
-is applied here, at the canonical production boundary, so every production path
-sees the same trajectory-value score before portfolio selection.
-"""
+"""Canonical Story Gate and canonical score boundary."""
 from future_significance import annotate_future_significance, is_low_future_value
 from editorial_score_v2 import score_editorial_v2
 from story_identity import deduplicate_stories
@@ -25,9 +19,13 @@ _TECH_SIGNAL_TERMS = (
 
 
 def _technology_relevant(item):
-    explicit = bool(item.get("ai_relevance") or item.get("_ai_link") or item.get("interview_signal") and item.get("topic_family"))
-    text = " ".join(str(item.get(k) or "") for k in ("title", "summary", "description", "category", "topic_family", "content_type")).casefold()
-    return explicit or any(term.casefold() in text for term in _TECH_SIGNAL_TERMS)
+    if item.get("ai_relevance") is True or item.get("_ai_link") is True:
+        return True
+    text = " ".join(
+        str(item.get(k) or "")
+        for k in ("title", "summary", "description", "category", "topic_family", "content_type")
+    ).casefold()
+    return any(term.casefold() in text for term in _TECH_SIGNAL_TERMS)
 
 
 def _prepare_canonical_scores(item):
@@ -54,10 +52,6 @@ def _prepare_canonical_scores(item):
 
 
 def story_representative_rank_key(item):
-    """Rank only by policy/authority/editorial publication value.
-
-    Signal score and signal-inflated editorial score are intentionally absent.
-    """
     try:
         representative_score = float(item.get("editorial_score_pre_signal", item.get("editorial_score", 0)) or 0)
     except (TypeError, ValueError):
@@ -72,7 +66,6 @@ def story_representative_rank_key(item):
 
 
 def _canonical_final_editorial_score(item):
-    """Combine future-adjusted editorial value and technology signal exactly once."""
     try:
         editorial = float(item.get("radar_composite_score", item.get("editorial_score_pre_signal", 0)) or 0)
     except (TypeError, ValueError):
@@ -85,12 +78,7 @@ def _canonical_final_editorial_score(item):
 
 
 def gate_story_candidates(protected_items, leader_items, regular_items, seen_signatures, threshold=0.45):
-    """Prepare canonical scores, remove low-information stories, then deduplicate.
-
-    Protected leader content remains quota-exempt only when the story itself has
-    a substantive technology/AI signal. Generic biography, politics, lifestyle,
-    physics or unrelated commentary must return to the normal relevance path.
-    """
+    """Prepare canonical scores, filter low-information and invalid protected leaders, then deduplicate."""
     ordered = []
     for pool in (protected_items or [], leader_items or [], regular_items or []):
         prepared_items = []
@@ -100,6 +88,10 @@ def gate_story_candidates(protected_items, leader_items, regular_items, seen_sig
                 item["protected_content"] = False
                 item["leader_watch_protected"] = False
                 item["protected_reason"] = "leader_protection_not_technology_relevant"
+                print(
+                    f"[Leader Protection Gate] dropped non-technology protected item: {str(item.get('title', ''))[:120]}",
+                    flush=True,
+                )
                 continue
             prepared_items.append(_prepare_canonical_scores(item))
         ordered.extend(sorted(prepared_items, key=story_representative_rank_key, reverse=True))

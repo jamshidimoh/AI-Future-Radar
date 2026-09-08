@@ -75,10 +75,17 @@ class FinalProductionAcceptanceTests(unittest.TestCase):
     def test_production_state_contains_real_published_baseline(self):
         state = json.loads(STATE_PATH.read_text(encoding="utf-8"))
         self.assertGreaterEqual(int(state["run_number"]), 1)
-        self.assertIsInstance(state.get("last_published_news_score"), (int, float))
-        self.assertGreater(float(state["last_published_news_score"]), 0.0)
-        self.assertIsInstance(state.get("last_published_normal_news_score"), (int, float))
-        self.assertGreater(float(state["last_published_normal_news_score"]), 0.0)
+        news_score = state.get("last_published_news_score")
+        self.assertIsInstance(news_score, (int, float))
+        self.assertGreater(float(news_score), 0.0)
+
+        # A normal-news baseline is legitimately absent until a normal story
+        # has actually been published. Never manufacture a numeric baseline
+        # merely to satisfy CI; once present, it must be a positive real score.
+        normal_score = state.get("last_published_normal_news_score")
+        if normal_score is not None:
+            self.assertIsInstance(normal_score, (int, float))
+            self.assertGreater(float(normal_score), 0.0)
 
     def test_single_publication_orchestrator_still_owns_selection_hook(self):
         source = inspect.getsource(production.main)

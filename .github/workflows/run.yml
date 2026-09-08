@@ -102,7 +102,8 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
+          state_files=(data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json)
+          git add "${state_files[@]}"
           if git diff --cached --quiet; then
             echo "No production state changes to commit."
             exit 0
@@ -116,8 +117,16 @@ jobs:
                 exit 0
               fi
             else
-              git rebase --abort || true
+              echo "State rebase attempt ${attempt} hit a generated-state conflict; resolving in favor of this run's state commit."
+              git checkout --theirs "${state_files[@]}"
+              git add "${state_files[@]}"
+              GIT_EDITOR=true git rebase --continue
+              if git push origin "HEAD:${{ github.ref_name }}"; then
+                echo "Production state persisted after conflict resolution on attempt ${attempt}."
+                exit 0
+              fi
             fi
+            git rebase --abort || true
             echo "State push attempt ${attempt} lost a race with the production branch; retrying."
             sleep $((attempt * 2))
           done

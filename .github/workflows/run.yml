@@ -10,6 +10,9 @@ on:
         required: false
         default: false
         type: boolean
+  # GitHub Actions cron is UTC.
+  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47.
+  # Tehran is UTC+3:30; cron values below are the corresponding UTC times.
   schedule:
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
@@ -99,7 +102,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           state_files=(data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json)
-          git add "${state_files[@]}"
+          git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
           if git diff --cached --quiet; then
             echo "No production state changes to commit."
             exit 0
@@ -120,12 +123,7 @@ jobs:
               import subprocess
               from pathlib import Path
 
-              files = [
-                  Path("data/seen.json"),
-                  Path("data/telegram_feedback.json"),
-                  Path("data/education_state.json"),
-                  Path("data/publication_state.json"),
-              ]
+              files = [Path("data/seen.json"), Path("data/telegram_feedback.json"), Path("data/education_state.json"), Path("data/publication_state.json")]
 
               def read_stage(stage, path):
                   try:
@@ -156,10 +154,9 @@ jobs:
                   theirs = read_stage(3, path)
                   if ours is None or theirs is None:
                       continue
-                  merged = merge(ours, theirs)
-                  path.write_text(json.dumps(merged, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                  path.write_text(json.dumps(merge(ours, theirs), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
               PY
-              git add "${state_files[@]}"
+              git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
               GIT_EDITOR=true git rebase --continue
               if git push origin "HEAD:${{ github.ref_name }}"; then
                 echo "Production state persisted after lossless JSON merge on attempt ${attempt}."

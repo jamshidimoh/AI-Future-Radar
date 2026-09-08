@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788857162,
+  "updated_at": 1788858553,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7632,6 +7632,25 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788846186
+    },
+    "-1004482051328:1493": {
+      "chat_id": -1004482051328,
+      "message_id": 1493,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Times of India)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "title": "پیشنهاد لایحه سنای آمریکا برای مقابله با رهبران فناوری",
+      "summary": "Bernie Sanders یک لایحه جدید را در سنا معرفی کرده است که هدف آن ایجاد چارچوب‌های قانونی سخت‌گیرانه‌تر برای مدیران ارشد شرکت‌های فناوری است. این طرح می‌تواند پیامدهای حقوقی جدی برای چهره‌های کلیدی صنعت AI مانند Sam Altman و Dario Amodei داشته باشد. لایحه مذکور با هدف افزایش مسئولیت‌پذیری و نظارت بر فعالیت‌های این شرکت‌ها تدوین شده و نشان‌دهنده گرایش به سمت مقررات‌گذاری دقیق‌تر در حوزه فناوری است.",
+      "why_it_matters": "ا",
+      "link": "https://news.google.com/rss/articles/CBMiyAJBVV95cUxNUDd1QkFManl6UXhLbWFhMFdMX3dwV1Q4a2lCc05Rall3M1N0SGpoa2dDck05ekRlMzRsNW5DYlQ4cTVGMmxCelFzYmxlc0hwSmdFMlVDTld1ODRKUEMwWUlDVHJmQmJyZEJPRk5SRndUbWdPa21DSkNDSS11VUVta3YyZ2dOWjV4bXU1UVJOQldraTZvZ096YUJ3bWJ2WEN1UlR3Y1FPVDVuV2hodU02UzVWaEVjbzhNa2I5bDNvWXQteF9PMThfZXE3ODMxYjNDUFNtV1NEOXd1eC1zRHI0bWdlR081MnJOU1kwMkJkZHNCVkdVYTY5WUc1R3c5UnVqR0RsMG1GZ0N3OENpRWoyNjc1b2VucG5sYjhuN3VHY0xZekJPdGJfTGx4dXhWLWtkTHQ0TmhhX0VzXy1zUzB0QmhDVmZyT1I50gHOAkFVX3lxTE5EV0lZcXQ3VllXRkV6bXdCV01HT3VMdjFJempXRHFreWpjcjM3a2twdkpuV1ZXaEZQT2l4LS1BTl9hZXVkN2NzQUE5aUh6NzZsc1VBQXFSZjdXc0djajMwbzlLdmdtMmJjdHozSnVudE52SjFiVkFaZ2tyYlE3V1BobGI3UUt0U3hmYkpLX1JIdzFNQTNqcko0Ui1pTUlUUEtMTGQyZnY0MWpqOEhvc21Vel9UOEl2NkpHVHV3V1pKQVdLVnVybl9KSGlnOE55TGI2VF9TSDhxcURla1I4VDBzeW81NXRvTEYzSnJGN3BnVW42ZGRYcHM1ay04SjUzWk02U0U0NXAxc29mLWtQdHpza2lEVFRJREFsTmlDMkk3NENVbXh4d0tzV3VHcXRpel8xZVZydW5NX1l3VThDWUx2SlpWWVJYSjlCTExKWmc?oc=5",
+      "posted_at": 1788858553
     }
   }
 }

@@ -49,7 +49,7 @@ def test_deterministic_recovery_supports_lesson_112_current_source_override(monk
     urls = {item["url"] for item in candidates}
     assert "https://platform.claude.com/docs/en/build-with-claude/compaction" in urls
     assert "https://www.truefoundry.com/blog/jit-context-just-in-time-context-agents" in urls
-    assert "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" not in urls
+    assert "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" in urls
 
 
 def test_deterministic_recovery_still_fails_closed_without_two_current_sources(monkeypatch):

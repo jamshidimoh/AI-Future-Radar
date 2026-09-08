@@ -8,7 +8,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from src.editorial_quality_policy import news_language_ok, normal_score_allowed, persian_ratio
+from src.editorial_quality_policy import news_language_ok, normal_score_allowed, persian_ratio, NORMAL_SCORE_FLOOR
 from src.priority_people import is_substantive_priority_interview
 from src.unified_editorial_selection import load_editorial_contract
 
@@ -48,11 +48,6 @@ def _tehran_now() -> datetime:
 
 
 def _education_slot(now: datetime | None = None) -> str | None:
-    """Return the current education slot only during a scheduled publication window.
-
-    A generous one-hour window after the nominal cron time tolerates GitHub Actions
-    queueing without allowing the following news cycle to become an education run.
-    """
     now = now or _tehran_now()
     for hour, minute, name in EDUCATION_WINDOWS_TEHRAN:
         start = now.replace(hour=hour, minute=0, second=0, microsecond=0)
@@ -293,7 +288,7 @@ def main(*, skip_education: bool = False) -> int:
         baseline = previous_normal_score
         allowed = render_state["normal_news_delivered_count"] < MAX_NORMAL_NEWS_PER_PERIOD and normal_news_policy_allowed(score, baseline, normal_rank)
         if not allowed:
-            return policy_blocked(f"normal_score_policy_blocked:{score}<={previous_normal_score}")
+            return policy_blocked(f"normal_score_policy_blocked:{score}<floor:{NORMAL_SCORE_FLOOR}")
         print(f"[Publication Policy] PUBLISH normal_rank={normal_rank} score={score} previous_normal={previous_normal_score}", flush=True)
         return delivered({"message_id": None})
 

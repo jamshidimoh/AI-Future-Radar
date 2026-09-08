@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788867232,
+  "updated_at": 1788869491,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7757,6 +7757,25 @@
       "why_it_matters": "ارائه یک مدل با عملکرد رقابتی به صورت متن‌باز و با هزینه بسیار پایین، موانع ورود به AI را کاهش می‌دهد. این امر می‌تواند دسترسی توسعه‌دهندگان به فناوری‌های پیشرفته را گسترش دهد و فشار رقابتی بر مدل‌های بسته و پرهزینه وارد کند.",
       "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE1mRzc1RlFXRmpnMzZfalFQUFFiUDA0UkxJTlFib0p3MzB3Q2FhU1Z4YlJXdjgtb3UycndrdHFfQXBHczI0eXl1ZzROVnRTOFRENGN3?oc=5",
       "posted_at": 1788864638
+    },
+    "-1004482051328:1500": {
+      "chat_id": -1004482051328,
+      "message_id": 1500,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "رقابت جهانی برای تأمین مس؛ چالش‌های زیرساخت‌های انرژی آینده",
+      "summary": "کشورها در حال تلاش برای تضمین تأمین مس هستند، زیرا این ماده معدنی حیاتی برای تولید، انتقال و مصرف برق در زیرساخت‌های آینده مانند مزارع خورشیدی، مراکز داده و خودروهای الکتریکی ضروری است. با وجود پیش‌بینی افزایش ۴۰ درصدی تقاضا تا سال ۲۰۴۰، جهان در مسیر برآورده کردن تنها ۷۰ درصد از این نیاز قرار دارد. ژاپن اخیراً ۴۶۶ میلیون دلار به شرکت دولتی معدن مس شیلی قرض داده است تا امنیت تأمین خود را افزایش دهد. گزارش World Economic Forum مداخلات سیاستی لازم برای تضمین عرضه کافی مواد معدنی حیاتی و جذب سرمایه‌گذاری را ترسیم می‌کند.",
+      "description": "Why did Japan just lend $466 million to Chile’s state copper mining company?\n\nThe answer lies in the energy transition.\n\nWhether it’s solar farms, data centres or electric vehicles, tomorrow’s infrastructure relies on critical minerals. And none is more crucial than copper, which is used almost anywhere electricity is generated, transmitted or used.\n\nBut with demand set to increase 40% by 2040 - and with the world on track to meet just 70% of that - nations are taking steps to shore up their #copper supplies for the future.\n\nA World Economic Forum report maps the policy interventions that will be required to ensure there are enough critical minerals to meet demand: https://www.weforum.org/publications/making-critical-minerals-bankable-policy-tools-to-unlock-investment/\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "این وضعیت نشان می‌دهد که کمبود مواد معدنی حیاتی می‌تواند گلوگاه اصلی گذار به انرژی‌های پاک و توسعه زیرساخت‌های دیجیتال باشد. شکاف بین تقاضای پیش‌بینی‌شده و ظرفیت تولید فعلی، کشورها را وادار به اتخاذ سیاست‌های ژئوپلیتیکی و اقتصادی تهاجمی‌تر برای کنترل زنجیره تأمین می‌کند. بدون مداخلات سیاستی مؤثر برای جذب سرمایه‌گذاری در معدن‌کاری، تحقق اهداف اقلیمی و توسعه زیرساخت‌های الکتریکی در مقیاس جهانی با ریسک جدی مواجه خواهد شد.",
+      "link": "https://www.youtube.com/shorts/0ISr_YoAqWQ",
+      "posted_at": 1788869491
     }
   }
 }

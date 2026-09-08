@@ -7,10 +7,11 @@ ROOT = Path(__file__).resolve().parents[1]
 MISSION_POLICY = ROOT / "config" / "mission_policy.yaml"
 
 
-def test_rank_one_never_bypasses_adaptive_baseline():
+def test_rank_one_uses_absolute_quality_floor_not_adaptive_baseline():
     assert normal_score_allowed(73.30, 73.30)
-    assert not normal_score_allowed(63.29, 73.30)
+    assert normal_score_allowed(63.29, 73.30)
     assert normal_score_allowed(63.30, 73.30)
+    assert not normal_score_allowed(59.99, 73.30)
 
 
 def test_mission_portfolio_is_explicit_and_not_generic_ai_only():

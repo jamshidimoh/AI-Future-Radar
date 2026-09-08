@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788864112,
+  "updated_at": 1788864638,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7738,6 +7738,25 @@
       "why_it_matters": "این تعامل مستقیم بین یک رهبر کلیدی صنعت فناوری و رئیس‌جمهور، سیگنال مهمی از پیچیدگی‌های سیاسی در تنظیم‌گری هوش مصنوعی ارسال می‌کند. مخالفت Zuckerberg می‌تواند فرآیند تصویب یا اجرای طرح‌های دولتی را تحت تأثیر قرار دهد و نشان دهد که حتی در سطح بالاترین تصمیم‌گیری‌ها، اجماعی بین بخش خصوصی و عمومی وجود ندارد. این موضوع اهمیت دیپلماسی فناوری و تأثیرگذاری شرکت‌های بزرگ بر سیاست‌گذاری‌های ملی را برجسته می‌سازد.",
       "link": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxNX05ZdHdWOW1wVXU1My11RHBMX3Z1Q19STWRjVkpRemFrQmhqRkI3UnlXQVRscnA0SjRTSTdWOVhKQ3ZKUzkwX2J4Z0YwVW9yNXZpRnRwZGFNREpoUW1KeG11OF82c3VOeEg3QjAweWp5WHlGclRFVU9lSl9JZ19QWWM1OEtkOHptTTR3N1hENmZsam9oaGFYaC1aSE53SHpDTF8xcEpDdHFGWmhwdzdqU0hLSTUzaWFBYTNhQ0haMU1CSnRBMzVTV3diQ3RDWUJ4eEs0Wmg2SkM4eWk5enBFRFdsYkc?oc=5",
       "posted_at": 1788864112
+    },
+    "-1004482051328:1499": {
+      "chat_id": -1004482051328,
+      "message_id": 1499,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (36Kr)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Mark Zuckerberg",
+      "watch_person": "Mark Zuckerberg",
+      "title": "زاکربرگ: مدل جدید Meta عملکرد Fable 5 را با هزینه‌ای بسیار پایین و منبع باز تکرار می‌کند",
+      "summary": "مارک زاکربرگ اعلام کرد که مدل جدید شرکت Meta عملکردی معادل با Fable 5 دارد. این مدل به صورت کاملاً متن‌باز (Open-Source) ارائه شده است. هزینه استفاده از این مدل به قدری پایین است که محاسبات پیچیده برای توجیه اقتصادی آن ضروری نیست.",
+      "why_it_matters": "ارائه یک مدل با عملکرد رقابتی به صورت متن‌باز و با هزینه بسیار پایین، موانع ورود به AI را کاهش می‌دهد. این امر می‌تواند دسترسی توسعه‌دهندگان به فناوری‌های پیشرفته را گسترش دهد و فشار رقابتی بر مدل‌های بسته و پرهزینه وارد کند.",
+      "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE1mRzc1RlFXRmpnMzZfalFQUFFiUDA0UkxJTlFib0p3MzB3Q2FhU1Z4YlJXdjgtb3UycndrdHFfQXBHczI0eXl1ZzROVnRTOFRENGN3?oc=5",
+      "posted_at": 1788864638
     }
   }
 }

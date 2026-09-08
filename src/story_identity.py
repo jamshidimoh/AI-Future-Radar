@@ -5,7 +5,7 @@ import difflib
 import re
 from typing import Any, Iterable
 
-from semantic_dedup import get_story_signature, _decode_signature
+from semantic_dedup import get_story_signature, _decode_signature, _similarity
 
 _STOPWORDS = {
     "the", "a", "an", "of", "in", "on", "for", "to", "and", "or", "is", "are",
@@ -110,7 +110,6 @@ def _material_update_tokens(sig: dict[str, Any]) -> set[str]:
     title_text = str(sig.get("title_text") or "")
     raw = " ".join(sorted(context)) + " " + title_text
     raw = raw.lower().replace("ي", "ی").replace("ك", "ک")
-    # Preserve semantic Persian markers before generic ZWNJ normalization/tokenization.
     canonical_markers: set[str] = set()
     for source, target in sorted(_PERSIAN_MATERIAL_MARKERS.items(), key=lambda x: len(x[0]), reverse=True):
         if re.search(re.escape(source), raw):
@@ -169,6 +168,14 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     if title_j >= 0.55 and context_j >= 0.55: return True
     if leader_a and leader_a == leader_b and events_a & events_b and context_j >= 0.55: return True
     if events_a & events_b and context_j >= 0.72 and title_j >= 0.45: return True
+
+    # Final publication-safety check: semantic similarity is evaluated here as
+    # well as in the broader candidate filter. This closes the gap where two
+    # sources describe the same event with different URLs/headlines and one
+    # representative survives the earlier lexical checks.
+    semantic_score = _similarity(candidate_sig, prior_sig)
+    if semantic_score >= 0.68 and not _has_material_update(candidate_sig, prior_sig):
+        return True
     return False
 
 

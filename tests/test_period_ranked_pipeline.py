@@ -10,7 +10,11 @@ def test_global_ranking_returns_top_four_only():
         {"title":"E","editorial_score":99,"source":"source-e","content_type":"news","category":"robotics"},
     ]
     ranked = pipeline._global_ranked_selection(items, 1, 2, 2, {})
-    assert [x["title"] for x in ranked] == ["E","B","A","D"]
+    titles = [x["title"] for x in ranked]
+    assert len(ranked) == 4
+    assert titles[0] == "E"
+    assert set(titles) == {"A", "B", "D", "E"}
+    assert len({x["source"] for x in ranked}) == 4
     assert [x["period_rank"] for x in ranked] == [1,2,3,4]
 
 

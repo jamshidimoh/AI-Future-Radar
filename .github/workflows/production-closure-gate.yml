@@ -114,9 +114,10 @@ jobs:
               except Exception as exc:
                   errors[run["run_number"]] = f"{type(exc).__name__}: {exc}"
 
-          if errors or len(logs) < 3:
+          log_errors = errors
+          if log_errors or len(logs) < 3:
               print("CLOSURE: BLOCKED — production evidence logs are incomplete; cannot certify closure")
-              print("Log errors:", errors)
+              print("Log errors:", log_errors)
               print("Observed logs:", sorted(logs))
               sys.exit(1)
 
@@ -133,15 +134,11 @@ jobs:
           observed_zero_publish = any_recent(r"Posts sent: 0/") and any_recent(r"normal_news=0[^\n]*tier0_news=0")
           fail_closed_regression = any_recent(r"\[Fail-Closed Acceptance Evidence\] PASS")
           zero_publish_evidence = observed_zero_publish or fail_closed_regression
-
           history_dedup_clean = any_recent(r"\[Story Identity\] history_duplicates=0")
-          # Only actual delivery/ledger error events count. Do not match prose such as
-          # "no_duplicate_publication" or duplicate-candidate rejection diagnostics.
           actual_duplicate_event = r"(?:\[Telegram Published\].*duplicate|\[Publication Ledger\].*duplicate publication|\[Publication Contract\].*duplicate publication)"
           no_duplicate_publication = not any_recent(actual_duplicate_event)
           duplicate_rejection_evidence = any_recent(r"(?:duplicate candidate removed|current_run_duplicates=\d+)")
           duplicate_free = history_dedup_clean and no_duplicate_publication
-
           image_contract = any_recent(r"full_text=\d+ photo=(?:enabled|disabled) single_message=true")
           ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_recent(r"normal_rank=\d{2,}")
           qa_replacement = any_recent(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
@@ -167,13 +164,11 @@ jobs:
               "10_mission_portfolio_not_generic": mission_portfolio,
               "11_real_education_publication": education_published and education_recovery_confirmed,
           }
-
           for key, value in evidence.items():
               print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
           print(f"DEDUP_EVIDENCE history_clean={history_dedup_clean} no_duplicate_publication={no_duplicate_publication} rejection_evidence={duplicate_rejection_evidence}")
           print(f"EDUCATION_EVIDENCE published={education_published} recovery={education_recovery_confirmed}")
           print(f"FAIL_CLOSED_EVIDENCE observed_zero={observed_zero_publish} regression_contract={fail_closed_regression}")
-
           blocked = [key for key, value in evidence.items() if not value]
           if blocked:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))

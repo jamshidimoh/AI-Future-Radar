@@ -6,7 +6,8 @@ from technology_signal_v2 import calculate_technology_signal_score
 
 _TECH_SIGNAL_TERMS = (
     "artificial intelligence", "ai", "machine learning", "deep learning", "llm", "agi",
-    "openai", "anthropic", "deepmind", "gpt", "claude", "gemini", "qwen", "llama",
+    "openai", "anthropic", "deepmind", "nvidia", "google ai", "microsoft ai", "meta ai", "xai",
+    "mistral", "cohere", "hugging face", "gpt", "claude", "gemini", "qwen", "llama",
     "reasoning model", "foundation model", "frontier model", "ai agent", "agentic ai",
     "robotics", "humanoid", "physical ai", "computer use", "ai safety", "ai security",
     "ai governance", "ai policy", "ai regulation", "ai infrastructure", "ai chip", "gpu",

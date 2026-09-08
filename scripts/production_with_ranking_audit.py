@@ -4,6 +4,9 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlsplit
+
+import requests
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -25,6 +28,8 @@ _original_main = pipeline.main
 _original_rank = pipeline._global_ranked_selection
 _original_summarize = pipeline.summarize_item
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
+_GOOGLE_NEWS_HOSTS = {"news.google.com", "news.googleusercontent.com"}
+_CANONICAL_RESOLVE_TIMEOUT_SECONDS = 6
 
 _CRITICAL_AI_TERMS = (
     "artificial intelligence", "ai", "ai agent", "ai agents", "agent", "agents",
@@ -84,6 +89,60 @@ def _protect_critical_incidents(items):
     return items
 
 
+def _resolve_google_news_url(value):
+    """Resolve a Google News wrapper to its publisher URL without touching other sources."""
+    raw = str(value or "").strip()
+    if not raw:
+        return ""
+    try:
+        host = urlsplit(raw).netloc.lower().split(":", 1)[0]
+    except Exception:
+        return raw
+    if host not in _GOOGLE_NEWS_HOSTS:
+        return raw
+    try:
+        response = requests.get(
+            raw,
+            allow_redirects=True,
+            timeout=_CANONICAL_RESOLVE_TIMEOUT_SECONDS,
+            stream=True,
+            headers={
+                "User-Agent": "Mozilla/5.0 (compatible; AI-Future-Radar/1.0; +https://github.com/jamshidimoh/AI-Future-Radar)",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            },
+        )
+        resolved = str(response.url or raw).strip()
+        response.close()
+        return resolved or raw
+    except Exception as exc:
+        print(f"[Canonical Source Resolution] fallback=google_news_wrapper reason={type(exc).__name__}", flush=True)
+        return raw
+
+
+def _resolve_selected_source_urls(items):
+    """Promote publisher URLs for the small set of selected candidates only."""
+    resolved_count = 0
+    for item in items or []:
+        original = str(item.get("link") or item.get("canonical_url") or item.get("url") or "").strip()
+        if not original:
+            continue
+        resolved = _resolve_google_news_url(original)
+        if resolved and resolved != original:
+            item["discovery_link"] = original
+            item["link"] = resolved
+            item["canonical_url"] = resolved
+            resolved_count += 1
+            print(
+                f"[Canonical Source Resolution] resolved=true domain={urlsplit(resolved).netloc.lower()}",
+                flush=True,
+            )
+        elif item.get("canonical_url"):
+            item["canonical_url"] = str(item["canonical_url"]).strip()
+    if resolved_count:
+        print(f"[Canonical Source Resolution] selected_resolved={resolved_count}", flush=True)
+    return items
+
+
 def _production_select(items, max_posts, max_per_source, max_per_type, policy):
     """Use the canonical period ranking implementation for production."""
     _protect_critical_incidents(items)
@@ -94,6 +153,7 @@ def _production_select(items, max_posts, max_per_source, max_per_type, policy):
         max_per_type=max_per_type,
         policy=policy,
     )
+    _resolve_selected_source_urls(selected)
     print(
         f"[Production Selection] canonical_period_rank=true total={len(selected)}",
         flush=True,
@@ -201,6 +261,7 @@ def _audited_main(hooks=None):
                 max_per_type=max_per_type,
                 policy=policy,
             )
+            _resolve_selected_source_urls(selected)
             audit_selection(selected)
             return selected
 

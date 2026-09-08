@@ -44,11 +44,43 @@ rss_sources:
     official: false
     mission: "ai"
 
-  - name: "MarkTechPost"
-    url: "https://www.marktechpost.com/feed/"
+  - name: "AlphaSignal"
+    url: "https://alphasignalai.substack.com/feed"
     tier: 2
-    type: "specialist_media"
+    type: "curated_intelligence"
     content_type: "research"
+    official: false
+    mission: "ai"
+
+  - name: "Import AI"
+    url: "https://importai.substack.com/feed"
+    tier: 2
+    type: "expert_analysis"
+    content_type: "research"
+    official: false
+    mission: "ai"
+
+  - name: "TLDR AI"
+    url: "https://tldr.tech/api/rss/ai"
+    tier: 2
+    type: "curated_intelligence"
+    content_type: "news"
+    official: false
+    mission: "ai"
+
+  - name: "The Rundown AI"
+    url: "https://rss.beehiiv.com/feeds/2R3C6Bt5wj.xml"
+    tier: 2
+    type: "curated_intelligence"
+    content_type: "news"
+    official: false
+    mission: "ai"
+
+  - name: "Simon Willison"
+    url: "https://simonwillison.net/atom/everything/"
+    tier: 2
+    type: "expert_commentary"
+    content_type: "analysis"
     official: false
     mission: "ai"
 
@@ -60,18 +92,10 @@ rss_sources:
     official: false
     mission: "ai"
 
-  - name: "Latent Space"
-    url: "https://www.latent.space/feed"
+  - name: "MarkTechPost"
+    url: "https://www.marktechpost.com/feed/"
     tier: 2
-    type: "curated_intelligence"
+    type: "specialist_media"
     content_type: "research"
-    official: false
-    mission: "ai"
-
-  - name: "Ben's Bites"
-    url: "https://www.bensbites.co/feed"
-    tier: 2
-    type: "curated_intelligence"
-    content_type: "news"
     official: false
     mission: "ai"

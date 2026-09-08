@@ -34,7 +34,7 @@ jobs:
       - name: Checkout current ref
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.sha }}
           fetch-depth: 1
           persist-credentials: true
 

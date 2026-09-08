@@ -108,5 +108,6 @@ def test_story_gate_sets_p3_canonical_final_score():
     assert len(result) == 1
     assert result[0]["editorial_score_pre_signal"] == editorial
     assert result[0]["technology_signal_score"] == signal
-    assert result[0]["final_editorial_score"] == round(0.75 * editorial + 0.25 * signal, 2)
+    radar_composite = float(result[0]["radar_composite_score"])
+    assert result[0]["final_editorial_score"] == round(0.75 * radar_composite + 0.25 * signal, 2)
     assert result[0]["story_representative_score"] == editorial

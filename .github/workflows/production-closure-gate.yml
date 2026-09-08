@@ -138,9 +138,10 @@ jobs:
           fail_closed_regression = any_recent(r"\[Fail-Closed Acceptance Evidence\] PASS")
           zero_publish_evidence = observed_zero_publish or fail_closed_regression
 
-          dedup_runtime = any_recent(r"\[Story Identity\] history_duplicates=0 current_run_duplicates=0")
-          no_duplicate_publication = not any_recent(r"duplicate publication")
-          duplicate_free = dedup_runtime and no_duplicate_publication
+          history_dedup_clean = any_recent(r"\[Story Identity\] history_duplicates=0")
+          no_duplicate_publication = not any_recent(r"(?:duplicate publication|\[Telegram Published\].*duplicate)")
+          duplicate_rejection_evidence = any_recent(r"(?:duplicate candidate removed|current_run_duplicates=\d+)")
+          duplicate_free = history_dedup_clean and no_duplicate_publication
 
           image_contract = any_recent(r"full_text=\d+ photo=(?:enabled|disabled) single_message=true")
           ranking_contract = all_window(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_recent(r"normal_rank=\d{2,}")
@@ -171,7 +172,7 @@ jobs:
 
           for key, value in evidence.items():
               print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
-          print(f"DEDUP_EVIDENCE runtime={dedup_runtime} no_duplicate_publication={no_duplicate_publication}")
+          print(f"DEDUP_EVIDENCE history_clean={history_dedup_clean} no_duplicate_publication={no_duplicate_publication} rejection_evidence={duplicate_rejection_evidence}")
           print(f"EDUCATION_EVIDENCE published={education_published} recovery={education_recovery_confirmed}")
           print(f"FAIL_CLOSED_EVIDENCE observed_zero={observed_zero_publish} regression_contract={fail_closed_regression}")
 

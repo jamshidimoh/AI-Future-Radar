@@ -10,6 +10,25 @@ from editorial_score_v2 import score_editorial_v2
 from story_identity import deduplicate_stories
 from technology_signal_v2 import calculate_technology_signal_score
 
+_TECH_SIGNAL_TERMS = (
+    "artificial intelligence", "ai", "machine learning", "deep learning", "llm", "agi",
+    "openai", "anthropic", "deepmind", "gpt", "claude", "gemini", "qwen", "llama",
+    "reasoning model", "foundation model", "frontier model", "ai agent", "agentic ai",
+    "robotics", "humanoid", "physical ai", "computer use", "ai safety", "ai security",
+    "ai governance", "ai policy", "ai regulation", "ai infrastructure", "ai chip", "gpu",
+    "npu", "tpu", "ai accelerator", "quantum computing", "quantum ai", "brain-computer interface",
+    "bci", "neurotechnology", "synthetic biology", "protein design", "computational biology",
+    "photonic computing", "neuromorphic", "technology", "computing", "digital transformation",
+    "هوش مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی", "عامل هوشمند", "رباتیک",
+    "فناوری", "رایانش", "محاسبات", "کوانتوم", "رابط مغز و رایانه",
+)
+
+
+def _technology_relevant(item):
+    explicit = bool(item.get("ai_relevance") or item.get("_ai_link") or item.get("interview_signal") and item.get("topic_family"))
+    text = " ".join(str(item.get(k) or "") for k in ("title", "summary", "description", "category", "topic_family", "content_type")).casefold()
+    return explicit or any(term.casefold() in text for term in _TECH_SIGNAL_TERMS)
+
 
 def _prepare_canonical_scores(item):
     candidate = dict(item)
@@ -68,15 +87,22 @@ def _canonical_final_editorial_score(item):
 def gate_story_candidates(protected_items, leader_items, regular_items, seen_signatures, threshold=0.45):
     """Prepare canonical scores, remove low-information stories, then deduplicate.
 
-    The low-information gate is deliberately narrow: it rejects only explicit
-    utility/tutorial content when the item has no compensating research,
-    capability, convergence, strategic, societal, or future-horizon signal.
-    It does not blacklist ChatGPT, OpenAI, product news, or model releases.
+    Protected leader content remains quota-exempt only when the story itself has
+    a substantive technology/AI signal. Generic biography, politics, lifestyle,
+    physics or unrelated commentary must return to the normal relevance path.
     """
     ordered = []
     for pool in (protected_items or [], leader_items or [], regular_items or []):
-        prepared = (_prepare_canonical_scores(item) for item in pool)
-        ordered.extend(sorted(prepared, key=story_representative_rank_key, reverse=True))
+        prepared_items = []
+        for raw in pool:
+            item = dict(raw)
+            if item.get("protected_content") and not _technology_relevant(item):
+                item["protected_content"] = False
+                item["leader_watch_protected"] = False
+                item["protected_reason"] = "leader_protection_not_technology_relevant"
+                continue
+            prepared_items.append(_prepare_canonical_scores(item))
+        ordered.extend(sorted(prepared_items, key=story_representative_rank_key, reverse=True))
 
     filtered = []
     for item in ordered:

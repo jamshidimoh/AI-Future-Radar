@@ -118,44 +118,7 @@ jobs:
               fi
             else
               echo "State rebase attempt ${attempt} hit generated-state conflicts; merging JSON state instead of discarding remote history."
-              python - <<'PY'
-              import json
-              import subprocess
-              from pathlib import Path
-
-              files = [Path("data/seen.json"), Path("data/telegram_feedback.json"), Path("data/education_state.json"), Path("data/publication_state.json")]
-
-              def read_stage(stage, path):
-                  try:
-                      raw = subprocess.check_output(["git", "show", f":{stage}:{path.as_posix()}"], text=True)
-                      return json.loads(raw)
-                  except Exception:
-                      return None
-
-              def merge(a, b):
-                  if isinstance(a, dict) and isinstance(b, dict):
-                      out = dict(a)
-                      for key, value in b.items():
-                          out[key] = merge(out[key], value) if key in out else value
-                      return out
-                  if isinstance(a, list) and isinstance(b, list):
-                      out = list(a)
-                      seen = {json.dumps(x, ensure_ascii=False, sort_keys=True) for x in out}
-                      for value in b:
-                          marker = json.dumps(value, ensure_ascii=False, sort_keys=True)
-                          if marker not in seen:
-                              out.append(value)
-                              seen.add(marker)
-                      return out
-                  return a if a is not None else b
-
-              for path in files:
-                  ours = read_stage(2, path)
-                  theirs = read_stage(3, path)
-                  if ours is None or theirs is None:
-                      continue
-                  path.write_text(json.dumps(merge(ours, theirs), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-              PY
+              python scripts/merge_production_state.py
               git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
               GIT_EDITOR=true git rebase --continue
               if git push origin "HEAD:${{ github.ref_name }}"; then

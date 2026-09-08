@@ -108,6 +108,14 @@ google_news_queries:
   - {query: "TED AI artificial intelligence interview", category: ai, tier: 1, content_type: talk}
   - {query: "Dwarkesh Patel AI interview latest", category: ai, tier: 1, content_type: interview}
   - {query: "No Priors AI podcast latest", category: ai, tier: 1, content_type: podcast}
+  # Dedicated high-recall lane for consequential AI incidents, safety failures,
+  # security breaches, and regulator-facing developments. These queries are
+  # intentionally independent from the leader watchlist so a major incident
+  # is not lost when the leader query set is dominated by model-release news.
+  - {query: "site:reuters.com OpenAI AI agents incident breach safety", category: ai, tier: 1, content_type: news, preferred_source: "Reuters"}
+  - {query: "site:reuters.com AI agents incident cybersecurity safety OpenAI Anthropic", category: ai, tier: 1, content_type: news, preferred_source: "Reuters"}
+  - {query: "OpenAI agents incident Germany DseWiki", category: ai, tier: 1, content_type: news}
+  - {query: "AI agents rogue incident breach hijack safety regulator", category: ai, tier: 1, content_type: news}
   - {query: "quantum machine learning AI breakthrough", category: quantum, tier: 1, content_type: research}
   - {query: "quantum computing AI application machine learning", category: quantum, tier: 1, content_type: research}
   - {query: "AI drug discovery genomics CRISPR machine learning", category: genetics, tier: 1, content_type: research}

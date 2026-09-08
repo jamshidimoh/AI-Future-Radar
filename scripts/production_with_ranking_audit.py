@@ -17,6 +17,7 @@ from src.production_router_policy import apply as apply_production_router_policy
 from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
 from src.source_authority import resolve_source_tier
+from src.story_gate import _technology_relevant
 
 apply_production_router_policy()
 
@@ -37,14 +38,23 @@ _CRITICAL_INCIDENT_TERMS = (
 )
 
 
+def _contains_whole_term(text, term):
+    """Match a critical term as a token/phrase, not as an arbitrary substring."""
+    escaped = re.escape(str(term).strip())
+    return bool(re.search(rf"(?<!\w){escaped}(?!\w)", text))
+
+
 def _is_critical_ai_incident(item):
-    """Recognize consequential AI incidents independently of leader/model lanes."""
+    """Recognize consequential AI incidents only when technology relevance is independent."""
+    if not _technology_relevant(item):
+        return False
+
     text = " ".join(
         str(item.get(key) or "")
         for key in ("title", "summary", "description", "source")
     ).casefold()
-    ai_hit = any(term in text for term in _CRITICAL_AI_TERMS)
-    incident_hit = any(term in text for term in _CRITICAL_INCIDENT_TERMS)
+    ai_hit = any(_contains_whole_term(text, term) for term in _CRITICAL_AI_TERMS)
+    incident_hit = any(_contains_whole_term(text, term) for term in _CRITICAL_INCIDENT_TERMS)
     try:
         source_tier = int(item.get("source_tier", 3) or 3)
     except (TypeError, ValueError):

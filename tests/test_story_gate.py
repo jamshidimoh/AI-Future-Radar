@@ -1,5 +1,5 @@
 from editorial_score_v2 import score_editorial_v2
-from story_gate import gate_story_candidates, story_representative_rank_key
+from story_gate import gate_story_candidates, story_representative_rank_key, _technology_relevant
 from technology_signal_v2 import calculate_technology_signal_score
 
 
@@ -51,6 +51,43 @@ def test_representative_rank_ignores_signal_inflation():
     assert story_representative_rank_key(left)[3] == 80
     assert story_representative_rank_key(right)[3] == 85
     assert story_representative_rank_key(right) > story_representative_rank_key(left)
+
+
+def test_protected_leader_cannot_bypass_technology_relevance_via_ai_link():
+    item = {
+        "title": "Why gravity is changing our understanding of fundamental physics",
+        "summary": "A discussion about fundamental physics and scientific discovery.",
+        "content_type": "interview",
+        "protected_content": True,
+        "leader_watch_protected": True,
+        "_ai_link": True,
+    }
+    assert _technology_relevant(item) is False
+
+
+def test_protected_leader_with_explicit_ai_signal_remains_relevant():
+    item = {
+        "title": "Dario Amodei on the next phase of AI safety",
+        "summary": "A substantive interview about frontier models, AI safety and deployment risks.",
+        "content_type": "interview",
+        "protected_content": True,
+        "leader_watch_protected": True,
+        "_ai_link": True,
+    }
+    assert _technology_relevant(item) is True
+
+
+def test_story_gate_rejects_non_technology_protected_leader_even_when_ai_link_is_set():
+    item = {
+        "title": "The Nuremberg trials and capturing Pinochet",
+        "summary": "Philippe Sands discusses international law and historical accountability.",
+        "content_type": "interview",
+        "protected_content": True,
+        "leader_watch_protected": True,
+        "_ai_link": True,
+    }
+    result = gate_story_candidates([item], [], [], [])
+    assert result == []
 
 
 def test_story_gate_sets_p3_canonical_final_score():

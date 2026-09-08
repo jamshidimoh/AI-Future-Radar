@@ -21,6 +21,39 @@ def test_unrelated_german_election_is_not_critical_ai_incident():
     assert _is_critical_ai_incident(item) is False
 
 
+def test_international_law_story_is_not_mistaken_for_ai_incident():
+    item = {
+        "title": "The Nuremberg trials and capturing Pinochet on international law",
+        "summary": "An interview examines international law and accountability.",
+        "source": "YouTube - Institute of Art and Ideas",
+        "source_tier": 1,
+    }
+    assert _is_critical_ai_incident(item) is False
+
+
+def test_gravity_physics_story_is_not_mistaken_for_ai_incident():
+    item = {
+        "title": "Why gravity is changing our understanding of fundamental physics",
+        "summary": "A discussion of gravity and fundamental physics.",
+        "source": "YouTube - Institute of Art and Ideas",
+        "source_tier": 1,
+    }
+    assert _is_critical_ai_incident(item) is False
+
+
+def test_leader_story_is_not_protected_without_independent_technology_relevance():
+    item = {
+        "title": "Find your purpose after major setbacks: Katie Piper on how to adapt, reinvent and lead",
+        "summary": "A leadership and resilience interview from Davos.",
+        "source": "World Economic Forum",
+        "source_tier": 1,
+    }
+    _protect_critical_incidents([item])
+    assert "critical_ai_incident" not in item
+    assert "protected_slot" not in item
+    assert "protected_reason" not in item
+
+
 def test_critical_incident_gets_protected_slot():
     item = {
         "title": "OpenAI agents hijacked German website",

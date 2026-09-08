@@ -63,7 +63,7 @@ jobs:
                       raise
                   location = exc.headers.get("Location")
                   if not location:
-                      raise RuntimeError("GitHub log redirect did not include Location") from exc
+                      raise RuntimeError("GitHub log redirect did not include a Location header") from exc
                   with urllib.request.urlopen(urllib.request.Request(location), timeout=30) as response:
                       return response.read().decode("utf-8", errors="replace")
 
@@ -119,9 +119,11 @@ jobs:
               except Exception as exc:
                   errors[run["run_number"]] = f"{type(exc).__name__}: {exc}"
 
-          if any(r.get("run_number") in errors for r in window):
-              print("CLOSURE: BLOCKED — a closure-window production log could not be read.")
-              print("Log errors:", errors)
+          log_errors = errors
+          if log_errors or len(logs) < 3:
+              print("CLOSURE: BLOCKED — production evidence logs are incomplete; cannot certify closure")
+              print("Log errors:", log_errors)
+              print("Observed logs:", sorted(logs))
               sys.exit(1)
 
           def has(text, pattern):
@@ -130,7 +132,7 @@ jobs:
           def any_recent(pattern):
               return any(has(text, pattern) for text in logs.values())
 
-          def all_window(pattern):
+          def all_runs(pattern):
               return all(r.get("run_number") in logs and has(logs[r.get("run_number")], pattern) for r in window)
 
           published_run = any_recent(r"\[Telegram Published\]")
@@ -144,14 +146,14 @@ jobs:
           duplicate_free = history_dedup_clean and no_duplicate_publication
 
           image_contract = any_recent(r"full_text=\d+ photo=(?:enabled|disabled) single_message=true")
-          ranking_contract = all_window(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_recent(r"normal_rank=\d{2,}")
+          ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_recent(r"normal_rank=\d{2,}")
           qa_replacement = any_recent(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
-          leader_watch = all_window(r"\[Protected Leader Eligibility\] candidates=\d+") and all_window(r"\[Leader Protection Audit\]")
+          leader_watch = all_runs(r"\[Protected Leader Eligibility\] candidates=\d+") and all_runs(r"\[Leader Protection Audit\]")
           provider_success = any_recent(r"\[Light Router\] success=")
           provider_failure_observed = any_recent(r"\[Light Router\] disabled=") or any_recent(r"(?:429|quota|timeout|5\d{2}|401|403)")
           provider_isolated = provider_failure_observed and provider_success
-          state_persisted = all_window(r"Production state persisted")
-          mission_portfolio = all_window(r"mission_aware=true") and not any_recent(r"generic low[- ]signal")
+          state_persisted = all_runs(r"Production state persisted")
+          mission_portfolio = all_runs(r"mission_aware=true") and not any_recent(r"generic low[- ]signal")
 
           education_published = any_recent(r"\[Education Published\].*telegram_delivery=successful")
           education_recovery_confirmed = any_recent(r"\[Education Recovery\] CONFIRMED")

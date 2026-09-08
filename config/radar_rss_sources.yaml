@@ -1,6 +1,77 @@
-# Mission-critical supplemental feeds. These extend the canonical source policy
-# without replacing it. They are discovery inputs; AI relevance/publication gates
-# remain authoritative downstream.
-# arXiv is intentionally absent: it is not a Radar source and must not be searched,
-# crawled, ingested, ranked, selected, or published.
-rss_sources: []
+# Mission-critical supplemental feeds.
+# These feeds expand DISCOVERY only; downstream relevance, evidence, deduplication,
+# editorial quality and publication gates remain authoritative.
+# The goal is higher recall without turning the Radar into a generic AI-news firehose.
+# arXiv is intentionally absent and remains globally excluded.
+#
+# Source roles:
+# - primary/research: first-party or research-originated signals
+# - specialist: expert editorial coverage
+# - curated: high-signal editorial/technical discovery leads
+# A discovery lead is not automatically a publication source: downstream ranking
+# should prefer the primary source when one can be recovered.
+
+rss_sources:
+  - name: "Google AI Blog"
+    url: "https://blog.google/technology/ai/rss/"
+    tier: 1
+    type: "ai_lab"
+    content_type: "official"
+    official: true
+    mission: "ai"
+
+  - name: "The Gradient"
+    url: "https://thegradient.pub/rss/"
+    tier: 2
+    type: "specialist_media"
+    content_type: "research"
+    official: false
+    mission: "ai"
+
+  - name: "Ahead of AI"
+    url: "https://magazine.sebastianraschka.com/feed"
+    tier: 2
+    type: "specialist_research"
+    content_type: "research"
+    official: false
+    mission: "ai"
+
+  - name: "Last Week in AI"
+    url: "https://lastweekin.ai/feed"
+    tier: 2
+    type: "curated_intelligence"
+    content_type: "news"
+    official: false
+    mission: "ai"
+
+  - name: "MarkTechPost"
+    url: "https://www.marktechpost.com/feed/"
+    tier: 2
+    type: "specialist_media"
+    content_type: "research"
+    official: false
+    mission: "ai"
+
+  - name: "The Verge - AI"
+    url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+    tier: 2
+    type: "specialist_media"
+    content_type: "news"
+    official: false
+    mission: "ai"
+
+  - name: "Latent Space"
+    url: "https://www.latent.space/feed"
+    tier: 2
+    type: "curated_intelligence"
+    content_type: "research"
+    official: false
+    mission: "ai"
+
+  - name: "Ben's Bites"
+    url: "https://www.bensbites.co/feed"
+    tier: 2
+    type: "curated_intelligence"
+    content_type: "news"
+    official: false
+    mission: "ai"

@@ -14,6 +14,7 @@ from model_release_priority import model_release_bonus
 from publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
 from protected_story_identity import probable_same_story
 from src.priority_people import priority_people_features
+from src.story_gate import _technology_relevant
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 REGULAR_SAME_STORY_THRESHOLD = 0.82
@@ -249,6 +250,17 @@ def _eligibility_split(items, max_protected=2):
         is_interview = _pipeline._is_protected_leader_interview(item)
         is_activity = not is_interview and _pipeline._is_protected_leader_activity(item)
         if is_interview or is_activity:
+            # Watchlist membership is routing metadata, not an editorial bypass.
+            # Reserve Tier-0 only when the candidate itself has a concrete
+            # technology/AI signal. Do this check before injecting _ai_link.
+            if not _technology_relevant(item):
+                item["protected_content"] = False
+                item["leader_watch_protected"] = False
+                item["protected_slot"] = False
+                item["_rank_is_tier0"] = False
+                item["protected_reason"] = "leader_protection_not_technology_relevant"
+                regular.append(item)
+                continue
             item["protected_content"] = True
             item["protected_reason"] = "leader_interview" if is_interview else "leader_activity"
             item["_ai_link"] = True

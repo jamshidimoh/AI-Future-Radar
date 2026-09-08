@@ -24,7 +24,10 @@ def test_strategic_ai_policy_signal_is_retained():
     }]
     result = filter_ai_relevance(items, ["AI"])
     assert len(result) == 1
-    assert result[0]["early_inclusion_reason"] == "strategic_ai_or_tech"
+    # Direct AI evidence remains on the established AI-evidence relevance path;
+    # early-inclusion metadata is reserved for signals that actually need rescue.
+    assert result[0]["relevance_reason"] == "ai_evidence"
+    assert result[0].get("early_inclusion") is not True
 
 
 def test_emerging_technology_from_authoritative_source_is_retained():

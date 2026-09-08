@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from src.editorial_quality_policy import normal_score_allowed
+from src.editorial_quality_policy import normal_score_allowed, NORMAL_SCORE_FLOOR
 from scripts.production_acceptance_guard import validate
 
 ROOT = Path(__file__).resolve().parents[1]
 MISSION_POLICY = ROOT / "config" / "mission_policy.yaml"
+PRODUCTION_ENTRYPOINT = ROOT / "production_entrypoint.py"
 
 
 def test_rank_one_uses_absolute_quality_floor_not_adaptive_baseline():
@@ -12,6 +13,13 @@ def test_rank_one_uses_absolute_quality_floor_not_adaptive_baseline():
     assert normal_score_allowed(63.29, 73.30)
     assert normal_score_allowed(63.30, 73.30)
     assert not normal_score_allowed(59.99, 73.30)
+
+
+def test_normal_score_rejection_diagnostic_uses_absolute_floor():
+    text = PRODUCTION_ENTRYPOINT.read_text(encoding="utf-8")
+    assert "normal_score_policy_blocked:{score}<floor:{NORMAL_SCORE_FLOOR}" in text
+    assert "normal_score_policy_blocked:{score}<={previous_normal_score}" not in text
+    assert NORMAL_SCORE_FLOOR == 60.0
 
 
 def test_mission_portfolio_is_explicit_and_not_generic_ai_only():

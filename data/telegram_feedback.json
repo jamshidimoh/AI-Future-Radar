@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788890167,
+  "updated_at": 1788904444,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8051,6 +8051,44 @@
       "why_it_matters": "کاهش ۲۰٪ خطا به معنای افزایش دقت استخراج داده‌ها از اسناد است که می‌تواند هزینه‌های اصلاح و بازبینی را به‌طور قابل‌Attentionی کاهش دهد. هزینه ثابت ۱ سنت برای هر صفحه، نسبت به ۳‑۶ سنت قبلی، باعث می‌شود که مقیاس‌پذیری پردازش اسناد بزرگ برای شرکت‌ها اقتصادی‌تر شود. ترکیب تمام مراحل در یک مدل، پیچیدگی پیاده‌سازی را کاهش داده و زمان استقرار را کوتاه می‌کند، اما ممکن است در موارد خاصی که نیاز به تنظیمات دقیق‌تری دارد، محدودیت داشته باشد. این پیشرفت نشان‌دهنده جهتی است که هوش مصنوعی می‌تواند فرآیندهای اداری را به‌صورت یکپارچه و کم‌هزینه‌تری بهبود بخشد.",
       "link": "https://www.marktechpost.com/2026/09/07/reducto-releases-r-1-a-single-pass-document-parsing-model-that-cuts-errors-20-at-1-cent-per-page/",
       "posted_at": 1788890432
+    },
+    "-1004482051328:1528": {
+      "chat_id": -1004482051328,
+      "message_id": 1528,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "OpenAI News",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "GPT-5.6 Sol و Codex در اجرای خودکار آزمایش‌های رایانش کوانتومی",
+      "summary": "پژوهشگری از MIT از مدل GPT-5.6 Sol در ترکیب با ابزار Codex برای انجام خودکار آزمایش‌های رایانش کوانتومی استفاده می‌کند. این سیستم قادر است نتایج آزمایش‌ها را تحلیل کرده و کالیبراسیون کیوبیت‌ها را به صورت مستقل مدیریت کند. این رویکرد نشان‌دهنده کاربرد عملی هوش مصنوعی در فرآیندهای پیچیده فنی و آزمایشگاهی است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "استفاده از GPT-5.6 Sol برای کالیبراسیون کیوبیت‌ها و تحلیل خودکار نتایج، می‌تواند سرعت و دقت آزمایش‌های کوانتومی را افزایش دهد. این قابلیت به کاهش بار کاری محققان و تسریع در توسعه فناوری‌های کوانتومی کمک می‌کند. همچنین نشان می‌دهد که مدل‌های زبانی بزرگ می‌توانند در چرخه‌های تحقیق و توسعه سخت‌افزاری نقش فعالی ایفا کنند.",
+      "link": "https://openai.com/index/codex-quantum-computing-experiments",
+      "posted_at": 1788904442
+    },
+    "-1004482051328:1529": {
+      "chat_id": -1004482051328,
+      "message_id": 1529,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Google DeepMind)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "AlphaGenome Atlas: پیش‌بینی اثرات مولکولی ۹ میلیارد واریانت DNA انسان",
+      "summary": "Google DeepMind از AlphaGenome Atlas رونمایی کرد؛ ابزاری برای پیش‌بینی اثرات مولکولی واریانت‌های DNA انسان. این سیستم قابلیت تحلیل ۹ میلیارد واریانت را دارد و هدف آن ارائه درک عمیق‌تری از ارتباط بین تغییرات ژنتیکی و عملکرد سلولی است. این پروژه گامی مهم در جهت شخصی‌سازی پزشکی و درک بیماری‌های ژنتیکی محسوب می‌شود.",
+      "why_it_matters": "این فناوری امکان شناسایی دقیق‌تر واریانت‌های ژنتیکی مرتبط با بیماری‌ها را فراهم می‌کند. تحلیل ۹ میلیارد واریانت به درک بهتر مکانیسم‌های مولکولی بیماری‌ها کمک می‌کند و می‌تواند منجر به توسعه درمان‌های هدفمندتر شود. همچنین به محققان کمک می‌کند تا اثرات ناشناخته تغییرات DNA را سریع‌تر بررسی کنند.",
+      "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOM25CMWNTTmk2YTl0V21uU0tyRXpfem5BXzlZOW4wSW9BUlFDX29qY25NcV9XVWhNZHRnRS13UFpEN213Sl9RTm13SlBEV0gwUVVpaTdxV1ZYZzVoNG91ODlUal9NUkFmcGdsZTN5VklJYndBeU90ZmI0cVQ1ZVdJZzUwV2pYcHlKZkd0eTFjakZhbGxqX1ZKRTF3aXQtbDE0b2c0cXMzQzYtSXVIcjRRQ2ROa3pRVWpmZV9UZA?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "posted_at": 1788904444
     }
   }
 }

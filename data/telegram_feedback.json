@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788835833,
+  "updated_at": 1788835973,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7581,6 +7581,45 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1788835833
+    },
+    "-1004482051328:1490": {
+      "chat_id": -1004482051328,
+      "message_id": 1490,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Yahoo)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "Elon Musk پس از انتشار مستندی که او را «مرد بیش از حد ناامید» توصیف کرد، در مصاحبه‌ای اعلام کرد که حدود نیمی از زمان‌ها احساس خوشبختی می‌کند",
+      "summary": "Elon Musk پس از انتشار مستندی که او را «مرد بیش از حد ناامید» توصیف کرد، در مصاحبه‌ای اعلام کرد که حدود نیمی از زمان‌ها احساس خوشبختی می‌کند. او افزود که این احساسات متغیر است و به عوامل مختلفی بستگی دارد. مادرش نیز در واکنش به مستند، نظراتی درباره وضعیت روحی پسرش ارائه داد. این اظهارات در پی انتشار مستندی صورت گرفت که به بررسی عمیق زندگی شخصی و چالش‌های روان‌شناختی Musk می‌پردازد.",
+      "why_it_matters": "بیان احساسات شخصی Musk نشان می‌دهد که حتی رهبران برجسته فناوری تحت فشارهای روانی قابل Attentionی قرار دارند، که می‌تواند بر تصمیم‌گیری‌های استراتژیک و عملکرد شرکت‌ها تأثیر بگذارد. Attention عمومی به سلامت روان این افراد می‌تواند منجر به ایجاد سیاست‌ها و برنامه‌های حمایتی در داخل شرکت‌ها شود. همچنین، واکنش خانواده به این موضوع می‌تواند به تغییر روایت عمومی از تصویر کامل‌نگرانه موفقیت در صنعت فناوری کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxNcHg0b3NoX29MbVc3cmlzWWpMS0JPNGpSbFhtX1JuY0NsMjJST0dWMDdZWkh3bUF4Qy1OejlGVWs1Y1E3V2dfMm5HbGQ5RFRmR24yZmV1Wlg2MktVRlpoY3liODN3R3NuX0pxX3ExOTRhQTE5eUR0TFBUeGIzVUN5MFBxa29IZzhHSEVxdUtvSFNCV2VNaHU3T0tB?oc=5",
+      "posted_at": 1788835971
+    },
+    "-1004482051328:1491": {
+      "chat_id": -1004482051328,
+      "message_id": 1491,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (OpenAI)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "OpenAI فراخوان استخدام مهندس Applied AI Engineer برای پروژه Codex در توکیو",
+      "summary": "OpenAI اعلام کرده است که به دنبال استخدام یک Applied AI Engineer برای تیم Codex در توکیو است. این موقعیت شغلی در دسته‌بندی research قرار دارد و بر توسعه و پیاده‌سازی مدل‌های هوش مصنوعی تمرکز دارد. جزئیات فنی دقیق یا مشخصات شغلی کامل در متن ارائه‌شده ذکر نشده است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "استخدام نیروی متخصص در توکیو نشان‌دهنده گسترش حضور فیزیکی و توسعه‌ای OpenAI در منطقه آسیا-اقیانوسیه است. تمرکز بر پروژه Codex که یک ابزار کدنویسی هوشمند است، اهمیت می‌دهد که چگونه شرکت‌های بزرگ AI در حال جذب استعدادهای محلی برای تسریع نوآوری در حوزه‌های کاربردی هستند.",
+      "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBWa04tU3RpTl8xOWpLVDNmVnRPbDlWQ3BkRzdIS2FzUVdnVFdsWGZWemt1X0NDUDBNVDZtOHdQMW5rMUJWc1Z3aDYwTXR6OWhBdVV4T29rQ1RYQjBERWM1SDk2eGJiSXZ1MzFLT1VKdy1nT09QNGpDUGVzR0w2RXM?oc=5",
+      "posted_at": 1788835973
     }
   }
 }

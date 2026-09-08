@@ -9,8 +9,10 @@ SUMMARY_MIN_CHARS = 180
 WHY_MIN_CHARS = 140
 SHORT_SOURCE_SUMMARY_MIN_CHARS = 120
 SHORT_SOURCE_WHY_MIN_CHARS = 100
+# Editorial quality is enforced by language, evidence, specificity and value gates.
+# The ranking score is a prioritization signal, not a stale-state publication floor.
 NORMAL_SCORE_TOLERANCE = 10.0
-NORMAL_SCORE_FLOOR = 85.0
+NORMAL_SCORE_FLOOR = 60.0
 TITLE_MAX_CHARS = 160
 LATIN_TOKEN_MAX_CHARS = 64
 _BIDI_CONTROLS = "\u202A\u202B\u202C\u202D\u202E\u2066\u2067\u2069\u200E\u200F"
@@ -72,10 +74,7 @@ def _sentence_count(text: str) -> int:
 def _content_tokens(text: str) -> set[str]:
     value = str(text or "").lower()
     latin = {x for x in re.findall(r"[a-z][a-z0-9.+/#-]{1,}", value) if len(x) >= 2}
-    persian = {
-        x for x in re.findall(r"[\u0600-\u06ff]{3,}", value)
-        if x not in _GENERIC_WORDS
-    }
+    persian = {x for x in re.findall(r"[\u0600-\u06ff]{3,}", value) if x not in _GENERIC_WORDS}
     return latin | persian
 
 
@@ -109,32 +108,19 @@ def _source_support(summary: str, why: str, source_text: str) -> tuple[float, fl
         return 0.0, 0.0
     lexical_summary = len(summary_tokens & source) / max(1, len(summary_tokens))
     lexical_why = len(why_tokens & source) / max(1, len(why_tokens))
-
     source_anchors = set(re.findall(r"\d+(?:[.,]\d+)?%?", source_text or ""))
-    source_anchors |= {
-        x.lower() for x in re.findall(r"\b[A-Z][A-Za-z0-9.+/#-]{1,}\b", source_text or "")
-        if len(x) >= 2
-    }
+    source_anchors |= {x.lower() for x in re.findall(r"\b[A-Z][A-Za-z0-9.+/#-]{1,}\b", source_text or "") if len(x) >= 2}
     if source_anchors and persian_ratio(summary) >= BODY_PERSIAN_RATIO_MIN:
         def anchor_ratio(text: str) -> float:
             text_value = str(text or "")
             present = set(re.findall(r"\d+(?:[.,]\d+)?%?", text_value))
-            present |= {
-                x.lower() for x in re.findall(r"\b[A-Z][A-Za-z0-9.+/#-]{1,}\b", text_value)
-                if len(x) >= 2
-            }
+            present |= {x.lower() for x in re.findall(r"\b[A-Z][A-Za-z0-9.+/#-]{1,}\b", text_value) if len(x) >= 2}
             return len(present & source_anchors) / max(1, len(present))
-
         anchor_summary = anchor_ratio(summary)
         anchor_why = anchor_ratio(why)
         source_is_mostly_latin = persian_ratio(source_text) < 0.35
         if source_is_mostly_latin:
             summary_support = max(lexical_summary, anchor_summary * 0.55)
-            # why_it_matters is an editorial inference from the supported summary.
-            # In cross-language output it may contain no source-identical anchors.
-            # Permit only bounded evidence inherited from a strongly supported
-            # summary and shared substantive terms; generic claims remain blocked
-            # by the existing generic-why and impact-marker gates.
             derived_why = _overlap(why, summary) * 0.50 if summary_support >= 0.12 else 0.0
             return summary_support, max(lexical_why, anchor_why * 0.35, derived_why)
     return lexical_summary, lexical_why
@@ -162,7 +148,6 @@ def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_tex
         return False
     if len(summary) > 260 and len(summary) / max(1, source_len) < 0.06 and source_len >= 700:
         return False
-
     summary_support, why_support = _source_support(summary, why, source)
     if source_len >= 350:
         if persian_ratio(summary) >= BODY_PERSIAN_RATIO_MIN and persian_ratio(source) < 0.35:
@@ -203,23 +188,19 @@ def terminology_safety_ok(text: str) -> bool:
 
 
 def editorial_fields_ok(title: str, summary: str, why_it_matters: str) -> bool:
-    return (
-        headline_quality_ok(title)
-        and terminology_safety_ok(title)
-        and terminology_safety_ok(summary)
-        and terminology_safety_ok(why_it_matters)
-    )
+    return headline_quality_ok(title) and terminology_safety_ok(title) and terminology_safety_ok(summary) and terminology_safety_ok(why_it_matters)
 
 
 def normal_score_allowed(score: float, previous_score: float | None) -> bool:
-    """Allow controlled step-downs without allowing an impossible stale floor.
+    """Use ranking score only as a bounded minimum-quality signal.
 
-    The previous published normal score remains the adaptive anchor. When the
-    baseline itself is below the nominal floor, the same relative tolerance is
-    applied to that baseline rather than imposing a hard 85-point cutoff.
+    Previous published scores are retained for diagnostics and analytics, but are
+    deliberately not used as a hard publication baseline. The previous policy
+    could permanently suppress the entire normal-news portfolio when score scale
+    or ranking weights changed between deployments.
     """
-    if previous_score is None:
-        return True
-    previous = float(previous_score)
-    threshold = max(NORMAL_SCORE_FLOOR, previous - NORMAL_SCORE_TOLERANCE) if previous >= NORMAL_SCORE_FLOOR else previous - NORMAL_SCORE_TOLERANCE
-    return float(score) >= threshold
+    try:
+        value = float(score)
+    except (TypeError, ValueError):
+        return False
+    return value >= NORMAL_SCORE_FLOOR

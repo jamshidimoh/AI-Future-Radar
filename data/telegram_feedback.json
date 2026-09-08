@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788829759,
+  "updated_at": 1788835833,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -7549,6 +7549,38 @@
       "why_it_matters": "این رویداد نشان‌دهنده تغییرات بنیادین در طیف سیاسی اروپا است که می‌تواند بر سیاست‌های اتحادیه اروپا، همکاری‌های بین‌المللی و ثبات اقتصادی منطقه تأثیر بگذارد. هشدار سیاستمداران از «لحظه جدی» بودن این پیروزی، اهمیت استراتژیک آلمان در ساختار قدرت اروپا و چالش‌های پیش‌رو برای احزاب سنتی را برجسته می‌کند. بدون در نظر گرفتن جزئیات فنی، این خبر سیگنالی از افزایش نفوذ جریان‌های راست‌گرا در قلب اروپا است.",
       "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQdDBvY1BwR2xpOTJxUy1yQXRMeGg2Y0pZeURLY0d2Rm9KZVpnNllsSGxqWl9lVHVWa2JZWG9WZmNQaGI2UGI1bWNHZGcyRERId3lya3lXdGRraUdRc0tTNXZNSHZOcWFuMHNNWmFjOXBGazc5LW5BNEsxV1lsYURRNVl3MTZkWUw2ZGlfSk1YOXF1ZGdFamxESlI4UFRycDQ?oc=5",
       "posted_at": 1788818526
+    },
+    "-1004482051328:1488": {
+      "chat_id": -1004482051328,
+      "message_id": 1488,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (OpenAI)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "GPT-6 Astra: نسل جدید هوش مصنوعی",
+      "summary": "OpenAI مدل جدید GPT-6 با نام Astra را معرفی کرد. این نسخه پیشرفته نسبت به GPT‑4، توانایی پردازش داده‌های بزرگ‌تر و بهبود در درک زمینه‌ای را دارد. بر پایه معماری پیشرفته‌تر، سرعت پاسخ‌دهی و دقت در تولید متن افزایش یافته است. OpenAI اعلام کرد که Astra می‌تواند در کاربردهای پیچیده‌تر مانند برنامه‌نویسی خودکار و تحلیل علمی به‌کار رود.",
+      "description": "artificial intelligence",
+      "why_it_matters": "معرفی GPT‑6 Astra نشان می‌دهد که پیشرفت‌های هوش مصنوعی به سرعت به سطوح جدیدی از توان پردازشی و درک زبانی می‌رسند. این مدل می‌تواند ابزارهای تولید محتوا، برنامه‌نویسی و تحلیل داده را به‌طور قابل‌Attentionی بهبود بخشد و در صنایع مختلف کارایی را افزایش دهد. با این حال، پیچیدگی و هزینه‌های محاسباتی بالاتر ممکن است دسترسی به این فناوری را برای برخی کاربران محدود کند.",
+      "link": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE11QUxBUVJLdC1jSmtJbmcxQzg4Qm9yUlNPS3JEMEVBanIyY1FRT2k2R0hBTlNnX2VqcWpTSDJUMDV0TjBJN1VGamlrZzVPZw?oc=5",
+      "posted_at": 1788835824
+    },
+    "-1004482051328:1489": {
+      "chat_id": -1004482051328,
+      "message_id": 1489,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1788835833
     }
   }
 }

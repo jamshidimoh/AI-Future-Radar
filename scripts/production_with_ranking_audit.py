@@ -10,11 +10,13 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import period_ranked_pipeline as pipeline
+from model_release_priority import model_release_bonus
 from src.content_grounding import ensure_source_grounding
 from src.headline_grounding import ensure_headline_grounding
 from src.production_router_policy import apply as apply_production_router_policy
 from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
+from src.source_authority import resolve_source_tier
 
 apply_production_router_policy()
 
@@ -23,9 +25,58 @@ _original_rank = pipeline._global_ranked_selection
 _original_summarize = pipeline.summarize_item
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 
+_CRITICAL_AI_TERMS = (
+    "artificial intelligence", "ai", "ai agent", "ai agents", "agent", "agents",
+    "openai", "anthropic", "deepmind", "llm", "machine learning", "foundation model",
+)
+_CRITICAL_INCIDENT_TERMS = (
+    "incident", "breach", "breached", "hack", "hacked", "hijack", "hijacked",
+    "rogue", "escaped", "escape", "unauthorized", "attack", "attacked", "cyberattack",
+    "misalignment", "safety failure", "security failure", "investigation", "regulator",
+    "regulatory report", "safety report", "containment failure", "loss of control",
+)
+
+
+def _is_critical_ai_incident(item):
+    """Recognize consequential AI incidents independently of leader/model lanes."""
+    text = " ".join(
+        str(item.get(key) or "")
+        for key in ("title", "summary", "description", "source")
+    ).casefold()
+    ai_hit = any(term in text for term in _CRITICAL_AI_TERMS)
+    incident_hit = any(term in text for term in _CRITICAL_INCIDENT_TERMS)
+    try:
+        source_tier = int(item.get("source_tier", 3) or 3)
+    except (TypeError, ValueError):
+        source_tier = 3
+    if source_tier > 2:
+        source_tier = resolve_source_tier(
+            source_name=item.get("source_name") or item.get("source"),
+            source_url=item.get("link") or item.get("canonical_url") or item.get("url"),
+            configured_tier=3,
+        )
+    return ai_hit and incident_hit and source_tier <= 2
+
+
+def _protect_critical_incidents(items):
+    protected = 0
+    for item in items:
+        if not _is_critical_ai_incident(item):
+            continue
+        item["critical_ai_incident"] = True
+        item["protected_slot"] = True
+        item["protected_content"] = True
+        item["protected_reason"] = "critical_ai_incident"
+        item["_ai_link"] = True
+        protected += 1
+    if protected:
+        print(f"[Critical AI Incident Priority] protected={protected} source_tier<=2 incident_lane=true", flush=True)
+    return items
+
 
 def _production_select(items, max_posts, max_per_source, max_per_type, policy):
     """Use the canonical period ranking implementation for production."""
+    _protect_critical_incidents(items)
     selected = _original_rank(
         items,
         max_posts=max_posts,
@@ -132,6 +183,7 @@ def _audited_main(hooks=None):
 
     def production_select(items, max_posts, max_per_source, max_per_type, policy):
         if explicit_select is not None:
+            _protect_critical_incidents(items)
             selected = explicit_select(
                 items,
                 max_posts=max_posts,

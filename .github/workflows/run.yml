@@ -9,10 +9,6 @@ on:
         default: false
         type: boolean
   schedule:
-    # Tehran publication windows:
-    # 05:17, 10:47, 13:47, 17:47, 20:47, 22:47.
-    # Tehran is UTC+3:30. The first window needs :47 UTC;
-    # the remaining windows map from :17 UTC to :47 Tehran.
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
 
@@ -25,8 +21,6 @@ concurrency:
 
 jobs:
   run-bot:
-    # Production state and Telegram publication are owned by main only.
-    # workflow_dispatch on a feature branch is intentionally skipped.
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 26
@@ -50,7 +44,7 @@ jobs:
       - name: Run production regression checks
         run: |
           python -m compileall -q scripts src *.py
-          python -m pytest -q tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_critical_ai_incident_priority.py
+          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_critical_ai_incident_priority.py
 
       - name: Emit fail-closed closure evidence
         run: |

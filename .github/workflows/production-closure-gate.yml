@@ -36,11 +36,7 @@ jobs:
           trigger_conclusion = os.environ.get("TRIGGER_CONCLUSION", "unknown")
           trigger_run_number = os.environ.get("TRIGGER_RUN_NUMBER", "unknown")
           base = f"https://api.github.com/repos/{repo}"
-          headers = {
-              "Authorization": f"Bearer {token}",
-              "Accept": "application/vnd.github+json",
-              "X-GitHub-Api-Version": "2022-11-28",
-          }
+          headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
 
           def get_json(path):
               req = urllib.request.Request(base + path, headers=headers)
@@ -68,7 +64,6 @@ jobs:
                       return response.read().decode("utf-8", errors="replace")
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
-
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=20")
           runs = [r for r in runs_data.get("workflow_runs", []) if r.get("name") == "Run AI Future Radar Bot"]
 
@@ -103,8 +98,8 @@ jobs:
 
           window = executable[:3]
           recent = executable[:12]
-          print("Closure window:", [(r.get("run_number"), r.get("head_sha", "")[:8]) for r in window])
-          print("Recent evidence search:", [(r.get("run_number"), r.get("head_sha", "")[:8]) for r in recent])
+          print("Closure window:", [(r.get("run_number"), r.get("id"), r.get("head_sha", "")[:8]) for r in window])
+          print("Recent evidence search:", [(r.get("run_number"), r.get("id"), r.get("head_sha", "")[:8]) for r in recent])
 
           logs = {}
           errors = {}
@@ -119,10 +114,9 @@ jobs:
               except Exception as exc:
                   errors[run["run_number"]] = f"{type(exc).__name__}: {exc}"
 
-          log_errors = errors
-          if log_errors or len(logs) < 3:
+          if errors or len(logs) < 3:
               print("CLOSURE: BLOCKED — production evidence logs are incomplete; cannot certify closure")
-              print("Log errors:", log_errors)
+              print("Log errors:", errors)
               print("Observed logs:", sorted(logs))
               sys.exit(1)
 
@@ -141,7 +135,10 @@ jobs:
           zero_publish_evidence = observed_zero_publish or fail_closed_regression
 
           history_dedup_clean = any_recent(r"\[Story Identity\] history_duplicates=0")
-          no_duplicate_publication = not any_recent(r"(?:duplicate publication|\[Telegram Published\].*duplicate)")
+          # Only actual delivery/ledger error events count. Do not match prose such as
+          # "no_duplicate_publication" or duplicate-candidate rejection diagnostics.
+          actual_duplicate_event = r"(?:\[Telegram Published\].*duplicate|\[Publication Ledger\].*duplicate publication|\[Publication Contract\].*duplicate publication)"
+          no_duplicate_publication = not any_recent(actual_duplicate_event)
           duplicate_rejection_evidence = any_recent(r"(?:duplicate candidate removed|current_run_duplicates=\d+)")
           duplicate_free = history_dedup_clean and no_duplicate_publication
 
@@ -154,7 +151,6 @@ jobs:
           provider_isolated = provider_failure_observed and provider_success
           state_persisted = all_runs(r"Production state persisted")
           mission_portfolio = all_runs(r"mission_aware=true") and not any_recent(r"generic low[- ]signal")
-
           education_published = any_recent(r"\[Education Published\].*telegram_delivery=successful")
           education_recovery_confirmed = any_recent(r"\[Education Recovery\] CONFIRMED")
 
@@ -183,6 +179,5 @@ jobs:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))
               print("CLOSURE: ACCEPTANCE IN PROGRESS")
               sys.exit(1)
-
           print("CLOSURE: CLOSED — deterministic gates and production evidence checks passed.")
           PY

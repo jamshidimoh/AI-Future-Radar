@@ -12,14 +12,19 @@ _TECH_SIGNAL_TERMS = (
     "ai governance", "ai policy", "ai regulation", "ai infrastructure", "ai chip", "gpu",
     "npu", "tpu", "ai accelerator", "quantum computing", "quantum ai", "brain-computer interface",
     "bci", "neurotechnology", "synthetic biology", "protein design", "computational biology",
-    "photonic computing", "neuromorphic", "technology", "computing", "digital transformation",
+    "photonic computing", "neuromorphic", "digital transformation",
     "هوش مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی", "عامل هوشمند", "رباتیک",
-    "فناوری", "رایانش", "محاسبات", "کوانتوم", "رابط مغز و رایانه",
+    "فناوری اطلاعات", "تحول دیجیتال", "کوانتوم", "رابط مغز و رایانه",
 )
 
 
 def _technology_relevant(item):
-    if item.get("ai_relevance") is True or item.get("_ai_link") is True:
+    # Protected leader stories may carry _ai_link for routing, but that flag
+    # must never bypass the actual technology-relevance gate. Genuine AI
+    # evidence or explicit technology signals must remain sufficient.
+    if item.get("ai_relevance") is True:
+        return True
+    if item.get("_ai_link") is True and not item.get("protected_content"):
         return True
     text = " ".join(
         str(item.get(k) or "")

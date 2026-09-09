@@ -8,7 +8,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from src.editorial_quality_policy import news_language_ok, normal_score_allowed, persian_ratio, NORMAL_SCORE_FLOOR
+from src.editorial_quality_policy import news_language_ok, normal_score_allowed, persian_ratio, protected_score_allowed, NORMAL_SCORE_FLOOR, PROTECTED_SCORE_FLOOR
 from src.priority_people import is_substantive_priority_interview
 from src.unified_editorial_selection import load_editorial_contract
 
@@ -281,7 +281,9 @@ def main(*, skip_education: bool = False) -> int:
         normal_rank = story.get("normal_period_rank")
         normal_rank = int(normal_rank) if normal_rank is not None else None
         if priority_person:
-            print(f"[Publication Policy] PUBLISH TIER0 interview/quote global_rank={global_rank} tier0_rank={story.get('tier0_rank')} score={score} quota_exempt=true", flush=True)
+            if not protected_score_allowed(score):
+                return policy_blocked(f"tier0_score_policy_blocked:{score}<floor:{PROTECTED_SCORE_FLOOR}")
+            print(f"[Publication Policy] PUBLISH TIER0 interview/quote global_rank={global_rank} tier0_rank={story.get('tier0_rank')} score={score} quality_floor={PROTECTED_SCORE_FLOOR} quota_exempt=true", flush=True)
             return delivered({"message_id": None})
         if normal_rank is None or normal_rank > RANK_WINDOW:
             return policy_blocked(f"normal_rank_outside_window:{normal_rank}")
@@ -332,7 +334,7 @@ def main(*, skip_education: bool = False) -> int:
     _save_cadence(cadence)
     if education_due and not render_state["education_delivered"]:
         print(f"[Education Contract] deferred: educational Telegram post was not confirmed; slot={education_slot} remains due for retry", flush=True)
-    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} tier0_quota_exempt=true education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
+    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} tier0_quota_exempt=true tier0_quality_floor={PROTECTED_SCORE_FLOOR} education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
     print(f"[Telegram Feedback] stored_messages={len(store.get('messages', {}))}", flush=True)
     return 0
 

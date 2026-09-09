@@ -36,15 +36,15 @@ def test_stanford_hai_two_headlines_are_one_story():
     assert is_story_duplicate(b, [a])
 
 
-def test_same_entities_different_event_is_not_duplicate():
+def test_same_entities_different_event_is_related_not_duplicate():
     a = item("Meta introduces Muse personal AI agent")
     b = item("Meta reports a new security vulnerability in Muse")
-    assert compare_events(a, b)[0] != "DUPLICATE"
+    assert compare_events(a, b)[0] == "RELATED"
 
 
-def test_same_event_with_material_finding_is_not_duplicate():
+def test_same_event_with_material_finding_is_update():
     a = item("Meta introduces Muse personal AI agent")
-    b = item("Meta reveals a newly discovered security vulnerability in Muse")
+    b = item("Meta introduces Muse and reveals newly discovered findings about the launch")
     assert compare_events(a, b)[0] == "UPDATE"
 
 

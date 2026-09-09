@@ -38,13 +38,19 @@ _LEADER_ACTIVITY_EVIDENCE_TERMS = (
     "research project", "initiative", "product", "model", "platform", "steps down", "steps aside", "steps up",
     "reshuffle", "reorganize", "reorganise", "vision", "outlook", "forecast", "predicts", "prediction", "timeline",
 )
+_LEADER_ANALYTICAL_SIGNAL_TERMS = (
+    "will ", "would ", "could ", "may ", "until ", "by 202", "future", "forecast", "prediction", "outlook", "timeline",
+    "singularity", "existential", "consciousness", "sentience", "intimacy", "economy", "economic", "jobs", "workforce",
+    "labor", "work", "society", "governance", "rules", "regulation", "risk", "safety", "business", "industry",
+    "adoption", "deployment", "transformation", "impact", "implications", "reasoning", "intelligence",
+)
 _LEADER_SIGNAL_CONTEXT_TERMS = (
     "ai", "artificial intelligence", "agi", "machine learning", "robot", "robotics", "chip", "chips", "semiconductor",
     "compute", "computing", "data center", "datacenter", "space", "spacex", "tesla", "xai", "openai", "anthropic",
     "deepmind", "nvidia", "meta", "google", "microsoft", "apple", "amazon", "technology", "tech", "europe", "eu",
     "european", "regulation", "regulatory", "policy", "government", "law", "legislation", "governance", "safety", "risk",
     "future", "innovation", "economy", "education", "jobs", "labor", "workforce", "health", "science", "research",
-    "infrastructure", "energy", "autonomy", "cybersecurity", "security",
+    "infrastructure", "energy", "autonomy", "cybersecurity", "security", "consciousness", "singularity", "intimacy",
 )
 _MAX_LEADER_SIGNAL_QUERIES = 24
 
@@ -83,13 +89,17 @@ def _expand_leader_signal_queries(queries):
     return expanded
 
 
-def classify_leader_signal(title, summary):
-    """Classify broad Leader results by event type and technology context."""
+def classify_leader_signal(title, summary, watch_person=""):
+    """Classify broad Leader results by event type, substantive analysis and technology context."""
     text = f"{title} {summary}".lower()
     interview = any(term in text for term in _LEADER_INTERVIEW_EVIDENCE_TERMS)
     activity = any(term in text for term in _LEADER_ACTIVITY_EVIDENCE_TERMS)
+    analytical = any(term in text for term in _LEADER_ANALYTICAL_SIGNAL_TERMS)
     context = any(term in text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
-    return {"accepted": bool((interview or activity) and context), "interview": interview, "activity": activity, "context": context}
+    person_signal = bool(watch_person and str(watch_person).lower() in text)
+    substantive_analysis = bool(analytical and context)
+    accepted = bool((interview or activity or substantive_analysis) and context)
+    return {"accepted": accepted, "interview": interview, "activity": activity, "analytical": analytical, "context": context, "person_signal": person_signal}
 
 
 def _has_leader_signal_evidence(title, summary):
@@ -117,10 +127,10 @@ def _collect_query(q, cutoff):
         if is_excluded_source_url(link) or is_excluded_source_text(source_title) or is_excluded_source_text(title): continue
         effective_tier = resolve_google_news_tier(source_title, source_href or link)
         watch_person = str(q.get("watch_person", "") or "").strip(); is_leader_watch = bool(watch_person)
-        classification = classify_leader_signal(title, summary) if q.get("leader_discovery") else None
+        classification = classify_leader_signal(title, summary, watch_person) if q.get("leader_discovery") else None
         if q.get("leader_discovery") and not classification["accepted"]:
             print(f"[Leader Discovery Filter] dropped weak signal title={str(title)[:100]}", flush=True); continue
-        results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "source_name": source_title, "source_domain": source_href, "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": effective_tier, "discovery_query_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "leader_activity_signal": bool(classification and classification.get("accepted") and (classification.get("activity") or classification.get("interview"))), "_ai_link": True if is_leader_watch else None})
+        results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "source_name": source_title, "source_domain": source_href, "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": effective_tier, "discovery_query_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "leader_activity_signal": bool(classification and classification.get("accepted") and (classification.get("activity") or classification.get("interview") or classification.get("analytical"))), "_ai_link": True if is_leader_watch else None})
     return q, results, None
 
 _SERIAL_FETCH_BUDGET_SECONDS = 90

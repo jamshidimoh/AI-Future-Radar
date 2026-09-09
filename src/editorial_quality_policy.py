@@ -13,6 +13,10 @@ SHORT_SOURCE_WHY_MIN_CHARS = 100
 # The ranking score is a prioritization signal, not a stale-state publication floor.
 NORMAL_SCORE_TOLERANCE = 10.0
 NORMAL_SCORE_FLOOR = 60.0
+# Protected Tier-0 stories are allowed to bypass the normal publication quota,
+# but never the minimum editorial quality floor. This prevents watchlist metadata
+# from becoming a second path around quality-ranked publication.
+PROTECTED_SCORE_FLOOR = 60.0
 TITLE_MAX_CHARS = 160
 LATIN_TOKEN_MAX_CHARS = 64
 _BIDI_CONTROLS = "\u202A\u202B\u202C\u202D\u202E\u2066\u2067\u2069\u200E\u200F"
@@ -204,3 +208,17 @@ def normal_score_allowed(score: float, previous_score: float | None) -> bool:
     except (TypeError, ValueError):
         return False
     return value >= NORMAL_SCORE_FLOOR
+
+
+def protected_score_allowed(score: float) -> bool:
+    """Allow Protected/Tier-0 only when it independently clears the quality floor.
+
+    Protected status exempts a substantive interview from the normal-news quota,
+    not from minimum quality. This prevents leader-watch metadata from overriding
+    the same objective floor applied to ordinary news.
+    """
+    try:
+        value = float(score)
+    except (TypeError, ValueError):
+        return False
+    return value >= PROTECTED_SCORE_FLOOR

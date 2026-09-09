@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788934552,
+  "updated_at": 1788937458,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8276,6 +8276,44 @@
       "why_it_matters": "این ادعا از سوی یک چهره کلیدی در اکوسیستم سخت‌افزار هوش مصنوعی، سیگنال قوی‌ای به بازار سرمایه و توسعه‌دهندگان می‌فرستد که مرزهای فعلی مدل‌های زبانی بزرگ از آستانه‌ای عبور کرده‌اند که قبلاً به عنوان AGI شناخته می‌شد. اگرچه تعریف دقیق AGI همچنان بحث‌برانگیز است، اما تأیید این وضعیت توسط Nvidia می‌تواند انتظارات از کاربردپذیری و مقیاس‌پذیری این فناوری‌ها را در صنایع مختلف تغییر دهد و فشار رقابتی بر سایر بازیگران را افزایش دهد.",
       "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNSEl1Y1NTMlQ4MnVIaWVfc2ZUY2s2RUNyalBOVUY1OGZtRDJ3Z3AwUElMVUNMWDVzODBXNDJsSUEtMVU3ZWtyaHFSOTNnSUJIZnpFNUhzNXRqTHpuOWRWTlRUMUJWbnZ5QUhHdUpCeEZSNloxekZkQU9uYVRyZWRHdTVxeWxoWVZHbXVnQlRlaTNVZXVGVkRpWllKZ1V3enptVVpVejdBMmNuUWdDRk5reUZLM3N3cGNITXFTM9IBwgFBVV95cUxPQlZvNE5ESkxIUVVJZHhYVzQyWkt0MFh4VjMzbzNlX2E5eVl5U1pNQ0ZwQmpuX1c5NnVxbGU5S1JGYWZQc043Tlg4YTk0anRneXRMdVF3Q1M1OG5NcjN3S1pTN3RUZGlKaE5OR19PU2FwNkVwM3pRZmZ6aWJic3ZUYnRGTmlpbjQ4b3VSTlRtbEZRdU1qU0pXLWh4NXZ3NVNXNlhqM2NLUUh5ZGc3NktLOUFmTXh4bjRQYVdneThyVENVUQ?oc=5",
       "posted_at": 1788934552
+    },
+    "-1004482051328:1540": {
+      "chat_id": -1004482051328,
+      "message_id": 1540,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Variety)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "title": "آشلی است کلیر، که پیشتر با ایلان ماسک رابطه داشته، پیشنهاد قرارداد محرمانگی (NDA) به ارزش ۴۰ میلیون دلار را رد کرد و تصمیم گرفت در مستند «Musk» که",
+      "summary": "آشلی است کلیر، که پیشتر با ایلان ماسک رابطه داشته، پیشنهاد قرارداد محرمانگی (NDA) به ارزش ۴۰ میلیون دلار را رد کرد و تصمیم گرفت در مستند «Musk» که توسط Variety تهیه شده است، حضور یابد. او اعلام کرد که امید دارد اقدام او برای مقابله با ماسک، حتی به‌صورت جزئی، تأثیرگذار باشد. این تصمیم نشان‌دهنده تمایل او به بیان روایت شخصی‌اش بدون محدودیت‌های قانونی است. مستند به بررسی زندگی و کارهای ماسک می‌پردازد و حضور است کلیر می‌تواند دیدگاه متفاوتی ارائه دهد.",
+      "why_it_matters": "رد قرارداد محرمانگی ۴۰ میلیونی توسط یک شخصیت نزدیک به ایلان ماسک، نشان‌دهنده فشارهای قانونی و مالی است که افراد در اطراف افراد سرشناس با آن مواجه می‌شوند. حضور آشلی است کلیر در مستند می‌تواند روایت‌های جدیدی درباره تصمیمات و رفتارهای ماسک ارائه دهد و به مخاطبان کمک کند تا تصویر جامع‌تری از شخصیت او به دست آورند. این رویداد همچنین نشان می‌دهد که حتی افراد نزدیک به افراد قدرتمند، می‌توانند با ریسک‌های قانونی مقابله کنند تا صدای خود را به گوش برسانند.",
+      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQMTFMSXg2MXppSWloTHh5dkttQVVDb3lTSzBXRW12S2tUMUctMEFHRy00UzhtTUhBR1Y5NTJPd0g3OTJVQy0xaFg3WWwxa2taejNOcDJ1azZWRk1MakVIWWlaOE9aMDN0bktNQ2dqbWlvODNuOWw0N2JMTEoxLXFwb3Y5eVZLTlNmNlhxUGo2eWFxRV9tTS1hdWIzTF9DVllibVh2OUdudUdiVFFDUjRMUGFld2FJSWxP?oc=5",
+      "posted_at": 1788937456
+    },
+    "-1004482051328:1541": {
+      "chat_id": -1004482051328,
+      "message_id": 1541,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Simon Willison",
+      "content_type": "analysis",
+      "category": "ai",
+      "leader": "",
+      "title": "OpenAI با مدل داخلی خود مسئله Navier–Stokes را حل کرد",
+      "summary": "OpenAI از یک مدل داخلی منتشرنشده برای ارائه راه‌حل مسئله وجود و صافی Navier–Stokes، یکی از مسائل Millennium Prize Problems، استفاده کرد. این فرآیند که در ۵ سپتامبر به نتیجه رسید، شامل ارسال ۲.۷ میلیون پیام و مصرف حدود ۱۳۰ میلیارد توکن خروجی توسط عامل‌های هوش مصنوعی بود. تأیید رسمی و فرمالی‌سازی Lean این راه‌حل نیز با استفاده از GPT-6 Astra در ۱۷ ساعت انجام شد. این دستاورد در سایه اختلافات با Tristan Buckmaster و Levent Alpöge قرار گرفته است که مدعی‌اند OpenAI پس از شنیدن شایعات درباره کار آن‌ها اقدام به حل مسئله کرده است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این رویداد نشان می‌دهد که مدل‌های زبانی پیشرفته قادر به حل مسائل ریاضی باز و پیچیده هستند، هرچند با هزینه محاسباتی بسیار بالا (تخمین ۱۵ میلیون دلار برای توکن‌های مصرف‌شده). همچنین چالش‌های اخلاقی و حقوقی ناشی از استفاده از داده‌های کاربری یا شایعات صنعتی در فرآیند تحقیق و توسعه مدل‌ها را برجسته می‌کند. محدودیت‌های دسترسی به داده‌های آموزشی و نحوه تعامل با رقبای تجاری مانند Anthropic در این فرآیند به وضوح دیده می‌شود.",
+      "link": "https://simonwillison.net/2026/Sep/8/on-navier-stokes/",
+      "posted_at": 1788937458
     }
   }
 }

@@ -38,7 +38,7 @@ PROTECTED_TIER0_FALLBACK = """
 [Canonical Story Gate] kept=3 url_rejected=0 story_rejected=0 semantic_rejected=1 protected_semantic_bypassed=1 protected_same_story_blocked=1
 [Editorial Gate] skipped candidate: normal candidate one
 [Editorial Gate] skipped candidate: normal candidate two
-[Publication Policy] PUBLISH TIER0 interview/quote global_rank=2 tier0_rank=2 score=0.11 quota_exempt=true
+[Publication Policy] PUBLISH TIER0 interview/quote global_rank=2 tier0_rank=2 score=61.11 quality_floor=60.0 quota_exempt=true
 Posts sent: 1/3
 [Production Contract] normal_news=0 normal_max=3 tier0_news=1 tier0_quota_exempt=true education=not_due
 """
@@ -51,7 +51,7 @@ PROTECTED_TIER0_WITH_POLICY_BLOCKS = """
 [Publication Policy] normal candidate one: normal_score_policy_blocked:62.11<=80.50
 [Publication Policy] normal candidate two: normal_score_policy_blocked:59.68<=80.50
 [Publication Policy] normal candidate three: normal_score_policy_blocked:53.20<=80.50
-[Publication Policy] PUBLISH TIER0 interview/quote global_rank=4 tier0_rank=1 score=0.11 quota_exempt=true
+[Publication Policy] PUBLISH TIER0 interview/quote global_rank=4 tier0_rank=1 score=61.11 quality_floor=60.0 quota_exempt=true
 Posts sent: 1/4
 [Production Contract] normal_news=0 normal_max=3 tier0_news=1 tier0_quota_exempt=true education=not_due
 """
@@ -62,7 +62,7 @@ INVALID_TIER0_FALLBACK = """
 [Tier0 Interview Priority] retained=0 quota_exempt=true unique_people=true
 [Canonical Story Gate] kept=3 url_rejected=0 story_rejected=0 semantic_rejected=0 protected_semantic_bypassed=0 protected_same_story_blocked=0
 [Editorial Gate] skipped candidate: normal candidate one
-[Publication Policy] PUBLISH TIER0 interview/quote global_rank=1 tier0_rank=1 score=0.11 quota_exempt=true
+[Publication Policy] PUBLISH TIER0 interview/quote global_rank=1 tier0_rank=1 score=61.11 quality_floor=60.0 quota_exempt=true
 Posts sent: 1/3
 [Production Contract] normal_news=0 normal_max=3 tier0_news=1 tier0_quota_exempt=true education=not_due
 """

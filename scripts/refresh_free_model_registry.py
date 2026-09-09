@@ -97,20 +97,25 @@ def _supports_response_format(model: dict) -> bool:
     return "response_format" in {str(x).strip() for x in supported}
 
 
-def _known_quality(model_id: str) -> tuple[float, float]:
-    """Return quality/task-fit evidence for models we explicitly evaluated."""
+def _known_quality(model_id: str) -> tuple[float, float, str]:
+    """Return conservative quality/task-fit evidence and its provenance."""
     key = model_id.lower()
     overrides = {
-        "gpt-5.6-luna-free": (99, 99),
-        "minimax-m3-free": (94, 96),
-        "dots-3-note-preview": (90, 95),
-        "nvidia/nemotron-3-ultra-550b-a55b:free": (98, 94),
-        "nvidia/nemotron-3-super-120b-a12b:free": (97, 94),
-        "openai/gpt-oss-120b:free": (94, 97),
+        "gpt-5.6-luna-free": (0, 0, "unverified"),
+        "minimax-m3-free": (94, 96, "independent"),
+        "dots-3-note-preview": (72, 82, "independent"),
+        "nvidia/nemotron-3-ultra-550b-a55b:free": (98, 94, "independent"),
+        "nvidia/nemotron-3-super-120b-a12b:free": (97, 94, "independent"),
+        "openai/gpt-oss-120b:free": (94, 97, "independent"),
     }
-    if key in overrides:
-        return overrides[key]
-    return (0, 0)
+    return overrides.get(key, (0, 0, "unverified"))
+
+
+def _conservative_quality(model: dict, base_quality: float, task_fit: float, evidence: str) -> tuple[float, float]:
+    if evidence == "provider_only":
+        # Provider marketing establishes availability, not comparative quality.
+        return min(float(base_quality), 84.0), min(float(task_fit), 89.0)
+    return float(base_quality), float(task_fit)
 
 
 def refresh() -> dict:
@@ -157,9 +162,6 @@ def refresh() -> dict:
                     if family == "openrouter":
                         model["free"] = _is_zero_price(live)
                     else:
-                        # Kira exposes both free and paid models; never infer
-                        # free from the model name alone. Static entries are
-                        # eligible only while their live catalog entry exists.
                         model["free"] = bool(model.get("free") is True)
                     model["context_length"] = int(live.get("context_length") or 0)
                     model["response_format"] = _supports_response_format(live) or bool(model.get("response_format"))
@@ -170,6 +172,10 @@ def refresh() -> dict:
                 model["enabled"] = False
                 model["runtime_reason"] = "not_listed"
 
+            if model.get("quality_evidence") == "provider_only":
+                model["base_quality"], model["task_fit"] = _conservative_quality(model, model.get("base_quality", 0), model.get("task_fit", 0), "provider_only")
+                model["quality_score"] = round(float(model["base_quality"]) * 0.80 + float(model["task_fit"]) * 0.20, 3)
+
     trusted_ids = {str(m.get("id")) for p in registry.get("providers", []) for m in p.get("models", [])}
     for family, catalog in (("openrouter", or_models), ("kiraai", kira_models)):
         for model_id, live in sorted(catalog.items()):
@@ -178,7 +184,7 @@ def refresh() -> dict:
             free = _is_zero_price(live) if family == "openrouter" else model_id.endswith("-free")
             if not free:
                 continue
-            base_quality, task_fit = _known_quality(model_id)
+            base_quality, task_fit, evidence = _known_quality(model_id)
             if base_quality <= 0:
                 continue
             discovery.append({
@@ -192,6 +198,7 @@ def refresh() -> dict:
                 "base_quality": base_quality,
                 "task_fit": task_fit,
                 "quality_score": round(base_quality * 0.80 + task_fit * 0.20, 3),
+                "quality_evidence": evidence,
                 "priority": 1000,
                 "promotion_status": "candidate_with_quality_evidence",
             })
@@ -199,7 +206,7 @@ def refresh() -> dict:
 
     runtime = {
         "runtime": {
-            "schema_version": 2,
+            "schema_version": 3,
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "discovery_candidates": discovery[:30],
             "provider_validation": {

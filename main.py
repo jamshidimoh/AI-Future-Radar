@@ -156,14 +156,7 @@ def _select_editorial_default(items, max_posts, max_per_source, max_per_type, po
     return select_regular_portfolio(items, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, contract=contract, mission_aware=bool(policy.get("mission_aware", True)), strict_relevance=bool(policy.get("strict_relevance", False)))
 
 def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, cap):
-    """Refill slots when the final historical-dedup pass removes a selected story.
-
-    Historical dedup is intentionally retained as a last safety net. If canonical
-    URL resolution or a late ledger reconciliation discovers a duplicate after
-    ranking, that story must not consume a publication slot. We therefore select
-    replacements from the remaining already-gated editorial pool until capacity
-    is restored or no safe replacement exists.
-    """
+    """Refill slots after the final historical-dedup safety pass."""
     selected = unique_candidates(selected)
     selected = filter_new_items(selected, seen_hashes)
     initial_count = len(selected)
@@ -172,31 +165,27 @@ def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_
     rounds = 0
     while len(selected) < target:
         rounds += 1
-        remaining = [
-            x for x in editorial_pool
-            if id(x) not in selected_ids and not x.get("protected_content")
-        ]
-        if not remaining: break
+        remaining = [x for x in editorial_pool if id(x) not in selected_ids and not x.get("protected_content")]
+        if not remaining:
+            break
+        safe_pool = filter_new_items(remaining, seen_hashes)
+        if not safe_pool:
+            break
         need = target - len(selected)
-        replacements = select_editorial_fn(
-            remaining,
-            max_posts=need,
-            max_per_source=max_per_source,
-            max_per_type=max_per_type,
-            policy=policy,
-        )
-        replacements = unique_candidates(replacements)
-        if not replacements: break
-        safe_replacements = filter_new_items(replacements, seen_hashes)
-        if not safe_replacements: break
+        replacements = unique_candidates(select_editorial_fn(safe_pool, max_posts=need, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy))
+        if not replacements:
+            break
         before = len(selected)
-        for item in safe_replacements:
-            if len(selected) >= target: break
+        for item in replacements:
+            if len(selected) >= target:
+                break
             identity = id(item)
-            if identity in selected_ids: continue
-            selected.append(item); selected_ids.add(identity)
-        if len(selected) == before: break
-    removed = initial_count
+            if identity in selected_ids or item.get("protected_content"):
+                continue
+            selected.append(item)
+            selected_ids.add(identity)
+        if len(selected) == before:
+            break
     print(f"[Selection Refill] initial_after_late_dedup={initial_count} final={len(selected)} target={target} rounds={rounds} refilled={max(0, len(selected)-initial_count)}", flush=True)
     return selected
 

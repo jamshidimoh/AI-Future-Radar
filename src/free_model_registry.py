@@ -171,36 +171,39 @@ def _litellm_model_name(entry: dict) -> str:
 
 
 def build_litellm_model_list() -> list[dict]:
-    """Translate the ranked registry into LiteLLM deployments."""
+    """Translate the ranked registry into one named LiteLLM deployment per rank.
+
+    Unique model names are intentional: the application explicitly walks rank
+    order, so LiteLLM cannot randomly load-balance across quality tiers.
+    """
     rows: list[dict] = []
     for order, entry in enumerate(ranked_entries(), start=1):
         env_name = str(entry.get("credential_env") or "").strip()
         api_key = os.getenv(env_name, "").strip()
         if not api_key:
             continue
-        params = {"model": _litellm_model_name(entry), "api_key": api_key, "timeout": 8, "order": order}
+        params = {"model": _litellm_model_name(entry), "api_key": api_key, "timeout": 8, "order": 1}
         if entry.get("family") == "kiraai":
             params["api_base"] = "https://kiraai.vn/api/v1"
         for key in ("rpm", "tpm"):
             if entry.get(key) is not None:
                 params[key] = entry[key]
         rows.append({
-            "model_name": "radar-production",
+            "model_name": f"radar-production-{order}",
             "litellm_params": params,
             "model_info": {
                 "id": entry["deployment_id"],
                 "quality_score": entry["quality_score"],
                 "provider_family": entry["family"],
+                "rank": order,
             },
         })
     return rows
 
 
 def build_production_chain(router):
-    # The production executor remains LiteLLM-only. This assignment replaces
-    # the former hard-coded deployment list without changing the execution API.
-    router._litellm_model_list = build_litellm_model_list
-
+    # The production executor remains LiteLLM-only. The direct-provider chain
+    # remains available only for injected test lists in llm_router_light.py.
     chain: list[tuple[str, object]] = []
     max_runtime_candidates = int(_load().get("registry", {}).get("max_runtime_candidates", 18) or 18)
     for entry in ranked_entries()[:max_runtime_candidates]:

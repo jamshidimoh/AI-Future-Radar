@@ -107,27 +107,25 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         leader_sig = get_story_signature({"title": leader_candidate_text, "summary": candidate_summary})
         stored_sig = get_story_signature({"title": leader_stored_text, "summary": stored_summary})
         score = max(score, _similarity(leader_sig, stored_sig))
-        # A translated rewrite can lose lexical similarity while retaining the
-        # same named leader plus two or more stable English anchors (for example,
-        # co-speaker, company, model, or quantitative marker). Promote that
-        # evidence to the same fail-closed threshold used elsewhere.
         if cross_language_anchor_conflict(leader_candidate_text, leader_stored_text):
             score = max(score, 0.70)
 
     return score
 
 
-def check_before_publish(text: str, source_link: str = "") -> tuple[bool, str]:
+def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None) -> tuple[bool, str]:
     """Return (allowed, reason). Any known publication conflict blocks delivery."""
-    records = _load_records()
-    if not records:
+    stored_records = _load_records()
+    runtime_records = [x for x in (records or []) if isinstance(x, dict)]
+    all_records = runtime_records + stored_records
+    if not all_records:
         return True, "ledger_empty"
 
     candidate_title, candidate_summary = _extract_candidate(text)
     candidate_url = _canonical_url(source_link)
     title_key = _normalized_title(candidate_title)
 
-    for record in records:
+    for record in all_records:
         record_url = _canonical_url(record.get("link", ""))
         if candidate_url and record_url and candidate_url == record_url:
             return False, "canonical_url_already_published"
@@ -135,7 +133,7 @@ def check_before_publish(text: str, source_link: str = "") -> tuple[bool, str]:
         if title_key and stored_title and title_key == stored_title:
             return False, "exact_story_title_already_published"
 
-    for record in records:
+    for record in all_records:
         if not str(record.get("title") or "").strip():
             continue
         score = _semantic_conflict(candidate_title, candidate_summary, record)

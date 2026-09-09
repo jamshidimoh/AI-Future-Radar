@@ -1,6 +1,7 @@
 """Production launcher with canonical period ranking and audit."""
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -23,7 +24,10 @@ from src.source_authority import resolve_source_tier
 from src.story_gate import _technology_relevant
 from src.youtube_parallel_discovery import fetch_youtube_items_parallel
 
-apply_production_router_policy()
+# Policy application is an explicit production-runtime concern. Do not mutate
+# the global router merely by importing this module during unit-test collection.
+if os.getenv("RADAR_PRODUCTION_MODE") == "1":
+    apply_production_router_policy()
 
 _original_main = pipeline.main
 _original_rank = pipeline._global_ranked_selection
@@ -321,4 +325,9 @@ import production_resilient_runner  # noqa: E402
 
 
 if __name__ == "__main__":
+    # The launcher reaches __main__ only for an actual production invocation;
+    # imports from tests do not activate the production routing policy.
+    if os.getenv("RADAR_PRODUCTION_MODE") != "1":
+        os.environ["RADAR_PRODUCTION_MODE"] = "1"
+        apply_production_router_policy()
     raise SystemExit(production_resilient_runner.main())

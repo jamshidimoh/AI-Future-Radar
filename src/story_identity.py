@@ -66,7 +66,7 @@ def _coerce_prior(prior: Any) -> dict[str, Any] | None:
 
 
 def _is_protected_leader(item: dict[str, Any]) -> bool:
-    return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview")))
+    return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview") or item.get("leader_watch_protected")))
 
 
 def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
@@ -83,6 +83,8 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     kind, _, _ = compare_events(candidate, comparable)
     if kind == "DUPLICATE":
         return True
+    if kind == "UPDATE":
+        return False
     try:
         from semantic_dedup import get_story_signature, _similarity
         candidate_sig = get_story_signature(candidate)

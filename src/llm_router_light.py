@@ -10,7 +10,6 @@ import time
 import requests
 
 _CALL_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="llm-call")
-_CALL_SEMAPHORE = threading.BoundedSemaphore(2)
 
 class QuotaExceeded(Exception):
     """Provider-side quota, auth, permission, or availability failure."""
@@ -55,25 +54,14 @@ def _groq(system_prompt, user_content, model, *, output_mode="native"):
     key = os.getenv("GROQ_API_KEY")
     if not key:
         return None
-    payload = {
-        "model": model,
-        "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
-        "max_completion_tokens": 850,
-        "stream": False,
-        "temperature": 0.15,
-    }
+    payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_completion_tokens": 850, "stream": False, "temperature": 0.15}
     if output_mode == "native":
         payload["response_format"] = {"type": "json_object"}
     if model.startswith("qwen/"):
         payload.update({"reasoning_effort": "none", "reasoning_format": "hidden"})
     elif model.startswith("openai/gpt-oss"):
         payload["reasoning_effort"] = "low"
-    r = requests.post(
-        "https://api.groq.com/openai/v1/chat/completions",
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        json=payload,
-        timeout=_REQUEST_TIMEOUT,
-    )
+    r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=_REQUEST_TIMEOUT)
     if r.status_code in (401, 402, 403, 404, 429):
         raise QuotaExceeded(f"Groq {model}: HTTP {r.status_code} {r.text[:400]}")
     r.raise_for_status()
@@ -92,27 +80,10 @@ def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         return None
-    payload = {
-        "model": model,
-        "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
-        "max_tokens": 850,
-        "temperature": 0.15,
-    }
-    # Nemotron Ultra and Nano Omni can produce structured text but do not
-    # expose OpenAI response_format. Native JSON enforcement is capability-led.
+    payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_tokens": 850, "temperature": 0.15}
     if output_mode == "native" and _openrouter_supports_response_format(model):
         payload["response_format"] = {"type": "json_object"}
-    r = requests.post(
-        "https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {key}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
-            "X-Title": "AI Future Radar",
-        },
-        json=payload,
-        timeout=_REQUEST_TIMEOUT,
-    )
+    r = requests.post("https://openrouter.ai/api/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json", "HTTP-Referer": "https://github.com/jamshidimoh/AI-Future-Radar", "X-Title": "AI Future Radar"}, json=payload, timeout=_REQUEST_TIMEOUT)
     body = r.text[:800]
     if r.status_code in (401, 403, 404, 429):
         raise QuotaExceeded(f"OpenRouter {model}: HTTP {r.status_code} {body}")
@@ -131,11 +102,7 @@ def _gemini(system_prompt, user_content):
     model = (os.getenv("GEMINI_MODEL") or GEMINI_DEFAULT_MODEL).strip()
     client = genai.Client(api_key=key, http_options={"timeout": 8_000})
     try:
-        response = client.models.generate_content(
-            model=model,
-            contents=user_content,
-            config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", max_output_tokens=850),
-        )
+        response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", max_output_tokens=850))
         return response.text
     except Exception as exc:
         raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
@@ -177,11 +144,7 @@ def _huggingface(system_prompt, user_content):
         raise QuotaExceeded("No zero-price Hugging Face chat model is currently available")
     explicit = (os.getenv("HF_MODEL") or "").strip()
     model = explicit if explicit and any(m.get("id") == explicit for m in free) else free[0].get("id")
-    response = InferenceClient(token=token, provider="auto").chat.completions.create(
-        model=model,
-        messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
-        max_tokens=850,
-    )
+    response = InferenceClient(token=token, provider="auto").chat.completions.create(model=model, messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], max_tokens=850)
     return response.choices[0].message.content
 
 
@@ -211,6 +174,11 @@ def _failure_class(message: str) -> str:
     return "other"
 
 
+def _should_disable_provider(message: str) -> bool:
+    """Compatibility classifier; routing itself uses model/family semantics below."""
+    return bool(re.search(r"\b(?:401|402|403|404|408|429|500|502|503|504)\b", str(message or "")))
+
+
 def _disable(name: str, reason: str) -> None:
     family = _provider_family(name)
     with _STATE_LOCK:
@@ -220,10 +188,7 @@ def _disable(name: str, reason: str) -> None:
         elif reason == "quota" and not _PRODUCTION_POLICY_APPLIED and family != "openrouter":
             _DISABLED_FAMILIES.add(family)
         elif reason in _MODEL_COOLDOWN_SECONDS:
-            _MODEL_DISABLED_UNTIL[name] = max(
-                float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0),
-                time.monotonic() + _MODEL_COOLDOWN_SECONDS[reason],
-            )
+            _MODEL_DISABLED_UNTIL[name] = max(float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0), time.monotonic() + _MODEL_COOLDOWN_SECONDS[reason])
     scope = "family" if reason == "auth" or (reason == "quota" and not _PRODUCTION_POLICY_APPLIED and family != "openrouter") else "model"
     print(f"[Light Router] disabled={name} family={family} reason={reason} scope={scope}", flush=True)
 
@@ -245,8 +210,7 @@ def _provider_timeout(name: str, remaining: float) -> float:
 
 
 def _invoke(fn, system_prompt, user_content):
-    with _CALL_SEMAPHORE:
-        return fn(system_prompt, user_content)
+    return fn(system_prompt, user_content)
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):

@@ -5,3 +5,4 @@ google-genai>=1.30.0,<2.0
 huggingface_hub>=0.34.0,<1.0
 youtube-transcript-api==0.6.3
 pytest==9.1.1
+litellm==1.100.0

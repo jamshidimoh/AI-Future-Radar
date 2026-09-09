@@ -116,30 +116,33 @@ registry:
       pricing_mode: free-quota
       dynamic_catalog: true
       models:
+        # Kira is integrated as an additional free-quota source. The Luna
+        # variant is NOT promoted by provider marketing alone; it stays out of
+        # production ordering until independent quality evidence is available.
         - priority: 1
           id: gpt-5.6-luna-free
           free: true
           chat_capable: true
           json_capable: true
           response_format: true
-          base_quality: 99
-          task_fit: 99
+          base_quality: 0
+          task_fit: 0
         - priority: 2
           id: minimax-m3-free
           free: true
           chat_capable: true
           json_capable: true
           response_format: true
-          base_quality: 94
-          task_fit: 96
+          base_quality: 89
+          task_fit: 95
         - priority: 3
           id: dots-3-note-preview
           free: true
           chat_capable: true
           json_capable: true
           response_format: true
-          base_quality: 90
-          task_fit: 95
+          base_quality: 72
+          task_fit: 82
     - family: huggingface
       credential_env: HF_TOKEN
       pricing_mode: monthly-credit-only

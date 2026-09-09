@@ -138,7 +138,7 @@ jobs:
               return any(has(text, pattern) for text in logs.values())
 
           def all_runs(pattern):
-              return all(has(logs[r.get("run_number")], pattern) for r in window)
+              return all(r.get("run_number") in logs and has(logs[r.get("run_number")], pattern) for r in window)
 
           published_run = any_recent(r"\[Telegram Published\]")
           observed_zero_publish = any_recent(r"Posts sent: 0/") and any_recent(r"normal_news=0[^\n]*tier0_news=0")
@@ -163,11 +163,7 @@ jobs:
           education_recovery_confirmed = any_recent(r"\[Education Recovery\] CONFIRMED")
           education_not_due_all = all_runs(r"\[Education Recovery\].*due=false")
           education_contract_not_due = all_runs(r"\[Production Contract\].*education=not_due")
-          education_evidence = (
-              (education_published and education_recovery_confirmed)
-              or education_not_due_all
-              or education_contract_not_due
-          )
+          education_evidence = ((education_published and education_recovery_confirmed) or education_not_due_all or education_contract_not_due)
 
           evidence = {
               "01_three_successful_runs": len(window) == 3,

@@ -6,7 +6,7 @@ registry:
   policy_version: "2026-09-09"
   refresh_hours: 12
   stale_after_hours: 48
-  max_runtime_candidates: 14
+  max_runtime_candidates: 18
   require_free: true
   require_chat: true
   require_json_capability: true
@@ -140,8 +140,8 @@ registry:
           chat_capable: true
           json_capable: true
           response_format: true
-          base_quality: 88
-          task_fit: 94
+          base_quality: 84
+          task_fit: 90
           quality_evidence: provider_only
         - priority: 3
           id: qwen3.8-max-free
@@ -149,8 +149,8 @@ registry:
           chat_capable: true
           json_capable: true
           response_format: true
-          base_quality: 87
-          task_fit: 95
+          base_quality: 83
+          task_fit: 90
           quality_evidence: provider_only
           rate_limit_rpm: 1
         - priority: 4
@@ -159,26 +159,26 @@ registry:
           chat_capable: true
           json_capable: true
           response_format: true
-          base_quality: 86
-          task_fit: 94
+          base_quality: 82
+          task_fit: 89
           quality_evidence: provider_only
         - priority: 5
-          id: kira-mini-1.0
-          free: true
-          chat_capable: true
-          json_capable: true
-          response_format: true
-          base_quality: 82
-          task_fit: 90
-          quality_evidence: provider_only
-        - priority: 6
           id: glm-5.3-flash-free
           free: true
           chat_capable: true
           json_capable: true
           response_format: true
-          base_quality: 84
-          task_fit: 92
+          base_quality: 82
+          task_fit: 89
+          quality_evidence: provider_only
+        - priority: 6
+          id: kira-mini-1.0
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 80
+          task_fit: 87
           quality_evidence: provider_only
         - priority: 7
           id: dots-3-note-preview

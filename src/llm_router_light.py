@@ -19,6 +19,7 @@ _DISABLED_FAMILIES: set[str] = set()
 _MODEL_DISABLED_UNTIL: dict[str, float] = {}
 _STATE_LOCK = threading.RLock()
 _CHAIN_CACHE = None
+_CHAIN_CACHE_KEY = None
 _PRODUCTION_POLICY_APPLIED = False
 _PROVIDER_TIMEOUTS = {"Groq:": 8.0, "OpenRouter:": 7.0, "Gemini": 8.0, "HuggingFace": 5.0}
 _REQUEST_TIMEOUT = 10
@@ -136,7 +137,7 @@ def _discover_hf_models():
 
 
 def _select_hf_model(models=None):
-    """Return a current free HF chat model, preserving legacy test API."""
+    """Return a current free HF chat model, preserving deterministic preference."""
     rows = list(models) if isinstance(models, list) else _discover_hf_models()
     free = [m for m in rows if isinstance(m, dict) and _hf_price_is_free(m)]
     explicit = (os.getenv("HF_MODEL") or "").strip()
@@ -144,7 +145,8 @@ def _select_hf_model(models=None):
         return explicit
     if not free:
         raise QuotaExceeded("No zero-price Hugging Face chat model is currently available")
-    return str(free[0].get("id"))
+    preferred = [m for m in free if "qwen" in str(m.get("id", "")).lower()]
+    return str((preferred or free)[0].get("id"))
 
 
 def _huggingface(system_prompt, user_content):
@@ -157,14 +159,30 @@ def _huggingface(system_prompt, user_content):
     return response.choices[0].message.content
 
 
+def _chain_key():
+    return (
+        os.getenv("GROQ_API_KEY", ""),
+        os.getenv("OPENROUTER_API_KEY", ""),
+        os.getenv("KIRAAI_API_KEY", ""),
+        os.getenv("GEMINI_API_KEY", ""),
+        os.getenv("HF_TOKEN", ""),
+        os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0"),
+        os.getenv("RADAR_ENABLE_HF_FALLBACK", "0"),
+        os.getenv("GEMINI_MODEL", GEMINI_DEFAULT_MODEL),
+    )
+
+
 def get_quality_chain():
-    # The registry is cheap to evaluate and must honor runtime credential and
-    # fallback-policy changes. Caching here caused tests and long-lived workers
-    # to retain a stale chain after environment changes.
+    global _CHAIN_CACHE, _CHAIN_CACHE_KEY
+    key = _chain_key()
+    if _CHAIN_CACHE is not None and _CHAIN_CACHE_KEY == key:
+        return list(_CHAIN_CACHE)
     from free_model_registry import build_production_chain
     chain = build_production_chain(__import__(__name__))
+    _CHAIN_CACHE = list(chain)
+    _CHAIN_CACHE_KEY = key
     print("[Light Router] chain=" + ", ".join(n for n, _ in chain), flush=True)
-    return list(chain)
+    return list(_CHAIN_CACHE)
 
 
 def _failure_class(message: str) -> str:
@@ -183,7 +201,6 @@ def _failure_class(message: str) -> str:
 
 
 def _should_disable_provider(message: str) -> bool:
-    """Compatibility classifier; routing itself uses model/family semantics below."""
     return bool(re.search(r"\b(?:401|402|403|404|408|429|500|502|503|504)\b", str(message or "")))
 
 

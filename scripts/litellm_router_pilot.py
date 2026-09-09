@@ -62,11 +62,12 @@ def _litellm_fallback_contract() -> None:
 
 
 def _probe_provider(label: str, model: str, key_env: str, **kwargs) -> bool:
-    """Probe provider authentication/connectivity without imposing JSON mode.
+    """Probe provider authentication/connectivity without requiring content.
 
-    Some providers reject a trivial JSON-schema request before authentication
-    is actually the problem. JSON structured-output compatibility is tested
-    separately by the real Router smoke call.
+    The provider probe answers only whether LiteLLM received a successful
+    completion response. Structured-output/content requirements are tested
+    separately by the real Router smoke call, so an empty message body must
+    not turn an otherwise successful provider response into a false failure.
     """
     key = os.getenv(key_env, "").strip()
     if not key:
@@ -82,10 +83,12 @@ def _probe_provider(label: str, model: str, key_env: str, **kwargs) -> bool:
             timeout=8,
             **kwargs,
         )
-        content = response.choices[0].message.content or ""
-        if not content:
-            raise RuntimeError("empty response")
-        print(f"[LiteLLM Pilot] {label}_probe=PASS response={content[:32]!r}", flush=True)
+        choices = getattr(response, "choices", None)
+        if not choices:
+            raise RuntimeError("provider returned no choices")
+        content = getattr(getattr(choices[0], "message", None), "content", None)
+        preview = str(content)[:32] if content is not None else "<empty>"
+        print(f"[LiteLLM Pilot] {label}_probe=PASS response={preview!r}", flush=True)
         return True
     except Exception as exc:
         print(f"[LiteLLM Pilot] {label}_probe=FAIL type={type(exc).__name__}: {exc}", flush=True)

@@ -171,23 +171,14 @@ def _litellm_model_name(entry: dict) -> str:
 
 
 def build_litellm_model_list() -> list[dict]:
-    """Translate the ranked registry into LiteLLM deployments.
-
-    The registry decides *which* free deployment is preferred. LiteLLM only
-    executes that ordered deployment pool and applies runtime cooldowns.
-    """
+    """Translate the ranked registry into LiteLLM deployments."""
     rows: list[dict] = []
     for order, entry in enumerate(ranked_entries(), start=1):
         env_name = str(entry.get("credential_env") or "").strip()
         api_key = os.getenv(env_name, "").strip()
         if not api_key:
             continue
-        params = {
-            "model": _litellm_model_name(entry),
-            "api_key": api_key,
-            "timeout": 8,
-            "order": order,
-        }
+        params = {"model": _litellm_model_name(entry), "api_key": api_key, "timeout": 8, "order": order}
         if entry.get("family") == "kiraai":
             params["api_base"] = "https://kiraai.vn/api/v1"
         for key in ("rpm", "tpm"):
@@ -206,6 +197,10 @@ def build_litellm_model_list() -> list[dict]:
 
 
 def build_production_chain(router):
+    # The production executor remains LiteLLM-only. This assignment replaces
+    # the former hard-coded deployment list without changing the execution API.
+    router._litellm_model_list = build_litellm_model_list
+
     chain: list[tuple[str, object]] = []
     max_runtime_candidates = int(_load().get("registry", {}).get("max_runtime_candidates", 18) or 18)
     for entry in ranked_entries()[:max_runtime_candidates]:

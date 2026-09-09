@@ -4,7 +4,8 @@ from __future__ import annotations
 import re
 from typing import Any, Iterable
 from canonical_story import canonical_url
-from event_identity import compare_events, has_material_update
+from event_identity import compare_event_features, event_features, has_material_update
+from semantic_dedup import get_story_signature, _similarity
 
 
 def _canonical_url(item: Any) -> str:
@@ -69,18 +70,29 @@ def _is_protected_leader(item: dict[str, Any]) -> bool:
     return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview") or item.get("leader_watch_protected")))
 
 
-def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
+def _prepare_prior(prior: Any) -> tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None] | None:
+    """Normalize one history/current item once for repeated pair comparisons."""
     if not isinstance(prior, dict):
-        return False
-    ca, cb = _canonical_url(candidate), _canonical_url(prior)
-    if ca and cb and ca == cb:
+        return None
+    comparable = _coerce_prior(prior)
+    if comparable is None:
+        return None
+    return comparable, _canonical_url(comparable), event_features(comparable), get_story_signature(comparable)
+
+
+def _is_same_story_cached(
+    candidate: dict[str, Any],
+    candidate_url: str,
+    candidate_features: dict[str, Any],
+    candidate_signature: dict[str, Any],
+    prior: tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None],
+) -> bool:
+    comparable, prior_url, prior_features, prior_signature = prior
+    if candidate_url and prior_url and candidate_url == prior_url:
         return True
     if _is_protected_leader(candidate):
         return False
-    comparable = _coerce_prior(prior)
-    if comparable is None:
-        return False
-    kind, _, _ = compare_events(candidate, comparable)
+    kind, _, _ = compare_event_features(candidate_features, prior_features)
     if kind == "DUPLICATE":
         return True
     if kind == "UPDATE":
@@ -88,29 +100,65 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     if kind == "RELATED" and has_material_update(candidate, comparable):
         return False
     try:
-        from semantic_dedup import get_story_signature, _similarity
-        candidate_sig = get_story_signature(candidate)
-        prior_sig = get_story_signature(comparable) if not ("title_text" in comparable or "context" in comparable) else comparable
-        return _similarity(candidate_sig, prior_sig) >= 0.45
+        return _similarity(candidate_signature, prior_signature) >= 0.45
     except Exception:
         return False
 
 
+def _build_comparison_cache(items: Iterable[Any]) -> list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]]:
+    cache = []
+    for item in items or []:
+        prepared = _prepare_prior(item)
+        if prepared is not None:
+            cache.append(prepared)
+    return cache
+
+
+def _is_story_duplicate_cached(
+    candidate: dict[str, Any],
+    cache: list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]],
+) -> bool:
+    candidate_url = _canonical_url(candidate)
+    candidate_features = event_features(candidate)
+    candidate_signature = get_story_signature(candidate)
+    return any(
+        _is_same_story_cached(candidate, candidate_url, candidate_features, candidate_signature, prior)
+        for prior in cache
+    )
+
+
+def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
+    prepared = _prepare_prior(prior)
+    if prepared is None:
+        return False
+    candidate_url = _canonical_url(candidate)
+    candidate_features = event_features(candidate)
+    candidate_signature = get_story_signature(candidate)
+    return _is_same_story_cached(candidate, candidate_url, candidate_features, candidate_signature, prepared)
+
+
 def is_story_duplicate(candidate: dict[str, Any], prior_stories: Iterable[Any]) -> bool:
-    return any(_is_same_story(candidate, prior) for prior in prior_stories or [])
+    return _is_story_duplicate_cached(candidate, _build_comparison_cache(prior_stories))
 
 
 def deduplicate_stories(items: Iterable[dict[str, Any]], history: Iterable[Any] = ()) -> list[dict[str, Any]]:
+    """Deduplicate with a precomputed history cache to avoid O(items*history) re-parsing."""
     accepted: list[dict[str, Any]] = []
     rejected_history = rejected_current = 0
-    history = list(history or [])
+    history_cache = _build_comparison_cache(history)
+    accepted_cache: list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]] = []
+
     for item in items or []:
-        if is_story_duplicate(item, history):
+        if _is_story_duplicate_cached(item, history_cache):
             rejected_history += 1
             continue
-        if is_story_duplicate(item, accepted):
+        if _is_story_duplicate_cached(item, accepted_cache):
             rejected_current += 1
             continue
         accepted.append(dict(item))
+        prepared = _prepare_prior(item)
+        if prepared is not None:
+            accepted_cache.append(prepared)
+
     print(f"[Story Identity] history_duplicates={rejected_history} current_run_duplicates={rejected_current} accepted={len(accepted)}", flush=True)
     return accepted

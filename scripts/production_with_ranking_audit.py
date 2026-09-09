@@ -21,6 +21,7 @@ from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
 from src.source_authority import resolve_source_tier
 from src.story_gate import _technology_relevant
+from src.youtube_parallel_discovery import fetch_youtube_items_parallel
 
 apply_production_router_policy()
 
@@ -30,6 +31,12 @@ _original_summarize = pipeline.summarize_item
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 _GOOGLE_NEWS_HOSTS = {"news.google.com", "news.googleusercontent.com"}
 _CANONICAL_RESOLVE_TIMEOUT_SECONDS = 6
+
+# Production-only discovery optimization. Main.py keeps its public behavior;
+# this launcher replaces only the slow serial YouTube transport with a bounded
+# concurrent adapter that preserves Data API -> RSS -> page fallback semantics.
+pipeline._pipeline.fetch_youtube_items = fetch_youtube_items_parallel
+pipeline.fetch_youtube_items = fetch_youtube_items_parallel
 
 _CRITICAL_AI_TERMS = (
     "artificial intelligence", "ai", "ai agent", "ai agents", "agent", "agents",

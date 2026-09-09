@@ -251,10 +251,11 @@ def _provider_timeout(name: str, remaining: float) -> float:
 def _model_is_disabled(name: str) -> bool:
     with _STATE_LOCK:
         until = float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0)
-        if until and until <= time.monotonic():
+        now = time.monotonic()
+        if until and until <= now:
             _MODEL_DISABLED_UNTIL.pop(name, None)
             return False
-        return until > time.monotonic()
+        return until > now
 
 
 def _disable(name: str, reason: str) -> None:
@@ -263,12 +264,14 @@ def _disable(name: str, reason: str) -> None:
         _DISABLED.add(name)
         if reason == "auth":
             _DISABLED_FAMILIES.add(family)
+        elif reason == "quota" and not _PRODUCTION_POLICY_APPLIED:
+            _DISABLED_FAMILIES.add(family)
         elif reason in _MODEL_COOLDOWN_SECONDS:
             _MODEL_DISABLED_UNTIL[name] = max(
                 float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0),
                 time.monotonic() + _MODEL_COOLDOWN_SECONDS[reason],
             )
-    scope = "family" if reason == "auth" else "model"
+    scope = "family" if reason == "auth" or (reason == "quota" and not _PRODUCTION_POLICY_APPLIED) else "model"
     print(f"[Light Router] disabled={name} family={family} reason={reason} scope={scope}", flush=True)
 
 
@@ -277,8 +280,8 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
 
     Production semantics are model-scoped for quotas, model permissions and
     endpoint unavailability. Only credential/authentication failures disable a
-    provider family. Legacy non-production quota compatibility is preserved by
-    keeping quota family-scoped when production policy is not applied.
+    provider family. Legacy non-production quota compatibility remains
+    family-scoped.
     """
     providers = providers or get_quality_chain()
     last = None
@@ -318,9 +321,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             last = exc
             reason = _failure_class(str(exc))
             local_disabled_names.add(name)
-            if reason == "auth":
-                local_disabled_families.add(family)
-            elif reason == "quota" and not _PRODUCTION_POLICY_APPLIED:
+            if reason == "auth" or (reason == "quota" and not _PRODUCTION_POLICY_APPLIED):
                 local_disabled_families.add(family)
             _disable(name, reason)
         except Exception as exc:
@@ -330,7 +331,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             if reason == "auth":
                 local_disabled_families.add(family)
                 _disable(name, reason)
-            elif reason in {"model", "quota", "transient"} and transient_retries.get(name, 0) < (_MAX_TRANSIENT_RETRIES if reason == "transient" else 0):
+            elif reason == "transient" and transient_retries.get(name, 0) < _MAX_TRANSIENT_RETRIES:
                 transient_retries[name] = transient_retries.get(name, 0) + 1
                 retry_future = _CALL_EXECUTOR.submit(fn, system_prompt, user_content)
                 try:

@@ -33,36 +33,63 @@ def _material_update_tokens(signature: Any) -> set[str]:
     text = " ".join(
         str(signature.get(key) or "")
         for key in ("title_text", "title", "summary", "description")
-    ).replace("\u200c", " ")
-    text = re.sub(r"\s+", " ", text).strip().casefold()
+    ).casefold()
+    # Normalize Arabic/Persian variants and zero-width joiners before matching.
+    text = text.replace("ي", "ی").replace("ك", "ک").replace("\u200c", " ")
+    text = re.sub(r"\s+", " ", text).strip()
     markers: set[str] = set()
-    variant_map = {
-        "یافته": ("یافته‌ها", "یافته ها", "یافته‌های"),
-        "شواهد": ("شواهد",),
-        "مستقل": ("مستقل",),
-        "دامنه": ("دامنه",),
-        "مقیاس": ("مقیاس",),
-        "جزئیات": ("جزئیات",),
-        "علت": ("علت",),
-        "کشف": ("کشف",),
-        "تأیید": ("تأیید", "تایید"),
-        "شدت": ("شدت",),
-        "خسارت": ("خسارت",),
-        "رفع": ("رفع",),
+    patterns = {
+        "یافته‌ها": r"(?<![\w])یافته\s+ها(?:ی)?(?![\w])",
+        "شواهد": r"(?<![\w])شواهد(?![\w])",
+        "مستقل": r"(?<![\w])مستقل(?![\w])",
+        "دامنه": r"(?<![\w])دامنه(?![\w])",
+        "مقیاس": r"(?<![\w])مقیاس(?![\w])",
+        "جزئیات": r"(?<![\w])جزئیات(?![\w])",
+        "علت": r"(?<![\w])علت(?![\w])",
+        "کشف": r"(?<![\w])کشف(?![\w])",
+        "تأیید": r"(?<![\w])(?:تأیید|تایید)(?![\w])",
+        "شدت": r"(?<![\w])شدت(?![\w])",
+        "خسارت": r"(?<![\w])خسارت(?![\w])",
+        "رفع": r"(?<![\w])رفع(?![\w])",
     }
-    for canonical, variants in variant_map.items():
-        if any(re.search(rf"(?<![\w]){re.escape(variant.casefold())}(?![\w])", text) for variant in variants):
-            markers.add("یافته‌ها" if canonical == "یافته" else canonical)
+    for marker, pattern in patterns.items():
+        if re.search(pattern, text):
+            markers.add(marker)
     return markers
+
+
+def _coerce_prior(prior: Any) -> dict[str, Any] | None:
+    """Adapt stored semantic signatures to the event matcher without changing raw items."""
+    if not isinstance(prior, dict):
+        return None
+    if any(key in prior for key in ("title_text", "context", "anchors", "events", "personnel", "numbers")) and "title" in prior:
+        title = str(prior.get("title_text") or " ".join(str(x) for x in (prior.get("title") or [])))
+        context = " ".join(str(x) for x in (prior.get("context") or []))
+        return {
+            "title": title,
+            "summary": context,
+            "description": "",
+            "content": "",
+            "leader": prior.get("leader", ""),
+        }
+    return prior
 
 
 def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     if not isinstance(prior, dict):
         return False
     ca, cb = _canonical_url(candidate), _canonical_url(prior)
+    # Exact canonical URL is always blocked, including protected leader content.
     if ca and cb and ca == cb:
         return True
-    kind, _, _ = compare_events(candidate, prior)
+    # Protected leader material may bypass semantic/history similarity, but never
+    # the exact URL check above.
+    if candidate.get("protected_content") or candidate.get("_named_leader_interview"):
+        return False
+    comparable = _coerce_prior(prior)
+    if comparable is None:
+        return False
+    kind, _, _ = compare_events(candidate, comparable)
     return kind == "DUPLICATE"
 
 

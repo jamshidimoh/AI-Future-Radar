@@ -24,8 +24,10 @@ def apply() -> None:
     def production_disable(name: str, reason: str) -> None:
         family = router._provider_family(name)
         router._DISABLED.add(name)
-        # Quota/rate-limit is model-level unless the provider itself is
-        # demonstrably unavailable. This preserves sibling-model fallback.
+        # Production quota is model-scoped so a second model from the same
+        # provider can still serve the current request and later requests can
+        # retry the previously limited model after the provider recovers.
+        # Authentication/configuration failures remain family-scoped.
         if reason == "permanent":
             router._DISABLED_FAMILIES.add(family)
         print(

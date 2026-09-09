@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
+from functools import lru_cache
 from typing import Any
 
 ALIASES = {
@@ -50,9 +51,21 @@ def _time(value: Any):
         d=datetime.fromisoformat(str(value).replace("Z","+00:00")); return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
     except ValueError: return None
 
+@lru_cache(maxsize=8192)
+def _event_features_cached(title, summary, description, content, event_time, published, published_at):
+    text=" ".join(str(x or "") for x in (title, summary, description, content))
+    return {"entities":entities(text),"events":events(text),"tokens":tokens(text),"material":material(text),"title":normalize(title or ""),"time":_time(event_time or published or published_at),"norm":normalize(text)}
+
 def event_features(item: dict[str,Any])->dict[str,Any]:
-    text=" ".join(str(item.get(k) or "") for k in ("title","summary","description","content"))
-    return {"entities":entities(text),"events":events(text),"tokens":tokens(text),"material":material(text),"title":normalize(item.get("title","")),"time":_time(item.get("event_time") or item.get("published") or item.get("published_at")),"norm":normalize(text)}
+    return _event_features_cached(
+        str(item.get("title") or ""),
+        str(item.get("summary") or ""),
+        str(item.get("description") or ""),
+        str(item.get("content") or ""),
+        str(item.get("event_time") or ""),
+        str(item.get("published") or ""),
+        str(item.get("published_at") or ""),
+    )
 
 def has_material_update(a:dict[str,Any],b:dict[str,Any])->bool:
     fa,fb=event_features(a),event_features(b)

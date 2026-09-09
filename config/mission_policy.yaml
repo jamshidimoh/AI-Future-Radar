@@ -8,9 +8,10 @@ mission:
   operational_publication_capacity: 3
   min_unique_sources: 3
   max_same_source: 1
-  # Mission areas are now a soft diversity preference, not a topic quota.
-  # Do not force weak convergence/mind/governance items merely to fill a slot.
-  max_same_mission_area: 3
+  # Mission areas are a soft diversity preference, not a topic quota.
+  # The candidate window must remain large enough for replacement after QA;
+  # the final 3-item portfolio is still diversified by portfolio_value.
+  max_same_mission_area: 6
   min_authoritative_items: 2
   stale_hours: 72
   ai_core_target_min: 0

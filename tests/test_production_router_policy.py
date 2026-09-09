@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -27,7 +28,7 @@ def test_production_uses_canonical_router_module(monkeypatch):
     assert summarize.get_quality_chain() == router.get_quality_chain()
     names = [name for name, _ in router.get_quality_chain()]
     assert names[0].startswith("OpenRouter:")
-    assert any(name.startswith("Groq:") for name in names)
+    assert any(name.startswith("Groq:") for name in names[1:])
     assert any(name.startswith("OpenRouter:") for name in names)
     assert names[-1] == "Gemini"
 
@@ -138,3 +139,20 @@ def test_quota_state_from_one_request_does_not_starve_sibling_in_next_request(mo
     assert second_result == '{"title":"ok"}'
     assert second_provider == "Groq:openai/gpt-oss-120b"
     assert calls == ["quota", "ok", "ok"]
+
+
+def test_production_launcher_does_not_activate_router_on_import(monkeypatch):
+    _reset()
+    monkeypatch.delenv("RADAR_PRODUCTION_MODE", raising=False)
+    sys.modules.pop("scripts.production_with_ranking_audit", None)
+    import scripts.production_with_ranking_audit  # noqa: F401
+    assert router._PRODUCTION_POLICY_APPLIED is False
+
+
+def test_production_launcher_activates_router_only_at_main_entry(monkeypatch):
+    _reset()
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    # The module sees production mode on import and therefore must activate the policy.
+    sys.modules.pop("scripts.production_with_ranking_audit", None)
+    import scripts.production_with_ranking_audit  # noqa: F401
+    assert router._PRODUCTION_POLICY_APPLIED is True

@@ -1,0 +1,1 @@
+The canonical event identity regression suite is maintained in tests/event_identity_regression.py.

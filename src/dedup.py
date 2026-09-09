@@ -93,8 +93,8 @@ def save_seen(seen_hashes, seen_signatures, source_history=None):
         json.dump({"seen_hashes": list(dict.fromkeys(seen_hashes))[-MAX_HISTORY:], "seen_signatures": _unique_signatures(seen_signatures), "source_history": source_history[-MAX_SOURCE_HISTORY:]}, f, ensure_ascii=False, indent=2)
 
 
-def _is_protected_leader(item): return bool(item.get("protected_content") or item.get("_named_leader_interview"))
-def _is_leader_exception(item): return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview")))
+def _is_protected_leader(item): return bool(item.get("protected_content") or item.get("_named_leader_interview") or item.get("leader_watch_protected"))
+def _is_leader_exception(item): return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview") or item.get("leader_watch_protected")))
 def _is_education(item): return str(item.get("content_type") or "").strip().lower() == "education"
 
 def _education_identity(item):
@@ -103,7 +103,6 @@ def _education_identity(item):
     except (TypeError, ValueError): return ""
 
 def _stored_story_ids(signatures): return {s[len(STORY_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(STORY_MARKER)}
-
 def _stored_protected_hashes(signatures): return {s[len(PROTECTED_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(PROTECTED_MARKER)}
 
 
@@ -134,7 +133,8 @@ def _legacy_event_history(signatures):
 
 def _event_payload(item):
     from event_identity import event_features
-    data=event_features(item); data["time"]=data.get("time").isoformat() if data.get("time") else None
+    data=dict(event_features(item))
+    data["time"]=data.get("time").isoformat() if data.get("time") else None
     for key in ("entities","events","tokens","material"): data[key]=sorted(data.get(key) or [])
     return data
 

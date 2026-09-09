@@ -1,0 +1,76 @@
+# AI Future Radar — trusted free LLM registry
+# Base priorities are curated for news summarization, factual preservation,
+# Persian/English rewriting and strict JSON. The updater refreshes availability,
+# release date, capabilities and health; production remains deterministic.
+registry:
+  schema_version: 1
+  refresh_hours: 24
+  stale_after_hours: 72
+  max_runtime_candidates: 10
+  require_free: true
+  require_chat: true
+  require_structured_output: true
+  providers:
+    - family: groq
+      credential_env: GROQ_API_KEY
+      pricing_mode: free-plan
+      models:
+        - id: qwen/qwen3.8-27b
+          base_quality: 96
+          freshness: 100
+          task_fit: 98
+          reason: "Newest high-quality multilingual model; JSON/schema/reasoning"
+        - id: openai/gpt-oss-120b
+          base_quality: 95
+          freshness: 72
+          task_fit: 99
+          reason: "Very strong reasoning and strict structured output"
+        - id: qwen/qwen3.6-27b
+          base_quality: 93
+          freshness: 88
+          task_fit: 97
+          reason: "Strong multilingual reasoning and structured output"
+        - id: openai/gpt-oss-20b
+          base_quality: 84
+          freshness: 72
+          task_fit: 91
+          reason: "Fast emergency summarization fallback"
+    - family: openrouter
+      credential_env: OPENROUTER_API_KEY
+      pricing_mode: free-endpoint
+      models:
+        - id: nvidia/nemotron-3-ultra-550b-a55b:free
+          base_quality: 98
+          freshness: 96
+          task_fit: 94
+          reason: "Frontier reasoning; 1M context; free endpoint"
+        - id: nvidia/nemotron-3-super-120b-a12b:free
+          base_quality: 97
+          freshness: 96
+          task_fit: 94
+          reason: "Strong hybrid reasoning and long-context analysis"
+        - id: google/gemma-4-31b-it:free
+          base_quality: 91
+          freshness: 93
+          task_fit: 98
+          reason: "Multilingual, structured output, strong availability"
+        - id: google/gemma-4-26b-a4b-it:free
+          base_quality: 88
+          freshness: 93
+          task_fit: 95
+          reason: "Efficient multilingual structured-output fallback"
+        - id: openai/gpt-oss-120b:free
+          base_quality: 94
+          freshness: 72
+          task_fit: 97
+          reason: "High-capability reasoning and structured output"
+        - id: openai/gpt-oss-20b:free
+          base_quality: 84
+          freshness: 72
+          task_fit: 91
+          reason: "Reliable lightweight fallback"
+    - family: huggingface
+      credential_env: HF_TOKEN
+      pricing_mode: monthly-credit-only
+      models: []
+      reason: "Dynamic emergency lane; free account credits are limited"

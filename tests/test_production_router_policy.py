@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -27,16 +26,16 @@ def test_production_uses_canonical_router_module(monkeypatch):
     apply()
     assert summarize.get_quality_chain() == router.get_quality_chain()
     names = [name for name, _ in router.get_quality_chain()]
-    assert names[0].startswith("OpenRouter:")
-    assert any(name.startswith("Groq:") for name in names[1:])
+    assert names[0] == "Groq:qwen/qwen3.8-27b"
+    assert any(name.startswith("Groq:") for name in names)
     assert any(name.startswith("OpenRouter:") for name in names)
     assert names[-1] == "Gemini"
 
 
 def test_production_quota_is_model_scoped_and_sibling_can_failover(monkeypatch):
     _reset()
-    apply()
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    apply()
     calls = []
 
     def first_fails(*_args, **_kwargs):
@@ -61,8 +60,8 @@ def test_production_quota_is_model_scoped_and_sibling_can_failover(monkeypatch):
 
 def test_production_model_permission_failure_is_model_scoped(monkeypatch):
     _reset()
-    apply()
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    apply()
     calls = []
 
     def blocked(*_args, **_kwargs):
@@ -87,9 +86,9 @@ def test_production_model_permission_failure_is_model_scoped(monkeypatch):
 
 def test_production_auth_failure_remains_family_scoped(monkeypatch):
     _reset()
-    apply()
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    apply()
     calls = []
 
     def auth_fail(*_args, **_kwargs):
@@ -114,8 +113,8 @@ def test_production_auth_failure_remains_family_scoped(monkeypatch):
 
 def test_quota_state_from_one_request_does_not_starve_sibling_in_next_request(monkeypatch):
     _reset()
-    apply()
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    apply()
     calls = []
 
     def quota(*_args, **_kwargs):
@@ -149,10 +148,10 @@ def test_production_launcher_does_not_activate_router_on_import(monkeypatch):
     assert router._PRODUCTION_POLICY_APPLIED is False
 
 
-def test_production_launcher_activates_router_only_at_main_entry(monkeypatch):
+def test_production_launcher_activates_router_when_production_mode_is_enabled(monkeypatch):
     _reset()
     monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
-    # The module sees production mode on import and therefore must activate the policy.
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     sys.modules.pop("scripts.production_with_ranking_audit", None)
     import scripts.production_with_ranking_audit  # noqa: F401
     assert router._PRODUCTION_POLICY_APPLIED is True

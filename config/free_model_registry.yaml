@@ -1,8 +1,9 @@
 # AI Future Radar — dynamic, quality-first free-model registry
-# KiraAI is treated as a model collection: availability is refreshed at runtime,
-# while only explicitly free, chat-capable, quality-scored models can enter production.
+# Free means provider-side zero-price access for the credential being tested.
+# Quality scores are internal priors; runtime provider validation is authoritative
+# for whether a deployment is actually usable in the current run.
 registry:
-  schema_version: 4
+  schema_version: 5
   policy_version: "2026-09-09"
   refresh_hours: 12
   stale_after_hours: 48
@@ -189,13 +190,41 @@ registry:
           base_quality: 72
           task_fit: 82
           quality_evidence: independent
+    - family: gemini
+      credential_env: GEMINI_API_KEY
+      pricing_mode: free-tier
+      dynamic_catalog: true
+      catalog_endpoint: "https://generativelanguage.googleapis.com/v1beta/models"
+      models:
+        - priority: 1
+          id: gemini-3.8-flash
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 96
+          task_fit: 98
+          quality_evidence: provider_official
+        - priority: 2
+          id: gemini-3.7-flash
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 94
+          task_fit: 97
+          quality_evidence: provider_official
+        - priority: 3
+          id: gemini-3.6-flash
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 91
+          task_fit: 95
+          quality_evidence: provider_official
     - family: huggingface
       credential_env: HF_TOKEN
       pricing_mode: monthly-credit-only
       models: []
       reason: "Dynamic discovery/emergency lane; never outranks quality-scored trusted models without evidence"
-    - family: gemini
-      credential_env: GEMINI_API_KEY
-      pricing_mode: optional
-      models: []
-      reason: "Optional non-critical lane; disabled in production unless explicitly enabled"

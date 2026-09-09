@@ -31,6 +31,15 @@ _MODEL_COOLDOWN_SECONDS = {"quota": 12.0, "model": 45.0, "transient": 10.0, "oth
 GEMINI_DEFAULT_MODEL = "gemini-3.8-flash"
 
 
+class ProductionQualityChain(list):
+    """Marker type for the registry-produced production chain.
+
+    Production callers may pass this chain explicitly for backwards compatibility;
+    the marker lets the execution layer route it through LiteLLM without changing
+    tests that inject ordinary provider lists.
+    """
+
+
 def _provider_family(name: str) -> str:
     return str(name or "").split(":", 1)[0].strip().casefold()
 
@@ -178,13 +187,13 @@ def get_quality_chain():
     global _CHAIN_CACHE, _CHAIN_CACHE_KEY
     key = _chain_key()
     if _CHAIN_CACHE is not None and _CHAIN_CACHE_KEY == key:
-        return list(_CHAIN_CACHE)
+        return ProductionQualityChain(_CHAIN_CACHE)
     from free_model_registry import build_production_chain
     chain = build_production_chain(__import__(__name__))
     _CHAIN_CACHE = list(chain)
     _CHAIN_CACHE_KEY = key
     print("[Light Router] chain=" + ", ".join(n for n, _ in chain), flush=True)
-    return list(_CHAIN_CACHE)
+    return ProductionQualityChain(_CHAIN_CACHE)
 
 
 def _litellm_model_list():
@@ -313,11 +322,17 @@ def _invoke(fn, system_prompt, user_content):
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
-    """Use LiteLLM as the production execution layer; retain the legacy router as a fail-safe."""
-    if providers is None:
+    """Route production calls through LiteLLM; retain explicit injected lists for tests/fallbacks."""
+    use_litellm = providers is None or isinstance(providers, ProductionQualityChain)
+    if use_litellm:
         result, provider = _call_litellm(system_prompt, user_content)
         if result:
             return result, provider
+        if providers is None:
+            providers = get_quality_chain()
+        else:
+            providers = list(providers)
+    if providers is None:
         providers = get_quality_chain()
     last = None
     deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS

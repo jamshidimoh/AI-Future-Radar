@@ -10,6 +10,7 @@ name: Run AI Future Radar Bot
 # - 19:17 UTC = 22:47 Tehran
 # GitHub Actions cron is UTC; these comments document the intended Tehran windows.
 # Post-merge verification trigger: validate Canonical Story Gate performance on main.
+# LiteLLM verification trigger: validate the actual production LLM execution path.
 
 on:
   push:

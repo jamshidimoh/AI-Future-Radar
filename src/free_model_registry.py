@@ -60,6 +60,12 @@ def _quality_score(model: dict) -> float:
     return round(base * 0.80 + fit * 0.20, 3)
 
 
+def discovered_candidates() -> list[dict]:
+    data = _load().get("runtime", {})
+    rows = data.get("discovery_candidates", []) if isinstance(data, dict) else []
+    return list(rows) if isinstance(rows, list) else []
+
+
 def canonical_entries() -> list[dict]:
     data = _load().get("registry", {})
     rows: list[dict] = []
@@ -83,10 +89,10 @@ def canonical_entries() -> list[dict]:
             row["family"] = family
             row["credential_env"] = credential_env
             row["quality_score"] = _quality_score(row)
+            if row["quality_score"] <= 0:
+                continue
             rows.append(row)
 
-    # Runtime discovery can promote only candidates that already carry explicit
-    # quality evidence. Unknown models remain quarantined instead of guessing.
     known_ids = {row["id"] for row in rows}
     for candidate in discovered_candidates():
         if not isinstance(candidate, dict) or candidate.get("id") in known_ids:
@@ -108,12 +114,6 @@ def canonical_entries() -> list[dict]:
 
     rows.sort(key=lambda x: (-float(x["quality_score"]), int(x.get("priority", 9999)), x["id"]))
     return rows
-
-
-def discovered_candidates() -> list[dict]:
-    data = _load().get("runtime", {})
-    rows = data.get("discovery_candidates", []) if isinstance(data, dict) else []
-    return list(rows) if isinstance(rows, list) else []
 
 
 def model_capability(model_id: str) -> dict:

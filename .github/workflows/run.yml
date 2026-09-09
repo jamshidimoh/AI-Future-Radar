@@ -2,11 +2,12 @@ name: Run AI Future Radar Bot
 # Production verification is registry-driven: discovery validates the current
 # free-model landscape, while quality is the primary model-ordering signal.
 # Tehran publication windows:
-# - 05:17 UTC = 08:47 Tehran (UTC+3:30)
-# - 08:17 UTC = 11:47 Tehran
-# - 11:17 UTC = 14:47 Tehran
+# - 01:47 UTC = 05:17 Tehran (UTC+3:30)
+# - 07:17 UTC = 10:47 Tehran
+# - 10:17 UTC = 13:47 Tehran
 # - 14:17 UTC = 17:47 Tehran
-# - 16:17 UTC = 19:47 Tehran
+# - 17:17 UTC = 20:47 Tehran
+# - 19:17 UTC = 22:47 Tehran
 # GitHub Actions cron is UTC; these comments document the intended Tehran windows.
 
 on:

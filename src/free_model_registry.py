@@ -9,6 +9,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 
+import requests
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -111,14 +112,35 @@ def model_capability(model_id: str) -> dict:
     return {}
 
 
+def _kiraai_call(router, system_prompt, user_content, model):
+    key = __import__("os").getenv("KIRAAI_API_KEY")
+    if not key:
+        return None
+    payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_tokens": 850, "temperature": 0.15}
+    capability = model_capability(model)
+    if capability.get("response_format"):
+        payload["response_format"] = {"type": "json_object"}
+    response = requests.post("https://kiraai.vn/api/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=10)
+    if response.status_code in (401, 402, 403, 404, 429):
+        raise router.QuotaExceeded(f"KiraAI {model}: HTTP {response.status_code} {response.text[:500]}")
+    response.raise_for_status()
+    choices = response.json().get("choices") or []
+    if not choices:
+        raise ValueError("KiraAI response has no choices")
+    message = choices[0].get("message") or {}
+    content = message.get("content") if isinstance(message, dict) else None
+    if content is None:
+        raise ValueError("KiraAI response content not found")
+    return content
+
+
 def build_production_chain(router):
     """Build a live eligible chain ordered by quality, then priority."""
     data = _load().get("registry", {})
     max_runtime_candidates = int(data.get("max_runtime_candidates", 11) or 11)
-    entries = canonical_entries()
     chain: list[tuple[str, object]] = []
 
-    for entry in entries:
+    for entry in canonical_entries():
         family = entry["family"]
         model_id = entry["id"]
         if family == "groq":
@@ -126,7 +148,7 @@ def build_production_chain(router):
         elif family == "openrouter":
             fn = lambda sp, uc, m=model_id: router._openrouter(sp, uc, m)
         elif family == "kiraai":
-            fn = lambda sp, uc, m=model_id: router._kiraai(sp, uc, m)
+            fn = lambda sp, uc, m=model_id: _kiraai_call(router, sp, uc, m)
         else:
             continue
         display_family = {"openrouter": "OpenRouter", "kiraai": "KiraAI", "groq": "Groq"}.get(family, family.title())

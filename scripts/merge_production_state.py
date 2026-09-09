@@ -16,13 +16,17 @@ FILES = (
 
 
 def read_stage(stage: int, path: Path):
+    result = subprocess.run(
+        ["git", "show", f":{stage}:{path.as_posix()}"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        return None
     try:
-        raw = subprocess.check_output(
-            ["git", "show", f":{stage}:{path.as_posix()}"],
-            text=True,
-        )
-        return json.loads(raw)
-    except Exception:
+        return json.loads(result.stdout)
+    except (TypeError, json.JSONDecodeError):
         return None
 
 
@@ -45,6 +49,7 @@ def merge(a, b):
 
 
 def main() -> None:
+    merged_files = 0
     for path in FILES:
         ours = read_stage(2, path)
         theirs = read_stage(3, path)
@@ -54,7 +59,8 @@ def main() -> None:
             json.dumps(merge(ours, theirs), ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
-    print("[Production State Merge] generated JSON state merged without discarding either side")
+        merged_files += 1
+    print(f"[Production State Merge] generated JSON state merged without discarding either side; files={merged_files}")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,9 @@
-"""جلوگیری از تکرار؛ Canonical Story Identity برای Dedup بین منابع و اجراها."""
+"""Canonical publication deduplication.
+
+URL identity and exact title identity remain terminal fast paths. Cross-source
+semantic identity is augmented by event identity; protected leader content no
+longer bypasses the event-level duplicate check.
+"""
 import json
 import os
 import time
@@ -15,6 +20,7 @@ MAX_SIGNATURE_HISTORY = 1200
 MAX_SOURCE_HISTORY = 1000
 PROTECTED_MARKER = "__protected_sent__:"
 STORY_MARKER = "__story_id__:"
+EVENT_MARKER = "__event_identity__:"
 
 
 def _canonical_url(link):
@@ -66,6 +72,11 @@ def _reconcile_feedback(seen_hashes, seen_signatures):
             if encode_story_signature:
                 try: seen_signatures.append(encode_story_signature(item))
                 except Exception: pass
+            try:
+                from event_identity import event_representation
+                seen_signatures.append(EVENT_MARKER + json.dumps(event_representation(item), ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+            except Exception:
+                pass
     added = (len(seen_hashes)-before_h)+(len(seen_signatures)-before_s)
     if added: print(f"[Publication Ledger] reconciled={added} identities from Telegram history", flush=True)
     return seen_hashes, seen_signatures, added
@@ -124,9 +135,22 @@ def _education_identity(item):
 def _stored_story_ids(signatures): return {s[len(STORY_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(STORY_MARKER)}
 
 
+def _stored_event_representations(signatures):
+    out = []
+    for value in signatures or []:
+        if not isinstance(value, str) or not value.startswith(EVENT_MARKER):
+            continue
+        try:
+            data = json.loads(value[len(EVENT_MARKER):])
+            if isinstance(data, dict): out.append(data)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            continue
+    return out
+
+
 def _semantic_history_match(item, signatures):
     try:
-        from semantic_dedup import get_story_signature, _similarity, SEMANTIC_MARKER
+        from semantic_dedup import get_story_signature, _similarity
         from semantic_threshold import semantic_threshold
     except Exception:
         return 0.0
@@ -134,86 +158,125 @@ def _semantic_history_match(item, signatures):
     threshold = semantic_threshold(item, local=False)
     best = 0.0
     for stored in signatures or []:
-        if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER): continue
+        if not isinstance(stored, str) or not stored.startswith("__semantic_story__:"): continue
         score = _similarity(candidate, stored)
         best = max(best, score)
         if best >= threshold: return best
     return best
 
 
-def _protected_same_story_match(item, signatures):
-    """Detect only strong rewrites of the same protected story, not same-topic items."""
+def _event_history_match(item, signatures):
     try:
-        from semantic_dedup import SEMANTIC_MARKER, _decode_signature, get_story_signature
-        from protected_story_identity import probable_same_story
+        from event_identity import classify_story, event_similarity
+        candidate = event_representation_for_item(item)
     except Exception:
-        return False
-    candidate = get_story_signature(item)
-    for stored in signatures or []:
-        if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER):
-            continue
-        stored_signature = _decode_signature(stored)
-        if stored_signature and probable_same_story(candidate, stored_signature):
-            return True
-    return False
+        return "NEW", 0.0
+    best = ("NEW", 0.0)
+    for stored in _stored_event_representations(signatures):
+        # Stored event representations are canonical feature vectors; classify_story
+        # accepts articles, so compare a lightweight synthetic article carrying the
+        # representation features through direct similarity instead.
+        try:
+            score = _event_similarity_from_rep(candidate, stored)
+        except Exception:
+            score = 0.0
+        if score > best[1]:
+            best = ("MATCH", score)
+    return best
+
+
+def event_representation_for_item(item):
+    from event_identity import event_representation
+    return event_representation(item)
+
+
+def _event_similarity_from_rep(a, b):
+    from event_identity import _jaccard, _set
+    score = 0.0
+    for key, weight in (("organizations", 0.16), ("people", 0.18), ("products", 0.17), ("concepts", 0.24), ("event_types", 0.10), ("tokens", 0.15)):
+        score += _jaccard(_set(a, key), _set(b, key)) * weight
+    aa, ab = _set(a, "people"), _set(b, "people")
+    pa, pb = _set(a, "products"), _set(b, "products")
+    oa, ob = _set(a, "organizations"), _set(b, "organizations")
+    ca, cb = _set(a, "concepts"), _set(b, "concepts")
+    ea, eb = _set(a, "event_types"), _set(b, "event_types")
+    if aa & ab and pa & pb and (ea & eb or ca & cb): score = max(score, 0.78)
+    if oa & ob and aa & ab and pa & pb: score = max(score, 0.78)
+    if oa & ob and len(ca & cb) >= 2 and ea & eb: score = max(score, 0.78)
+    if aa & ab and len(ca & cb) >= 2 and ea & eb: score = max(score, 0.78)
+    return round(min(1.0, score), 4)
+
+
+def _event_duplicate(item, signatures):
+    try:
+        from event_identity import classify_story
+        candidate = event_representation_for_item(item)
+    except Exception:
+        return False, 0.0, "NEW"
+    best = 0.0
+    for stored in _stored_event_representations(signatures):
+        score = _event_similarity_from_rep(candidate, stored)
+        best = max(best, score)
+        if score >= 0.78:
+            # Material-update logic needs the original representation; reconstruct
+            # the small comparison directly so new findings do not disappear.
+            ca, cb = set(candidate.get("numbers") or []), set(stored.get("numbers") or [])
+            ma, mb = set(candidate.get("material") or []), set(stored.get("material") or [])
+            material = bool(ca and cb and ca != cb) or len(ma - mb) >= 2 or len(mb - ma) >= 2
+            ea, eb = set(candidate.get("event_types") or []), set(stored.get("event_types") or [])
+            if ea and eb and ea != eb: material = True
+            return (not material), score, "UPDATE" if material else "DUPLICATE"
+    return False, best, "NEW"
 
 
 def filter_new_items(items, seen_hashes):
-    """Single publication gate: canonical URL, exact Story ID, then semantic identity.
-
-    Education is a separate scheduled product stream. It has no article URL and
-    therefore must not enter the URL/semantic Story dedup path; its stable
-    identity is ``education:<lesson_id>`` and its cadence/state is authoritative.
-    """
+    """Single publication gate: URL, exact story, event identity, then semantic fallback."""
     _, seen_signatures = load_seen()
-    protected_sent = {s[len(PROTECTED_MARKER):] for s in seen_signatures if isinstance(s, str) and s.startswith(PROTECTED_MARKER)}
     stored_story_ids = _stored_story_ids(seen_signatures)
-    result, local_urls, local_stories, local_semantic = [], set(), set(), []
-    rejected_url = rejected_story = rejected_semantic = 0
-    protected_semantic_bypassed = 0
+    result, local_urls, local_stories, local_semantic, local_events = [], set(), set(), [], []
+    rejected_url = rejected_story = rejected_semantic = rejected_event = 0
+    protected_event_bypassed = 0
     protected_same_story_blocked = 0
     for item in items:
         if _is_education(item):
             identity = _education_identity(item)
             if identity and identity in stored_story_ids:
-                rejected_story += 1
-                continue
+                rejected_story += 1; continue
             if identity and identity in local_stories:
-                rejected_story += 1
-                continue
-            if identity:
-                local_stories.add(identity)
-            result.append(item)
-            continue
+                rejected_story += 1; continue
+            if identity: local_stories.add(identity)
+            result.append(item); continue
 
         link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
         protected = _is_protected_leader(item)
-        # Canonical URL is terminal across both regular and protected streams.
         if link_hash in seen_hashes:
-            rejected_url += 1
-            continue
-        if protected:
-            if link_hash in protected_sent or (identity and identity in stored_story_ids):
-                rejected_story += 1; continue
-            if _protected_same_story_match(item, seen_signatures):
-                rejected_semantic += 1
-                protected_same_story_blocked += 1
-                continue
-            protected_semantic_bypassed += 1
-        else:
-            if identity and identity in stored_story_ids:
-                rejected_story += 1; continue
-            semantic_match = _semantic_history_match(item, seen_signatures)
-            if semantic_match >= __import__("semantic_threshold").semantic_threshold(item, local=False):
-                rejected_semantic += 1; continue
+            rejected_url += 1; continue
+        if identity and identity in stored_story_ids:
+            rejected_story += 1; continue
         if link_hash in local_urls or (identity and identity in local_stories):
             rejected_story += 1; continue
-        local_match = 0.0
+
+        is_dup, event_score, event_status = _event_duplicate(item, seen_signatures)
+        if is_dup:
+            rejected_event += 1; continue
+        if event_status == "UPDATE":
+            pass
+
+        semantic_match = _semantic_history_match(item, seen_signatures)
+        try:
+            from semantic_threshold import semantic_threshold
+            historical_threshold = semantic_threshold(item, local=False)
+        except Exception:
+            historical_threshold = 0.68
+        if semantic_match >= historical_threshold:
+            rejected_semantic += 1; continue
+
         try:
             from semantic_dedup import get_story_signature, _similarity
             candidate = get_story_signature(item)
             local_match = max((_similarity(candidate, previous) for previous in local_semantic), default=0.0)
-        except Exception: pass
+        except Exception:
+            local_match = 0.0
         try:
             from semantic_threshold import semantic_threshold
             local_threshold = semantic_threshold(item, local=True)
@@ -221,6 +284,15 @@ def filter_new_items(items, seen_hashes):
             local_threshold = 0.60
         if local_match >= local_threshold:
             rejected_semantic += 1; continue
+
+        try:
+            from event_identity import event_representation
+            candidate_event = event_representation(item)
+            if any(_event_similarity_from_rep(candidate_event, previous) >= 0.78 for previous in local_events):
+                rejected_event += 1; continue
+            local_events.append(candidate_event)
+        except Exception:
+            pass
         local_urls.add(link_hash)
         if identity: local_stories.add(identity)
         try:
@@ -228,7 +300,7 @@ def filter_new_items(items, seen_hashes):
             local_semantic.append(get_story_signature(item))
         except Exception: pass
         result.append(item)
-    print(f"[Canonical Story Gate] kept={len(result)} | url_rejected={rejected_url} | story_rejected={rejected_story} | semantic_rejected={rejected_semantic} | protected_semantic_bypassed={protected_semantic_bypassed} | protected_same_story_blocked={protected_same_story_blocked}")
+    print(f"[Canonical Story Gate] kept={len(result)} | url_rejected={rejected_url} | story_rejected={rejected_story} | semantic_rejected={rejected_semantic} | event_rejected={rejected_event} | protected_semantic_bypassed=0 | protected_same_story_blocked={protected_same_story_blocked}")
     return result
 
 
@@ -242,12 +314,15 @@ def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
             source_history.append({"ts": int(time.time()), "source": item.get("source", "education"), "category": item.get("category", "ai"), "content_type": "education", "leader": "", "story_id": identity})
         return seen_hashes, seen_signatures, source_history
     link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
-    # Keep the protected marker for compatibility, while also recording the URL
-    # in the global seen set so regular and protected streams share one ledger.
     seen_hashes.add(link_hash)
     if _is_protected_leader(item): seen_signatures.append(PROTECTED_MARKER + link_hash)
     if identity: seen_signatures.append(STORY_MARKER + identity)
     seen_signatures.append(get_signature(item.get("title", ""))); seen_signatures.append(encode_story_signature(item))
+    try:
+        from event_identity import event_representation
+        seen_signatures.append(EVENT_MARKER + json.dumps(event_representation(item), ensure_ascii=False, sort_keys=True, separators=(",", ":")))
+    except Exception:
+        pass
     if source_history is not None:
         source_history.append({"ts": int(time.time()), "source": item.get("source", "unknown"), "category": item.get("category", "ai"), "content_type": item.get("content_type", "news"), "leader": item.get("leader") or item.get("watch_person") or item.get("_leader_match", ""), "story_id": identity})
     return seen_hashes, seen_signatures, source_history

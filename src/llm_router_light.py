@@ -326,7 +326,6 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
         providers = get_quality_chain()
     last = None
     deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS
-    retries: dict[str, int] = {}
     local_models: set[str] = set()
     local_families: set[str] = set()
 

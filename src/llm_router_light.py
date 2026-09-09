@@ -22,6 +22,7 @@ class QuotaExceeded(Exception):
 _DISABLED = set()
 _DISABLED_FAMILIES = set()
 _CHAIN_CACHE = None
+_PRODUCTION_POLICY_APPLIED = False
 _PROVIDER_TIMEOUTS = {"Groq:": 6.0, "OpenRouter:": 2.5, "Gemini": 10.0, "HuggingFace": 4.0}
 _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
@@ -244,21 +245,20 @@ def _provider_timeout(name: str, remaining: float) -> float:
 def _disable(name: str, reason: str) -> None:
     family = _provider_family(name)
     _DISABLED.add(name)
-    # Permanent authentication/configuration failures are family-scoped.
-    # Quota/429 is model-scoped so a healthy sibling model can still fail over.
-    # Transient endpoint failures are also model-local.
-    if reason == "permanent":
+    production_quota = _PRODUCTION_POLICY_APPLIED and reason == "quota"
+    if reason == "permanent" or (reason == "quota" and not production_quota):
         _DISABLED_FAMILIES.add(family)
-    scope = "family" if reason == "permanent" else "model"
+    scope = "model" if production_quota or reason != "permanent" else "family"
     print(f"[Light Router] disabled={name} family={family} reason={reason} scope={scope}", flush=True)
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
     """Call providers with bounded failover.
 
-    Permanent auth/config failures are family-scoped; quota/429 is model-scoped
-    across requests so sibling models remain eligible; transient endpoint
-    failures remain local to the model/request.
+    Base router compatibility keeps quota family-scoped. Production policy
+    enables model-scoped quota so healthy siblings remain eligible. Permanent
+    authentication/configuration failures remain family-scoped everywhere;
+    transient endpoint failures remain local to the model/request.
     """
     providers = providers or get_quality_chain()
     last = None
@@ -295,7 +295,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             last = exc
             reason = _failure_class(str(exc))
             local_disabled_names.add(name)
-            if reason == "permanent":
+            if reason == "permanent" or (reason == "quota" and not _PRODUCTION_POLICY_APPLIED):
                 local_disabled_families.add(family)
             _disable(name, reason)
         except Exception as exc:
@@ -317,7 +317,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                     last = retry_exc
                     local_disabled_names.add(name)
                     retry_reason = _failure_class(str(retry_exc))
-                    if retry_reason == "permanent":
+                    if retry_reason == "permanent" or (retry_reason == "quota" and not _PRODUCTION_POLICY_APPLIED):
                         local_disabled_families.add(family)
                     _disable(name, retry_reason)
             else:

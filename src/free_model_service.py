@@ -41,7 +41,6 @@ class FreeModelIntelligence:
 
     def mark_success(self, deployment_id: str) -> None:
         with self._lock:
-            old = self._health.get(deployment_id, DeploymentHealth())
             self._health[deployment_id] = DeploymentHealth(
                 failures=0,
                 disabled_until=0.0,

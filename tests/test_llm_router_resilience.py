@@ -11,6 +11,7 @@ def _reset():
     router._DISABLED.clear()
     router._DISABLED_FAMILIES.clear()
     router._CHAIN_CACHE = None
+    router._PRODUCTION_POLICY_APPLIED = False
 
 
 def test_quota_failure_disables_provider_family_and_uses_next_family(monkeypatch):

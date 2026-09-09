@@ -35,13 +35,15 @@ Posts sent: 0/1
     assert "policy_rejections=1" in reason
 
 
-def test_low_quality_tier0_without_rejection_evidence_is_not_a_valid_fallback():
+def test_low_quality_tier0_publication_is_fail_closed():
     log = """
 [Production Selection] total=1
-[Publication Policy] PUBLISH TIER0 interview/quote global_rank=999 tier0_rank=1 score=28.16 quota_exempt=true
+[Tier0 Interview Priority] retained=1 quota_exempt=true
+[Publication Policy] PUBLISH TIER0 interview/quote global_rank=1 tier0_rank=1 score=25.23 quota_exempt=true
 Posts sent: 1/1
-[Production Contract] normal_news=0 normal_max=3 tier0_news=1 tier0_quota_exempt=true education=not_due
+[Production Contract] normal_news=0 normal_max=3 tier0_news=1 tier0_quota_exempt=true tier0_quality_floor=60.0 education=not_due
 """
     ok, reason = validate(log)
-    assert ok is True  # acceptance guard validates accounting; policy gate owns score enforcement
-    assert "PUBLISH TIER0" in log
+    assert ok is False
+    assert "low-quality Tier-0 publication observed" in reason
+    assert "25.23" in reason

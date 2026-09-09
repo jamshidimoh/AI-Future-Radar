@@ -28,7 +28,9 @@ mission:
   min_unique_sources: 3
   preferred_max_same_source_per_run: 1
   hard_max_same_source_per_run: 2
-  max_same_mission_area_per_run: 3
+  # This is a candidate-pool ceiling, not a publication quota. The final
+  # portfolio remains bounded by capacity and information-gain diversification.
+  max_same_mission_area_per_run: 6
   min_authoritative_items: 2
   community_max: 0
   # Area/research targets are intentionally zero: coverage is a soft preference,

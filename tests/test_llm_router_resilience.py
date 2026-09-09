@@ -10,6 +10,7 @@ import llm_router_light as router
 def _reset():
     router._DISABLED.clear()
     router._DISABLED_FAMILIES.clear()
+    router._MODEL_DISABLED_UNTIL.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
 
@@ -81,3 +82,30 @@ def test_current_default_chain_uses_supported_gemini_model(monkeypatch):
     assert router.GEMINI_DEFAULT_MODEL == "gemini-3.7-flash"
     assert "Groq:qwen/qwen3.8-27b" in names
     assert "OpenRouter:openai/gpt-oss-120b:free" in names
+
+
+def test_model_permission_failure_is_not_family_scoped(monkeypatch):
+    _reset()
+    monkeypatch.setenv("GROQ_API_KEY", "x")
+    calls = []
+
+    def blocked(*args, **kwargs):
+        calls.append("blocked")
+        raise router.QuotaExceeded("Groq openai/gpt-oss-120b: HTTP 403 model_permission_blocked_project")
+
+    def sibling(*args, **kwargs):
+        calls.append("sibling")
+        return '{"title":"ok"}'
+
+    result, provider = router.call_llm_with_fallback(
+        "system",
+        "user",
+        providers=[
+            ("Groq:openai/gpt-oss-120b", blocked),
+            ("Groq:qwen/qwen3.8-27b", sibling),
+        ],
+    )
+    assert result == '{"title":"ok"}'
+    assert provider == "Groq:qwen/qwen3.8-27b"
+    assert calls == ["blocked", "sibling"]
+    assert "groq" not in router._DISABLED_FAMILIES

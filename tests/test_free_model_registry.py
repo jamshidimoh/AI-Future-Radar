@@ -40,11 +40,13 @@ def test_quality_is_primary_and_priority_is_only_tiebreak(monkeypatch):
     ]
 
 
-def test_kiraai_is_first_when_credentialed_and_quality_is_high(monkeypatch):
+def test_kiraai_free_quota_lane_is_included_when_credentialed(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("KIRAAI_API_KEY", "test-kira")
     names = [name for name, _ in registry.build_production_chain(router)]
-    assert names[0] == "KiraAI:gpt-5.6-luna-free"
+    assert "KiraAI:minimax-m3-free" in names
+    assert names.index("KiraAI:minimax-m3-free") < names.index("OpenRouter:openai/gpt-oss-20b:free")
+    assert "KiraAI:gpt-5.6-luna-free" not in names
 
 
 def test_retired_nemotron_nano_and_qwen38_are_not_trusted(monkeypatch):
@@ -101,22 +103,19 @@ def test_kiraai_adapter_is_openai_compatible(monkeypatch):
         return Response()
 
     monkeypatch.setattr(registry.requests, "post", post)
-    fn = dict(registry.build_production_chain(router))["KiraAI:gpt-5.6-luna-free"]
+    fn = dict(registry.build_production_chain(router))["KiraAI:minimax-m3-free"]
     assert fn("system", "user") == '{"ok":true}'
     assert seen["url"] == "https://kiraai.vn/api/v1/chat/completions"
-    assert seen["json"]["model"] == "gpt-5.6-luna-free"
+    assert seen["json"]["model"] == "minimax-m3-free"
 
 
 def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monkeypatch):
     _reset(monkeypatch)
-    calls = []
 
     def groq_quota(*_args, **_kwargs):
-        calls.append("groq-quota")
         raise router.QuotaExceeded("Groq openai/gpt-oss-120b: HTTP 429")
 
     def groq_ok(*_args, **_kwargs):
-        calls.append("groq-ok")
         return '{"ok":true}'
 
     result, provider = router.call_llm_with_fallback("s", "u", providers=[
@@ -129,11 +128,9 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
 
     _reset(monkeypatch)
     def or_daily(*_args, **_kwargs):
-        calls.append("or-daily")
         raise router.QuotaExceeded("OpenRouter model: HTTP 429 free tier requests/day exceeded")
 
     def or_sibling(*_args, **_kwargs):
-        calls.append("or-sibling")
         return '{"ok":true}'
 
     result, provider = router.call_llm_with_fallback("s", "u", providers=[

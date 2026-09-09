@@ -62,6 +62,12 @@ def _litellm_fallback_contract() -> None:
 
 
 def _probe_provider(label: str, model: str, key_env: str, **kwargs) -> bool:
+    """Probe provider authentication/connectivity without imposing JSON mode.
+
+    Some providers reject a trivial JSON-schema request before authentication
+    is actually the problem. JSON structured-output compatibility is tested
+    separately by the real Router smoke call.
+    """
     key = os.getenv(key_env, "").strip()
     if not key:
         print(f"[LiteLLM Pilot] {label}_probe=SKIP reason=missing_credential", flush=True)
@@ -71,16 +77,15 @@ def _probe_provider(label: str, model: str, key_env: str, **kwargs) -> bool:
         response = litellm.completion(
             model=model,
             api_key=key,
-            messages=[{"role": "user", "content": "Return exactly JSON: {\"ok\":true}"}],
-            response_format={"type": "json_object"},
-            max_tokens=32,
+            messages=[{"role": "user", "content": "Reply with exactly: OK"}],
+            max_tokens=8,
             timeout=8,
             **kwargs,
         )
         content = response.choices[0].message.content or ""
         if not content:
             raise RuntimeError("empty response")
-        print(f"[LiteLLM Pilot] {label}_probe=PASS", flush=True)
+        print(f"[LiteLLM Pilot] {label}_probe=PASS response={content[:32]!r}", flush=True)
         return True
     except Exception as exc:
         print(f"[LiteLLM Pilot] {label}_probe=FAIL type={type(exc).__name__}: {exc}", flush=True)

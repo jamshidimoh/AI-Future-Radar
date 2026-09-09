@@ -1,8 +1,8 @@
 """Run the isolated LiteLLM router pilot.
 
-The script never prints API keys. It first validates LiteLLM's own fallback
-mechanism with its deterministic mock path, then performs one real provider
-smoke call when at least one credential is available.
+The script never prints API keys. It validates LiteLLM fallback with its
+mock path, probes OpenRouter separately, then runs the real multi-deployment
+smoke call. Production Radar is not wired to this module yet.
 """
 from __future__ import annotations
 
@@ -44,24 +44,10 @@ def _litellm_fallback_contract() -> None:
 
     router = Router(
         model_list=[
-            {
-                "model_name": "radar-fallback-primary",
-                "litellm_params": {
-                    "model": "openai/fallback-primary",
-                    "mock_response": '{"route":"primary"}',
-                },
-            },
-            {
-                "model_name": "radar-fallback-secondary",
-                "litellm_params": {
-                    "model": "openai/fallback-secondary",
-                    "mock_response": '{"route":"secondary"}',
-                },
-            },
+            {"model_name": "radar-fallback-primary", "litellm_params": {"model": "openai/fallback-primary", "mock_response": '{"route":"primary"}'}},
+            {"model_name": "radar-fallback-secondary", "litellm_params": {"model": "openai/fallback-secondary", "mock_response": '{"route":"secondary"}'}},
         ],
-        fallbacks=[
-            {"radar-fallback-primary": ["radar-fallback-secondary"]},
-        ],
+        fallbacks=[{"radar-fallback-primary": ["radar-fallback-secondary"]}],
         num_retries=0,
         allowed_fails=1,
         cooldown_time=45,
@@ -76,20 +62,43 @@ def _litellm_fallback_contract() -> None:
     print("[LiteLLM Pilot] router_fallback_contract=PASS", flush=True)
 
 
+def _probe_openrouter() -> None:
+    key = os.getenv("OPENROUTER_API_KEY", "").strip()
+    if not key:
+        print("[LiteLLM Pilot] openrouter_probe=SKIP reason=missing_credential", flush=True)
+        return
+
+    import litellm
+
+    try:
+        response = litellm.completion(
+            model="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+            api_key=key,
+            messages=[{"role": "user", "content": "Return exactly JSON: {\"ok\":true}"}],
+            response_format={"type": "json_object"},
+            max_tokens=32,
+            timeout=8,
+        )
+        content = response.choices[0].message.content or ""
+        if not content:
+            raise RuntimeError("empty response")
+        print("[LiteLLM Pilot] openrouter_probe=PASS", flush=True)
+    except Exception as exc:
+        # Keep the diagnostic useful without ever echoing credentials.
+        print(f"[LiteLLM Pilot] openrouter_probe=FAIL type={type(exc).__name__}: {exc}", flush=True)
+
+
 def main() -> int:
     _mock_contract()
     _litellm_fallback_contract()
+    _probe_openrouter()
 
     from src.litellm_router_pilot import build_model_list, build_router, smoke_call
 
     rows = build_model_list()
     print(f"[LiteLLM Pilot] credentialed_deployments={len(rows)}", flush=True)
     for row in rows:
-        print(
-            f"[LiteLLM Pilot] deployment={row['model_info']['id']} "
-            f"order={row['litellm_params']['order']}",
-            flush=True,
-        )
+        print(f"[LiteLLM Pilot] deployment={row['model_info']['id']} order={row['litellm_params']['order']}", flush=True)
 
     if not rows:
         print("[LiteLLM Pilot] real_smoke=SKIP reason=no_credentials", flush=True)

@@ -27,8 +27,6 @@ _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
 _MAX_TRANSIENT_RETRIES = 1
 
-# Current production-capable Groq models. Qwen 3.8 27B and GPT-OSS 120B both
-# support JSON output; Qwen 3.8 additionally supports tunable reasoning.
 GROQ_MODELS = ("qwen/qwen3.8-27b", "openai/gpt-oss-120b")
 OPENROUTER_MODELS = ("openai/gpt-oss-120b:free", "openai/gpt-oss-20b:free")
 GEMINI_DEFAULT_MODEL = "gemini-3.7-flash"
@@ -107,7 +105,6 @@ def _gemini(system_prompt, user_content):
     model = (os.getenv("GEMINI_MODEL") or GEMINI_DEFAULT_MODEL).strip()
     client = genai.Client(api_key=key, http_options={"timeout": 8_000})
     try:
-        # Gemini 3.x does not accept legacy temperature/top-p/top-k controls.
         response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", max_output_tokens=900))
         return response.text
     except Exception as exc:
@@ -247,20 +244,22 @@ def _provider_timeout(name: str, remaining: float) -> float:
 def _disable(name: str, reason: str) -> None:
     family = _provider_family(name)
     _DISABLED.add(name)
-    # Only permanent authentication/configuration failures are shared across
-    # requests. Quota/rate-limit and transient failures are model/request local.
-    if reason == "permanent":
+    # Permanent authentication failures and account/provider quota exhaustion
+    # are family-scoped because a sibling model uses the same account/quota.
+    # Transient 5xx/timeouts remain model-local so one flaky endpoint does not
+    # unnecessarily eliminate a healthy sibling.
+    if reason in {"permanent", "quota"}:
         _DISABLED_FAMILIES.add(family)
     print(f"[Light Router] disabled={name} family={family} reason={reason}", flush=True)
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
-    """Call providers with request-local failover state.
+    """Call providers with run-scoped family failover and bounded retries.
 
-    Permanent authentication/configuration failures remain globally scoped so
-    a broken provider family is not retried by every concurrent worker. Quota,
-    transient, timeout, and ordinary failures are local to this request so
-    one story cannot starve sibling models or unrelated concurrent stories.
+    Permanent authentication/configuration failures and quota exhaustion are
+    shared across concurrent requests for the whole process, preventing a
+    depleted provider account from being hit repeatedly through sibling models.
+    Transient endpoint failures remain local to the current model/request.
     """
     providers = providers or get_quality_chain()
     last = None
@@ -274,6 +273,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
         if name in local_disabled_names or family in local_disabled_families:
             continue
         if family in _DISABLED_FAMILIES:
+            print(f"[Light Router] skipped={name} reason=family_disabled", flush=True)
             continue
         if not _provider_credential_available(name):
             print(f"[Light Router] skipped={name} reason=missing_credential", flush=True)
@@ -296,7 +296,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             last = exc
             reason = _failure_class(str(exc))
             local_disabled_names.add(name)
-            if reason == "permanent":
+            if reason in {"permanent", "quota"}:
                 local_disabled_families.add(family)
             _disable(name, reason)
         except Exception as exc:

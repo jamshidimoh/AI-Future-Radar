@@ -1,71 +1,63 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from event_identity import compare_events
 from story_identity import deduplicate_stories, is_story_duplicate
 
 
-def test_same_hugging_face_incident_from_different_sources_is_duplicate():
-    previous = {
-        "title": "MIT analysis of the OpenAI agents incident at Hugging Face",
-        "summary": "Researchers examine the security breach involving OpenAI AI agents, Hugging Face and the evaluation environment.",
-    }
-    current = {
-        "title": "OpenAI report details the AI-agent security breach at Hugging Face",
-        "summary": "OpenAI describes the incident in which its AI agents escaped the evaluation environment and reached Hugging Face.",
-    }
-    assert is_story_duplicate(current, [previous]) is True
+def item(title, summary="", published="2026-09-09T00:00:00+00:00"):
+    return {"title": title, "summary": summary, "published": published}
 
 
-def test_same_hugging_face_incident_with_material_new_evidence_is_allowed():
-    previous = {
-        "title": "MIT analysis of the OpenAI agents incident at Hugging Face",
-        "summary": "Researchers examine the security breach involving OpenAI AI agents and Hugging Face.",
-    }
-    current = {
-        "title": "OpenAI and independent investigators reveal new scale of Hugging Face incident",
-        "summary": "The new reports say roughly 700 agents attacked Hugging Face and describe transcript manipulation and coordinated activity.",
-    }
-    assert is_story_duplicate(current, [previous]) is False
+def test_muse_three_headlines_are_one_story():
+    a = item("Zuckerberg launches personal superintelligence plan, Muse agent")
+    b = item("Meta introduces Muse, a personal AI agent with dedicated cloud computer")
+    c = item("Zuckerberg introduces personal superintelligence and Muse agent")
+    assert compare_events(a, b)[0] == "DUPLICATE"
+    assert compare_events(a, c)[0] == "DUPLICATE"
+    assert is_story_duplicate(b, [a])
+    assert is_story_duplicate(c, [a])
 
 
-def test_same_event_without_material_new_context_is_deduplicated_within_current_run():
+def test_terence_tao_two_headlines_are_one_story():
+    a = item("Terence Tao: warning about AI threatening open science and unsolved math problems")
+    b = item("Theoretical warning from Tao: risk of a shortage of open problems in the AI era")
+    assert compare_events(a, b)[0] == "DUPLICATE"
+    assert is_story_duplicate(b, [a])
+
+
+def test_stanford_hai_two_headlines_are_one_story():
+    a = item("AI legal review finds millions live under discriminatory local laws - Stanford HAI")
+    b = item("AI-based legal review: millions of people live under discriminatory local laws")
+    assert compare_events(a, b)[0] == "DUPLICATE"
+    assert is_story_duplicate(b, [a])
+
+
+def test_same_entities_different_event_is_not_duplicate():
+    a = item("Meta introduces Muse personal AI agent")
+    b = item("Meta reports a new security vulnerability in Muse")
+    assert compare_events(a, b)[0] != "DUPLICATE"
+
+
+def test_same_event_with_material_finding_is_not_duplicate():
+    a = item("Meta introduces Muse personal AI agent")
+    b = item("Meta reveals a newly discovered security vulnerability in Muse")
+    assert compare_events(a, b)[0] == "UPDATE"
+
+
+def test_different_events_same_person_are_not_duplicate():
+    a = item("Zuckerberg launches personal superintelligence plan, Muse agent")
+    b = item("Zuckerberg appoints a new Meta AI research chief")
+    assert compare_events(a, b)[0] != "DUPLICATE"
+
+
+def test_same_event_without_material_update_deduplicates_current_run():
     items = [
-        {
-            "title": "OpenAI AI agents breached Hugging Face during a security incident",
-            "summary": "The AI agents escaped the sandbox and attacked Hugging Face during the security incident.",
-        },
-        {
-            "title": "Hugging Face breach involved OpenAI AI agents",
-            "summary": "OpenAI AI agents escaped the sandbox and breached Hugging Face in the security incident.",
-        },
+        item("Zuckerberg launches personal superintelligence plan, Muse agent"),
+        item("Meta introduces Muse, a personal AI agent with dedicated cloud computer"),
+        item("Zuckerberg introduces personal superintelligence and Muse agent"),
     ]
     assert len(deduplicate_stories(items)) == 1
-
-
-def test_same_company_different_event_remains_distinct():
-    items = [
-        {
-            "title": "OpenAI AI agents breached Hugging Face",
-            "summary": "The agents escaped a sandbox during a security incident and reached Hugging Face.",
-        },
-        {
-            "title": "OpenAI releases a new language model",
-            "summary": "OpenAI announced a new model for developers and research users.",
-        },
-    ]
-    assert len(deduplicate_stories(items)) == 2
-
-
-def test_event_aliases_do_not_recursively_expand_canonical_tokens():
-    previous = {
-        "title": "Hugging Face security incident involving AI agents",
-        "summary": "OpenAI agents escaped the sandbox during the incident.",
-    }
-    current = {
-        "title": "OpenAI AI-agent security incident at Hugging Face",
-        "summary": "The agents escaped the sandbox during the same incident.",
-    }
-    assert is_story_duplicate(current, [previous]) is True

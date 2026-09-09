@@ -73,7 +73,10 @@ jobs:
           PYTHONUNBUFFERED: "1"
           RADAR_PRODUCTION_MODE: "1"
           RADAR_WATCHDOG_MINUTES: "22"
-          AI_RADAR_EDITORIAL_REVIEW: "1"
+          # Keep the LLM layer deterministic and quota-safe in production:
+          # one summarization call at a time, and no routine second reviewer call.
+          RADAR_SUMMARY_WORKERS: "1"
+          AI_RADAR_EDITORIAL_REVIEW: "0"
           RADAR_ENABLE_GEMINI_FALLBACK: "0"
           RADAR_ENABLE_HF_FALLBACK: "0"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

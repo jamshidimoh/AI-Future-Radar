@@ -21,6 +21,8 @@ _STATE_LOCK = threading.RLock()
 _CHAIN_CACHE = None
 _CHAIN_CACHE_KEY = None
 _PRODUCTION_POLICY_APPLIED = False
+_LITELLM_ROUTER = None
+_LITELLM_ROUTER_KEY = None
 _PROVIDER_TIMEOUTS = {"Groq:": 8.0, "OpenRouter:": 7.0, "Gemini": 8.0, "HuggingFace": 5.0}
 _REQUEST_TIMEOUT = 10
 _ROUTER_BUDGET_SECONDS = 24
@@ -185,6 +187,78 @@ def get_quality_chain():
     return list(_CHAIN_CACHE)
 
 
+def _litellm_model_list():
+    """Build a credential-driven LiteLLM deployment list without exposing secrets."""
+    rows = []
+    def add(order, model, ident, env, **extra):
+        key = os.getenv(env, "").strip()
+        if not key:
+            return
+        params = {"model": model, "api_key": key, "timeout": 8, "order": order}
+        params.update(extra)
+        rows.append({"model_name": "radar-production", "litellm_params": params, "model_info": {"id": ident}})
+    add(1, "openrouter/nvidia/nemotron-3-super-120b-a12b:free", "openrouter-nemotron-3-super", "OPENROUTER_API_KEY")
+    if os.getenv("GROQ_API_KEY", "").strip():
+        add(2, "groq/openai/gpt-oss-120b", "groq-gpt-oss-120b", "GROQ_API_KEY")
+        add(3, "groq/qwen/qwen3.6-27b", "groq-qwen3.6-27b", "GROQ_API_KEY")
+        add(4, "groq/openai/gpt-oss-20b", "groq-gpt-oss-20b", "GROQ_API_KEY")
+    add(5, "openai/minimax-m3-free", "kiraai-minimax-m3-free", "KIRAAI_API_KEY", api_base="https://kiraai.vn/api/v1")
+    add(6, "gemini/gemini-3-flash-preview", "gemini-3-flash-preview", "GEMINI_API_KEY")
+    add(7, "cerebras/glm-4.7", "cerebras-glm-4.7", "CEREBRAS_API_KEY")
+    return rows
+
+
+def _get_litellm_router():
+    global _LITELLM_ROUTER, _LITELLM_ROUTER_KEY
+    if os.getenv("RADAR_USE_LITELLM", "1").strip().lower() in {"0", "false", "no", "off"}:
+        return None
+    model_list = _litellm_model_list()
+    if not model_list:
+        return None
+    key = tuple((x["model_info"]["id"], x["litellm_params"]["model"]) for x in model_list)
+    if _LITELLM_ROUTER is not None and _LITELLM_ROUTER_KEY == key:
+        return _LITELLM_ROUTER
+    try:
+        from litellm import Router
+        _LITELLM_ROUTER = Router(
+            model_list=model_list,
+            num_retries=0,
+            retry_after=0,
+            timeout=8,
+            allowed_fails=1,
+            cooldown_time=45,
+            enable_pre_call_checks=True,
+            fallbacks=[],
+        )
+        _LITELLM_ROUTER_KEY = key
+        print("[LiteLLM Router] deployments=" + ", ".join(x["model_info"]["id"] for x in model_list), flush=True)
+        return _LITELLM_ROUTER
+    except Exception as exc:
+        print(f"[LiteLLM Router] initialization_failed={type(exc).__name__}: {exc}", flush=True)
+        return None
+
+
+def _call_litellm(system_prompt, user_content):
+    router = _get_litellm_router()
+    if router is None:
+        return None, None
+    try:
+        response = router.completion(
+            model="radar-production",
+            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
+            response_format={"type": "json_object"},
+        )
+        content = getattr(response.choices[0].message, "content", None) if getattr(response, "choices", None) else None
+        if not content:
+            raise ValueError("LiteLLM response has no content")
+        selected = str(getattr(response, "model", "unknown"))
+        print(f"[LiteLLM Router] success={selected}", flush=True)
+        return content, selected
+    except Exception as exc:
+        print(f"[LiteLLM Router] exhausted_or_failed={type(exc).__name__}: {exc}", flush=True)
+        return None, None
+
+
 def _failure_class(message: str) -> str:
     text = str(message or "").lower()
     if re.search(r"\b401\b|unauthenticated|invalid.*(?:credential|key|token)|unauthorized|authentication.*(?:fail|invalid)", text):
@@ -239,7 +313,12 @@ def _invoke(fn, system_prompt, user_content):
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
-    providers = providers or get_quality_chain()
+    """Use LiteLLM as the production execution layer; retain the legacy router as a fail-safe."""
+    if providers is None:
+        result, provider = _call_litellm(system_prompt, user_content)
+        if result:
+            return result, provider
+        providers = get_quality_chain()
     last = None
     deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS
     retries: dict[str, int] = {}

@@ -1,8 +1,9 @@
-"""Dynamic, quality-first production ordering for free LLMs."""
+"""Dynamic, quality-first production ordering for free LLM deployments."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
 from pathlib import Path
+import os
 
 import requests
 import yaml
@@ -42,7 +43,6 @@ def _load() -> dict:
 
 
 def _credential_available(env_name: str | None, env: dict[str, str] | None = None) -> bool:
-    import os
     source = env if env is not None else os.environ
     return bool(env_name and source.get(str(env_name).strip()))
 
@@ -88,6 +88,7 @@ def canonical_entries() -> list[dict]:
             row = dict(model)
             row["family"] = family
             row["credential_env"] = credential_env
+            row["deployment_id"] = f"{family}:{row['id']}"
             row["quality_score"] = _quality_score(row)
             if row["quality_score"] <= 0:
                 continue
@@ -99,6 +100,8 @@ def canonical_entries() -> list[dict]:
             continue
         if candidate.get("free") is not True or candidate.get("chat_capable") is not True:
             continue
+        if data.get("require_json_capability", True) and candidate.get("json_capable") is not True:
+            continue
         score = _quality_score(candidate)
         if score < 88:
             continue
@@ -108,12 +111,20 @@ def canonical_entries() -> list[dict]:
             continue
         row = dict(candidate)
         row["credential_env"] = env_name
+        row["deployment_id"] = f"{family}:{row['id']}"
         row["quality_score"] = score
         row["priority"] = int(row.get("priority", 1000))
         rows.append(row)
 
     rows.sort(key=lambda x: (-float(x["quality_score"]), int(x.get("priority", 9999)), x["id"]))
     return rows
+
+
+def ranked_entries() -> list[dict]:
+    """Return quality-ranked, currently credentialed trusted deployments."""
+    from free_model_service import get_intelligence
+
+    return get_intelligence().rank(canonical_entries())
 
 
 def model_capability(model_id: str) -> dict:
@@ -127,7 +138,7 @@ def model_capability(model_id: str) -> dict:
 
 
 def _kiraai_call(router, system_prompt, user_content, model):
-    key = __import__("os").getenv("KIRAAI_API_KEY")
+    key = os.getenv("KIRAAI_API_KEY")
     if not key:
         return None
     payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_tokens": 850, "temperature": 0.15}
@@ -147,11 +158,57 @@ def _kiraai_call(router, system_prompt, user_content, model):
     return content
 
 
+def _litellm_model_name(entry: dict) -> str:
+    family = str(entry["family"]).lower()
+    model_id = str(entry["id"])
+    if family == "openrouter":
+        return f"openrouter/{model_id}"
+    if family == "groq":
+        return f"groq/{model_id}"
+    if family == "kiraai":
+        return f"openai/{model_id}"
+    raise ValueError(f"Unsupported LiteLLM provider family: {family}")
+
+
+def build_litellm_model_list() -> list[dict]:
+    """Translate the ranked registry into LiteLLM deployments.
+
+    The registry decides *which* free deployment is preferred. LiteLLM only
+    executes that ordered deployment pool and applies runtime cooldowns.
+    """
+    rows: list[dict] = []
+    for order, entry in enumerate(ranked_entries(), start=1):
+        env_name = str(entry.get("credential_env") or "").strip()
+        api_key = os.getenv(env_name, "").strip()
+        if not api_key:
+            continue
+        params = {
+            "model": _litellm_model_name(entry),
+            "api_key": api_key,
+            "timeout": 8,
+            "order": order,
+        }
+        if entry.get("family") == "kiraai":
+            params["api_base"] = "https://kiraai.vn/api/v1"
+        for key in ("rpm", "tpm"):
+            if entry.get(key) is not None:
+                params[key] = entry[key]
+        rows.append({
+            "model_name": "radar-production",
+            "litellm_params": params,
+            "model_info": {
+                "id": entry["deployment_id"],
+                "quality_score": entry["quality_score"],
+                "provider_family": entry["family"],
+            },
+        })
+    return rows
+
+
 def build_production_chain(router):
-    data = _load().get("registry", {})
-    max_runtime_candidates = int(data.get("max_runtime_candidates", 18) or 18)
     chain: list[tuple[str, object]] = []
-    for entry in canonical_entries():
+    max_runtime_candidates = int(_load().get("registry", {}).get("max_runtime_candidates", 18) or 18)
+    for entry in ranked_entries()[:max_runtime_candidates]:
         family = entry["family"]
         model_id = entry["id"]
         if family == "groq":
@@ -164,10 +221,7 @@ def build_production_chain(router):
             continue
         display_family = {"openrouter": "OpenRouter", "kiraai": "KiraAI", "groq": "Groq"}.get(family, family.title())
         chain.append((f"{display_family}:{model_id}", fn))
-        if len(chain) >= max_runtime_candidates:
-            break
 
-    import os
     if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("GEMINI_API_KEY"):
         chain.append(("Gemini", router._gemini))
     if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("HF_TOKEN"):

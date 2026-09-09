@@ -1,8 +1,8 @@
 """Run the isolated LiteLLM router pilot.
 
-The script never prints API keys. It always executes a mocked fallback contract
-test first, then performs one real smoke call when at least one credential is
-available in the environment.
+The script never prints API keys. It first validates LiteLLM's own fallback
+mechanism with its deterministic mock path, then performs one real provider
+smoke call when at least one credential is available.
 """
 from __future__ import annotations
 
@@ -35,11 +35,50 @@ def _mock_contract() -> None:
     content, selected = pilot.smoke_call(FakeRouter())
     assert json.loads(content)["ok"] is True
     assert selected == "mock/fallback-model"
-    print("[LiteLLM Pilot] mock_contract=PASS", flush=True)
+    print("[LiteLLM Pilot] adapter_contract=PASS", flush=True)
+
+
+def _litellm_fallback_contract() -> None:
+    """Exercise LiteLLM's actual Router fallback path without external calls."""
+    from litellm import Router
+
+    router = Router(
+        model_list=[
+            {
+                "model_name": "radar-fallback-primary",
+                "litellm_params": {
+                    "model": "openai/fallback-primary",
+                    "mock_response": '{"route":"primary"}',
+                },
+            },
+            {
+                "model_name": "radar-fallback-secondary",
+                "litellm_params": {
+                    "model": "openai/fallback-secondary",
+                    "mock_response": '{"route":"secondary"}',
+                },
+            },
+        ],
+        fallbacks=[
+            {"radar-fallback-primary": ["radar-fallback-secondary"]},
+        ],
+        num_retries=0,
+        allowed_fails=1,
+        cooldown_time=45,
+    )
+    response = router.completion(
+        model="radar-fallback-primary",
+        messages=[{"role": "user", "content": "fallback test"}],
+        mock_testing_fallbacks=True,
+    )
+    content = response.choices[0].message.content or ""
+    assert "secondary" in content
+    print("[LiteLLM Pilot] router_fallback_contract=PASS", flush=True)
 
 
 def main() -> int:
     _mock_contract()
+    _litellm_fallback_contract()
 
     from src.litellm_router_pilot import build_model_list, build_router, smoke_call
 

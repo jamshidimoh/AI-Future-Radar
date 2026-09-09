@@ -6,6 +6,7 @@ health state and required capabilities, then follows the stored priority.
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import yaml
@@ -22,6 +23,10 @@ def _healthy(model: dict) -> bool:
     return model.get("enabled", True) is not False and model.get("health", "healthy") != "disabled"
 
 
+def _credential_available(env_name: str | None) -> bool:
+    return bool(env_name and os.getenv(str(env_name).strip()))
+
+
 def ranked_entries() -> list[dict]:
     data = _load().get("registry", {})
     entries: list[dict] = []
@@ -30,6 +35,8 @@ def ranked_entries() -> list[dict]:
         credential_env = provider.get("credential_env")
         for model in provider.get("models", []) or []:
             if not isinstance(model, dict) or not model.get("id") or not _healthy(model):
+                continue
+            if credential_env and not _credential_available(credential_env):
                 continue
             row = dict(model)
             row["family"] = family
@@ -48,13 +55,24 @@ def ranked_entries() -> list[dict]:
 def build_production_chain(router):
     """Return production providers in deterministic quality-first order.
 
-    OpenRouter models remain individual candidates, while OpenRouter itself is
-    responsible for provider-level failover behind each model endpoint.
-    Gemini stays optional and non-authoritative; Hugging Face stays the final
-    emergency lane because its free-user credit is intentionally limited.
+    The registry is the single production model-selection authority. Runtime
+    state may temporarily cool down individual models, but it never reorders
+    healthy candidates randomly or disables siblings because one model failed.
     """
+    data = _load().get("registry", {})
+    max_runtime_candidates = int(data.get("max_runtime_candidates", 10) or 10)
+    require_free = bool(data.get("require_free", True))
+    require_chat = bool(data.get("require_chat", True))
+    require_structured = bool(data.get("require_structured_output", True))
+
     chain = []
     for entry in ranked_entries():
+        if require_free and entry.get("free") is False:
+            continue
+        if require_chat and entry.get("chat_capable") is False:
+            continue
+        if require_structured and entry.get("structured_output") is False:
+            continue
         family = entry["family"]
         model_id = entry["id"]
         if family == "groq":
@@ -63,10 +81,19 @@ def build_production_chain(router):
             fn = lambda sp, uc, m=model_id: router._openrouter(sp, uc, m)
         else:
             continue
-        chain.append((f"{family.title()}:{model_id}", fn))
+        display_family = "OpenRouter" if family == "openrouter" else family.title()
+        chain.append((f"{display_family}:{model_id}", fn))
+        if len(chain) >= max_runtime_candidates:
+            break
 
-    # Gemini is retained only when explicitly configured and after the curated
-    # free-model pool. It must never become the sole production dependency.
-    chain.append(("Gemini", router._gemini))
-    chain.append(("HuggingFace", router._huggingface))
+    # Gemini is retained only as an optional emergency lane after all curated
+    # free models. Hugging Face remains the final lane because its free-user
+    # credit is explicitly limited.
+    if _credential_available("GEMINI_API_KEY"):
+        chain.append(("Gemini", router._gemini))
+    if _credential_available("HF_TOKEN"):
+        chain.append(("HuggingFace", router._huggingface))
+
+    if not chain:
+        raise RuntimeError("No credentialed production LLM model is available")
     return chain

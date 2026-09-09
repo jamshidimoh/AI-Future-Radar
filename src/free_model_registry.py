@@ -106,7 +106,7 @@ def canonical_entries() -> list[dict]:
         if score < 88:
             continue
         family = str(candidate.get("family", "")).strip().lower()
-        env_name = {"openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "groq": "GROQ_API_KEY"}.get(family)
+        env_name = {"openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY"}.get(family)
         if not _credential_available(env_name):
             continue
         row = dict(candidate)
@@ -167,15 +167,13 @@ def _litellm_model_name(entry: dict) -> str:
         return f"groq/{model_id}"
     if family == "kiraai":
         return f"openai/{model_id}"
+    if family == "gemini":
+        return f"gemini/{model_id}"
     raise ValueError(f"Unsupported LiteLLM provider family: {family}")
 
 
 def build_litellm_model_list() -> list[dict]:
-    """Translate the ranked registry into one named LiteLLM deployment per rank.
-
-    Unique model names are intentional: the application explicitly walks rank
-    order, so LiteLLM cannot randomly load-balance across quality tiers.
-    """
+    """Translate the ranked registry into one named LiteLLM deployment per rank."""
     rows: list[dict] = []
     for order, entry in enumerate(ranked_entries(), start=1):
         env_name = str(entry.get("credential_env") or "").strip()
@@ -185,9 +183,6 @@ def build_litellm_model_list() -> list[dict]:
         params = {"model": _litellm_model_name(entry), "api_key": api_key, "timeout": 8, "order": 1}
         if entry.get("family") == "kiraai":
             params["api_base"] = "https://kiraai.vn/api/v1"
-        for key in ("rpm", "tpm"):
-            if entry.get(key) is not None:
-                params[key] = entry[key]
         rows.append({
             "model_name": f"radar-production-{order}",
             "litellm_params": params,

@@ -1,5 +1,6 @@
 name: Run AI Future Radar Bot
-# Final production verification trigger: no runtime behavior change.
+# Production verification is registry-driven: discovery validates the current
+# free-model landscape, while the canonical trust order remains deterministic.
 
 on:
   push:
@@ -12,8 +13,6 @@ on:
         default: false
         type: boolean
   # GitHub Actions cron is UTC.
-  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47.
-  # Tehran is UTC+3:30; first window needs :47 UTC; remaining windows map from :17 UTC to :47 Tehran.
   schedule:
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
@@ -50,12 +49,18 @@ jobs:
       - name: Run production regression checks
         run: |
           python -m compileall -q scripts src *.py
-          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py
+          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py
 
       - name: Emit fail-closed closure evidence
         run: |
           python -m pytest -q tests/test_production_acceptance_guard.py -k "all_selected_candidates_rejected_downstream_is_fail_closed_pass or zero_publication_without_rejection_evidence_is_failure"
           echo "[Fail-Closed Acceptance Evidence] PASS"
+
+      - name: Refresh and validate free-model registry
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python -u scripts/refresh_free_model_registry.py --strict
 
       - name: Telegram production preflight
         env:
@@ -69,6 +74,8 @@ jobs:
           RADAR_PRODUCTION_MODE: "1"
           RADAR_WATCHDOG_MINUTES: "22"
           AI_RADAR_EDITORIAL_REVIEW: "1"
+          RADAR_ENABLE_GEMINI_FALLBACK: "0"
+          RADAR_ENABLE_HF_FALLBACK: "0"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: "-1004482051328"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -143,5 +150,6 @@ jobs:
           path: |
             run.log
             artifacts/ranking_audit/
+            artifacts/free_model_registry.runtime.yaml
           if-no-files-found: warn
           retention-days: 14

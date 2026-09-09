@@ -1,8 +1,4 @@
-"""Low-token, provider-diverse LLM router for production summarization.
-
-Includes a bounded Hugging Face fallback. In free-first mode, paid HF models
-are never selected.
-"""
+"""Production LLM router with deterministic registry-driven failover."""
 from __future__ import annotations
 
 import concurrent.futures
@@ -14,31 +10,23 @@ import time
 import requests
 
 _CALL_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="llm-call")
-
+_CALL_SEMAPHORE = threading.BoundedSemaphore(2)
 
 class QuotaExceeded(Exception):
-    """Provider-side quota, auth, or availability failure safe for failover."""
+    """Provider-side quota, auth, permission, or availability failure."""
 
-
-_DISABLED = set()
-_DISABLED_FAMILIES = set()
-_MODEL_DISABLED_UNTIL = {}
+_DISABLED: set[str] = set()
+_DISABLED_FAMILIES: set[str] = set()
+_MODEL_DISABLED_UNTIL: dict[str, float] = {}
 _STATE_LOCK = threading.RLock()
 _CHAIN_CACHE = None
 _PRODUCTION_POLICY_APPLIED = False
-_PROVIDER_TIMEOUTS = {"Groq:": 6.0, "OpenRouter:": 2.5, "Gemini": 10.0, "HuggingFace": 4.0}
-_REQUEST_TIMEOUT = 8
-_ROUTER_BUDGET_SECONDS = 14
+_PROVIDER_TIMEOUTS = {"Groq:": 8.0, "OpenRouter:": 7.0, "Gemini": 8.0, "HuggingFace": 5.0}
+_REQUEST_TIMEOUT = 10
+_ROUTER_BUDGET_SECONDS = 24
 _MAX_TRANSIENT_RETRIES = 1
-_MODEL_COOLDOWN_SECONDS = {"quota": 8.0, "model": 60.0, "transient": 8.0}
-
-GROQ_MODELS = ("qwen/qwen3.8-27b", "openai/gpt-oss-120b")
-OPENROUTER_MODELS = ("openai/gpt-oss-120b:free", "openai/gpt-oss-20b:free")
+_MODEL_COOLDOWN_SECONDS = {"quota": 12.0, "model": 45.0, "transient": 10.0, "other": 15.0}
 GEMINI_DEFAULT_MODEL = "gemini-3.7-flash"
-_HF_MODEL_CACHE = None
-_HF_MODEL_CACHE_TS = 0.0
-_HF_MODEL_CACHE_TTL = 900
-CHINESE_FREE_PREFIXES = ("qwen/", "qwen3", "qwen3.", "z-ai/", "thudm/", "moonshotai/", "minimax/", "deepseek/")
 
 
 def _provider_family(name: str) -> str:
@@ -46,57 +34,90 @@ def _provider_family(name: str) -> str:
 
 
 def _provider_credential_available(name: str) -> bool:
-    family = _provider_family(name)
-    if family == "groq":
-        return bool(os.getenv("GROQ_API_KEY"))
-    if family == "gemini":
-        return bool(os.getenv("GEMINI_API_KEY"))
-    if family == "openrouter":
-        return bool(os.getenv("OPENROUTER_API_KEY"))
-    if family == "huggingface":
-        return bool(os.getenv("HF_TOKEN"))
-    return True
+    env = {"groq": "GROQ_API_KEY", "openrouter": "OPENROUTER_API_KEY", "gemini": "GEMINI_API_KEY", "huggingface": "HF_TOKEN"}.get(_provider_family(name))
+    return bool(os.getenv(env)) if env else True
 
 
-def _extract_message(payload):
+def _extract_message(payload: dict):
     choices = payload.get("choices") or []
     if not choices:
         raise ValueError("LLM response has no choices")
-    choice = choices[0]
-    if isinstance(choice, dict):
-        message = choice.get("message") or {}
-        if isinstance(message, dict) and message.get("content") is not None:
-            return message["content"]
-        if choice.get("text") is not None:
-            return choice["text"]
+    choice = choices[0] if isinstance(choices[0], dict) else {}
+    message = choice.get("message") or {}
+    if isinstance(message, dict) and message.get("content") is not None:
+        return message["content"]
+    if choice.get("text") is not None:
+        return choice["text"]
     raise ValueError("LLM response content not found")
 
 
-def _groq(system_prompt, user_content, model):
+def _groq(system_prompt, user_content, model, *, output_mode="native"):
     key = os.getenv("GROQ_API_KEY")
     if not key:
         return None
-    payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "response_format": {"type": "json_object"}, "max_completion_tokens": 900, "stream": False}
+    payload = {
+        "model": model,
+        "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
+        "max_completion_tokens": 850,
+        "stream": False,
+        "temperature": 0.15,
+    }
+    if output_mode == "native":
+        payload["response_format"] = {"type": "json_object"}
     if model.startswith("qwen/"):
-        payload.update({"reasoning_effort": "none", "reasoning_format": "hidden", "temperature": 0.15})
+        payload.update({"reasoning_effort": "none", "reasoning_format": "hidden"})
     elif model.startswith("openai/gpt-oss"):
-        payload.update({"reasoning_effort": "low", "temperature": 0.15})
-    else:
-        payload.update({"temperature": 0.15})
-    r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=_REQUEST_TIMEOUT)
+        payload["reasoning_effort"] = "low"
+    r = requests.post(
+        "https://api.groq.com/openai/v1/chat/completions",
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        json=payload,
+        timeout=_REQUEST_TIMEOUT,
+    )
     if r.status_code in (401, 402, 403, 404, 429):
-        raise QuotaExceeded(f"Groq {model}: HTTP {r.status_code}")
+        raise QuotaExceeded(f"Groq {model}: HTTP {r.status_code} {r.text[:400]}")
     r.raise_for_status()
     return _extract_message(r.json())
 
 
-def _openrouter(system_prompt, user_content, model):
+def _openrouter_supports_response_format(model: str) -> bool:
+    try:
+        from free_model_registry import model_capability
+        return bool(model_capability(model).get("response_format"))
+    except Exception:
+        return False
+
+
+def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         return None
-    r = requests.post("https://openrouter.ai/api/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json={"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "response_format": {"type": "json_object"}, "max_tokens": 900, "temperature": 0.15}, timeout=_REQUEST_TIMEOUT)
-    if r.status_code in (401, 402, 403, 404, 429):
-        raise QuotaExceeded(f"OpenRouter {model}: HTTP {r.status_code}")
+    payload = {
+        "model": model,
+        "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
+        "max_tokens": 850,
+        "temperature": 0.15,
+    }
+    # Nemotron Ultra and Nano Omni can produce structured text but do not
+    # expose OpenAI response_format. Native JSON enforcement is capability-led.
+    if output_mode == "native" and _openrouter_supports_response_format(model):
+        payload["response_format"] = {"type": "json_object"}
+    r = requests.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
+            "X-Title": "AI Future Radar",
+        },
+        json=payload,
+        timeout=_REQUEST_TIMEOUT,
+    )
+    body = r.text[:800]
+    if r.status_code in (401, 403, 404, 429):
+        raise QuotaExceeded(f"OpenRouter {model}: HTTP {r.status_code} {body}")
+    if r.status_code == 402:
+        raise QuotaExceeded(f"OpenRouter {model}: HTTP 402 account_limit {body}")
     r.raise_for_status()
     return _extract_message(r.json())
 
@@ -110,88 +131,39 @@ def _gemini(system_prompt, user_content):
     model = (os.getenv("GEMINI_MODEL") or GEMINI_DEFAULT_MODEL).strip()
     client = genai.Client(api_key=key, http_options={"timeout": 8_000})
     try:
-        response = client.models.generate_content(model=model, contents=user_content, config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", max_output_tokens=900))
+        response = client.models.generate_content(
+            model=model,
+            contents=user_content,
+            config=types.GenerateContentConfig(system_instruction=system_prompt, response_mime_type="application/json", max_output_tokens=850),
+        )
         return response.text
     except Exception as exc:
-        msg = str(exc).lower()
-        if any(token in msg for token in ("401", "403", "404", "429", "quota", "resource_exhausted", "unauthenticated", "invalid argument", "permission")):
-            raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
-        raise
-
-
-def _num(value, default=0.0):
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return default
+        raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
 
 
 def _hf_price_is_free(item):
-    pricing = item.get("pricing") or {}
-    return isinstance(pricing, dict) and _num(pricing.get("input"), -1) == 0 and _num(pricing.get("output"), -1) == 0
-
-
-def _hf_supported_as_chat(item):
-    task = str(item.get("task") or "").lower()
-    model_id = str(item.get("id") or "")
-    blocked = {"text-to-image", "automatic-speech-recognition", "feature-extraction", "text-classification"}
-    return bool(model_id) and task not in blocked
+    p = item.get("pricing") or {}
+    try:
+        return float(p.get("input", -1)) == 0 and float(p.get("output", -1)) == 0
+    except (TypeError, ValueError):
+        return False
 
 
 def _discover_hf_models():
-    global _HF_MODEL_CACHE, _HF_MODEL_CACHE_TS
-    now = time.time()
-    if _HF_MODEL_CACHE is not None and now - _HF_MODEL_CACHE_TS < _HF_MODEL_CACHE_TTL:
-        return _HF_MODEL_CACHE
     try:
         token = os.getenv("HF_TOKEN")
         headers = {"Authorization": f"Bearer {token}"} if token else {}
-        response = requests.get("https://router.huggingface.co/v1/models", headers=headers, timeout=20)
-        if response.status_code in (401, 403):
-            raise QuotaExceeded(f"HF discovery unauthorized: HTTP {response.status_code}")
-        response.raise_for_status()
-        payload = response.json()
+        r = requests.get("https://router.huggingface.co/v1/models", headers=headers, timeout=10)
+        if r.status_code in (401, 403):
+            raise QuotaExceeded(f"HF discovery unauthorized: HTTP {r.status_code}")
+        r.raise_for_status()
+        payload = r.json()
         rows = payload.get("data", payload if isinstance(payload, list) else [])
-        normalized = []
-        for item in rows if isinstance(rows, list) else []:
-            if not isinstance(item, dict) or not _hf_supported_as_chat(item):
-                continue
-            providers = item.get("providers") or item.get("inferenceProviderMapping") or []
-            pricing = item.get("pricing") or {}
-            normalized.append({"id": item.get("id"), "free": _hf_price_is_free(item), "providers": len(providers) if isinstance(providers, (list, dict)) else 0, "latency": _num(item.get("first_token_latency_ms"), 999999), "throughput": _num(item.get("throughput"), 0), "context": int(item.get("context_length") or 0), "structured": bool(item.get("supports_structured_output")), "input": _num(pricing.get("input"), 999999), "output": _num(pricing.get("output"), 999999)})
-        _HF_MODEL_CACHE, _HF_MODEL_CACHE_TS = normalized, now
-        print(f"[HF Router] models discovered: {len(normalized)}", flush=True)
-        return normalized
+        return [x for x in rows if isinstance(x, dict) and x.get("id")]
     except QuotaExceeded:
         raise
-    except Exception as exc:
-        _HF_MODEL_CACHE, _HF_MODEL_CACHE_TS = [], now
-        print(f"[HF Router] discovery failed: {exc}", flush=True)
+    except Exception:
         return []
-
-
-def _select_hf_model():
-    policy = (os.getenv("HF_POLICY") or "free-first").strip().lower()
-    explicit = (os.getenv("HF_MODEL") or "").strip()
-    models = _discover_hf_models()
-    by_id = {m["id"]: m for m in models}
-    if explicit and explicit in by_id:
-        candidate = by_id[explicit]
-        if policy != "free-first" or candidate["free"]:
-            return explicit
-    structured = [m for m in models if m["structured"]] or models
-    if policy == "free-first":
-        pool = [m for m in structured if m["free"]]
-        if not pool:
-            raise QuotaExceeded("No zero-price Hugging Face model is currently available")
-        pool.sort(key=lambda m: (not any(str(m["id"]).lower().startswith(p) for p in CHINESE_FREE_PREFIXES), -(m["providers"] or 0), -(m["throughput"] or 0), m["latency"], -(m["context"] or 0)))
-    else:
-        pool = sorted(structured, key=lambda m: (not m["free"], -(m["providers"] or 0), m["latency"]))
-    if not pool:
-        raise QuotaExceeded("No Hugging Face chat model is available")
-    selected = pool[0]
-    print(f"[HF Router] selected: {selected['id']} | free={selected['free']}", flush=True)
-    return selected["id"]
 
 
 def _huggingface(system_prompt, user_content):
@@ -199,15 +171,17 @@ def _huggingface(system_prompt, user_content):
     if not token:
         return None
     from huggingface_hub import InferenceClient
-    model = _select_hf_model()
-    try:
-        client = InferenceClient(token=token, provider="auto")
-        response = client.chat.completions.create(model=model, messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], response_format={"type": "json_object"}, max_tokens=900)
-    except Exception as exc:
-        message = str(exc).lower()
-        if any(token in message for token in ("402", "payment required", "depleted your monthly included credits", "429", "rate limit")):
-            raise QuotaExceeded(f"Hugging Face quota/credits exhausted: {exc}") from exc
-        raise
+    models = _discover_hf_models()
+    free = [m for m in models if _hf_price_is_free(m)]
+    if not free:
+        raise QuotaExceeded("No zero-price Hugging Face chat model is currently available")
+    explicit = (os.getenv("HF_MODEL") or "").strip()
+    model = explicit if explicit and any(m.get("id") == explicit for m in free) else free[0].get("id")
+    response = InferenceClient(token=token, provider="auto").chat.completions.create(
+        model=model,
+        messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
+        max_tokens=850,
+    )
     return response.choices[0].message.content
 
 
@@ -215,30 +189,52 @@ def get_quality_chain():
     global _CHAIN_CACHE
     if _CHAIN_CACHE is not None:
         return list(_CHAIN_CACHE)
-    chain = [(f"Groq:{model}", lambda sp, uc, m=model: _groq(sp, uc, m)) for model in GROQ_MODELS]
-    chain.append(("Gemini", _gemini))
-    chain.extend((f"OpenRouter:{model}", lambda sp, uc, m=model: _openrouter(sp, uc, m)) for model in OPENROUTER_MODELS)
-    chain.append(("HuggingFace", _huggingface))
+    from free_model_registry import build_production_chain
+    chain = build_production_chain(__import__(__name__))
     _CHAIN_CACHE = list(chain)
-    print("[Light Router] chain=" + ", ".join(name for name, _ in chain), flush=True)
+    print("[Light Router] chain=" + ", ".join(n for n, _ in chain), flush=True)
     return list(_CHAIN_CACHE)
 
 
 def _failure_class(message: str) -> str:
     text = str(message or "").lower()
-    if re.search(r"\b401\b|unauthenticated|authentication|invalid.*(?:credential|key|token)", text):
+    if re.search(r"\b401\b|unauthenticated|invalid.*(?:credential|key|token)|unauthorized|authentication.*(?:fail|invalid)", text):
         return "auth"
-    if re.search(r"\b403\b|\b404\b|permission|model.*(?:blocked|disabled|unavailable)|not found", text):
+    if re.search(r"\b403\b|permission|model.*(?:blocked|disabled|unavailable)|not found", text) and not re.search(r"authentication|invalid.*(?:credential|key|token)", text):
         return "model"
-    if re.search(r"\b429\b|quota|rate.?limit|resource_exhausted|payment required|depleted your monthly included credits", text):
+    if re.search(r"\b402\b|\b429\b|quota|rate.?limit|resource_exhausted|payment required|depleted your monthly included credits", text):
         return "quota"
     if re.search(r"\b(?:408|500|502|503|504)\b|timeout|timed out|temporarily unavailable|connection", text):
         return "transient"
+    if re.search(r"\b400\b|invalid.*(?:request|parameter)|unsupported.*(?:parameter|response_format)", text):
+        return "model"
     return "other"
 
 
-def _should_disable_provider(message: str) -> bool:
-    return bool(re.search(r"\b(?:401|403|404|408|429|500|502|503|504)\b", str(message or "")))
+def _disable(name: str, reason: str) -> None:
+    family = _provider_family(name)
+    with _STATE_LOCK:
+        _DISABLED.add(name)
+        if reason == "auth":
+            _DISABLED_FAMILIES.add(family)
+        elif reason == "quota" and not _PRODUCTION_POLICY_APPLIED and family != "openrouter":
+            _DISABLED_FAMILIES.add(family)
+        elif reason in _MODEL_COOLDOWN_SECONDS:
+            _MODEL_DISABLED_UNTIL[name] = max(
+                float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0),
+                time.monotonic() + _MODEL_COOLDOWN_SECONDS[reason],
+            )
+    scope = "family" if reason == "auth" or (reason == "quota" and not _PRODUCTION_POLICY_APPLIED and family != "openrouter") else "model"
+    print(f"[Light Router] disabled={name} family={family} reason={reason} scope={scope}", flush=True)
+
+
+def _model_is_disabled(name: str) -> bool:
+    with _STATE_LOCK:
+        until = float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0)
+        if until and until <= time.monotonic():
+            _MODEL_DISABLED_UNTIL.pop(name, None)
+            return False
+        return until > time.monotonic()
 
 
 def _provider_timeout(name: str, remaining: float) -> float:
@@ -248,54 +244,22 @@ def _provider_timeout(name: str, remaining: float) -> float:
     return max(0.1, min(remaining, 4.0))
 
 
-def _model_is_disabled(name: str) -> bool:
-    with _STATE_LOCK:
-        until = float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0)
-        now = time.monotonic()
-        if until and until <= now:
-            _MODEL_DISABLED_UNTIL.pop(name, None)
-            return False
-        return until > now
-
-
-def _disable(name: str, reason: str) -> None:
-    family = _provider_family(name)
-    with _STATE_LOCK:
-        _DISABLED.add(name)
-        if reason == "auth":
-            _DISABLED_FAMILIES.add(family)
-        elif reason == "quota" and not _PRODUCTION_POLICY_APPLIED:
-            _DISABLED_FAMILIES.add(family)
-        elif reason in _MODEL_COOLDOWN_SECONDS:
-            _MODEL_DISABLED_UNTIL[name] = max(
-                float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0),
-                time.monotonic() + _MODEL_COOLDOWN_SECONDS[reason],
-            )
-    scope = "family" if reason == "auth" or (reason == "quota" and not _PRODUCTION_POLICY_APPLIED) else "model"
-    print(f"[Light Router] disabled={name} family={family} reason={reason} scope={scope}", flush=True)
+def _invoke(fn, system_prompt, user_content):
+    with _CALL_SEMAPHORE:
+        return fn(system_prompt, user_content)
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
-    """Call providers with bounded, concurrency-safe failover.
-
-    Production semantics are model-scoped for quotas, model permissions and
-    endpoint unavailability. Only credential/authentication failures disable a
-    provider family. Legacy non-production quota compatibility remains
-    family-scoped.
-    """
     providers = providers or get_quality_chain()
     last = None
     deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS
-    transient_retries = {}
-    local_disabled_names = set()
-    local_disabled_families = set()
+    retries: dict[str, int] = {}
+    local_models: set[str] = set()
+    local_families: set[str] = set()
 
     for name, fn in providers:
         family = _provider_family(name)
-        if name in local_disabled_names or family in local_disabled_families:
-            continue
-        if family in _DISABLED_FAMILIES:
-            print(f"[Light Router] skipped={name} reason=family_disabled", flush=True)
+        if name in local_models or family in local_families or family in _DISABLED_FAMILIES:
             continue
         if _model_is_disabled(name):
             print(f"[Light Router] skipped={name} reason=model_cooldown", flush=True)
@@ -307,7 +271,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
         if remaining <= 0:
             break
         timeout = _provider_timeout(name, remaining)
-        future = _CALL_EXECUTOR.submit(fn, system_prompt, user_content)
+        future = _CALL_EXECUTOR.submit(_invoke, fn, system_prompt, user_content)
         try:
             result = future.result(timeout=timeout)
             if result:
@@ -315,41 +279,41 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                 return result, name
         except concurrent.futures.TimeoutError:
             last = TimeoutError(f"{name}: exceeded provider timeout of {timeout:.1f}s")
-            local_disabled_names.add(name)
+            local_models.add(name)
             _disable(name, "transient")
         except QuotaExceeded as exc:
             last = exc
             reason = _failure_class(str(exc))
-            local_disabled_names.add(name)
-            if reason == "auth" or (reason == "quota" and not _PRODUCTION_POLICY_APPLIED):
-                local_disabled_families.add(family)
+            local_models.add(name)
+            if reason == "auth":
+                local_families.add(family)
+            elif reason == "quota" and family == "openrouter" and re.search(r"\b402\b|account_limit|requests?/day|daily|free.*tier", str(exc), re.I):
+                local_families.add(family)
+                with _STATE_LOCK:
+                    _DISABLED_FAMILIES.add(family)
             _disable(name, reason)
         except Exception as exc:
             last = exc
             reason = _failure_class(str(exc))
-            print(f"[Light Router] error={name} reason={reason} | {exc}", flush=True)
             if reason == "auth":
-                local_disabled_families.add(family)
+                local_families.add(family)
                 _disable(name, reason)
-            elif reason == "transient" and transient_retries.get(name, 0) < _MAX_TRANSIENT_RETRIES:
-                transient_retries[name] = transient_retries.get(name, 0) + 1
-                retry_future = _CALL_EXECUTOR.submit(fn, system_prompt, user_content)
+            elif reason == "transient" and retries.get(name, 0) < _MAX_TRANSIENT_RETRIES:
+                retries[name] = retries.get(name, 0) + 1
                 try:
+                    retry_future = _CALL_EXECUTOR.submit(_invoke, fn, system_prompt, user_content)
                     retry_result = retry_future.result(timeout=min(timeout, max(0.1, deadline - time.monotonic())))
                     if retry_result:
-                        print(f"[Light Router] success={name} retry={transient_retries[name]}", flush=True)
+                        print(f"[Light Router] success={name} retry={retries[name]}", flush=True)
                         return retry_result, name
                 except Exception as retry_exc:
                     last = retry_exc
-                    local_disabled_names.add(name)
                     retry_reason = _failure_class(str(retry_exc))
                     if retry_reason == "auth":
-                        local_disabled_families.add(family)
-                    elif retry_reason == "quota" and not _PRODUCTION_POLICY_APPLIED:
-                        local_disabled_families.add(family)
+                        local_families.add(family)
                     _disable(name, retry_reason)
             else:
-                local_disabled_names.add(name)
+                local_models.add(name)
                 _disable(name, reason)
         if deadline - time.monotonic() <= 0:
             break

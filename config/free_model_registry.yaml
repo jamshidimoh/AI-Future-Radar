@@ -1,76 +1,131 @@
 # AI Future Radar — trusted free LLM registry
-# Base priorities are curated for news summarization, factual preservation,
-# Persian/English rewriting and strict JSON. The updater refreshes availability,
-# release date, capabilities and health; production remains deterministic.
+# Production order is explicit and deterministic. Runtime discovery may validate
+# or disable entries, but it does not reorder this trust list.
 registry:
-  schema_version: 1
+  schema_version: 2
+  policy_version: "2026-09-09"
   refresh_hours: 24
   stale_after_hours: 72
-  max_runtime_candidates: 10
+  max_runtime_candidates: 11
   require_free: true
   require_chat: true
-  require_structured_output: true
+  require_json_capability: true
+  enable_dynamic_discovery_candidates: true
   providers:
-    - family: groq
-      credential_env: GROQ_API_KEY
-      pricing_mode: free-plan
-      models:
-        - id: qwen/qwen3.8-27b
-          base_quality: 96
-          freshness: 100
-          task_fit: 98
-          reason: "Newest high-quality multilingual model; JSON/schema/reasoning"
-        - id: openai/gpt-oss-120b
-          base_quality: 95
-          freshness: 72
-          task_fit: 99
-          reason: "Very strong reasoning and strict structured output"
-        - id: qwen/qwen3.6-27b
-          base_quality: 93
-          freshness: 88
-          task_fit: 97
-          reason: "Strong multilingual reasoning and structured output"
-        - id: openai/gpt-oss-20b
-          base_quality: 84
-          freshness: 72
-          task_fit: 91
-          reason: "Fast emergency summarization fallback"
     - family: openrouter
       credential_env: OPENROUTER_API_KEY
       pricing_mode: free-endpoint
       models:
-        - id: nvidia/nemotron-3-ultra-550b-a55b:free
+        - priority: 1
+          id: nvidia/nemotron-3-ultra-550b-a55b:free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: false
           base_quality: 98
-          freshness: 96
           task_fit: 94
-          reason: "Frontier reasoning; 1M context; free endpoint"
-        - id: nvidia/nemotron-3-super-120b-a12b:free
+          reason: "Frontier reasoning and long-context analysis; prompt-based JSON because response_format is unsupported"
+        - priority: 2
+          id: nvidia/nemotron-3-super-120b-a12b:free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
           base_quality: 97
-          freshness: 96
           task_fit: 94
-          reason: "Strong hybrid reasoning and long-context analysis"
-        - id: google/gemma-4-31b-it:free
+          reason: "High-capability reasoning and long-context analysis"
+        - priority: 5
+          id: openai/gpt-oss-120b:free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 94
+          task_fit: 97
+          reason: "Strong reasoning and structured output; independent OpenRouter capacity"
+        - priority: 6
+          id: google/gemma-4-31b-it:free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
           base_quality: 91
-          freshness: 93
           task_fit: 98
-          reason: "Multilingual, structured output, strong availability"
-        - id: google/gemma-4-26b-a4b-it:free
+          reason: "Multilingual, structured-output capable and suitable for news summarization"
+        - priority: 7
+          id: qwen/qwen3-next-80b-a3b-instruct:free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 92
+          task_fit: 97
+          reason: "Fast stable multilingual instruction following and long context"
+        - priority: 8
+          id: google/gemma-4-26b-a4b-it:free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
           base_quality: 88
-          freshness: 93
           task_fit: 95
           reason: "Efficient multilingual structured-output fallback"
-        - id: openai/gpt-oss-120b:free
-          base_quality: 94
-          freshness: 72
-          task_fit: 97
-          reason: "High-capability reasoning and structured output"
-        - id: openai/gpt-oss-20b:free
+        - priority: 9
+          id: nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: false
+          base_quality: 82
+          task_fit: 90
+          reason: "Current free Nemotron small-model replacement; prompt-based JSON"
+        - priority: 11
+          id: openai/gpt-oss-20b:free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
           base_quality: 84
-          freshness: 72
           task_fit: 91
-          reason: "Reliable lightweight fallback"
+          reason: "Lightweight emergency fallback"
+    - family: groq
+      credential_env: GROQ_API_KEY
+      pricing_mode: free-plan
+      models:
+        - priority: 3
+          id: openai/gpt-oss-120b
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 95
+          task_fit: 99
+          reason: "Primary direct Groq model with JSON/JSON-schema support"
+        - priority: 4
+          id: qwen/qwen3.6-27b
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 93
+          task_fit: 97
+          reason: "Strong multilingual reasoning and structured output"
+        - priority: 10
+          id: openai/gpt-oss-20b
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 84
+          task_fit: 91
+          reason: "Fast emergency summarization fallback"
     - family: huggingface
       credential_env: HF_TOKEN
       pricing_mode: monthly-credit-only
       models: []
-      reason: "Dynamic emergency lane; free account credits are limited"
+      reason: "Dynamic discovery/emergency lane; never part of the canonical trust ranking"
+    - family: gemini
+      credential_env: GEMINI_API_KEY
+      pricing_mode: optional
+      models: []
+      reason: "Optional non-critical lane; disabled in production unless explicitly enabled"

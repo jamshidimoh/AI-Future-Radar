@@ -1,0 +1,43 @@
+name: LiteLLM Content Test
+
+on:
+  push:
+    paths:
+      - '.github/workflows/litellm-content-test.yml'
+
+jobs:
+  test-litellm-content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Send test content through LiteLLM
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'src')
+          from llm_router_light import call_llm_with_fallback
+
+          system = '''You are an AI/technology news editor. Return ONLY valid JSON with keys: verdict, summary, topic, confidence. verdict must be one of KEEP, UPDATE, RELATED, REJECT. Evaluate whether the item is editorially valuable for an AI Future Radar.'''
+          content = '''OpenAI announced a new research model focused on improving long-horizon reasoning and tool use. The company said the model can plan multi-step tasks more reliably and use external tools with fewer errors. Researchers described the release as an incremental research milestone rather than a new general-purpose product.'''
+
+          result, provider = call_llm_with_fallback(system, content)
+          print('=== LITELLM CONTENT TEST RESULT ===')
+          print('provider=', provider)
+          print('content=', result)
+          if not result or not provider:
+              raise SystemExit('LiteLLM content test FAILED: no response/provider')
+          if '[LiteLLM Router]' not in str(provider) and provider is None:
+              raise SystemExit('LiteLLM content test FAILED: provider missing')
+          print('=== LITELLM CONTENT TEST PASS ===')
+          PY

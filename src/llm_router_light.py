@@ -8,6 +8,7 @@ from __future__ import annotations
 import concurrent.futures
 import os
 import re
+import threading
 import time
 
 import requests
@@ -21,12 +22,15 @@ class QuotaExceeded(Exception):
 
 _DISABLED = set()
 _DISABLED_FAMILIES = set()
+_MODEL_DISABLED_UNTIL = {}
+_STATE_LOCK = threading.RLock()
 _CHAIN_CACHE = None
 _PRODUCTION_POLICY_APPLIED = False
 _PROVIDER_TIMEOUTS = {"Groq:": 6.0, "OpenRouter:": 2.5, "Gemini": 10.0, "HuggingFace": 4.0}
 _REQUEST_TIMEOUT = 8
 _ROUTER_BUDGET_SECONDS = 14
 _MAX_TRANSIENT_RETRIES = 1
+_MODEL_COOLDOWN_SECONDS = {"quota": 8.0, "model": 60.0, "transient": 8.0}
 
 GROQ_MODELS = ("qwen/qwen3.8-27b", "openai/gpt-oss-120b")
 OPENROUTER_MODELS = ("openai/gpt-oss-120b:free", "openai/gpt-oss-20b:free")
@@ -80,7 +84,7 @@ def _groq(system_prompt, user_content, model):
     else:
         payload.update({"temperature": 0.15})
     r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=_REQUEST_TIMEOUT)
-    if r.status_code in (401, 402, 429):
+    if r.status_code in (401, 402, 403, 404, 429):
         raise QuotaExceeded(f"Groq {model}: HTTP {r.status_code}")
     r.raise_for_status()
     return _extract_message(r.json())
@@ -91,7 +95,7 @@ def _openrouter(system_prompt, user_content, model):
     if not key:
         return None
     r = requests.post("https://openrouter.ai/api/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json={"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "response_format": {"type": "json_object"}, "max_tokens": 900, "temperature": 0.15}, timeout=_REQUEST_TIMEOUT)
-    if r.status_code in (401, 402, 429):
+    if r.status_code in (401, 402, 403, 404, 429):
         raise QuotaExceeded(f"OpenRouter {model}: HTTP {r.status_code}")
     r.raise_for_status()
     return _extract_message(r.json())
@@ -110,7 +114,7 @@ def _gemini(system_prompt, user_content):
         return response.text
     except Exception as exc:
         msg = str(exc).lower()
-        if any(token in msg for token in ("401", "403", "404", "429", "quota", "resource_exhausted", "unauthenticated", "invalid argument")):
+        if any(token in msg for token in ("401", "403", "404", "429", "quota", "resource_exhausted", "unauthenticated", "invalid argument", "permission")):
             raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
         raise
 
@@ -222,8 +226,10 @@ def get_quality_chain():
 
 def _failure_class(message: str) -> str:
     text = str(message or "").lower()
-    if re.search(r"\b(?:401|403|404|unauthenticated|authentication|invalid.*credential|invalid.*key)\b", text):
-        return "permanent"
+    if re.search(r"\b401\b|unauthenticated|authentication|invalid.*(?:credential|key|token)", text):
+        return "auth"
+    if re.search(r"\b403\b|\b404\b|permission|model.*(?:blocked|disabled|unavailable)|not found", text):
+        return "model"
     if re.search(r"\b429\b|quota|rate.?limit|resource_exhausted|payment required|depleted your monthly included credits", text):
         return "quota"
     if re.search(r"\b(?:408|500|502|503|504)\b|timeout|timed out|temporarily unavailable|connection", text):
@@ -242,23 +248,37 @@ def _provider_timeout(name: str, remaining: float) -> float:
     return max(0.1, min(remaining, 4.0))
 
 
+def _model_is_disabled(name: str) -> bool:
+    with _STATE_LOCK:
+        until = float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0)
+        if until and until <= time.monotonic():
+            _MODEL_DISABLED_UNTIL.pop(name, None)
+            return False
+        return until > time.monotonic()
+
+
 def _disable(name: str, reason: str) -> None:
     family = _provider_family(name)
-    _DISABLED.add(name)
-    production_quota = _PRODUCTION_POLICY_APPLIED and reason == "quota"
-    if reason == "permanent" or (reason == "quota" and not production_quota):
-        _DISABLED_FAMILIES.add(family)
-    scope = "model" if production_quota or reason != "permanent" else "family"
+    with _STATE_LOCK:
+        _DISABLED.add(name)
+        if reason == "auth":
+            _DISABLED_FAMILIES.add(family)
+        elif reason in _MODEL_COOLDOWN_SECONDS:
+            _MODEL_DISABLED_UNTIL[name] = max(
+                float(_MODEL_DISABLED_UNTIL.get(name, 0.0) or 0.0),
+                time.monotonic() + _MODEL_COOLDOWN_SECONDS[reason],
+            )
+    scope = "family" if reason == "auth" else "model"
     print(f"[Light Router] disabled={name} family={family} reason={reason} scope={scope}", flush=True)
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
-    """Call providers with bounded failover.
+    """Call providers with bounded, concurrency-safe failover.
 
-    Base router compatibility keeps quota family-scoped. Production policy
-    enables model-scoped quota so healthy siblings remain eligible. Permanent
-    authentication/configuration failures remain family-scoped everywhere;
-    transient endpoint failures remain local to the model/request.
+    Production semantics are model-scoped for quotas, model permissions and
+    endpoint unavailability. Only credential/authentication failures disable a
+    provider family. Legacy non-production quota compatibility is preserved by
+    keeping quota family-scoped when production policy is not applied.
     """
     providers = providers or get_quality_chain()
     last = None
@@ -273,6 +293,9 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             continue
         if family in _DISABLED_FAMILIES:
             print(f"[Light Router] skipped={name} reason=family_disabled", flush=True)
+            continue
+        if _model_is_disabled(name):
+            print(f"[Light Router] skipped={name} reason=model_cooldown", flush=True)
             continue
         if not _provider_credential_available(name):
             print(f"[Light Router] skipped={name} reason=missing_credential", flush=True)
@@ -295,29 +318,33 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             last = exc
             reason = _failure_class(str(exc))
             local_disabled_names.add(name)
-            if reason == "permanent" or (reason == "quota" and not _PRODUCTION_POLICY_APPLIED):
+            if reason == "auth":
+                local_disabled_families.add(family)
+            elif reason == "quota" and not _PRODUCTION_POLICY_APPLIED:
                 local_disabled_families.add(family)
             _disable(name, reason)
         except Exception as exc:
             last = exc
             reason = _failure_class(str(exc))
             print(f"[Light Router] error={name} reason={reason} | {exc}", flush=True)
-            if reason == "permanent":
+            if reason == "auth":
                 local_disabled_families.add(family)
                 _disable(name, reason)
-            elif reason == "transient" and transient_retries.get(family, 0) < _MAX_TRANSIENT_RETRIES:
-                transient_retries[family] = transient_retries.get(family, 0) + 1
+            elif reason in {"model", "quota", "transient"} and transient_retries.get(name, 0) < (_MAX_TRANSIENT_RETRIES if reason == "transient" else 0):
+                transient_retries[name] = transient_retries.get(name, 0) + 1
                 retry_future = _CALL_EXECUTOR.submit(fn, system_prompt, user_content)
                 try:
                     retry_result = retry_future.result(timeout=min(timeout, max(0.1, deadline - time.monotonic())))
                     if retry_result:
-                        print(f"[Light Router] success={name} retry={transient_retries[family]}", flush=True)
+                        print(f"[Light Router] success={name} retry={transient_retries[name]}", flush=True)
                         return retry_result, name
                 except Exception as retry_exc:
                     last = retry_exc
                     local_disabled_names.add(name)
                     retry_reason = _failure_class(str(retry_exc))
-                    if retry_reason == "permanent" or (retry_reason == "quota" and not _PRODUCTION_POLICY_APPLIED):
+                    if retry_reason == "auth":
+                        local_disabled_families.add(family)
+                    elif retry_reason == "quota" and not _PRODUCTION_POLICY_APPLIED:
                         local_disabled_families.add(family)
                     _disable(name, retry_reason)
             else:

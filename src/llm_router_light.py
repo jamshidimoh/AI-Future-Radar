@@ -32,12 +32,7 @@ GEMINI_DEFAULT_MODEL = "gemini-3.8-flash"
 
 
 class ProductionQualityChain(list):
-    """Marker type for the registry-produced production chain.
-
-    Production callers may pass this chain explicitly for backwards compatibility;
-    the marker lets the execution layer route it through LiteLLM without changing
-    tests that inject ordinary provider lists.
-    """
+    """Marker type for the registry-produced production chain."""
 
 
 def _provider_family(name: str) -> str:
@@ -322,16 +317,15 @@ def _invoke(fn, system_prompt, user_content):
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
-    """Route production calls through LiteLLM; retain explicit injected lists for tests/fallbacks."""
+    """Use LiteLLM exclusively for production; explicit injected lists remain test-only."""
     use_litellm = providers is None or isinstance(providers, ProductionQualityChain)
     if use_litellm:
         result, provider = _call_litellm(system_prompt, user_content)
         if result:
             return result, provider
-        if providers is None:
-            providers = get_quality_chain()
-        else:
-            providers = list(providers)
+        if providers is None or isinstance(providers, ProductionQualityChain):
+            print("[LiteLLM Router] production_only_fail_closed=1", flush=True)
+            return None, None
     if providers is None:
         providers = get_quality_chain()
     last = None
@@ -378,27 +372,14 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
         except Exception as exc:
             last = exc
             reason = _failure_class(str(exc))
-            if reason == "auth":
-                local_families.add(family)
+            local_models.add(name)
+            if _should_disable_provider(str(exc)):
                 _disable(name, reason)
-            elif reason == "transient" and retries.get(name, 0) < _MAX_TRANSIENT_RETRIES:
-                retries[name] = retries.get(name, 0) + 1
-                try:
-                    retry_future = _CALL_EXECUTOR.submit(_invoke, fn, system_prompt, user_content)
-                    retry_result = retry_future.result(timeout=min(timeout, max(0.1, deadline - time.monotonic())))
-                    if retry_result:
-                        print(f"[Light Router] success={name} retry={retries[name]}", flush=True)
-                        return retry_result, name
-                except Exception as retry_exc:
-                    last = retry_exc
-                    retry_reason = _failure_class(str(retry_exc))
-                    if retry_reason == "auth":
-                        local_families.add(family)
-                    _disable(name, retry_reason)
             else:
-                local_models.add(name)
                 _disable(name, reason)
-        if deadline - time.monotonic() <= 0:
-            break
-    print(f"[Light Router] exhausted; last={last}", flush=True)
+        finally:
+            if future.done():
+                future.cancel()
+    if last is not None:
+        raise last
     return None, None

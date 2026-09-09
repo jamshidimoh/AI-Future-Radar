@@ -14,7 +14,6 @@ def _canonical_url(item: Any) -> str:
 
 
 def _event_tokens(signature: Any) -> set[str]:
-    """Return the already-computed event context tokens without recursive expansion."""
     if not isinstance(signature, dict):
         return set()
     context = signature.get("context") or set()
@@ -27,14 +26,12 @@ def _event_tokens(signature: Any) -> set[str]:
 
 
 def _material_update_tokens(signature: Any) -> set[str]:
-    """Extract explicit material-update markers with Persian spacing variants normalized."""
     if not isinstance(signature, dict):
         return set()
     text = " ".join(
         str(signature.get(key) or "")
         for key in ("title_text", "title", "summary", "description")
     ).casefold()
-    # Normalize Arabic/Persian variants and zero-width joiners before matching.
     text = text.replace("ي", "ی").replace("ك", "ک").replace("\u200c", " ")
     text = re.sub(r"\s+", " ", text).strip()
     markers: set[str] = set()
@@ -59,38 +56,40 @@ def _material_update_tokens(signature: Any) -> set[str]:
 
 
 def _coerce_prior(prior: Any) -> dict[str, Any] | None:
-    """Adapt stored semantic signatures to the event matcher without changing raw items."""
     if not isinstance(prior, dict):
         return None
     if any(key in prior for key in ("title_text", "context", "anchors", "events", "personnel", "numbers")) and "title" in prior:
         title = str(prior.get("title_text") or " ".join(str(x) for x in (prior.get("title") or [])))
         context = " ".join(str(x) for x in (prior.get("context") or []))
-        return {
-            "title": title,
-            "summary": context,
-            "description": "",
-            "content": "",
-            "leader": prior.get("leader", ""),
-        }
+        return {"title": title, "summary": context, "description": "", "content": "", "leader": prior.get("leader", "")}
     return prior
+
+
+def _is_protected_leader(item: dict[str, Any]) -> bool:
+    return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview")))
 
 
 def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     if not isinstance(prior, dict):
         return False
     ca, cb = _canonical_url(candidate), _canonical_url(prior)
-    # Exact canonical URL is always blocked, including protected leader content.
     if ca and cb and ca == cb:
         return True
-    # Protected leader material may bypass semantic/history similarity, but never
-    # the exact URL check above.
-    if candidate.get("protected_content") or candidate.get("_named_leader_interview"):
+    if _is_protected_leader(candidate):
         return False
     comparable = _coerce_prior(prior)
     if comparable is None:
         return False
     kind, _, _ = compare_events(candidate, comparable)
-    return kind == "DUPLICATE"
+    if kind == "DUPLICATE":
+        return True
+    try:
+        from semantic_dedup import get_story_signature, _similarity
+        candidate_sig = get_story_signature(candidate)
+        prior_sig = get_story_signature(comparable) if not ("title_text" in comparable or "context" in comparable) else comparable
+        return _similarity(candidate_sig, prior_sig) >= 0.45
+    except Exception:
+        return False
 
 
 def is_story_duplicate(candidate: dict[str, Any], prior_stories: Iterable[Any]) -> bool:

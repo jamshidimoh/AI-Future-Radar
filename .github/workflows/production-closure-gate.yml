@@ -110,13 +110,13 @@ jobs:
           print("Closure window:", [(r.get("run_number"), r.get("id"), r.get("head_sha", "")[:8]) for r in window])
 
           logs = {}
-          errors = {}
+          log_errors = {}
           metadata = {}
           for run in recent:
               jobs = get_json(f"/actions/runs/{run['id']}/jobs?per_page=50").get("jobs", [])
               bot_jobs = [j for j in jobs if j.get("name") == "run-bot"]
               if not bot_jobs:
-                  errors[run["run_number"]] = "run-bot job not found"
+                  log_errors[run["run_number"]] = "run-bot job not found"
                   continue
               bot = bot_jobs[0]
               metadata[run["run_number"]] = {
@@ -127,11 +127,11 @@ jobs:
               try:
                   logs[run["run_number"]] = get_text(f"/actions/jobs/{bot['id']}/logs")
               except Exception as exc:
-                  errors[run["run_number"]] = f"{type(exc).__name__}: {exc}"
+                  log_errors[run["run_number"]] = f"{type(exc).__name__}: {exc}"
 
-          if errors or len(logs) < 3:
+          if log_errors or len(logs) < 3:
               print("CLOSURE: BLOCKED — production evidence logs are incomplete; cannot certify closure")
-              print("Log errors:", errors)
+              print("Log errors:", log_errors)
               sys.exit(1)
 
           def any_recent(pattern):

@@ -34,8 +34,8 @@ def test_quality_is_primary_and_priority_is_only_tiebreak(monkeypatch):
         "OpenRouter:qwen/qwen3-next-80b-a3b-instruct:free",
         "OpenRouter:google/gemma-4-31b-it:free",
         "OpenRouter:google/gemma-4-26b-a4b-it:free",
-        "OpenRouter:openai/gpt-oss-20b:free",
         "Groq:openai/gpt-oss-20b",
+        "OpenRouter:openai/gpt-oss-20b:free",
         "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
     ]
 
@@ -119,12 +119,10 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
         calls.append("groq-ok")
         return '{"ok":true}'
 
-    result, provider = router.call_llm_with_fallback(
-        "s", "u", providers=[
-            ("Groq:openai/gpt-oss-120b", groq_quota),
-            ("Groq:qwen/qwen3.6-27b", groq_ok),
-        ],
-    )
+    result, provider = router.call_llm_with_fallback("s", "u", providers=[
+        ("Groq:openai/gpt-oss-120b", groq_quota),
+        ("Groq:qwen/qwen3.6-27b", groq_ok),
+    ])
     assert result == '{"ok":true}'
     assert provider == "Groq:qwen/qwen3.6-27b"
     assert "groq" not in router._DISABLED_FAMILIES
@@ -138,13 +136,11 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
         calls.append("or-sibling")
         return '{"ok":true}'
 
-    result, provider = router.call_llm_with_fallback(
-        "s", "u", providers=[
-            ("OpenRouter:a:free", or_daily),
-            ("OpenRouter:b:free", or_sibling),
-            ("Groq:qwen/qwen3.6-27b", groq_ok),
-        ],
-    )
+    result, provider = router.call_llm_with_fallback("s", "u", providers=[
+        ("OpenRouter:a:free", or_daily),
+        ("OpenRouter:b:free", or_sibling),
+        ("Groq:qwen/qwen3.6-27b", groq_ok),
+    ])
     assert result == '{"ok":true}'
     assert provider == "Groq:qwen/qwen3.6-27b"
     assert "openrouter" in router._DISABLED_FAMILIES

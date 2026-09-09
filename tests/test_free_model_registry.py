@@ -34,9 +34,9 @@ def test_quality_is_primary_and_priority_is_only_tiebreak(monkeypatch):
         "OpenRouter:qwen/qwen3-next-80b-a3b-instruct:free",
         "OpenRouter:google/gemma-4-31b-it:free",
         "OpenRouter:google/gemma-4-26b-a4b-it:free",
+        "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
         "Groq:openai/gpt-oss-20b",
         "OpenRouter:openai/gpt-oss-20b:free",
-        "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
     ]
 
 
@@ -47,6 +47,16 @@ def test_kiraai_free_quota_lane_is_included_when_credentialed(monkeypatch):
     assert "KiraAI:minimax-m3-free" in names
     assert names.index("KiraAI:minimax-m3-free") < names.index("OpenRouter:openai/gpt-oss-20b:free")
     assert "KiraAI:gpt-5.6-luna-free" not in names
+    assert "KiraAI:kira-auto" in names
+
+
+def test_provider_only_kira_models_are_conservatively_scored(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("KIRAAI_API_KEY", "test-kira")
+    rows = {row["id"]: row for row in registry.canonical_entries()}
+    assert rows["minimax-m3-free"]["quality_score"] > rows["kira-auto"]["quality_score"]
+    assert rows["kira-auto"]["base_quality"] <= 84
+    assert rows["qwen3.8-max-free"]["base_quality"] <= 84
 
 
 def test_retired_nemotron_nano_and_qwen38_are_not_trusted(monkeypatch):
@@ -127,6 +137,7 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
     assert "groq" not in router._DISABLED_FAMILIES
 
     _reset(monkeypatch)
+
     def or_daily(*_args, **_kwargs):
         raise router.QuotaExceeded("OpenRouter model: HTTP 429 free tier requests/day exceeded")
 

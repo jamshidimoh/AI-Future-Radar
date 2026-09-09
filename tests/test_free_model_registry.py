@@ -34,9 +34,9 @@ def test_quality_is_primary_and_priority_is_only_tiebreak(monkeypatch):
         "OpenRouter:qwen/qwen3-next-80b-a3b-instruct:free",
         "OpenRouter:google/gemma-4-31b-it:free",
         "OpenRouter:google/gemma-4-26b-a4b-it:free",
-        "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
         "Groq:openai/gpt-oss-20b",
         "OpenRouter:openai/gpt-oss-20b:free",
+        "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
     ]
 
 
@@ -75,10 +75,8 @@ def test_nemotron_ultra_uses_prompt_json_not_response_format(monkeypatch):
     class Response:
         status_code = 200
         text = ""
-
         def json(self):
             return {"choices": [{"message": {"content": '{"ok":true}'}}]}
-
         def raise_for_status(self):
             return None
 
@@ -100,10 +98,8 @@ def test_kiraai_adapter_is_openai_compatible(monkeypatch):
     class Response:
         status_code = 200
         text = ""
-
         def json(self):
             return {"choices": [{"message": {"content": '{"ok":true}'}}]}
-
         def raise_for_status(self):
             return None
 
@@ -124,7 +120,6 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
 
     def groq_quota(*_args, **_kwargs):
         raise router.QuotaExceeded("Groq openai/gpt-oss-120b: HTTP 429")
-
     def groq_ok(*_args, **_kwargs):
         return '{"ok":true}'
 
@@ -137,10 +132,8 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
     assert "groq" not in router._DISABLED_FAMILIES
 
     _reset(monkeypatch)
-
     def or_daily(*_args, **_kwargs):
         raise router.QuotaExceeded("OpenRouter model: HTTP 429 free tier requests/day exceeded")
-
     def or_sibling(*_args, **_kwargs):
         return '{"ok":true}'
 
@@ -159,7 +152,6 @@ def test_optional_gemini_and_hf_are_disabled_by_default(monkeypatch):
     names = [name for name, _ in registry.build_production_chain(router)]
     assert "Gemini" not in names
     assert "HuggingFace" not in names
-
     monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
     names = [name for name, _ in registry.build_production_chain(router)]
     assert names[-1] == "Gemini"

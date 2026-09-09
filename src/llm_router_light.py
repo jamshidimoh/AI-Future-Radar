@@ -232,8 +232,13 @@ def _call_litellm(system_prompt, user_content):
     if router is None:
         return None, None
     model_list = _litellm_model_list()
+    deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS
     last_error = None
     for deployment in model_list:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            print("[LiteLLM Router] budget_exhausted=1", flush=True)
+            break
         model_name = deployment["model_name"]
         deployment_id = deployment["model_info"]["id"]
         try:
@@ -243,6 +248,7 @@ def _call_litellm(system_prompt, user_content):
             response = router.completion(
                 model=model_name,
                 messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
+                timeout=max(0.5, min(8.0, remaining)),
             )
             content = getattr(response.choices[0].message, "content", None) if getattr(response, "choices", None) else None
             if not content:

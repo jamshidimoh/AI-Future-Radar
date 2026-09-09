@@ -71,16 +71,17 @@ def test_auth_failure_does_not_try_sibling_openrouter_model(monkeypatch):
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
-def test_current_default_chain_uses_supported_gemini_model(monkeypatch):
+def test_current_default_chain_uses_current_supported_policy(monkeypatch):
     _reset()
     monkeypatch.setenv("GROQ_API_KEY", "x")
     monkeypatch.setenv("GEMINI_API_KEY", "x")
     monkeypatch.setenv("OPENROUTER_API_KEY", "x")
+    monkeypatch.delenv("RADAR_ENABLE_GEMINI_FALLBACK", raising=False)
     chain = router.get_quality_chain()
     names = [name for name, _ in chain]
-    assert "Gemini" in names
-    assert router.GEMINI_DEFAULT_MODEL == "gemini-3.7-flash"
-    assert "Groq:qwen/qwen3.8-27b" in names
+    assert "Gemini" not in names
+    assert router.GEMINI_DEFAULT_MODEL == "gemini-3.8-flash"
+    assert "Groq:qwen/qwen3.6-27b" in names
     assert "OpenRouter:openai/gpt-oss-120b:free" in names
 
 
@@ -102,10 +103,10 @@ def test_model_permission_failure_is_not_family_scoped(monkeypatch):
         "user",
         providers=[
             ("Groq:openai/gpt-oss-120b", blocked),
-            ("Groq:qwen/qwen3.8-27b", sibling),
+            ("Groq:qwen/qwen3.6-27b", sibling),
         ],
     )
     assert result == '{"title":"ok"}'
-    assert provider == "Groq:qwen/qwen3.8-27b"
+    assert provider == "Groq:qwen/qwen3.6-27b"
     assert calls == ["blocked", "sibling"]
     assert "groq" not in router._DISABLED_FAMILIES

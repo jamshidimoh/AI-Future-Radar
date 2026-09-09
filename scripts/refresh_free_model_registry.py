@@ -29,8 +29,8 @@ def _load_static() -> dict:
     return value
 
 
-def _get_json(url: str, *, token: str | None = None) -> tuple[int, dict]:
-    headers = {"Authorization": f"Bearer {token}"} if token else {}
+def _get_json(url: str, *, token: str | None = None, header_name: str = "Authorization") -> tuple[int, dict]:
+    headers = {header_name: f"Bearer {token}"} if token and header_name == "Authorization" else ({header_name: token} if token else {})
     response = requests.get(url, headers=headers, timeout=TIMEOUT)
     try:
         payload = response.json()
@@ -84,6 +84,26 @@ def _kira_models(token: str | None) -> tuple[bool, dict[str, dict], str]:
     return True, {str(row.get("id")): row for row in rows if isinstance(row, dict) and row.get("id")}, "catalog ok"
 
 
+def _gemini_models(token: str | None) -> tuple[bool, dict[str, dict], str]:
+    if not token:
+        return False, {}, "missing credential"
+    status, payload = _get_json("https://generativelanguage.googleapis.com/v1beta/models?key=" + token)
+    if status in (400, 401, 403):
+        return False, {}, f"authentication failed HTTP {status}"
+    if status >= 400:
+        return False, {}, f"model catalog failed HTTP {status}"
+    rows = payload.get("models") or []
+    catalog: dict[str, dict] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        model_id = str(row.get("baseModelId") or row.get("name", "").replace("models/", ""))
+        actions = {str(x) for x in (row.get("supportedGenerationMethods") or [])}
+        if model_id and "generateContent" in actions:
+            catalog[model_id] = row
+    return True, catalog, "catalog ok"
+
+
 def _is_zero_price(model: dict) -> bool:
     pricing = model.get("pricing") or {}
     try:
@@ -112,9 +132,8 @@ def _known_quality(model_id: str) -> tuple[float, float, str]:
 
 
 def _conservative_quality(model: dict, base_quality: float, task_fit: float, evidence: str) -> tuple[float, float]:
-    if evidence == "provider_only":
-        # Provider marketing establishes availability, not comparative quality.
-        return min(float(base_quality), 84.0), min(float(task_fit), 89.0)
+    if evidence in {"provider_only", "provider_official"}:
+        return min(float(base_quality), 92.0), min(float(task_fit), 96.0)
     return float(base_quality), float(task_fit)
 
 
@@ -124,10 +143,12 @@ def refresh() -> dict:
     openrouter_token = os.getenv("OPENROUTER_API_KEY")
     groq_token = os.getenv("GROQ_API_KEY")
     kira_token = os.getenv("KIRAAI_API_KEY")
+    gemini_token = os.getenv("GEMINI_API_KEY")
     or_auth_ok, or_auth_reason = _openrouter_auth(openrouter_token)
     or_models, or_catalog_reason = _openrouter_models(openrouter_token)
     groq_ok, groq_models, groq_reason = _groq_models(groq_token)
     kira_ok, kira_models, kira_reason = _kira_models(kira_token)
+    gemini_ok, gemini_models, gemini_reason = _gemini_models(gemini_token)
     discovery: list[dict] = []
 
     for provider in registry.get("providers", []) or []:
@@ -144,6 +165,10 @@ def refresh() -> dict:
             provider["credential_valid"] = kira_ok
             provider["validation"] = kira_reason
             catalog = kira_models
+        elif family == "gemini":
+            provider["credential_valid"] = gemini_ok
+            provider["validation"] = gemini_reason
+            catalog = gemini_models
         else:
             env_name = str(provider.get("credential_env") or "").strip()
             provider["credential_valid"] = bool(env_name and os.getenv(env_name))
@@ -171,9 +196,17 @@ def refresh() -> dict:
             elif family == "groq" and not live:
                 model["enabled"] = False
                 model["runtime_reason"] = "not_listed"
+            elif family == "gemini":
+                if not live or not provider["credential_valid"]:
+                    model["enabled"] = False
+                    model["runtime_reason"] = "provider_unavailable"
+                else:
+                    model["context_length"] = int(live.get("inputTokenLimit") or 0)
+                    model["response_format"] = True
+                    model["free"] = True
 
-            if model.get("quality_evidence") == "provider_only":
-                model["base_quality"], model["task_fit"] = _conservative_quality(model, model.get("base_quality", 0), model.get("task_fit", 0), "provider_only")
+            if model.get("quality_evidence") in {"provider_only", "provider_official"}:
+                model["base_quality"], model["task_fit"] = _conservative_quality(model, model.get("base_quality", 0), model.get("task_fit", 0), model.get("quality_evidence"))
                 model["quality_score"] = round(float(model["base_quality"]) * 0.80 + float(model["task_fit"]) * 0.20, 3)
 
     trusted_ids = {str(m.get("id")) for p in registry.get("providers", []) for m in p.get("models", [])}
@@ -206,13 +239,14 @@ def refresh() -> dict:
 
     runtime = {
         "runtime": {
-            "schema_version": 3,
+            "schema_version": 4,
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "discovery_candidates": discovery[:30],
             "provider_validation": {
                 "openrouter": {"valid": or_auth_ok, "reason": f"{or_auth_reason}; {or_catalog_reason}"},
                 "groq": {"valid": groq_ok, "reason": groq_reason},
                 "kiraai": {"valid": kira_ok, "reason": kira_reason},
+                "gemini": {"valid": gemini_ok, "reason": gemini_reason},
             },
         },
         "registry": registry,
@@ -229,7 +263,7 @@ def main() -> int:
     args = parser.parse_args()
     runtime = refresh()
     validation = runtime["runtime"]["provider_validation"]
-    if args.strict and not any(validation[name]["valid"] for name in ("groq", "openrouter", "kiraai")):
+    if args.strict and not any(validation[name]["valid"] for name in ("groq", "openrouter", "kiraai", "gemini")):
         raise SystemExit("No core production provider credential validated")
     return 0
 

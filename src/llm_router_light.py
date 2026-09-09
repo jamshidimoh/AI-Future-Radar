@@ -25,7 +25,7 @@ _REQUEST_TIMEOUT = 10
 _ROUTER_BUDGET_SECONDS = 24
 _MAX_TRANSIENT_RETRIES = 1
 _MODEL_COOLDOWN_SECONDS = {"quota": 12.0, "model": 45.0, "transient": 10.0, "other": 15.0}
-GEMINI_DEFAULT_MODEL = "gemini-3.7-flash"
+GEMINI_DEFAULT_MODEL = "gemini-3.8-flash"
 
 
 def _provider_family(name: str) -> str:
@@ -109,6 +109,8 @@ def _gemini(system_prompt, user_content):
 
 
 def _hf_price_is_free(item):
+    if item.get("free") is True:
+        return True
     p = item.get("pricing") or {}
     try:
         return float(p.get("input", -1)) == 0 and float(p.get("output", -1)) == 0
@@ -156,14 +158,13 @@ def _huggingface(system_prompt, user_content):
 
 
 def get_quality_chain():
-    global _CHAIN_CACHE
-    if _CHAIN_CACHE is not None:
-        return list(_CHAIN_CACHE)
+    # The registry is cheap to evaluate and must honor runtime credential and
+    # fallback-policy changes. Caching here caused tests and long-lived workers
+    # to retain a stale chain after environment changes.
     from free_model_registry import build_production_chain
     chain = build_production_chain(__import__(__name__))
-    _CHAIN_CACHE = list(chain)
     print("[Light Router] chain=" + ", ".join(n for n, _ in chain), flush=True)
-    return list(_CHAIN_CACHE)
+    return list(chain)
 
 
 def _failure_class(message: str) -> str:

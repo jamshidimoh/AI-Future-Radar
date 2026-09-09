@@ -1,9 +1,8 @@
-"""Deterministic production ordering for trusted free LLM models.
+"""Dynamic, quality-first production ordering for free LLMs.
 
-The canonical trust list is explicit and auditable. A separate runtime registry
-may validate availability/capabilities, but it cannot silently invent a new
-production priority order. Discovery candidates remain quarantined until they
-are promoted into the trust list.
+Eligibility is hard-gated by live availability/free status. Quality is the
+primary ordering signal; configured priority is only a deterministic tie-break.
+Runtime discovery may add candidates when they have enough quality evidence.
 """
 from __future__ import annotations
 
@@ -48,15 +47,22 @@ def _load() -> dict:
 
 def _credential_available(env_name: str | None, env: dict[str, str] | None = None) -> bool:
     import os
-
     source = env if env is not None else os.environ
     return bool(env_name and source.get(str(env_name).strip()))
 
 
 def _provider_runtime_available(provider: dict) -> bool:
-    if provider.get("credential_valid") is False:
-        return False
-    return True
+    return provider.get("credential_valid") is not False
+
+
+def _quality_score(model: dict) -> float:
+    """Quality dominates. Task fit refines quality; priority never outranks quality."""
+    try:
+        base = float(model.get("quality_score", model.get("base_quality", 0)) or 0)
+        fit = float(model.get("task_fit", 0) or 0)
+    except (TypeError, ValueError):
+        return 0.0
+    return round(base * 0.80 + fit * 0.20, 3)
 
 
 def canonical_entries() -> list[dict]:
@@ -70,13 +76,9 @@ def canonical_entries() -> list[dict]:
         if not _provider_runtime_available(provider):
             continue
         for model in provider.get("models", []) or []:
-            if not isinstance(model, dict):
+            if not isinstance(model, dict) or model.get("enabled", True) is False:
                 continue
-            if model.get("enabled", True) is False:
-                continue
-            if int(model.get("priority", 9999)) >= 1000:
-                continue
-            if not model.get("id"):
+            if int(model.get("priority", 9999)) >= 1000 or not model.get("id"):
                 continue
             if data.get("require_free", True) and model.get("free") is not True:
                 continue
@@ -87,8 +89,9 @@ def canonical_entries() -> list[dict]:
             row = dict(model)
             row["family"] = family
             row["credential_env"] = credential_env
+            row["quality_score"] = _quality_score(row)
             rows.append(row)
-    rows.sort(key=lambda x: (int(x.get("priority", 9999)), x["id"]))
+    rows.sort(key=lambda x: (-float(x["quality_score"]), int(x.get("priority", 9999)), x["id"]))
     return rows
 
 
@@ -109,36 +112,33 @@ def model_capability(model_id: str) -> dict:
 
 
 def build_production_chain(router):
-    """Build the canonical production chain without score-based reordering."""
+    """Build a live eligible chain ordered by quality, then priority."""
     data = _load().get("registry", {})
     max_runtime_candidates = int(data.get("max_runtime_candidates", 11) or 11)
+    entries = canonical_entries()
     chain: list[tuple[str, object]] = []
 
-    for entry in canonical_entries():
+    for entry in entries:
         family = entry["family"]
         model_id = entry["id"]
         if family == "groq":
             fn = lambda sp, uc, m=model_id: router._groq(sp, uc, m)
         elif family == "openrouter":
             fn = lambda sp, uc, m=model_id: router._openrouter(sp, uc, m)
+        elif family == "kiraai":
+            fn = lambda sp, uc, m=model_id: router._kiraai(sp, uc, m)
         else:
             continue
-        display_family = "OpenRouter" if family == "openrouter" else family.title()
+        display_family = {"openrouter": "OpenRouter", "kiraai": "KiraAI", "groq": "Groq"}.get(family, family.title())
         chain.append((f"{display_family}:{model_id}", fn))
         if len(chain) >= max_runtime_candidates:
             break
 
-    # Optional emergency lanes. They are never allowed to outrank the curated
-    # canonical list and are opt-in because their quotas/credentials are less
-    # predictable for this project.
     import os
-
-    if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}:
-        if _credential_available("GEMINI_API_KEY"):
-            chain.append(("Gemini", router._gemini))
-    if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}:
-        if _credential_available("HF_TOKEN"):
-            chain.append(("HuggingFace", router._huggingface))
+    if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("GEMINI_API_KEY"):
+        chain.append(("Gemini", router._gemini))
+    if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("HF_TOKEN"):
+        chain.append(("HuggingFace", router._huggingface))
 
     if not chain:
         raise RuntimeError("No credentialed trusted production LLM model is available")

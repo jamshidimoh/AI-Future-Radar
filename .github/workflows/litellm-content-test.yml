@@ -37,7 +37,7 @@ jobs:
           print('content=', result)
           if not result or not provider:
               raise SystemExit('LiteLLM content test FAILED: no response/provider')
-          if '[LiteLLM Router]' not in str(provider) and provider is None:
-              raise SystemExit('LiteLLM content test FAILED: provider missing')
           print('=== LITELLM CONTENT TEST PASS ===')
           PY
+
+          # Trigger-only revision: execute the fixed-content LiteLLM test.

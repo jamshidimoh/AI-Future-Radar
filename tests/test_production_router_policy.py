@@ -11,8 +11,21 @@ from production_router_policy import apply
 def _reset():
     router._DISABLED.clear()
     router._DISABLED_FAMILIES.clear()
+    router._MODEL_DISABLED_UNTIL.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
+
+
+def test_production_uses_canonical_router_module(monkeypatch):
+    _reset()
+    import summarize
+
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    apply()
+    assert summarize.get_quality_chain() == router.get_quality_chain()
+    names = [name for name, _ in router.get_quality_chain()]
+    assert names[0] == "Groq:qwen/qwen3.8-27b"
+    assert any(name.startswith("OpenRouter:") for name in names[1:])
 
 
 def test_production_quota_is_model_scoped_and_sibling_can_failover(monkeypatch):
@@ -39,6 +52,32 @@ def test_production_quota_is_model_scoped_and_sibling_can_failover(monkeypatch):
     assert calls == ["qwen", "gpt-oss"]
     assert "Groq:qwen/qwen3.8-27b" in router._DISABLED
     assert "groq" not in router._DISABLED_FAMILIES
+
+
+def test_production_model_permission_failure_is_model_scoped(monkeypatch):
+    _reset()
+    apply()
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    calls = []
+
+    def blocked(*_args, **_kwargs):
+        calls.append("blocked")
+        raise router.QuotaExceeded("Groq qwen/qwen3.8-27b: HTTP 403 model_permission_blocked_project")
+
+    def sibling_ok(*_args, **_kwargs):
+        calls.append("sibling")
+        return '{"title":"ok"}'
+
+    providers = [
+        ("Groq:qwen/qwen3.8-27b", blocked),
+        ("Groq:openai/gpt-oss-120b", sibling_ok),
+    ]
+    result, provider = router.call_llm_with_fallback("system", "user", providers=providers)
+    assert result == '{"title":"ok"}'
+    assert provider == "Groq:openai/gpt-oss-120b"
+    assert calls == ["blocked", "sibling"]
+    assert "groq" not in router._DISABLED_FAMILIES
+    assert "Groq:qwen/qwen3.8-27b" in router._DISABLED
 
 
 def test_production_auth_failure_remains_family_scoped(monkeypatch):
@@ -94,4 +133,4 @@ def test_quota_state_from_one_request_does_not_starve_sibling_in_next_request(mo
     assert first_provider == "Groq:openai/gpt-oss-120b"
     assert second_result == '{"title":"ok"}'
     assert second_provider == "Groq:openai/gpt-oss-120b"
-    assert calls == ["quota", "ok", "quota", "ok"]
+    assert calls == ["quota", "ok", "ok"]

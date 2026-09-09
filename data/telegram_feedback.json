@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1788930832,
+  "updated_at": 1788934552,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8238,6 +8238,44 @@
       "why_it_matters": "بهبودهای ChatGPT Images 2.5 باعث می‌شود توسعه‌دهندگان بتوانند در برنامه‌های خود از تولید تصویر دقیق‌تر و سریع‌تر بهره ببرند، به‌ویژه در کاربردهایی که حفظ جزئیات تصویر مرجع حیاتی است. انتخاب بین مدل‌های Sunburst و Flare امکان بهینه‌سازی بین دقت و سرعت را فراهم می‌کند، که برای گردش‌کارهای ویرایشی حساس یا تولید محتوای روزانه مفید است. این پیشرفت نشان‌دهندهٔ مقیاس‌پذیری بالای مدل‌های تصویری OpenAI است که تا کنون بیش از ۳ میلیارد تصویر پردازش کرده‌اند، و نشانگر رشد سریع فناوری متن‑به‑تصویر در حوزهٔ هوش مصنوعی می‌باشد.",
       "link": "https://simonwillison.net/2026/Sep/8/introducing-chatgpt-images-25/",
       "posted_at": 1788931030
+    },
+    "-1004482051328:1538": {
+      "chat_id": -1004482051328,
+      "message_id": 1538,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CNBC)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "title": "مصاحبهٔ اختصاصی CNBC با Marc Benioff و Dario Amodei در برنامه «Closing Bell: Overtime»",
+      "summary": "در این مصاحبهٔ اختصاصی برنامه «Closing Bell: Overtime»، Marc Benioff، رئیس و مدیرعامل Salesforce، و Dario Amodei، هم‑بنیان‌گذار و مدیرعامل Anthropic، به گفتگو با Jim Cramer می‌پردازند. دو رهبر فناوری دربارهٔ چشم‌انداز هوش مصنوعی در کسب‌وکارها، رقابت بین پلتفرم‌های بزرگ AI و نقش مدل‌های زبانی پیشرفته بحث می‌کنند. همچنین به چالش‌های مقرراتی و اخلاقی مرتبط با توسعهٔ هوش مصنوعی اشاره می‌شود.",
+      "why_it_matters": "این گفت‌وگو نشان می‌دهد که رهبران بزرگ فناوری چگونه هوش مصنوعی را به عنوان عامل تحول‌ساز در صنایع مختلف می‌بینند و استراتژی‌های خود را برای بهره‌برداری از این فناوری تنظیم م",
+      "link": "https://news.google.com/rss/articles/CBMiowJBVV95cUxObW1iOEpzT2dpUUlYU2RHaGpLWjdmd1g5cnFvbWZQVldOTVNqT1F5Skk1alFibjJKT2Jkam4xdm54VEVHRVM2UEJEekZnQ3cwLU9lNHNHa0pWVG4yRkFkZ2FqNlUtVFVYSk1hYXVXcTFVNVRmOU9jRFZNcEdVZzR5eDdHRzl4NENjb2hpS014eWxyUXhEbTFDZHFBY1hGNnZ2bi1rVG5uTU9FQ1JrckNON05FRkxtZFNzYUtsUFdZWF9ZODZPR2lBYmVhSW9jSG9xM2wtdDE0ci0wOU5LZVJmaWRPM3pUOWkzZUw5ZERERTlVSHZqVk9BdUdUY2dZYnlzQXlmaUxJZmNCd2ZSTjhtdHZvMXg0ZEo4WG00R0ZxQktDdG_SAagCQVVfeXFMTzRCVTAyVV9wN0tuWnpkbHd6TWVUREM2c3V4UWc4OTU0LTA2dG5wVmppeEx6WHRCSkoyS2xiV2kyVkEwdkQzUVZqT0JKVFkzaWhMUl9WbTVaaDRaUl8xS2hxS0RXQmFTVDhkdlQzZ3VzWHRLV1JzTzFnOGw4TGJybks5SVRMU0FzWTNoRVV5SVJwOFptWXpDY0tCV3gyX1FMNExzS1dqOEJNWEthS0Y0TFRNN3lBcFZGeTBxN3hDQVhpT0sycTA1MkZuN0lvZFMyVkJiVTU5RE0wNVg4TExHSk9UVWs0MHVBOHBKX2p6SEQ1YnYzZ2ZuX3Q0RElESmJTZC1ZeGtNMXRiMDhEVnI0d1ZRdW5wX3Z6RzJTT3VQcWRXOGU1QU44WHc?oc=5",
+      "posted_at": 1788934551
+    },
+    "-1004482051328:1539": {
+      "chat_id": -1004482051328,
+      "message_id": 1539,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Fox Business)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "title": "Jensen Huang اعلام می‌کند AGI با معرفی GPT-6 Astra توسط OpenAI فرا رسیده است",
+      "summary": "Jensen Huang، مدیرعامل Nvidia، پس از رونمایی OpenAI از مدل GPT-6 Astra، رسماً اعلام کرد که هوش مصنوعی عمومی (AGI) به دست آمده است. این اظهارنظر در پی انتشار جدیدترین نسخه از مدل‌های زبانی OpenAI صورت گرفته و نشان‌دهنده تغییر پارادایم در ارزیابی قابلیت‌های فعلی هوش مصنوعی توسط رهبران صنعت سخت‌افزار است. متن ارائه‌شده جزئیات فنی بیشتری درباره معماری یا بنچمارک‌های GPT-6 Astra ارائه نمی‌دهد، اما تأکید بر «رسیدن» AGI به عنوان یک نقطه عطف کلیدی در روایت رسانه‌ای Fox Business برجسته است.",
+      "why_it_matters": "این ادعا از سوی یک چهره کلیدی در اکوسیستم سخت‌افزار هوش مصنوعی، سیگنال قوی‌ای به بازار سرمایه و توسعه‌دهندگان می‌فرستد که مرزهای فعلی مدل‌های زبانی بزرگ از آستانه‌ای عبور کرده‌اند که قبلاً به عنوان AGI شناخته می‌شد. اگرچه تعریف دقیق AGI همچنان بحث‌برانگیز است، اما تأیید این وضعیت توسط Nvidia می‌تواند انتظارات از کاربردپذیری و مقیاس‌پذیری این فناوری‌ها را در صنایع مختلف تغییر دهد و فشار رقابتی بر سایر بازیگران را افزایش دهد.",
+      "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNSEl1Y1NTMlQ4MnVIaWVfc2ZUY2s2RUNyalBOVUY1OGZtRDJ3Z3AwUElMVUNMWDVzODBXNDJsSUEtMVU3ZWtyaHFSOTNnSUJIZnpFNUhzNXRqTHpuOWRWTlRUMUJWbnZ5QUhHdUpCeEZSNloxekZkQU9uYVRyZWRHdTVxeWxoWVZHbXVnQlRlaTNVZXVGVkRpWllKZ1V3enptVVpVejdBMmNuUWdDRk5reUZLM3N3cGNITXFTM9IBwgFBVV95cUxPQlZvNE5ESkxIUVVJZHhYVzQyWkt0MFh4VjMzbzNlX2E5eVl5U1pNQ0ZwQmpuX1c5NnVxbGU5S1JGYWZQc043Tlg4YTk0anRneXRMdVF3Q1M1OG5NcjN3S1pTN3RUZGlKaE5OR19PU2FwNkVwM3pRZmZ6aWJic3ZUYnRGTmlpbjQ4b3VSTlRtbEZRdU1qU0pXLWh4NXZ3NVNXNlhqM2NLUUh5ZGc3NktLOUFmTXh4bjRQYVdneThyVENVUQ?oc=5",
+      "posted_at": 1788934552
     }
   }
 }

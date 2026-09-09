@@ -4,7 +4,8 @@ from unittest.mock import patch
 import summarize
 
 
-def test_title_recovery_repairs_valid_persian_title_without_changing_body():
+def test_title_recovery_repairs_valid_persian_title_without_changing_body(monkeypatch):
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     item = {
         "category": "ai",
         "title": "AI in Context, produced by 80,000 Hours",

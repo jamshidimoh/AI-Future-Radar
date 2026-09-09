@@ -1,9 +1,4 @@
-"""Dynamic, quality-first production ordering for free LLMs.
-
-Eligibility is hard-gated by live availability/free status. Quality is the
-primary ordering signal; configured priority is only a deterministic tie-break.
-Runtime discovery may add candidates when they have enough quality evidence.
-"""
+"""Dynamic, quality-first production ordering for free LLMs."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -57,7 +52,6 @@ def _provider_runtime_available(provider: dict) -> bool:
 
 
 def _quality_score(model: dict) -> float:
-    """Quality dominates. Task fit refines quality; priority never outranks quality."""
     try:
         base = float(model.get("quality_score", model.get("base_quality", 0)) or 0)
         fit = float(model.get("task_fit", 0) or 0)
@@ -72,9 +66,7 @@ def canonical_entries() -> list[dict]:
     for provider in data.get("providers", []) or []:
         family = str(provider.get("family", "")).strip().lower()
         credential_env = provider.get("credential_env")
-        if not _credential_available(credential_env):
-            continue
-        if not _provider_runtime_available(provider):
+        if not _credential_available(credential_env) or not _provider_runtime_available(provider):
             continue
         for model in provider.get("models", []) or []:
             if not isinstance(model, dict) or model.get("enabled", True) is False:
@@ -92,6 +84,28 @@ def canonical_entries() -> list[dict]:
             row["credential_env"] = credential_env
             row["quality_score"] = _quality_score(row)
             rows.append(row)
+
+    # Runtime discovery can promote only candidates that already carry explicit
+    # quality evidence. Unknown models remain quarantined instead of guessing.
+    known_ids = {row["id"] for row in rows}
+    for candidate in discovered_candidates():
+        if not isinstance(candidate, dict) or candidate.get("id") in known_ids:
+            continue
+        if candidate.get("free") is not True or candidate.get("chat_capable") is not True:
+            continue
+        score = _quality_score(candidate)
+        if score < 88:
+            continue
+        family = str(candidate.get("family", "")).strip().lower()
+        env_name = {"openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "groq": "GROQ_API_KEY"}.get(family)
+        if not _credential_available(env_name):
+            continue
+        row = dict(candidate)
+        row["credential_env"] = env_name
+        row["quality_score"] = score
+        row["priority"] = int(row.get("priority", 1000))
+        rows.append(row)
+
     rows.sort(key=lambda x: (-float(x["quality_score"]), int(x.get("priority", 9999)), x["id"]))
     return rows
 
@@ -117,8 +131,7 @@ def _kiraai_call(router, system_prompt, user_content, model):
     if not key:
         return None
     payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_tokens": 850, "temperature": 0.15}
-    capability = model_capability(model)
-    if capability.get("response_format"):
+    if model_capability(model).get("response_format"):
         payload["response_format"] = {"type": "json_object"}
     response = requests.post("https://kiraai.vn/api/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=10)
     if response.status_code in (401, 402, 403, 404, 429):
@@ -135,11 +148,9 @@ def _kiraai_call(router, system_prompt, user_content, model):
 
 
 def build_production_chain(router):
-    """Build a live eligible chain ordered by quality, then priority."""
     data = _load().get("registry", {})
     max_runtime_candidates = int(data.get("max_runtime_candidates", 11) or 11)
     chain: list[tuple[str, object]] = []
-
     for entry in canonical_entries():
         family = entry["family"]
         model_id = entry["id"]
@@ -161,7 +172,6 @@ def build_production_chain(router):
         chain.append(("Gemini", router._gemini))
     if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("HF_TOKEN"):
         chain.append(("HuggingFace", router._huggingface))
-
     if not chain:
         raise RuntimeError("No credentialed trusted production LLM model is available")
     return chain

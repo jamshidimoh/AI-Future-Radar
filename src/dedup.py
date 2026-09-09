@@ -94,6 +94,7 @@ def save_seen(seen_hashes, seen_signatures, source_history=None):
 
 
 def _is_protected_leader(item): return bool(item.get("protected_content") or item.get("_named_leader_interview"))
+def _is_leader_exception(item): return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview")))
 def _is_education(item): return str(item.get("content_type") or "").strip().lower() == "education"
 
 def _education_identity(item):
@@ -125,7 +126,6 @@ def _legacy_event_history(signatures):
         data=_decode_signature(value)
         if not isinstance(data,dict): continue
         title=str(data.get("title_text") or " ".join(data.get("title") or []))
-        context=" ".join(data.get("context") or [])
         out.append({"title":title,"tokens":data.get("context") or data.get("title") or [],"event_time":None,"entities":data.get("anchors") or [],"events":data.get("events") or [],"material":[]})
     return out
 
@@ -167,40 +167,40 @@ def _semantic_history_match(item, signatures):
 
 def filter_new_items(items, seen_hashes):
     _,seen_signatures=load_seen(); stored_story_ids=_stored_story_ids(seen_signatures)
-    result=[]; local_urls=set(); local_stories=set(); local_event_items=[]; local_semantic=[]
+    result=[]; local_event_items=[]; local_semantic=[]
     rejected_url=rejected_story=rejected_semantic=0; protected_event_blocked=0
     for item in items or []:
         if _is_education(item):
             identity=_education_identity(item)
             if identity and identity in stored_story_ids: rejected_story+=1; continue
-            if identity: local_stories.add(identity)
             result.append(item); continue
         link_hash,identity=_hash_link(item.get("link", "")),_story_id(item)
-        if link_hash in seen_hashes: rejected_url+=1; continue
-        if identity and identity in stored_story_ids: rejected_story+=1; continue
-        protected_leader = _is_protected_leader(item)
+        if link_hash in seen_hashes:
+            rejected_url+=1; continue
+        if identity and identity in stored_story_ids:
+            rejected_story+=1; continue
         matched,_score=_event_match(item,seen_signatures)
-        if matched and not protected_leader:
+        if matched:
             rejected_semantic+=1
+            if _is_protected_leader(item): protected_event_blocked+=1
             continue
-        try:
-            from event_identity import compare_events
-            if any(compare_events(item,previous)[0]=="DUPLICATE" for previous in local_event_items): rejected_semantic+=1; continue
-        except Exception: pass
+        if any(__import__("event_identity").compare_events(item,previous)[0]=="DUPLICATE" for previous in local_event_items):
+            rejected_semantic+=1; continue
         semantic_match=_semantic_history_match(item,seen_signatures)
         try:
             from semantic_threshold import semantic_threshold
-            if not protected_leader and semantic_match>=semantic_threshold(item,local=False): rejected_semantic+=1; continue
+            if semantic_match>=semantic_threshold(item,local=False) and not _is_leader_exception(item):
+                rejected_semantic+=1; continue
         except Exception: pass
         try:
             from semantic_dedup import get_story_signature,_similarity
-            candidate_sig=get_story_signature(item); local_match=max((_similarity(candidate_sig,p) for p in local_semantic),default=0.0)
+            candidate_sig=get_story_signature(item)
+            local_match=max((_similarity(candidate_sig,p) for p in local_semantic),default=0.0)
             from semantic_threshold import semantic_threshold
-            if local_match>=semantic_threshold(item,local=True): rejected_semantic+=1; continue
+            if local_match>=semantic_threshold(item,local=True):
+                rejected_semantic+=1; continue
             local_semantic.append(candidate_sig)
         except Exception: pass
-        local_urls.add(link_hash)
-        if identity: local_stories.add(identity)
         local_event_items.append(dict(item)); result.append(item)
     print(f"[Canonical Story Gate] kept={len(result)} | url_rejected={rejected_url} | story_rejected={rejected_story} | semantic_rejected={rejected_semantic} | protected_event_blocked={protected_event_blocked}")
     return result

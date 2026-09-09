@@ -16,27 +16,35 @@ def _reset(monkeypatch):
     router._PRODUCTION_POLICY_APPLIED = True
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.delenv("KIRAAI_API_KEY", raising=False)
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     monkeypatch.delenv("RADAR_ENABLE_GEMINI_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
 
 
-def test_canonical_trust_order_is_explicit_not_score_sorted(monkeypatch):
+def test_quality_is_primary_and_priority_is_only_tiebreak(monkeypatch):
     _reset(monkeypatch)
     names = [name for name, _ in registry.build_production_chain(router)]
     assert names == [
         "OpenRouter:nvidia/nemotron-3-ultra-550b-a55b:free",
         "OpenRouter:nvidia/nemotron-3-super-120b-a12b:free",
         "Groq:openai/gpt-oss-120b",
-        "Groq:qwen/qwen3.6-27b",
         "OpenRouter:openai/gpt-oss-120b:free",
-        "OpenRouter:google/gemma-4-31b-it:free",
+        "Groq:qwen/qwen3.6-27b",
         "OpenRouter:qwen/qwen3-next-80b-a3b-instruct:free",
+        "OpenRouter:google/gemma-4-31b-it:free",
         "OpenRouter:google/gemma-4-26b-a4b-it:free",
-        "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-        "Groq:openai/gpt-oss-20b",
         "OpenRouter:openai/gpt-oss-20b:free",
+        "Groq:openai/gpt-oss-20b",
+        "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
     ]
+
+
+def test_kiraai_is_first_when_credentialed_and_quality_is_high(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("KIRAAI_API_KEY", "test-kira")
+    names = [name for name, _ in registry.build_production_chain(router)]
+    assert names[0] == "KiraAI:gpt-5.6-luna-free"
 
 
 def test_retired_nemotron_nano_and_qwen38_are_not_trusted(monkeypatch):
@@ -70,6 +78,33 @@ def test_nemotron_ultra_uses_prompt_json_not_response_format(monkeypatch):
     result = router._openrouter("system", "user", "nvidia/nemotron-3-ultra-550b-a55b:free")
     assert result == '{"ok":true}'
     assert "response_format" not in seen
+
+
+def test_kiraai_adapter_is_openai_compatible(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("KIRAAI_API_KEY", "test-kira")
+    seen = {}
+
+    class Response:
+        status_code = 200
+        text = ""
+
+        def json(self):
+            return {"choices": [{"message": {"content": '{"ok":true}'}}]}
+
+        def raise_for_status(self):
+            return None
+
+    def post(url, **kwargs):
+        seen["url"] = url
+        seen["json"] = kwargs["json"]
+        return Response()
+
+    monkeypatch.setattr(registry.requests, "post", post)
+    fn = dict(registry.build_production_chain(router))["KiraAI:gpt-5.6-luna-free"]
+    assert fn("system", "user") == '{"ok":true}'
+    assert seen["url"] == "https://kiraai.vn/api/v1/chat/completions"
+    assert seen["json"]["model"] == "gpt-5.6-luna-free"
 
 
 def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monkeypatch):

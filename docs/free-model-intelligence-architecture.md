@@ -72,7 +72,7 @@ A benchmark score is never allowed to override a hard runtime failure.
 
 The default decision function is:
 
-`utility = 0.55 * quality + 0.25 * task_fit + 0.15 * reliability + 0.05 * freshness`
+`utility = 0.60 * benchmark_quality + 0.20 * task_fit + 0.15 * reliability + 0.05 * freshness`
 
 Only after hard eligibility is established. The weights are configuration, not code constants.
 

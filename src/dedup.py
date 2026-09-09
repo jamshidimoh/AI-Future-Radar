@@ -178,10 +178,10 @@ def filter_new_items(items, seen_hashes):
         link_hash,identity=_hash_link(item.get("link", "")),_story_id(item)
         if link_hash in seen_hashes: rejected_url+=1; continue
         if identity and identity in stored_story_ids: rejected_story+=1; continue
+        protected_leader = _is_protected_leader(item)
         matched,_score=_event_match(item,seen_signatures)
-        if matched:
+        if matched and not protected_leader:
             rejected_semantic+=1
-            if _is_protected_leader(item): protected_event_blocked+=1
             continue
         try:
             from event_identity import compare_events
@@ -190,7 +190,7 @@ def filter_new_items(items, seen_hashes):
         semantic_match=_semantic_history_match(item,seen_signatures)
         try:
             from semantic_threshold import semantic_threshold
-            if semantic_match>=semantic_threshold(item,local=False): rejected_semantic+=1; continue
+            if not protected_leader and semantic_match>=semantic_threshold(item,local=False): rejected_semantic+=1; continue
         except Exception: pass
         try:
             from semantic_dedup import get_story_signature,_similarity

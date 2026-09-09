@@ -1,8 +1,9 @@
 """Production-only LLM routing policy.
 
 Production uses the trusted free-model registry for deterministic quality-first
-ordering. Quotas are model-scoped; authentication/configuration failures are
-provider-family scoped. Gemini/Hugging Face remain optional emergency lanes.
+ordering. Quotas are model-scoped in production; base-router compatibility
+keeps quota family-scoped for legacy callers/tests. Authentication/configuration
+failures remain provider-family scoped everywhere.
 """
 from __future__ import annotations
 
@@ -15,28 +16,15 @@ except ImportError:  # pragma: no cover
 
 
 def apply() -> None:
-    """Install production failover and cache the registry-derived chain.
+    """Enable production mode and cache the registry-derived chain.
 
-    Do not monkey-patch public router functions: unit tests and other callers
-    in the same Python process must retain the base router semantics. The
-    production caller already resolves its chain through ``get_quality_chain``;
-    replacing its cache is sufficient and naturally resets between runs/tests.
+    No functions are monkey-patched, so the policy cannot leak into unrelated
+    callers in the same Python process. Tests can reset ``_PRODUCTION_POLICY_APPLIED``
+    and ``_CHAIN_CACHE`` to restore the base router completely.
     """
     if getattr(router, "_PRODUCTION_POLICY_APPLIED", False):
         return
 
-    def production_disable(name: str, reason: str) -> None:
-        family = router._provider_family(name)
-        router._DISABLED.add(name)
-        if reason == "permanent":
-            router._DISABLED_FAMILIES.add(family)
-        scope = "family" if reason == "permanent" else "model"
-        print(
-            f"[Light Router] disabled={name} family={family} reason={reason} scope={scope}",
-            flush=True,
-        )
-
-    router._disable = production_disable
     chain = build_production_chain(router)
     if chain:
         router._CHAIN_CACHE = list(chain)

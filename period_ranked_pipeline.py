@@ -20,20 +20,26 @@ from src.unified_editorial_selection import load_editorial_contract, select_regu
 REGULAR_SAME_STORY_THRESHOLD = 0.82
 EDITORIAL_WEIGHT = 0.75
 SIGNAL_WEIGHT = 0.25
+_PROTECTED_ACTIVITY_TERMS = (
+    "announce", "announced", "announces", "launch", "launched", "launching",
+    "release", "released", "releases", "unveil", "unveiled", "introduce", "introduced",
+    "acquire", "acquired", "acquisition", "investment", "invested", "funding",
+    "partnership", "appoint", "appointed", "raises", "raised", "founded", "initiative",
+    "research project", "product", "model", "platform",
+)
+_PROTECTED_TECH_TERMS = (
+    "artificial intelligence", " ai ", "machine learning", "deep learning", "llm", "agi",
+    "openai", "anthropic", "deepmind", "nvidia", "meta ai", "google ai", "microsoft ai",
+    "xai", "gpt", "claude", "gemini", "qwen", "llama", "reasoning model", "foundation model",
+    "frontier model", "ai agent", "agentic ai", "robotics", "humanoid", "physical ai",
+    "ai safety", "ai security", "ai governance", "ai policy", "ai regulation", "ai chip",
+    "gpu", "npu", "tpu", "quantum computing", "quantum ai", "bci", "neurotechnology",
+    "هوش مصنوعی", "یادگیری ماشین", "مدل زبانی", "رباتیک", "کوانتوم",
+)
 
 
 def _base_editorial_score(item):
-    # Future-significance is materialized by the canonical story gate as
-    # radar_composite_score. Production ranking must consume that adjusted
-    # value; otherwise the gate only annotates stories and the later period
-    # ranking silently discards the future-intelligence improvement.
-    for key in (
-        "radar_composite_score",
-        "editorial_score_pre_signal",
-        "final_editorial_score",
-        "editorial_score",
-        "score",
-    ):
+    for key in ("radar_composite_score", "editorial_score_pre_signal", "final_editorial_score", "editorial_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
             if value:
@@ -116,27 +122,12 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
     limit = min(len(normal), max(requested + buffer, int(contract["candidate_window"] or 0)))
     strict_relevance = bool(policy.get("strict_relevance", False))
-    selected = select_regular_portfolio(
-        normal,
-        max_posts=limit,
-        max_per_source=max_per_source,
-        max_per_type=max_per_type,
-        recent_source_counts=recent_source_counts,
-        contract=contract,
-        mission_aware=bool(policy.get("mission_aware", False)),
-        strict_relevance=strict_relevance,
-    )
+    selected = select_regular_portfolio(normal, max_posts=limit, max_per_source=max_per_source, max_per_type=max_per_type, recent_source_counts=recent_source_counts, contract=contract, mission_aware=bool(policy.get("mission_aware", False)), strict_relevance=strict_relevance)
     source_counts = {}
     for item in selected:
         key = _source_key(item)
         source_counts[key] = source_counts.get(key, 0) + 1
-    print(
-        f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} "
-        f"source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true "
-        f"preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} "
-        f"candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))} "
-        f"strict_relevance={strict_relevance}", flush=True
-    )
+    print(f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))} strict_relevance={strict_relevance}", flush=True)
     return selected
 
 
@@ -243,6 +234,14 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     return ranked
 
 
+def _substantive_protected_activity(item):
+    """Allow Tier-0 activity only for a concrete leader event with AI/tech evidence."""
+    text = " ".join(str(item.get(k) or "") for k in ("title", "summary", "description")).casefold()
+    activity = any(term in text for term in _PROTECTED_ACTIVITY_TERMS)
+    tech = any(term in f" {text} " for term in _PROTECTED_TECH_TERMS)
+    return activity and tech
+
+
 def _eligibility_split(items, max_protected=2):
     candidates, regular = [], []
     for raw in items:
@@ -250,16 +249,17 @@ def _eligibility_split(items, max_protected=2):
         is_interview = _pipeline._is_protected_leader_interview(item)
         is_activity = not is_interview and _pipeline._is_protected_leader_activity(item)
         if is_interview or is_activity:
-            # Watchlist membership is routing metadata, not an editorial bypass.
-            # Reserve Tier-0 only when the candidate itself has a concrete
-            # technology/AI signal. Do this check before injecting _ai_link.
-            if not _technology_relevant(item):
+            # Watchlist membership and generic speech/activity verbs are not an
+            # editorial bypass. Interviews may remain protected, while activity
+            # stories require both a concrete event and independent AI/tech evidence.
+            if (is_activity and not _substantive_protected_activity(item)) or not _technology_relevant(item):
                 item["protected_content"] = False
                 item["leader_watch_protected"] = False
                 item["protected_slot"] = False
                 item["_rank_is_tier0"] = False
-                item["protected_reason"] = "leader_protection_not_technology_relevant"
+                item["protected_reason"] = "leader_protection_not_substantive_technology_relevant"
                 regular.append(item)
+                print(f"[Leader Protection Gate] demoted weak activity: {str(item.get('title', ''))[:120]}", flush=True)
                 continue
             item["protected_content"] = True
             item["protected_reason"] = "leader_interview" if is_interview else "leader_activity"

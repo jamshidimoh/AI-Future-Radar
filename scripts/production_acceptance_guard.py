@@ -4,7 +4,8 @@ A selected candidate must end in an auditable terminal state: publication,
 explicit editorial/policy/publication rejection, or an upstream structural
 rejection such as canonical-story deduplication. Protected Tier-0 publication
 is a valid failover path only when every non-published selected candidate is
-fully accounted for.
+fully accounted for and every published Tier-0 item satisfies the absolute
+quality floor.
 """
 from __future__ import annotations
 
@@ -24,7 +25,10 @@ EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
 POLICY_REJECTION_PATTERN = re.compile(r"(?:normal_score_policy_blocked|tier0_score_policy_blocked):\s*[^\s]+<=?\s*[^\s]+")
 PUBLICATION_REJECTION_PATTERN = re.compile(r"\[Publication Contract\]\s+candidate rejected reason=([^;]+);")
 TIER0_PRIORITY_PATTERN = re.compile(r"\[Tier0 Interview Priority\]\s+retained=(\d+).*?quota_exempt=true")
-TIER0_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH TIER0\b")
+TIER0_PUBLICATION_PATTERN = re.compile(
+    r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)"
+)
+TIER0_FLOOR_PATTERN = re.compile(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", re.I)
 EDUCATION_CONFIRMED_PATTERN = re.compile(
     r"\[Education Published\]\s+CONFIRMED\b.*?telegram_delivery=successful"
 )
@@ -49,6 +53,24 @@ def _last_group_int(lines, pattern):
             value = int(match.group(1))
             found = True
     return value if found else None
+
+
+def _published_tier0_scores(lines):
+    scores = []
+    for line in lines:
+        match = TIER0_PUBLICATION_PATTERN.search(line)
+        if match:
+            scores.append(float(match.group(1)))
+    return scores
+
+
+def _observed_tier0_floor(lines):
+    value = None
+    for line in lines:
+        match = TIER0_FLOOR_PATTERN.search(line)
+        if match:
+            value = float(match.group(1))
+    return value
 
 
 def validate(log_text: str) -> tuple[bool, str]:
@@ -85,7 +107,17 @@ def validate(log_text: str) -> tuple[bool, str]:
     accounted = published_news + editorial_rejections + policy_rejections + publication_rejections + upstream_rejections
     posts_sent = int(posts_match.group(1)) if posts_match else None
     tier0_retained = _last_group_int(lines, TIER0_PRIORITY_PATTERN) or 0
-    tier0_publish_policy = bool(_last_match(lines, (TIER0_PUBLICATION_PATTERN,)))
+    tier0_publish_matches = _published_tier0_scores(lines)
+    tier0_publish_policy = bool(tier0_publish_matches)
+    tier0_floor = _observed_tier0_floor(lines)
+    if tier0_publish_matches:
+        effective_floor = tier0_floor if tier0_floor is not None else 60.0
+        violating_scores = [score for score in tier0_publish_matches if score < effective_floor]
+        if violating_scores:
+            return False, (
+                "production contract violation: low-quality Tier-0 publication observed; "
+                f"scores={violating_scores}, floor={effective_floor}"
+            )
 
     if selected > 0 and published_news == 0 and education != "confirmed":
         if accounted >= selected and (posts_sent is None or posts_sent == 0):

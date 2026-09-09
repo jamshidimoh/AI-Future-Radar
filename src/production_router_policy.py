@@ -15,12 +15,15 @@ except ImportError:  # pragma: no cover
 
 
 def apply() -> None:
-    """Install production failover and quality-first chain once."""
+    """Install production failover and cache the registry-derived chain.
+
+    Do not monkey-patch public router functions: unit tests and other callers
+    in the same Python process must retain the base router semantics. The
+    production caller already resolves its chain through ``get_quality_chain``;
+    replacing its cache is sufficient and naturally resets between runs/tests.
+    """
     if getattr(router, "_PRODUCTION_POLICY_APPLIED", False):
         return
-
-    original_disable = router._disable
-    original_chain = getattr(router, "_ORIGINAL_GET_QUALITY_CHAIN", router.get_quality_chain)
 
     def production_disable(name: str, reason: str) -> None:
         family = router._provider_family(name)
@@ -33,16 +36,12 @@ def apply() -> None:
             flush=True,
         )
 
-    def production_chain():
-        chain = build_production_chain(router)
-        if chain:
-            names = ", ".join(name for name, _ in chain)
-            print(f"[Production Model Registry] chain={names}", flush=True)
-            return chain
-        return original_chain()
-
     router._disable = production_disable
-    router._ORIGINAL_DISABLE = original_disable
-    router._ORIGINAL_GET_QUALITY_CHAIN = original_chain
-    router.get_quality_chain = production_chain
+    chain = build_production_chain(router)
+    if chain:
+        router._CHAIN_CACHE = list(chain)
+        print(
+            "[Production Model Registry] chain=" + ", ".join(name for name, _ in chain),
+            flush=True,
+        )
     router._PRODUCTION_POLICY_APPLIED = True

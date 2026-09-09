@@ -21,11 +21,15 @@ def test_production_uses_canonical_router_module(monkeypatch):
     import summarize
 
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     apply()
     assert summarize.get_quality_chain() == router.get_quality_chain()
     names = [name for name, _ in router.get_quality_chain()]
-    assert names[0] == "Groq:qwen/qwen3.8-27b"
-    assert any(name.startswith("OpenRouter:") for name in names[1:])
+    assert names[0].startswith("OpenRouter:")
+    assert any(name.startswith("Groq:") for name in names)
+    assert any(name.startswith("OpenRouter:") for name in names)
+    assert names[-1] == "Gemini"
 
 
 def test_production_quota_is_model_scoped_and_sibling_can_failover(monkeypatch):

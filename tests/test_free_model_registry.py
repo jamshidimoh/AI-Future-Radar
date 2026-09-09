@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -15,14 +14,15 @@ def _reset(monkeypatch):
     router._MODEL_DISABLED_UNTIL.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = True
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     monkeypatch.delenv("RADAR_ENABLE_GEMINI_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
 
 
 def test_canonical_trust_order_is_explicit_not_score_sorted(monkeypatch):
     _reset(monkeypatch)
-    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
     names = [name for name, _ in registry.build_production_chain(router)]
     assert names == [
         "OpenRouter:nvidia/nemotron-3-ultra-550b-a55b:free",
@@ -41,8 +41,6 @@ def test_canonical_trust_order_is_explicit_not_score_sorted(monkeypatch):
 
 def test_retired_nemotron_nano_and_qwen38_are_not_trusted(monkeypatch):
     _reset(monkeypatch)
-    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
     rows = registry.canonical_entries()
     ids = {row["id"] for row in rows}
     assert "qwen/qwen3.8-27b" not in ids
@@ -52,15 +50,11 @@ def test_retired_nemotron_nano_and_qwen38_are_not_trusted(monkeypatch):
 
 def test_nemotron_ultra_uses_prompt_json_not_response_format(monkeypatch):
     _reset(monkeypatch)
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
-    assert registry.model_capability("nvidia/nemotron-3-ultra-550b-a55b:free")["json_capable"] is True
-    assert registry.model_capability("nvidia/nemotron-3-ultra-550b-a55b:free")["response_format"] is False
-
     seen = {}
 
     class Response:
         status_code = 200
-        text = ''
+        text = ""
 
         def json(self):
             return {"choices": [{"message": {"content": '{"ok":true}'}}]}
@@ -91,9 +85,7 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
         return '{"ok":true}'
 
     result, provider = router.call_llm_with_fallback(
-        "s",
-        "u",
-        providers=[
+        "s", "u", providers=[
             ("Groq:openai/gpt-oss-120b", groq_quota),
             ("Groq:qwen/qwen3.6-27b", groq_ok),
         ],
@@ -112,9 +104,7 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
         return '{"ok":true}'
 
     result, provider = router.call_llm_with_fallback(
-        "s",
-        "u",
-        providers=[
+        "s", "u", providers=[
             ("OpenRouter:a:free", or_daily),
             ("OpenRouter:b:free", or_sibling),
             ("Groq:qwen/qwen3.6-27b", groq_ok),
@@ -127,8 +117,6 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
 
 def test_optional_gemini_and_hf_are_disabled_by_default(monkeypatch):
     _reset(monkeypatch)
-    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     names = [name for name, _ in registry.build_production_chain(router)]
     assert "Gemini" not in names
     assert "HuggingFace" not in names

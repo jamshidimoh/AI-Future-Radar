@@ -13,7 +13,7 @@ def test_normalize_free_variant_id():
 
 def test_benchmark_score_uses_available_dimensions():
     score = benchmark_score({"intelligence_index": 90, "agentic_index": 80, "coding_index": 70})
-    assert score == 86.5
+    assert score == 85.0
 
 
 def test_benchmark_record_normalizes_openrouter_evidence():

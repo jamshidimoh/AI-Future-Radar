@@ -104,6 +104,8 @@ def _education_identity(item):
 
 def _stored_story_ids(signatures): return {s[len(STORY_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(STORY_MARKER)}
 
+def _stored_protected_hashes(signatures): return {s[len(PROTECTED_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(PROTECTED_MARKER)}
+
 
 def _event_history(signatures):
     out=[]
@@ -147,6 +149,13 @@ def _event_match(item, signatures):
         for prior in previous_items:
             kind,score,_=compare_events(item,prior)
             if kind=="DUPLICATE": return True,score
+        if _is_leader_exception(item):
+            from semantic_dedup import get_story_signature, _similarity, SEMANTIC_MARKER
+            candidate = get_story_signature(item)
+            for stored in signatures or []:
+                if isinstance(stored, str) and stored.startswith(SEMANTIC_MARKER):
+                    if _similarity(candidate, stored) >= 0.45:
+                        return True, 0.45
     except Exception as exc:
         print(f"[Event Identity] history match unavailable: {exc}", flush=True)
     return False,0.0
@@ -166,7 +175,7 @@ def _semantic_history_match(item, signatures):
 
 
 def filter_new_items(items, seen_hashes):
-    _,seen_signatures=load_seen(); stored_story_ids=_stored_story_ids(seen_signatures)
+    _,seen_signatures=load_seen(); stored_story_ids=_stored_story_ids(seen_signatures); protected_hashes=_stored_protected_hashes(seen_signatures)
     result=[]; local_event_items=[]; local_semantic=[]
     rejected_url=rejected_story=rejected_semantic=0; protected_event_blocked=0
     for item in items or []:
@@ -175,7 +184,7 @@ def filter_new_items(items, seen_hashes):
             if identity and identity in stored_story_ids: rejected_story+=1; continue
             result.append(item); continue
         link_hash,identity=_hash_link(item.get("link", "")),_story_id(item)
-        if link_hash in seen_hashes:
+        if link_hash in seen_hashes or (_is_protected_leader(item) and link_hash in protected_hashes):
             rejected_url+=1; continue
         if identity and identity in stored_story_ids:
             rejected_story+=1; continue

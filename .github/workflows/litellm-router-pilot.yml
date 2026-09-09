@@ -2,7 +2,7 @@ name: LiteLLM Router Pilot
 
 on:
   push:
-    branches: [feat/litellm-router-pilot-v2]
+    branches: [feat/provider-diversity-final]
   workflow_dispatch:
 
 permissions:
@@ -33,4 +33,6 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
         run: python -u scripts/litellm_router_pilot.py

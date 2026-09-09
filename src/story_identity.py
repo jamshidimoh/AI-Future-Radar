@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any, Iterable
 from canonical_story import canonical_url
-from event_identity import compare_events
+from event_identity import compare_events, has_material_update
 
 
 def _canonical_url(item: Any) -> str:
@@ -84,6 +84,8 @@ def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
     if kind == "DUPLICATE":
         return True
     if kind == "UPDATE":
+        return False
+    if kind == "RELATED" and has_material_update(candidate, comparable):
         return False
     try:
         from semantic_dedup import get_story_signature, _similarity

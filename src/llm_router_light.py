@@ -244,22 +244,21 @@ def _provider_timeout(name: str, remaining: float) -> float:
 def _disable(name: str, reason: str) -> None:
     family = _provider_family(name)
     _DISABLED.add(name)
-    # Permanent authentication failures and account/provider quota exhaustion
-    # are family-scoped because a sibling model uses the same account/quota.
-    # Transient 5xx/timeouts remain model-local so one flaky endpoint does not
-    # unnecessarily eliminate a healthy sibling.
-    if reason in {"permanent", "quota"}:
+    # Permanent authentication/configuration failures are family-scoped.
+    # Quota/429 is model-scoped so a healthy sibling model can still fail over.
+    # Transient endpoint failures are also model-local.
+    if reason == "permanent":
         _DISABLED_FAMILIES.add(family)
-    print(f"[Light Router] disabled={name} family={family} reason={reason}", flush=True)
+    scope = "family" if reason == "permanent" else "model"
+    print(f"[Light Router] disabled={name} family={family} reason={reason} scope={scope}", flush=True)
 
 
 def call_llm_with_fallback(system_prompt, user_content, providers=None):
-    """Call providers with run-scoped family failover and bounded retries.
+    """Call providers with bounded failover.
 
-    Permanent authentication/configuration failures and quota exhaustion are
-    shared across concurrent requests for the whole process, preventing a
-    depleted provider account from being hit repeatedly through sibling models.
-    Transient endpoint failures remain local to the current model/request.
+    Permanent auth/config failures are family-scoped; quota/429 is model-scoped
+    across requests so sibling models remain eligible; transient endpoint
+    failures remain local to the model/request.
     """
     providers = providers or get_quality_chain()
     last = None
@@ -296,7 +295,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             last = exc
             reason = _failure_class(str(exc))
             local_disabled_names.add(name)
-            if reason in {"permanent", "quota"}:
+            if reason == "permanent":
                 local_disabled_families.add(family)
             _disable(name, reason)
         except Exception as exc:
@@ -317,7 +316,10 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
                 except Exception as retry_exc:
                     last = retry_exc
                     local_disabled_names.add(name)
-                    _disable(name, _failure_class(str(retry_exc)))
+                    retry_reason = _failure_class(str(retry_exc))
+                    if retry_reason == "permanent":
+                        local_disabled_families.add(family)
+                    _disable(name, retry_reason)
             else:
                 local_disabled_names.add(name)
                 _disable(name, reason)

@@ -192,24 +192,9 @@ def get_quality_chain():
 
 
 def _litellm_model_list():
-    """Build a credential-driven LiteLLM deployment list without exposing secrets."""
-    rows = []
-    def add(order, model, ident, env, **extra):
-        key = os.getenv(env, "").strip()
-        if not key:
-            return
-        params = {"model": model, "api_key": key, "timeout": 8, "order": order}
-        params.update(extra)
-        rows.append({"model_name": "radar-production", "litellm_params": params, "model_info": {"id": ident}})
-    add(1, "openrouter/nvidia/nemotron-3-super-120b-a12b:free", "openrouter-nemotron-3-super", "OPENROUTER_API_KEY")
-    if os.getenv("GROQ_API_KEY", "").strip():
-        add(2, "groq/openai/gpt-oss-120b", "groq-gpt-oss-120b", "GROQ_API_KEY")
-        add(3, "groq/qwen/qwen3.6-27b", "groq-qwen3.6-27b", "GROQ_API_KEY")
-        add(4, "groq/openai/gpt-oss-20b", "groq-gpt-oss-20b", "GROQ_API_KEY")
-    add(5, "openai/minimax-m3-free", "kiraai-minimax-m3-free", "KIRAAI_API_KEY", api_base="https://kiraai.vn/api/v1")
-    add(6, "gemini/gemini-3-flash-preview", "gemini-3-flash-preview", "GEMINI_API_KEY")
-    add(7, "cerebras/glm-4.7", "cerebras-glm-4.7", "CEREBRAS_API_KEY")
-    return rows
+    """Return the live, registry-ranked free deployment pool for LiteLLM."""
+    from free_model_registry import build_litellm_model_list
+    return build_litellm_model_list()
 
 
 def _get_litellm_router():
@@ -247,10 +232,12 @@ def _call_litellm(system_prompt, user_content):
     if router is None:
         return None, None
     try:
+        # JSON is required by Radar, but not every free deployment implements
+        # OpenAI response_format. The prompt/schema contract is provider-neutral;
+        # downstream parsing remains the authoritative validity gate.
         response = router.completion(
             model="radar-production",
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
-            response_format={"type": "json_object"},
         )
         content = getattr(response.choices[0].message, "content", None) if getattr(response, "choices", None) else None
         if not content:

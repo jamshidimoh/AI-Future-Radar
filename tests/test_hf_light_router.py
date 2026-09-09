@@ -22,17 +22,20 @@ class HuggingFaceLightRouterTests(unittest.TestCase):
         with patch.dict(os.environ, {"HF_POLICY": "free-first", "HF_MODEL": ""}, clear=False), patch("llm_router_light._discover_hf_models", return_value=models):
             self.assertEqual(_select_hf_model(), "qwen/free-model")
 
-    def test_huggingface_is_last_fallback(self):
-        names = [name for name, _ in get_quality_chain()]
+    def test_huggingface_is_last_when_explicitly_enabled_and_credentialed(self):
+        env = {"GROQ_API_KEY": "test-groq", "OPENROUTER_API_KEY": "test-openrouter", "HF_TOKEN": "test-hf", "RADAR_ENABLE_HF_FALLBACK": "1"}
+        with patch.dict(os.environ, env, clear=False):
+            names = [name for name, _ in get_quality_chain()]
         self.assertEqual(names[-1], "HuggingFace")
 
+    def test_huggingface_is_not_in_default_production_chain(self):
+        env = {"GROQ_API_KEY": "test-groq", "OPENROUTER_API_KEY": "test-openrouter", "HF_TOKEN": "test-hf", "RADAR_ENABLE_HF_FALLBACK": "0"}
+        with patch.dict(os.environ, env, clear=False):
+            names = [name for name, _ in get_quality_chain()]
+        self.assertNotIn("HuggingFace", names)
+
     def test_missing_credentials_are_skipped_without_provider_calls(self):
-        env = {
-            "GROQ_API_KEY": "",
-            "GEMINI_API_KEY": "",
-            "OPENROUTER_API_KEY": "",
-            "HF_TOKEN": "",
-        }
+        env = {"GROQ_API_KEY": "", "GEMINI_API_KEY": "", "OPENROUTER_API_KEY": "", "HF_TOKEN": ""}
         calls = []
 
         def provider(*_args):

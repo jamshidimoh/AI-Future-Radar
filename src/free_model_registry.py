@@ -149,7 +149,7 @@ def _kiraai_call(router, system_prompt, user_content, model):
 
 def build_production_chain(router):
     data = _load().get("registry", {})
-    max_runtime_candidates = int(data.get("max_runtime_candidates", 11) or 11)
+    max_runtime_candidates = int(data.get("max_runtime_candidates", 18) or 18)
     chain: list[tuple[str, object]] = []
     for entry in canonical_entries():
         family = entry["family"]

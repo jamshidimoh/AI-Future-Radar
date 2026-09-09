@@ -133,17 +133,24 @@ def _discover_hf_models():
         return []
 
 
+def _select_hf_model(models=None):
+    """Return a current free HF chat model, preserving legacy test API."""
+    rows = list(models) if isinstance(models, list) else _discover_hf_models()
+    free = [m for m in rows if isinstance(m, dict) and _hf_price_is_free(m)]
+    explicit = (os.getenv("HF_MODEL") or "").strip()
+    if explicit and any(m.get("id") == explicit for m in free):
+        return explicit
+    if not free:
+        raise QuotaExceeded("No zero-price Hugging Face chat model is currently available")
+    return str(free[0].get("id"))
+
+
 def _huggingface(system_prompt, user_content):
     token = os.getenv("HF_TOKEN")
     if not token:
         return None
     from huggingface_hub import InferenceClient
-    models = _discover_hf_models()
-    free = [m for m in models if _hf_price_is_free(m)]
-    if not free:
-        raise QuotaExceeded("No zero-price Hugging Face chat model is currently available")
-    explicit = (os.getenv("HF_MODEL") or "").strip()
-    model = explicit if explicit and any(m.get("id") == explicit for m in free) else free[0].get("id")
+    model = _select_hf_model()
     response = InferenceClient(token=token, provider="auto").chat.completions.create(model=model, messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], max_tokens=850)
     return response.choices[0].message.content
 

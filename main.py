@@ -36,9 +36,7 @@ TELEGRAM_SAFE_TEXT_LIMIT = 3900
 
 def load_yaml(path):
     import yaml
-    with open(path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
-
+    with open(path, "r", encoding="utf-8") as f: return yaml.safe_load(f)
 
 def _text(item): return " ".join(str(item.get(k) or "") for k in ("title", "summary", "description")).lower()
 def _contains_person(text, name): return str(name or "").strip().lower() in str(text or "").lower()
@@ -47,12 +45,10 @@ def _direct_interview_signal(item): return has_interview_evidence(item)
 
 def _leader_activity_signal(item):
     ctype = str(item.get("content_type") or "").lower().strip()
-    if ctype == "interview":
-        return False
+    if ctype == "interview": return False
     text = _text(item)
     activity_terms = ("launch", "launched", "release", "released", "unveil", "introduced", "product", "model", "platform", "startup", "company", "fund", "investment", "acquisition", "partnership", "appoint", "appointed", "research project", "initiative", "new course", "course", "paper", "project", "announcement", "funding", "raises", "raised", "joins", "founded", "founder", "ceo")
     return ctype in {"product_news", "official"} or bool(item.get("leader_activity_signal")) or any(term in text for term in activity_terms)
-
 
 def _leader_people(leader_config):
     names, priorities = [], {}
@@ -62,7 +58,6 @@ def _leader_people(leader_config):
             if name: names.append(name); priorities[name] = int(group.get("priority", 0) or 0)
     return sorted(set(names)), priorities
 
-
 def _merge_unique_dicts(*lists, key):
     out, seen = [], set()
     for seq in lists:
@@ -71,11 +66,9 @@ def _merge_unique_dicts(*lists, key):
             if value not in seen: seen.add(value); out.append(item)
     return out
 
-
 def _mark_leader_items(items):
     for item in items: item["is_leader"] = True; item["is_leader_watch"] = True
     return items
-
 
 def _annotate_named_leader_interviews(items, leader_people, leader_priorities=None):
     names = sorted({str(x).strip() for x in (leader_people or []) if str(x).strip()}, key=len, reverse=True); priorities = {str(k).strip(): int(v or 0) for k, v in (leader_priorities or {}).items()}; matched = protected = watch_candidates = 0
@@ -95,7 +88,6 @@ def _annotate_named_leader_interviews(items, leader_people, leader_priorities=No
                 elif _leader_activity_signal(item): item["leader_activity_signal"] = True; item["is_leader_watch"] = True; item["leader_watch_protected"] = True; protected += 1
                 break
     print(f"[Leader Identity Recovery] verified_interviews={matched} | activity_protected={protected} | watchlist_candidates={watch_candidates}"); return items
-
 
 def _is_protected_leader_interview(item):
     leader = str(item.get("leader") or item.get("watch_person") or "").strip()
@@ -156,23 +148,57 @@ def _summarize_selected(selected, summarize_fn):
 def _publication_text_within_limit(post):
     valid, reason = validate_publication_payload(post)
     if not valid:
-        print(f"[Publication Contract] rejected story before Telegram: {reason}", flush=True)
-        return False
+        print(f"[Publication Contract] rejected story before Telegram: {reason}", flush=True); return False
     return True
-
 
 def _select_editorial_default(items, max_posts, max_per_source, max_per_type, policy):
     contract = load_editorial_contract()
-    return select_regular_portfolio(
-        items,
-        max_posts=max_posts,
-        max_per_source=max_per_source,
-        max_per_type=max_per_type,
-        contract=contract,
-        mission_aware=bool(policy.get("mission_aware", True)),
-        strict_relevance=bool(policy.get("strict_relevance", False)),
-    )
+    return select_regular_portfolio(items, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, contract=contract, mission_aware=bool(policy.get("mission_aware", True)), strict_relevance=bool(policy.get("strict_relevance", False)))
 
+def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, cap):
+    """Refill slots when the final historical-dedup pass removes a selected story.
+
+    Historical dedup is intentionally retained as a last safety net. If canonical
+    URL resolution or a late ledger reconciliation discovers a duplicate after
+    ranking, that story must not consume a publication slot. We therefore select
+    replacements from the remaining already-gated editorial pool until capacity
+    is restored or no safe replacement exists.
+    """
+    selected = unique_candidates(selected)
+    selected = filter_new_items(selected, seen_hashes)
+    initial_count = len(selected)
+    selected_ids = {id(x) for x in selected}
+    target = min(max(0, int(cap)), len(editorial_pool))
+    rounds = 0
+    while len(selected) < target:
+        rounds += 1
+        remaining = [
+            x for x in editorial_pool
+            if id(x) not in selected_ids and not x.get("protected_content")
+        ]
+        if not remaining: break
+        need = target - len(selected)
+        replacements = select_editorial_fn(
+            remaining,
+            max_posts=need,
+            max_per_source=max_per_source,
+            max_per_type=max_per_type,
+            policy=policy,
+        )
+        replacements = unique_candidates(replacements)
+        if not replacements: break
+        safe_replacements = filter_new_items(replacements, seen_hashes)
+        if not safe_replacements: break
+        before = len(selected)
+        for item in safe_replacements:
+            if len(selected) >= target: break
+            identity = id(item)
+            if identity in selected_ids: continue
+            selected.append(item); selected_ids.add(identity)
+        if len(selected) == before: break
+    removed = initial_count
+    print(f"[Selection Refill] initial_after_late_dedup={initial_count} final={len(selected)} target={target} rounds={rounds} refilled={max(0, len(selected)-initial_count)}", flush=True)
+    return selected
 
 def main(hooks=None):
     hooks = dict(hooks or {}); select_editorial_fn = hooks.get("select_editorial", _select_editorial_default); split_protected_fn = hooks.get("split_protected", _split_protected); summarize_fn = hooks.get("summarize_item", summarize_item); format_fn = hooks.get("format_post", format_post); resolve_image_fn = hooks.get("resolve_source_image", resolve_source_image); deliver_fn = hooks.get("send_to_telegram_safe", send_to_telegram_safe); persist_fn = hooks.get("persist_item_success", _persist_item_success)
@@ -185,7 +211,7 @@ def main(hooks=None):
     protected_items, regular_items = split_protected_fn(new_items, max_protected=leader_protected_max); print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}"); print("[4/7] AI-first relevance gate (regular pool only)"); regular_items = filter_ai_relevance(regular_items, bridge_keywords); print("[5/7] Story clustering and canonical-source selection"); regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy); regular_enriched = enrich_signal_items(regular_enriched); _apply_signal_ranking(regular_enriched); regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_pool = [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")]; regular_pool = [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))]; leader_before, regular_before = len(leader_pool), len(regular_pool)
     editorial_pool = gate_story_candidates(protected_items, leader_pool, regular_pool, seen_signatures, threshold=story_threshold); editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal")); regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal"))); protected_after = sum(1 for x in editorial_pool if x.get("protected_content")); print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy); protected_candidates = [x for x in editorial_pool if x.get("protected_content")]; protected_selected = sorted(protected_candidates, key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _direct_interview_signal(x) else 0, x.get("published", "")), reverse=True)[:leader_protected_max]
-    selected = unique_candidates(protected_selected + selected_regular); print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={leader_protected_max + max_posts}", flush=True); selected = filter_new_items(selected, seen_hashes)
+    selected = unique_candidates(protected_selected + selected_regular); print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={leader_protected_max + max_posts}", flush=True); selected = _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, leader_protected_max + max_posts)
     if not selected:
         print("[Final Publication Guard] no publishable items remain", flush=True); save_seen(seen_hashes, seen_signatures, source_history); print("Posts sent: 0/0"); return
     print("[6/7] AI processing / summarization"); summaries = _summarize_selected(selected, summarize_fn)
@@ -198,8 +224,7 @@ def main(hooks=None):
         if item.get("_publication_blocked"): continue
         try:
             source_name = str(item.get("source") or item.get("source_name") or "منبع"); link = str(item.get("link") or item.get("url") or ""); post = format_fn(item, source_name, link, is_video=str(item.get("source_type") or "").lower() in {"youtube", "video"}, published=item.get("published", ""), content_type=item.get("content_type", "news"), source_tier=item.get("source_tier", 3), source_type=item.get("source_type", "news"), leader=item.get("leader") or item.get("watch_person") or "")
-            if not _publication_text_within_limit(post):
-                continue
+            if not _publication_text_within_limit(post): continue
             result = deliver_fn(post, image_url=str(item.get("source_image") or ""), source_link=link)
             if hasattr(result, "status"):
                 status = getattr(result, "status"); status_value = getattr(status, "value", str(status))
@@ -212,5 +237,4 @@ def main(hooks=None):
             print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
     save_seen(seen_hashes, seen_signatures, source_history); print(f"Posts sent: {sent}/{len(selected)}")
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__": main()

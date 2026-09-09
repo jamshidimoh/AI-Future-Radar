@@ -66,6 +66,12 @@ jobs:
           def has(text, pattern):
               return re.search(pattern, text, re.I | re.M) is not None
 
+          def tier0_quality_floor_clean(text):
+              floors = [float(m.group(1)) for m in re.finditer(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", text, re.I)]
+              floor = floors[-1] if floors else 60.0
+              published = [float(m.group(1)) for m in re.finditer(r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)", text)]
+              return all(score >= floor for score in published)
+
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=20")
           runs = [r for r in runs_data.get("workflow_runs", []) if r.get("name") == "Run AI Future Radar Bot"]
@@ -151,6 +157,7 @@ jobs:
           provider_isolated = provider_failure_observed and provider_success
           state_persisted = all_runs(r"Production state persisted")
           mission_portfolio = all_runs(r"mission_aware=true") and not any_recent(r"generic low[- ]signal")
+          tier0_quality_floor = all(tier0_quality_floor_clean(logs[r.get("run_number")]) for r in window)
 
           education_published = any_recent(r"\[Education Published\].*telegram_delivery=successful")
           education_recovery_confirmed = any_recent(r"\[Education Recovery\] CONFIRMED")
@@ -173,11 +180,13 @@ jobs:
               "08_provider_failure_isolated": provider_isolated,
               "09_state_after_confirmed_delivery": state_persisted,
               "10_mission_portfolio_not_generic": mission_portfolio,
-              "11_education_cadence_contract": education_evidence,
+              "11_tier0_quality_floor": tier0_quality_floor,
+              "12_education_cadence_contract": education_evidence,
           }
 
           for key, value in evidence.items():
               print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
+          print(f"TIER0_QUALITY_FLOOR clean={tier0_quality_floor}")
           print(f"EDUCATION_EVIDENCE published={education_published} recovery={education_recovery_confirmed} not_due_all={education_not_due_all} contract_not_due={education_contract_not_due}")
           print(f"FAIL_CLOSED_EVIDENCE observed_zero={observed_zero_publish} regression_contract={fail_closed_regression}")
 

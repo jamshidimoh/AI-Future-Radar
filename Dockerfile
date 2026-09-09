@@ -8,7 +8,8 @@ LABEL org.opencontainers.image.version="${VERSION}"
 LABEL org.opencontainers.image.licenses="MIT"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    RADAR_PRODUCTION_MODE=1
 
 WORKDIR /app
 

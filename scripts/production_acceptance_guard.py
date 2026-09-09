@@ -21,7 +21,7 @@ CONTRACT_PATTERN = re.compile(
 )
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
-POLICY_REJECTION_PATTERN = re.compile(r"normal_score_policy_blocked:\s*[^\s]+<=\s*[^\s]+")
+POLICY_REJECTION_PATTERN = re.compile(r"(?:normal_score_policy_blocked|tier0_score_policy_blocked):\s*[^\s]+<=?\s*[^\s]+")
 PUBLICATION_REJECTION_PATTERN = re.compile(r"\[Publication Contract\]\s+candidate rejected reason=([^;]+);")
 TIER0_PRIORITY_PATTERN = re.compile(r"\[Tier0 Interview Priority\]\s+retained=(\d+).*?quota_exempt=true")
 TIER0_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH TIER0\b")

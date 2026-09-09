@@ -45,7 +45,7 @@ def test_ledger_requires_confirmed_message_id():
     assert calls == [42]
 
 
-def test_final_story_guard_blocks_duplicate_within_current_run():
+def test_final_story_guard_blocks_duplicate_within_current_run(monkeypatch):
     import src.publication_orchestrator as orchestrator
     import src.publication_guard as publication_guard
 

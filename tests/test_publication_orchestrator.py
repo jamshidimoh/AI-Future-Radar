@@ -45,17 +45,18 @@ def test_ledger_requires_confirmed_message_id():
     assert calls == [42]
 
 
-def test_final_story_guard_blocks_duplicate_within_current_run(monkeypatch):
+def test_final_story_guard_blocks_duplicate_within_current_run():
     import src.publication_orchestrator as orchestrator
     import src.publication_guard as publication_guard
 
     monkeypatch.setattr(publication_guard, "_load_records", lambda: [])
     orchestrator._CURRENT_RUN_PUBLICATIONS.clear()
     calls = []
-    rendered = "<b>📡 Same story</b>\n<blockquote>📌 <b>خلاصه</b>\nSame event summary.</blockquote>"
+    rendered_first = "<b>📡 Same story</b>\n<blockquote>📌 <b>خلاصه</b>\nSame event summary.</blockquote>"
+    rendered_second = "<b>📡 New wording for the same story</b>\n<blockquote>📌 <b>خلاصه</b>\nSame event summary.</blockquote>"
 
-    first = {"title": "Same story", "summary": "Same event summary.", "link": "https://one.example/story", "_rendered_text": rendered}
-    second = {"title": "Same story", "summary": "Same event summary.", "link": "https://two.example/story", "_rendered_text": rendered}
+    first = {"title": "Same story", "summary": "Same event summary.", "link": "https://one.example/story", "_rendered_text": rendered_first}
+    second = {"title": "New wording for the same story", "summary": "Same event summary.", "link": "https://two.example/story", "_rendered_text": rendered_second}
 
     try:
         first_outcome = publish_story(

@@ -1,12 +1,12 @@
-# AI Future Radar — dynamic free-model registry
-# Eligibility is runtime-validated. Quality is the primary ordering signal;
-# priority is only a tie-break. Provider/model availability may change daily.
+# AI Future Radar — dynamic, quality-first free-model registry
+# KiraAI is treated as a model collection: availability is refreshed at runtime,
+# while only explicitly free, chat-capable, quality-scored models can enter production.
 registry:
-  schema_version: 3
+  schema_version: 4
   policy_version: "2026-09-09"
-  refresh_hours: 24
-  stale_after_hours: 72
-  max_runtime_candidates: 11
+  refresh_hours: 12
+  stale_after_hours: 48
+  max_runtime_candidates: 14
   require_free: true
   require_chat: true
   require_json_capability: true
@@ -115,19 +115,17 @@ registry:
       credential_env: KIRAAI_API_KEY
       pricing_mode: free-quota
       dynamic_catalog: true
+      catalog_endpoint: "https://kiraai.vn/api/v1/models"
+      free_model_ids:
+        - kira-auto
+        - minimax-m3-free
+        - qwen3.8-max-free
+        - qwen3.8-flash
+        - kira-mini-1.0
+        - glm-5.3-flash-free
+        - dots-3-note-preview
       models:
-        # Kira is integrated as an additional free-quota source. The Luna
-        # variant is NOT promoted by provider marketing alone; it stays out of
-        # production ordering until independent quality evidence is available.
         - priority: 1
-          id: gpt-5.6-luna-free
-          free: true
-          chat_capable: true
-          json_capable: true
-          response_format: true
-          base_quality: 0
-          task_fit: 0
-        - priority: 2
           id: minimax-m3-free
           free: true
           chat_capable: true
@@ -135,7 +133,54 @@ registry:
           response_format: true
           base_quality: 89
           task_fit: 95
+          quality_evidence: independent
+        - priority: 2
+          id: kira-auto
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 88
+          task_fit: 94
+          quality_evidence: provider_only
         - priority: 3
+          id: qwen3.8-max-free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 87
+          task_fit: 95
+          quality_evidence: provider_only
+          rate_limit_rpm: 1
+        - priority: 4
+          id: qwen3.8-flash
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 86
+          task_fit: 94
+          quality_evidence: provider_only
+        - priority: 5
+          id: kira-mini-1.0
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 82
+          task_fit: 90
+          quality_evidence: provider_only
+        - priority: 6
+          id: glm-5.3-flash-free
+          free: true
+          chat_capable: true
+          json_capable: true
+          response_format: true
+          base_quality: 84
+          task_fit: 92
+          quality_evidence: provider_only
+        - priority: 7
           id: dots-3-note-preview
           free: true
           chat_capable: true
@@ -143,6 +188,7 @@ registry:
           response_format: true
           base_quality: 72
           task_fit: 82
+          quality_evidence: independent
     - family: huggingface
       credential_env: HF_TOKEN
       pricing_mode: monthly-credit-only

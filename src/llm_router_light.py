@@ -231,23 +231,32 @@ def _call_litellm(system_prompt, user_content):
     router = _get_litellm_router()
     if router is None:
         return None, None
-    try:
-        # JSON is required by Radar, but not every free deployment implements
-        # OpenAI response_format. The prompt/schema contract is provider-neutral;
-        # downstream parsing remains the authoritative validity gate.
-        response = router.completion(
-            model="radar-production",
-            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
-        )
-        content = getattr(response.choices[0].message, "content", None) if getattr(response, "choices", None) else None
-        if not content:
-            raise ValueError("LiteLLM response has no content")
-        selected = str(getattr(response, "model", "unknown"))
-        print(f"[LiteLLM Router] success={selected}", flush=True)
-        return content, selected
-    except Exception as exc:
-        print(f"[LiteLLM Router] exhausted_or_failed={type(exc).__name__}: {exc}", flush=True)
-        return None, None
+    model_list = _litellm_model_list()
+    last_error = None
+    for deployment in model_list:
+        model_name = deployment["model_name"]
+        deployment_id = deployment["model_info"]["id"]
+        try:
+            # Each rank has its own LiteLLM model name. This preserves the
+            # registry's quality order and lets LiteLLM cooldown each failed
+            # deployment independently instead of randomly load-balancing tiers.
+            response = router.completion(
+                model=model_name,
+                messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
+            )
+            content = getattr(response.choices[0].message, "content", None) if getattr(response, "choices", None) else None
+            if not content:
+                raise ValueError("LiteLLM response has no content")
+            selected = str(getattr(response, "model", deployment_id))
+            print(f"[LiteLLM Router] success={deployment_id} model={selected}", flush=True)
+            return content, deployment_id
+        except Exception as exc:
+            last_error = exc
+            print(f"[LiteLLM Router] failed={deployment_id} type={type(exc).__name__}: {exc}", flush=True)
+            continue
+    if last_error is not None:
+        print(f"[LiteLLM Router] exhausted_or_failed={type(last_error).__name__}: {last_error}", flush=True)
+    return None, None
 
 
 def _failure_class(message: str) -> str:

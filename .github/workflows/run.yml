@@ -1,4 +1,5 @@
 name: Run AI Future Radar Bot
+# Final production verification trigger: no runtime behavior change.
 
 on:
   push:

@@ -61,7 +61,7 @@ jobs:
       - name: Run production regression checks
         run: |
           python -m compileall -q scripts src *.py
-          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py
+          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py
 
       - name: Emit fail-closed closure evidence
         run: |

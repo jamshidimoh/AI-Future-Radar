@@ -1,4 +1,4 @@
-"""Dynamic, quality-first production ordering for free LLM deployments."""
+"""Dynamic, evidence-backed production ordering for free LLM deployments."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -53,7 +53,10 @@ def _provider_runtime_available(provider: dict) -> bool:
 
 def _quality_score(model: dict) -> float:
     try:
-        base = float(model.get("quality_score", model.get("base_quality", 0)) or 0)
+        explicit = model.get("quality_score")
+        if explicit is not None:
+            return round(float(explicit), 3)
+        base = float(model.get("base_quality", 0) or 0)
         fit = float(model.get("task_fit", 0) or 0)
     except (TypeError, ValueError):
         return 0.0
@@ -103,7 +106,7 @@ def canonical_entries() -> list[dict]:
         if data.get("require_json_capability", True) and candidate.get("json_capable") is not True:
             continue
         score = _quality_score(candidate)
-        if score < 88:
+        if score < 50:
             continue
         family = str(candidate.get("family", "")).strip().lower()
         env_name = {"openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY"}.get(family)
@@ -197,8 +200,6 @@ def build_litellm_model_list() -> list[dict]:
 
 
 def build_production_chain(router):
-    # The production executor remains LiteLLM-only. The direct-provider chain
-    # remains available only for injected test lists in llm_router_light.py.
     chain: list[tuple[str, object]] = []
     max_runtime_candidates = int(_load().get("registry", {}).get("max_runtime_candidates", 18) or 18)
     for entry in ranked_entries()[:max_runtime_candidates]:

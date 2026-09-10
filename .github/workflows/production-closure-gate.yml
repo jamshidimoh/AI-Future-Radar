@@ -152,7 +152,7 @@ jobs:
           ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_recent(r"normal_rank=\d{2,}")
           qa_replacement = any_recent(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
           leader_watch = all_runs(r"\[Protected Leader Eligibility\] candidates=\d+") and all_runs(r"\[Leader Protection Audit\]")
-          provider_success = any_recent(r"\[Light Router\] success=")
+          provider_success = any_recent(r"\[LiteLLM Router\] success=")
           provider_failure_observed = any_recent(r"\[Light Router\] disabled=") or any_recent(r"(?:429|quota|timeout|5\d{2}|401|403)")
           provider_isolated = provider_failure_observed and provider_success
           state_persisted = all_runs(r"Production state persisted")

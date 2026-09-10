@@ -1,7 +1,7 @@
 emerging_terminology:
   enabled: true
-  version: "2026.08"
-  reviewed_at: "2026-08-14"
+  version: "2026.09"
+  reviewed_at: "2026-09-10"
   policy:
     status_labels: [established, emerging, informal]
     rule: "Introduce new terminology only when it has credible current usage. Distinguish standards/specifications from practitioner terminology and hype. Never present an emerging or informal term as an established scientific standard."
@@ -111,20 +111,20 @@ emerging_terminology:
       title: "MCP Apps و MCP Tasks"
       a: {term: "MCP Apps", fa: "برنامه‌های MCP", seed: "الگویی در اکوسیستم MCP برای ارائه رابط‌های کاربری تعاملی مرتبط با قابلیت‌های یک MCP server."}
       b: {term: "MCP Tasks", fa: "وظایف MCP", seed: "قابلیتی در مسیر تکامل MCP برای پشتیبانی از کارهای طولانی‌تر و مدیریت چرخه اجرای آن‌ها."}
-      relation: "هر دو بخشی از گسترش اکوسیستم MCP هستند؛ Apps بر تعامل UI و Tasks بر عملیات طولانی‌تر تمرکز دارد."
+      relation: "هر دو بخشی از گسترش اکوسیستم MCP هستند؛ MCP Apps بر تعامل کاربر و MCP Tasks بر چرخه اجرای وظایف تمرکز دارد."
       sources:
-        - {name: "MCP 2026-07-28 Specification", url: "https://blog.modelcontextprotocol.io/posts/2026-07-28/"}
-        - {name: "MCP 2026 Release Candidate", url: "https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/"}
+        - {name: "Model Context Protocol Specification", url: "https://modelcontextprotocol.io/specification/2025-11-25"}
+        - {name: "Model Context Protocol: Tasks", url: "https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks"}
 
     - id: 111
-      status: established
-      title: "Agentic Workflow و Autonomous Agent"
-      a: {term: "Agentic Workflow", fa: "گردش‌کار عامل‌محور", seed: "گردش‌کاری که در آن یک یا چند agent در چند مرحله با context، ابزار و قواعد مشخص برای رسیدن به هدف کار می‌کنند."}
-      b: {term: "Autonomous Agent", fa: "عامل خودمختار", seed: "عاملی که می‌تواند بدون هدایت انسانی در هر گام، بخشی از تصمیم‌گیری و اجرای وظایف را بر اساس هدف و محدودیت‌های تعیین‌شده انجام دهد."}
-      relation: "Agentic workflow بر ساختار فرایند تأکید دارد؛ autonomous agent بر میزان استقلال عامل در اجرای آن فرایند."
+      status: emerging
+      title: "Agent Identity و Agent Authorization"
+      a: {term: "Agent Identity", fa: "هویت عامل", seed: "مکانیزمی برای شناسایی یک agent یا نماینده نرم‌افزاری در سامانه‌ها و تعامل‌های کنترل‌شده."}
+      b: {term: "Agent Authorization", fa: "مجوزدهی عامل", seed: "فرایند تعیین و اعمال اینکه یک agent با هویت مشخص چه منابع یا اقدام‌هایی را مجاز به استفاده یا انجام است."}
+      relation: "Identity مشخص می‌کند عامل چه کسی است؛ authorization مشخص می‌کند با آن هویت چه کاری مجاز است انجام دهد."
       sources:
-        - {name: "Anthropic: Effective Context Engineering", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
-        - {name: "IBM: Agentic Engineering", url: "https://www.ibm.com/think/topics/agentic-engineering"}
+        - {name: "NIST: AI Agent Standards Initiative", url: "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative"}
+        - {name: "OpenID Foundation: Agentic Identity", url: "https://openid.net/agentic-identity/")}
 
     - id: 112
       status: emerging
@@ -142,34 +142,15 @@ emerging_terminology:
       b: {term: "Structured Memory", fa: "حافظه ساختاریافته", seed: "حافظه‌ای که اطلاعات را در ساختاری مشخص و قابل بازیابی نگهداری می‌کند تا agent بتواند آن را در زمان مناسب به context بازگرداند."}
       relation: "Structured memory یک روش سازمان‌دهی حافظه است؛ agentic memory مفهوم گسترده‌تری برای حفظ اطلاعات قابل استفاده توسط agent است."
       sources:
-        - {name: "Anthropic: Effective Context Engineering", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+        - {name: "IBM: What Is AI Agent Memory?", url: "https://www.ibm.com/think/topics/ai-agent-memory"}
+        - {name: "AWS: Structured memory filtering with metadata in AgentCore Memory", url: "https://aws.amazon.com/blogs/machine-learning/structured-memory-filtering-with-metadata-in-agentcore-memory/"}
 
     - id: 114
       status: emerging
       title: "Agent Evaluation و Verifier"
       a: {term: "Agent Evaluation", fa: "ارزیابی عامل", seed: "سنجش توانایی و قابلیت اطمینان یک agent در انجام وظایف چندمرحله‌ای با معیارها و سناریوهای مشخص."}
-      b: {term: "Verifier", fa: "راستی‌آزما/بازرس", seed: "مولفه‌ای که نتیجه یا وضعیت اجرای agent را با یک معیار مستقل بررسی می‌کند تا مشخص شود آیا شرط موفقیت برآورده شده است."}
-      relation: "Evaluation عملکرد کلی را می‌سنجد؛ verifier بخشی از یک اجرای مشخص را برای تصمیم‌گیری درباره موفقیت یا ادامه کار بررسی می‌کند."
+      b: {term: "Verifier", fa: "راستی‌آزما", seed: "جزئی از یک سامانه یا فرایند که خروجی یا وضعیت حاصل از اجرای agent را با معیارها یا شواهد مشخص بررسی می‌کند."}
+      relation: "Agent evaluation سنجش کلی عملکرد است؛ verifier یک سازوکار مشخص برای بررسی نتیجه یا یک مرحله از اجراست."
       sources:
-        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
-        - {name: "arXiv: Engineering the Loops that Replace Step-by-Step Prompting", url: "https://arxiv.org/abs/2607.00038"}
-
-    - id: 115
-      status: emerging
-      title: "Agentic Coding و Continuous Agent Loop"
-      a: {term: "Agentic Coding", fa: "کدنویسی عامل‌محور", seed: "توسعه نرم‌افزار با استفاده از agentهایی که می‌توانند چند مرحله از خواندن کد، تغییر، اجرای ابزار و بررسی نتیجه را دنبال کنند."}
-      b: {term: "Continuous Agent Loop", fa: "حلقه پیوسته عامل", seed: "اجرای تکرارشونده یک agent یا workflow که پس از دریافت نتیجه، در صورت برقرار بودن شرایط ادامه، گام بعدی را به‌صورت خودکار آغاز می‌کند."}
-      relation: "Agentic coding حوزه کاربرد است؛ continuous agent loop یکی از الگوهای اجرایی برای خودکارسازی تکرار در آن حوزه است."
-      sources:
-        - {name: "IBM: Agentic Engineering", url: "https://www.ibm.com/think/topics/agentic-engineering"}
-        - {name: "IBM: Loop Engineering", url: "https://www.ibm.com/think/topics/loop-engineering"}
-
-    - id: 116
-      status: emerging
-      title: "AI Slop و AI-generated Software"
-      a: {term: "AI Slop", fa: "محتوای کم‌کیفیت تولیدشده با AI", seed: "اصطلاحی غیررسمی برای محتوای تولیدشده با AI که معمولاً حجم بالا، کیفیت پایین، تکراری یا کم‌ارزش تلقی می‌شود."}
-      b: {term: "AI-generated Software", fa: "نرم‌افزار تولیدشده با AI", seed: "نرم‌افزاری که بخش قابل توجهی از کد یا اجزای آن با کمک مدل‌های مولد تولید شده است؛ کیفیت آن به فرایند مهندسی و ارزیابی وابسته است."}
-      relation: "AI-generated software الزاماً AI slop نیست؛ تفاوت اصلی در کیفیت، هدف، بررسی و فرایند مهندسی است."
-      sources:
-        - {name: "Martin Fowler: Vibe Coding", url: "https://martinfowler.com/bliki/VibeCoding.html"}
-        - {name: "IBM: Agentic Engineering", url: "https://www.ibm.com/think/topics/agentic-engineering"}
+        - {name: "NIST AI", url: "https://www.nist.gov/artificial-intelligence"}
+        - {name: "Anthropic: Demystifying evals for AI agents", url: "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"}

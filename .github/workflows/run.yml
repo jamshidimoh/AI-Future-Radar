@@ -14,6 +14,7 @@ name: Run AI Future Radar Bot
 # Full production verification trigger: execute the complete end-to-end pipeline.
 # Full end-to-end rerun: validate current production behavior after the latest verification.
 # LiteLLM-only verification: confirm production fail-closed behavior without legacy router fallback.
+# Post-closure verification: run the complete production path after closure-evidence alignment.
 
 on:
   push:

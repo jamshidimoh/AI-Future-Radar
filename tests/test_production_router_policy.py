@@ -14,8 +14,11 @@ def _reset(monkeypatch):
     router._MODEL_DISABLED_UNTIL.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
+    router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
     monkeypatch.delenv("RADAR_ENABLE_GEMINI_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
+    monkeypatch.delenv("RADAR_MAX_LLM_ATTEMPTS", raising=False)
+    monkeypatch.delenv("RADAR_ROUTER_BUDGET_SECONDS", raising=False)
 
 
 def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
@@ -115,6 +118,98 @@ def test_quota_state_from_one_request_does_not_starve_sibling_in_next_request(mo
     assert second_result == '{"title":"ok"}'
     assert second_provider == "Groq:openai/gpt-oss-120b"
     assert calls == ["quota", "ok", "ok"]
+
+
+def test_production_provider_quota_skips_all_siblings_and_switches_provider(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
+    apply()
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            calls.append(model)
+            if model in {"radar-production-1", "radar-production-2"}:
+                raise RuntimeError(
+                    "HTTP 429 upstream_provider_shared_pool; X-RateLimit-Remaining: 0"
+                )
+            return type(
+                "Response",
+                (),
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\"title\":\"ok\"}'})()})()]},
+            )()
+
+    calls = []
+    deployments = [
+        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b"}},
+        {"model_name": "radar-production-3", "model_info": {"id": "groq:model-c"}},
+    ]
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"ok"}'
+    assert provider == "groq:model-c"
+    assert calls == ["radar-production-1", "radar-production-3"]
+    assert "openrouter" in router._DISABLED_FAMILIES
+
+
+def test_production_model_429_does_not_disable_provider(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    apply()
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            calls.append(model)
+            if model == "radar-production-1":
+                raise RuntimeError("HTTP 429 model rate limit")
+            return type(
+                "Response",
+                (),
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\"title\":\"ok\"}'})()})()]},
+            )()
+
+    calls = []
+    deployments = [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "groq:model-b"}},
+    ]
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"ok"}'
+    assert provider == "groq:model-b"
+    assert calls == ["radar-production-1", "radar-production-2"]
+    assert "groq" not in router._DISABLED_FAMILIES
+
+
+def test_production_attempt_budget_is_hard_capped(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "2")
+    apply()
+
+    class FakeRouter:
+        def completion(self, **_kwargs):
+            calls.append(1)
+            raise RuntimeError("HTTP 503 temporary")
+
+    calls = []
+    deployments = [
+        {"model_name": f"radar-production-{i}", "model_info": {"id": f"groq:model-{i}"}}
+        for i in range(1, 6)
+    ]
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+
+    result, provider = router._call_litellm("system", "user")
+    assert result is None
+    assert provider is None
+    assert len(calls) == 2
 
 
 def test_production_launcher_does_not_activate_router_on_import(monkeypatch):

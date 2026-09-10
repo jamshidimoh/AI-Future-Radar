@@ -15,52 +15,8 @@ for path in (ROOT, SRC):
 import educational_content
 import production_entrypoint
 import production_resilient_runner
+from education_dynamic_sources import rank_verified_sources
 from education_source_policy import assess_source, validate_current_sources
-
-CURRENT_SOURCE_OVERRIDES = {
-    41: [
-        {"name": "Anthropic: Demystifying evals for AI agents", "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents", "year": 2026},
-        {"name": "OpenAI Academy: Workspace agents", "url": "https://openai.com/academy/workspace-agents/", "year": 2026},
-        {"name": "NIST: AI Agent Standards Initiative", "url": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative", "year": 2026},
-    ],
-    112: [
-        {"name": "Anthropic: Compaction", "url": "https://platform.claude.com/docs/en/build-with-claude/compaction", "year": 2026},
-        {"name": "TrueFoundry: Just-in-Time Context for AI Agents", "url": "https://www.truefoundry.com/blog/jit-context-just-in-time-context-agents", "year": 2026},
-        {"name": "Anthropic: Effective Context Engineering for AI Agents", "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents", "year": 2026},
-    ],
-}
-
-_ORIGINAL_SOURCE_CANDIDATES = educational_content._source_candidates
-
-
-def _source_candidates_with_current_overrides(lesson: dict):
-    candidates = _ORIGINAL_SOURCE_CANDIDATES(lesson)
-    lesson_id = int(lesson.get("id", 0) or 0)
-    overrides = CURRENT_SOURCE_OVERRIDES.get(lesson_id, [])
-    if not overrides:
-        return candidates
-    stale_urls = {
-        "https://www.anthropic.com/research/building-effective-agents",
-        "https://platform.openai.com/docs/guides/agents",
-        "https://www.anthropic.com/research/trustworthy-agents",
-        "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
-    }
-    stale_normalized = {u.rstrip("/") for u in stale_urls}
-    filtered = [item for item in candidates if str(item.get("url", "")).rstrip("/") not in stale_normalized]
-    seen = {str(item.get("url", "")).rstrip("/") for item in filtered}
-    for source in overrides:
-        url = str(source["url"]).rstrip("/")
-        if url not in seen:
-            filtered.append(dict(source))
-            seen.add(url)
-    print(f"[Education Recovery] lesson={lesson_id} current-source override enabled sources={[item['url'] for item in overrides]}", flush=True)
-    return filtered
-
-
-def _install_authoritative_source_override() -> None:
-    educational_content._source_candidates = _source_candidates_with_current_overrides
-    production_resilient_runner._source_candidates_with_current_overrides = _source_candidates_with_current_overrides
-    print("[Education Recovery] authoritative source override installed", flush=True)
 
 
 def _deterministic_education_item(lesson: dict, verified_sources: list[dict]) -> dict:
@@ -86,20 +42,40 @@ def _deterministic_education_item(lesson: dict, verified_sources: list[dict]) ->
 
 
 def _collect_verified_current_sources(lesson: dict) -> list[dict]:
+    """Probe the central dynamic candidate pool and fail over automatically.
+
+    Candidate discovery is owned by educational_content._source_candidates,
+    which now combines lesson-configured sources with the central dynamic
+    source pool. Recovery deliberately does not maintain lesson-specific URL
+    overrides, so a source can disappear without requiring a code change.
+    """
     verified_sources: list[dict] = []
-    for source in _source_candidates_with_current_overrides(lesson):
+    candidates = educational_content._source_candidates(lesson)
+    print(
+        f"[Education Recovery] dynamic source candidates lesson={int(lesson.get('id', 0) or 0)} count={len(candidates)}",
+        flush=True,
+    )
+    for source in candidates:
         url = str(source.get("url", "")).strip()
         if not url:
             continue
         excerpt, detected_year = educational_content._fetch_reference(url)
         if not excerpt:
-            print(f"[Education Recovery] deterministic source retrieval failed url={url}", flush=True)
+            print(f"[Education Recovery] dynamic source retrieval failed url={url}", flush=True)
             continue
         declared = source.get("year")
         declared_year = int(declared) if str(declared or "").isdigit() else None
-        assessment = assess_source(url=url, reachable=True, detected_year=detected_year, declared_year=declared_year)
+        assessment = assess_source(
+            url=url,
+            reachable=True,
+            detected_year=detected_year,
+            declared_year=declared_year,
+        )
         if not assessment.get("current"):
-            print(f"[Education Recovery] deterministic source rejected status={assessment.get('status')} url={url}", flush=True)
+            print(
+                f"[Education Recovery] dynamic source rejected status={assessment.get('status')} url={url}",
+                flush=True,
+            )
             continue
         verified_sources.append({
             **source,
@@ -110,8 +86,13 @@ def _collect_verified_current_sources(lesson: dict) -> list[dict]:
             "authority_tier": assessment.get("authority_tier"),
             "authority_score": assessment.get("authority_score"),
         })
-    ok, verified, reason = validate_current_sources(verified_sources)
-    print(f"[Education Recovery] deterministic source contract ok={ok} verified={len(verified)} reason={reason}", flush=True)
+
+    ranked_sources = rank_verified_sources(verified_sources)
+    ok, verified, reason = validate_current_sources(ranked_sources)
+    print(
+        f"[Education Recovery] dynamic source contract ok={ok} candidates={len(candidates)} verified={len(verified)} reason={reason}",
+        flush=True,
+    )
     return verified if ok else []
 
 
@@ -132,7 +113,6 @@ def _build_with_deterministic_recovery() -> dict | None:
 
 
 def main() -> int:
-    _install_authoritative_source_override()
     cadence = production_entrypoint._load_cadence()
     forced = os.getenv("FORCE_EDUCATION_PUBLICATION", "").strip().lower() in {"1", "true", "yes"}
     due, slot = production_entrypoint._education_is_due(production_entrypoint._tehran_now(), cadence.get("last_education_slot", ""))

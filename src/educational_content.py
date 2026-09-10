@@ -17,9 +17,7 @@ from education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_cu
 from education_dynamic_sources import dynamic_source_candidates, rank_verified_sources
 from llm_router_light import call_llm_with_fallback, get_quality_chain
 
-# Backward-compatible public constant retained for existing tests/callers.
 MIN_SOURCE_YEAR = MIN_CURRENT_YEAR
-
 ROOT = Path(__file__).resolve().parent.parent
 CURRICULUM_PATH = ROOT / "config" / "education_curriculum.yaml"
 MODULES_PATH = ROOT / "config" / "education_curriculum_modules.yaml"
@@ -28,16 +26,8 @@ SOURCE_FALLBACKS_PATH = ROOT / "config" / "education_source_fallbacks.yaml"
 STATE_PATH = ROOT / "data" / "education_state.json"
 
 LESSON_15_CURRENT_SOURCES = [
-    {
-        "name": "NIST: Lessons Learned from the Consortium — Tool Use in Agent Systems",
-        "url": "https://www.nist.gov/news-events/news/2025/08/lessons-learned-consortium-tool-use-agent-systems",
-        "year": 2025,
-    },
-    {
-        "name": "Google Developers: What's new with Agents: ADK, Agent Engine, and A2A Enhancements",
-        "url": "https://developers.googleblog.com/en/agents-adk-agent-engine-a2a-enhancements-google-io/",
-        "year": 2025,
-    },
+    {"name": "NIST: Lessons Learned from the Consortium — Tool Use in Agent Systems", "url": "https://www.nist.gov/news-events/news/2025/08/lessons-learned-consortium-tool-use-agent-systems", "year": 2025},
+    {"name": "Google Developers: What's new with Agents: ADK, Agent Engine, and A2A Enhancements", "url": "https://developers.googleblog.com/en/agents-adk-agent-engine-a2a-enhancements-google-io/", "year": 2025},
 ]
 
 
@@ -95,9 +85,7 @@ def load_source_fallbacks() -> dict[str, list[dict[str, Any]]]:
 
 
 def _base_lessons():
-    base = list(load_curriculum().get("education", {}).get("lessons") or [])
-    modules = list(load_curriculum_modules().get("lessons") or [])
-    return base + modules
+    return list(load_curriculum().get("education", {}).get("lessons") or []) + list(load_curriculum_modules().get("lessons") or [])
 
 
 def _emerging_lessons():
@@ -106,28 +94,32 @@ def _emerging_lessons():
 
 
 def _lesson_sequence():
-    base, emerging = _base_lessons(), _emerging_lessons()
-    sequence = [("foundation", lesson) for lesson in base]
-    sequence.extend(("emerging", lesson) for lesson in emerging)
+    sequence = [("foundation", lesson) for lesson in _base_lessons()]
+    sequence.extend(("emerging", lesson) for lesson in _emerging_lessons())
     return sequence
 
 
+def _completed_ids(state=None):
+    state = state or load_state()
+    return {int(x) for x in (state.get("completed") or []) if str(x).lstrip("-").isdigit()}
+
+
 def _next_lesson():
+    """Return the first uncompleted lesson in curriculum order; never wrap.
+
+    Exhausted curricula fail closed. State pointers are metadata only and are
+    never allowed to select an already-completed lesson.
+    """
     sequence = _lesson_sequence()
     if not sequence:
         return None, 0, 0
-    state = load_state()
-    completed = {int(x) for x in (state.get("completed") or []) if str(x).lstrip("-").isdigit()}
-    slot = int(state.get("next_slot", 0) or 0)
+    completed = _completed_ids()
     for idx, (track, lesson) in enumerate(sequence):
         lesson_id = int(lesson.get("id", 0) or 0)
-        if lesson_id not in completed:
-            slot = idx
-            break
-    else:
-        slot = min(max(slot, 0), len(sequence) - 1)
-    track, lesson = sequence[slot]
-    return lesson, int(lesson.get("id", 0)), len(sequence)
+        if lesson_id and lesson_id not in completed:
+            return lesson, lesson_id, len(sequence)
+    print(f"[Education Selection] curriculum exhausted: total={len(sequence)} completed={len(completed)}; publication blocked", flush=True)
+    return None, 0, len(sequence)
 
 
 def _extract_source_year(raw_html: str) -> int | None:
@@ -207,16 +199,13 @@ def _source_candidates(lesson: dict[str, Any]) -> list[dict[str, Any]]:
     candidates.extend(load_source_fallbacks().get(lesson_id, []))
     if int(lesson.get("id", 0) or 0) == 15:
         candidates.extend(LESSON_15_CURRENT_SOURCES)
-    deduped = []
-    seen = set()
+    deduped, seen = [], set()
     for source in candidates:
         url = str(source.get("url", "")).strip()
         if not url or url in seen:
             continue
         seen.add(url)
         deduped.append(dict(source))
-    # Add a topic-aware fallback pool. Availability and freshness are still
-    # verified at runtime, so an unavailable source is simply skipped.
     return dynamic_source_candidates(lesson, deduped, limit=8)
 
 
@@ -224,8 +213,7 @@ def _generate(lesson):
     a, b = lesson["a"], lesson["b"]
     status = str(lesson.get("status", "established"))
     sources = _source_candidates(lesson)
-    source_blocks = []
-    verified_sources = []
+    source_blocks, verified_sources = [], []
     for source in sources:
         url = str(source.get("url", "")).strip()
         excerpt, detected_year = _fetch_reference(url)
@@ -238,26 +226,15 @@ def _generate(lesson):
         if not assessment.get("current"):
             print(f"[Education Source Gate] rejected status={assessment.get('status')} url={url}", flush=True)
             continue
-        verified = {
-            **source,
-            "year": assessment.get("year", detected_year if detected_year is not None else declared_year),
-            "current_verified": True,
-            "current_status": assessment.get("status"),
-            "organization": assessment.get("organization"),
-            "authority_tier": assessment.get("authority_tier"),
-            "authority_score": assessment.get("authority_score"),
-        }
+        verified = {**source, "year": assessment.get("year", detected_year if detected_year is not None else declared_year), "current_verified": True, "current_status": assessment.get("status"), "organization": assessment.get("organization"), "authority_tier": assessment.get("authority_tier"), "authority_score": assessment.get("authority_score")}
         verified_sources.append(verified)
         current_label = str(assessment.get("year") or assessment.get("status") or "current")
         source_blocks.append(f"منبع: {source.get('name')}\nوضعیت زمانی: {current_label}\nURL: {url}\nبخش بازیابی‌شده: {excerpt[:2200]}")
-
-    # Prefer the best verified sources for the prompt and publication metadata.
     verified_sources = rank_verified_sources(verified_sources)
     source_ok, verified_sources, source_reason = validate_current_sources(verified_sources)
     if not source_ok:
         print(f"[Education Source Gate] FAILED lesson={lesson.get('id')} reason={source_reason}", flush=True)
         return None, verified_sources
-
     prompt = f"""تو ویراستار و نویسنده ارشد یک کانال آموزشی فارسی درباره هوش مصنوعی و فناوری هستی.
 قواعد سخت و غیرقابل مذاکره:
 1) دقیقاً فقط دو مفهوم اصلی را آموزش بده.
@@ -307,13 +284,23 @@ def build_educational_item():
 
 def commit_education_lesson(lesson_id):
     state = load_state()
+    sequence = _lesson_sequence()
+    valid_ids = {int(lesson.get("id", 0) or 0) for _, lesson in sequence}
+    lesson_id = int(lesson_id)
+    if lesson_id not in valid_ids:
+        raise ValueError(f"[Education Contract] refusing unknown lesson_id={lesson_id}")
     completed = [int(x) for x in (state.get("completed") or []) if str(x).lstrip("-").isdigit()]
     if lesson_id not in completed:
-        completed.append(int(lesson_id))
-    sequence = _lesson_sequence()
+        completed.append(lesson_id)
     total = len(sequence)
-    current_slot = next((idx for idx, (_, lesson) in enumerate(sequence) if int(lesson.get("id", 0)) == int(lesson_id)), 0)
-    state["next_slot"] = (current_slot + 1) % total if total else 0
-    state["next_lesson"] = int(sequence[state["next_slot"]][1].get("id", 1)) if total else 1
-    state["completed"] = completed[-total:] if total else completed
+    pending = [(idx, lesson) for idx, (_, lesson) in enumerate(sequence) if int(lesson.get("id", 0) or 0) not in set(completed)]
+    if pending:
+        next_slot, next_lesson = pending[0]
+        state["next_slot"] = next_slot
+        state["next_lesson"] = int(next_lesson.get("id", 0) or 0)
+    else:
+        state["next_slot"] = total
+        state["next_lesson"] = 0
+        print(f"[Education Selection] curriculum exhausted after commit: total={total}; next_lesson=0", flush=True)
+    state["completed"] = completed
     save_state(state)

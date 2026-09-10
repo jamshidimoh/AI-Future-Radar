@@ -63,7 +63,7 @@ jobs:
       - name: Run production regression checks
         run: |
           python -m compileall -q scripts src *.py
-          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py
+          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py
 
       - name: Emit fail-closed closure evidence
         run: |
@@ -123,13 +123,17 @@ jobs:
       - name: Enforce runtime production acceptance
         run: python -u scripts/production_acceptance_guard.py run.log
 
+      - name: Update persistent LLM health from runtime evidence
+        if: always()
+        run: python -u scripts/update_llm_health_state.py run.log
+
       - name: Persist production state
         if: always()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
+          git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
           if git diff --cached --quiet; then
             echo "No production state changes to commit."
             exit 0
@@ -145,7 +149,7 @@ jobs:
             else
               echo "State rebase attempt ${attempt} hit generated-state conflicts; merging JSON state instead of discarding remote history."
               python scripts/merge_production_state.py
-              git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json
+              git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
               GIT_EDITOR=true git rebase --continue
               if git push origin "HEAD:${{ github.ref_name }}"; then
                 echo "Production state persisted after lossless JSON merge on attempt ${attempt}."

@@ -62,6 +62,28 @@ def test_confirmed_education_can_satisfy_an_education_slot():
     assert "education=confirmed" in reason
 
 
+def test_runtime_education_confirmation_overrides_earlier_not_due_summary():
+    log = """
+[Production Selection] canonical_period_rank=true total=13
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+[Education Published] CONFIRMED lesson_slot=manual-validation:2026-09-10 run=466 telegram_delivery=successful
+"""
+    ok, reason = validate(log)
+    assert ok
+    assert "education=confirmed" in reason
+
+
+def test_runtime_education_confirmation_requires_successful_delivery():
+    log = """
+[Production Selection] canonical_period_rank=true total=2
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+[Education Published] CONFIRMED lesson_slot=manual-validation:2026-09-10 run=466 telegram_delivery=failed
+"""
+    ok, reason = validate(log)
+    assert not ok
+    assert "zero news items" in reason
+
+
 def test_production_state_preserves_real_baseline_fields():
     state = (ROOT / "data" / "publication_state.json").read_text(encoding="utf-8")
     assert "last_published_news_score" in state

@@ -1,0 +1,144 @@
+"""Persist safe, bounded LLM failure state observed during a production run.
+
+The router already isolates failures inside a run. This script bridges that
+runtime state across GitHub Actions runs without storing credentials or prompt
+content. It intentionally persists only durable failures: authentication,
+account/provider quota, model-not-found/permission, and explicit rate limits.
+Transient 5xx/network failures are not persisted across runs.
+"""
+from __future__ import annotations
+
+import json
+import re
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+STATE_PATH = ROOT / "data" / "llm_health.json"
+
+MODEL_COOLDOWN = {
+    "quota": 3600.0,
+    "rate_limit": 3600.0,
+    "auth": 86400.0,
+    "model": 21600.0,
+}
+PROVIDER_COOLDOWN = {
+    "quota": 21600.0,
+    "rate_limit": 21600.0,
+    "auth": 86400.0,
+}
+
+FAIL_RE = re.compile(r"\[LiteLLM Router\] failed=(?P<deployment>\S+) .*?(?:type=\S+: )?(?P<message>.*)$")
+SUCCESS_RE = re.compile(r"\[LiteLLM Router\] success=(?P<deployment>\S+)")
+
+
+def family(deployment: str) -> str:
+    return deployment.split(":", 1)[0].strip().casefold()
+
+
+def classify(message: str) -> str:
+    text = str(message or "").lower()
+    if re.search(r"\b401\b|unauthorized|unauthenticated|invalid.*(?:api|credential|key|token)|authentication", text):
+        return "auth"
+    if re.search(r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|monthly.*(?:credit|quota)|daily.*(?:limit|quota)|depleted", text):
+        return "quota"
+    if re.search(r"\b429\b|rate.?limit|too many requests|resource_exhausted", text):
+        return "rate_limit"
+    if re.search(r"\b(?:403|404)\b|model.*(?:blocked|disabled|not found|unavailable)|not found|permission", text):
+        return "model"
+    return "transient"
+
+
+def load() -> dict:
+    try:
+        value = json.loads(STATE_PATH.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError, TypeError):
+        return {}
+
+
+def prune(section: dict, now: float) -> dict:
+    out = {}
+    for key, row in section.items():
+        if not isinstance(row, dict):
+            continue
+        try:
+            until = float(row.get("disabled_until", 0) or 0)
+        except (TypeError, ValueError):
+            continue
+        if until > now:
+            out[str(key)] = row
+    return out
+
+
+def main() -> int:
+    log_path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "run.log"
+    if not log_path.exists():
+        print(f"[LLM Health Persistence] no_log=1 path={log_path}")
+        return 0
+
+    state = load()
+    now = time.time()
+    models = prune(state.get("models", {}) if isinstance(state.get("models"), dict) else {}, now)
+    providers = prune(state.get("providers", {}) if isinstance(state.get("providers"), dict) else {}, now)
+    successes: set[str] = set()
+    failures: list[tuple[str, str, str]] = []
+
+    for line in log_path.read_text(encoding="utf-8", errors="replace").splitlines():
+        success = SUCCESS_RE.search(line)
+        if success:
+            successes.add(success.group("deployment"))
+            continue
+        failure = FAIL_RE.search(line)
+        if failure:
+            deployment = failure.group("deployment")
+            reason = failure.group("message").strip()
+            failures.append((deployment, family(deployment), classify(reason)))
+
+    # A successful deployment is healthy again; a same-run failure followed by
+    # success must therefore not leave stale model-level cooldown state.
+    for deployment in successes:
+        models.pop(deployment, None)
+
+    for deployment, provider, kind in failures:
+        if deployment in successes:
+            continue
+        model_seconds = MODEL_COOLDOWN.get(kind)
+        if model_seconds:
+            models[deployment] = {
+                "failures": int(models.get(deployment, {}).get("failures", 0) or 0) + 1,
+                "disabled_until": round(now + model_seconds, 3),
+                "last_error": kind,
+                "last_success": 0,
+            }
+        provider_seconds = PROVIDER_COOLDOWN.get(kind)
+        if provider_seconds:
+            # Account/auth failures are provider-wide. A plain 429 remains
+            # model-scoped unless its message explicitly identifies account
+            # or provider quota, handled as "quota" above.
+            if kind in {"auth", "quota"}:
+                old = providers.get(provider, {})
+                providers[provider] = {
+                    "failures": int(old.get("failures", 0) or 0) + 1,
+                    "disabled_until": round(now + provider_seconds, 3),
+                    "last_error": kind,
+                    "last_success": 0,
+                }
+
+    payload = {
+        "version": 1,
+        "updated_at": round(now, 3),
+        "models": models,
+        "providers": providers,
+    }
+    STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    tmp = STATE_PATH.with_suffix(STATE_PATH.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    tmp.replace(STATE_PATH)
+    print(f"[LLM Health Persistence] failures={len(failures)} successes={len(successes)} models={len(models)} providers={len(providers)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

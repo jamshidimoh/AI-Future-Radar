@@ -15,6 +15,7 @@ name: Run AI Future Radar Bot
 # Full end-to-end rerun: validate current production behavior after the latest verification.
 # LiteLLM-only verification: confirm production fail-closed behavior without legacy router fallback.
 # Post-closure verification: run the complete production path after closure-evidence alignment.
+# Post-closure verification: run one controlled Education Recovery validation.
 
 on:
   push:
@@ -116,7 +117,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
-          FORCE_EDUCATION_PUBLICATION: ${{ github.event_name == 'workflow_dispatch' && inputs.force_education || false }}
+          FORCE_EDUCATION_PUBLICATION: true
         run: python -u scripts/education_recovery.py
 
       - name: Enforce runtime production acceptance

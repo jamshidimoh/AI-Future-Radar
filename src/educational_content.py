@@ -14,6 +14,7 @@ import yaml
 from education_editor import normalize_education_item, terminology_review_prompt
 from educational_telegram_style import format_educational_post
 from education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_current_sources
+from education_dynamic_sources import dynamic_source_candidates, rank_verified_sources
 from llm_router_light import call_llm_with_fallback, get_quality_chain
 
 # Backward-compatible public constant retained for existing tests/callers.
@@ -214,7 +215,9 @@ def _source_candidates(lesson: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         seen.add(url)
         deduped.append(dict(source))
-    return deduped
+    # Add a topic-aware fallback pool. Availability and freshness are still
+    # verified at runtime, so an unavailable source is simply skipped.
+    return dynamic_source_candidates(lesson, deduped, limit=8)
 
 
 def _generate(lesson):
@@ -248,6 +251,8 @@ def _generate(lesson):
         current_label = str(assessment.get("year") or assessment.get("status") or "current")
         source_blocks.append(f"منبع: {source.get('name')}\nوضعیت زمانی: {current_label}\nURL: {url}\nبخش بازیابی‌شده: {excerpt[:2200]}")
 
+    # Prefer the best verified sources for the prompt and publication metadata.
+    verified_sources = rank_verified_sources(verified_sources)
     source_ok, verified_sources, source_reason = validate_current_sources(verified_sources)
     if not source_ok:
         print(f"[Education Source Gate] FAILED lesson={lesson.get('id')} reason={source_reason}", flush=True)

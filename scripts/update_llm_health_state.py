@@ -25,7 +25,6 @@ MODEL_COOLDOWN = {
 }
 PROVIDER_COOLDOWN = {
     "quota": 21600.0,
-    "rate_limit": 21600.0,
     "auth": 86400.0,
 }
 
@@ -96,10 +95,12 @@ def main() -> int:
             reason = failure.group("message").strip()
             failures.append((deployment, family(deployment), classify(reason)))
 
-    # A successful deployment is healthy again; a same-run failure followed by
-    # success must therefore not leave stale model-level cooldown state.
+    # A successful deployment is healthy again. A successful deployment also
+    # proves its provider account is usable, so clear any same-run provider
+    # cooldown left by an earlier account/auth failure.
     for deployment in successes:
         models.pop(deployment, None)
+        providers.pop(family(deployment), None)
 
     for deployment, provider, kind in failures:
         if deployment in successes:
@@ -113,18 +114,14 @@ def main() -> int:
                 "last_success": 0,
             }
         provider_seconds = PROVIDER_COOLDOWN.get(kind)
-        if provider_seconds:
-            # Account/auth failures are provider-wide. A plain 429 remains
-            # model-scoped unless its message explicitly identifies account
-            # or provider quota, handled as "quota" above.
-            if kind in {"auth", "quota"}:
-                old = providers.get(provider, {})
-                providers[provider] = {
-                    "failures": int(old.get("failures", 0) or 0) + 1,
-                    "disabled_until": round(now + provider_seconds, 3),
-                    "last_error": kind,
-                    "last_success": 0,
-                }
+        if provider_seconds and kind in {"auth", "quota"}:
+            old = providers.get(provider, {})
+            providers[provider] = {
+                "failures": int(old.get("failures", 0) or 0) + 1,
+                "disabled_until": round(now + provider_seconds, 3),
+                "last_error": kind,
+                "last_success": 0,
+            }
 
     payload = {
         "version": 1,

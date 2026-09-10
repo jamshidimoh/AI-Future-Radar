@@ -29,8 +29,10 @@ TIER0_PUBLICATION_PATTERN = re.compile(
     r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)"
 )
 TIER0_FLOOR_PATTERN = re.compile(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", re.I)
+# Runtime evidence may carry additional fields between CONFIRMED and the
+# delivery marker; do not require an exact field order beyond the two anchors.
 EDUCATION_CONFIRMED_PATTERN = re.compile(
-    r"\[Education Published\]\s+CONFIRMED\b.*?telegram_delivery=successful"
+    r"\[Education Published\].*?CONFIRMED\b.*?telegram_delivery=successful"
 )
 
 
@@ -89,7 +91,11 @@ def validate(log_text: str) -> tuple[bool, str]:
     tier0_news = int(contract_match.group(3))
     tier0_quota_exempt = contract_match.group(4).lower() == "true"
     education = contract_match.group(5)
-    if education != "confirmed" and _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
+    # Education Recovery runs after the news Production Contract summary. If
+    # it successfully publishes, that later runtime evidence is authoritative
+    # for the final acceptance state, even when the earlier summary said
+    # education=not_due.
+    if _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
         education = "confirmed"
     published_news = normal_news + tier0_news
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))

@@ -34,22 +34,51 @@ def test_deterministic_recovery_supports_the_actually_due_lesson(monkeypatch):
     assert len(item["education_sources"]) == 2
 
 
-def test_deterministic_recovery_supports_lesson_112_current_source_override(monkeypatch):
+def test_recovery_fails_over_from_unavailable_candidate_to_current_candidates(monkeypatch):
     lesson = {
-        "id": 112,
-        "status": "emerging",
-        "title": "Just-in-Time Context و Context Compaction",
-        "a": {"term": "Just-in-Time Context", "fa": "زمینه در زمان نیاز", "seed": "راهبردی برای وارد کردن اطلاعات لازم در زمان مناسب."},
-        "b": {"term": "Context Compaction", "fa": "فشرده‌سازی زمینه", "seed": "کاهش یا بازنمایی فشرده اطلاعات تاریخی یک اجرای طولانی برای حفظ اطلاعات مهم."},
-        "relation": "یکی بر زمان بازیابی و دیگری بر فشرده‌سازی سابقه تمرکز دارد.",
-        "sources": [{"name": "stale", "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents", "year": 2025}],
+        "id": 113,
+        "title": "Agentic Memory و Structured Memory",
+        "domain": "AI agents",
+        "a": {"term": "Agentic Memory", "fa": "حافظه عاملی", "seed": "memory for agents"},
+        "b": {"term": "Structured Memory", "fa": "حافظه ساختاریافته", "seed": "structured metadata"},
     }
-    monkeypatch.setattr(module, "_ORIGINAL_SOURCE_CANDIDATES", lambda _: lesson["sources"])
-    candidates = module._source_candidates_with_current_overrides(lesson)
-    urls = {item["url"] for item in candidates}
-    assert "https://platform.claude.com/docs/en/build-with-claude/compaction" in urls
-    assert "https://www.truefoundry.com/blog/jit-context-just-in-time-context-agents" in urls
-    assert "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" in urls
+    candidates = [
+        {"name": "unavailable-primary", "url": "https://primary.example/404", "year": 2026},
+        {"name": "AWS", "url": "https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/long-term-memory-metadata.html", "year": 2026, "authority": 99},
+        {"name": "Microsoft Research", "url": "https://www.microsoft.com/en-us/research/", "year": 2026, "authority": 96},
+    ]
+
+    def fake_fetch(url):
+        if url.endswith("/404"):
+            return "", None
+        return "verified excerpt", 2026
+
+    def fake_assess(**kwargs):
+        return {
+            "current": True,
+            "status": "current",
+            "year": kwargs.get("detected_year"),
+            "organization": "aws.amazon.com" if "amazonaws" in kwargs["url"] else "microsoft.com",
+            "authority_tier": 1,
+            "authority_score": 99,
+        }
+
+    monkeypatch.setattr(module.educational_content, "_source_candidates", lambda _: candidates)
+    monkeypatch.setattr(module.educational_content, "_fetch_reference", fake_fetch)
+    monkeypatch.setattr(module, "assess_source", fake_assess)
+    monkeypatch.setattr(module, "validate_current_sources", lambda sources: (len(sources) >= 2, sources[:2], "ok"))
+
+    verified = module._collect_verified_current_sources(lesson)
+    urls = [source["url"] for source in verified]
+    assert "https://primary.example/404" not in urls
+    assert len(verified) == 2
+    assert urls[0].startswith("https://")
+
+
+def test_recovery_has_no_lesson_specific_override_registry():
+    assert not hasattr(module, "CURRENT_SOURCE_OVERRIDES")
+    assert not hasattr(module, "_source_candidates_with_current_overrides")
+    assert not hasattr(module, "_install_authoritative_source_override")
 
 
 def test_deterministic_recovery_still_fails_closed_without_two_current_sources(monkeypatch):

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789011950,
+  "updated_at": 1789012199,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8458,6 +8458,18 @@
       "why_it_matters": "سرعت پیشرفت‌های هوش مصنوعی باعث شده تا خطرات ناشی از سوءاستفاده، تبعیض الگوریتمی و فقدان شفافیت به سرعت افزایش یابد. اگر در این «پنجرهٔ سیاست‌گذاری» اقدام نگردد، تنظیم‌گری‌های بعدی ممکن است بیش از حد محدودکننده یا ناکافی باشند و به بروز خسارات اجتماعی، اقتصادی و امنیتی منجر شوند. بنابراین، پذیرش یک رویکرد پیشگیرانه و جامع در همین لحظه می‌تواند ریسک‌های آینده را به‌طور قابل‌Attentionی کاهش دهد.",
       "link": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE16Nk92bjU2QkFrUWR3enpvc2JRd2RDR2JMRDJpb0RvbFdpOEVDTEtfbVBvbm5NTllaOUNmR1ZDTmtoYXFLalVMSlBtZEpqckZaaTJfMw?oc=5&hl=en-US&gl=US&ceid=US:en",
       "posted_at": 1789011376
+    },
+    "-1004482051328:1550": {
+      "chat_id": -1004482051328,
+      "message_id": 1550,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1789012199
     }
   }
 }

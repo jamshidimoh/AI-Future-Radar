@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789062358,
+  "updated_at": 1789076363,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8482,6 +8482,25 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1789016555
+    },
+    "-1004482051328:1552": {
+      "chat_id": -1004482051328,
+      "message_id": 1552,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - No Priors Podcast",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "Coinbase به عنوان «Everything Exchange»: مالی هوشمند، توکنیزه‌سازی دارایی‌ها و پروژه طول عمر New Limit",
+      "summary": "در این قسمت از No Priors Podcast، بنیان‌گذار و CEO شرکت Coinbase، Brian Armstrong، با Elad Gil دربارهٔ «Everything Exchange» گفتگو می‌کند؛ پلتفرمی که هدفش ترکیب مالی‌ agentic، توکنیزه‌سازی سهام واقعی، پذیرش stablecoin برای پرداخت و بازارهای پیش‌بینی است. او شرح می‌دهد که هوش مصنوعی داخل Coinbase برای بهبود کارایی و مقیاس‌پذیری چه نقشی ایفا می‌کند و چگونه این فناوری به تجارت «agentic» می‌انجامد. در میان مباحث، Armstrong پروژه جدید خود، New Limit، را معرفی می‌کند؛ شرکتی که به‌وسیلهٔ بازنویسی اپی‌ژنتیک به دنبال افزایش طول عمر انسان‌هاست و برنامه‌های اولیهٔ درمانی را تا مرحلهٔ آزمایشات بالینی برنامه‌ریزی کرده است. در پایان، او چشم‌انداز پنج سالهٔ توسعهٔ این ایده‌ها، شامل ایجاد مناطق اقتصادی ویژه و گسترش زیرساخت‌های کریپتو‑AI را ترسیم می‌کند.",
+      "description": "From the tokenization of real-world assets to funding research on anti-aging therapeutics, Coinbase co-founder and CEO Brian Armstrong is focused on solving meta-problems for the benefit of society. Brian joins Elad Gil this episode to discuss the intersections of artificial intelligence, crypto rails, and biotechnology. He details Coinbase’s vision for agentic finance, as well as how Coinbase is becoming the ‘Everything Exchange’, which includes tokenized real-world stocks, stablecoin payment adoption, and prediction markets. Brian also introduces his new venture, New Limit, a company founded to tackle longevity through epigenetic reprogramming, and outlines initial therapeutic programs and the roadmap toward clinical trials.  \n\nSign up for new podcasts every week. Email feedback to show@no-priors.com\n\nFollow us on Twitter: @NoPriorsPod | @Saranormous | @EladGil | @brian_armstrong | @Coinbase\n\nChapters:\n00:00 – Cold Open Trailer\n00:45 – Brian Armstrong Introduction\n01:13 – Coinbase and the Everything Exchange\n05:52 – Agentic Commerce\n10:00 – AI and Crypto\n10:49 – AI Inside Coinbase\n15:39 – Productivity and Company Size\n17:26 – The Everything Exchange and Tokenization\n20:53 – Prediction Markets\n23:15 – Introducing New Limit\n34:17 – Looking Forward Five Years\n40:24 – Special Economic Zones\n44:26 – Conclusion artificial intelligence",
+      "why_it_matters": "اجرای یک «Everything Exchange» می‌تواند مرزهای مالی سنتی را با ترکیب توکنیزه‌سازی دارایی‌های واقعی و پرداخت‌های stablecoin درهم بریزد و به کاربران امکان دسترسی سریع‌تر و شفاف‌تر به بازارهای جهانی را بدهد. به کارگیری هوش مصنوعی در زیرساخت‌های Coinbase نه تنها کارایی تراکنش‌ها را ارتقاء می‌دهد، بلکه پایه‌ای برای سرویس‌های پیش‌بینی و تجارت هوشمند فراهم می‌کند. پروژه New Limit، با هدف بازنویسی اپی‌ژنتیک برای طول عمر، نشان می‌دهد که سرمایه‌گذاری در بایوتکنولوژی می‌تواند از حوزهٔ رمزارزها فراتر رفته و به‌صورت مستقیم بر سلامت انسان تأثیر بگذارد. این ترکیب فناوری‌های نوین، فرصت‌های اقتصادی جدیدی ایجاد می‌کند اما همچنان با چالش‌های نظارتی، امنیت داده و اثبات بالینی در مسیر پیشرفت مواجه است.",
+      "link": "https://www.youtube.com/watch?v=uLDK4l_-gUE",
+      "posted_at": 1789076363
     }
   }
 }

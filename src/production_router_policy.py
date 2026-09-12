@@ -54,12 +54,9 @@ def _load_health() -> dict:
 
 
 def _persistently_unavailable(deployment_id: str) -> bool:
-    """Skip providers/models whose persisted health cooldown is still active.
-
-    This prevents every production run from repeatedly spending its routing
-    budget on a provider already proven to be quota/auth/wallet unavailable.
-    The cooldown is time based, so healthy providers automatically re-enter.
-    """
+    """Skip providers/models whose persisted health cooldown is still active in production."""
+    if os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() not in {"1", "true", "yes"}:
+        return False
     health = _load_health()
     now = time.time()
     models = health.get("models") or {}

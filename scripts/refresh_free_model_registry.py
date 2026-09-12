@@ -115,6 +115,22 @@ def _openrouter_task_evidence(token: str | None) -> dict[str, float]:
     return scores
 
 
+def _free_llm_router_ids(token: str | None) -> tuple[bool, list[str], str]:
+    if not token:
+        return False, [], "missing credential"
+    status, payload = _get_json(
+        "https://freellmrouter.com/api/v1/models/ids",
+        token=token,
+        query={"useCase": "chat", "sort": "capable", "topN": 40, "maxErrorRate": 40, "timeRange": "7d"},
+    )
+    if status in (401, 403):
+        return False, [], f"authentication failed HTTP {status}"
+    if status >= 400:
+        return False, [], f"catalog failed HTTP {status}"
+    ids = [str(x).strip() for x in (payload.get("ids") or []) if str(x).strip()]
+    return True, ids, f"catalog ok count={len(ids)}"
+
+
 def _groq_models(token: str | None) -> tuple[bool, dict[str, dict], str]:
     if not token:
         return False, {}, "missing credential"
@@ -212,6 +228,7 @@ def refresh() -> dict:
     token_groq = os.getenv("GROQ_API_KEY")
     token_kira = os.getenv("KIRAAI_API_KEY")
     token_gemini = os.getenv("GEMINI_API_KEY")
+    token_flr = os.getenv("FREE_LLM_ROUTER_API_KEY")
     generated_at = datetime.now(timezone.utc).isoformat()
 
     or_auth_ok, or_auth_reason = _openrouter_auth(token_or)
@@ -221,6 +238,7 @@ def refresh() -> dict:
     groq_ok, groq_models, groq_reason = _groq_models(token_groq)
     kira_ok, kira_models, kira_reason = _kira_models(token_kira)
     gemini_ok, gemini_models, gemini_reason = _gemini_models(token_gemini)
+    flr_ok, flr_ids, flr_reason = _free_llm_router_ids(token_flr)
     discovery: list[dict] = []
 
     for provider in registry.get("providers", []) or []:
@@ -312,6 +330,30 @@ def refresh() -> dict:
             if row["quality_score"] >= 45:
                 discovery.append(row)
 
+    if flr_ok and or_auth_ok:
+        discovery_ids = {str(x.get("id")) for x in discovery}
+        for model_id in flr_ids:
+            live = or_models.get(model_id)
+            if not live or not _is_zero_price(live) or model_id in trusted_ids or model_id in discovery_ids:
+                continue
+            benchmark = or_benchmarks.get(model_id.lower().removesuffix(":free"))
+            row = {
+                "id": model_id,
+                "family": "openrouter",
+                "free": True,
+                "chat_capable": "text" in (live.get("architecture", {}).get("input_modalities") or ["text"]),
+                "json_capable": True,
+                "response_format": _supports_response_format(live),
+                "context_length": int(live.get("context_length") or 0),
+                "priority": 950,
+                "reliability_score": 85,
+                "promotion_status": "free-llm-router-qualified",
+                "discovery_source": "free-llm-router",
+            }
+            _apply_evidence(row, benchmark, or_task_usage, generated_at)
+            if row["quality_score"] >= 45:
+                discovery.append(row)
+
     discovery.sort(key=lambda x: (-float(x.get("quality_score", 0)), x["id"]))
     runtime = {
         "runtime": {
@@ -323,6 +365,7 @@ def refresh() -> dict:
                 "groq": {"valid": groq_ok, "reason": groq_reason},
                 "kiraai": {"valid": kira_ok, "reason": kira_reason},
                 "gemini": {"valid": gemini_ok, "reason": gemini_reason},
+                "free_llm_router": {"valid": flr_ok, "reason": flr_reason},
             },
             "evidence": {
                 "benchmark_source": "OpenRouter API -> Artificial Analysis",

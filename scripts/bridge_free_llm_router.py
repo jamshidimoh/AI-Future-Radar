@@ -1,15 +1,9 @@
 """Bridge Free LLM Router health discovery into the runtime OpenRouter registry.
 
 Free LLM Router is a discovery/availability layer, not an inference provider.
-This bridge only promotes models that are:
-- returned by FLR's live chat-capable catalog,
-- present in OpenRouter's live catalog,
-- currently zero-priced on OpenRouter, and
-- text-capable for the Radar's JSON-prompted workload.
-
-Because FLR does not provide an intelligence benchmark, promoted candidates
-receive a deliberately conservative fallback quality score (<65). They can
-serve as resilience candidates but cannot outrank benchmark-backed models.
+This bridge promotes only concrete OpenRouter free model IDs that are usable
+for the Radar's text/JSON workload. Health evidence controls resilience, not
+intelligence rank.
 """
 from __future__ import annotations
 
@@ -28,6 +22,7 @@ TIMEOUT = 12
 MAX_CANDIDATES = 40
 MIN_QUALITY = 50.0
 MAX_QUALITY = 64.0
+BLOCKED_IDS = {"openrouter/free", "openrouter/auto"}
 
 
 def _get_json(url: str, *, token: str | None = None, query: dict | None = None) -> tuple[int, dict]:
@@ -48,6 +43,13 @@ def _zero_price(model: dict) -> bool:
         return False
 
 
+def _text_capable(model: dict) -> bool:
+    architecture = model.get("architecture") or {}
+    inputs = architecture.get("input_modalities") or ["text"]
+    outputs = architecture.get("output_modalities") or ["text"]
+    return "text" in inputs and "text" in outputs
+
+
 def _load() -> dict:
     if not RUNTIME_PATH.exists():
         raise RuntimeError(f"Runtime registry not found: {RUNTIME_PATH}")
@@ -58,8 +60,6 @@ def _load() -> dict:
 
 
 def _candidate_quality(reliability: float, rank: int) -> float:
-    # FLR health is availability evidence, not intelligence evidence. Keep the
-    # resulting score conservative and below benchmark-backed production tiers.
     reliability = max(0.0, min(100.0, reliability))
     rank_bonus = max(0.0, min(4.0, (MAX_CANDIDATES - rank) / 10.0))
     return round(min(MAX_QUALITY, max(MIN_QUALITY, 50.0 + reliability * 0.10 + rank_bonus)), 3)
@@ -72,6 +72,10 @@ def bridge() -> dict:
     or_token = os.getenv("OPENROUTER_API_KEY", "").strip()
     if not flr_token or not or_token:
         runtime["flr_bridge"] = {"enabled": False, "reason": "missing credential"}
+        runtime["discovery_candidates"] = [
+            row for row in (runtime.get("discovery_candidates") or [])
+            if isinstance(row, dict) and str(row.get("id") or "").strip().casefold() not in BLOCKED_IDS
+        ]
         RUNTIME_PATH.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
         return data
 
@@ -98,7 +102,10 @@ def bridge() -> dict:
     registry = data.get("registry") or {}
     trusted_ids = {str(model.get("id")) for provider in registry.get("providers", []) or [] for model in provider.get("models", []) or []}
     existing = runtime.get("discovery_candidates") or []
-    candidates = [row for row in existing if isinstance(row, dict)]
+    candidates = [
+        row for row in existing
+        if isinstance(row, dict) and str(row.get("id") or "").strip().casefold() not in BLOCKED_IDS
+    ]
     existing_ids = {str(row.get("id")) for row in candidates}
 
     accepted = 0
@@ -114,6 +121,8 @@ def bridge() -> dict:
         reasons: list[str] = []
         if not model_id:
             reasons.append("missing_id")
+        if model_id.casefold() in BLOCKED_IDS:
+            reasons.append("non_routable_alias")
         if model_id in trusted_ids:
             reasons.append("already_trusted")
         if model_id in existing_ids:
@@ -122,9 +131,8 @@ def bridge() -> dict:
             reasons.append("not_in_openrouter_catalog")
         elif not _zero_price(live):
             reasons.append("not_free_now")
-        modalities = (live or {}).get("architecture", {}).get("input_modalities") or ["text"]
-        if live and "text" not in modalities:
-            reasons.append("not_text_chat")
+        if live and not _text_capable(live):
+            reasons.append("not_text_io")
 
         if reasons:
             rejected += 1
@@ -195,7 +203,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-# Verified routing note: FLR candidates are fallback-only and bounded below
-# benchmark-backed entries, so discovery improves resilience without changing
-# the primary quality ordering policy.

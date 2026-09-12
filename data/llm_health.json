@@ -1,22 +1,13 @@
 {
   "models": {
     "kiraai:dots-3-note-preview": {
-<<<<<<< HEAD
-      "disabled_until": 1789202999.575,
-      "failures": 3,
-=======
-      "disabled_until": 1789203213.525,
+      "disabled_until": 1789203672.088,
       "failures": 2,
->>>>>>> db95592 (chore: persist production state [skip ci])
       "last_error": "quota",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
-<<<<<<< HEAD
-      "disabled_until": 1789202999.575,
-=======
-      "disabled_until": 1789203213.525,
->>>>>>> db95592 (chore: persist production state [skip ci])
+      "disabled_until": 1789203672.088,
       "failures": 1,
       "last_error": "quota",
       "last_success": 0
@@ -24,20 +15,12 @@
   },
   "providers": {
     "openrouter": {
-<<<<<<< HEAD
-      "disabled_until": 1789220999.575,
-=======
-      "disabled_until": 1789221213.525,
->>>>>>> db95592 (chore: persist production state [skip ci])
+      "disabled_until": 1789221672.088,
       "failures": 1,
       "last_error": "quota",
       "last_success": 0
     }
   },
-<<<<<<< HEAD
-  "updated_at": 1789199399.575,
-=======
-  "updated_at": 1789199613.525,
->>>>>>> db95592 (chore: persist production state [skip ci])
+  "updated_at": 1789200072.088,
   "version": 1
 }

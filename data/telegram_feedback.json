@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789200071,
+  "updated_at": 1789200497,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8706,6 +8706,24 @@
       "why_it_matters": "افزایش ۲٫۹۰ برابر در توان پردازشی به معنی توانایی پیش‌بینی تعداد بیشتری ترکیب پروتئینی در زمان کمتر است، که می‌تواند سرعت تحقیق در حوزه‌های داروسازی و زیست‌فناوری را به‌طور قابل‌Attentionی ارتقا دهد. توانمندی BioIR در استفاده از تمام توان H100ها و بهینه‌سازی لایه‌ای، هزینهٔ محاسباتی را کاهش داده و امکان مقیاس‌پذیری بزرگتر برای پروژه‌های ملی مانند AlphaFold Database را فراهم می‌کند. این پیشرفت همچنین نشان می‌دهد که به‌کارگیری ابزارهای عمومی PyTorch می‌تواند بدون از دست دادن کارایی، به‌سرعت به‌سوی برنامه‌های علمی خاص پیش برود.",
       "link": "https://www.marktechpost.com/2026/09/10/nvidia-details-bionemo-inference-runtime-bioir-2-90x-higher-boltz-2-folding-throughput-and-58-5k-residues-per-gpu-hour-on-8xh100/",
       "posted_at": 1789199611
+    },
+    "-1004482051328:1564": {
+      "chat_id": -1004482051328,
+      "message_id": 1564,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "ساکانا AI دو مدل جدید Fugu Max و Fugu Ultra v2 را معرفی کرده است که بر همان معماری orchestration یادگیری ساخته شده‌اند",
+      "summary": "ساکانا AI دو مدل جدید Fugu Max و Fugu Ultra v2 را معرفی کرده است که بر همان معماری orchestration یادگیری ساخته شده‌اند. Fugu Max با هدایت وظایف به مدل‌های lean و تخصصی از جمله NVIDIA Nemotron، قیمت‌گذاری $2/$6 بر هر میلیون توکن را ارائه می‌دهد. Fugu Ultra v2 بر حداکثر قابلیت تمرکز دارد و در آزمون‌های Chartography و DeepSWE به ترتیب 48.3 و 74.3 امتیاز کسب کرده است.",
+      "why_it_matters": "این نسخه‌های جدید با هزینه پایین‌تر و بهره‌وری بالاتر، امکان اجرای orchestration چند عامل را در مقیاس وسیع‌تر فراهم می‌کنند. قیمت‌های $2/$6 بر 1M توکن، نسبت به مدل‌های مشابه، کاهش قابل Attentionی در هزینه پردازش می‌سازد. عملکرد بالای Fugu Ultra v2 در Chartography و DeepSWE نشان‌دهنده قدرت بالای مدل در وظایف پیچیده است که برای کاربردهای صنعتی حیاتی می‌باشد. با Attention به اینکه این مدل‌ها به‌صورت open-source و به‌اشتراک‌گذاری می‌شوند، توسعه‌دهندگان می‌توانند به سرعت از امکانات آن بهره‌مند شوند. این پیشرفت، مسیر بهبود بهره‌وری و دسترسی به تکنولوژی AI را در بازارهای رقابتی باز می‌کند.",
+      "link": "https://www.marktechpost.com/2026/09/10/sakana-ai-launches-fugu-max-and-fugu-ultra-v2-for-cheaper-stronger-multi-agent-orchestration/",
+      "posted_at": 1789200497
     }
   }
 }

@@ -60,6 +60,22 @@ def test_log_persistence_distinguishes_plain_429_from_account_quota(tmp_path, mo
     assert "openrouter" in payload["providers"]
 
 
+def test_production_circuit_log_is_persisted(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    log = tmp_path / "run.log"
+    log.write_text(
+        "[Production Circuit] failed=openrouter:model-a reason=rate_limit scope=model: HTTP 429 upstream_provider_shared_pool\n"
+        "[Production Circuit] success=groq:model-b model=groq/model-b attempts=2\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+    assert "openrouter:model-a" in payload["models"]
+    assert "groq:model-b" not in payload["models"]
+
+
 def test_success_removes_persisted_model_failure(tmp_path, monkeypatch):
     state = tmp_path / "llm_health.json"
     log = tmp_path / "run.log"

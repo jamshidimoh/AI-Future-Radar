@@ -20,6 +20,9 @@ PROVIDER_COOLDOWN = {
     "quota": 21600.0,
     "auth": 86400.0,
 }
+# A zero-wallet KiraAI account cannot recover within the next run without a
+# balance change, so treat wallet exhaustion as provider-scoped for 24 hours.
+KIRAAI_WALLET_PROVIDER_COOLDOWN = 86400.0
 
 FAIL_RE = re.compile(
     r"\[(?:LiteLLM Router|Production Circuit)\]\s+"
@@ -117,8 +120,17 @@ def main() -> int:
                 "last_error": kind,
                 "last_success": 0,
             }
+        if kira_wallet_only:
+            old = providers.get(provider, {})
+            providers[provider] = {
+                "failures": int(old.get("failures", 0) or 0) + 1,
+                "disabled_until": round(now + KIRAAI_WALLET_PROVIDER_COOLDOWN, 3),
+                "last_error": "wallet_quota",
+                "last_success": 0,
+            }
+            continue
         provider_seconds = PROVIDER_COOLDOWN.get(kind)
-        if provider_seconds and kind in {"auth", "quota"} and not kira_wallet_only:
+        if provider_seconds and kind in {"auth", "quota"}:
             old = providers.get(provider, {})
             providers[provider] = {
                 "failures": int(old.get("failures", 0) or 0) + 1,

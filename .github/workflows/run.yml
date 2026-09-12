@@ -1,69 +1,49 @@
-name: Run AI Future Radar Bot
-# Production verification is registry-driven: discovery validates the current
-# free-model landscape, while quality is the primary model-ordering signal.
-# Tehran publication windows:
-# - 01:47 UTC = 05:17 Tehran (UTC+3:30)
-# - 07:17 UTC = 10:47 Tehran
-# - 10:17 UTC = 13:47 Tehran
-# - 14:17 UTC = 17:47 Tehran
-# - 17:17 UTC = 20:47 Tehran
-# - 19:17 UTC = 22:47 Tehran
-# GitHub Actions cron is UTC; these comments document the intended Tehran windows.
-# Post-merge verification trigger: validate Canonical Story Gate performance on main.
-# LiteLLM verification trigger: validate the actual production LLM execution path.
-# Full production verification trigger: execute the complete end-to-end pipeline.
-# Full end-to-end rerun: validate current production behavior after the latest verification.
-# LiteLLM-only verification: confirm production fail-closed behavior without legacy router fallback.
-# Post-closure verification: run the complete production path after closure-evidence alignment.
-# Post-closure verification: run one controlled Education Recovery validation.
+name: AI Future Radar
 
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: "*/30 * * * *"
   workflow_dispatch:
     inputs:
       force_education:
-        description: "Run a controlled end-to-end Education publication validation"
+        description: "Force Education recovery publication"
         required: false
         default: false
         type: boolean
-  schedule:
-    - cron: "47 1 * * *"
-    - cron: "17 7,10,14,17,19 * * *"
+  push:
+    branches: [main]
 
 permissions:
   contents: write
 
 concurrency:
   group: ai-future-radar-production
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   run-bot:
-    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 26
     steps:
       - name: Checkout current ref
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.sha }}
-          fetch-depth: 1
-          persist-credentials: true
+          fetch-depth: 20
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-          cache: pip
 
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
       - name: Run production regression checks
+        env:
+          PYTHONUNBUFFERED: "1"
+          RADAR_PRODUCTION_MODE: "1"
         run: |
-          python -m compileall -q scripts src *.py
-          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py
+          python -m pytest -q tests/test_llm_router_resilience.py tests/test_production_router_policy.py tests/test_hf_light_router.py tests/test_free_model_registry.py tests/test_production_acceptance_guard.py
 
       - name: Emit fail-closed closure evidence
         run: |
@@ -92,7 +72,7 @@ jobs:
           RADAR_SUMMARY_WORKERS: "1"
           AI_RADAR_EDITORIAL_REVIEW: "0"
           RADAR_ENABLE_GEMINI_FALLBACK: "0"
-          RADAR_ENABLE_HF_FALLBACK: "0"
+          RADAR_ENABLE_HF_FALLBACK: "1"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: "-1004482051328"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

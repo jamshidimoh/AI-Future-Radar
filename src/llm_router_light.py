@@ -298,6 +298,16 @@ def _failure_class(message: str) -> str:
     return "other"
 
 
+def _should_disable_provider(message: str) -> bool:
+    """Return true only for provider-level unavailability/auth failures."""
+    text = str(message or "").lower()
+    if re.search(r"\b401\b|unauthorized|authentication failed|invalid api", text):
+        return True
+    if re.search(r"\b403\b|\b404\b|\b503\b", text):
+        return True
+    return False
+
+
 def _model_is_disabled(name: str) -> bool:
     with _STATE_LOCK:
         until = _MODEL_DISABLED_UNTIL.get(name, 0.0)
@@ -341,7 +351,7 @@ def call_llm_with_fallback(system_prompt, user_content, providers=None):
             if result:
                 print(f"[Light Router] success={name}", flush=True)
                 return result, name
-        except concurrent.futures.TimeoutError as exc:
+        except concurrent.futures.TimeoutError:
             last_error = TimeoutError(f"{name}: provider timeout")
             local_models.add(name)
             _disable(name, "transient")

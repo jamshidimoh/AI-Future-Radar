@@ -13,19 +13,19 @@
       "last_success": 0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "disabled_until": 1789194251.623,
-      "failures": 9,
+      "disabled_until": 1789198348.248,
+      "failures": 1,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
-      "disabled_until": 1789194251.623,
-      "failures": 9,
+      "disabled_until": 1789198348.248,
+      "failures": 1,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {},
-  "updated_at": 1789193983.213,
+  "updated_at": 1789194748.248,
   "version": 1
 }

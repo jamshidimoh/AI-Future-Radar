@@ -9,7 +9,7 @@ selection:
   similarity_penalty: 12.0
   preferred_max_same_source: 1
   distinct_sources_first: true
-  replacement_buffer: 2
+  replacement_buffer: 3
 
 editorial:
   leader_priority_weight: 2
@@ -40,8 +40,11 @@ editorial:
 # - Information gain never bypasses relevance, authority, source, content-type,
 #   community, interview, or publication-quality gates.
 # - Community/aggregator sources are not eligible for the normal portfolio.
-# - Candidate_window exists to support replacement after a summary/editorial
-#   quality rejection without relaxing publication quality gates.
+# - Candidate_window exists to support replacement after summary, editorial, or
+#   downstream publication rejection without relaxing publication quality gates.
+# - replacement_buffer=3 keeps three additional normal candidates available
+#   beyond the publication capacity of 3 so semantic/publication rejection can
+#   be absorbed without lowering the score floor.
 # - strict_relevance=true enables hard mission-relevance filtering in the
 #   production orchestration path.
-# - 2026-09-12: production validation trigger after mission-recovery fix.
+# - 2026-09-12: production routing hardening and fallback reserve tuning.

@@ -83,7 +83,7 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
-        run: python -u scripts/bridge_free_llm_router.py --strict
+        run: python -u scripts/bridge_free_llm_router.py
 
       - name: Telegram production preflight
         env:

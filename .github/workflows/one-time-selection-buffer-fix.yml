@@ -1,0 +1,55 @@
+name: One-time Selection Buffer Fix
+
+on:
+  push:
+    paths:
+      - .github/workflows/one-time-selection-buffer-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Patch runtime selection budget
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("production_entrypoint.py")
+          text = p.read_text(encoding="utf-8")
+          old = '''    protected_limit = max(0, int(policy.get("leader_protected_max", 2) or 0))\n    normal_limit = max(0, int(max_posts or 0))\n'''
+          new = '''    protected_limit = max(0, int(policy.get("leader_protected_max", 2) or 0))\n    normal_capacity = max(0, int(max_posts or 0))\n    replacement_buffer = max(0, int(policy.get("replacement_buffer", 0) or 0))\n    normal_limit = normal_capacity + replacement_buffer\n'''
+          if old not in text:
+              raise SystemExit("runtime budget anchor not found")
+          text = text.replace(old, new, 1)
+          old = '''        f"[Selection Budget Guard] ranked={len(candidates)} protected={len(protected)} normal={len(normals)} output={len(bounded)} protected_limit={protected_limit} normal_limit={normal_limit}",\n'''
+          new = '''        f"[Selection Budget Guard] ranked={len(candidates)} protected={len(protected)} normal={len(normals)} output={len(bounded)} protected_limit={protected_limit} normal_capacity={normal_capacity} replacement_buffer={replacement_buffer} normal_limit={normal_limit}",\n'''
+          if old not in text:
+              raise SystemExit("runtime budget log anchor not found")
+          text = text.replace(old, new, 1)
+          old = '''    bounded = _bound_runtime_candidates(candidates, max_posts=3, policy={"leader_protected_max": 2})\n    assert len(bounded) == 5\n    protected = [item for item in bounded if item.get("protected_slot")]\n    normals = [item for item in bounded if item.get("normal_period_rank") is not None]\n    assert len(protected) == 2\n    assert [item.get("normal_period_rank") for item in normals] == [1, 2, 3]\n'''
+          new = '''    bounded = _bound_runtime_candidates(\n        candidates,\n        max_posts=3,\n        policy={"leader_protected_max": 2, "replacement_buffer": 2},\n    )\n    assert len(bounded) == 7\n    protected = [item for item in bounded if item.get("protected_slot")]\n    normals = [item for item in bounded if item.get("normal_period_rank") is not None]\n    assert len(protected) == 2\n    assert [item.get("normal_period_rank") for item in normals] == [1, 2, 3, 4, 5]\n'''
+          if old not in Path("tests/test_production_acceptance_contract.py").read_text(encoding="utf-8"):
+              raise SystemExit("legacy runtime-budget test anchor not found")
+          tp = Path("tests/test_production_acceptance_contract.py")
+          tt = tp.read_text(encoding="utf-8")
+          if old not in tt:
+              raise SystemExit("test anchor not found")
+          tt = tt.replace(old, new, 1)
+          tp.write_text(tt, encoding="utf-8")
+          p.write_text(text, encoding="utf-8")
+          PY
+      - name: Run focused tests
+        run: |
+          python -m pytest -q tests/test_production_acceptance_contract.py
+      - name: Commit fix and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add production_entrypoint.py tests/test_production_acceptance_contract.py .github/workflows/one-time-selection-buffer-fix.yml
+          git commit -m "fix: honor replacement buffer before summarization"
+          git push

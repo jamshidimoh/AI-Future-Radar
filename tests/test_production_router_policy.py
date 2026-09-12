@@ -131,9 +131,7 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
         def completion(self, *, model, **_kwargs):
             calls.append(model)
             if model in {"radar-production-1", "radar-production-2"}:
-                raise RuntimeError(
-                    "HTTP 429 upstream_provider_shared_pool; X-RateLimit-Remaining: 0"
-                )
+                raise RuntimeError("HTTP 429 account_limit; daily quota exhausted")
             return type(
                 "Response",
                 (),
@@ -185,6 +183,41 @@ def test_production_model_429_does_not_disable_provider(monkeypatch):
     assert provider == "groq:model-b"
     assert calls == ["radar-production-1", "radar-production-2"]
     assert "groq" not in router._DISABLED_FAMILIES
+
+
+def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
+    apply()
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            calls.append(model)
+            if model == "radar-production-1":
+                raise RuntimeError("HTTP 429 upstream_provider_shared_pool")
+            return type(
+                "Response",
+                (),
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\"title\":\"ok\"}'})()})()]},
+            )()
+
+    calls = []
+    deployments = [
+        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b"}},
+        {"model_name": "radar-production-3", "model_info": {"id": "groq:model-c"}},
+    ]
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"ok"}'
+    assert provider == "openrouter:model-b"
+    assert calls == ["radar-production-1", "radar-production-2"]
+    assert "openrouter" not in router._DISABLED_FAMILIES
+    assert "openrouter:model-a" in router._DISABLED
 
 
 def test_production_attempt_budget_is_hard_capped(monkeypatch):

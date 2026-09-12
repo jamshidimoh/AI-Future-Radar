@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
       - name: Apply final mission accounting fix
         run: |
           python - <<'PY'
@@ -28,13 +30,48 @@ jobs:
           if old not in t: raise SystemExit('mission block not found')
           p.write_text(t.replace(old,new,1),encoding='utf-8')
           PY
-      - name: Validate and commit
+      - name: Integrate Free LLM Router discovery
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/refresh_free_model_registry.py'); t=p.read_text(encoding='utf-8')
+          marker='''def _groq_models(token: str | None) -> tuple[bool, dict[str, dict], str]:\n'''
+          insert='''def _free_llm_router_ids(token: str | None) -> tuple[bool, list[str], str]:\n    if not token:\n        return False, [], "missing credential"\n    status, payload = _get_json(\n        "https://freellmrouter.com/api/v1/models/ids",\n        token=token,\n        query={"useCase": "chat", "sort": "capable", "topN": 40, "maxErrorRate": 40, "timeRange": "7d"},\n    )\n    if status in (401, 403):\n        return False, [], f"authentication failed HTTP {status}"\n    if status >= 400:\n        return False, [], f"catalog failed HTTP {status}"\n    ids = [str(x).strip() for x in (payload.get("ids") or []) if str(x).strip()]\n    return True, ids, f"catalog ok count={len(ids)}"\n\n\n'''+marker
+          if marker not in t: raise SystemExit('refresh insertion marker not found')
+          t=t.replace(marker,insert,1)
+          t=t.replace('''    token_gemini = os.getenv("GEMINI_API_KEY")\n    generated_at = datetime.now(timezone.utc).isoformat()\n''','''    token_gemini = os.getenv("GEMINI_API_KEY")\n    token_flr = os.getenv("FREE_LLM_ROUTER_API_KEY")\n    generated_at = datetime.now(timezone.utc).isoformat()\n''',1)
+          t=t.replace('''    gemini_ok, gemini_models, gemini_reason = _gemini_models(token_gemini)\n    discovery: list[dict] = []\n''','''    gemini_ok, gemini_models, gemini_reason = _gemini_models(token_gemini)\n    flr_ok, flr_ids, flr_reason = _free_llm_router_ids(token_flr)\n    discovery: list[dict] = []\n''',1)
+          marker='''    discovery.sort(key=lambda x: (-float(x.get("quality_score", 0)), x["id"]))\n'''
+          insert='''    if flr_ok and or_auth_ok:\n        for model_id in flr_ids:\n            live = or_models.get(model_id)\n            if not live or not _is_zero_price(live) or model_id in trusted_ids:\n                continue\n            benchmark = or_benchmarks.get(model_id.lower().removesuffix(":free"))\n            row = {\n                "id": model_id,\n                "family": "openrouter",\n                "free": True,\n                "chat_capable": "text" in (live.get("architecture", {}).get("input_modalities") or ["text"]),\n                "json_capable": True,\n                "response_format": _supports_response_format(live),\n                "context_length": int(live.get("context_length") or 0),\n                "priority": 950,\n                "reliability_score": 85,\n                "promotion_status": "free-llm-router-qualified",\n                "discovery_source": "free-llm-router",\n            }\n            _apply_evidence(row, benchmark, or_task_usage, generated_at)\n            if row["quality_score"] >= 45 and model_id not in {x["id"] for x in discovery}:\n                discovery.append(row)\n\n'''+marker
+          if marker not in t: raise SystemExit('discovery marker not found')
+          t=t.replace(marker,insert,1)
+          t=t.replace('''                "gemini": {"valid": gemini_ok, "reason": gemini_reason},\n''','''                "gemini": {"valid": gemini_ok, "reason": gemini_reason},\n                "free_llm_router": {"valid": flr_ok, "reason": flr_reason},\n''',1)
+          p.write_text(t,encoding='utf-8')
+          PY
+      - name: Wire Free LLM Router secret into production workflow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/run.yml'); t=p.read_text(encoding='utf-8')
+          t=t.replace('''          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}\n        run: python -u scripts/refresh_free_model_registry.py --strict\n''','''          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}\n          FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}\n        run: python -u scripts/refresh_free_model_registry.py --strict\n''',1)
+          p.write_text(t,encoding='utf-8')
+          PY
+      - name: Validate, exercise discovery, and clean up
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
         run: |
           python -m compileall -q main.py src scripts
-          python -m pytest -q tests/test_mission_coverage_recovery.py tests/test_mission_coverage_prepared_quality.py
+          python -m pytest -q tests/test_mission_coverage_recovery.py tests/test_mission_coverage_prepared_quality.py tests/test_free_model_registry.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py
+          python -u scripts/refresh_free_model_registry.py --strict | tee /tmp/flr.log
+          grep -q '"free_llm_router": {"valid": true' /tmp/flr.log
+          grep -q '"discovery_candidates"' /tmp/flr.log
           rm -f .github/workflows/fix-mission-prepared-quality.yml .github/workflows/finalize-radar-fixes.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add main.py tests/test_mission_coverage_prepared_quality.py .github/workflows/fix-mission-prepared-quality.yml .github/workflows/finalize-radar-fixes.yml
-          git commit -m "fix: finalize publishable mission accounting"
+          git add main.py scripts/refresh_free_model_registry.py .github/workflows/run.yml .github/workflows/fix-mission-prepared-quality.yml .github/workflows/finalize-radar-fixes.yml
+          git commit -m "fix: finalize mission recovery and free router discovery"
           git push origin HEAD:main

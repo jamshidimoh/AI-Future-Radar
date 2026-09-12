@@ -56,9 +56,7 @@ def _provider_runtime_available(provider: dict) -> bool:
 
 
 def _blocked_model_id(family: str, model_id: str) -> bool:
-    if family != "openrouter":
-        return False
-    return model_id.strip().casefold() in _BLOCKED_OPENROUTER_IDS
+    return family == "openrouter" and model_id.strip().casefold() in _BLOCKED_OPENROUTER_IDS
 
 
 def _quality_score(model: dict) -> float:
@@ -75,12 +73,7 @@ def _quality_score(model: dict) -> float:
 
 def _routing_key(entry: dict) -> tuple:
     family = str(entry.get("family") or "").strip().casefold()
-    return (
-        _PROVIDER_ORDER.get(family, 99),
-        -_quality_score(entry),
-        int(entry.get("priority", 9999) or 9999),
-        str(entry.get("id", "")),
-    )
+    return (_PROVIDER_ORDER.get(family, 99), -_quality_score(entry), int(entry.get("priority", 9999) or 9999), str(entry.get("id", "")))
 
 
 def discovered_candidates() -> list[dict]:
@@ -135,13 +128,7 @@ def canonical_entries() -> list[dict]:
         score = _quality_score(candidate)
         if score < 50:
             continue
-        env_name = {
-            "openrouter": "OPENROUTER_API_KEY",
-            "kiraai": "KIRAAI_API_KEY",
-            "groq": "GROQ_API_KEY",
-            "gemini": "GEMINI_API_KEY",
-            "huggingface": "HF_TOKEN",
-        }.get(family)
+        env_name = {"openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY", "huggingface": "HF_TOKEN"}.get(family)
         if not _credential_available(env_name):
             continue
         row = dict(candidate)
@@ -155,7 +142,6 @@ def canonical_entries() -> list[dict]:
 
 
 def ranked_entries() -> list[dict]:
-    """Return currently usable deployments using provider-first reliability order."""
     from free_model_service import get_intelligence
     ranked = get_intelligence().rank(canonical_entries())
     return sorted(ranked, key=_routing_key)
@@ -206,12 +192,19 @@ def _litellm_model_name(entry: dict) -> str:
     raise ValueError(f"Unsupported LiteLLM provider family: {family}")
 
 
+def _nara_deployment(order: int) -> dict:
+    model = os.getenv("NARA_MODEL", NARA_DEFAULT_MODEL).strip()
+    return {
+        "model_name": f"radar-production-{order}",
+        "litellm_params": {"model": f"openai/{model}", "api_key": os.getenv("NARAROUTER_API_KEY", "").strip(), "api_base": "https://router.bynara.id/v1", "timeout": 8, "order": 1},
+        "model_info": {"id": f"nararouter:{model}", "quality_score": 62.0, "provider_family": "nararouter", "rank": order, "response_format": False},
+    }
+
+
 def build_litellm_model_list() -> list[dict]:
-    """Translate ranked registry plus the independent Nara free lane into deployments."""
+    """Translate ranked registry and the independent Nara free lane into deployments."""
     rows: list[dict] = []
-    ranked = ranked_entries()
-    order = 1
-    for entry in ranked:
+    for entry in ranked_entries():
         env_name = str(entry.get("credential_env") or "").strip()
         api_key = os.getenv(env_name, "").strip()
         if not api_key:
@@ -219,38 +212,21 @@ def build_litellm_model_list() -> list[dict]:
         params = {"model": _litellm_model_name(entry), "api_key": api_key, "timeout": 8, "order": 1}
         if entry.get("family") == "kiraai":
             params["api_base"] = "https://kiraai.vn/api/v1"
-        rows.append({
-            "model_name": f"radar-production-{order}",
-            "litellm_params": params,
-            "model_info": {
-                "id": entry["deployment_id"],
-                "quality_score": entry["quality_score"],
-                "provider_family": entry["family"],
-                "rank": order,
-                "response_format": bool(entry.get("response_format")),
-            },
-        })
-        order += 1
-        if entry.get("family") == "groq" and os.getenv("NARAROUTER_API_KEY", "").strip():
-            rows.append({
-                "model_name": f"radar-production-{order}",
-                "litellm_params": {"model": f"openai/{os.getenv('NARA_MODEL', NARA_DEFAULT_MODEL).strip()}", "api_key": os.getenv("NARAROUTER_API_KEY", "").strip(), "api_base": "https://router.bynara.id/v1", "timeout": 8, "order": 1},
-                "model_info": {
-                    "id": f"nararouter:{os.getenv('NARA_MODEL', NARA_DEFAULT_MODEL).strip()}",
-                    "quality_score": 62.0,
-                    "provider_family": "nararouter",
-                    "rank": order,
-                    "response_format": False,
-                },
-            })
-            order += 1
+        rows.append({"model_name": "", "litellm_params": params, "model_info": {"id": entry["deployment_id"], "quality_score": entry["quality_score"], "provider_family": entry["family"], "rank": 0, "response_format": bool(entry.get("response_format"))}})
+
+    if os.getenv("NARAROUTER_API_KEY", "").strip():
+        first_nara_index = next((i for i, row in enumerate(rows) if row["model_info"]["provider_family"] != "groq"), len(rows))
+        rows.insert(first_nara_index, _nara_deployment(0))
+
+    for order, row in enumerate(rows, start=1):
+        row["model_name"] = f"radar-production-{order}"
+        row["model_info"]["rank"] = order
     return rows
 
 
 def build_production_chain(router):
     chain: list[tuple[str, object]] = []
     max_runtime_candidates = int(_load().get("registry", {}).get("max_runtime_candidates", 18) or 18)
-    inserted_nara = False
     for entry in ranked_entries()[:max_runtime_candidates]:
         family = entry["family"]
         model_id = entry["id"]
@@ -264,10 +240,11 @@ def build_production_chain(router):
             continue
         display_family = {"openrouter": "OpenRouter", "kiraai": "KiraAI", "groq": "Groq"}.get(family, family.title())
         chain.append((f"{display_family}:{model_id}", fn))
-        if family == "groq" and not inserted_nara and os.getenv("NARAROUTER_API_KEY", "").strip():
-            nara_model = os.getenv("NARA_MODEL", NARA_DEFAULT_MODEL).strip()
-            chain.append((f"NaraRouter:{nara_model}", lambda sp, uc, m=nara_model: router._nara(sp, uc, m)))
-            inserted_nara = True
+
+    if os.getenv("NARAROUTER_API_KEY", "").strip():
+        nara_model = os.getenv("NARA_MODEL", NARA_DEFAULT_MODEL).strip()
+        insert_at = next((i for i, (name, _) in enumerate(chain) if not name.startswith("Groq:")), len(chain))
+        chain.insert(insert_at, (f"NaraRouter:{nara_model}", lambda sp, uc, m=nara_model: router._nara(sp, uc, m)))
 
     if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("GEMINI_API_KEY"):
         chain.append(("Gemini", router._gemini))

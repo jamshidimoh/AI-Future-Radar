@@ -122,3 +122,25 @@ def test_runtime_selection_keeps_only_publishable_protected_and_normal_candidate
 def test_critical_incident_with_reserved_slot_uses_tier0_publication_lane():
     assert _is_tier0_publication_candidate({"critical_ai_incident": True, "protected_slot": True})
     assert not _is_tier0_publication_candidate({"critical_ai_incident": True, "protected_slot": False})
+
+
+def test_runtime_candidates_honor_replacement_buffer():
+    candidates = [
+        {"normal_period_rank": rank, "editorial_score": 70 - rank}
+        for rank in range(1, 6)
+    ]
+    candidates.extend(
+        [
+            {"protected_slot": True, "final_editorial_score": 70},
+            {"protected_slot": True, "final_editorial_score": 69},
+            {"protected_slot": True, "final_editorial_score": 68},
+        ]
+    )
+    bounded = _bound_runtime_candidates(
+        candidates,
+        max_posts=3,
+        policy={"leader_protected_max": 2, "replacement_buffer": 2},
+    )
+    assert len(bounded) == 7
+    assert sum(1 for item in bounded if item.get("protected_slot")) == 2
+    assert [item.get("normal_period_rank") for item in bounded if item.get("normal_period_rank") is not None] == [1, 2, 3, 4, 5]

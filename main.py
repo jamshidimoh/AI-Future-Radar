@@ -229,10 +229,19 @@ def _mission_coverage_recovery(
         return []
     mission_areas = {"mind_cognition", "future_governance"}
 
-    prepared = sum(
-        1 for item in selected
-        if not item.get("_publication_blocked")
-        and mission_area(item) in mission_areas
+    prepared = 0
+    for item in selected:
+        if item.get("_publication_blocked") or mission_area(item) not in mission_areas:
+            continue
+        try:
+            score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
+        except (TypeError, ValueError):
+            score = 0.0
+        if score >= PROTECTED_SUMMARY_SCORE_FLOOR:
+            prepared += 1
+    print(
+        f"[Mission Coverage Recovery] prepared_publishable={prepared} "
+        f"score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}", flush=True
     )
     if prepared >= target:
         print(

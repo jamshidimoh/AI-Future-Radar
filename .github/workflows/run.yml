@@ -36,7 +36,7 @@ permissions:
 
 concurrency:
   group: ai-future-radar-production
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   run-bot:

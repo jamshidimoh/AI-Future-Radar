@@ -1,13 +1,10 @@
 name: Run AI Future Radar Bot
 
 on:
+  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (UTC+3:30). GitHub Actions cron is UTC.
   schedule:
-    - cron: '17 4 * * *'
-    - cron: '47 7 * * *'
-    - cron: '47 10 * * *'
-    - cron: '47 14 * * *'
-    - cron: '47 17 * * *'
-    - cron: '47 19 * * *'
+    - cron: "47 1 * * *"
+    - cron: "17 7,10,14,17,19 * * *"
   workflow_dispatch:
 
 permissions:
@@ -37,7 +34,7 @@ jobs:
       - name: Run production regression checks
         run: |
           python -m compileall -q scripts src *.py
-          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py
+          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_workflow_persistence_contract.py
 
       - name: Emit fail-closed closure evidence
         run: |
@@ -59,6 +56,34 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
         run: python -u scripts/bridge_free_llm_router.py
+
+      - name: Nara live smoke test
+        env:
+          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
+        run: |
+          python - <<'PY'
+          import os
+          import requests
+          key = os.getenv("NARAROUTER_API_KEY", "").strip()
+          if not key:
+              print("[Nara Smoke] skipped: secret not configured")
+              raise SystemExit(0)
+          r = requests.post(
+              "https://router.bynara.id/v1/chat/completions",
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+              json={"model":"auto/bynara","messages":[{"role":"user","content":"Reply only with OK"}],"max_tokens":8,"temperature":0},
+              timeout=15,
+          )
+          print(f"[Nara Smoke] status={r.status_code}")
+          if r.ok:
+              data = r.json()
+              text = (((data.get("choices") or [{}])[0].get("message") or {}).get("content") or "").strip()
+              print(f"[Nara Smoke] success text={text[:32]}")
+          elif r.status_code in {401,402,403,404,429,503}:
+              print(f"[Nara Smoke] provider-state response: {r.status_code}")
+          else:
+              r.raise_for_status()
+          PY
 
       - name: Telegram production preflight
         env:
@@ -115,6 +140,7 @@ jobs:
         run: python -u scripts/update_llm_health_state.py run.log
 
       - name: Persist production state
+        if: always()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"

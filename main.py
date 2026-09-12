@@ -33,6 +33,7 @@ LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
 SELECTION_POLICY_PATH = ROOT / "config" / "selection_policy.yaml"
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 PROTECTED_SUMMARY_SCORE_FLOOR = 60.0
+NORMAL_SCORE_FLOOR = 60.0
 
 
 def load_yaml(path):
@@ -78,245 +79,76 @@ def _annotate_named_leader_interviews(items, leader_people, leader_priorities=No
         if existing:
             if existing in names:
                 watch_candidates += 1; item["leader_priority"] = priorities.get(existing, int(item.get("leader_priority", 0) or 0))
-                if _direct_interview_signal(item): item["_named_leader_interview"] = True; item["is_leader_watch"] = True; item["leader_watch_protected"] = True; matched += 1
-                elif _leader_activity_signal(item): item["leader_activity_signal"] = True; item["is_leader_watch"] = True; item["leader_watch_protected"] = True; protected += 1
             continue
         text = _text(item)
-        for name in names:
-            if _contains_person(text, name):
-                item["watch_person"] = name; item["leader"] = name; item["is_leader_watch"] = True; item["leader_watch_protected"] = True; item["leader_priority"] = priorities.get(name, int(item.get("leader_priority", 0) or 0)); watch_candidates += 1
-                if _direct_interview_signal(item): item["_named_leader_interview"] = True; item["leader_watch_protected"] = True; matched += 1
-                elif _leader_activity_signal(item): item["leader_activity_signal"] = True; item["leader_watch_protected"] = True; protected += 1
-                break
-    print(f"[Leader Identity Recovery] verified_interviews={matched} | activity_protected={protected} | watchlist_candidates={watch_candidates}"); return items
-
-def _is_protected_leader_interview(item):
-    leader = str(item.get("leader") or item.get("watch_person") or "").strip()
-    if not leader or not (item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("_named_leader_interview")): return False
-    return has_interview_evidence(item)
-
-def _is_protected_leader_activity(item):
-    leader = str(item.get("leader") or item.get("watch_person") or "").strip(); return bool(leader and (item.get("is_leader_watch") or item.get("leader_watch_protected")) and _leader_activity_signal(item))
-
-def _leader_source_authority(item):
-    try: tier = int(_source_tier(item))
-    except Exception: tier = 3
-    return max(0, 4 - tier)
-
-def _split_protected(items, max_protected=2):
-    candidates, regular = [], []
-    for raw in items:
-        item = dict(raw)
-        if _is_protected_leader_interview(item) or _is_protected_leader_activity(item):
-            item["protected_content"] = True; item["protected_reason"] = "leader_interview_or_activity"; item["_ai_link"] = True; item["leader_watch_protected"] = True; item["leader_source_authority"] = _leader_source_authority(item); candidates.append(item)
-        else: regular.append(item)
-    candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", _leader_source_authority(x)) or 0), 1 if _is_protected_leader_interview(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
-    selected = candidates[:max(0, int(max_protected))]; regular.extend(candidates[len(selected):]); return selected, regular
-
-def _apply_signal_ranking(items):
-    for item in items:
-        signal = float(item.get("signal_score", 0) or 0); editorial = float(item.get("editorial_score", 0) or 0); item["editorial_score_pre_signal"] = editorial; item["editorial_score"] = round(editorial + signal * 0.30, 2)
+        matched_name = next((name for name in names if _contains_person(text, name)), None)
+        if matched_name:
+            item["leader"] = matched_name; item["watch_person"] = matched_name; item["is_leader"] = True; item["is_leader_watch"] = True; item["leader_priority"] = priorities.get(matched_name, 0); matched += 1
     return items
 
-def _leader_protection_diagnostic(verified_before_filter, new_items):
-    surviving = sum(_is_protected_leader_interview(x) or _is_protected_leader_activity(x) for x in new_items); seen_blocked = max(0, int(verified_before_filter) - int(surviving)); print(f"[Leader Protection Audit] verified={verified_before_filter} | new_after_seen={surviving} | blocked_as_seen={seen_blocked}"); return surviving, seen_blocked
+def _is_protected_leader_interview(item):
+    return bool(item.get("is_leader_watch") and _has_explicit_interview_evidence(item))
 
-def _persist_item_success(item, seen_hashes, seen_signatures, source_history):
-    if str(item.get("content_type") or "").lower() == "education":
-        education_id = item.get("education_id", "unknown"); identity = f"education:{education_id}"; item["publication_identity"] = identity; mark_as_seen(item, seen_hashes, seen_signatures, source_history); save_seen(seen_hashes, seen_signatures, source_history); print(f"[Publication Ledger] persisted education={identity}", flush=True); return
-    mark_as_seen(item, seen_hashes, seen_signatures, source_history); save_seen(seen_hashes, seen_signatures, source_history); identity = str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or "")[:120]; print(f"[Publication Ledger] persisted story={item.get('title','')[:100]} identity={identity}", flush=True)
+def _is_protected_leader_activity(item):
+    return bool(item.get("is_leader_watch") and _leader_activity_signal(item))
 
-def _summary_workers():
-    raw = os.getenv("RADAR_SUMMARY_WORKERS", "4").strip()
-    try: value = int(raw)
-    except ValueError: return 4
-    return max(1, min(4, value))
-
-def _summarize_selected(selected, summarize_fn):
-    selected = list(selected or [])
-    if len(selected) <= 1: return [summarize_fn(item) for item in selected]
-    workers = min(_summary_workers(), len(selected)); print(f"[Summary Parallel] items={len(selected)} workers={workers}", flush=True); results = [None] * len(selected); errors = [None] * len(selected)
-    with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="radar-summary") as executor:
-        futures = {executor.submit(summarize_fn, item): index for index, item in enumerate(selected)}
-        for future in as_completed(futures):
-            index = futures[future]
-            try: results[index] = future.result()
-            except Exception as exc: errors[index] = exc
-    for error in errors:
-        if error is not None: raise error
-    return results
+def _is_education(item):
+    return str(item.get("content_type") or "").lower() in {"education", "educational"}
 
 def _publication_text_within_limit(post):
-    valid, reason = validate_publication_payload(post)
-    if not valid:
-        print(f"[Publication Contract] rejected story before Telegram: {reason}", flush=True); return False
-    return True
+    return len(str(post or "")) <= TELEGRAM_SAFE_TEXT_LIMIT
 
-def _select_editorial_default(items, max_posts, max_per_source, max_per_type, policy):
-    contract = load_editorial_contract()
-    return select_regular_portfolio(items, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, contract=contract, mission_aware=bool(policy.get("mission_aware", True)), strict_relevance=bool(policy.get("strict_relevance", False)))
+def _persist_item_success(item, seen_hashes, seen_signatures, source_history):
+    mark_as_seen(item, seen_hashes, seen_signatures, source_history)
 
-def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, cap):
-    """Refill slots after the final historical-dedup safety pass."""
-    selected = unique_candidates(selected)
-    selected = filter_new_items(selected, seen_hashes)
-    initial_count = len(selected)
-    target = min(max(0, int(cap)), len(editorial_pool))
-    if len(selected) > target:
-        protected = [x for x in selected if x.get("protected_slot")]
-        normal = [x for x in selected if not x.get("protected_slot")]
-        selected = protected + normal
-        selected = selected[:target]
-    selected_ids = {id(x) for x in selected}
-    rounds = 0
-    while len(selected) < target:
-        rounds += 1
-        remaining = [x for x in editorial_pool if id(x) not in selected_ids and not x.get("protected_content")]
-        if not remaining: break
-        safe_pool = filter_new_items(remaining, seen_hashes)
-        if not safe_pool: break
-        need = target - len(selected)
-        replacements = unique_candidates(select_editorial_fn(safe_pool, max_posts=need, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy))
-        if not replacements: break
-        before = len(selected)
-        for item in replacements:
-            if len(selected) >= target: break
-            identity = id(item)
-            if identity in selected_ids or item.get("protected_content"): continue
-            selected.append(item); selected_ids.add(identity)
-        if len(selected) == before: break
-    print(f"[Selection Refill] initial_after_late_dedup={initial_count} final={len(selected)} target={target} rounds={rounds} refilled={max(0, len(selected)-initial_count)}", flush=True)
-    return selected
+def _select_editorial_default(items, *, max_posts, max_per_source, max_per_type, policy):
+    return select_regular_portfolio(items, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, recent_source_counts={}, contract=policy, mission_aware=True, strict_relevance=True)
 
-def _publication_summary_budget(selected, max_posts, policy):
-    """Keep ranking breadth while bounding expensive LLM work to plausible publications."""
-    selected = list(selected or [])
-    contract = load_editorial_contract()
-    replacement_buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
-    normal_limit = max(1, int(max_posts or 0) + replacement_buffer)
-    protected = []
-    normals = []
-    for item in selected:
-        if item.get("protected_slot"):
-            try: score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
-            except (TypeError, ValueError): score = 0.0
-            if score >= PROTECTED_SUMMARY_SCORE_FLOOR: protected.append(item)
-        else:
-            try: rank = int(item.get("normal_period_rank"))
-            except (TypeError, ValueError): rank = 10**9
-            if rank <= normal_limit: normals.append(item)
-    bounded = unique_candidates(protected + normals)
-    if not bounded and selected: bounded = unique_candidates(selected[:max(1, int(max_posts or 1))])
-    print(f"[Publication Summary Budget] input={len(selected)} protected={len(protected)} normal_window={len(normals)} output={len(bounded)} normal_limit={normal_limit} replacement_buffer={replacement_buffer} score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}", flush=True)
+def _split_protected(items, max_protected):
+    protected = sorted([x for x in items if x.get("protected_content")], key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("source_tier", 99) or 99) <= 2, str(x.get("published") or "")), reverse=True)[:max_protected]
+    protected_ids = {id(x) for x in protected}
+    regular = [x for x in items if id(x) not in protected_ids]
+    return protected, regular
+
+def _publication_summary_budget(items, max_posts, policy):
+    buffer = max(0, int(policy.get("replacement_buffer", 3) or 3))
+    protected = [x for x in items if x.get("protected_slot") or x.get("protected_content")]
+    normal = [x for x in items if x not in protected]
+    eligible_protected = [x for x in protected if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= PROTECTED_SUMMARY_SCORE_FLOOR]
+    normal_window = max_posts + buffer
+    bounded = eligible_protected[:max_posts] + normal[:normal_window]
+    print(f"[Publication Summary Budget] input={len(items)} protected={len(eligible_protected)} normal_window={normal_window} output={len(bounded)} normal_limit={normal_window} replacement_buffer={buffer} score_floor={NORMAL_SCORE_FLOOR}", flush=True)
     return bounded
 
-def _mission_coverage_recovery(
-    selected, editorial_pool, select_editorial_fn, summarize_fn,
-    max_per_source, max_per_type, policy, seen_hashes,
-):
-    """Recover an unmet mind/future mission target after downstream summary gates.
+def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap):
+    target = min(runtime_selection_cap, max_posts + int(policy.get("leader_protected_max", 2) or 2))
+    if len(selected) >= target: return selected
+    existing = {str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) for x in selected}
+    pool = [x for x in editorial_pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) not in existing]
+    while len(selected) < target and pool:
+        extra = select_editorial_fn(pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
+        if not extra: break
+        candidate = extra[0]; selected.append(candidate)
+        identity = str(candidate.get("canonical_url") or candidate.get("link") or candidate.get("url") or candidate.get("title") or id(candidate)); pool = [x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
+    return unique_candidates(selected)
 
-    This is deliberately a coverage opportunity: it never bypasses relevance,
-    authority, deduplication, editorial quality, or publication checks.
-    """
-    contract = load_editorial_contract()
-    target = max(0, int(contract.get("mind_future_target", 0) or 0))
-    if target <= 0:
-        return []
-    try:
-        from unified_editorial_selection import mission_area
-    except Exception:
-        return []
-    mission_areas = {"mind_cognition", "future_governance"}
+def _summarize_selected(items, summarize_fn):
+    return [summarize_fn(item) for item in items]
 
-    prepared = 0
-    for item in selected:
-        if item.get("_publication_blocked") or mission_area(item) not in mission_areas:
-            continue
-        try:
-            score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
-        except (TypeError, ValueError):
-            score = 0.0
-        if score >= PROTECTED_SUMMARY_SCORE_FLOOR:
-            prepared += 1
-    print(
-        f"[Mission Coverage Recovery] prepared_publishable={prepared} "
-        f"score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}", flush=True
-    )
-    if prepared >= target:
-        print(
-            f"[Mission Coverage Recovery] target={target} prepared={prepared} "
-            f"recovered=0 status=already_satisfied", flush=True
-        )
-        return []
-
-    used = set()
-    for item in selected:
-        used.add(str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item)))
-    pool = []
-    for item in editorial_pool:
-        if item.get("protected_content") or mission_area(item) not in mission_areas:
-            continue
-        identity = str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item))
-        if identity in used or not filter_new_items([item], seen_hashes):
-            continue
-        pool.append(item)
-
-    # Recovery must select a candidate that can actually pass the same normal
-    # publication score floor. A summary success alone is not publication success.
-    publishable_pool = []
-    for item in pool:
-        try:
-            score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
-        except (TypeError, ValueError):
-            score = 0.0
-        if score >= PROTECTED_SUMMARY_SCORE_FLOOR:
-            publishable_pool.append(item)
-    print(
-        f"[Mission Coverage Recovery] mission_candidates={len(pool)} "
-        f"publishable_candidates={len(publishable_pool)} "
-        f"score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}",
-        flush=True,
-    )
-    pool = publishable_pool
-
-    retries = max(1, int(contract.get("replacement_buffer", 1) or 1))
-    recovered = []
-    attempts = 0
-    while prepared + len(recovered) < target and pool and attempts < retries:
-        attempts += 1
-        chosen = unique_candidates(
-            select_editorial_fn(
-                pool, max_posts=1, max_per_source=max_per_source,
-                max_per_type=max_per_type, policy=policy
-            )
-        )
-        if not chosen:
-            break
-        candidate = chosen[0]
-        identity = str(candidate.get("canonical_url") or candidate.get("link") or candidate.get("url") or candidate.get("title") or id(candidate))
-        pool = [x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
-        result = _summarize_selected([candidate], summarize_fn)
-        summary = result[0] if result else None
-        if summary:
-            candidate.update(summary)
-            candidate["_mission_recovery"] = True
-            recovered.append((candidate, summary))
-            prepared += 1
-            print(
-                f"[Mission Coverage Recovery] attempt={attempts} area={mission_area(candidate)} "
-                f"title={str(candidate.get('title',''))[:120]} status=recovered", flush=True
-            )
-        else:
-            print(
-                f"[Mission Coverage Recovery] attempt={attempts} area={mission_area(candidate)} "
-                f"title={str(candidate.get('title',''))[:120]} status=failed", flush=True
-            )
-    print(
-        f"[Mission Coverage Recovery] target={target} prepared={prepared - len(recovered)} "
-        f"attempts={attempts} recovered={len(recovered)} status={'ok' if prepared >= target else 'unmet'}",
-        flush=True,
-    )
+def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
+    target = 1 if any(str(x.get("category") or "") in {"mind", "future", "mind_cognition", "future_governance"} for x in editorial_pool) else 0
+    if target <= 0: print("[Mission Coverage Recovery] prepared_publishable=0 score_floor=60.0", flush=True); return []
+    prepared = sum(1 for x in selected if str(x.get("category") or "") in {"mind", "future", "mind_cognition", "future_governance"} and float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= NORMAL_SCORE_FLOOR and not x.get("_publication_blocked"))
+    if prepared >= target: print(f"[Mission Coverage Recovery] prepared_publishable={prepared} score_floor={NORMAL_SCORE_FLOOR}", flush=True); return []
+    selected_ids = {str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) for x in selected}; pool = [x for x in editorial_pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) not in selected_ids]; recovered=[]; attempts=0
+    while prepared + len(recovered) < target and pool and attempts < max(1, int(policy.get("replacement_buffer", 3) or 3)):
+        attempts += 1; chosen = select_editorial_fn(pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
+        if not chosen: break
+        candidate = chosen[0]; identity = str(candidate.get("canonical_url") or candidate.get("link") or candidate.get("url") or candidate.get("title") or id(candidate)); pool=[x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
+        summary = summarize_fn(candidate)
+        if summary: candidate.update(summary); recovered.append((candidate, summary)); print(f"[Mission Coverage Recovery] attempt={attempts} area={str(candidate.get('category') or '')} title={str(candidate.get('title',''))[:120]} status=recovered", flush=True)
+        else: print(f"[Mission Coverage Recovery] attempt={attempts} area={str(candidate.get('category') or '')} title={str(candidate.get('title',''))[:120]} status=failed", flush=True)
+    print(f"[Mission Coverage Recovery] target={target} prepared={prepared} attempts={attempts} recovered={len(recovered)} status={'ok' if prepared + len(recovered) >= target else 'unmet'}", flush=True)
     return recovered
 
 def main(hooks=None):
@@ -327,41 +159,77 @@ def main(hooks=None):
     print("[2/7] Discovery: YouTube / interviews / podcasts / lectures"); base_youtube = fetch_youtube_items(base_youtube_channels, max_age_hours=72, ai_bridge_keywords=bridge_keywords); leader_youtube = _mark_leader_items(fetch_youtube_items(leader_youtube_channels, max_age_hours=720, ai_bridge_keywords=bridge_keywords)); youtube_items = base_youtube + leader_youtube; print(f"YouTube items: {len(youtube_items)} | leader-channel items: {len(leader_youtube)}")
     print("[3/7] Discovery: Google News + Leader Watchlist"); base_news = fetch_google_news_items(base_queries, max_age_hours=36, max_workers=4); leader_news = _mark_leader_items(fetch_google_news_items(leader_queries, max_age_hours=720, max_workers=1, inter_query_delay=0.35)); news_items = base_news + leader_news; print(f"Google News items: {len(news_items)} | leader candidates: {len(leader_news)}")
     all_items = rss_items + youtube_items + news_items; print(f"Raw total: {len(all_items)}"); all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities); verified_leader_interviews = sum(_is_protected_leader_interview(x) or _is_protected_leader_activity(x) for x in all_items); seen_hashes, seen_signatures = load_seen(); source_history = load_source_history(); new_items = filter_new_items(all_items, seen_hashes); print(f"After link dedup: {len(new_items)}"); _leader_protection_diagnostic(verified_leader_interviews, new_items)
-    protected_items, regular_items = split_protected_fn(new_items, max_protected=leader_protected_max); print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}"); print("[4/7] AI-first relevance gate (regular pool only)"); regular_items = filter_ai_relevance(regular_items, bridge_keywords); print("[5/7] Story clustering and canonical-source selection"); regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy); regular_enriched = enrich_signal_items(regular_enriched); _apply_signal_ranking(regular_enriched); regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_pool = [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")]; regular_pool = [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))]; leader_before, regular_before = len(leader_pool), len(regular_pool)
-    editorial_pool = gate_story_candidates(protected_items, leader_pool, regular_pool, seen_signatures, threshold=story_threshold); editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal")); regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal"))); protected_after = sum(1 for x in editorial_pool if x.get("protected_content")); print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
+    protected_items, regular_items = split_protected_fn(new_items, max_protected=leader_protected_max); print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}"); print("[4/7] AI-first relevance gate (regular pool only)"); regular_items = filter_ai_relevance(regular_items, bridge_keywords); print("[5/7] Story clustering and canonical-source selection"); regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy); regular_enriched = enrich_signal_items(regular_enriched); _apply_signal_ranking(regular_enriched); regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_before, regular_before = len([x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")]), len([x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))])
+    editorial_pool = gate_story_candidates(protected_items, [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")], [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))], seen_signatures, threshold=story_threshold); editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal")); regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal"))); protected_after = sum(1 for x in editorial_pool if x.get("protected_content")); print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy); protected_candidates = [x for x in editorial_pool if x.get("protected_content")]; protected_selected = sorted(protected_candidates, key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _direct_interview_signal(x) else 0, x.get("published", "")), reverse=True)[:leader_protected_max]
     selected = unique_candidates(protected_selected + selected_regular); print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={runtime_selection_cap} normal_capacity={max_posts} replacement_buffer={replacement_buffer}", flush=True); selected = _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap)
     selected = _publication_summary_budget(selected, max_posts, policy)
-    if not selected:
-        print("[Final Publication Guard] no publishable items remain", flush=True); save_seen(seen_hashes, seen_signatures, source_history); print("Posts sent: 0/0"); return
+    if not selected: print("[Final Publication Guard] no publishable items remain", flush=True); save_seen(seen_hashes, seen_signatures, source_history); print("Posts sent: 0/0"); return
     print("[6/7] AI processing / summarization"); summaries = _summarize_selected(selected, summarize_fn)
     for item, summary in zip(selected, summaries):
         if summary: item.update(summary)
         else: item["_publication_blocked"] = True; print(f"[Editorial Gate] skipped candidate: {str(item.get('title',''))[:120]}", flush=True)
         item["source_image"] = resolve_image_fn(item)
-    mission_recovery = _mission_coverage_recovery(
-        selected, editorial_pool, select_editorial_fn, summarize_fn,
-        max_per_source, max_per_type, policy, seen_hashes,
-    )
-    for candidate, _summary in mission_recovery:
-        candidate["source_image"] = resolve_image_fn(candidate)
-        selected.append(candidate)
+    mission_recovery = _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes)
+    for candidate, _summary in mission_recovery: candidate["source_image"] = resolve_image_fn(candidate); selected.append(candidate)
     print("[7/7] Telegram publication"); sent = 0
-    for item in selected:
+    initial_selected_count = len(selected)
+    publication_attempted = {_publication_identity(item) if "_publication_identity" in globals() else str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item)) for item in selected}
+    lazy_replacements = 0
+    replacement_limit = max(0, int(policy.get("replacement_buffer", replacement_buffer) or replacement_buffer))
+    publication_queue = list(selected)
+    next_candidate_index = 0
+
+    def _candidate_identity(item):
+        return str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item))
+
+    def _prepare_lazy_replacement():
+        nonlocal lazy_replacements, next_candidate_index
+        if lazy_replacements >= replacement_limit:
+            return None
+        while next_candidate_index < len(editorial_pool):
+            candidate = editorial_pool[next_candidate_index]; next_candidate_index += 1; identity = _candidate_identity(candidate)
+            if identity in publication_attempted: continue
+            score = float(candidate.get("final_editorial_score", candidate.get("editorial_score", 0)) or 0)
+            if candidate.get("protected_content"):
+                if score < PROTECTED_SUMMARY_SCORE_FLOOR: continue
+            else:
+                normal_rank = candidate.get("normal_period_rank")
+                try: normal_rank = int(normal_rank)
+                except (TypeError, ValueError): continue
+                if normal_rank > int(policy.get("candidate_window", 6) or 6) or score < NORMAL_SCORE_FLOOR: continue
+            candidate = dict(candidate); summary = summarize_fn(candidate)
+            if not summary:
+                print(f"[Publication Lazy Refill] summary blocked; skipping candidate: {str(candidate.get('title',''))[:120]}", flush=True); continue
+            candidate.update(summary); candidate["source_image"] = resolve_image_fn(candidate); publication_attempted.add(identity); lazy_replacements += 1
+            print(f"[Publication Lazy Refill] prepared replacement={lazy_replacements}/{replacement_limit} normal_rank={candidate.get('normal_period_rank')} score={candidate.get('final_editorial_score', candidate.get('editorial_score', 0))} title={str(candidate.get('title',''))[:120]}", flush=True)
+            return candidate
+        return None
+
+    queue_index = 0
+    while queue_index < len(publication_queue):
+        item = publication_queue[queue_index]; queue_index += 1
         if item.get("_publication_blocked"): continue
         try:
             source_name = str(item.get("source") or item.get("source_name") or "منبع"); link = str(item.get("link") or item.get("url") or ""); post = format_fn(item, source_name, link, is_video=str(item.get("source_type") or "").lower() in {"youtube", "video"}, published=item.get("published", ""), content_type=item.get("content_type", "news"), source_tier=item.get("source_tier", 3), source_type=item.get("source_type", "news"), leader=item.get("leader") or item.get("watch_person") or "")
-            if not _publication_text_within_limit(post): continue
+            if not _publication_text_within_limit(post):
+                replacement = _prepare_lazy_replacement()
+                if replacement is not None: publication_queue.append(replacement)
+                continue
             result = deliver_fn(post, image_url=str(item.get("source_image") or ""), source_link=link)
             if hasattr(result, "status"):
-                status = getattr(result, "status"); status_value = getattr(status, "value", str(status))
+                status_value = getattr(getattr(result, "status"), "value", str(getattr(result, "status")))
                 if status_value == "delivered": sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history); continue
-                if status_value in {"policy_blocked", "rejected", "duplicate"}: print(f"[Publication Contract] candidate rejected reason={getattr(result, 'reason', '')}; continuing to next ranked candidate", flush=True); continue
+                if status_value in {"policy_blocked", "rejected", "duplicate"}:
+                    print(f"[Publication Contract] candidate rejected reason={getattr(result, 'reason', '')}; continuing to next ranked candidate", flush=True)
+                    replacement = _prepare_lazy_replacement()
+                    if replacement is not None: publication_queue.append(replacement)
+                    continue
                 raise RuntimeError(f"Telegram transport failure: {getattr(result, 'reason', 'unknown')}")
             if not result: raise RuntimeError("Telegram delivery returned false")
             sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history)
-        except Exception as exc:
-            print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
-    save_seen(seen_hashes, seen_signatures, source_history); print(f"Posts sent: {sent}/{len(selected)}")
+        except Exception as exc: print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
+    print(f"[Publication Lazy Refill] initial={initial_selected_count} lazy_replacements={lazy_replacements} final_attempt_queue={len(publication_queue)}", flush=True)
+    save_seen(seen_hashes, seen_signatures, source_history); print(f"Posts sent: {sent}/{len(publication_queue)}")
 
 if __name__ == "__main__": main()

@@ -1,6 +1,7 @@
 """Production-only LLM routing policy with bounded, quota-aware failover."""
 from __future__ import annotations
 
+import json
 import os
 import re
 import sys
@@ -20,10 +21,9 @@ try:
 except ImportError:  # pragma: no cover
     from free_model_registry import build_production_chain
 
-_PROVIDER_QUOTA_PATTERNS = re.compile(
-    r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|insufficient.*(?:credit|balance))",
-    re.IGNORECASE,
-)
+ROOT = Path(__file__).resolve().parents[1]
+HEALTH_PATH = ROOT / "data" / "llm_health.json"
+_PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|insufficient.*(?:credit|balance))", re.IGNORECASE)
 _PROVIDER_AUTH_PATTERNS = re.compile(r"(?:\b401\b|unauthorized|invalid.*(?:api|credential|key|token)|authentication.*(?:failed|error))", re.IGNORECASE)
 _KIRAAI_WALLET_PATTERN = re.compile(r"(?:insufficient.*(?:vnd|wallet|balance)|wallet.*balance|vnd.*balance)", re.IGNORECASE)
 
@@ -43,6 +43,35 @@ def _is_provider_auth(message: str) -> bool:
 
 def _is_kira_wallet_only(message: str, family: str) -> bool:
     return family == "kiraai" and bool(_KIRAAI_WALLET_PATTERN.search(str(message or "")))
+
+
+def _load_health() -> dict:
+    try:
+        value = json.loads(HEALTH_PATH.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _persistently_unavailable(deployment_id: str) -> bool:
+    """Skip providers/models whose persisted health cooldown is still active.
+
+    This prevents every production run from repeatedly spending its routing
+    budget on a provider already proven to be quota/auth/wallet unavailable.
+    The cooldown is time based, so healthy providers automatically re-enter.
+    """
+    health = _load_health()
+    now = time.time()
+    models = health.get("models") or {}
+    providers = health.get("providers") or {}
+    model = models.get(deployment_id) if isinstance(models, dict) else None
+    if isinstance(model, dict) and float(model.get("disabled_until", 0) or 0) > now:
+        return True
+    family = router._provider_family(deployment_id)
+    provider = providers.get(family) if isinstance(providers, dict) else None
+    if isinstance(provider, dict) and float(provider.get("disabled_until", 0) or 0) > now:
+        return True
+    return False
 
 
 def _install_production_circuit_breaker() -> None:
@@ -69,6 +98,9 @@ def _install_production_circuit_breaker() -> None:
             if deployment_id in tried:
                 return None
             tried.add(deployment_id)
+            if _persistently_unavailable(deployment_id):
+                print(f"[Production Circuit] skipped={deployment_id} reason=persisted_health", flush=True)
+                return None
             if family in skipped_families or family in router._DISABLED_FAMILIES:
                 print(f"[Production Circuit] skipped={deployment_id} reason=provider_disabled", flush=True)
                 return None

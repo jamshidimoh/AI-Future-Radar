@@ -113,7 +113,7 @@ def test_runtime_selection_keeps_only_publishable_protected_and_normal_candidate
         {"period_rank": 6, "normal_period_rank": 3, "protected_slot": False},
         {"period_rank": 7, "normal_period_rank": 4, "protected_slot": False},
     ]
-    bounded = _bound_runtime_candidates(candidates, max_posts=3, policy={"leader_protected_max": 2})
+    bounded = _bound_runtime_candidates(candidates, max_posts=3, policy={"leader_protected_max": 2, "replacement_buffer": 0})
     assert len(bounded) == 5
     assert sum(bool(x.get("protected_slot")) for x in bounded) == 2
     assert [x["normal_period_rank"] for x in bounded if not x.get("protected_slot")] == [1, 2, 3]

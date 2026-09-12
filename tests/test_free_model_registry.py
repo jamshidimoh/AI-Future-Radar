@@ -13,6 +13,8 @@ def _reset(monkeypatch):
     router._DISABLED_FAMILIES.clear()
     router._MODEL_DISABLED_UNTIL.clear()
     router._CHAIN_CACHE = None
+    router._LITELLM_ROUTER = None
+    router._LITELLM_ROUTER_KEY = None
     router._PRODUCTION_POLICY_APPLIED = True
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
@@ -22,22 +24,25 @@ def _reset(monkeypatch):
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
 
 
-def test_quality_is_primary_and_priority_is_only_tiebreak(monkeypatch):
+def test_provider_order_is_primary_and_quality_orders_models_within_provider(monkeypatch):
     _reset(monkeypatch)
     names = [name for name, _ in registry.build_production_chain(router)]
-    assert names == [
+    assert names[:3] == [
+        "Groq:openai/gpt-oss-120b",
+        "Groq:qwen/qwen3.6-27b",
+        "Groq:openai/gpt-oss-20b",
+    ]
+    assert names[3:] == [
         "OpenRouter:nvidia/nemotron-3-ultra-550b-a55b:free",
         "OpenRouter:nvidia/nemotron-3-super-120b-a12b:free",
-        "Groq:openai/gpt-oss-120b",
         "OpenRouter:openai/gpt-oss-120b:free",
-        "Groq:qwen/qwen3.6-27b",
         "OpenRouter:qwen/qwen3-next-80b-a3b-instruct:free",
         "OpenRouter:google/gemma-4-31b-it:free",
         "OpenRouter:google/gemma-4-26b-a4b-it:free",
-        "Groq:openai/gpt-oss-20b",
         "OpenRouter:openai/gpt-oss-20b:free",
         "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
     ]
+    assert "OpenRouter:openrouter/free" not in names
 
 
 def test_kiraai_free_quota_lane_is_included_when_credentialed(monkeypatch):
@@ -45,7 +50,7 @@ def test_kiraai_free_quota_lane_is_included_when_credentialed(monkeypatch):
     monkeypatch.setenv("KIRAAI_API_KEY", "test-kira")
     names = [name for name, _ in registry.build_production_chain(router)]
     assert "KiraAI:minimax-m3-free" in names
-    assert names.index("KiraAI:minimax-m3-free") < names.index("OpenRouter:openai/gpt-oss-20b:free")
+    assert names.index("KiraAI:minimax-m3-free") > names.index("Groq:openai/gpt-oss-20b")
     assert "KiraAI:gpt-5.6-luna-free" not in names
     assert "KiraAI:kira-auto" in names
 
@@ -113,6 +118,7 @@ def test_kiraai_adapter_is_openai_compatible(monkeypatch):
     assert fn("system", "user") == '{"ok":true}'
     assert seen["url"] == "https://kiraai.vn/api/v1/chat/completions"
     assert seen["json"]["model"] == "minimax-m3-free"
+    assert seen["json"]["max_tokens"] == 700
 
 
 def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monkeypatch):

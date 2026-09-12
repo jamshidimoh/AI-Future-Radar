@@ -195,3 +195,7 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+# Verified routing note: FLR candidates are fallback-only and bounded below
+# benchmark-backed entries, so discovery improves resilience without changing
+# the primary quality ordering policy.

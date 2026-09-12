@@ -15,34 +15,28 @@ def _reset():
     router._PRODUCTION_POLICY_APPLIED = False
 
 
-def test_quota_failure_disables_provider_family_and_uses_next_family(monkeypatch):
+def test_model_specific_quota_keeps_provider_sibling_available(monkeypatch):
     _reset()
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     calls = []
 
     def groq_qwen_quota(*args, **kwargs):
         calls.append("qwen")
         raise router.QuotaExceeded("Groq qwen/qwen3.8-27b: HTTP 429")
 
-    def groq_sibling_should_not_run(*args, **kwargs):
+    def groq_sibling_ok(*args, **kwargs):
         calls.append("gpt-oss")
-        return '{"title":"bad-path"}'
-
-    def gemini_ok(*args, **kwargs):
-        calls.append("gemini")
         return '{"title":"ok"}'
 
     providers = [
         ("Groq:qwen/qwen3.8-27b", groq_qwen_quota),
-        ("Groq:openai/gpt-oss-120b", groq_sibling_should_not_run),
-        ("Gemini", gemini_ok),
+        ("Groq:openai/gpt-oss-120b", groq_sibling_ok),
     ]
     result, provider = router.call_llm_with_fallback("system", "user", providers=providers)
     assert result == '{"title":"ok"}'
-    assert provider == "Gemini"
-    assert calls == ["qwen", "gemini"]
-    assert "groq" in router._DISABLED_FAMILIES
+    assert provider == "Groq:openai/gpt-oss-120b"
+    assert calls == ["qwen", "gpt-oss"]
+    assert "groq" not in router._DISABLED_FAMILIES
 
 
 def test_auth_failure_does_not_try_sibling_openrouter_model(monkeypatch):

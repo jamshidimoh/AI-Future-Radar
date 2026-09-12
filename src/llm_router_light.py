@@ -178,7 +178,6 @@ def _discover_hf_models():
 
 
 def _select_hf_model(models=None):
-    """Return a current free HF chat model, preserving deterministic preference."""
     rows = list(models) if isinstance(models, list) else _discover_hf_models()
     free = [m for m in rows if isinstance(m, dict) and _hf_price_is_free(m)]
     explicit = (os.getenv("HF_MODEL") or "").strip()
@@ -229,7 +228,6 @@ def get_quality_chain():
 
 
 def _litellm_model_list():
-    """Return the live, registry-ranked free deployment pool for LiteLLM."""
     from free_model_registry import build_litellm_model_list
     return build_litellm_model_list()
 
@@ -264,6 +262,53 @@ def _get_litellm_router():
         return None
 
 
+def _call_direct_deployment(litellm_router, deployment, system_prompt, user_content, *, max_tokens=700, timeout=8):
+    """Call a normal LiteLLM deployment, except independent gateway lanes use direct HTTP adapters."""
+    deployment_id = str(deployment.get("model_info", {}).get("id") or "")
+    family = _provider_family(deployment_id)
+    if family == "nararouter":
+        return _nara_response_adapter(system_prompt, user_content, deployment_id, max_tokens=max_tokens, timeout=timeout)
+    kwargs = {
+        "model": deployment["model_name"],
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "timeout": timeout,
+        "max_tokens": max_tokens,
+        "temperature": 0.15,
+    }
+    if deployment["model_info"].get("response_format"):
+        kwargs["response_format"] = {"type": "json_object"}
+    return litellm_router.completion(**kwargs)
+
+
+def _nara_response_adapter(system_prompt, user_content, deployment_id, *, max_tokens=700, timeout=8):
+    model = deployment_id.split(":", 1)[1] if ":" in deployment_id else NARA_DEFAULT_MODEL
+    key = os.getenv("NARAROUTER_API_KEY")
+    if not key:
+        raise QuotaExceeded("NaraRouter missing credential")
+    payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_tokens": max_tokens, "temperature": 0.15}
+    response = requests.post("https://router.bynara.id/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=timeout)
+    if response.status_code in (401, 402, 403, 404, 429, 503):
+        raise QuotaExceeded(f"NaraRouter {model}: HTTP {response.status_code} {response.text[:500]}")
+    response.raise_for_status()
+    data = response.json()
+    content = _extract_message(data)
+    class Message:
+        pass
+    class Choice:
+        pass
+    class Response:
+        pass
+    out = Response()
+    out.model = data.get("model", model)
+    msg = Message(); msg.content = content
+    choice = Choice(); choice.message = msg
+    out.choices = [choice]
+    return out
+
+
 def _call_litellm(system_prompt, user_content):
     router = _get_litellm_router()
     if router is None:
@@ -279,11 +324,7 @@ def _call_litellm(system_prompt, user_content):
         model_name = deployment["model_name"]
         deployment_id = deployment["model_info"]["id"]
         try:
-            response = router.completion(
-                model=model_name,
-                messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],
-                timeout=max(0.5, min(8.0, remaining)),
-            )
+            response = _call_direct_deployment(router, deployment, system_prompt, user_content, max_tokens=700, timeout=max(0.5, min(8.0, remaining)))
             content = getattr(response.choices[0].message, "content", None) if getattr(response, "choices", None) else None
             if not content:
                 raise ValueError("LiteLLM response has no content")

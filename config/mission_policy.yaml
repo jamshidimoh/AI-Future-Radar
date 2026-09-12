@@ -17,6 +17,9 @@ mission:
   ai_core_target_min: 1
   ai_core_target_max: 2
   convergence_target: 0
+  # One normal slot is reserved for mind/cognition, consciousness,
+  # philosophy-of-mind/science, or future-governance material when an eligible
+  # candidate exists. This is a coverage opportunity, not a quality bypass.
   mind_future_target: 1
   research_target: 0
   interview_target_max: 1

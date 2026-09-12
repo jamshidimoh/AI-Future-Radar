@@ -28,8 +28,14 @@ PROVIDER_COOLDOWN = {
     "auth": 86400.0,
 }
 
-FAIL_RE = re.compile(r"\[LiteLLM Router\] failed=(?P<deployment>\S+) .*?(?:type=\S+: )?(?P<message>.*)$")
-SUCCESS_RE = re.compile(r"\[LiteLLM Router\] success=(?P<deployment>\S+)")
+FAIL_RE = re.compile(
+    r"\[(?:LiteLLM Router|Production Circuit)\]\s+"
+    r"failed=(?P<deployment>\S+)(?:\s+reason=\S+)?(?:\s+scope=\S+:)?\s*(?P<message>.*)$"
+)
+SUCCESS_RE = re.compile(
+    r"\[(?:LiteLLM Router|Production Circuit)\]\s+"
+    r"success=(?P<deployment>\S+)"
+)
 
 
 def family(deployment: str) -> str:
@@ -40,9 +46,9 @@ def classify(message: str) -> str:
     text = str(message or "").lower()
     if re.search(r"\b401\b|unauthorized|unauthenticated|invalid.*(?:api|credential|key|token)|authentication", text):
         return "auth"
-    if re.search(r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|monthly.*(?:credit|quota)|daily.*(?:limit|quota)|depleted", text):
+    if re.search(r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|monthly.*(?:credit|quota)|daily.*(?:limit|quota)|depleted|insufficient.*(?:credit|balance)", text):
         return "quota"
-    if re.search(r"\b429\b|rate.?limit|too many requests|resource_exhausted", text):
+    if re.search(r"\b429\b|rate.?limit|too many requests|resource_exhausted|upstream_provider_shared_pool", text):
         return "rate_limit"
     if re.search(r"\b(?:403|404)\b|model.*(?:blocked|disabled|not found|unavailable)|not found|permission", text):
         return "model"
@@ -95,9 +101,6 @@ def main() -> int:
             reason = failure.group("message").strip()
             failures.append((deployment, family(deployment), classify(reason)))
 
-    # A successful deployment is healthy again. A successful deployment also
-    # proves its provider account is usable, so clear any same-run provider
-    # cooldown left by an earlier account/auth failure.
     for deployment in successes:
         models.pop(deployment, None)
         providers.pop(family(deployment), None)

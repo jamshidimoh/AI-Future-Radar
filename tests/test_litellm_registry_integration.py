@@ -22,8 +22,8 @@ def test_litellm_deployments_are_registry_driven(monkeypatch):
     route_names = [row["model_name"] for row in rows]
 
     assert ids
-    assert ids[0] == "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free"
-    assert models[0] == "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"
+    assert ids[0] == "groq:openai/gpt-oss-120b"
+    assert models[0] == "groq/openai/gpt-oss-120b"
     assert route_names == [f"radar-production-{i}" for i in range(1, len(rows) + 1)]
     assert "groq/openai/gpt-oss-120b" in models
     assert "groq/qwen/qwen3.6-27b" in models

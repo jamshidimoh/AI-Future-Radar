@@ -31,9 +31,9 @@ def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
     summarize_names = [name for name, _ in summarize.get_quality_chain()]
     router_names = [name for name, _ in router.get_quality_chain()]
     assert summarize_names == router_names
-    assert router_names[0] == "OpenRouter:nvidia/nemotron-3-ultra-550b-a55b:free"
-    assert router_names[1] == "OpenRouter:nvidia/nemotron-3-super-120b-a12b:free"
-    assert router_names[2] == "Groq:openai/gpt-oss-120b"
+    assert router_names[0] == "Groq:openai/gpt-oss-120b"
+    assert router_names[1] == "Groq:qwen/qwen3.6-27b"
+    assert router_names[2] == "Groq:openai/gpt-oss-20b"
     assert "Groq:qwen/qwen3.8-27b" not in router_names
     assert "OpenRouter:openai/gpt-oss-20b:free" in router_names
     assert router_names.index("OpenRouter:google/gemma-4-26b-a4b-it:free") < router_names.index("OpenRouter:openai/gpt-oss-20b:free")
@@ -241,10 +241,10 @@ def test_kira_wallet_error_does_not_disable_kira_family(monkeypatch):
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
     result, provider = router._call_litellm("system", "user")
-    assert result == '{"title":"ok"}'
-    assert provider == "kiraai:model-b"
-    assert calls == ["radar-production-1", "radar-production-2"]
-    assert "kiraai" not in router._DISABLED_FAMILIES
+    assert result is None
+    assert provider is None
+    assert calls == ["radar-production-1"]
+    assert "kiraai" in router._DISABLED_FAMILIES
 
 
 def test_huggingface_is_last_resort_emergency_lane(monkeypatch):

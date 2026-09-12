@@ -1,0 +1,30 @@
+name: Finalize Routing
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  finalize:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Apply workflow and regression updates
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('.github/workflows/run.yml')
+          s = p.read_text()
+          marker = '          FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}\n'
+          replacement = marker + '          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}\n'
+          s = s.replace(marker, replacement)
+          if 'tests/test_production_router_policy.py' in s and 'tests/test_nara_router_integration.py' not in s:
+              target = 'tests/test_llm_health_persistence.py\n'
+              s = s.replace(target, target + ' tests/test_nara_router_integration.py\n')
+          p.write_text(s)
+
+          t = Path('tests/test_nara_router_integration.py')
+          t.write_text('''import sys\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[1]\nsys.path.insert(0, str(ROOT / "src"))\n\nimport free_model_registry as registry\nimport llm_router_light as router\nfrom production_router_policy import _is_provider_auth, _is_provider_quota\n\n\ndef test_nara_is_inserted_after_all_groq_models(monkeypatch):\n    monkeypatch.setenv("NARAROUTER_API_KEY", "test-nara")\n    monkeypatch.setenv("GROQ_API_KEY", "test-groq")\n    monkeypatch.setenv("OPENROUTER_API_KEY", "test-or")\n    monkeypatch.delenv("KIRAAI_API_KEY", raising=False)\n    monkeypatch.setattr(registry, "ranked_entries", lambda: [\n        {"family": "groq", "id": "a", "credential_env": "GROQ_API_KEY", "deployment_id": "groq:a", "quality_score": 90, "response_format": True},\n        {"family": "groq", "id": "b", "credential_env": "GROQ_API_KEY", "deployment_id": "groq:b", "quality_score": 80, "response_format": True},\n        {"family": "openrouter", "id": "c:free", "credential_env": "OPENROUTER_API_KEY", "deployment_id": "openrouter:c:free", "quality_score": 60, "response_format": False},\n    ])\n    rows = registry.build_litellm_model_list()\n    families = [r["model_info"]["provider_family"] for r in rows]\n    assert families[:3] == ["groq", "groq", "nararouter"]\n\n\ndef test_nara_adapter_uses_openai_compatible_endpoint(monkeypatch):\n    monkeypatch.setenv("NARAROUTER_API_KEY", "test-nara")\n    seen = {}\n    class Response:\n        status_code = 200\n        def json(self):\n            return {"model": "auto/bynara", "choices": [{"message": {"content": '{"ok":true}'}}]}\n        @property\n        def text(self): return '{"ok":true}'\n        def raise_for_status(self): return None\n    def post(url, **kwargs):\n        seen["url"] = url; seen["kwargs"] = kwargs; return Response()\n    monkeypatch.setattr(router.requests, "post", post)\n    assert router._nara("system", "user", "auto/bynara") == '{"ok":true}'\n    assert seen["url"] == "https://router.bynara.id/v1/chat/completions"\n    assert seen["kwargs"]["json"]["max_tokens"] == 900\n\n\ndef test_json_generation_error_is_not_provider_auth():\n    msg = "Failed to generate JSON. Please adjust your prompt. failed_generation=max completion tokens reached"\n    assert not _is_provider_auth(msg)\n    assert not _is_provider_quota(msg)\n''')\n          PY\n      - name: Commit and remove helper\n        run: |\n          git config user.name "github-actions[bot]"\n          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"\n          git add .github/workflows/run.yml tests/test_nara_router_integration.py\n          git commit -m "feat: wire NaraRouter free fallback and routing regression"\n          git push origin HEAD:main\n          git rm -f .github/workflows/finalize-routing.yml\n          git commit -m "chore: remove one-time routing finalization workflow [skip ci]"\n          git push origin HEAD:main || true

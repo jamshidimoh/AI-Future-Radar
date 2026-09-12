@@ -1,7 +1,6 @@
 name: Run AI Future Radar Bot
 
 on:
-  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (UTC+3:30). GitHub Actions cron is UTC.
   schedule:
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
@@ -83,12 +82,7 @@ jobs:
           if not key:
               print("[Nara Smoke] skipped: secret not configured")
               raise SystemExit(0)
-          r = requests.post(
-              "https://router.bynara.id/v1/chat/completions",
-              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-              json={"model":"auto/bynara","messages":[{"role":"user","content":"Reply only with OK"}],"max_tokens":8,"temperature":0},
-              timeout=15,
-          )
+          r = requests.post("https://router.bynara.id/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json={"model":"auto/bynara","messages":[{"role":"user","content":"Reply only with OK"}],"max_tokens":8,"temperature":0}, timeout=15)
           print(f"[Nara Smoke] status={r.status_code}")
           if r.ok:
               data = r.json()
@@ -160,31 +154,29 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
-          if git diff --cached --quiet; then
-            echo "No production state changes to commit."
-            exit 0
-          fi
-          git commit -m "chore: persist production state [skip ci]"
+          STATE_DIR="$(mktemp -d)"
+          STATE_FILES="data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json"
+          for f in $STATE_FILES; do
+            mkdir -p "$STATE_DIR/$(dirname "$f")"
+            cp "$f" "$STATE_DIR/$f"
+          done
           for attempt in 1 2 3; do
-            git fetch origin "main" --depth=20
-            if git rebase "origin/main"; then
-              if git push origin "HEAD:main"; then
-                echo "Production state persisted on attempt ${attempt}."
-                exit 0
-              fi
-            else
-              echo "State rebase attempt ${attempt} hit generated-state conflicts; merging JSON state instead of discarding remote history."
-              python scripts/merge_production_state.py
-              git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
-              GIT_EDITOR=true git rebase --continue
-              if git push origin "HEAD:main"; then
-                echo "Production state persisted after lossless JSON merge on attempt ${attempt}."
-                exit 0
-              fi
+            git fetch origin main --depth=50
+            git reset --hard origin/main
+            for f in $STATE_FILES; do
+              cp "$STATE_DIR/$f" "$f"
+            done
+            git add $STATE_FILES
+            if git diff --cached --quiet; then
+              echo "No production state changes to commit."
+              exit 0
             fi
-            git rebase --abort || true
-            echo "State push attempt ${attempt} lost a race with the production branch; retrying."
+            git commit -m "chore: persist production state [skip ci]"
+            if git push origin HEAD:main; then
+              echo "Production state persisted on attempt ${attempt} without rebasing production code."
+              exit 0
+            fi
+            git reset --hard origin/main
             sleep $((attempt * 2))
           done
           echo "Unable to persist production state after 3 attempts."

@@ -12,8 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "config" / "free_model_registry.yaml"
 RUNTIME_REGISTRY_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 
-_PROVIDER_ORDER = {"groq": 0, "openrouter": 1, "kiraai": 2, "gemini": 3, "huggingface": 4}
+_PROVIDER_ORDER = {"groq": 0, "nararouter": 1, "openrouter": 2, "kiraai": 3, "gemini": 4, "huggingface": 5}
 _BLOCKED_OPENROUTER_IDS = {"openrouter/free", "openrouter/auto"}
+NARA_DEFAULT_MODEL = "auto/bynara"
 
 
 def _read(path: Path) -> dict:
@@ -73,7 +74,6 @@ def _quality_score(model: dict) -> float:
 
 
 def _routing_key(entry: dict) -> tuple:
-    """Prefer reliable direct providers, then quality, then configured priority."""
     family = str(entry.get("family") or "").strip().casefold()
     return (
         _PROVIDER_ORDER.get(family, 99),
@@ -126,7 +126,7 @@ def canonical_entries() -> list[dict]:
             continue
         model_id = str(candidate.get("id") or "").strip()
         family = str(candidate.get("family") or "").strip().casefold()
-        if not model_id or candidate.get("id") in known_ids or _blocked_model_id(family, model_id):
+        if not model_id or model_id in known_ids or _blocked_model_id(family, model_id):
             continue
         if candidate.get("free") is not True or candidate.get("chat_capable") is not True:
             continue
@@ -157,7 +157,6 @@ def canonical_entries() -> list[dict]:
 def ranked_entries() -> list[dict]:
     """Return currently usable deployments using provider-first reliability order."""
     from free_model_service import get_intelligence
-
     ranked = get_intelligence().rank(canonical_entries())
     return sorted(ranked, key=_routing_key)
 
@@ -208,9 +207,11 @@ def _litellm_model_name(entry: dict) -> str:
 
 
 def build_litellm_model_list() -> list[dict]:
-    """Translate the ranked registry into one named LiteLLM deployment per rank."""
+    """Translate ranked registry plus the independent Nara free lane into deployments."""
     rows: list[dict] = []
-    for order, entry in enumerate(ranked_entries(), start=1):
+    ranked = ranked_entries()
+    order = 1
+    for entry in ranked:
         env_name = str(entry.get("credential_env") or "").strip()
         api_key = os.getenv(env_name, "").strip()
         if not api_key:
@@ -229,12 +230,27 @@ def build_litellm_model_list() -> list[dict]:
                 "response_format": bool(entry.get("response_format")),
             },
         })
+        order += 1
+        if entry.get("family") == "groq" and os.getenv("NARAROUTER_API_KEY", "").strip():
+            rows.append({
+                "model_name": f"radar-production-{order}",
+                "litellm_params": {"model": f"openai/{os.getenv('NARA_MODEL', NARA_DEFAULT_MODEL).strip()}", "api_key": os.getenv("NARAROUTER_API_KEY", "").strip(), "api_base": "https://router.bynara.id/v1", "timeout": 8, "order": 1},
+                "model_info": {
+                    "id": f"nararouter:{os.getenv('NARA_MODEL', NARA_DEFAULT_MODEL).strip()}",
+                    "quality_score": 62.0,
+                    "provider_family": "nararouter",
+                    "rank": order,
+                    "response_format": False,
+                },
+            })
+            order += 1
     return rows
 
 
 def build_production_chain(router):
     chain: list[tuple[str, object]] = []
     max_runtime_candidates = int(_load().get("registry", {}).get("max_runtime_candidates", 18) or 18)
+    inserted_nara = False
     for entry in ranked_entries()[:max_runtime_candidates]:
         family = entry["family"]
         model_id = entry["id"]
@@ -248,6 +264,10 @@ def build_production_chain(router):
             continue
         display_family = {"openrouter": "OpenRouter", "kiraai": "KiraAI", "groq": "Groq"}.get(family, family.title())
         chain.append((f"{display_family}:{model_id}", fn))
+        if family == "groq" and not inserted_nara and os.getenv("NARAROUTER_API_KEY", "").strip():
+            nara_model = os.getenv("NARA_MODEL", NARA_DEFAULT_MODEL).strip()
+            chain.append((f"NaraRouter:{nara_model}", lambda sp, uc, m=nara_model: router._nara(sp, uc, m)))
+            inserted_nara = True
 
     if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("GEMINI_API_KEY"):
         chain.append(("Gemini", router._gemini))

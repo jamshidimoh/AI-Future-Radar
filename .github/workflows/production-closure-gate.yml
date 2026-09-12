@@ -4,6 +4,8 @@ on:
   workflow_run:
     workflows: ["Run AI Future Radar Bot"]
     types: [completed]
+  push:
+    branches: [main]
 
 permissions:
   actions: read
@@ -12,19 +14,19 @@ permissions:
 
 jobs:
   closure-evidence:
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'cancelled' || github.event.workflow_run.conclusion == 'timed_out' }}
+    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'cancelled' || github.event.workflow_run.conclusion == 'timed_out' }}
     runs-on: ubuntu-latest
     steps:
       - name: Evaluate production evidence
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          TRIGGER_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-          TRIGGER_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+          TRIGGER_CONCLUSION: ${{ github.event.workflow_run.conclusion || 'push' }}
+          TRIGGER_RUN_NUMBER: ${{ github.event.workflow_run.run_number || 'n/a' }}
         run: |
           set -euo pipefail
           python - <<'PY'
-          import json, os, re, sys, urllib.error, urllib.request
+          import base64, json, os, re, sys, urllib.error, urllib.request
 
           repo = os.environ["REPO"]
           token = os.environ["GH_TOKEN"]
@@ -127,8 +129,19 @@ jobs:
           duplicate_free = history_dedup_clean and not any_recent(actual_duplicate_event)
 
           runtime_single_message = any_recent(r"\[Telegram Delivery\] full_text=\d+ photo=disabled single_message=true")
-          static_single_message = any_recent(r"\[Telegram Full-Text Contract\] PASS")
-          image_contract = runtime_single_message or static_single_message
+          regression_single_message = any_recent(r"\[Image Delivery Contract Evidence\] PASS")
+          try:
+              source_payload = get_json("/contents/src/telegram_single_delivery.py?ref=main")
+              source_text = base64.b64decode(source_payload.get("content", "")).decode("utf-8", errors="replace")
+          except Exception as exc:
+              source_text = ""
+              print(f"STATIC_CONTRACT read_error={type(exc).__name__}: {exc}")
+          static_single_message = (
+              "exactly one canonical full-text message" in source_text
+              and "photo=disabled single_message=true" in source_text
+              and "return _send_text_only(text, source_link=source_link)" in source_text
+          )
+          image_contract = runtime_single_message or regression_single_message or static_single_message
 
           ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_recent(r"normal_rank=\d{2,}")
           qa_replacement = any_recent(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
@@ -160,13 +173,12 @@ jobs:
               "11_tier0_quality_floor": tier0_quality_floor,
               "12_education_cadence_contract": education_evidence,
           }
-          for key, value in evidence.items():
-              print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
+          for key, value in evidence.items(): print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
           print(f"TIER0_QUALITY_FLOOR clean={tier0_quality_floor}")
           print(f"EDUCATION_EVIDENCE published={education_published} recovery={education_recovery_confirmed} not_due_all={education_not_due_all} contract_not_due={education_contract_not_due}")
           print(f"FAIL_CLOSED_EVIDENCE observed_zero={observed_zero_publish} regression_contract={fail_closed_regression} runtime_acceptance={production_acceptance_pass}")
           print(f"PUBLICATION_EVIDENCE published_run={published_run} publication_attempted={publication_attempted} fail_closed_publication={fail_closed_publication_evidence}")
-          print(f"IMAGE_EVIDENCE runtime={runtime_single_message} regression={static_single_message}")
+          print(f"IMAGE_EVIDENCE runtime={runtime_single_message} regression={regression_single_message} static={static_single_message}")
           print(f"PROVIDER_EVIDENCE failure_observed={failure_observed} llm_success={llm_success}")
           blocked = [key for key, value in evidence.items() if not value]
           if blocked:

@@ -41,14 +41,7 @@ def _provider_family(name: str) -> str:
 
 
 def _provider_credential_available(name: str) -> bool:
-    env = {
-        "groq": "GROQ_API_KEY",
-        "nararouter": "NARAROUTER_API_KEY",
-        "openrouter": "OPENROUTER_API_KEY",
-        "kiraai": "KIRAAI_API_KEY",
-        "gemini": "GEMINI_API_KEY",
-        "huggingface": "HF_TOKEN",
-    }.get(_provider_family(name))
+    env = {"groq": "GROQ_API_KEY", "nararouter": "NARAROUTER_API_KEY", "openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "gemini": "GEMINI_API_KEY", "huggingface": "HF_TOKEN"}.get(_provider_family(name))
     return bool(os.getenv(env)) if env else False
 
 
@@ -88,21 +81,8 @@ def _nara(system_prompt, user_content, model=None):
     if not key:
         return None
     selected_model = (model or os.getenv("NARA_MODEL") or NARA_DEFAULT_MODEL).strip()
-    payload = {
-        "model": selected_model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ],
-        "max_tokens": 900,
-        "temperature": 0.15,
-    }
-    r = requests.post(
-        "https://router.bynara.id/v1/chat/completions",
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        json=payload,
-        timeout=8,
-    )
+    payload = {"model": selected_model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_tokens": 900, "temperature": 0.15}
+    r = requests.post("https://router.bynara.id/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=8)
     body = r.text[:800]
     if r.status_code in (401, 402, 403, 404, 429, 503):
         raise QuotaExceeded(f"NaraRouter {selected_model}: HTTP {r.status_code} {body}")
@@ -200,18 +180,7 @@ def _huggingface(system_prompt, user_content):
 
 
 def _chain_key():
-    return (
-        os.getenv("GROQ_API_KEY", ""),
-        os.getenv("NARAROUTER_API_KEY", ""),
-        os.getenv("OPENROUTER_API_KEY", ""),
-        os.getenv("KIRAAI_API_KEY", ""),
-        os.getenv("GEMINI_API_KEY", ""),
-        os.getenv("HF_TOKEN", ""),
-        os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0"),
-        os.getenv("RADAR_ENABLE_HF_FALLBACK", "0"),
-        os.getenv("GEMINI_MODEL", GEMINI_DEFAULT_MODEL),
-        os.getenv("NARA_MODEL", NARA_DEFAULT_MODEL),
-    )
+    return (os.getenv("GROQ_API_KEY", ""), os.getenv("NARAROUTER_API_KEY", ""), os.getenv("OPENROUTER_API_KEY", ""), os.getenv("KIRAAI_API_KEY", ""), os.getenv("GEMINI_API_KEY", ""), os.getenv("HF_TOKEN", ""), os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0"), os.getenv("RADAR_ENABLE_HF_FALLBACK", "0"), os.getenv("GEMINI_MODEL", GEMINI_DEFAULT_MODEL), os.getenv("NARA_MODEL", NARA_DEFAULT_MODEL))
 
 
 def get_quality_chain():
@@ -244,16 +213,7 @@ def _get_litellm_router():
         return _LITELLM_ROUTER
     try:
         from litellm import Router
-        _LITELLM_ROUTER = Router(
-            model_list=model_list,
-            num_retries=0,
-            retry_after=0,
-            timeout=8,
-            allowed_fails=1,
-            cooldown_time=45,
-            enable_pre_call_checks=True,
-            fallbacks=[],
-        )
+        _LITELLM_ROUTER = Router(model_list=model_list, num_retries=0, retry_after=0, timeout=8, allowed_fails=1, cooldown_time=45, enable_pre_call_checks=True, fallbacks=[])
         _LITELLM_ROUTER_KEY = key
         print("[LiteLLM Router] deployments=" + ", ".join(x["model_info"]["id"] for x in model_list), flush=True)
         return _LITELLM_ROUTER
@@ -263,21 +223,11 @@ def _get_litellm_router():
 
 
 def _call_direct_deployment(litellm_router, deployment, system_prompt, user_content, *, max_tokens=700, timeout=8):
-    """Call a normal LiteLLM deployment, except independent gateway lanes use direct HTTP adapters."""
     deployment_id = str(deployment.get("model_info", {}).get("id") or "")
     family = _provider_family(deployment_id)
     if family == "nararouter":
         return _nara_response_adapter(system_prompt, user_content, deployment_id, max_tokens=max_tokens, timeout=timeout)
-    kwargs = {
-        "model": deployment["model_name"],
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ],
-        "timeout": timeout,
-        "max_tokens": max_tokens,
-        "temperature": 0.15,
-    }
+    kwargs = {"model": deployment["model_name"], "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "timeout": timeout, "max_tokens": max_tokens, "temperature": 0.15}
     if deployment["model_info"].get("response_format"):
         kwargs["response_format"] = {"type": "json_object"}
     return litellm_router.completion(**kwargs)
@@ -295,14 +245,10 @@ def _nara_response_adapter(system_prompt, user_content, deployment_id, *, max_to
     response.raise_for_status()
     data = response.json()
     content = _extract_message(data)
-    class Message:
-        pass
-    class Choice:
-        pass
-    class Response:
-        pass
-    out = Response()
-    out.model = data.get("model", model)
+    class Message: pass
+    class Choice: pass
+    class Response: pass
+    out = Response(); out.model = data.get("model", model)
     msg = Message(); msg.content = content
     choice = Choice(); choice.message = msg
     out.choices = [choice]
@@ -321,7 +267,6 @@ def _call_litellm(system_prompt, user_content):
         if remaining <= 0:
             print("[LiteLLM Router] budget_exhausted=1", flush=True)
             break
-        model_name = deployment["model_name"]
         deployment_id = deployment["model_info"]["id"]
         try:
             response = _call_direct_deployment(router, deployment, system_prompt, user_content, max_tokens=700, timeout=max(0.5, min(8.0, remaining)))
@@ -369,3 +314,65 @@ def _disable(name: str, reason: str):
 def _litellm_router_disabled() -> bool:
     with _STATE_LOCK:
         return bool(_DISABLED_FAMILIES)
+
+
+def call_llm_with_fallback(system_prompt, user_content, providers=None):
+    """Public compatibility API with bounded provider/model-aware failover."""
+    if providers is None or isinstance(providers, ProductionQualityChain):
+        providers = get_quality_chain()
+    deadline = time.monotonic() + _ROUTER_BUDGET_SECONDS
+    local_models: set[str] = set()
+    local_families: set[str] = set()
+    last_error = None
+    for name, fn in providers:
+        family = _provider_family(name)
+        if name in local_models or family in local_families:
+            continue
+        if family in _DISABLED_FAMILIES or _model_is_disabled(name):
+            continue
+        if not _provider_credential_available(name):
+            continue
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        future = _CALL_EXECUTOR.submit(fn, system_prompt, user_content)
+        try:
+            result = future.result(timeout=_provider_timeout(name, remaining))
+            if result:
+                print(f"[Light Router] success={name}", flush=True)
+                return result, name
+        except concurrent.futures.TimeoutError as exc:
+            last_error = TimeoutError(f"{name}: provider timeout")
+            local_models.add(name)
+            _disable(name, "transient")
+        except QuotaExceeded as exc:
+            last_error = exc
+            reason = _failure_class(str(exc))
+            local_models.add(name)
+            if reason == "auth":
+                local_families.add(family)
+                with _STATE_LOCK:
+                    _DISABLED_FAMILIES.add(family)
+            elif reason == "quota" and family in {"openrouter", "nararouter", "kiraai"} and re.search(r"\b402\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd", str(exc), re.I):
+                local_families.add(family)
+                with _STATE_LOCK:
+                    _DISABLED_FAMILIES.add(family)
+            _disable(name, reason)
+        except Exception as exc:
+            last_error = exc
+            reason = _failure_class(str(exc))
+            local_models.add(name)
+            _disable(name, reason)
+        finally:
+            if future.done():
+                future.cancel()
+    if last_error is not None:
+        raise last_error
+    return None, None
+
+
+def _provider_timeout(name: str, remaining: float) -> float:
+    for prefix, limit in _PROVIDER_TIMEOUTS.items():
+        if name.startswith(prefix):
+            return max(0.1, min(remaining, limit))
+    return max(0.1, min(remaining, 4.0))

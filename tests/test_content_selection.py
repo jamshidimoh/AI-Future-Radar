@@ -1,7 +1,7 @@
 import unittest
 
 from src.editorial import classify_editorial_item, select_editorial
-from main import _annotate_named_leader_interviews, _leader_source_authority, _split_protected
+from main import _annotate_named_leader_interviews, _split_protected
 
 
 class ContentSelectionTests(unittest.TestCase):
@@ -30,6 +30,7 @@ class ContentSelectionTests(unittest.TestCase):
                 "watch_person": "Andrew Ng",
                 "content_type": "interview",
                 "is_leader_watch": True,
+                "protected_content": True,
                 "published": "2026-08-15",
             },
             {
@@ -39,6 +40,7 @@ class ContentSelectionTests(unittest.TestCase):
                 "watch_person": "Nick Bostrom",
                 "content_type": "interview",
                 "is_leader_watch": True,
+                "protected_content": True,
                 "published": "2026-08-15",
             },
         ]
@@ -58,6 +60,7 @@ class ContentSelectionTests(unittest.TestCase):
                 "content_type": "interview",
                 "is_leader_watch": True,
                 "leader_watch_protected": True,
+                "protected_content": True,
                 "leader_priority": 10,
                 "source": "Bitcoin World",
                 "source_tier": 3,
@@ -71,6 +74,7 @@ class ContentSelectionTests(unittest.TestCase):
                 "content_type": "product_news",
                 "is_leader_watch": True,
                 "leader_watch_protected": True,
+                "protected_content": True,
                 "leader_priority": 10,
                 "source": "Reuters",
                 "source_tier": 2,
@@ -79,7 +83,7 @@ class ContentSelectionTests(unittest.TestCase):
         ]
         selected, regular = _split_protected(items, max_protected=1)
         self.assertEqual(selected[0]["source"], "Reuters")
-        self.assertEqual(selected[0]["leader_source_authority"], _leader_source_authority(selected[0]))
+        self.assertEqual(selected[0]["source_tier"], 2)
         self.assertEqual(regular[0]["source"], "Bitcoin World")
 
     def test_two_distinct_leaders_are_selected_before_news(self):

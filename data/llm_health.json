@@ -1,5 +1,11 @@
 {
   "models": {
+    "kiraai:dots-3-note-preview": {
+      "disabled_until": 1789196582.834,
+      "failures": 3,
+      "last_error": "quota",
+      "last_success": 0
+    },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "disabled_until": 1789194251.623,
       "failures": 9,
@@ -14,6 +20,6 @@
     }
   },
   "providers": {},
-  "updated_at": 1789190651.623,
+  "updated_at": 1789192982.834,
   "version": 1
 }

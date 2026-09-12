@@ -1,9 +1,9 @@
 """Production-only LLM routing policy.
 
-Production uses the trusted free-model registry for deterministic quality-first
+Production uses the free-model registry for deterministic, quality-aware
 ordering. Provider/account failures trip a family circuit, while model and
-upstream-shared-pool failures remain model-scoped. Hugging Face is reserved for
-an explicit last-resort emergency lane because its free allowance is limited.
+upstream-shared-pool failures remain model-scoped. Emergency paid/free-credit
+lanes are opt-in and never enabled implicitly.
 """
 from __future__ import annotations
 
@@ -57,16 +57,13 @@ def _is_kira_wallet_only(message: str, family: str) -> bool:
 
 
 def _install_production_circuit_breaker() -> None:
-    """Replace the production LiteLLM loop with quota-aware bounded failover."""
+    """Replace the production LiteLLM loop with bounded, quota-aware failover."""
     if getattr(router, "_PRODUCTION_CIRCUIT_BREAKER_INSTALLED", False):
         return
 
-    # Four attempts were too small for the real production chain: transient
-    # failures in the first OpenRouter/Groq deployments could consume the whole
-    # budget before KiraAI was ever reached. Eight preserves a hard bound while
-    # allowing cross-provider failover to reach the configured KiraAI lane.
     max_attempts = max(1, int(os.getenv("RADAR_MAX_LLM_ATTEMPTS", "8") or 8))
     budget_seconds = max(5.0, float(os.getenv("RADAR_ROUTER_BUDGET_SECONDS", "24") or 24))
+    max_tokens = max(256, int(os.getenv("RADAR_LLM_MAX_TOKENS", "700") or 700))
 
     def _call_litellm_guarded(system_prompt, user_content):
         litellm_router = router._get_litellm_router()
@@ -75,11 +72,15 @@ def _install_production_circuit_breaker() -> None:
         last_error = None
         attempts = 0
         skipped_families: set[str] = set()
+        tried: set[str] = set()
 
         def _try_deployment(deployment):
             nonlocal attempts, last_error
             deployment_id = deployment["model_info"]["id"]
             family = router._provider_family(deployment_id)
+            if deployment_id in tried:
+                return None
+            tried.add(deployment_id)
             if family in skipped_families or family in router._DISABLED_FAMILIES:
                 print(f"[Production Circuit] skipped={deployment_id} reason=provider_disabled", flush=True)
                 return None
@@ -95,14 +96,19 @@ def _install_production_circuit_breaker() -> None:
                 return None
             attempts += 1
             try:
-                response = litellm_router.completion(
-                    model=deployment["model_name"],
-                    messages=[
+                kwargs = {
+                    "model": deployment["model_name"],
+                    "messages": [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_content},
                     ],
-                    timeout=max(0.5, min(8.0, remaining)),
-                )
+                    "timeout": max(0.5, min(8.0, remaining)),
+                    "max_tokens": max_tokens,
+                    "temperature": 0.15,
+                }
+                if deployment["model_info"].get("response_format"):
+                    kwargs["response_format"] = {"type": "json_object"}
+                response = litellm_router.completion(**kwargs)
                 content = getattr(response.choices[0].message, "content", None) if getattr(response, "choices", None) else None
                 if not content:
                     raise ValueError("LiteLLM response has no content")
@@ -114,8 +120,12 @@ def _install_production_circuit_breaker() -> None:
                 message = str(exc)
                 reason = router._failure_class(message)
                 if _is_kira_wallet_only(message, family):
+                    skipped_families.add(family)
+                    with router._STATE_LOCK:
+                        router._DISABLED_FAMILIES.add(family)
+                        router._DISABLED.add(deployment_id)
                     router._disable(deployment_id, "quota")
-                    scope = "model"
+                    scope = "provider"
                 elif _is_provider_quota(message) or reason == "auth":
                     skipped_families.add(family)
                     with router._STATE_LOCK:
@@ -155,7 +165,11 @@ def _install_production_circuit_breaker() -> None:
 
     router._call_litellm = _call_litellm_guarded
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = True
-    print(f"[Production Circuit] installed max_attempts={max_attempts} budget_seconds={budget_seconds:.1f}", flush=True)
+    print(
+        f"[Production Circuit] installed max_attempts={max_attempts} "
+        f"budget_seconds={budget_seconds:.1f} max_tokens={max_tokens}",
+        flush=True,
+    )
 
 
 def apply() -> None:

@@ -1,10 +1,4 @@
-"""Production-only LLM routing policy.
-
-Production uses the free-model registry for deterministic, quality-aware
-ordering. Provider/account failures trip a family circuit, while model and
-upstream-shared-pool failures remain model-scoped. Emergency paid/free-credit
-lanes are opt-in and never enabled implicitly.
-"""
+"""Production-only LLM routing policy with bounded, quota-aware failover."""
 from __future__ import annotations
 
 import os
@@ -27,23 +21,14 @@ except ImportError:  # pragma: no cover
     from free_model_registry import build_production_chain
 
 _PROVIDER_QUOTA_PATTERNS = re.compile(
-    r"(?:"
-    r"free-models-per-day|"
-    r"x-ratelimit-(?:remaining|reset).*?(?:0|quota)|"
-    r"account[_ -]?limit|"
-    r"daily[_ -]?quota|"
-    r"quota.*(?:exhaust|deplet)|"
-    r"(?:requests?|tokens?)/(?:day|daily)|"
-    r"provider.*(?:quota|limit)|"
-    r"insufficient.*(?:credit|balance)"
-    r")",
+    r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|insufficient.*(?:credit|balance))",
     re.IGNORECASE,
 )
+_PROVIDER_AUTH_PATTERNS = re.compile(r"(?:\b401\b|unauthorized|invalid.*(?:api|credential|key|token)|authentication.*(?:failed|error))", re.IGNORECASE)
 _KIRAAI_WALLET_PATTERN = re.compile(r"(?:insufficient.*(?:vnd|wallet|balance)|wallet.*balance|vnd.*balance)", re.IGNORECASE)
 
 
 def _is_provider_quota(message: str) -> bool:
-    """Return True only for evidence that the provider/account is exhausted."""
     text = str(message or "")
     if re.search(r"upstream_provider_shared_pool", text, re.IGNORECASE):
         return False
@@ -52,12 +37,15 @@ def _is_provider_quota(message: str) -> bool:
     return bool(_PROVIDER_QUOTA_PATTERNS.search(text))
 
 
+def _is_provider_auth(message: str) -> bool:
+    return bool(_PROVIDER_AUTH_PATTERNS.search(str(message or "")))
+
+
 def _is_kira_wallet_only(message: str, family: str) -> bool:
     return family == "kiraai" and bool(_KIRAAI_WALLET_PATTERN.search(str(message or "")))
 
 
 def _install_production_circuit_breaker() -> None:
-    """Replace the production LiteLLM loop with bounded, quota-aware failover."""
     if getattr(router, "_PRODUCTION_CIRCUIT_BREAKER_INSTALLED", False):
         return
 
@@ -96,22 +84,10 @@ def _install_production_circuit_breaker() -> None:
                 return None
             attempts += 1
             try:
-                kwargs = {
-                    "model": deployment["model_name"],
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_content},
-                    ],
-                    "timeout": max(0.5, min(8.0, remaining)),
-                    "max_tokens": max_tokens,
-                    "temperature": 0.15,
-                }
-                if deployment["model_info"].get("response_format"):
-                    kwargs["response_format"] = {"type": "json_object"}
-                response = litellm_router.completion(**kwargs)
+                response = router._call_direct_deployment(litellm_router, deployment, system_prompt, user_content, max_tokens=max_tokens, timeout=max(0.5, min(8.0, remaining)))
                 content = getattr(response.choices[0].message, "content", None) if getattr(response, "choices", None) else None
                 if not content:
-                    raise ValueError("LiteLLM response has no content")
+                    raise ValueError("LLM response has no content")
                 selected = str(getattr(response, "model", deployment_id))
                 print(f"[Production Circuit] success={deployment_id} model={selected} attempts={attempts}", flush=True)
                 return content, deployment_id
@@ -126,7 +102,7 @@ def _install_production_circuit_breaker() -> None:
                         router._DISABLED.add(deployment_id)
                     router._disable(deployment_id, "quota")
                     scope = "provider"
-                elif _is_provider_quota(message) or reason == "auth":
+                elif _is_provider_quota(message) or _is_provider_auth(message):
                     skipped_families.add(family)
                     with router._STATE_LOCK:
                         router._DISABLED_FAMILIES.add(family)
@@ -165,15 +141,10 @@ def _install_production_circuit_breaker() -> None:
 
     router._call_litellm = _call_litellm_guarded
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = True
-    print(
-        f"[Production Circuit] installed max_attempts={max_attempts} "
-        f"budget_seconds={budget_seconds:.1f} max_tokens={max_tokens}",
-        flush=True,
-    )
+    print(f"[Production Circuit] installed max_attempts={max_attempts} budget_seconds={budget_seconds:.1f} max_tokens={max_tokens}", flush=True)
 
 
 def apply() -> None:
-    """Enable production mode on the canonical router module exactly once."""
     if getattr(router, "_PRODUCTION_POLICY_APPLIED", False):
         return
     chain = build_production_chain(router)

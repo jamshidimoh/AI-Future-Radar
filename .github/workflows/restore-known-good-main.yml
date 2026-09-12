@@ -1,0 +1,147 @@
+name: Restore Known Good Main
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Restore known-good main.py and add lazy refill
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL 'https://raw.githubusercontent.com/jamshidimoh/AI-Future-Radar/6747a309b43b4a0a8e9660a6200e28a7ee4f8e07/main.py' -o main.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('main.py')
+          s = p.read_text(encoding='utf-8')
+          if 'Publication Lazy Refill' not in s:
+              s = s.replace('PROTECTED_SUMMARY_SCORE_FLOOR = 60.0\n', 'PROTECTED_SUMMARY_SCORE_FLOOR = 60.0\nNORMAL_SCORE_FLOOR = 60.0\n', 1)
+              s = s.replace('        if item.get("protected_slot"):\n', '        if item.get("protected_slot") or item.get("protected_content"):\n', 1)
+              pattern = re.compile(
+                  r'    print\("\[7/7\] Telegram publication"\); sent = 0\n'
+                  r'    for item in selected:.*?'
+                  r'    save_seen\(seen_hashes, seen_signatures, source_history\); print\(f"Posts sent: \{sent\}/\{len\(selected\)\}"\)', re.S)
+              replacement = '''    print("[7/7] Telegram publication"); sent = 0
+    initial_selected_count = len(selected)
+    replacement_limit = max(0, int(load_editorial_contract().get("replacement_buffer", 0) or 0))
+    publication_attempted = {str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item)) for item in selected}
+    publication_queue = list(selected)
+    lazy_replacements = 0
+    next_candidate_index = 0
+
+    def _candidate_identity(item):
+        return str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item))
+
+    def _prepare_lazy_replacement():
+        nonlocal lazy_replacements, next_candidate_index
+        if lazy_replacements >= replacement_limit:
+            return None
+        while next_candidate_index < len(editorial_pool):
+            candidate = editorial_pool[next_candidate_index]
+            next_candidate_index += 1
+            identity = _candidate_identity(candidate)
+            if identity in publication_attempted:
+                continue
+            try:
+                score = float(candidate.get("final_editorial_score", candidate.get("editorial_score", 0)) or 0)
+            except (TypeError, ValueError):
+                score = 0.0
+            if candidate.get("protected_content"):
+                if score < PROTECTED_SUMMARY_SCORE_FLOOR:
+                    continue
+            else:
+                try:
+                    rank = int(candidate.get("normal_period_rank"))
+                except (TypeError, ValueError):
+                    continue
+                if rank > 6 or score < NORMAL_SCORE_FLOOR:
+                    continue
+            summary = summarize_fn(candidate)
+            if not summary:
+                print(f"[Publication Lazy Refill] summary blocked; skipping candidate: {str(candidate.get('title',''))[:120]}", flush=True)
+                continue
+            candidate = dict(candidate)
+            candidate.update(summary)
+            candidate["source_image"] = resolve_image_fn(candidate)
+            publication_attempted.add(identity)
+            lazy_replacements += 1
+            print(f"[Publication Lazy Refill] prepared replacement={lazy_replacements}/{replacement_limit} score={candidate.get('final_editorial_score', candidate.get('editorial_score', 0))} title={str(candidate.get('title',''))[:120]}", flush=True)
+            return candidate
+        return None
+
+    queue_index = 0
+    while queue_index < len(publication_queue):
+        item = publication_queue[queue_index]
+        queue_index += 1
+        if item.get("_publication_blocked"):
+            continue
+        try:
+            source_name = str(item.get("source") or item.get("source_name") or "منبع")
+            link = str(item.get("link") or item.get("url") or "")
+            post = format_fn(item, source_name, link, is_video=str(item.get("source_type") or "").lower() in {"youtube", "video"}, published=item.get("published", ""), content_type=item.get("content_type", "news"), source_tier=item.get("source_tier", 3), source_type=item.get("source_type", "news"), leader=item.get("leader") or item.get("watch_person") or "")
+            if not _publication_text_within_limit(post):
+                replacement = _prepare_lazy_replacement()
+                if replacement is not None:
+                    publication_queue.append(replacement)
+                continue
+            result = deliver_fn(post, image_url=str(item.get("source_image") or ""), source_link=link)
+            if hasattr(result, "status"):
+                status_value = getattr(getattr(result, "status"), "value", str(getattr(result, "status")))
+                if status_value == "delivered":
+                    sent += 1
+                    persist_fn(item, seen_hashes, seen_signatures, source_history)
+                    continue
+                if status_value in {"policy_blocked", "rejected", "duplicate"}:
+                    print(f"[Publication Contract] candidate rejected reason={getattr(result, 'reason', '')}; continuing to next ranked candidate", flush=True)
+                    replacement = _prepare_lazy_replacement()
+                    if replacement is not None:
+                        publication_queue.append(replacement)
+                    continue
+                raise RuntimeError(f"Telegram transport failure: {getattr(result, 'reason', 'unknown')}")
+            if not result:
+                raise RuntimeError("Telegram delivery returned false")
+            sent += 1
+            persist_fn(item, seen_hashes, seen_signatures, source_history)
+        except Exception as exc:
+            print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
+    print(f"[Publication Lazy Refill] initial={initial_selected_count} lazy_replacements={lazy_replacements} final_attempt_queue={len(publication_queue)}", flush=True)
+    save_seen(seen_hashes, seen_signatures, source_history); print(f"Posts sent: {sent}/{len(publication_queue)}")'''
+              m = pattern.search(s)
+              if not m:
+                  raise SystemExit('known-good publication loop not found')
+              s = s[:m.start()] + replacement + s[m.end():]
+              p.write_text(s, encoding='utf-8')
+          print('RESTORED_AND_PATCHED')
+          PY
+      - name: Validate routing and full contract suite
+        run: |
+          python -m pip install -q -r requirements.txt
+          python -m compileall -q main.py src tests
+          python -m pip install -q --disable-pip-version-check 'ruff>=0.12,<0.13'
+          python -m ruff check --select F src/llm_router_light.py src/free_model_registry.py src/production_router_policy.py tests/test_llm_health_persistence.py tests/test_nara_router_integration.py
+          python -m pytest -q
+      - name: Remove temporary workflows and commit stable main
+        shell: bash
+        run: |
+          rm -f .github/workflows/restore-known-good-main.yml .github/workflows/restore-and-finalize.yml .github/workflows/apply-final-routing-hardening.yml .github/workflows/apply-routing-hardening.yml scripts/apply_final_routing_hardening.py
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add main.py .github/workflows/restore-known-good-main.yml .github/workflows/restore-and-finalize.yml .github/workflows/apply-final-routing-hardening.yml .github/workflows/apply-routing-hardening.yml scripts/apply_final_routing_hardening.py
+          git commit -m 'fix: restore stable production entrypoint with bounded publication refill'
+          git push origin HEAD:main

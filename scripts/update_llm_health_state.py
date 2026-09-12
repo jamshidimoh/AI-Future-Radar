@@ -1,11 +1,4 @@
-"""Persist safe, bounded LLM failure state observed during a production run.
-
-The router already isolates failures inside a run. This script bridges that
-runtime state across GitHub Actions runs without storing credentials or prompt
-content. It intentionally persists only durable failures: authentication,
-account/provider quota, model-not-found/permission, and explicit rate limits.
-Transient 5xx/network failures are not persisted across runs.
-"""
+"""Persist safe, bounded LLM failure state observed during a production run."""
 from __future__ import annotations
 
 import json
@@ -36,10 +29,18 @@ SUCCESS_RE = re.compile(
     r"\[(?:LiteLLM Router|Production Circuit)\]\s+"
     r"success=(?P<deployment>\S+)"
 )
+KIRAAI_WALLET_RE = re.compile(
+    r"insufficient.*(?:vnd|wallet|balance)|wallet.*balance|vnd.*balance",
+    re.IGNORECASE,
+)
 
 
 def family(deployment: str) -> str:
     return deployment.split(":", 1)[0].strip().casefold()
+
+
+def is_kira_wallet_only(deployment: str, message: str) -> bool:
+    return family(deployment) == "kiraai" and bool(KIRAAI_WALLET_RE.search(str(message or "")))
 
 
 def classify(message: str) -> str:
@@ -88,7 +89,7 @@ def main() -> int:
     models = prune(state.get("models", {}) if isinstance(state.get("models"), dict) else {}, now)
     providers = prune(state.get("providers", {}) if isinstance(state.get("providers"), dict) else {}, now)
     successes: set[str] = set()
-    failures: list[tuple[str, str, str]] = []
+    failures: list[tuple[str, str, str, bool]] = []
 
     for line in log_path.read_text(encoding="utf-8", errors="replace").splitlines():
         success = SUCCESS_RE.search(line)
@@ -98,14 +99,14 @@ def main() -> int:
         failure = FAIL_RE.search(line)
         if failure:
             deployment = failure.group("deployment")
-            reason = failure.group("message").strip()
-            failures.append((deployment, family(deployment), classify(reason)))
+            message = failure.group("message").strip()
+            failures.append((deployment, family(deployment), classify(message), is_kira_wallet_only(deployment, message)))
 
     for deployment in successes:
         models.pop(deployment, None)
         providers.pop(family(deployment), None)
 
-    for deployment, provider, kind in failures:
+    for deployment, provider, kind, kira_wallet_only in failures:
         if deployment in successes:
             continue
         model_seconds = MODEL_COOLDOWN.get(kind)
@@ -117,7 +118,7 @@ def main() -> int:
                 "last_success": 0,
             }
         provider_seconds = PROVIDER_COOLDOWN.get(kind)
-        if provider_seconds and kind in {"auth", "quota"}:
+        if provider_seconds and kind in {"auth", "quota"} and not kira_wallet_only:
             old = providers.get(provider, {})
             providers[provider] = {
                 "failures": int(old.get("failures", 0) or 0) + 1,

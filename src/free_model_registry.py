@@ -12,6 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "config" / "free_model_registry.yaml"
 RUNTIME_REGISTRY_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 
+_PROVIDER_ORDER = {"groq": 0, "openrouter": 1, "kiraai": 2, "gemini": 3, "huggingface": 4}
+_BLOCKED_OPENROUTER_IDS = {"openrouter/free", "openrouter/auto"}
+
 
 def _read(path: Path) -> dict:
     try:
@@ -51,6 +54,12 @@ def _provider_runtime_available(provider: dict) -> bool:
     return provider.get("credential_valid") is not False
 
 
+def _blocked_model_id(family: str, model_id: str) -> bool:
+    if family != "openrouter":
+        return False
+    return model_id.strip().casefold() in _BLOCKED_OPENROUTER_IDS
+
+
 def _quality_score(model: dict) -> float:
     try:
         explicit = model.get("quality_score")
@@ -61,6 +70,17 @@ def _quality_score(model: dict) -> float:
     except (TypeError, ValueError):
         return 0.0
     return round(base * 0.80 + fit * 0.20, 3)
+
+
+def _routing_key(entry: dict) -> tuple:
+    """Prefer reliable direct providers, then quality, then configured priority."""
+    family = str(entry.get("family") or "").strip().casefold()
+    return (
+        _PROVIDER_ORDER.get(family, 99),
+        -_quality_score(entry),
+        int(entry.get("priority", 9999) or 9999),
+        str(entry.get("id", "")),
+    )
 
 
 def discovered_candidates() -> list[dict]:
@@ -80,7 +100,10 @@ def canonical_entries() -> list[dict]:
         for model in provider.get("models", []) or []:
             if not isinstance(model, dict) or model.get("enabled", True) is False:
                 continue
-            if int(model.get("priority", 9999)) >= 1000 or not model.get("id"):
+            model_id = str(model.get("id") or "").strip()
+            if not model_id or _blocked_model_id(family, model_id):
+                continue
+            if int(model.get("priority", 9999)) >= 1000:
                 continue
             if data.get("require_free", True) and model.get("free") is not True:
                 continue
@@ -99,7 +122,11 @@ def canonical_entries() -> list[dict]:
 
     known_ids = {row["id"] for row in rows}
     for candidate in discovered_candidates():
-        if not isinstance(candidate, dict) or candidate.get("id") in known_ids:
+        if not isinstance(candidate, dict):
+            continue
+        model_id = str(candidate.get("id") or "").strip()
+        family = str(candidate.get("family") or "").strip().casefold()
+        if not model_id or candidate.get("id") in known_ids or _blocked_model_id(family, model_id):
             continue
         if candidate.get("free") is not True or candidate.get("chat_capable") is not True:
             continue
@@ -108,8 +135,13 @@ def canonical_entries() -> list[dict]:
         score = _quality_score(candidate)
         if score < 50:
             continue
-        family = str(candidate.get("family", "")).strip().lower()
-        env_name = {"openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY"}.get(family)
+        env_name = {
+            "openrouter": "OPENROUTER_API_KEY",
+            "kiraai": "KIRAAI_API_KEY",
+            "groq": "GROQ_API_KEY",
+            "gemini": "GEMINI_API_KEY",
+            "huggingface": "HF_TOKEN",
+        }.get(family)
         if not _credential_available(env_name):
             continue
         row = dict(candidate)
@@ -119,15 +151,15 @@ def canonical_entries() -> list[dict]:
         row["priority"] = int(row.get("priority", 1000))
         rows.append(row)
 
-    rows.sort(key=lambda x: (-float(x["quality_score"]), int(x.get("priority", 9999)), x["id"]))
-    return rows
+    return sorted(rows, key=_routing_key)
 
 
 def ranked_entries() -> list[dict]:
-    """Return quality-ranked, currently credentialed trusted deployments."""
+    """Return currently usable deployments using provider-first reliability order."""
     from free_model_service import get_intelligence
 
-    return get_intelligence().rank(canonical_entries())
+    ranked = get_intelligence().rank(canonical_entries())
+    return sorted(ranked, key=_routing_key)
 
 
 def model_capability(model_id: str) -> dict:
@@ -144,7 +176,7 @@ def _kiraai_call(router, system_prompt, user_content, model):
     key = os.getenv("KIRAAI_API_KEY")
     if not key:
         return None
-    payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_tokens": 850, "temperature": 0.15}
+    payload = {"model": model, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}], "max_tokens": 700, "temperature": 0.15}
     if model_capability(model).get("response_format"):
         payload["response_format"] = {"type": "json_object"}
     response = requests.post("https://kiraai.vn/api/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json=payload, timeout=10)
@@ -194,6 +226,7 @@ def build_litellm_model_list() -> list[dict]:
                 "quality_score": entry["quality_score"],
                 "provider_family": entry["family"],
                 "rank": order,
+                "response_format": bool(entry.get("response_format")),
             },
         })
     return rows

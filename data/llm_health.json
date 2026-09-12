@@ -14,6 +14,10 @@
     }
   },
   "providers": {},
+<<<<<<< HEAD
   "updated_at": 1789197056.016,
+=======
+  "updated_at": 1789197410.118,
+>>>>>>> 1d53a55 (chore: persist production state [skip ci])
   "version": 1
 }

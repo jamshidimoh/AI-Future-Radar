@@ -1,8 +1,13 @@
 from main import _mission_coverage_recovery
 
 
+def _disable_history_dedup(monkeypatch):
+    monkeypatch.setattr("main.filter_new_items", lambda items, _seen: list(items))
+
+
 def test_mission_coverage_recovery_replaces_failed_mind_future_candidate(monkeypatch):
     monkeypatch.setenv("RADAR_SUMMARY_WORKERS", "1")
+    _disable_history_dedup(monkeypatch)
     failed = {
         "title": "Harari item",
         "mission_area": "future_governance",
@@ -44,6 +49,7 @@ def test_mission_coverage_recovery_replaces_failed_mind_future_candidate(monkeyp
 
 def test_mission_coverage_recovery_does_not_bypass_quality_gate(monkeypatch):
     monkeypatch.setenv("RADAR_SUMMARY_WORKERS", "1")
+    _disable_history_dedup(monkeypatch)
     failed = {
         "title": "Failed first",
         "mission_area": "future_governance",

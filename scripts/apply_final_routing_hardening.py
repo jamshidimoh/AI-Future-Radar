@@ -4,15 +4,15 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def patch_text(path: Path, old: str, new: str, label: str, count: int = 1) -> None:
+def replace_if_present(path: Path, old: str, new: str, label: str) -> None:
     text = path.read_text(encoding="utf-8")
-    if old not in text:
-        raise SystemExit(f"{label}: expected text not found")
-    path.write_text(text.replace(old, new, count), encoding="utf-8")
+    if old in text:
+        path.write_text(text.replace(old, new, 1), encoding="utf-8")
+    elif new not in text:
+        raise SystemExit(f"{label}: expected source not found")
 
 
-# Fix routing-specific Ruff error without changing runtime semantics.
-patch_text(
+replace_if_present(
     ROOT / "src/llm_router_light.py",
     'except concurrent.futures.TimeoutError as exc:\n            last_error = TimeoutError(f"{name}: provider timeout")',
     'except concurrent.futures.TimeoutError:\n            last_error = TimeoutError(f"{name}: provider timeout")',
@@ -28,7 +28,7 @@ old = '        if item.get("protected_slot"):\n            try: score = float(it
 new = '        if item.get("protected_slot") or item.get("protected_content"):\n            try: score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)'
 if old in s:
     s = s.replace(old, new, 1)
-# Publication patch is applied only once; accept both the original and already-patched source.
+
 if 'Publication Lazy Refill' not in s:
     pattern = re.compile(
         r'    print\("\[7/7\] Telegram publication"\); sent = 0\n'
@@ -122,10 +122,11 @@ if 'Publication Lazy Refill' not in s:
     if not m:
         raise SystemExit("publication loop: expected block not found")
     s = s[:m.start()] + replacement + s[m.end():]
+
 main_path.write_text(s, encoding="utf-8")
 
 quality_path = ROOT / ".github" / "workflows" / "test-quality.yml"
-patch_text(
+replace_if_present(
     quality_path,
     "      - name: Ruff changed-surface gate\n        run: python -m ruff check --select F src/llm_router_light.py tests/test_hf_light_router.py",
     "      - name: Ruff changed-surface gate\n        run: python -m ruff check --select F src/llm_router_light.py src/free_model_registry.py src/production_router_policy.py tests/test_llm_health_persistence.py tests/test_nara_router_integration.py",

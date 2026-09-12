@@ -210,6 +210,88 @@ def _publication_summary_budget(selected, max_posts, policy):
     print(f"[Publication Summary Budget] input={len(selected)} protected={len(protected)} normal_window={len(normals)} output={len(bounded)} normal_limit={normal_limit} replacement_buffer={replacement_buffer} score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}", flush=True)
     return bounded
 
+def _mission_coverage_recovery(
+    selected, editorial_pool, select_editorial_fn, summarize_fn,
+    max_per_source, max_per_type, policy, seen_hashes,
+):
+    """Recover an unmet mind/future mission target after downstream summary gates.
+
+    This is deliberately a coverage opportunity: it never bypasses relevance,
+    authority, deduplication, editorial quality, or publication checks.
+    """
+    contract = load_editorial_contract()
+    target = max(0, int(contract.get("mind_future_target", 0) or 0))
+    if target <= 0:
+        return []
+    try:
+        from unified_editorial_selection import mission_area
+    except Exception:
+        return []
+    mission_areas = {"mind_cognition", "future_governance"}
+
+    prepared = sum(
+        1 for item in selected
+        if not item.get("_publication_blocked")
+        and mission_area(item) in mission_areas
+    )
+    if prepared >= target:
+        print(
+            f"[Mission Coverage Recovery] target={target} prepared={prepared} "
+            f"recovered=0 status=already_satisfied", flush=True
+        )
+        return []
+
+    used = set()
+    for item in selected:
+        used.add(str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item)))
+    pool = []
+    for item in editorial_pool:
+        if item.get("protected_content") or mission_area(item) not in mission_areas:
+            continue
+        identity = str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item))
+        if identity in used or not filter_new_items([item], seen_hashes):
+            continue
+        pool.append(item)
+
+    retries = max(1, int(contract.get("replacement_buffer", 1) or 1))
+    recovered = []
+    attempts = 0
+    while prepared + len(recovered) < target and pool and attempts < retries:
+        attempts += 1
+        chosen = unique_candidates(
+            select_editorial_fn(
+                pool, max_posts=1, max_per_source=max_per_source,
+                max_per_type=max_per_type, policy=policy
+            )
+        )
+        if not chosen:
+            break
+        candidate = chosen[0]
+        identity = str(candidate.get("canonical_url") or candidate.get("link") or candidate.get("url") or candidate.get("title") or id(candidate))
+        pool = [x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
+        result = _summarize_selected([candidate], summarize_fn)
+        summary = result[0] if result else None
+        if summary:
+            candidate.update(summary)
+            candidate["_mission_recovery"] = True
+            recovered.append((candidate, summary))
+            prepared += 1
+            print(
+                f"[Mission Coverage Recovery] attempt={attempts} area={mission_area(candidate)} "
+                f"title={str(candidate.get('title',''))[:120]} status=recovered", flush=True
+            )
+        else:
+            print(
+                f"[Mission Coverage Recovery] attempt={attempts} area={mission_area(candidate)} "
+                f"title={str(candidate.get('title',''))[:120]} status=failed", flush=True
+            )
+    print(
+        f"[Mission Coverage Recovery] target={target} prepared={prepared - len(recovered)} "
+        f"attempts={attempts} recovered={len(recovered)} status={'ok' if prepared >= target else 'unmet'}",
+        flush=True,
+    )
+    return recovered
+
 def main(hooks=None):
     hooks = dict(hooks or {}); select_editorial_fn = hooks.get("select_editorial", _select_editorial_default); split_protected_fn = hooks.get("split_protected", _split_protected); summarize_fn = hooks.get("summarize_item", summarize_item); format_fn = hooks.get("format_post", format_post); resolve_image_fn = hooks.get("resolve_source_image", resolve_source_image); deliver_fn = hooks.get("send_to_telegram_safe", send_to_telegram_safe); persist_fn = hooks.get("persist_item_success", _persist_item_success)
     config = load_yaml(CONFIG_PATH); leader_config = load_yaml(LEADER_CONFIG_PATH); selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {}); policy = load_yaml(SELECTION_POLICY_PATH).get("editorial", {}); categories = config["categories"]; max_posts = int(selection.get("max_posts", 4)); max_per_source = int(selection.get("max_items_per_source", 2)); max_per_type = int(selection.get("max_items_per_content_type", 2)); leader_protected_max = int(policy.get("leader_protected_max", 2)); replacement_buffer = max(0, int(selection.get("replacement_buffer", 0) or 0)); runtime_selection_cap = leader_protected_max + max_posts + replacement_buffer; bridge_keywords = config.get("ai_bridge_keywords", []); story_threshold = float(selection.get("story_similarity_threshold", 0.45)); leader_people, leader_priorities = _leader_people(leader_config)
@@ -230,6 +312,13 @@ def main(hooks=None):
         if summary: item.update(summary)
         else: item["_publication_blocked"] = True; print(f"[Editorial Gate] skipped candidate: {str(item.get('title',''))[:120]}", flush=True)
         item["source_image"] = resolve_image_fn(item)
+    mission_recovery = _mission_coverage_recovery(
+        selected, editorial_pool, select_editorial_fn, summarize_fn,
+        max_per_source, max_per_type, policy, seen_hashes,
+    )
+    for candidate, _summary in mission_recovery:
+        candidate["source_image"] = resolve_image_fn(candidate)
+        selected.append(candidate)
     print("[7/7] Telegram publication"); sent = 0
     for item in selected:
         if item.get("_publication_blocked"): continue

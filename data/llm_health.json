@@ -1,36 +1,26 @@
 {
   "models": {
-    "groq:qwen/qwen3.6-27b": {
-      "disabled_until": 1789202474.155,
-      "failures": 2,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
     "kiraai:dots-3-note-preview": {
-      "disabled_until": 1789201856.299,
-      "failures": 2,
+      "disabled_until": 1789202999.575,
+      "failures": 3,
       "last_error": "quota",
       "last_success": 0
     },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "disabled_until": 1789201856.299,
-      "failures": 2,
+    "openrouter:google/gemma-4-31b-it:free": {
+      "disabled_until": 1789202999.575,
+      "failures": 1,
       "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "openrouter": {
-      "disabled_until": 1789219856.299,
+      "disabled_until": 1789220999.575,
       "failures": 1,
       "last_error": "quota",
       "last_success": 0
     }
   },
-<<<<<<< HEAD
-  "updated_at": 1789198675.566,
-=======
-  "updated_at": 1789198874.155,
->>>>>>> 1bcfb8d (chore: persist production state [skip ci])
+  "updated_at": 1789199399.575,
   "version": 1
 }

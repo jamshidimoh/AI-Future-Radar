@@ -2,9 +2,8 @@
 
 Production uses the trusted free-model registry for deterministic quality-first
 ordering. Quota failures are handled with an in-run provider circuit breaker:
-provider/account quota disables the whole provider immediately, while a
-model-specific 429 remains model-scoped. This keeps the production router
-from wasting calls on sibling deployments after an account quota is exhausted.
+provider/account quota disables the whole provider immediately, while an
+upstream shared-pool throttle and model-specific 429 remain model-scoped.
 """
 from __future__ import annotations
 
@@ -13,10 +12,6 @@ import sys
 import time
 from pathlib import Path
 
-# The production application imports ``llm_router_light`` as a top-level module
-# after main.py adds src/ to sys.path. Importing ``src.llm_router_light`` here
-# creates a second module instance and silently bypasses the production chain.
-# Resolve the exact canonical module used by summarization and grounding.
 try:
     import llm_router_light as router
 except ImportError:  # pragma: no cover
@@ -32,7 +27,6 @@ except ImportError:  # pragma: no cover
 
 _PROVIDER_QUOTA_PATTERNS = re.compile(
     r"(?:"
-    r"upstream_provider_shared_pool|"
     r"free-models-per-day|"
     r"x-ratelimit-(?:remaining|reset).*?(?:0|quota)|"
     r"account[_ -]?limit|"
@@ -49,6 +43,11 @@ _PROVIDER_QUOTA_PATTERNS = re.compile(
 def _is_provider_quota(message: str) -> bool:
     """Return True only for evidence that the provider/account is exhausted."""
     text = str(message or "")
+    # OpenRouter may surface a 429 caused by its upstream shared pool. That is
+    # a route/model-level capacity issue, not evidence that our OpenRouter
+    # account is exhausted; sibling free deployments must remain eligible.
+    if re.search(r"upstream_provider_shared_pool", text, re.IGNORECASE):
+        return False
     if re.search(r"\b402\b", text):
         return True
     return bool(_PROVIDER_QUOTA_PATTERNS.search(text))

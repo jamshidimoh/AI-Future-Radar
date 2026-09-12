@@ -76,6 +76,22 @@ def test_production_circuit_log_is_persisted(tmp_path, monkeypatch):
     assert "groq:model-b" not in payload["models"]
 
 
+def test_light_router_log_is_persisted(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    log = tmp_path / "run.log"
+    log.write_text(
+        "[Light Router] failed=groq:model-a reason=rate_limit scope=model: HTTP 429 rate limit\n"
+        "[Light Router] success=groq:model-b model=groq/model-b attempts=1\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+    assert "groq:model-a" in payload["models"]
+    assert "groq:model-b" not in payload["models"]
+
+
 def test_success_removes_persisted_model_failure(tmp_path, monkeypatch):
     state = tmp_path / "llm_health.json"
     log = tmp_path / "run.log"

@@ -1,6 +1,19 @@
 {
-  "models": {},
+  "models": {
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
+      "disabled_until": 1789194251.623,
+      "failures": 9,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "disabled_until": 1789194251.623,
+      "failures": 9,
+      "last_error": "rate_limit",
+      "last_success": 0
+    }
+  },
   "providers": {},
-  "updated_at": 1789190145.277,
+  "updated_at": 1789190651.623,
   "version": 1
 }

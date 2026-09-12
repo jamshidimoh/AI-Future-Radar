@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789197055,
+  "updated_at": 1789198255,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8633,6 +8633,43 @@
       "why_it_matters": "استفاده از هوش مصنوعی در شخصی‌سازی درمان می‌تواند پزشکان را قادر به تجزیه و تحلیل دقیق‌تر داده‌های clinیک و ارائه توصیه‌های پزشکی مناسبتر کند. این فرآیند می‌تواند از تکرار تست‌های ناموفق و تلاش‌های empiric برای یافتن دوز مناسب جلوگیری کند و به بهبود تجربه治癇ی بیماران منجر شود. در نهایت، استفاده از هوش مصنوعی در این زمینه می‌تواند بار کار kliniki را کاهش دهد و کیفیت مراقبت‌های دردی را ارتقا بخشد.",
       "link": "https://news.harvard.edu/gazette/story/2026/09/who-needs-opioids/",
       "posted_at": 1789197055
+    },
+    "-1004482051328:1560": {
+      "chat_id": -1004482051328,
+      "message_id": 1560,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - 80,000 Hours",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "در این پادکست، Tom Reed استدلال می‌کند که بهبود بازگشتی (Recursive Self-improvement) به تنهایی منجر به superintelligence نمی‌شود زیرا مدل‌ها برای",
+      "summary": "در این پادکست، Tom Reed استدلال می‌کند که بهبود بازگشتی (Recursive Self-improvement) به تنهایی منجر به superintelligence نمی‌شود زیرا مدل‌ها برای پیشرفت به مواجهه با مسائل واقعی و بازخوردهای انسانی نیاز دارند. او معتقد است داده‌های ضروری برای اکثر وظایف اقتصادی تنها هنگام استقرار مدل و ابراز ترجیحات کاربران ایجاد می‌شوند و در محیط‌های ایزوله در دسترس نیستند. در نتیجه، بهینه‌سازی مدل‌ها صرفاً بر اساس benchmarkها، منجر به افزایش عملکرد در محیط آزمایشگاه می‌شود که قابلیت تعمیم به دنیای واقعی را ندارد.",
+      "description": "AI systems are starting to build themselves. The standard story is that recursive self-improvement will lead to superintelligence. Host Tom Reed does not think this will happen. Nothing — not even a country of geniuses — gets good at solving problems without a supply of real problems. For most tasks in the economy, the data required doesn't exist. It only comes into being when a model is deployed and somebody reveals a preference.\n\nAn isolated AI improving itself against benchmarks would only _appear_ to be approaching superintelligence, while actually optimising for eval performance that fails to generalise beyond the lab.\n\nAI models need real-world deployment for the same reason the body needs pain and corporations need profit: signal is sovereign. \n\nTo paraphrase economist Charles Goodhart’s famous aphorism: when a measure becomes a target, it ceases to be a good measure. Thus, Tom argues that the output of the R&amp;D produced by an isolated data centre of geniuses would be a mere “Goodhart Singularity.” \n\n*Learn more & full transcript:* https://80k.info/goodhart\n\n_“The Goodhart Singularity” originally appeared on Tom’s Substack in May 2026, and this narration was recorded on August 26, 2026._\n\nChapters:\n• Introduction (00:00:00)\n• Practice makes perfect (00:05:05)\n• Good data is hard to find (00:08:22)\n• Simulation is shallow (00:13:43)\n• What a Goodhart Singularity looks like (00:19:04)\n\n_Our production team includes:_\n_• Video editors: Josh Alward, Dominic Armstrong, Jasper Luithlen, Milo McGuire, Luke Monsour, and Simon Monsour_\n_• Producers: Elizabeth Cox and Nick Stockton_\n_• Coordination and support: Katy Moore and Lou Moran_\n_• Camera operator: Dominic Armstrong_",
+      "why_it_matters": "این تحلیل مفهوم Goodhart Singularity را معرفی می‌کند؛ وضعیتی که در آن AI با بهینه‌سازی شدید برای معیارهای ارزیابی (Eval performance)، به ظاهر پیشرفت می‌کند اما در واقعیت از کارایی فاصله می‌گیرد. اهمیت این موضوع در این است که بدون سیگنال‌های واقعی از محیط بیرونی، مدل‌های هوش مصنوعی در تله‌ای از داده‌های مصنوعی یا بنچمارک‌ها می‌افتند و نمی‌توانند به توانمندی‌های حل مسئله در مقیاس جهانی دست یابند.",
+      "link": "https://www.youtube.com/watch?v=KQ2sIGi6ESA",
+      "posted_at": 1789198252
+    },
+    "-1004482051328:1561": {
+      "chat_id": -1004482051328,
+      "message_id": 1561,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "ارزیابی HarnessDev: فقط ۳۴ تغییر از ۶۴ تغییر توسط LLMها در وظایف جدید مؤثر هستند",
+      "summary": "HarnessDev یک بنچمارک جدید از ByteDance Seed، SUTD، Georgia Tech، M‑A‑P و TokenWave.AI است که ارزیابی می‌کند مدل‌های زبانی بزرگ قادر به ساخت «harness» اجرایی هستند یا نه، نه فقط پاسخ نهایی. در این آزمایش، شش LLM خالق از نقطه شروع با امتیاز صفر، در پنج بنچمارک و ۲۲۰۷ کار، harnessهایی می‌سازند و سپس بر پایه بازخورد اجرای کد، آنها را تکامل می‌دهند. نتایج نشان می‌دهد که harnessهای ساخته‌شده توسط مدل‌ها در نوشتن و آزمایش‌های Machine Learning به مرجع انسانی نزدیک می‌شوند، اما در کد و جستجو عقب می‌مانند. از ۶۴ تغییر ایجاد شده در فرآیند تکامل، تنها ۳۴ تغییر در کارهای نگه‌داری (held‑out) جهت مطلوبی حرکت می‌کنند.",
+      "why_it_matters": "این بنچمارک نشان می‌دهد که توانایی LLMها در تولید خودکار اجزای اجرایی هنوز به‌طور قابل‌اعتمادی به وظایف جدید تعمیم نیافته است. عدم تعمیم ۳۴ از ۶۴ تغییر به کارهای نگه‌داری، محدودیت‌های فعلی در استفاده از LLMها برای ساخت خودکار عامل‌های هوشمند و ابزارهای برنامه‌نویسی را برجسته می‌کند. این نتایج برای توسعه‌گران سامانه‌های خودکار، پژوهشگران AI و شرکت‌هایی که به دنبال کاهش دخالت انسانی در مهندسی نرم‌افزار هستند، هشدار مهمی است که نیاز به روش‌های بازخوردی قوی‌تر و ارزیابی‌های گسترده‌تر دارد.",
+      "link": "https://www.marktechpost.com/2026/09/11/can-llms-engineer-their-own-agent-harness-bytedance-seeds-harnessdev-says-only-34-of-64-changes-generalize/",
+      "posted_at": 1789198255
     }
   }
 }

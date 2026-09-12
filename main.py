@@ -253,6 +253,24 @@ def _mission_coverage_recovery(
             continue
         pool.append(item)
 
+    # Recovery must select a candidate that can actually pass the same normal
+    # publication score floor. A summary success alone is not publication success.
+    publishable_pool = []
+    for item in pool:
+        try:
+            score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
+        except (TypeError, ValueError):
+            score = 0.0
+        if score >= PROTECTED_SUMMARY_SCORE_FLOOR:
+            publishable_pool.append(item)
+    print(
+        f"[Mission Coverage Recovery] mission_candidates={len(pool)} "
+        f"publishable_candidates={len(publishable_pool)} "
+        f"score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}",
+        flush=True,
+    )
+    pool = publishable_pool
+
     retries = max(1, int(contract.get("replacement_buffer", 1) or 1))
     recovered = []
     attempts = 0

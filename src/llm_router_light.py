@@ -23,7 +23,7 @@ _CHAIN_CACHE_KEY = None
 _PRODUCTION_POLICY_APPLIED = False
 _LITELLM_ROUTER = None
 _LITELLM_ROUTER_KEY = None
-_PROVIDER_TIMEOUTS = {"Groq:": 8.0, "OpenRouter:": 7.0, "Gemini": 8.0, "HuggingFace": 5.0}
+_PROVIDER_TIMEOUTS = {"Groq:": 8.0, "OpenRouter:": 7.0, "KiraAI:": 8.0, "Gemini": 8.0, "HuggingFace": 5.0}
 _REQUEST_TIMEOUT = 10
 _ROUTER_BUDGET_SECONDS = 24
 _MAX_TRANSIENT_RETRIES = 1
@@ -40,8 +40,14 @@ def _provider_family(name: str) -> str:
 
 
 def _provider_credential_available(name: str) -> bool:
-    env = {"groq": "GROQ_API_KEY", "openrouter": "OPENROUTER_API_KEY", "gemini": "GEMINI_API_KEY", "huggingface": "HF_TOKEN"}.get(_provider_family(name))
-    return bool(os.getenv(env)) if env else True
+    env = {
+        "groq": "GROQ_API_KEY",
+        "openrouter": "OPENROUTER_API_KEY",
+        "kiraai": "KIRAAI_API_KEY",
+        "gemini": "GEMINI_API_KEY",
+        "huggingface": "HF_TOKEN",
+    }.get(_provider_family(name))
+    return bool(os.getenv(env)) if env else False
 
 
 def _extract_message(payload: dict):
@@ -242,9 +248,6 @@ def _call_litellm(system_prompt, user_content):
         model_name = deployment["model_name"]
         deployment_id = deployment["model_info"]["id"]
         try:
-            # Each rank has its own LiteLLM model name. This preserves the
-            # registry's quality order and lets LiteLLM cooldown each failed
-            # deployment independently instead of randomly load-balancing tiers.
             response = router.completion(
                 model=model_name,
                 messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_content}],

@@ -13,19 +13,33 @@
       "last_success": 0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
+<<<<<<< HEAD
       "disabled_until": 1789198348.248,
       "failures": 1,
+=======
+      "disabled_until": 1789198611.477,
+      "failures": 4,
+>>>>>>> 62e9531 (chore: persist production state [skip ci])
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
+<<<<<<< HEAD
       "disabled_until": 1789198348.248,
       "failures": 1,
+=======
+      "disabled_until": 1789198611.477,
+      "failures": 4,
+>>>>>>> 62e9531 (chore: persist production state [skip ci])
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {},
+<<<<<<< HEAD
   "updated_at": 1789194748.248,
+=======
+  "updated_at": 1789195011.477,
+>>>>>>> 62e9531 (chore: persist production state [skip ci])
   "version": 1
 }

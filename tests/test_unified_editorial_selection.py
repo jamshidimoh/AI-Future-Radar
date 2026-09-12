@@ -58,13 +58,13 @@ def test_tier3_publisher_is_not_treated_as_community_source():
     assert all("community" not in x["source"].casefold() for x in selected)
 
 
-def test_mission_diversity_targets_are_soft_not_mandatory():
+def test_mission_coverage_targets_are_explicit_opportunities():
     contract = load_editorial_contract()
     assert contract["max_posts"] == 3
-    assert contract["ai_core_target_min"] == 0
-    assert contract["ai_core_target_max"] == 3
+    assert contract["ai_core_target_min"] == 1
+    assert contract["ai_core_target_max"] == 2
     assert contract["convergence_target"] == 0
-    assert contract["mind_future_target"] == 0
+    assert contract["mind_future_target"] == 1
     assert contract["research_target"] == 0
     assert contract["interview_target_max"] == 1
     assert contract["min_authoritative_items"] == 2
@@ -72,14 +72,29 @@ def test_mission_diversity_targets_are_soft_not_mandatory():
     assert contract["similarity_penalty"] == 12.0
 
 
-def test_mind_future_items_are_not_forced_when_their_quality_is_lower():
+def test_mind_future_target_selects_an_eligible_mind_or_future_item():
     candidates = [
-        item("Exceptional AI capability", "OpenAI", 100, area="ai"), item("Second exceptional AI capability", "Anthropic", 99, area="ai"),
-        item("Third exceptional AI capability", "MIT CSAIL", 98, area="ai"), item("Weak future item", "NIST", 35, area="future"), item("Weak mind item", "Stanford HAI", 30, area="mind"),
+        item("Exceptional AI capability", "OpenAI", 100, area="ai"),
+        item("Second exceptional AI capability", "Anthropic", 99, area="ai"),
+        item("Strong consciousness research linked to AI", "Nature", 72, area="mind", content_type="research", research_signal=True),
+        item("Weak future commentary", "NIST", 35, area="future"),
     ]
     selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, mission_aware=True, strict_relevance=True)
-    assert len(selected) == 3
-    assert [x["title"] for x in selected] == ["Exceptional AI capability", "Second exceptional AI capability", "Third exceptional AI capability"]
+    titles = [x["title"] for x in selected]
+    assert "Strong consciousness research linked to AI" in titles
+    assert any(x["mission_selection_reason"] == "mission_target:mind_cognition" for x in selected)
+
+
+def test_zero_mind_future_target_does_not_force_weak_mind_content():
+    candidates = [
+        item("Exceptional AI capability", "OpenAI", 100, area="ai"),
+        item("Second exceptional AI capability", "Anthropic", 99, area="ai"),
+        item("Weak mind item", "Stanford HAI", 30, area="mind"),
+    ]
+    contract = load_editorial_contract()
+    contract["mind_future_target"] = 0
+    selected = select_regular_portfolio(candidates, max_posts=2, max_per_source=1, max_per_type=2, recent_source_counts={}, contract=contract, mission_aware=True, strict_relevance=True)
+    assert [x["title"] for x in selected] == ["Exceptional AI capability", "Second exceptional AI capability"]
 
 
 def test_high_value_convergence_can_win_on_score_without_a_mandatory_slot():
@@ -87,7 +102,9 @@ def test_high_value_convergence_can_win_on_score_without_a_mandatory_slot():
         item("AI core", "OpenAI", 100, area="ai"), item("Transformative robotics breakthrough", "MIT CSAIL", 96, area="robotics", content_type="research", research_signal=True),
         item("AI core second", "Anthropic", 95, area="ai"), item("Weak policy commentary", "NIST", 40, area="future"),
     ]
-    selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, mission_aware=True, strict_relevance=True)
+    contract = load_editorial_contract()
+    contract["mind_future_target"] = 0
+    selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, contract=contract, mission_aware=True, strict_relevance=True)
     titles = [x["title"] for x in selected]
     assert "Transformative robotics breakthrough" in titles
     assert "Weak policy commentary" not in titles
@@ -98,10 +115,12 @@ def test_min_authoritative_items_is_repaired_when_feasible():
         item("AI unknown tier", "Independent Lab", 100, area="ai", tier=None), item("Quantum authoritative", "IBM Research", 90, area="quantum", tier=1),
         item("Future unknown tier", "Independent Policy Lab", 80, area="future", tier=None), item("AI authoritative research", "Nature", 70, area="ai", content_type="research", tier=1, research_signal=True),
     ]
-    selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, mission_aware=True, strict_relevance=True)
+    contract = load_editorial_contract()
+    contract["mind_future_target"] = 0
+    selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, contract=contract, mission_aware=True, strict_relevance=True)
     assert sum(x.get("source_tier") in {1, 2} for x in selected) >= 2
     assert any(x["source"] == "Nature" for x in selected)
-    assert_portfolio_contract(selected)
+    assert_portfolio_contract(selected, contract=contract)
 
 
 def test_content_type_and_source_hard_caps_are_enforced():
@@ -109,7 +128,9 @@ def test_content_type_and_source_hard_caps_are_enforced():
         item("A1", "OpenAI", 100, area="ai", content_type="news"), item("A2", "OpenAI", 99, area="convergence", content_type="news"), item("A3", "OpenAI", 98, area="mind", content_type="news"),
         item("B1", "Nature", 97, area="future", content_type="research"), item("C1", "MIT", 96, area="ai", content_type="research"),
     ]
-    selected = select_regular_portfolio(candidates, max_posts=5, max_per_source=2, max_per_type=2, recent_source_counts={})
+    contract = load_editorial_contract()
+    contract["mind_future_target"] = 0
+    selected = select_regular_portfolio(candidates, max_posts=5, max_per_source=2, max_per_type=2, recent_source_counts={}, contract=contract)
     counts, types = {}, {}
     for x in selected:
         counts[x["source"]] = counts.get(x["source"], 0) + 1
@@ -132,7 +153,9 @@ def test_information_gain_reduces_diminishing_returns_for_near_duplicate_topics(
         item("Frontier model reasoning benchmark shows improved reasoning", "Anthropic", 99),
         item("Brain computer interface restores speech after paralysis", "Nature", 94, area="bci", content_type="research", research_signal=True),
     ]
-    selected = select_regular_portfolio(candidates, max_posts=2, max_per_source=1, max_per_type=2, recent_source_counts={}, mission_aware=True, strict_relevance=True)
+    contract = load_editorial_contract()
+    contract["mind_future_target"] = 0
+    selected = select_regular_portfolio(candidates, max_posts=2, max_per_source=1, max_per_type=2, recent_source_counts={}, contract=contract, mission_aware=True, strict_relevance=True)
     titles = [x["title"] for x in selected]
     assert "Brain computer interface restores speech after paralysis" in titles
     assert all("information_gain_score" in x for x in selected)

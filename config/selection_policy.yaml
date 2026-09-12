@@ -29,10 +29,11 @@ editorial:
 # - Within a run, distinct sources are preferred first; source repetition is
 #   allowed only during adaptive backfill when capacity remains.
 # - Historical source usage is a bounded preference signal, never a hard exclusion.
-# - Mission areas are not mandatory targets. They may influence future-significance
-#   and diversity ranking, but a weaker item must never be selected to fill an area.
-# - max_same_mission_area is an operational ceiling equal to publication capacity,
-#   so it does not create an artificial topic quota for the normal 3-item portfolio.
+# - ai_core_target_min/max and mind_future_target are explicit mission
+#   coverage opportunities. They do not bypass relevance, authority, dedup,
+#   editorial quality, or publication gates.
+# - When an eligible mind/cognition or future/governance candidate exists,
+#   mind_future_target=1 preserves one normal slot for that mission family.
 # - Information gain is a bounded soft reranker: the next candidate is evaluated
 #   against already selected topics. Similar stories receive diminishing-return
 #   penalties; distinct high-quality stories receive a modest novelty bonus.

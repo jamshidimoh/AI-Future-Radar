@@ -44,3 +44,4 @@ editorial:
 #   quality rejection without relaxing publication quality gates.
 # - strict_relevance=true enables hard mission-relevance filtering in the
 #   production orchestration path.
+# - 2026-09-12: production validation trigger after mission-recovery fix.

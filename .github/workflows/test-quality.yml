@@ -7,16 +7,13 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Apply final hardening
-        if: hashFiles('scripts/apply_final_routing_hardening.py') != ''
-        run: python scripts/apply_final_routing_hardening.py
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
@@ -35,19 +32,8 @@ jobs:
         continue-on-error: true
         run: python -m ruff check --select F main.py src tests
       - name: Ruff changed-surface gate
-        run: python -m ruff check --select F src/llm_router_light.py tests/test_hf_light_router.py
+        run: python -m ruff check --select F src/llm_router_light.py src/free_model_registry.py src/production_router_policy.py tests/test_llm_health_persistence.py tests/test_nara_router_integration.py
       - name: Run full quality contract suite
         run: python -m pytest -q
       - name: CI execution marker
         run: echo "UNIFIED_EDITORIAL_SELECTION_CONTRACT_V2"
-      - name: Finalize hardening commit
-        if: hashFiles('scripts/apply_final_routing_hardening.py') != ''
-        shell: bash
-        run: |
-          rm -f .github/workflows/apply-final-routing-hardening.yml scripts/apply_final_routing_hardening.py
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add main.py src/llm_router_light.py .github/workflows/test-quality.yml .github/workflows/apply-final-routing-hardening.yml scripts/apply_final_routing_hardening.py
-          git diff --cached --quiet && exit 0
-          git commit -m 'fix: finalize routing and publication hardening'
-          git push origin HEAD:main

@@ -4,7 +4,7 @@
 
 ## وضعیت محصول
 
-**Production hardening / CLOSURE PENDING — 2026-09-06**
+**Production hardening / routing validation — 2026-09-12**
 
 پذیرش قبلی در `2026-09-05` با workflow run `33948969943` سبز شده بود، اما اجرای بعدی Production Closure Gate در `2026-09-06` با run `34016810047` به دلیل ناقص بودن شواهد معیار `02_publish_and_fail_closed_zero` متوقف شد. بنابراین برچسب `CLOSED` فعلاً معتبر نیست و تا تولید یک پنجره شواهد جدید و سبز نباید دوباره اعلام شود.
 

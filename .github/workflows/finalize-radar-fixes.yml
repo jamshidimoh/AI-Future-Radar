@@ -1,0 +1,40 @@
+name: Finalize Radar Fixes
+
+on:
+  push:
+    paths:
+      - .github/workflows/finalize-radar-fixes.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 20
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Apply final mission accounting fix
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('main.py'); t=p.read_text(encoding='utf-8')
+          old='''    prepared = sum(\n        1 for item in selected\n        if not item.get("_publication_blocked")\n        and mission_area(item) in mission_areas\n    )\n'''
+          new='''    prepared = 0\n    for item in selected:\n        if item.get("_publication_blocked") or mission_area(item) not in mission_areas:\n            continue\n        try:\n            score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)\n        except (TypeError, ValueError):\n            score = 0.0\n        if score >= PROTECTED_SUMMARY_SCORE_FLOOR:\n            prepared += 1\n    print(f"[Mission Coverage Recovery] prepared_publishable={prepared} score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}", flush=True)\n'''
+          if old not in t: raise SystemExit('mission block not found')
+          p.write_text(t.replace(old,new,1),encoding='utf-8')
+          PY
+      - name: Validate and commit
+        run: |
+          python -m compileall -q main.py src scripts
+          python -m pytest -q tests/test_mission_coverage_recovery.py tests/test_mission_coverage_prepared_quality.py
+          rm -f .github/workflows/fix-mission-prepared-quality.yml .github/workflows/finalize-radar-fixes.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add main.py tests/test_mission_coverage_prepared_quality.py .github/workflows/fix-mission-prepared-quality.yml .github/workflows/finalize-radar-fixes.yml
+          git commit -m "fix: finalize publishable mission accounting"
+          git push origin HEAD:main

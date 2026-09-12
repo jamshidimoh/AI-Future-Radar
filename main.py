@@ -84,9 +84,9 @@ def _annotate_named_leader_interviews(items, leader_people, leader_priorities=No
         text = _text(item)
         for name in names:
             if _contains_person(text, name):
-                item["watch_person"] = name; item["leader"] = name; item["is_leader_watch"] = True; item["leader_priority"] = priorities.get(name, int(item.get("leader_priority", 0) or 0)); watch_candidates += 1
+                item["watch_person"] = name; item["leader"] = name; item["is_leader_watch"] = True; item["leader_watch_protected"] = True; item["leader_priority"] = priorities.get(name, int(item.get("leader_priority", 0) or 0)); watch_candidates += 1
                 if _direct_interview_signal(item): item["_named_leader_interview"] = True; item["leader_watch_protected"] = True; matched += 1
-                elif _leader_activity_signal(item): item["leader_activity_signal"] = True; item["is_leader_watch"] = True; item["leader_watch_protected"] = True; protected += 1
+                elif _leader_activity_signal(item): item["leader_activity_signal"] = True; item["leader_watch_protected"] = True; protected += 1
                 break
     print(f"[Leader Identity Recovery] verified_interviews={matched} | activity_protected={protected} | watchlist_candidates={watch_candidates}"); return items
 
@@ -172,29 +172,21 @@ def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_
     while len(selected) < target:
         rounds += 1
         remaining = [x for x in editorial_pool if id(x) not in selected_ids and not x.get("protected_content")]
-        if not remaining:
-            break
+        if not remaining: break
         safe_pool = filter_new_items(remaining, seen_hashes)
-        if not safe_pool:
-            break
+        if not safe_pool: break
         need = target - len(selected)
         replacements = unique_candidates(select_editorial_fn(safe_pool, max_posts=need, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy))
-        if not replacements:
-            break
+        if not replacements: break
         before = len(selected)
         for item in replacements:
-            if len(selected) >= target:
-                break
+            if len(selected) >= target: break
             identity = id(item)
-            if identity in selected_ids or item.get("protected_content"):
-                continue
-            selected.append(item)
-            selected_ids.add(identity)
-        if len(selected) == before:
-            break
+            if identity in selected_ids or item.get("protected_content"): continue
+            selected.append(item); selected_ids.add(identity)
+        if len(selected) == before: break
     print(f"[Selection Refill] initial_after_late_dedup={initial_count} final={len(selected)} target={target} rounds={rounds} refilled={max(0, len(selected)-initial_count)}", flush=True)
     return selected
-
 
 def _publication_summary_budget(selected, max_posts, policy):
     """Keep ranking breadth while bounding expensive LLM work to plausible publications."""
@@ -206,28 +198,21 @@ def _publication_summary_budget(selected, max_posts, policy):
     normals = []
     for item in selected:
         if item.get("protected_slot"):
-            try:
-                score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
-            except (TypeError, ValueError):
-                score = 0.0
-            if score >= PROTECTED_SUMMARY_SCORE_FLOOR:
-                protected.append(item)
+            try: score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
+            except (TypeError, ValueError): score = 0.0
+            if score >= PROTECTED_SUMMARY_SCORE_FLOOR: protected.append(item)
         else:
-            try:
-                rank = int(item.get("normal_period_rank"))
-            except (TypeError, ValueError):
-                rank = 10**9
-            if rank <= normal_limit:
-                normals.append(item)
+            try: rank = int(item.get("normal_period_rank"))
+            except (TypeError, ValueError): rank = 10**9
+            if rank <= normal_limit: normals.append(item)
     bounded = unique_candidates(protected + normals)
-    if not bounded and selected:
-        bounded = unique_candidates(selected[:max(1, int(max_posts or 1))])
+    if not bounded and selected: bounded = unique_candidates(selected[:max(1, int(max_posts or 1))])
     print(f"[Publication Summary Budget] input={len(selected)} protected={len(protected)} normal_window={len(normals)} output={len(bounded)} normal_limit={normal_limit} replacement_buffer={replacement_buffer} score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}", flush=True)
     return bounded
 
 def main(hooks=None):
     hooks = dict(hooks or {}); select_editorial_fn = hooks.get("select_editorial", _select_editorial_default); split_protected_fn = hooks.get("split_protected", _split_protected); summarize_fn = hooks.get("summarize_item", summarize_item); format_fn = hooks.get("format_post", format_post); resolve_image_fn = hooks.get("resolve_source_image", resolve_source_image); deliver_fn = hooks.get("send_to_telegram_safe", send_to_telegram_safe); persist_fn = hooks.get("persist_item_success", _persist_item_success)
-    config = load_yaml(CONFIG_PATH); leader_config = load_yaml(LEADER_CONFIG_PATH); selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {}); policy = load_yaml(SELECTION_POLICY_PATH).get("editorial", {}); categories = config["categories"]; max_posts = int(selection.get("max_posts", 4)); max_per_source = int(selection.get("max_items_per_source", 2)); max_per_type = int(selection.get("max_items_per_content_type", 2)); leader_protected_max = int(policy.get("leader_protected_max", 2)); bridge_keywords = config.get("ai_bridge_keywords", []); story_threshold = float(selection.get("story_similarity_threshold", 0.45)); leader_people, leader_priorities = _leader_people(leader_config)
+    config = load_yaml(CONFIG_PATH); leader_config = load_yaml(LEADER_CONFIG_PATH); selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {}); policy = load_yaml(SELECTION_POLICY_PATH).get("editorial", {}); categories = config["categories"]; max_posts = int(selection.get("max_posts", 4)); max_per_source = int(selection.get("max_items_per_source", 2)); max_per_type = int(selection.get("max_items_per_content_type", 2)); leader_protected_max = int(policy.get("leader_protected_max", 2)); replacement_buffer = max(0, int(selection.get("replacement_buffer", 0) or 0)); runtime_selection_cap = leader_protected_max + max_posts + replacement_buffer; bridge_keywords = config.get("ai_bridge_keywords", []); story_threshold = float(selection.get("story_similarity_threshold", 0.45)); leader_people, leader_priorities = _leader_people(leader_config)
     youtube_channels = _merge_unique_dicts(config.get("youtube_channels", []), leader_config.get("youtube_channels", []), key="name"); leader_channel_names = {x.get("name") for x in leader_config.get("youtube_channels", [])}; base_youtube_channels = [x for x in youtube_channels if x.get("name") not in leader_channel_names]; leader_youtube_channels = [x for x in youtube_channels if x.get("name") in leader_channel_names]; base_queries = list(config.get("google_news_queries", [])); leader_queries = list(leader_config.get("google_news_queries", []))
     print("[1/7] Discovery: RSS / university / scientific / specialist sources"); rss_items = fetch_rss_items(config["rss_sources"], categories); print(f"RSS items: {len(rss_items)}")
     print("[2/7] Discovery: YouTube / interviews / podcasts / lectures"); base_youtube = fetch_youtube_items(base_youtube_channels, max_age_hours=72, ai_bridge_keywords=bridge_keywords); leader_youtube = _mark_leader_items(fetch_youtube_items(leader_youtube_channels, max_age_hours=720, ai_bridge_keywords=bridge_keywords)); youtube_items = base_youtube + leader_youtube; print(f"YouTube items: {len(youtube_items)} | leader-channel items: {len(leader_youtube)}")
@@ -236,7 +221,7 @@ def main(hooks=None):
     protected_items, regular_items = split_protected_fn(new_items, max_protected=leader_protected_max); print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}"); print("[4/7] AI-first relevance gate (regular pool only)"); regular_items = filter_ai_relevance(regular_items, bridge_keywords); print("[5/7] Story clustering and canonical-source selection"); regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy); regular_enriched = enrich_signal_items(regular_enriched); _apply_signal_ranking(regular_enriched); regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_pool = [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")]; regular_pool = [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))]; leader_before, regular_before = len(leader_pool), len(regular_pool)
     editorial_pool = gate_story_candidates(protected_items, leader_pool, regular_pool, seen_signatures, threshold=story_threshold); editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal")); regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal"))); protected_after = sum(1 for x in editorial_pool if x.get("protected_content")); print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy); protected_candidates = [x for x in editorial_pool if x.get("protected_content")]; protected_selected = sorted(protected_candidates, key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _direct_interview_signal(x) else 0, x.get("published", "")), reverse=True)[:leader_protected_max]
-    selected = unique_candidates(protected_selected + selected_regular); print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={leader_protected_max + max_posts}", flush=True); selected = _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, leader_protected_max + max_posts)
+    selected = unique_candidates(protected_selected + selected_regular); print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={runtime_selection_cap} normal_capacity={max_posts} replacement_buffer={replacement_buffer}", flush=True); selected = _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap)
     selected = _publication_summary_budget(selected, max_posts, policy)
     if not selected:
         print("[Final Publication Guard] no publishable items remain", flush=True); save_seen(seen_hashes, seen_signatures, source_history); print("Posts sent: 0/0"); return

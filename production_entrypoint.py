@@ -151,16 +151,17 @@ def _is_tier0_publication_candidate(item: dict) -> bool:
 
 
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
-    """Bound the runtime set to publishable protected + normal candidates.
+    """Bound runtime candidates while preserving the normal replacement buffer.
 
-    Global ranking may contain many Tier-0 or replacement candidates, but the
-    publication contract only has a small normal capacity plus reserved protected
-    slots. Keeping that invariant before summarization prevents expensive LLM work
-    on candidates that can never reach Telegram.
+    ``max_posts`` is the hard normal publication capacity. ``replacement_buffer``
+    is additional pre-summary capacity used only to survive later LLM/editorial
+    rejection. It must not increase the Telegram publication quota.
     """
     candidates = list(candidates or [])
     protected_limit = max(0, int(policy.get("leader_protected_max", 2) or 0))
-    normal_limit = max(0, int(max_posts or 0))
+    normal_capacity = max(0, int(max_posts or 0))
+    replacement_buffer = max(0, int(policy.get("replacement_buffer", EDITORIAL_CONTRACT.get("replacement_buffer", 0)) or 0))
+    normal_limit = normal_capacity + replacement_buffer
     protected = []
     for item in candidates:
         if not item.get("protected_slot"):
@@ -183,7 +184,7 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
         seen.add(key)
         bounded.append(item)
     print(
-        f"[Selection Budget Guard] ranked={len(candidates)} protected={len(protected)} normal={len(normals)} output={len(bounded)} protected_limit={protected_limit} normal_limit={normal_limit}",
+        f"[Selection Budget Guard] ranked={len(candidates)} protected={len(protected)} normal={len(normals)} output={len(bounded)} protected_limit={protected_limit} normal_capacity={normal_capacity} replacement_buffer={replacement_buffer} normal_limit={normal_limit}",
         flush=True,
     )
     return bounded

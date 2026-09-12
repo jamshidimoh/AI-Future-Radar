@@ -79,6 +79,12 @@ jobs:
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
         run: python -u scripts/refresh_free_model_registry.py --strict
 
+      - name: Bridge Free LLM Router discovery into runtime registry
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
+        run: python -u scripts/bridge_free_llm_router.py --strict
+
       - name: Telegram production preflight
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

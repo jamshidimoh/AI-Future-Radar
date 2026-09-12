@@ -25,11 +25,11 @@ PROVIDER_COOLDOWN = {
 KIRAAI_WALLET_PROVIDER_COOLDOWN = 86400.0
 
 FAIL_RE = re.compile(
-    r"\[(?:LiteLLM Router|Production Circuit)\]\s+"
+    r"\[(?:LiteLLM Router|Light Router|Production Circuit)\]\s+"
     r"failed=(?P<deployment>\S+)(?:\s+reason=\S+)?(?:\s+scope=\S+:)?\s*(?P<message>.*)$"
 )
 SUCCESS_RE = re.compile(
-    r"\[(?:LiteLLM Router|Production Circuit)\]\s+"
+    r"\[(?:LiteLLM Router|Light Router|Production Circuit)\]\s+"
     r"success=(?P<deployment>\S+)"
 )
 KIRAAI_WALLET_RE = re.compile(

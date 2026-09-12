@@ -8,16 +8,16 @@ mission:
   operational_publication_capacity: 3
   min_unique_sources: 3
   max_same_source: 1
-  # Mission areas are a soft diversity preference, not a topic quota.
-  # The candidate window must remain large enough for replacement after QA;
-  # the final 3-item portfolio is still diversified by portfolio_value.
+  # Mission areas are balanced through explicit coverage opportunities.
+  # These are not unconditional publication quotas: candidates must still pass
+  # relevance, authority, quality, deduplication and publication gates.
   max_same_mission_area: 6
   min_authoritative_items: 2
   stale_hours: 72
-  ai_core_target_min: 0
-  ai_core_target_max: 3
+  ai_core_target_min: 1
+  ai_core_target_max: 2
   convergence_target: 0
-  mind_future_target: 0
+  mind_future_target: 1
   research_target: 0
   interview_target_max: 1
   community_max: 0

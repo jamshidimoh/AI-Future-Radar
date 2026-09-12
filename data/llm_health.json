@@ -1,5 +1,11 @@
 {
   "models": {
+    "groq:qwen/qwen3.6-27b": {
+      "disabled_until": 1789197583.213,
+      "failures": 1,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
     "kiraai:dots-3-note-preview": {
       "disabled_until": 1789196582.834,
       "failures": 3,
@@ -20,6 +26,6 @@
     }
   },
   "providers": {},
-  "updated_at": 1789192982.834,
+  "updated_at": 1789193983.213,
   "version": 1
 }

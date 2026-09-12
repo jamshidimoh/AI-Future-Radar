@@ -1,35 +1,14 @@
 name: Run AI Future Radar Bot
-# Production verification is registry-driven: discovery validates the current
-# free-model landscape, while quality is the primary model-ordering signal.
-# Tehran publication windows:
-# - 01:47 UTC = 05:17 Tehran (UTC+3:30)
-# - 07:17 UTC = 10:47 Tehran
-# - 10:17 UTC = 13:47 Tehran
-# - 14:17 UTC = 17:47 Tehran
-# - 17:17 UTC = 20:47 Tehran
-# - 19:17 UTC = 22:47 Tehran
-# GitHub Actions cron is UTC; these comments document the intended Tehran windows.
-# Post-merge verification trigger: validate Canonical Story Gate performance on main.
-# LiteLLM verification trigger: validate the actual production LLM execution path.
-# Full production verification trigger: execute the complete end-to-end pipeline.
-# Full end-to-end rerun: validate current production behavior after the latest verification.
-# LiteLLM-only verification: confirm production fail-closed behavior without legacy router fallback.
-# Post-closure verification: run the complete production path after closure-evidence alignment.
-# Post-closure verification: run one controlled Education Recovery validation.
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-    inputs:
-      force_education:
-        description: "Run a controlled end-to-end Education publication validation"
-        required: false
-        default: false
-        type: boolean
   schedule:
-    - cron: "47 1 * * *"
-    - cron: "17 7,10,14,17,19 * * *"
+    - cron: '17 4 * * *'
+    - cron: '47 7 * * *'
+    - cron: '47 10 * * *'
+    - cron: '47 14 * * *'
+    - cron: '47 17 * * *'
+    - cron: '47 19 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -40,16 +19,11 @@ concurrency:
 
 jobs:
   run-bot:
-    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 26
     steps:
       - name: Checkout current ref
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 1
-          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -77,6 +51,7 @@ jobs:
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
+          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
         run: python -u scripts/refresh_free_model_registry.py --strict
 
       - name: Bridge Free LLM Router discovery into runtime registry
@@ -100,6 +75,8 @@ jobs:
           AI_RADAR_EDITORIAL_REVIEW: "0"
           RADAR_ENABLE_GEMINI_FALLBACK: "0"
           RADAR_ENABLE_HF_FALLBACK: "1"
+          RADAR_LLM_MAX_TOKENS: "700"
+          RADAR_ROUTER_BUDGET_SECONDS: "24"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: "-1004482051328"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -107,6 +84,7 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
+          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
@@ -123,21 +101,20 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
+          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
-          FORCE_EDUCATION_PUBLICATION: ${{ github.event_name == 'workflow_dispatch' && inputs.force_education || false }}
+          FORCE_EDUCATION_PUBLICATION: "false"
         run: python -u scripts/education_recovery.py
 
       - name: Enforce runtime production acceptance
         run: python -u scripts/production_acceptance_guard.py run.log
 
       - name: Update persistent LLM health from runtime evidence
-        if: always()
         run: python -u scripts/update_llm_health_state.py run.log
 
       - name: Persist production state
-        if: always()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -149,9 +126,9 @@ jobs:
           fi
           git commit -m "chore: persist production state [skip ci]"
           for attempt in 1 2 3; do
-            git fetch origin "${{ github.ref_name }}" --depth=20
-            if git rebase "origin/${{ github.ref_name }}"; then
-              if git push origin "HEAD:${{ github.ref_name }}"; then
+            git fetch origin "main" --depth=20
+            if git rebase "origin/main"; then
+              if git push origin "HEAD:main"; then
                 echo "Production state persisted on attempt ${attempt}."
                 exit 0
               fi
@@ -160,7 +137,7 @@ jobs:
               python scripts/merge_production_state.py
               git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
               GIT_EDITOR=true git rebase --continue
-              if git push origin "HEAD:${{ github.ref_name }}"; then
+              if git push origin "HEAD:main"; then
                 echo "Production state persisted after lossless JSON merge on attempt ${attempt}."
                 exit 0
               fi
@@ -173,13 +150,11 @@ jobs:
           exit 1
 
       - name: Upload production diagnostics and ranking audit
-        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ai-future-radar-${{ github.event_name }}-${{ github.run_number }}
+          name: ai-future-radar-push-${{ github.run_number }}
           path: |
             run.log
             artifacts/ranking_audit/
             artifacts/free_model_registry.runtime.yaml
-          if-no-files-found: warn
           retention-days: 14

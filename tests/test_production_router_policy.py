@@ -126,6 +126,7 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
     apply()
+    calls = []
 
     class FakeRouter:
         def completion(self, *, model, **_kwargs):
@@ -138,7 +139,6 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
                 {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\"title\":\"ok\"}'})()})()]},
             )()
 
-    calls = []
     deployments = [
         {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a"}},
         {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b"}},
@@ -146,7 +146,6 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
-
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"ok"}'
     assert provider == "groq:model-c"
@@ -177,7 +176,6 @@ def test_production_model_429_does_not_disable_provider(monkeypatch):
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
-
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"ok"}'
     assert provider == "groq:model-b"
@@ -191,6 +189,7 @@ def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
     apply()
+    calls = []
 
     class FakeRouter:
         def completion(self, *, model, **_kwargs):
@@ -203,7 +202,6 @@ def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch)
                 {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\"title\":\"ok\"}'})()})()]},
             )()
 
-    calls = []
     deployments = [
         {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a"}},
         {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b"}},
@@ -211,13 +209,63 @@ def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch)
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
-
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"ok"}'
     assert provider == "openrouter:model-b"
     assert calls == ["radar-production-1", "radar-production-2"]
     assert "openrouter" not in router._DISABLED_FAMILIES
     assert "openrouter:model-a" in router._DISABLED
+
+
+def test_kira_wallet_error_does_not_disable_kira_family(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("KIRAAI_API_KEY", "test-kira")
+    apply()
+    calls = []
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            calls.append(model)
+            if model == "radar-production-1":
+                raise RuntimeError("Insufficient VND wallet balance (0 VND remaining)")
+            return type(
+                "Response",
+                (),
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\"title\":\"ok\"}'})()})()]},
+            )()
+
+    deployments = [
+        {"model_name": "radar-production-1", "model_info": {"id": "kiraai:model-a"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "kiraai:model-b"}},
+    ]
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"ok"}'
+    assert provider == "kiraai:model-b"
+    assert calls == ["radar-production-1", "radar-production-2"]
+    assert "kiraai" not in router._DISABLED_FAMILIES
+
+
+def test_huggingface_is_last_resort_emergency_lane(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("KIRAAI_API_KEY", "test-kira")
+    monkeypatch.setenv("HF_TOKEN", "test-hf")
+    monkeypatch.setenv("RADAR_ENABLE_HF_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
+    apply()
+
+    class FakeRouter:
+        def completion(self, **_kwargs):
+            raise RuntimeError("HTTP 503 temporary")
+
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [{"model_name": "radar-production-1", "model_info": {"id": "kiraai:model-a"}}])
+    monkeypatch.setattr(router, "_huggingface", lambda *_args, **_kwargs: '{"title":"hf"}')
+
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"hf"}'
+    assert provider == "HuggingFace"
 
 
 def test_production_attempt_budget_is_hard_capped(monkeypatch):
@@ -238,7 +286,6 @@ def test_production_attempt_budget_is_hard_capped(monkeypatch):
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
-
     result, provider = router._call_litellm("system", "user")
     assert result is None
     assert provider is None

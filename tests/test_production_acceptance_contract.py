@@ -2,6 +2,7 @@ from pathlib import Path
 
 from src.editorial_quality_policy import normal_score_allowed, NORMAL_SCORE_FLOOR
 from scripts.production_acceptance_guard import validate
+from production_entrypoint import _bound_runtime_candidates, _is_tier0_publication_candidate
 
 ROOT = Path(__file__).resolve().parents[1]
 MISSION_POLICY = ROOT / "config" / "mission_policy.yaml"
@@ -88,3 +89,36 @@ def test_production_state_preserves_real_baseline_fields():
     state = (ROOT / "data" / "publication_state.json").read_text(encoding="utf-8")
     assert "last_published_news_score" in state
     assert "last_published_normal_news_score" in state
+
+
+def test_acceptance_prefers_final_summary_budget_over_ranked_candidate_count():
+    log = """
+[Selection Timing] original_select candidates=15 candidate_window=6 elapsed=1.0s
+[Publication Summary Budget] input=5 protected=2 normal_window=3 output=5 normal_limit=5 replacement_buffer=2 score_floor=60.0
+[Production Contract] normal_news=3 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 3/5
+"""
+    ok, reason = validate(log)
+    assert ok
+    assert "selected=5" in reason
+
+
+def test_runtime_selection_keeps_only_publishable_protected_and_normal_candidates():
+    candidates = [
+        {"period_rank": 1, "normal_period_rank": None, "protected_slot": True, "final_editorial_score": 70.0},
+        {"period_rank": 2, "normal_period_rank": None, "protected_slot": True, "final_editorial_score": 69.0},
+        {"period_rank": 3, "normal_period_rank": None, "protected_slot": True, "final_editorial_score": 68.0},
+        {"period_rank": 4, "normal_period_rank": 1, "protected_slot": False},
+        {"period_rank": 5, "normal_period_rank": 2, "protected_slot": False},
+        {"period_rank": 6, "normal_period_rank": 3, "protected_slot": False},
+        {"period_rank": 7, "normal_period_rank": 4, "protected_slot": False},
+    ]
+    bounded = _bound_runtime_candidates(candidates, max_posts=3, policy={"leader_protected_max": 2})
+    assert len(bounded) == 5
+    assert sum(bool(x.get("protected_slot")) for x in bounded) == 2
+    assert [x["normal_period_rank"] for x in bounded if not x.get("protected_slot")] == [1, 2, 3]
+
+
+def test_critical_incident_with_reserved_slot_uses_tier0_publication_lane():
+    assert _is_tier0_publication_candidate({"critical_ai_incident": True, "protected_slot": True})
+    assert not _is_tier0_publication_candidate({"critical_ai_incident": True, "protected_slot": False})

@@ -17,6 +17,7 @@ CANDIDATE_PATTERNS = (
     re.compile(r"\[Production Selection\].*?total=(\d+)"),
     re.compile(r"\[Selection Timing\].*?candidates=(\d+)"),
 )
+SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output=(\d+)")
 CONTRACT_PATTERN = re.compile(
     r"\[Production Contract\].*?normal_news=(\d+).*?normal_max=(\d+).*?tier0_news=(\d+).*?tier0_quota_exempt=(\w+).*?education=(\w+)"
 )
@@ -29,8 +30,6 @@ TIER0_PUBLICATION_PATTERN = re.compile(
     r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)"
 )
 TIER0_FLOOR_PATTERN = re.compile(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", re.I)
-# Runtime evidence may carry additional fields between CONFIRMED and the
-# delivery marker; do not require an exact field order beyond the two anchors.
 EDUCATION_CONFIRMED_PATTERN = re.compile(
     r"\[Education Published\].*?CONFIRMED\b.*?telegram_delivery=successful"
 )
@@ -85,16 +84,13 @@ def validate(log_text: str) -> tuple[bool, str]:
     if contract_match is None:
         return False, "missing production contract summary"
 
-    selected = int(candidate_match.group(1))
+    summary_budget_match = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))
+    selected = int(summary_budget_match.group(1)) if summary_budget_match is not None else int(candidate_match.group(1))
     normal_news = int(contract_match.group(1))
     normal_max = int(contract_match.group(2))
     tier0_news = int(contract_match.group(3))
     tier0_quota_exempt = contract_match.group(4).lower() == "true"
     education = contract_match.group(5)
-    # Education Recovery runs after the news Production Contract summary. If
-    # it successfully publishes, that later runtime evidence is authoritative
-    # for the final acceptance state, even when the earlier summary said
-    # education=not_due.
     if _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
         education = "confirmed"
     published_news = normal_news + tier0_news

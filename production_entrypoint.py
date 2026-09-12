@@ -142,6 +142,52 @@ def normal_news_policy_allowed(score: float, previous_normal_score: float | None
     return normal_score_allowed(float(score), previous_normal_score)
 
 
+def _is_tier0_publication_candidate(item: dict) -> bool:
+    """Return whether production publication may use the protected Tier-0 lane."""
+    return is_substantive_priority_interview(item) or bool(
+        item.get("critical_ai_incident") and item.get("protected_slot")
+    )
+
+
+def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
+    """Bound the runtime set to publishable protected + normal candidates.
+
+    Global ranking may contain many Tier-0 or replacement candidates, but the
+    publication contract only has a small normal capacity plus reserved protected
+    slots. Keeping that invariant before summarization prevents expensive LLM work
+    on candidates that can never reach Telegram.
+    """
+    candidates = list(candidates or [])
+    protected_limit = max(0, int(policy.get("leader_protected_max", 2) or 0))
+    normal_limit = max(0, int(max_posts or 0))
+    protected = []
+    for item in candidates:
+        if not item.get("protected_slot"):
+            continue
+        try:
+            score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
+        except (TypeError, ValueError):
+            score = 0.0
+        if score >= PROTECTED_SUMMARY_SCORE_FLOOR:
+            protected.append(item)
+        if len(protected) >= protected_limit:
+            break
+    normals = [item for item in candidates if item.get("normal_period_rank") is not None][:normal_limit]
+    bounded = []
+    seen = set()
+    for item in protected + normals:
+        key = id(item)
+        if key in seen:
+            continue
+        seen.add(key)
+        bounded.append(item)
+    print(
+        f"[Selection Budget Guard] ranked={len(candidates)} protected={len(protected)} normal={len(normals)} output={len(bounded)} protected_limit={protected_limit} normal_limit={normal_limit}",
+        flush=True,
+    )
+    return bounded
+
+
 def main(*, skip_education: bool = False) -> int:
     import period_ranked_pipeline as pipeline
     from educational_content import build_educational_item, commit_education_lesson
@@ -199,6 +245,7 @@ def main(*, skip_education: bool = False) -> int:
         candidate_window = int(EDITORIAL_CONTRACT["candidate_window"])
         candidates = unique_candidates(original_select(items, max(candidate_window, min(len(items), max_posts)), max_per_source, max_per_type, policy))
         print(f"[Selection Timing] original_select candidates={len(candidates)} candidate_window={candidate_window} elapsed={time.monotonic() - rank_started:.3f}s", flush=True)
+        candidates = _bound_runtime_candidates(candidates, max_posts=max_posts, policy=policy)
         return ([education_item] if education_item else []) + candidates
 
     original_summarize = pipeline.summarize_item
@@ -243,13 +290,14 @@ def main(*, skip_education: bool = False) -> int:
                 score = _item_final_score(item)
                 render_state["published_news_scores"].append(score)
                 cadence["last_published_news_score"] = score
-                if not is_substantive_priority_interview(item):
+                is_tier0 = _is_tier0_publication_candidate(item)
+                if not is_tier0:
                     cadence["last_published_normal_news_score"] = score
-                if is_substantive_priority_interview(item):
+                if is_tier0:
                     render_state["tier0_news_delivered_count"] += 1
                 else:
                     render_state["normal_news_delivered_count"] += 1
-                print(f"[Publication Ledger] message_id={meta.get('message_id')} published_news_score={score} normal_baseline={cadence.get('last_published_normal_news_score')} global_rank={item.get('period_rank')} normal_rank={item.get('normal_period_rank')} tier0={is_substantive_priority_interview(item)}", flush=True)
+                print(f"[Publication Ledger] message_id={meta.get('message_id')} published_news_score={score} normal_baseline={cadence.get('last_published_normal_news_score')} global_rank={item.get('period_rank')} normal_rank={item.get('normal_period_rank')} tier0={is_tier0}", flush=True)
             else:
                 render_state["education_delivered"] = True
 
@@ -271,7 +319,7 @@ def main(*, skip_education: bool = False) -> int:
             return transport_failed("telegram_transport_unavailable", retryable=False)
         if current_type == "education":
             return delivered({"message_id": None})
-        priority_person = is_substantive_priority_interview(story)
+        priority_person = _is_tier0_publication_candidate(story)
         if not priority_person and render_state["normal_news_delivered_count"] >= MAX_NORMAL_NEWS_PER_PERIOD:
             return policy_blocked("normal_quota_exhausted")
         if not _news_language_ok(story):

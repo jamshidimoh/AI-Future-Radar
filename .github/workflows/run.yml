@@ -1,6 +1,7 @@
 name: Run AI Future Radar Bot
 
 on:
+  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (UTC+3:30). GitHub Actions cron is UTC.
   schedule:
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
@@ -166,7 +167,7 @@ jobs:
             for f in $STATE_FILES; do
               cp "$STATE_DIR/$f" "$f"
             done
-            git add $STATE_FILES
+            git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
             if git diff --cached --quiet; then
               echo "No production state changes to commit."
               exit 0

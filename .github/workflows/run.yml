@@ -41,6 +41,11 @@ jobs:
           python -m pytest -q tests/test_production_acceptance_guard.py -k "all_selected_candidates_rejected_downstream_is_fail_closed_pass or zero_publication_without_rejection_evidence_is_failure"
           echo "[Fail-Closed Acceptance Evidence] PASS"
 
+      - name: Emit single-message publication evidence
+        run: |
+          python -m pytest -q tests/test_telegram_single_delivery.py tests/test_telegram_single_delivery_adapter.py tests/test_telegram_format.py
+          echo "[Image Delivery Contract Evidence] PASS"
+
       - name: Refresh and validate free-model registry
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}

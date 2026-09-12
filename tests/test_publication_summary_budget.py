@@ -23,4 +23,5 @@ def test_publication_summary_budget_keeps_rank_breadth_without_summarizing_all_r
         "normal-3",
         "normal-4",
         "normal-5",
+        "normal-6",
     ]

@@ -17,7 +17,7 @@ try:
     import llm_router_light as router
 except ImportError:  # pragma: no cover
     src_dir = str(Path(__file__).resolve().parent)
-    if src_dir not in sys.path:
+    if str(src_dir) not in sys.path:
         sys.path.insert(0, src_dir)
     import llm_router_light as router
 
@@ -61,7 +61,11 @@ def _install_production_circuit_breaker() -> None:
     if getattr(router, "_PRODUCTION_CIRCUIT_BREAKER_INSTALLED", False):
         return
 
-    max_attempts = max(1, int(os.getenv("RADAR_MAX_LLM_ATTEMPTS", "4") or 4))
+    # Four attempts were too small for the real production chain: transient
+    # failures in the first OpenRouter/Groq deployments could consume the whole
+    # budget before KiraAI was ever reached. Eight preserves a hard bound while
+    # allowing cross-provider failover to reach the configured KiraAI lane.
+    max_attempts = max(1, int(os.getenv("RADAR_MAX_LLM_ATTEMPTS", "8") or 8))
     budget_seconds = max(5.0, float(os.getenv("RADAR_ROUTER_BUDGET_SECONDS", "24") or 24))
 
     def _call_litellm_guarded(system_prompt, user_content):

@@ -37,3 +37,5 @@ jobs:
         run: python -m pytest -q
       - name: CI execution marker
         run: echo "UNIFIED_EDITORIAL_SELECTION_CONTRACT_V2"
+      - name: Routing hardening workflow trigger
+        run: echo "TRIGGER_ROUTING_HARDENING"

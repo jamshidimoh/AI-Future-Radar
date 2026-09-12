@@ -1,13 +1,13 @@
 {
   "models": {
     "kiraai:dots-3-note-preview": {
-      "disabled_until": 1789203672.088,
+      "disabled_until": 1789206286.536,
       "failures": 2,
       "last_error": "quota",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
-      "disabled_until": 1789203672.088,
+      "disabled_until": 1789206286.536,
       "failures": 1,
       "last_error": "quota",
       "last_success": 0
@@ -15,16 +15,12 @@
   },
   "providers": {
     "openrouter": {
-      "disabled_until": 1789221672.088,
+      "disabled_until": 1789224286.536,
       "failures": 1,
       "last_error": "quota",
       "last_success": 0
     }
   },
-<<<<<<< HEAD
-  "updated_at": 1789201891.805,
-=======
-  "updated_at": 1789202095.539,
->>>>>>> 03c0dca (chore: persist production state [skip ci])
+  "updated_at": 1789202686.536,
   "version": 1
 }

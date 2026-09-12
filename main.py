@@ -32,6 +32,7 @@ CONFIG_PATH = ROOT / "config" / "sources.yaml"
 LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
 SELECTION_POLICY_PATH = ROOT / "config" / "selection_policy.yaml"
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
+PROTECTED_SUMMARY_SCORE_FLOOR = 60.0
 
 
 def load_yaml(path):
@@ -160,8 +161,13 @@ def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_
     selected = unique_candidates(selected)
     selected = filter_new_items(selected, seen_hashes)
     initial_count = len(selected)
-    selected_ids = {id(x) for x in selected}
     target = min(max(0, int(cap)), len(editorial_pool))
+    if len(selected) > target:
+        protected = [x for x in selected if x.get("protected_slot")]
+        normal = [x for x in selected if not x.get("protected_slot")]
+        selected = protected + normal
+        selected = selected[:target]
+    selected_ids = {id(x) for x in selected}
     rounds = 0
     while len(selected) < target:
         rounds += 1
@@ -189,6 +195,36 @@ def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_
     print(f"[Selection Refill] initial_after_late_dedup={initial_count} final={len(selected)} target={target} rounds={rounds} refilled={max(0, len(selected)-initial_count)}", flush=True)
     return selected
 
+
+def _publication_summary_budget(selected, max_posts, policy):
+    """Keep ranking breadth while bounding expensive LLM work to plausible publications."""
+    selected = list(selected or [])
+    contract = load_editorial_contract()
+    replacement_buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
+    normal_limit = max(1, int(max_posts or 0) + replacement_buffer)
+    protected = []
+    normals = []
+    for item in selected:
+        if item.get("protected_slot"):
+            try:
+                score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
+            except (TypeError, ValueError):
+                score = 0.0
+            if score >= PROTECTED_SUMMARY_SCORE_FLOOR:
+                protected.append(item)
+        else:
+            try:
+                rank = int(item.get("normal_period_rank"))
+            except (TypeError, ValueError):
+                rank = 10**9
+            if rank <= normal_limit:
+                normals.append(item)
+    bounded = unique_candidates(protected + normals)
+    if not bounded and selected:
+        bounded = unique_candidates(selected[:max(1, int(max_posts or 1))])
+    print(f"[Publication Summary Budget] input={len(selected)} protected={len(protected)} normal_window={len(normals)} output={len(bounded)} normal_limit={normal_limit} replacement_buffer={replacement_buffer} score_floor={PROTECTED_SUMMARY_SCORE_FLOOR}", flush=True)
+    return bounded
+
 def main(hooks=None):
     hooks = dict(hooks or {}); select_editorial_fn = hooks.get("select_editorial", _select_editorial_default); split_protected_fn = hooks.get("split_protected", _split_protected); summarize_fn = hooks.get("summarize_item", summarize_item); format_fn = hooks.get("format_post", format_post); resolve_image_fn = hooks.get("resolve_source_image", resolve_source_image); deliver_fn = hooks.get("send_to_telegram_safe", send_to_telegram_safe); persist_fn = hooks.get("persist_item_success", _persist_item_success)
     config = load_yaml(CONFIG_PATH); leader_config = load_yaml(LEADER_CONFIG_PATH); selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {}); policy = load_yaml(SELECTION_POLICY_PATH).get("editorial", {}); categories = config["categories"]; max_posts = int(selection.get("max_posts", 4)); max_per_source = int(selection.get("max_items_per_source", 2)); max_per_type = int(selection.get("max_items_per_content_type", 2)); leader_protected_max = int(policy.get("leader_protected_max", 2)); bridge_keywords = config.get("ai_bridge_keywords", []); story_threshold = float(selection.get("story_similarity_threshold", 0.45)); leader_people, leader_priorities = _leader_people(leader_config)
@@ -201,6 +237,7 @@ def main(hooks=None):
     editorial_pool = gate_story_candidates(protected_items, leader_pool, regular_pool, seen_signatures, threshold=story_threshold); editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal")); regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal"))); protected_after = sum(1 for x in editorial_pool if x.get("protected_content")); print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy); protected_candidates = [x for x in editorial_pool if x.get("protected_content")]; protected_selected = sorted(protected_candidates, key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _direct_interview_signal(x) else 0, x.get("published", "")), reverse=True)[:leader_protected_max]
     selected = unique_candidates(protected_selected + selected_regular); print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={leader_protected_max + max_posts}", flush=True); selected = _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, leader_protected_max + max_posts)
+    selected = _publication_summary_budget(selected, max_posts, policy)
     if not selected:
         print("[Final Publication Guard] no publishable items remain", flush=True); save_seen(seen_hashes, seen_signatures, source_history); print("Posts sent: 0/0"); return
     print("[6/7] AI processing / summarization"); summaries = _summarize_selected(selected, summarize_fn)

@@ -24,6 +24,7 @@ jobs:
       - name: Apply patches and validate
         run: |
           python scripts/apply_final_routing_hardening.py
+          python -m pip install -q -r requirements.txt
           python -m compileall -q main.py src scripts tests
           python -m pip install -q --disable-pip-version-check 'ruff>=0.12,<0.13'
           python -m ruff check --select F src/llm_router_light.py src/free_model_registry.py src/production_router_policy.py tests/test_llm_health_persistence.py tests/test_nara_router_integration.py

@@ -18,6 +18,7 @@ CADENCE_PATH = ROOT / "data" / "publication_state.json"
 EDITORIAL_CONTRACT = load_editorial_contract()
 MAX_NORMAL_NEWS_PER_PERIOD = 3
 RANK_WINDOW = int(EDITORIAL_CONTRACT["candidate_window"])
+PROTECTED_SUMMARY_SCORE_FLOOR = PROTECTED_SCORE_FLOOR
 EDU_FIELDS = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
 NEWS_FIELDS = ("title", "summary", "why_it_matters")
 GUARD_REASON_ENV = "AI_RADAR_PUBLICATION_GUARD_REASON"

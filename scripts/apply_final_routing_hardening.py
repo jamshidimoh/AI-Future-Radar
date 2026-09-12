@@ -21,19 +21,22 @@ patch_text(
 
 main_path = ROOT / "main.py"
 s = main_path.read_text(encoding="utf-8")
+anchor = 'TELEGRAM_SAFE_TEXT_LIMIT = 3900\nPROTECTED_SUMMARY_SCORE_FLOOR = 60.0\n'
+if anchor in s and 'NORMAL_SCORE_FLOOR = 60.0' not in s:
+    s = s.replace(anchor, anchor + 'NORMAL_SCORE_FLOOR = 60.0\n', 1)
 old = '        if item.get("protected_slot"):\n            try: score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)'
 new = '        if item.get("protected_slot") or item.get("protected_content"):\n            try: score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)'
-if old not in s:
-    raise SystemExit("protected summary budget: expected text not found")
-s = s.replace(old, new, 1)
-
-pattern = re.compile(
-    r'    print\("\[7/7\] Telegram publication"\); sent = 0\n'
-    r'    for item in selected:.*?'
-    r'    save_seen\(seen_hashes, seen_signatures, source_history\); print\(f"Posts sent: \{sent\}/\{len\(selected\)\}"\)',
-    re.S,
-)
-replacement = '''    print("[7/7] Telegram publication"); sent = 0
+if old in s:
+    s = s.replace(old, new, 1)
+# Publication patch is applied only once; accept both the original and already-patched source.
+if 'Publication Lazy Refill' not in s:
+    pattern = re.compile(
+        r'    print\("\[7/7\] Telegram publication"\); sent = 0\n'
+        r'    for item in selected:.*?'
+        r'    save_seen\(seen_hashes, seen_signatures, source_history\); print\(f"Posts sent: \{sent\}/\{len\(selected\)\}"\)',
+        re.S,
+    )
+    replacement = '''    print("[7/7] Telegram publication"); sent = 0
     initial_selected_count = len(selected)
     publication_attempted = set()
     lazy_replacements = 0
@@ -67,7 +70,7 @@ replacement = '''    print("[7/7] Telegram publication"); sent = 0
                     normal_rank = int(normal_rank)
                 except (TypeError, ValueError):
                     continue
-                if normal_rank > int(contract.get("candidate_window", RANK_WINDOW)):
+                if normal_rank > int(contract.get("candidate_window", 6)):
                     continue
                 if candidate_score < NORMAL_SCORE_FLOOR:
                     continue
@@ -115,13 +118,12 @@ replacement = '''    print("[7/7] Telegram publication"); sent = 0
             print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
     print(f"[Publication Lazy Refill] initial={initial_selected_count} lazy_replacements={lazy_replacements} final_attempt_queue={len(selected)}", flush=True)
     save_seen(seen_hashes, seen_signatures, source_history); print(f"Posts sent: {sent}/{len(selected)}")'''
-m = pattern.search(s)
-if not m:
-    raise SystemExit("publication loop: expected block not found")
-s = s[:m.start()] + replacement + s[m.end():]
+    m = pattern.search(s)
+    if not m:
+        raise SystemExit("publication loop: expected block not found")
+    s = s[:m.start()] + replacement + s[m.end():]
 main_path.write_text(s, encoding="utf-8")
 
-# Scope the blocking Ruff gate to routing files actually governed by this change.
 quality_path = ROOT / ".github" / "workflows" / "test-quality.yml"
 patch_text(
     quality_path,

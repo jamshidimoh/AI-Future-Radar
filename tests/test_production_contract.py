@@ -58,7 +58,7 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert selection["distinct_sources_first"] is True
 
 
-def test_mission_diversity_is_soft_and_canonical():
+def test_mission_diversity_is_explicit_and_canonical():
     contract = _load(CONTRACT)["mission"]
     mission = _load(MISSION)["mission"]
     assert set(contract["supported_areas"]) == {
@@ -72,9 +72,9 @@ def test_mission_diversity_is_soft_and_canonical():
     assert contract["community_max"] == mission["community_max"]
     assert contract["ai_core_target"] == [
         mission["ai_core_target_min"], mission["ai_core_target_max"]
-    ] == [0, 3]
+    ] == [1, 2]
     assert contract["convergence_target"] == mission["convergence_target"] == 0
-    assert contract["mind_future_target"] == mission["mind_future_target"] == 0
+    assert contract["mind_future_target"] == mission["mind_future_target"] == 1
     assert contract["research_target"] == mission["research_target"] == 0
     assert contract["interview_target_max"] == mission["interview_target_max"]
 

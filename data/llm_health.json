@@ -21,6 +21,10 @@
       "last_success": 0
     }
   },
+<<<<<<< HEAD
   "updated_at": 1789201891.805,
+=======
+  "updated_at": 1789202095.539,
+>>>>>>> 03c0dca (chore: persist production state [skip ci])
   "version": 1
 }

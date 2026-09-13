@@ -7,12 +7,17 @@ quota in one GitHub Actions run is not retried blindly in the next run.
 from __future__ import annotations
 
 import json
+import logging
 import os
 import threading
 import time
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+
+from src.state_io import load_json_state
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_STATE_PATH = ROOT / "data" / "llm_health.json"
@@ -49,10 +54,7 @@ class FreeModelIntelligence:
         path = self._state_path
         if path is None:
             return
-        try:
-            raw = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, ValueError, TypeError):
-            return
+        raw = load_json_state(path, {}, label="LLM health state")
         if not isinstance(raw, dict):
             return
         self._health = self._decode_section(raw.get("models"))

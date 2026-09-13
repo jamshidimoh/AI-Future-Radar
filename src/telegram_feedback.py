@@ -2,11 +2,16 @@
 from __future__ import annotations
 
 import json
+import logging
 import time
 from pathlib import Path
 from typing import Any
 
 import requests
+
+from src.state_io import load_json_state
+
+logger = logging.getLogger(__name__)
 
 REACTION_WEIGHTS = {"👍": 1.0, "❤️": 1.2, "🔥": 1.5, "🤔": -0.8, "💡": 1.3}
 
@@ -23,18 +28,13 @@ def _default_store() -> dict[str, Any]:
 
 def load_feedback(path: str | Path) -> dict[str, Any]:
     p = Path(path)
-    if not p.exists():
+    data = load_json_state(p, {}, label="Telegram feedback state")
+    if not isinstance(data, dict):
         return _default_store()
-    try:
-        data = json.loads(p.read_text(encoding="utf-8"))
-        if not isinstance(data, dict):
-            return _default_store()
-        base = _default_store()
-        base.update(data)
-        base.setdefault("messages", {})
-        return base
-    except (OSError, json.JSONDecodeError):
-        return _default_store()
+    base = _default_store()
+    base.update(data)
+    base.setdefault("messages", {})
+    return base
 
 
 def save_feedback(store: dict[str, Any], path: str | Path) -> None:
@@ -208,9 +208,11 @@ def ingest_from_env(path: str | Path) -> int:
         changed = poll_updates(token, store)
     except requests.RequestException as exc:
         print(f"[WARN] Telegram feedback polling unavailable: {exc}", flush=True)
+        logger.warning("[WARN] Telegram feedback polling unavailable: %s", exc, exc_info=True)
         return 0
     except Exception as exc:
         print(f"[WARN] Telegram feedback ingestion skipped: {exc}", flush=True)
+        logger.warning("[WARN] Telegram feedback ingestion skipped: %s", exc, exc_info=True)
         return 0
     if changed:
         save_feedback(store, path)

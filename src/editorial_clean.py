@@ -1,9 +1,12 @@
 """Canonical evidence-first editorial engine for AI Future Radar."""
 from __future__ import annotations
 
+import logging
 import re
 import time
 from collections import Counter
+
+logger = logging.getLogger(__name__)
 
 AI={"artificial intelligence","ai","machine learning","deep learning","large language model","llm","foundation model","generative ai","agentic ai","ai agent","agents","agi","superintelligence","reasoning model","multimodal","vision-language model","vlm","computer vision","copilot","ai coding","llm inference","llm training","world model","synthetic data","ai safety","ai alignment","ai governance","ai policy","ai for science","ai research","ai benchmark","physical ai","embodied ai","computer use","robotics"}
 AI_BRIDGE={"gpt","chatgpt","claude","gemini","qwen","llama","deepseek","mistral","openai","anthropic","deepmind","transformer","neural network","neural networks","frontier model","ai model","autoresearch","reasoning model","هوش مصنوعی","هوشِ مصنوعی","یادگیری ماشین","یادگیری عمیق","مدل زبانی بزرگ","مدل بنیادی","هوش مصنوعی مولد","هوش مولد","عامل هوشمند","عامل‌های هوشمند","ایجنت هوشمند","مدل استدلالی","بینایی ماشین","ربات‌های هوشمند","استفاده از رایانه","ایمنی هوش مصنوعی","حکمرانی هوش مصنوعی","سیاست‌گذاری هوش مصنوعی","آینده هوش مصنوعی","داده مصنوعی","شبکه عصبی","شبکه‌های عصبی","خودکارسازی پژوهش","اتوماسیون پژوهش","مدل مولد"}
@@ -87,7 +90,9 @@ def filter_ai_relevance(items,ai_keywords=None):
 def _age(p):
     if not p:return None
     try:return max(0,(time.time()-time.mktime(time.strptime(p,"%Y-%m-%d %H:%M")))/3600)
-    except Exception:return None
+    except (TypeError, ValueError, OverflowError) as exc:
+        logger.warning("Could not parse publication age %s: %s", p, exc, exc_info=True)
+        return None
 
 def _leader(x,prior):
     v=str(x.get("watch_person") or x.get("leader") or "").strip()

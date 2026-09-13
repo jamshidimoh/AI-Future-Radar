@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import concurrent.futures
+import logging
 import os
 import re
 import sys
@@ -9,6 +10,8 @@ import threading
 import time
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 _CALL_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="llm-call")
 
@@ -73,10 +76,8 @@ def _nara(system_prompt, user_content, model=None):
     r.raise_for_status(); return _extract_message(r.json())
 
 def _openrouter_supports_response_format(model: str) -> bool:
-    try:
-        from src.free_model_registry import model_capability
-        return bool(model_capability(model).get("response_format"))
-    except Exception: return False
+    from src.free_model_registry import model_capability
+    return bool(model_capability(model).get("response_format"))
 
 def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     key = os.getenv("OPENROUTER_API_KEY")
@@ -98,7 +99,9 @@ def _gemini(system_prompt, user_content):
     try:
         response = client.models.generate_content(model=model,contents=user_content,config=types.GenerateContentConfig(system_instruction=system_prompt,response_mime_type="application/json",max_output_tokens=850))
         return response.text
-    except Exception as exc: raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
+    except Exception as exc:
+        logger.warning("Gemini provider attempt failed provider=gemini model=%s exception=%s: %s", model, type(exc).__name__, exc, exc_info=True)
+        raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
 
 def _hf_price_is_free(item):
     if item.get("free") is True: return True
@@ -114,7 +117,9 @@ def _discover_hf_models():
         r.raise_for_status(); payload=r.json(); rows=payload.get("data",payload if isinstance(payload,list) else [])
         return [x for x in rows if isinstance(x,dict) and x.get("id")]
     except QuotaExceeded: raise
-    except Exception: return []
+    except Exception as exc:
+        logger.warning("Hugging Face model discovery failed: %s", exc, exc_info=True)
+        return []
 
 def _select_hf_model(models=None):
     rows=list(models) if isinstance(models,list) else _discover_hf_models(); free=[m for m in rows if isinstance(m,dict) and _hf_price_is_free(m)]
@@ -158,6 +163,7 @@ def _get_litellm_router():
         _LITELLM_ROUTER=Router(model_list=model_list,num_retries=0,retry_after=0,timeout=8,allowed_fails=1,cooldown_time=45,enable_pre_call_checks=True,fallbacks=[]); _LITELLM_ROUTER_KEY=key
         print("[LiteLLM Router] deployments="+", ".join(x["model_info"]["id"] for x in model_list),flush=True); return _LITELLM_ROUTER
     except Exception as exc:
+        logger.error("LiteLLM router initialization failed provider=litellm model=%s exception=%s", ",".join(x["model_info"]["id"] for x in model_list), type(exc).__name__, exc_info=True)
         print(f"[LiteLLM Router] initialization_failed={type(exc).__name__}: {exc}",flush=True); return None
 
 def _nara_response_adapter(system_prompt,user_content,deployment_id,*,max_tokens=700,timeout=8):
@@ -223,7 +229,19 @@ def _call_litellm(system_prompt,user_content):
             selected=str(getattr(response,"model",deployment_id)); print(f"[LiteLLM Router] success={deployment_id} model={selected}",flush=True); return content,deployment_id
         except Exception as exc:
             last_error=exc; message=str(exc); reason=_failure_class(message); local_models.add(deployment_id)
-            print(f"[LiteLLM Router] failed={deployment_id}: {exc}",flush=True)
+            logger.warning(
+                "LiteLLM provider attempt failed provider=%s model=%s exception=%s: %s",
+                family,
+                deployment_id,
+                type(exc).__name__,
+                exc,
+                exc_info=True,
+            )
+            print(
+                f"[LiteLLM Router] failed={deployment_id}: exception={type(exc).__name__} "
+                f"provider={family} model={deployment_id} {exc}",
+                flush=True,
+            )
             _disable(deployment_id,reason)
             if _provider_quota_is_family_scoped(family,reason,message):
                 local_families.add(family)
@@ -245,14 +263,36 @@ def call_llm_with_fallback(system_prompt,user_content,providers=None):
             if result: print(f"[Light Router] success={name}",flush=True); return result,name
         except concurrent.futures.TimeoutError:
             last_error=TimeoutError(f"{name}: provider timeout"); local_models.add(name); _disable(name,"transient")
+            logger.warning(
+                "Provider attempt timed out provider=%s model=%s exception=TimeoutError",
+                family,
+                name,
+                exc_info=True,
+            )
         except QuotaExceeded as exc:
             last_error=exc; reason=_failure_class(str(exc)); local_models.add(name)
+            logger.warning(
+                "Provider quota attempt failed provider=%s model=%s exception=%s: %s",
+                family,
+                name,
+                type(exc).__name__,
+                exc,
+                exc_info=True,
+            )
             if _provider_quota_is_family_scoped(family,reason,str(exc)):
                 local_families.add(family)
                 with _STATE_LOCK: _DISABLED_FAMILIES.add(family)
             _disable(name,reason)
         except Exception as exc:
             last_error=exc; local_models.add(name); _disable(name,_failure_class(str(exc)))
+            logger.warning(
+                "Provider attempt failed provider=%s model=%s exception=%s: %s",
+                family,
+                name,
+                type(exc).__name__,
+                exc,
+                exc_info=True,
+            )
         finally:
             if future.done(): future.cancel()
     if last_error is not None: raise last_error

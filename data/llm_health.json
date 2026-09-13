@@ -1,32 +1,13 @@
 {
-  "models": {
-    "kiraai:dots-3-note-preview": {
-      "disabled_until": 1789209242.709,
-      "failures": 1,
-      "last_error": "quota",
-      "last_success": 0
-    },
-    "openrouter:inclusionai/ling-3.0-flash-sante:free": {
-      "disabled_until": 1789209242.709,
-      "failures": 1,
-      "last_error": "quota",
-      "last_success": 0
-    }
-  },
+  "models": {},
   "providers": {
     "kiraai": {
       "disabled_until": 1789292042.709,
       "failures": 1,
       "last_error": "wallet_quota",
       "last_success": 0
-    },
-    "openrouter": {
-      "disabled_until": 1789227242.709,
-      "failures": 1,
-      "last_error": "quota",
-      "last_success": 0
     }
   },
-  "updated_at": 1789205642.709,
+  "updated_at": 1789282500.198,
   "version": 1
 }

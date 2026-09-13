@@ -24,6 +24,8 @@ NEWS_FIELDS = ("title", "summary", "why_it_matters")
 GUARD_REASON_ENV = "AI_RADAR_PUBLICATION_GUARD_REASON"
 EDUCATION_WINDOWS_TEHRAN = ((5, 7, "morning"), (20, 7, "evening"))
 TEHRAN = timezone(timedelta(hours=3, minutes=30))
+STRATEGIC_ANALYTICAL_MAX_PER_PERIOD = 1
+STRATEGIC_ANALYTICAL_CATEGORIES = {"future", "future_governance", "mind", "mind_cognition"}
 
 
 def _load_cadence() -> dict:
@@ -150,6 +152,50 @@ def _is_tier0_publication_candidate(item: dict) -> bool:
     )
 
 
+def _is_strategic_analytical_signal(item: dict) -> bool:
+    """Return whether a bounded analytical leader signal may use the strategic lane.
+
+    This lane is intentionally narrower than ordinary Leader protection. It requires
+    an accepted analytical/context signal from the existing Leader classifier,
+    a high-priority futurist/mind category, and a Tier-1/2 source. It never bypasses
+    deduplication, translation, source grounding, editorial-value QA, or the normal
+    three-message Telegram quota; it only prevents the generic ranking score from
+    becoming a second publication-quality gate for one mission-critical insight.
+    """
+    classification = item.get("leader_signal_classification") or {}
+    if not isinstance(classification, dict):
+        return False
+    if not (
+        item.get("is_leader_watch")
+        and classification.get("accepted")
+        and classification.get("analytical")
+        and classification.get("context")
+    ):
+        return False
+    category = str(item.get("category") or "").strip().casefold()
+    if category not in STRATEGIC_ANALYTICAL_CATEGORIES:
+        return False
+    try:
+        leader_priority = int(item.get("leader_priority", 0) or 0)
+    except (TypeError, ValueError):
+        leader_priority = 0
+    if leader_priority < 8:
+        return False
+    try:
+        source_tier = int(item.get("source_tier", 3) or 3)
+    except (TypeError, ValueError):
+        source_tier = 3
+    if source_tier > 2:
+        return False
+    source_text = " ".join(
+        str(item.get(key) or "").strip().casefold()
+        for key in ("source", "source_name", "source_type", "source_domain")
+    )
+    if any(marker in source_text for marker in ("reddit", "community")):
+        return False
+    return True
+
+
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     """Bound runtime candidates while preserving the normal replacement buffer.
 
@@ -251,7 +297,7 @@ def main(*, skip_education: bool = False) -> int:
         return ([education_item] if education_item else []) + candidates
 
     original_summarize = pipeline.summarize_item
-    render_state = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "tier0_news_delivered_count": 0, "published_news_scores": [], "delivery_transport_failed": False}
+    render_state = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "delivery_transport_failed": False}
 
     def summarize_with_education(item):
         if item.get("content_type") == "education":
@@ -261,7 +307,8 @@ def main(*, skip_education: bool = False) -> int:
         if result:
             item.update(result)
             item["final_editorial_score"] = _item_final_score(item)
-            print(f"[Fallback] publishable candidate prepared global_rank={item.get('period_rank')} normal_rank={item.get('normal_period_rank')} score={item.get('final_editorial_score')}: {str(item.get('title',''))[:120]}", flush=True)
+            lane = "strategic_analytical" if _is_strategic_analytical_signal(item) else "normal"
+            print(f"[Fallback] publishable candidate prepared lane={lane} global_rank={item.get('period_rank')} normal_rank={item.get('normal_period_rank')} score={item.get('final_editorial_score')}: {str(item.get('title',''))[:120]}", flush=True)
             return result
         item["_publication_blocked"] = True
         print(f"[Fallback] translation/QA failed; candidate blocked: {str(item.get('title',''))[:120]}", flush=True)
@@ -293,13 +340,16 @@ def main(*, skip_education: bool = False) -> int:
                 render_state["published_news_scores"].append(score)
                 cadence["last_published_news_score"] = score
                 is_tier0 = _is_tier0_publication_candidate(item)
+                is_strategic = _is_strategic_analytical_signal(item)
                 if not is_tier0:
                     cadence["last_published_normal_news_score"] = score
                 if is_tier0:
                     render_state["tier0_news_delivered_count"] += 1
                 else:
                     render_state["normal_news_delivered_count"] += 1
-                print(f"[Publication Ledger] message_id={meta.get('message_id')} published_news_score={score} normal_baseline={cadence.get('last_published_normal_news_score')} global_rank={item.get('period_rank')} normal_rank={item.get('normal_period_rank')} tier0={is_tier0}", flush=True)
+                if is_strategic:
+                    render_state["strategic_analytical_news_delivered_count"] += 1
+                print(f"[Publication Ledger] message_id={meta.get('message_id')} published_news_score={score} normal_baseline={cadence.get('last_published_normal_news_score')} global_rank={item.get('period_rank')} normal_rank={item.get('normal_period_rank')} tier0={is_tier0} strategic_analytical={is_strategic}", flush=True)
             else:
                 render_state["education_delivered"] = True
 
@@ -322,6 +372,9 @@ def main(*, skip_education: bool = False) -> int:
         if current_type == "education":
             return delivered({"message_id": None})
         priority_person = _is_tier0_publication_candidate(story)
+        strategic_analytical = _is_strategic_analytical_signal(story)
+        if strategic_analytical and render_state["strategic_analytical_news_delivered_count"] >= STRATEGIC_ANALYTICAL_MAX_PER_PERIOD:
+            return policy_blocked("strategic_analytical_lane_exhausted")
         if not priority_person and render_state["normal_news_delivered_count"] >= MAX_NORMAL_NEWS_PER_PERIOD:
             return policy_blocked("normal_quota_exhausted")
         if not _news_language_ok(story):
@@ -337,6 +390,9 @@ def main(*, skip_education: bool = False) -> int:
             return delivered({"message_id": None})
         if normal_rank is None or normal_rank > RANK_WINDOW:
             return policy_blocked(f"normal_rank_outside_window:{normal_rank}")
+        if strategic_analytical:
+            print(f"[Publication Policy] PUBLISH STRATEGIC_ANALYTICAL normal_rank={normal_rank} score={score} ranking_floor=not_applied lane_cap={STRATEGIC_ANALYTICAL_MAX_PER_PERIOD} quota_counted=true", flush=True)
+            return delivered({"message_id": None})
         baseline = previous_normal_score
         allowed = render_state["normal_news_delivered_count"] < MAX_NORMAL_NEWS_PER_PERIOD and normal_news_policy_allowed(score, baseline, normal_rank)
         if not allowed:
@@ -384,7 +440,7 @@ def main(*, skip_education: bool = False) -> int:
     _save_cadence(cadence)
     if education_due and not render_state["education_delivered"]:
         print(f"[Education Contract] deferred: educational Telegram post was not confirmed; slot={education_slot} remains due for retry", flush=True)
-    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} tier0_quota_exempt=true tier0_quality_floor={PROTECTED_SCORE_FLOOR} education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
+    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} strategic_analytical={render_state['strategic_analytical_news_delivered_count']} strategic_max={STRATEGIC_ANALYTICAL_MAX_PER_PERIOD} tier0_quota_exempt=true tier0_quality_floor={PROTECTED_SCORE_FLOOR} education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
     print(f"[Telegram Feedback] stored_messages={len(store.get('messages', {}))}", flush=True)
     return 0
 

@@ -142,9 +142,15 @@ def _select_editorial_default(items, *, max_posts, max_per_source, max_per_type,
 
 def _split_protected(items, max_protected):
     protected_candidates = [x for x in items if x.get("protected_content")]
-    protected_candidates = sorted(protected_candidates, key=lambda x: str(x.get("published") or ""), reverse=True)
-    protected_candidates = sorted(protected_candidates, key=lambda x: int(_source_tier(x) if _source_tier(x) is not None else 99))
-    protected = sorted(protected_candidates, key=lambda x: int(x.get("leader_priority", 0) or 0), reverse=True)[:max_protected]
+    protected = sorted(
+        protected_candidates,
+        key=lambda x: (
+            int(x.get("leader_priority", 0) or 0),
+            int(_leader_source_authority(x)),
+            str(x.get("published") or ""),
+        ),
+        reverse=True,
+    )[:max_protected]
     protected_ids = {id(x) for x in protected}
     regular = [x for x in items if id(x) not in protected_ids]
     return protected, regular

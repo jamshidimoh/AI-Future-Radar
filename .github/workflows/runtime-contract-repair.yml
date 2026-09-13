@@ -1,0 +1,204 @@
+name: Runtime Contract Repair
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/runtime-contract-repair.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Apply runtime fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          def replace_function(path, name, replacement):
+              p = Path(path)
+              s = p.read_text(encoding="utf-8")
+              pattern = rf"(?ms)^def {re.escape(name)}\(.*?(?=^def |\Z)"
+              out, count = re.subn(pattern, replacement.rstrip() + "\n\n", s, count=1)
+              if count != 1:
+                  raise SystemExit(f"FUNCTION_NOT_FOUND:{path}:{name}")
+              p.write_text(out, encoding="utf-8")
+
+          replace_function("main.py", "_annotate_named_leader_interviews", r'''def _annotate_named_leader_interviews(items, leader_people, leader_priorities=None):
+              names = sorted({str(x).strip() for x in (leader_people or []) if str(x).strip()}, key=len, reverse=True)
+              priorities = {str(k).strip(): int(v or 0) for k, v in (leader_priorities or {}).items()}
+              matched = protected = watch_candidates = 0
+              for item in items:
+                  existing = str(item.get("leader") or item.get("watch_person") or "").strip()
+                  if existing:
+                      if existing in names:
+                          item["leader_priority"] = priorities.get(existing, int(item.get("leader_priority", 0) or 0))
+                          watch_candidates += 1
+                          if _direct_interview_signal(item):
+                              item["_named_leader_interview"] = True; item["leader_watch_protected"] = True; matched += 1
+                          elif _leader_activity_signal(item):
+                              item["leader_activity_signal"] = True; item["leader_watch_protected"] = True; protected += 1
+                      continue
+                  text = _text(item)
+                  matched_name = next((name for name in names if _contains_person(text, name)), None)
+                  if matched_name:
+                      item["leader"] = matched_name; item["watch_person"] = matched_name; item["is_leader"] = True; item["is_leader_watch"] = True; item["leader_priority"] = priorities.get(matched_name, 0); watch_candidates += 1
+                      if _direct_interview_signal(item):
+                          item["_named_leader_interview"] = True; item["leader_watch_protected"] = True; matched += 1
+                      elif _leader_activity_signal(item):
+                          item["leader_activity_signal"] = True; item["leader_watch_protected"] = True; protected += 1
+              print(f"[Leader Identity Recovery] verified_interviews={matched} | activity_protected={protected} | watchlist_candidates={watch_candidates}")
+              return items''')
+
+          replace_function("main.py", "_is_protected_leader_interview", r'''def _is_protected_leader_interview(item):
+              leader = str(item.get("leader") or item.get("watch_person") or "").strip()
+              if not leader or not (item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("_named_leader_interview")):
+                  return False
+              return has_interview_evidence(item)''')
+
+          replace_function("main.py", "_is_protected_leader_activity", r'''def _is_protected_leader_activity(item):
+              leader = str(item.get("leader") or item.get("watch_person") or "").strip()
+              return bool(leader and (item.get("is_leader_watch") or item.get("leader_watch_protected")) and _leader_activity_signal(item))''')
+
+          replace_function("main.py", "_split_protected", r'''def _split_protected(items, max_protected=2):
+              candidates, regular = [], []
+              for raw in items:
+                  item = dict(raw)
+                  if _is_protected_leader_interview(item) or _is_protected_leader_activity(item):
+                      item["protected_content"] = True; item["protected_reason"] = "leader_interview_or_activity"; item["_ai_link"] = True; item["leader_watch_protected"] = True; item["leader_source_authority"] = _leader_source_authority(item); candidates.append(item)
+                  else:
+                      regular.append(item)
+              candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", _leader_source_authority(x)) or 0), 1 if _is_protected_leader_interview(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
+              selected = candidates[:max(0, int(max_protected))]
+              regular.extend(candidates[len(selected):])
+              return selected, regular''')
+
+          replace_function("main.py", "_summarize_selected", r'''def _summarize_selected(items, summarize_fn):
+              workers = max(1, int(os.getenv("RADAR_SUMMARY_WORKERS", "1") or 1))
+              if workers == 1 or len(items) <= 1:
+                  return [summarize_fn(item) for item in items]
+              with ThreadPoolExecutor(max_workers=min(workers, len(items))) as executor:
+                  return list(executor.map(summarize_fn, items))''')
+
+          replace_function("main.py", "_refill_after_late_dedup", r'''def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap=None, *, cap=None):
+              if runtime_selection_cap is None:
+                  runtime_selection_cap = cap if cap is not None else max_posts + int(policy.get("leader_protected_max", 2) or 2)
+              target = min(runtime_selection_cap, max_posts + int(policy.get("leader_protected_max", 2) or 2))
+              selected = filter_new_items(selected, seen_hashes)
+              existing = {str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) for x in selected}
+              pool = [x for x in editorial_pool if not x.get("protected_content") and not x.get("protected_slot") and str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) not in existing]
+              pool = filter_new_items(pool, seen_hashes)
+              while len(selected) < target and pool:
+                  extra = select_editorial_fn(pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
+                  if not extra: break
+                  candidate = extra[0]; selected.append(candidate)
+                  identity = str(candidate.get("canonical_url") or candidate.get("link") or candidate.get("url") or candidate.get("title") or id(candidate))
+                  pool = [x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
+              return unique_candidates(selected)''')
+
+          replace_function("main.py", "_mission_coverage_recovery", r'''def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
+              mission_areas = {"mind", "future", "mind_cognition", "future_governance"}
+              def _area(item):
+                  return str(item.get("mission_area") or item.get("category") or "").strip().casefold()
+              target = 1 if any(_area(x) in mission_areas for x in editorial_pool) else 0
+              if target <= 0: return []
+              prepared = sum(1 for x in selected if _area(x) in mission_areas and float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= NORMAL_SCORE_FLOOR and not x.get("_publication_blocked"))
+              if prepared >= target: return []
+              selected_ids = {str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) for x in selected}
+              pool = [x for x in editorial_pool if not x.get("_publication_blocked") and str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) not in selected_ids]
+              recovered, attempts = [], 0
+              while prepared + len(recovered) < target and pool and attempts < max(1, int(policy.get("replacement_buffer", 3) or 3)):
+                  attempts += 1; chosen = select_editorial_fn(pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
+                  if not chosen: break
+                  candidate = chosen[0]; identity = str(candidate.get("canonical_url") or candidate.get("link") or candidate.get("url") or candidate.get("title") or id(candidate)); pool = [x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
+                  summary = summarize_fn(candidate)
+                  if summary: candidate.update(summary); recovered.append((candidate, summary))
+              return recovered''')
+
+          p = Path("src/story_identity.py")
+          s = p.read_text(encoding="utf-8")
+          old = '''def _is_same_story_cached(
+    candidate: dict[str, Any],
+    candidate_url: str,
+    candidate_features: dict[str, Any],
+    candidate_signature: dict[str, Any],
+    prior: tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None],
+) -> bool:
+    comparable, prior_url, prior_features, prior_signature = prior
+    if candidate_url and prior_url and candidate_url == prior_url:
+        return True
+    kind, _, _ = compare_event_features(candidate_features, prior_features)
+    if kind == "DUPLICATE":
+        return True
+'''
+          new = '''def _is_same_story_cached(
+    candidate: dict[str, Any],
+    candidate_url: str,
+    candidate_features: dict[str, Any],
+    candidate_signature: dict[str, Any],
+    prior: tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None],
+    allow_protected_event_match: bool = True,
+) -> bool:
+    comparable, prior_url, prior_features, prior_signature = prior
+    if candidate_url and prior_url and candidate_url == prior_url:
+        return True
+    if _is_protected_leader(candidate) or _is_protected_leader(comparable):
+        candidate_title = " ".join(str(candidate.get("title") or "").casefold().split())
+        prior_title = " ".join(str(comparable.get("title") or "").casefold().split())
+        if candidate_title and prior_title and candidate_title == prior_title:
+            return True
+        if not allow_protected_event_match:
+            return False
+    kind, _, _ = compare_event_features(candidate_features, prior_features)
+    if kind == "DUPLICATE":
+        return True
+'''
+          if old not in s: raise SystemExit("STORY_IDENTITY_ANCHOR_MISSING")
+          s = s.replace(old, new, 1)
+          s = s.replace('def _is_story_duplicate_cached(\n    candidate: dict[str, Any],\n    cache: list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]],\n) -> bool:', 'def _is_story_duplicate_cached(\n    candidate: dict[str, Any],\n    cache: list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]],\n    allow_protected_event_match: bool = True,\n) -> bool:', 1)
+          s = s.replace('        _is_same_story_cached(candidate, candidate_url, candidate_features, candidate_signature, prior)\n        for prior in cache', '        _is_same_story_cached(candidate, candidate_url, candidate_features, candidate_signature, prior, allow_protected_event_match)\n        for prior in cache', 1)
+          s = s.replace('        if _is_story_duplicate_cached(item, history_cache):', '        if _is_story_duplicate_cached(item, history_cache, allow_protected_event_match=False):', 1)
+          s = s.replace('        if _is_story_duplicate_cached(item, accepted_cache):', '        if _is_story_duplicate_cached(item, accepted_cache, allow_protected_event_match=True):', 1)
+          p.write_text(s, encoding="utf-8")
+          for path in ("main.py", "src/story_identity.py"):
+              compile(Path(path).read_text(encoding="utf-8"), path, "exec")
+          print("RUNTIME_CONTRACT_REPAIR_APPLIED")
+          PY
+
+      - name: Validate repaired contracts
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pytest -q \
+            tests/test_canonical_ranking.py::test_protected_leader_capacity_demotes_overflow_candidates \
+            tests/test_mission_coverage_recovery.py \
+            tests/test_production_ranking_audit_hook.py::test_parallel_summary_preserves_input_order_and_runs_concurrently \
+            tests/test_protected_leader_bypass.py \
+            tests/test_selection_refill_after_late_dedup.py \
+            tests/test_protected_leader_semantic_dedup.py
+
+      - name: Persist fixes and remove temporary runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/runtime-contract-repair.yml
+          python -m pytest -q tests/test_protected_leader_semantic_dedup.py tests/test_selection_refill_after_late_dedup.py tests/test_mission_coverage_recovery.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add main.py src/story_identity.py .github/workflows/run.yml .github/workflows/runtime-contract-repair.yml
+          git commit -m "fix: restore generic runtime contract invariants [skip ci]"
+          git push origin HEAD:main

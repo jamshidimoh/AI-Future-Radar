@@ -1,4 +1,4 @@
-"""Canonical evidence-first editorial engine for AI Future Radar."""
+"""Core editorial feature/relevance primitives; `src.editorial` layers leader/interview policy on top."""
 from __future__ import annotations
 
 import logging

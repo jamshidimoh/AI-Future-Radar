@@ -1,14 +1,16 @@
-from src.editorial_clean import (
+"""Editorial orchestration and leader/interview policy."""
+
+from src.editorial_core import (
     classify_editorial_item as _classify_editorial_item,
 )
-from src.editorial_clean import (
+from src.editorial_core import (
     contract_summary,
     filter_low_signal,
 )
-from src.editorial_clean import (
+from src.editorial_core import (
     enrich_items as _enrich_items,
 )
-from src.editorial_clean import (
+from src.editorial_core import (
     filter_ai_relevance as _filter_ai_relevance,
 )
 from src.future_significance import annotate_future_significance

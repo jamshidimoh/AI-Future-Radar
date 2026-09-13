@@ -20,7 +20,6 @@ def test_language_gate_still_rejects_non_persian_summary():
 
 
 def test_full_draft_recovery_rejects_another_english_draft(monkeypatch):
-    import os
     import src.summarize as summarize
 
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")

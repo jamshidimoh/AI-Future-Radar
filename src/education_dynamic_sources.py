@@ -8,7 +8,6 @@ reachability, freshness, and independence to the existing source gates.
 from __future__ import annotations
 
 import re
-from urllib.parse import urlparse
 
 
 # Curated, durable source pool. Availability is checked at runtime by the

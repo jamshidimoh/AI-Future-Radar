@@ -5,7 +5,6 @@ This module deliberately stays independent from editorial selection. It answers:
 """
 from __future__ import annotations
 
-import re
 from datetime import datetime, timezone
 
 INTERVIEW_TERMS = {"interview", "conversation", "fireside", "keynote", "podcast", "discussion", "q&a", "dialogue"}

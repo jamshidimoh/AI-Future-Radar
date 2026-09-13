@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from src.delivery_contract import DeliveryOutcome, delivered, from_legacy
+from src.delivery_contract import DeliveryOutcome, from_legacy
 from src.publication_orchestrator import publish_story
 
 

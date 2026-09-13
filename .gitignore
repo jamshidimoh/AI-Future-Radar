@@ -11,3 +11,7 @@ artifacts/
 !.env.example
 .DS_Store
 Thumbs.db
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/

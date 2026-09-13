@@ -1,7 +1,6 @@
 """Deterministic quality gates for source-grounded educational lessons."""
 from __future__ import annotations
 
-import re
 from typing import Any
 
 from education_source_policy import validate_current_sources

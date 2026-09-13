@@ -7,11 +7,11 @@ import sys
 import time
 from pathlib import Path
 
+from src.state_io import load_json_state
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
-
-from src.state_io import load_json_state
 
 STATE_PATH = ROOT / "data" / "llm_health.json"
 
@@ -31,7 +31,13 @@ KIRAAI_WALLET_PROVIDER_COOLDOWN = 86400.0
 
 FAIL_RE = re.compile(
     r"\[(?:LiteLLM Router|Light Router|Production Circuit)\]\s+"
-    r"failed=(?P<deployment>\S+)(?:\s+reason=\S+)?(?:\s+scope=\S+:)?\s*(?P<message>.*)$"
+    r"failed=(?P<deployment>\S+)(?:\s+.*)?$",
+)
+PROVIDER_FAIL_RE = re.compile(
+    r"Provider(?:\s+quota)?\s+attempt\s+failed\s+"
+    r"provider=(?P<provider>\S+)\s+model=(?P<model>\S+)\s+"
+    r"exception=(?P<message>.*)$",
+    re.IGNORECASE,
 )
 SUCCESS_RE = re.compile(
     r"\[(?:LiteLLM Router|Light Router|Production Circuit)\]\s+"
@@ -42,9 +48,23 @@ KIRAAI_WALLET_RE = re.compile(
     re.IGNORECASE,
 )
 
+_PROVIDER_CANONICAL = {
+    "groq": "Groq",
+    "nararouter": "NaraRouter",
+    "openrouter": "OpenRouter",
+    "kiraai": "KiraAI",
+    "gemini": "Gemini",
+    "huggingface": "HuggingFace",
+}
+
 
 def family(deployment: str) -> str:
     return deployment.split(":", 1)[0].strip().casefold()
+
+
+def canonical_deployment(provider: str, model: str) -> str:
+    prefix = _PROVIDER_CANONICAL.get(str(provider).strip().casefold(), str(provider).strip())
+    return f"{prefix}:{str(model).strip()}"
 
 
 def is_kira_wallet_only(deployment: str, message: str) -> bool:
@@ -83,6 +103,22 @@ def prune(section: dict, now: float) -> dict:
     return out
 
 
+def _iter_failures(lines: list[str]):
+    for line in lines:
+        failure = FAIL_RE.search(line)
+        if failure:
+            deployment = failure.group("deployment")
+            yield deployment, family(deployment), classify(line), is_kira_wallet_only(deployment, line)
+            continue
+        provider_failure = PROVIDER_FAIL_RE.search(line)
+        if provider_failure:
+            provider = provider_failure.group("provider").strip()
+            model = provider_failure.group("model").strip()
+            deployment = canonical_deployment(provider, model)
+            message = provider_failure.group("message").strip()
+            yield deployment, family(deployment), classify(message), is_kira_wallet_only(deployment, message)
+
+
 def main() -> int:
     log_path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "run.log"
     if not log_path.exists():
@@ -94,18 +130,12 @@ def main() -> int:
     models = prune(state.get("models", {}) if isinstance(state.get("models"), dict) else {}, now)
     providers = prune(state.get("providers", {}) if isinstance(state.get("providers"), dict) else {}, now)
     successes: set[str] = set()
-    failures: list[tuple[str, str, str, bool]] = []
+    failures = list(_iter_failures(log_path.read_text(encoding="utf-8", errors="replace").splitlines()))
 
     for line in log_path.read_text(encoding="utf-8", errors="replace").splitlines():
         success = SUCCESS_RE.search(line)
         if success:
             successes.add(success.group("deployment"))
-            continue
-        failure = FAIL_RE.search(line)
-        if failure:
-            deployment = failure.group("deployment")
-            message = failure.group("message").strip()
-            failures.append((deployment, family(deployment), classify(message), is_kira_wallet_only(deployment, message)))
 
     for deployment in successes:
         models.pop(deployment, None)
@@ -146,6 +176,10 @@ def main() -> int:
         "updated_at": round(now, 3),
         "models": models,
         "providers": providers,
+        "telemetry": {
+            "observed_failures": len(failures),
+            "successful_deployments": len(successes),
+        },
     }
     STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
     tmp = STATE_PATH.with_suffix(STATE_PATH.suffix + ".tmp")

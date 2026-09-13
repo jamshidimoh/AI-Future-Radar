@@ -25,6 +25,21 @@ def test_google_news_url_is_resolved_to_publisher(monkeypatch):
     assert calls[0][1]["stream"] is True
 
 
+def test_google_news_wrapper_is_not_claimed_resolved_when_redirect_stays_on_google(monkeypatch, capsys):
+    def fake_get(url, **kwargs):
+        return SimpleNamespace(url=url, close=lambda: None)
+
+    monkeypatch.setattr(prod.requests, "get", fake_get)
+
+    item = {"title": "Example story", "link": "https://news.google.com/rss/articles/example"}
+    prod._resolve_selected_source_urls([item])
+    output = capsys.readouterr().out
+
+    assert item["link"] == "https://news.google.com/rss/articles/example"
+    assert "resolved=true" not in output
+    assert "attempted=1 resolved=0 unresolved=1" in output
+
+
 def test_non_google_news_url_is_untouched(monkeypatch):
     def fail_get(*args, **kwargs):
         raise AssertionError("non-Google URLs must not be resolved")

@@ -83,8 +83,8 @@ def _load_records() -> list[dict]:
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
     try:
-        from semantic_dedup import _similarity, get_story_signature
-        from semantic_publication_guard import cross_language_anchor_conflict
+        from src.semantic_dedup import _similarity, get_story_signature
+        from src.semantic_publication_guard import cross_language_anchor_conflict
     except Exception:
         return 0.0
 

@@ -1,11 +1,9 @@
-import sys
 from pathlib import Path
+
+from src.semantic_dedup import deduplicate_semantically
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
-
-from semantic_dedup import deduplicate_semantically
 
 
 def test_same_story_from_different_people_is_one_story():

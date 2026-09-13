@@ -2,9 +2,7 @@ import json
 
 
 def test_telegram_ledger_reconciles_missing_seen_state(tmp_path, monkeypatch):
-    import sys
-    sys.path.insert(0, "src")
-    import dedup
+    import src.dedup as dedup
 
     state = tmp_path / "seen.json"
     feedback = tmp_path / "telegram_feedback.json"
@@ -34,9 +32,7 @@ def test_telegram_ledger_reconciles_missing_seen_state(tmp_path, monkeypatch):
 
 
 def test_ledger_reconciles_rewritten_title_semantically(tmp_path, monkeypatch):
-    import sys
-    sys.path.insert(0, "src")
-    import dedup
+    import src.dedup as dedup
 
     state = tmp_path / "seen.json"
     feedback = tmp_path / "telegram_feedback.json"

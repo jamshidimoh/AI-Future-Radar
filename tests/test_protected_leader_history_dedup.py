@@ -1,10 +1,8 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.dedup as dedup
 
-import dedup
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_protected_leader_bypasses_historical_semantic_match(monkeypatch):

@@ -72,7 +72,7 @@ def _openrouter_benchmarks(token: str | None) -> tuple[dict[str, dict], str]:
     if status >= 400:
         return {}, f"benchmark catalog failed HTTP {status}"
     rows = payload.get("data") or []
-    from free_model_evidence import benchmark_record
+    from src.free_model_evidence import benchmark_record
 
     result: dict[str, dict] = {}
     for row in rows:
@@ -204,7 +204,7 @@ def _fallback_quality(model_id: str) -> tuple[float, float, str]:
 
 
 def _apply_evidence(model: dict, benchmark: dict | None, task_usage: dict[str, float], generated_at: str) -> None:
-    from free_model_evidence import benchmark_score, quality_score
+    from src.free_model_evidence import benchmark_score, quality_score
 
     model_id = str(model.get("id", ""))
     normalized = model_id.lower().removesuffix(":free")

@@ -1,13 +1,11 @@
-import sys
 import unittest
 from pathlib import Path
 
+from src.education_editor import normalize_editorial_text, normalize_education_text
+from src.educational_content import MIN_SOURCE_YEAR, format_educational_post, load_curriculum
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
-from education_editor import normalize_editorial_text, normalize_education_text
-from educational_content import MIN_SOURCE_YEAR, format_educational_post, load_curriculum
 
 RLI = "\u2067"
 PDI = "\u2069"

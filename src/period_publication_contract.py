@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
-from .priority_people import is_substantive_priority_interview
+from src.priority_people import is_substantive_priority_interview
 
 MAX_NORMAL_NEWS_PER_PERIOD = 3
 MAX_EXTRA_NEWS = 2

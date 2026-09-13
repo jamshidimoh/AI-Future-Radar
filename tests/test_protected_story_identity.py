@@ -1,4 +1,4 @@
-from protected_story_identity import probable_same_story
+from src.protected_story_identity import probable_same_story
 
 
 def test_reframed_same_leader_story_is_identified():

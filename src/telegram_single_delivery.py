@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import os
 
-import send_telegram
+import src.send_telegram as send_telegram
 
 SAFE_TEXT_LIMIT = 3900
 

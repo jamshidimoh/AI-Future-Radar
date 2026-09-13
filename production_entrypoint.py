@@ -242,14 +242,14 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
 
 def main(*, skip_education: bool = False) -> int:
     import period_ranked_pipeline as pipeline
-    from educational_content import build_educational_item, commit_education_lesson
-    from educational_telegram_style import format_educational_post
-    from llm_router_light import call_llm_with_fallback, get_quality_chain
     from src.delivery_contract import DeliveryStatus, delivered, policy_blocked, transport_failed
+    from src.educational_content import build_educational_item, commit_education_lesson
+    from src.educational_telegram_style import format_educational_post
+    from src.llm_router_light import call_llm_with_fallback, get_quality_chain
     from src.production_publication_adapter import publish_production_story
     from src.publication_contract import unique_candidates
-    from telegram_feedback import ingest_from_env, load_feedback, register_post, save_feedback
-    from telegram_single_delivery import send
+    from src.telegram_feedback import ingest_from_env, load_feedback, register_post, save_feedback
+    from src.telegram_single_delivery import send
 
     cadence = _load_cadence()
     run_number = cadence["run_number"] + 1

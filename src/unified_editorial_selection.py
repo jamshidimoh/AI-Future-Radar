@@ -7,7 +7,7 @@ from typing import Any
 
 import yaml
 
-from information_gain import information_gain_score, max_topic_similarity, portfolio_value, topic_fingerprint
+from src.information_gain import information_gain_score, max_topic_similarity, portfolio_value, topic_fingerprint
 
 ROOT = Path(__file__).resolve().parents[1]
 MISSION_PATH = ROOT / "config" / "mission_policy.yaml"

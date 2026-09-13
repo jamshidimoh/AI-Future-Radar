@@ -4,7 +4,7 @@ import importlib
 
 
 def test_dynamic_candidates_keep_primary_first_and_add_topic_fallbacks():
-    module = importlib.import_module("education_dynamic_sources")
+    module = importlib.import_module("src.education_dynamic_sources")
     lesson = {
         "id": 113,
         "title": "Agentic Memory و Structured Memory",
@@ -21,7 +21,7 @@ def test_dynamic_candidates_keep_primary_first_and_add_topic_fallbacks():
 
 
 def test_dynamic_candidates_are_deterministic():
-    module = importlib.import_module("education_dynamic_sources")
+    module = importlib.import_module("src.education_dynamic_sources")
     lesson = {
         "title": "AI agents evaluation",
         "domain": "AI",
@@ -34,7 +34,7 @@ def test_dynamic_candidates_are_deterministic():
 
 
 def test_rank_verified_sources_prefers_relevance_then_authority():
-    module = importlib.import_module("education_dynamic_sources")
+    module = importlib.import_module("src.education_dynamic_sources")
     sources = [
         {"url": "https://low.example", "dynamic_relevance": 2, "authority_score": 99},
         {"url": "https://high.example", "dynamic_relevance": 8, "authority_score": 80},

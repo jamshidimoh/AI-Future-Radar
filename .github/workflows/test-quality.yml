@@ -40,5 +40,9 @@ jobs:
       - name: Ruff repository audit
         run: python -m ruff check .
 
+      - name: Run mypy baseline
+        run: python -m pip install mypy && python -m mypy
+        continue-on-error: true
+
       - name: Run full quality contract suite
         run: python -m pytest -q

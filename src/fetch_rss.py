@@ -9,10 +9,7 @@ import feedparser
 import requests
 import yaml
 
-try:
-    from .source_exclusions import is_excluded_source_url
-except ImportError:
-    from source_exclusions import is_excluded_source_url
+from src.source_exclusions import is_excluded_source_url
 
 _WEAK_AI_KEYWORDS = {"ai"}
 _FEED_TIMEOUT_SECONDS = 20

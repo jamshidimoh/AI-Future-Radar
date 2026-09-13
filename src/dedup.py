@@ -4,10 +4,8 @@ import os
 import time
 from contextlib import suppress
 
-try:
-    from .canonical_story import canonical_url, normalize_title, story_id, url_id
-except ImportError:
-    from canonical_story import canonical_url, normalize_title, story_id, url_id
+from src.canonical_story import canonical_url, normalize_title, story_id, url_id
+from src.event_identity import compare_events
 
 STATE_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "seen.json")
 FEEDBACK_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "telegram_feedback.json")
@@ -46,7 +44,7 @@ def _reconcile_feedback(seen_hashes, seen_signatures):
     records = _load_feedback_records()
     if not records: return seen_hashes, seen_signatures, 0
     try:
-        from semantic_dedup import encode_story_signature
+        from src.semantic_dedup import encode_story_signature
     except Exception: encode_story_signature = None
     before_h, before_s = len(seen_hashes), len(seen_signatures)
     for record in records:
@@ -122,7 +120,7 @@ def _event_history(signatures):
 def _legacy_event_history(signatures):
     out=[]
     try:
-        from semantic_dedup import SEMANTIC_MARKER, _decode_signature
+        from src.semantic_dedup import SEMANTIC_MARKER, _decode_signature
     except Exception: return out
     for value in signatures or []:
         if not isinstance(value,str) or not value.startswith(SEMANTIC_MARKER): continue
@@ -134,7 +132,7 @@ def _legacy_event_history(signatures):
 
 
 def _event_payload(item):
-    from event_identity import event_features
+    from src.event_identity import event_features
     data=dict(event_features(item))
     data["time"]=data.get("time").isoformat() if data.get("time") else None
     for key in ("entities","events","tokens","material"): data[key]=sorted(data.get(key) or [])
@@ -143,7 +141,7 @@ def _event_payload(item):
 
 def _event_match(item, signatures):
     try:
-        from event_identity import compare_events
+        from src.event_identity import compare_events
         previous_items=[]
         for previous in _event_history(signatures):
             previous_items.append({"title":previous.get("title", ""),"summary":" ".join(previous.get("tokens", [])),"event_time":previous.get("time") or previous.get("event_time")})
@@ -152,7 +150,7 @@ def _event_match(item, signatures):
             kind,score,_=compare_events(item,prior)
             if kind=="DUPLICATE": return True,score
         if _is_leader_exception(item):
-            from semantic_dedup import SEMANTIC_MARKER, _similarity, get_story_signature
+            from src.semantic_dedup import SEMANTIC_MARKER, _similarity, get_story_signature
             candidate = get_story_signature(item)
             for stored in signatures or []:
                 if isinstance(stored, str) and stored.startswith(SEMANTIC_MARKER) and _similarity(candidate, stored) >= 0.45:
@@ -164,8 +162,8 @@ def _event_match(item, signatures):
 
 def _semantic_history_match(item, signatures):
     try:
-        from semantic_dedup import SEMANTIC_MARKER, _similarity, get_story_signature
-        from semantic_threshold import semantic_threshold
+        from src.semantic_dedup import SEMANTIC_MARKER, _similarity, get_story_signature
+        from src.semantic_threshold import semantic_threshold
     except Exception: return 0.0
     candidate=get_story_signature(item); threshold=semantic_threshold(item,local=False); best=0.0
     for stored in signatures or []:
@@ -194,19 +192,19 @@ def filter_new_items(items, seen_hashes):
             rejected_semantic+=1
             if _is_protected_leader(item): protected_event_blocked+=1
             continue
-        if any(__import__("event_identity").compare_events(item,previous)[0]=="DUPLICATE" for previous in local_event_items):
+        if any(compare_events(item,previous)[0]=="DUPLICATE" for previous in local_event_items):
             rejected_semantic+=1; continue
         semantic_match=_semantic_history_match(item,seen_signatures)
         try:
-            from semantic_threshold import semantic_threshold
+            from src.semantic_threshold import semantic_threshold
             if semantic_match>=semantic_threshold(item,local=False) and not _is_leader_exception(item):
                 rejected_semantic+=1; continue
         except Exception: pass
         try:
-            from semantic_dedup import _similarity, get_story_signature
+            from src.semantic_dedup import _similarity, get_story_signature
             candidate_sig=get_story_signature(item)
             local_match=max((_similarity(candidate_sig,p) for p in local_semantic),default=0.0)
-            from semantic_threshold import semantic_threshold
+            from src.semantic_threshold import semantic_threshold
             if local_match>=semantic_threshold(item,local=True):
                 rejected_semantic+=1; continue
             local_semantic.append(candidate_sig)
@@ -217,7 +215,7 @@ def filter_new_items(items, seen_hashes):
 
 
 def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
-    from semantic_dedup import encode_story_signature, get_signature
+    from src.semantic_dedup import encode_story_signature, get_signature
     if _is_education(item):
         identity=_education_identity(item)
         if identity: seen_signatures.append(STORY_MARKER+identity)

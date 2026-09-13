@@ -11,7 +11,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
-from fetch_youtube import (
+from src.fetch_youtube import (
     _fetch_channel_feed,
     _fetch_channel_page_items,
     _fetch_via_data_api,

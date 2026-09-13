@@ -3,7 +3,7 @@ import importlib
 
 def test_resilient_runner_bootstraps_src_import_path():
     module = importlib.import_module("production_resilient_runner")
-    assert module.educational_content.__name__ == "educational_content"
+    assert module.educational_content.__name__ == "src.educational_content"
     assert hasattr(module.educational_content, "build_educational_item")
 
 

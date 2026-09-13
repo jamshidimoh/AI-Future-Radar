@@ -11,11 +11,11 @@ from typing import Any
 import requests
 import yaml
 
-from education_dynamic_sources import dynamic_source_candidates, rank_verified_sources
-from education_editor import normalize_education_item, terminology_review_prompt
-from education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_current_sources
-from educational_telegram_style import format_educational_post  # noqa: F401
-from llm_router_light import call_llm_with_fallback, get_quality_chain
+from src.education_dynamic_sources import dynamic_source_candidates, rank_verified_sources
+from src.education_editor import normalize_education_item, terminology_review_prompt
+from src.education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_current_sources
+from src.educational_telegram_style import format_educational_post  # noqa: F401
+from src.llm_router_light import call_llm_with_fallback, get_quality_chain
 
 MIN_SOURCE_YEAR = MIN_CURRENT_YEAR
 ROOT = Path(__file__).resolve().parent.parent

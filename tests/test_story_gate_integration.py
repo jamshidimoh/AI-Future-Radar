@@ -1,4 +1,4 @@
-from story_gate import gate_story_candidates
+from src.story_gate import gate_story_candidates
 
 
 def test_gate_preserves_protected_priority_across_all_candidate_pools():
@@ -20,7 +20,7 @@ def test_gate_preserves_protected_priority_across_all_candidate_pools():
 
 
 def test_gate_blocks_history_before_any_pool_can_reintroduce_story():
-    from semantic_dedup import get_story_signature
+    from src.semantic_dedup import get_story_signature
 
     history = [get_story_signature({"title": "NVIDIA unveils next generation accelerator"})]
     protected = [{"title": "NVIDIA unveils next-generation accelerator", "protected_content": True}]

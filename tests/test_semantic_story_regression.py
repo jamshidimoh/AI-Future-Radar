@@ -1,11 +1,9 @@
-import sys
 from pathlib import Path
+
+from src.semantic_dedup import _similarity, deduplicate_semantically, get_story_signature
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
-
-from semantic_dedup import _similarity, deduplicate_semantically, get_story_signature
 
 
 def test_rewritten_title_same_story_is_rejected():

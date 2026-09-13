@@ -1,11 +1,9 @@
-import sys
 from pathlib import Path
+
+from src.semantic_publication_guard import cross_language_anchor_conflict, shared_anchor_count
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
-
-from semantic_publication_guard import cross_language_anchor_conflict, shared_anchor_count
 
 
 def test_same_story_survives_persian_english_rewrite():

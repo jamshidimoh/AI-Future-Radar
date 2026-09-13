@@ -1,4 +1,4 @@
-import dedup
+import src.dedup as dedup
 from main import TELEGRAM_SAFE_TEXT_LIMIT, _publication_text_within_limit
 
 

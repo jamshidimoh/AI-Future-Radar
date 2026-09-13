@@ -1,11 +1,9 @@
-import sys
 import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.story_shadow import build_shadow_stories
 
-from story_shadow import build_shadow_stories
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class StoryShadowTests(unittest.TestCase):

@@ -16,10 +16,15 @@ ignore = ["E501", "E701", "E702", "E731", "B905", "UP017"]
 known-first-party = ["src"]
 
 [tool.ruff.lint.per-file-ignores]
-"main.py" = ["E402"]
-"scripts/education_recovery.py" = ["E402"]
-"scripts/production_with_ranking_audit.py" = ["E402"]
-"tests/*.py" = ["E402"]
+"scripts/*.py" = ["E402"]
+"tools/*.py" = ["E402"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+explicit_package_bases = true
+files = ["src", "main.py", "production_entrypoint.py", "production_resilient_runner.py", "period_ranked_pipeline.py"]

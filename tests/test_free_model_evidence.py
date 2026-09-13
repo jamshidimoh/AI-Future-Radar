@@ -1,10 +1,8 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.free_model_evidence import benchmark_record, benchmark_score, normalize_model_id, quality_score
 
-from free_model_evidence import benchmark_record, benchmark_score, normalize_model_id, quality_score
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_normalize_free_variant_id():

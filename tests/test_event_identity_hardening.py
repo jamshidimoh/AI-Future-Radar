@@ -1,10 +1,8 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.story_identity import _event_tokens, _material_update_tokens, deduplicate_stories, is_story_duplicate
 
-from story_identity import _event_tokens, _material_update_tokens, deduplicate_stories, is_story_duplicate
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_agent_alias_does_not_recursively_expand():

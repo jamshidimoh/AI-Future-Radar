@@ -1,10 +1,8 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.free_model_service import FreeModelIntelligence
 
-from free_model_service import FreeModelIntelligence
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _entry(model_id, quality, priority=1):

@@ -1,13 +1,11 @@
 import os
-import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.publication_contract import TELEGRAM_SAFE_TEXT_LIMIT, candidate_identity, delivery_result, unique_candidates, validate_publication_payload
 
-from publication_contract import TELEGRAM_SAFE_TEXT_LIMIT, candidate_identity, delivery_result, unique_candidates, validate_publication_payload
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class PublicationContractTests(unittest.TestCase):

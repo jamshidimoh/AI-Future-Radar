@@ -4,6 +4,7 @@ from __future__ import annotations
 import concurrent.futures
 import os
 import re
+import sys
 import threading
 import time
 
@@ -73,7 +74,7 @@ def _nara(system_prompt, user_content, model=None):
 
 def _openrouter_supports_response_format(model: str) -> bool:
     try:
-        from free_model_registry import model_capability
+        from src.free_model_registry import model_capability
         return bool(model_capability(model).get("response_format"))
     except Exception: return False
 
@@ -137,12 +138,12 @@ def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY
     key=_chain_key()
     if _CHAIN_CACHE is not None and key == _CHAIN_CACHE_KEY: return ProductionQualityChain(_CHAIN_CACHE)
-    from free_model_registry import build_production_chain
-    chain=build_production_chain(__import__(__name__)); _CHAIN_CACHE=list(chain); _CHAIN_CACHE_KEY=key
+    from src.free_model_registry import build_production_chain
+    chain=build_production_chain(sys.modules[__name__]); _CHAIN_CACHE=list(chain); _CHAIN_CACHE_KEY=key
     print("[Light Router] chain="+", ".join(n for n,_ in chain),flush=True); return ProductionQualityChain(_CHAIN_CACHE)
 
 def _litellm_model_list():
-    from free_model_registry import build_litellm_model_list
+    from src.free_model_registry import build_litellm_model_list
     return build_litellm_model_list()
 
 def _get_litellm_router():

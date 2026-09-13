@@ -1,4 +1,4 @@
-from story_gate import gate_story_candidates
+from src.story_gate import gate_story_candidates
 
 
 def test_unrelated_ai_stories_are_not_duplicates():
@@ -30,7 +30,7 @@ def test_shared_company_and_event_are_not_enough_for_duplicate():
 
 
 def test_history_duplicate_is_removed_without_blocking_unrelated_story():
-    from semantic_dedup import get_story_signature
+    from src.semantic_dedup import get_story_signature
     history = [get_story_signature({"title": "NVIDIA unveils next generation accelerator"})]
     items = [
         {"title": "NVIDIA unveils next-generation accelerator"},

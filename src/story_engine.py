@@ -7,7 +7,7 @@ from collections import defaultdict
 from collections.abc import Sequence
 from datetime import datetime
 
-from radar_models import SourceItem, Story
+from src.radar_models import SourceItem, Story
 
 _TOKEN_RE = re.compile(r"[\w\u0600-\u06ff]+", re.UNICODE)
 _STOPWORDS = {

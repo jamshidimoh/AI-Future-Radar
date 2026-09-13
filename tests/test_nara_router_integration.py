@@ -1,12 +1,10 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.free_model_registry as registry
+import src.llm_router_light as router
+from src.production_router_policy import _is_provider_auth, _is_provider_quota
 
-import free_model_registry as registry
-import llm_router_light as router
-from production_router_policy import _is_provider_auth, _is_provider_quota
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_nara_is_independent_fallback(monkeypatch):

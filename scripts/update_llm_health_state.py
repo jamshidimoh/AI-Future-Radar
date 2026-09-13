@@ -8,6 +8,11 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.state_io import load_json_state
+
 STATE_PATH = ROOT / "data" / "llm_health.json"
 
 MODEL_COOLDOWN = {
@@ -60,11 +65,8 @@ def classify(message: str) -> str:
 
 
 def load() -> dict:
-    try:
-        value = json.loads(STATE_PATH.read_text(encoding="utf-8"))
-        return value if isinstance(value, dict) else {}
-    except (OSError, ValueError, TypeError):
-        return {}
+    value = load_json_state(STATE_PATH, {}, label="LLM health state")
+    return value if isinstance(value, dict) else {}
 
 
 def prune(section: dict, now: float) -> dict:

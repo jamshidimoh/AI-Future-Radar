@@ -8,6 +8,8 @@ on:
     - cron: "17 7,10,14,17,19 * * *"
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - "main.py"
       - "production_entrypoint.py"

@@ -1,7 +1,7 @@
 """Production-only LLM routing policy with bounded, quota-aware failover."""
 from __future__ import annotations
 
-import json
+import logging
 import os
 import re
 import time
@@ -9,6 +9,9 @@ from pathlib import Path
 
 import src.llm_router_light as router
 from src.free_model_registry import build_production_chain
+from src.state_io import load_json_state
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[1]
 HEALTH_PATH = ROOT / "data" / "llm_health.json"
@@ -35,11 +38,8 @@ def _is_kira_wallet_only(message: str, family: str) -> bool:
 
 
 def _load_health() -> dict:
-    try:
-        value = json.loads(HEALTH_PATH.read_text(encoding="utf-8"))
-        return value if isinstance(value, dict) else {}
-    except (OSError, json.JSONDecodeError):
-        return {}
+    value = load_json_state(HEALTH_PATH, {}, label="LLM health state")
+    return value if isinstance(value, dict) else {}
 
 
 def _persistently_unavailable(deployment_id: str) -> bool:
@@ -111,6 +111,14 @@ def _install_production_circuit_breaker() -> None:
                 last_error = exc
                 message = str(exc)
                 reason = router._failure_class(message)
+                logger.warning(
+                    "Production provider attempt failed provider=%s model=%s exception=%s: %s",
+                    family,
+                    deployment_id,
+                    type(exc).__name__,
+                    exc,
+                    exc_info=True,
+                )
                 if _is_kira_wallet_only(message, family):
                     skipped_families.add(family)
                     with router._STATE_LOCK:
@@ -127,7 +135,11 @@ def _install_production_circuit_breaker() -> None:
                 else:
                     router._disable(deployment_id, reason)
                     scope = "model"
-                print(f"[Production Circuit] failed={deployment_id} reason={reason} scope={scope}: {message}", flush=True)
+                print(
+                    f"[Production Circuit] failed={deployment_id} reason={reason} scope={scope}: "
+                    f"exception={type(exc).__name__} provider={family} model={deployment_id} {message}",
+                    flush=True,
+                )
                 return None
 
         for deployment in model_list:
@@ -149,7 +161,17 @@ def _install_production_circuit_breaker() -> None:
                         return content, "HuggingFace"
                 except Exception as exc:
                     last_error = exc
-                    print(f"[Production Circuit] failed=HuggingFace reason={router._failure_class(str(exc))} scope=model: {exc}", flush=True)
+                    logger.warning(
+                        "Production provider attempt failed provider=huggingface model=HuggingFace exception=%s: %s",
+                        type(exc).__name__,
+                        exc,
+                        exc_info=True,
+                    )
+                    print(
+                        f"[Production Circuit] failed=HuggingFace reason={router._failure_class(str(exc))} "
+                        f"scope=model: exception={type(exc).__name__} provider=huggingface model=HuggingFace {exc}",
+                        flush=True,
+                    )
 
         if last_error is not None:
             print(f"[Production Circuit] exhausted={type(last_error).__name__}: {last_error}", flush=True)

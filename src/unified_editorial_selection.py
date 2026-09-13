@@ -1,6 +1,7 @@
 """Unified, deterministic editorial portfolio selection contract."""
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
@@ -8,6 +9,8 @@ from typing import Any
 import yaml
 
 from src.information_gain import information_gain_score, max_topic_similarity, portfolio_value, topic_fingerprint
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[1]
 MISSION_PATH = ROOT / "config" / "mission_policy.yaml"
@@ -23,7 +26,8 @@ _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligen
 def _load_yaml(path: Path) -> dict[str, Any]:
     try:
         return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    except Exception:
+    except (OSError, UnicodeDecodeError, yaml.YAMLError) as exc:
+        logger.error("Editorial contract unavailable at %s: %s", path, exc, exc_info=True)
         return {}
 
 

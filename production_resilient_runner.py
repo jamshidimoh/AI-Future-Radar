@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import faulthandler
 import json
+import logging
 import os
 import sys
 from datetime import datetime
@@ -18,7 +19,11 @@ import production_entrypoint
 import src.educational_content as educational_content
 import src.normal_publication_fallback as _normal_fallback
 import src.production_publication_adapter as _publication_adapter
+from src.logging_setup import configure_logging
+from src.state_io import StateCorruptionError
 from src.unified_editorial_selection import load_editorial_contract
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parent
 
@@ -197,12 +202,14 @@ def _publish_education_after_news(run_number: int) -> bool:
         )
     except Exception as exc:
         print(f"[Education Publication] independent fallback failed: {exc}", flush=True)
+        logger.error("Independent education fallback failed: %s", exc, exc_info=True)
         return False
     finally:
         production_entrypoint._save_cadence(cadence)
 
 
 def main() -> int:
+    configure_logging()
     _normal_fallback._NORMAL_DELIVERED = 0
     contract = load_editorial_contract()
     production_entrypoint.RANK_WINDOW = int(contract["candidate_window"])
@@ -218,6 +225,8 @@ def main() -> int:
     try:
         try:
             return production_entrypoint.main()
+        except StateCorruptionError:
+            raise
         except RuntimeError as exc:
             message = str(exc)
             education_error = (
@@ -244,4 +253,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except StateCorruptionError as exc:
+        print(f"[STATE] {exc}", file=sys.stderr, flush=True)
+        raise SystemExit(1) from exc

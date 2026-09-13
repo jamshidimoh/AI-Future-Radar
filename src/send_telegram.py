@@ -1,10 +1,13 @@
 import html
 import json
+import logging
 import os
 import re
 from urllib.parse import parse_qs, quote, urlparse
 
 import requests
+
+logger = logging.getLogger(__name__)
 
 CATEGORY_EMOJI = {"ai": "🤖", "quantum": "⚛️", "genetics": "🧬", "mind": "🧠", "future": "🔮"}
 TITLE_ICON = "📡"
@@ -86,7 +89,8 @@ def _youtube_thumbnail(url):
                 video_id = parts[2] if len(parts) > 2 else ""
         if re.fullmatch(r"[A-Za-z0-9_-]{6,}", video_id):
             return f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
-    except Exception:
+    except (ValueError, AttributeError) as exc:
+        logger.warning("Could not derive YouTube thumbnail for %s: %s", raw, exc, exc_info=True)
         pass
     return None
 
@@ -122,8 +126,10 @@ def _source_page_image(link):
                 return image
     except requests.RequestException as exc:
         print(f"[WARN] Source image resolver failed: {exc}", flush=True)
-    except Exception as exc:
+        logger.warning("Source image resolver request failed: %s", exc, exc_info=True)
+    except (ValueError, AttributeError, TypeError) as exc:
         print(f"[WARN] Source image parser failed: {exc}", flush=True)
+        logger.warning("Source image parser failed: %s", exc, exc_info=True)
     return None
 
 
@@ -158,9 +164,11 @@ def _validate_remote_image(image_url):
             return not (declared and declared.isdigit() and int(declared) < 256)
     except requests.RequestException as exc:
         print(f"[WARN] Image validation failed: {exc}", flush=True)
+        logger.warning("Image validation request failed: %s", exc, exc_info=True)
         return False
-    except Exception as exc:
+    except (ValueError, AttributeError, TypeError, KeyError, StopIteration) as exc:
         print(f"[WARN] Image validation exception: {exc}", flush=True)
+        logger.warning("Image validation failed: %s", exc, exc_info=True)
         return False
 
 
@@ -264,8 +272,9 @@ def _telegram_preflight(token, channel):
         if chat.get("type") == "channel" and status not in {"administrator", "creator"}:
             return False
         return not (chat.get("type") == "channel" and status == "administrator" and member.get("can_post_messages") is False)
-    except Exception as exc:
+    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
         print(f"[ERROR] Telegram destination verification exception: {exc}", flush=True)
+        logger.error("Telegram destination verification failed: %s", exc, exc_info=True)
         return False
 
 
@@ -277,7 +286,8 @@ def _valid_preview_url(value):
         parsed = urlparse(raw)
         if parsed.scheme not in {"http", "https"} or not parsed.netloc:
             return ""
-    except Exception:
+    except (ValueError, AttributeError) as exc:
+        logger.warning("Invalid Telegram preview URL %s: %s", raw, exc, exc_info=True)
         return ""
     return raw
 
@@ -372,8 +382,9 @@ def _send_source_image(token, channel, image_url, source_link="", title=""):
             print(f"[Telegram Image Published] chat_id={meta.get('chat_id')} message_id={meta.get('message_id')}", flush=True)
             return meta
         return False
-    except Exception as exc:
+    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
         print(f"[WARN] Telegram source image send failed: {exc}", flush=True)
+        logger.warning("Telegram source image send failed: %s", exc, exc_info=True)
         return False
 
 
@@ -403,6 +414,7 @@ def send_to_telegram(text, image_url="", source_link=""):
 def send_to_telegram_safe(text, image_url="", source_link=""):
     try:
         return send_to_telegram(text, image_url=image_url, source_link=source_link)
-    except Exception as exc:
+    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
         print(f"[ERROR] Telegram delivery exception: {exc}", flush=True)
+        logger.error("Telegram delivery exception: %s", exc, exc_info=True)
         return False

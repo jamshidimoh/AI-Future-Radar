@@ -1,8 +1,11 @@
 """Deterministic publisher-authority resolution."""
 from __future__ import annotations
 
+import logging
 import re
 from urllib.parse import urlparse
+
+logger = logging.getLogger(__name__)
 
 _TIER1_DOMAIN_MARKERS = ("openai.com", "anthropic.com", "deepmind.google", "blog.google", "research.google", "hai.stanford.edu", "stanford.edu", "csail.mit.edu", "news.mit.edu", "mit.edu", "nature.com", "ncsu.edu", "cmu.edu", "nvidia.com", "nist.gov", "ieee.org", "quanta.com")
 _TIER2_DOMAIN_MARKERS = ("reuters.com", "apnews.com", "bbc.com", "bbc.co.uk", "cnbc.com", "forbes.com", "technologyreview.com", "spectrum.ieee.org", "arstechnica.com", "wired.com", "scientificamerican.com", "newscientist.com", "businessinsider.com", "economist.com")
@@ -20,7 +23,8 @@ def _host(url: object) -> str:
         return ""
     try:
         return urlparse(value if "://" in value else f"https://{value}").netloc.removeprefix("www.").split(":", 1)[0]
-    except Exception:
+    except (ValueError, AttributeError) as exc:
+        logger.warning("Could not parse source URL %s: %s", value, exc, exc_info=True)
         return ""
 
 

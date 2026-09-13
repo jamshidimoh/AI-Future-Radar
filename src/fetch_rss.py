@@ -1,4 +1,5 @@
 """دریافت اخبار به‌روز از RSS با taxonomy سخت‌گیرانه و متادیتای کیفیت منبع."""
+import logging
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -10,6 +11,8 @@ import requests
 import yaml
 
 from src.source_exclusions import is_excluded_source_url
+
+logger = logging.getLogger(__name__)
 
 _WEAK_AI_KEYWORDS = {"ai"}
 _FEED_TIMEOUT_SECONDS = 20
@@ -54,8 +57,9 @@ def _load_supplemental_sources():
             sources = payload.get("rss_sources", [])
             if isinstance(sources, list):
                 merged.extend(source for source in sources if isinstance(source, dict))
-        except Exception as exc:
+        except (OSError, ValueError, TypeError, AttributeError, KeyError) as exc:
             print(f"[WARN] supplemental RSS registry unavailable: {path.name}: {exc}", flush=True)
+            logger.warning("Supplemental RSS registry unavailable: %s", path, exc_info=True)
     return merged
 
 
@@ -83,7 +87,8 @@ def _collect_source(source, categories, cutoff):
         return source, [], None
     try:
         feed = _parse_feed(source["url"])
-    except Exception as exc:
+    except (requests.RequestException, RuntimeError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        logger.warning("RSS source collection failed for %s: %s", source.get("name", source.get("url", "")), exc, exc_info=True)
         return source, [], exc
 
     results = []

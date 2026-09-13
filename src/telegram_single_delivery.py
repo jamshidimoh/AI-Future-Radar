@@ -8,9 +8,12 @@ publication contract.
 """
 from __future__ import annotations
 
+import logging
 import os
 
 import src.send_telegram as send_telegram
+
+logger = logging.getLogger(__name__)
 
 SAFE_TEXT_LIMIT = 3900
 
@@ -49,6 +52,7 @@ def send(text: str, image_url: str = "", source_link: str = ""):
         return _send_text_only(text, source_link=source_link)
     except Exception as exc:
         print(f"[Telegram Delivery] send attempt failed without retry to prevent duplicate publication: {exc}", flush=True)
+        logger.error("Telegram delivery failed without retry: %s", exc, exc_info=True)
         return False
 
 

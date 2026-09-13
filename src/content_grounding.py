@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from collections import Counter
 
 from src.education_editor import normalize_editorial_text
 from src.llm_router_light import call_llm_with_fallback, get_quality_chain
+
+logger = logging.getLogger(__name__)
 
 _TOKEN_RE = re.compile(r"[A-Za-z0-9_./+#:-]+|[\u0600-\u06FF]+")
 _STOP = {"the", "and", "for", "with", "from", "this", "that", "about", "into", "این", "آن", "برای", "با", "در", "از", "به", "که", "و", "یک"}
@@ -84,7 +87,8 @@ def _llm_check(source_title: str, source_text: str, draft: dict) -> bool | None:
         data = json.loads(raw or "{}")
         if isinstance(data, dict) and isinstance(data.get("grounded"), bool):
             return bool(data["grounded"])
-    except Exception:
+    except (ValueError, TypeError, KeyError, RuntimeError) as exc:
+        logger.warning("Source grounding LLM check failed: %s", exc, exc_info=True)
         return None
     return None
 
@@ -96,7 +100,8 @@ def _repair(source_title: str, source_text: str, draft: dict) -> dict | None:
         value = json.loads(raw or "{}")
         if isinstance(value, dict) and value.get("title") and value.get("summary"):
             return value
-    except Exception:
+    except (ValueError, TypeError, KeyError, RuntimeError) as exc:
+        logger.warning("Source grounding repair failed: %s", exc, exc_info=True)
         return None
     return None
 

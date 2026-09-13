@@ -1,3 +1,4 @@
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -8,13 +9,17 @@ from src.fetch_google_news import fetch_google_news_items
 from src.fetch_rss import fetch_rss_items
 from src.fetch_youtube import fetch_youtube_items
 from src.interview_evidence import has_interview_evidence
+from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
 from src.publication_contract import unique_candidates
 from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
 from src.signal_engine import enrich_signal_items
+from src.state_io import StateCorruptionError
 from src.story_gate import gate_story_candidates
 from src.summarize import summarize_item
 from src.unified_editorial_selection import select_regular_portfolio
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "config" / "sources.yaml"
@@ -51,7 +56,8 @@ def _leader_source_authority(item):
             pass
     try:
         tier = _source_tier(item)
-    except Exception:
+    except Exception as exc:
+        logger.warning("Could not determine source authority: %s", exc, exc_info=True)
         tier = None
     try:
         tier = int(tier) if tier is not None else None
@@ -261,6 +267,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
     return recovered
 
 def main(hooks=None):
+    configure_logging()
     hooks = dict(hooks or {}); select_editorial_fn = hooks.get("select_editorial", _select_editorial_default); split_protected_fn = hooks.get("split_protected", _split_protected); summarize_fn = hooks.get("summarize_item", summarize_item); format_fn = hooks.get("format_post", format_post); resolve_image_fn = hooks.get("resolve_source_image", resolve_source_image); deliver_fn = hooks.get("send_to_telegram_safe", send_to_telegram_safe); persist_fn = hooks.get("persist_item_success", _persist_item_success)
     config = load_yaml(CONFIG_PATH); leader_config = load_yaml(LEADER_CONFIG_PATH); selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {}); policy = load_yaml(SELECTION_POLICY_PATH).get("editorial", {}); categories = config["categories"]; max_posts = int(selection.get("max_posts", 4)); max_per_source = int(selection.get("max_items_per_source", 2)); max_per_type = int(selection.get("max_items_per_content_type", 2)); leader_protected_max = int(policy.get("leader_protected_max", 2)); replacement_buffer = max(0, int(selection.get("replacement_buffer", 0) or 0)); runtime_selection_cap = leader_protected_max + max_posts + replacement_buffer; bridge_keywords = config.get("ai_bridge_keywords", []); story_threshold = float(selection.get("story_similarity_threshold", 0.45)); leader_people, leader_priorities = _leader_people(leader_config)
     youtube_channels = _merge_unique_dicts(config.get("youtube_channels", []), leader_config.get("youtube_channels", []), key="name"); leader_channel_names = {x.get("name") for x in leader_config.get("youtube_channels", [])}; base_youtube_channels = [x for x in youtube_channels if x.get("name") not in leader_channel_names]; leader_youtube_channels = [x for x in youtube_channels if x.get("name") in leader_channel_names]; base_queries = list(config.get("google_news_queries", [])); leader_queries = list(leader_config.get("google_news_queries", []))
@@ -337,8 +344,15 @@ def main(hooks=None):
                 raise RuntimeError(f"Telegram transport failure: {getattr(result, 'reason', 'unknown')}")
             if not result: raise RuntimeError("Telegram delivery returned false")
             sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history)
-        except Exception as exc: print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
+        except Exception as exc:
+            logger.error("Telegram send failed for %s: %s", item.get("title", "")[:100], exc, exc_info=True)
+            print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
     print(f"[Publication Lazy Refill] initial={initial_selected_count} lazy_replacements={lazy_replacements} final_attempt_queue={len(publication_queue)}", flush=True)
     save_seen(seen_hashes, seen_signatures, source_history); print(f"Posts sent: {sent}/{len(publication_queue)}")
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    try:
+        main()
+    except StateCorruptionError as exc:
+        logger.error("[STATE] %s", exc, exc_info=True)
+        raise SystemExit(1) from exc

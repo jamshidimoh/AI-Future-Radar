@@ -7,8 +7,11 @@ checks, and future Story clustering do not invent competing identifiers.
 from __future__ import annotations
 
 import hashlib
+import logging
 import re
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
+logger = logging.getLogger(__name__)
 
 _TRACKING_PARAMS = {
     "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
@@ -32,7 +35,8 @@ def canonical_url(value: object) -> str:
         return urlunsplit(
             (parts.scheme.lower(), parts.netloc.lower(), path, urlencode(sorted(query)), "")
         )
-    except Exception:
+    except (ValueError, AttributeError) as exc:
+        logger.warning("Could not canonicalize story URL %s: %s", raw, exc, exc_info=True)
         return raw.split("#", 1)[0].strip().rstrip("/")
 
 

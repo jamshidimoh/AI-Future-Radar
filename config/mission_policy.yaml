@@ -17,10 +17,10 @@ mission:
   ai_core_target_min: 1
   ai_core_target_max: 2
   convergence_target: 0
-  # One normal slot is reserved for mind/cognition, consciousness,
-  # philosophy-of-mind/science, or future-governance material when an eligible
-  # candidate exists. This is a coverage opportunity, not a quality bypass.
-  mind_future_target: 1
+  # Two normal slots are prioritized for mind/cognition, consciousness,
+  # philosophy of mind/science, and technology-linked philosophical analysis.
+  # This is a coverage priority, not a quality bypass.
+  mind_future_target: 2
   research_target: 0
   interview_target_max: 1
   community_max: 0
@@ -34,7 +34,7 @@ areas:
     keywords: ["quantum", "quantum computing", "robotics", "humanoid", "brain-computer", "bci", "neurotechnology", "biotech", "synthetic biology", "genomics", "crispr", "protein", "materials", "semiconductor", "energy", "space"]
   mind_cognition:
     label: "ذهن، شناخت و آگاهی"
-    keywords: ["consciousness", "sentience", "cognitive science", "cognition", "mind", "brain", "neuroscience", "philosophy of mind", "philosophy of science", "machine consciousness", "awareness"]
+    keywords: ["consciousness", "sentience", "cognitive science", "cognition", "mind", "brain", "neuroscience", "philosophy of mind", "philosophy of science", "philosophy of technology", "philosophy of ai", "epistemology of ai", "technology and consciousness", "artificial consciousness", "machine consciousness", "machine awareness", "awareness", "science and technology studies"]
   future_governance:
     label: "آینده‌پژوهی، جامعه و حکمرانی فناوری"
     keywords: ["future of ai", "foresight", "governance", "policy", "jobs", "economy", "geopolitics", "existential risk", "alignment", "regulation", "future of work", "society"]

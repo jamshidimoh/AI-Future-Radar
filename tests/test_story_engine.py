@@ -9,8 +9,6 @@ sys.path.insert(0, str(ROOT / "src"))
 from radar_models import SourceItem
 from story_engine import build_stories
 
-UTC = timezone.utc  # noqa: UP017
-
 
 class StoryEngineTests(unittest.TestCase):
     def item(self, title, url, summary="", source_type="news"):
@@ -21,7 +19,7 @@ class StoryEngineTests(unittest.TestCase):
             title=title,
             summary=summary,
             source_type=source_type,
-            published_at=datetime(2026, 8, 19, tzinfo=UTC),
+            published_at=datetime(2026, 8, 19, tzinfo=timezone.utc),
         )
 
     def test_empty_input_returns_no_stories(self):

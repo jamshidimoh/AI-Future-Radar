@@ -2,8 +2,6 @@ from datetime import datetime, timezone
 
 from radar_models import CanonicalContent, Evidence, SourceItem, Story
 
-UTC = timezone.utc  # noqa: UP017
-
 
 def test_source_item_has_stable_discovery_contract():
     item = SourceItem(
@@ -11,7 +9,7 @@ def test_source_item_has_stable_discovery_contract():
         source_name="Reuters",
         url="https://example.com/story",
         title="AI story",
-        published_at=datetime.now(UTC),
+        published_at=datetime.now(timezone.utc),
     )
     assert item.source_name == "Reuters"
     assert item.content_type == "news"

@@ -16,7 +16,6 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config" / "free_model_registry.yaml"
 OPENROUTER_MODELS_URL = "https://openrouter.ai/api/v1/models"
-UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
 
 BLOCKED = ("embed", "rerank", "speech", "audio", "image", "video", "code")
 PREFERRED_PREFIXES = (
@@ -58,7 +57,7 @@ def _freshness_score(created) -> float:
     if not created:
         return 40.0
     try:
-        days = max(0.0, (datetime.now(UTC) - datetime.fromtimestamp(float(created), tz=UTC)).total_seconds() / 86400.0)
+        days = max(0.0, (datetime.now(timezone.utc) - datetime.fromtimestamp(float(created), tz=timezone.utc)).total_seconds() / 86400.0)
     except (TypeError, ValueError, OverflowError):
         return 40.0
     return max(35.0, min(100.0, 100.0 - days * 0.10))
@@ -98,7 +97,7 @@ def refresh() -> int:
             "health": row.get("health", "healthy"),
             "health_score": row.get("health_score", 100),
             "catalog_score": round(_candidate_score(item), 3),
-            "verified_at": datetime.now(UTC).isoformat(),
+            "verified_at": datetime.now(timezone.utc).isoformat(),
         })
         discovered.append(row)
 
@@ -113,7 +112,7 @@ def refresh() -> int:
         key=lambda m: (-float(m.get("catalog_score", 0)), -float(m.get("base_quality", 0)), m["id"]),
     )
     target["models"] = ordered
-    registry["last_refresh"] = datetime.now(UTC).isoformat()
+    registry["last_refresh"] = datetime.now(timezone.utc).isoformat()
     REGISTRY.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
     print(f"[Free Model Registry] refreshed openrouter candidates={len(ordered)}")
     return len(ordered)

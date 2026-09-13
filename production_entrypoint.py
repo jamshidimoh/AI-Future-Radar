@@ -18,8 +18,6 @@ from src.editorial_quality_policy import (
 from src.priority_people import is_substantive_priority_interview
 from src.unified_editorial_selection import load_editorial_contract
 
-UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
-
 ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
 CADENCE_PATH = ROOT / "data" / "publication_state.json"
@@ -55,7 +53,7 @@ def _save_cadence(state: dict) -> None:
 
 
 def _tehran_now() -> datetime:
-    return datetime.now(UTC).astimezone(TEHRAN)
+    return datetime.now(timezone.utc).astimezone(TEHRAN)
 
 
 def _education_slot(now: datetime | None = None) -> str | None:

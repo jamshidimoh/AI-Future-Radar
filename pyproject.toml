@@ -10,7 +10,7 @@ extend-exclude = [".venv", "digital_transformation_booklet"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
-ignore = ["E501", "E701", "E702", "E731", "B905"]
+ignore = ["E501", "E701", "E702", "E731", "B905", "UP017"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]

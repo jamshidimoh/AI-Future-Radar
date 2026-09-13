@@ -9,8 +9,6 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from math import exp
 
-UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
-
 DEFAULT_WEIGHTS = {
     "benchmark": 0.60,
     "task_fit": 0.20,
@@ -65,7 +63,7 @@ def freshness_score(generated_at: str | None, half_life_hours: float = 168.0) ->
         return 60.0
     try:
         stamp = datetime.fromisoformat(str(generated_at).replace("Z", "+00:00"))
-        age_hours = max(0.0, (datetime.now(UTC) - stamp.astimezone(UTC)).total_seconds() / 3600.0)
+        age_hours = max(0.0, (datetime.now(timezone.utc) - stamp.astimezone(timezone.utc)).total_seconds() / 3600.0)
     except ValueError:
         return 40.0
     return round(100.0 * exp(-age_hours / max(1.0, half_life_hours)), 3)

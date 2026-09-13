@@ -8,8 +8,6 @@ from typing import Any
 from radar_models import SourceItem
 from story_engine import build_stories
 
-UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
-
 
 def _parse_datetime(value: Any) -> datetime | None:
     """Parse legacy timestamps into timezone-naive UTC for deterministic ordering."""
@@ -25,7 +23,7 @@ def _parse_datetime(value: Any) -> datetime | None:
             return None
 
     if parsed.tzinfo is not None:
-        parsed = parsed.astimezone(UTC).replace(tzinfo=None)
+        parsed = parsed.astimezone(timezone.utc).replace(tzinfo=None)
     return parsed
 
 

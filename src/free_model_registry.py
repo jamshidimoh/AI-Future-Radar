@@ -15,7 +15,6 @@ RUNTIME_REGISTRY_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 _PROVIDER_ORDER = {"groq": 0, "nararouter": 1, "openrouter": 2, "kiraai": 3, "gemini": 4, "huggingface": 5}
 _BLOCKED_OPENROUTER_IDS = {"openrouter/free", "openrouter/auto"}
 NARA_DEFAULT_MODEL = "auto/bynara"
-UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
 
 
 def _read(path: Path) -> dict:
@@ -35,7 +34,7 @@ def _runtime_is_fresh(data: dict) -> bool:
         generated = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
     except ValueError:
         return False
-    age_hours = (datetime.now(UTC) - generated.astimezone(UTC)).total_seconds() / 3600.0
+    age_hours = (datetime.now(timezone.utc) - generated.astimezone(timezone.utc)).total_seconds() / 3600.0
     stale_after = float(data.get("registry", {}).get("stale_after_hours", 72) or 72)
     return 0 <= age_hours <= stale_after
 

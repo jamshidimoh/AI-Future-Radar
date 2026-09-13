@@ -36,3 +36,4 @@ jobs:
           git rm -f .github/workflows/repair-protected-key.yml
           git commit -m 'chore: remove temporary protected key repair [skip ci]'
           git push origin HEAD:main
+# retrigger repair after main-branch verification

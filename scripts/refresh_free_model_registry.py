@@ -11,6 +11,7 @@ import argparse
 import copy
 import json
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -18,6 +19,9 @@ import requests
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 STATIC_PATH = ROOT / "config" / "free_model_registry.yaml"
 RUNTIME_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 TIMEOUT = 12

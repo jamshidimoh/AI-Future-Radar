@@ -99,6 +99,13 @@ def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candida
             return False
         if probable_same_story(candidate, comparable):
             return True
+        if _is_protected_leader(candidate) and _is_protected_leader(comparable):
+            leader_a = str(candidate.get("leader") or candidate.get("watch_person") or "").casefold().strip()
+            leader_b = str(comparable.get("leader") or comparable.get("watch_person") or "").casefold().strip()
+            shared_entities = set(candidate_features.get("entities", ())) & set(prior_features.get("entities", ()))
+            shared_events = set(candidate_features.get("events", ())) & set(prior_features.get("events", ()))
+            if leader_a and leader_a == leader_b and len(shared_entities) >= 2 and shared_events and not has_material_update(candidate, comparable):
+                return True
     kind, _, _ = compare_event_features(candidate_features, prior_features)
     if kind == "DUPLICATE":
         return True

@@ -62,7 +62,11 @@ def family(deployment: str) -> str:
 
 def canonical_deployment(provider: str, model: str) -> str:
     prefix = _PROVIDER_CANONICAL.get(str(provider).strip().casefold(), str(provider).strip())
-    return f"{prefix}:{str(model).strip()}"
+    model_text = str(model).strip()
+    prefix_colon = f"{prefix}:"
+    if model_text.casefold().startswith(prefix_colon.casefold()):
+        return model_text
+    return f"{prefix}:{model_text}"
 
 
 def is_kira_wallet_only(deployment: str, message: str) -> bool:
@@ -146,7 +150,6 @@ def main() -> int:
     for deployment, event_kind, failure_kind, wallet_only in events:
         last_event[deployment] = (event_kind, failure_kind, wallet_only)
 
-    successful_deployments = {deployment for deployment, event_kind, _, _ in events if event_kind == "success"}
     for deployment, (event_kind, _, _) in last_event.items():
         if event_kind == "success":
             models.pop(deployment, None)
@@ -168,35 +171,34 @@ def main() -> int:
             providers[provider] = {
                 "failures": int(old.get("failures", 0) or 0) + 1,
                 "disabled_until": round(now + KIRAAI_WALLET_PROVIDER_COOLDOWN, 3),
-                "last_error": "wallet_quota",
-                "last_success": 0,
+                "last_error": "wallet",
             }
-            continue
-        provider_seconds = PROVIDER_COOLDOWN.get(kind)
-        if provider_seconds and kind in {"auth", "quota"}:
+        elif kind in PROVIDER_COOLDOWN:
+            # Provider-wide account/auth failures disable the family, but ordinary
+            # rate limits remain model-scoped so healthy sibling models continue.
             old = providers.get(provider, {})
             providers[provider] = {
                 "failures": int(old.get("failures", 0) or 0) + 1,
-                "disabled_until": round(now + provider_seconds, 3),
+                "disabled_until": round(now + PROVIDER_COOLDOWN[kind], 3),
                 "last_error": kind,
-                "last_success": 0,
             }
 
-    payload = {
-        "version": 1,
-        "updated_at": round(now, 3),
-        "models": models,
-        "providers": providers,
-        "telemetry": {
-            "observed_failures": len(observed_failures),
-            "successful_deployments": len(successful_deployments),
-        },
+    state["models"] = models
+    state["providers"] = providers
+    state["telemetry"] = {
+        "observed_failures": len(observed_failures),
+        "observed_events": len(events),
+        "updated_at": now,
     }
+    state["updated_at"] = now
     STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp = STATE_PATH.with_suffix(STATE_PATH.suffix + ".tmp")
-    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    tmp.replace(STATE_PATH)
-    print(f"[LLM Health Persistence] failures={len(observed_failures)} successes={len(successful_deployments)} models={len(models)} providers={len(providers)}")
+    STATE_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(
+        f"[LLM Health Persistence] failures={len(observed_failures)} "
+        f"successes={sum(1 for e in events if e[1] == 'success')} "
+        f"models={len(models)} providers={len(providers)}",
+        flush=True,
+    )
     return 0
 
 

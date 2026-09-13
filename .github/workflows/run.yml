@@ -1,4 +1,5 @@
 # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (Tehran local time, UTC+3:30; GitHub Actions cron is UTC)
+# Production trigger: quality contracts verified; runtime audit follows on pushes to main.
 name: Run AI Future Radar Bot
 
 on:

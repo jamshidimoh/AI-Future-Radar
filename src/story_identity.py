@@ -92,6 +92,36 @@ def _prepare_prior(prior: Any) -> tuple[dict[str, Any], str, dict[str, Any], dic
     return comparable, _canonical_url(comparable), event_features(comparable), get_story_signature(comparable)
 
 
+def _semantic_story_match(candidate_features: dict[str, Any], prior_features: dict[str, Any], semantic_score: float) -> bool:
+    """Use semantic similarity only when an independent story-identity signal agrees.
+
+    This prevents same-entity/same-topic stories from collapsing merely because
+    their summaries use similar language, while still catching rewritten and
+    cross-source versions of the same event.
+    """
+    if semantic_score < 0.78:
+        return False
+    candidate_title = str(candidate_features.get("title") or "")
+    prior_title = str(prior_features.get("title") or "")
+    title_similarity = difflib.SequenceMatcher(None, candidate_title, prior_title).ratio() if candidate_title and prior_title else 0.0
+    shared_entities = set(candidate_features.get("entities", ())) & set(prior_features.get("entities", ()))
+    shared_events = set(candidate_features.get("events", ())) & set(prior_features.get("events", ()))
+    context = set(candidate_features.get("tokens", ()))
+    prior_context = set(prior_features.get("tokens", ()))
+    context_overlap = len(context & prior_context) / len(context | prior_context) if context and prior_context else 0.0
+
+    # Strong paraphrase: high semantic + high title agreement.
+    if title_similarity >= 0.80:
+        return True
+    # Same named entity + same event family: require meaningful title/context overlap.
+    if shared_entities and shared_events and (title_similarity >= 0.62 or context_overlap >= 0.45):
+        return True
+    # Same event wording without a recognized entity alias.
+    if shared_events and context_overlap >= 0.62 and title_similarity >= 0.58:
+        return True
+    return False
+
+
 def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candidate_features: dict[str, Any], candidate_signature: dict[str, Any], prior: tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None], allow_protected_event_match: bool = True) -> bool:
     comparable, prior_url, prior_features, prior_signature = prior
     if candidate_url and prior_url and candidate_url == prior_url:
@@ -122,25 +152,14 @@ def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candida
         return False
     try:
         semantic_score = _similarity(candidate_signature, prior_signature)
-        candidate_title = str(candidate_features.get("title") or "")
-        prior_title = str(prior_features.get("title") or "")
-        title_similarity = difflib.SequenceMatcher(None, candidate_title, prior_title).ratio() if candidate_title and prior_title else 0.0
-        shared_entities = set(candidate_features.get("entities", ())) & set(prior_features.get("entities", ()))
-        shared_events = set(candidate_features.get("events", ())) & set(prior_features.get("events", ()))
-        if semantic_score >= 0.88 and (title_similarity >= 0.86 or (len(shared_entities) >= 2 and bool(shared_events))):
-            return True
+        return _semantic_story_match(candidate_features, prior_features, semantic_score)
     except (TypeError, ValueError, KeyError, AttributeError) as exc:
         logger.warning("Story identity comparison failed: %s", exc, exc_info=True)
-    return False
+        return False
 
 
 def _build_comparison_cache(items: Iterable[Any]) -> list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]]:
-    cache = []
-    for item in items or []:
-        prepared = _prepare_prior(item)
-        if prepared is not None:
-            cache.append(prepared)
-    return cache
+    return [prepared for item in (items or []) if (prepared := _prepare_prior(item)) is not None]
 
 
 def _is_story_duplicate_cached(candidate: dict[str, Any], cache: list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]], allow_protected_event_match: bool = True) -> bool:

@@ -9,6 +9,7 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from src.event_identity import compare_events
 from src.semantic_dedup import _similarity, get_story_signature
+from src.semantic_publication_guard import shared_anchor_count
 from src.state_io import load_json_state
 
 logger = logging.getLogger(__name__)
@@ -85,25 +86,34 @@ def _load_records() -> list[dict]:
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
     """Return semantic conflict only when the event matcher supports same-story identity.
 
-    The final gate is intentionally conservative. A shared person/company/topic is not enough
-    to block publication: updates, follow-up stories, interviews, and separate events must pass.
+    A shared person/company/topic is not enough to block publication. Updates, follow-up
+    stories, interviews, and separate events must remain publishable.
     """
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
     candidate = {"title": candidate_title, "summary": candidate_summary}
     stored = {"title": stored_title, "summary": stored_summary}
     kind, event_score, evidence = compare_events(candidate, stored)
+    semantic_score = _similarity(get_story_signature(candidate), get_story_signature(stored))
+    anchors = shared_anchor_count(f"{candidate_title} {candidate_summary}", f"{stored_title} {stored_summary}")
 
-    if kind in {"NEW", "UPDATE", "RELATED"}:
+    if kind in {"NEW", "UPDATE"}:
         return 0.0
 
-    candidate_sig = get_story_signature(candidate)
-    stored_sig = get_story_signature(stored)
-    semantic_score = _similarity(candidate_sig, stored_sig)
-    score = max(semantic_score, event_score)
+    if kind == "DUPLICATE":
+        score = max(semantic_score, event_score)
+    elif kind == "RELATED" and anchors >= 3 and semantic_score >= 0.60:
+        # Event identity can be conservative with mixed Persian/English titles. Three
+        # concrete shared anchors plus substantial semantic similarity is sufficient for
+        # the final safety net, without treating a shared leader/company as a duplicate.
+        score = max(0.82, semantic_score)
+    else:
+        return 0.0
+
     logger.debug(
-        "publication semantic comparison kind=%s score=%.3f evidence=%s",
+        "publication semantic comparison kind=%s anchors=%d score=%.3f evidence=%s",
         kind,
+        anchors,
         score,
         evidence,
     )

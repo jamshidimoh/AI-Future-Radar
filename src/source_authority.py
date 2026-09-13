@@ -5,9 +5,9 @@ import re
 from urllib.parse import urlparse
 
 _TIER1_DOMAIN_MARKERS = ("openai.com", "anthropic.com", "deepmind.google", "blog.google", "research.google", "hai.stanford.edu", "stanford.edu", "csail.mit.edu", "news.mit.edu", "mit.edu", "nature.com", "ncsu.edu", "cmu.edu", "nvidia.com", "nist.gov", "ieee.org", "quanta.com")
-_TIER2_DOMAIN_MARKERS = ("reuters.com", "apnews.com", "bbc.com", "bbc.co.uk", "cnbc.com", "forbes.com", "technologyreview.com", "spectrum.ieee.org", "arstechnica.com", "wired.com", "scientificamerican.com", "newscientist.com", "businessinsider.com")
+_TIER2_DOMAIN_MARKERS = ("reuters.com", "apnews.com", "bbc.com", "bbc.co.uk", "cnbc.com", "forbes.com", "technologyreview.com", "spectrum.ieee.org", "arstechnica.com", "wired.com", "scientificamerican.com", "newscientist.com", "businessinsider.com", "economist.com")
 _TIER1_NAME_MARKERS = ("openai", "anthropic", "google deepmind", "mit csail", "mit news", "stanford hai", "stanford university", "nature", "nist", "ieee", "quanta magazine", "carnegie mellon")
-_TIER2_NAME_MARKERS = ("reuters", "associated press", "bbc", "cnbc", "forbes", "mit technology review", "ieee spectrum", "ars technica", "wired", "scientific american", "new scientist", "business insider")
+_TIER2_NAME_MARKERS = ("reuters", "associated press", "bbc", "cnbc", "forbes", "mit technology review", "ieee spectrum", "ars technica", "wired", "scientific american", "new scientist", "business insider", "the economist", "economist")
 
 
 def _clean(value: object) -> str:

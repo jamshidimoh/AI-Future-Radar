@@ -35,5 +35,3 @@ docker pull ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish
 آخرین GitHub Release ثبت‌شده `V1.0.1.On.Publish` است. Workflow انتشار در `.github/workflows/publish-container.yml` قرار دارد و tagهای semantic را build، validate و publish می‌کند. Image دارای OCI source metadata، SBOM و provenance است.
 
 راهنمای انتشار در `docs/RELEASE.md` قرار دارد. قالب متغیرهای محیطی نمونه نیز در `.env.example` موجود است.
-
-<!-- CI validation trigger: temporary runtime repair workflow. -->

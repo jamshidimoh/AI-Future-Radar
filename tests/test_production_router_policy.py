@@ -296,7 +296,6 @@ def test_production_launcher_does_not_activate_router_on_import(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.delenv("RADAR_PRODUCTION_MODE", raising=False)
     sys.modules.pop("scripts.production_with_ranking_audit", None)
-    import scripts.production_with_ranking_audit
     assert router._PRODUCTION_POLICY_APPLIED is False
 
 

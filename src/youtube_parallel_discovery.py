@@ -9,7 +9,7 @@ from __future__ import annotations
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
+from datetime import datetime
 
 from fetch_youtube import (
     _fetch_channel_feed,

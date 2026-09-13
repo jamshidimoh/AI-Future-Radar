@@ -1,12 +1,7 @@
-import json
 import os
-import re
 import sys
-import time
-from collections import Counter
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "src"
@@ -14,7 +9,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
-from editorial import enrich_items, filter_ai_relevance, filter_low_signal
+from editorial import enrich_items, filter_ai_relevance
 from fetch_google_news import fetch_google_news_items
 from fetch_rss import fetch_rss_items
 from fetch_youtube import fetch_youtube_items
@@ -23,10 +18,9 @@ from mission_selector import _source_tier
 from send_telegram import format_post, resolve_source_image, send_to_telegram_safe
 from signal_engine import enrich_signal_items
 from summarize import summarize_item
-from semantic_dedup import deduplicate_semantically
 from story_gate import gate_story_candidates
-from publication_contract import unique_candidates, validate_publication_payload
-from unified_editorial_selection import load_editorial_contract, select_regular_portfolio
+from publication_contract import unique_candidates
+from unified_editorial_selection import select_regular_portfolio
 
 CONFIG_PATH = ROOT / "config" / "sources.yaml"
 LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
@@ -34,6 +28,10 @@ SELECTION_POLICY_PATH = ROOT / "config" / "selection_policy.yaml"
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 PROTECTED_SUMMARY_SCORE_FLOOR = 60.0
 NORMAL_SCORE_FLOOR = 60.0
+
+
+def _publication_identity(item: dict) -> str:
+    return str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item))
 
 
 def load_yaml(path):
@@ -290,7 +288,7 @@ def main(hooks=None):
     for candidate, _summary in mission_recovery: candidate["source_image"] = resolve_image_fn(candidate); selected.append(candidate)
     print("[7/7] Telegram publication"); sent = 0
     initial_selected_count = len(selected)
-    publication_attempted = {_publication_identity(item) if "_publication_identity" in globals() else str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item)) for item in selected}
+    publication_attempted = {_publication_identity(item) for item in selected}
     lazy_replacements = 0
     replacement_limit = max(0, int(policy.get("replacement_buffer", replacement_buffer) or replacement_buffer))
     publication_queue = list(selected)

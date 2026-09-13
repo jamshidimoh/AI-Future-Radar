@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789299620,
+  "updated_at": 1789300364,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8798,6 +8798,26 @@
       "why_it_matters": "باتری‌های لیتیوم‑فلزی می‌توانند فشار بر منابع معدنی استراتژیک را کاهش دهند، در حالی که تأمین مس برای زیرساخت‌های انرژی پاک ضروری است؛ این دو روند نشان می‌دهد که نوآوری‌های مواد و سرمایه‌گذاری‌های مالی به‌صورت همزمان برای پایداری زنجیره‌های تأمین و کاهش اثرات زیست‌محیطی ضروری هستند. بازیافت تورهای ماهیگیری نیز یک مدل تجاری مقیاس‌پذیر برای تبدیل زباله‌های دریایی به محصولات با ارزش ایجاد می‌کند.",
       "link": "https://www.youtube.com/watch?v=W2FQsCOU0Eg",
       "posted_at": 1789295905
+    },
+    "-1004482051328:1571": {
+      "chat_id": -1004482051328,
+      "message_id": 1571,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (OpenAI)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "معرفی GPT-6 Astra: نسل بعدی هوش مصنوعی برای محیط کار از OpenAI",
+      "summary": "OpenAI مدل جدید GPT-6 Astra را به عنوان نسل بعدی هوش مصنوعی برای محیط‌های کاری معرفی کرده است. این مدل با تمرکز بر بهبود قابلیت‌های هوشمند در فرآیندهای شغلی طراحی شده است. منبع خبری اشاره به جایگاه این مدل به عنوان یک گام پیشرو در توسعه فناوری‌های هوش مصنوعی دارد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "معرفی GPT-6 Astra نشان‌دهنده تلاش OpenAI برای ارتقای کارایی هوش مصنوعی در محیط‌های حرفه‌ای است. این مدل می‌تواند به سازمان‌ها در بهینه‌سازی فرآیندها و افزایش بهره‌وری کمک کند. با این حال، جزئیات فنی دقیق درباره محدودیت‌ها یا قابلیت‌های خاص آن در منبع فعلی ذکر نشده است.",
+      "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5CMVNUYU5VZ0ZwQm56OGo4bVhKSmtEU1dLT01wR0hmbzE2ektwRS1LNnVqRkVha3ZzLXJyVE9GdHpMREM5dnRXS1Q2MHJoNGV3RFVLZ3VvZ3dwcGphbnI2RWx4dnFBMWM0Zmc?oc=5&hl=en-US&gl=US&ceid=US:en",
+      "posted_at": 1789300364
     }
   }
 }

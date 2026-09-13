@@ -91,7 +91,7 @@ google_news_queries:
   - {query: "Geoffrey Hinton AI future consciousness interview", watch_person: "Geoffrey Hinton", category: ai, tier: 1, content_type: interview}
   - {query: "Yann LeCun AI future world model interview", watch_person: "Yann LeCun", category: ai, tier: 1, content_type: interview}
   - {query: "Yoshua Bengio AI safety AGI interview", watch_person: "Yoshua Bengio", category: ai, tier: 1, content_type: interview}
-  - {query: "site:economist.com \"Yuval Noah Harari\" AI intimacy future 2028", watch_person: "Yuval Noah Harari", category: future, tier: 1, content_type: interview, preferred_source: "The Economist"}
+  - {query: "Yuval Noah Harari AI future interview", watch_person: "Yuval Noah Harari", category: future, tier: 1, content_type: interview}
   - {query: "Nick Bostrom AI superintelligence future interview", watch_person: "Nick Bostrom", category: future, tier: 1, content_type: interview}
   - {query: "Max Tegmark AI future intelligence interview", watch_person: "Max Tegmark", category: future, tier: 1, content_type: interview}
   - {query: "Toby Ord AI existential risk interview", watch_person: "Toby Ord", category: future, tier: 1, content_type: interview}

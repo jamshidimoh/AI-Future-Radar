@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 AUDIT = ROOT / "docs" / "EDUCATION_CURRICULUM_COVERAGE_AUDIT.md"
 

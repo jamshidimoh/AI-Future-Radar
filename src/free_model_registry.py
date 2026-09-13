@@ -1,9 +1,9 @@
 """Dynamic, evidence-backed production ordering for free LLM deployments."""
 from __future__ import annotations
 
+import os
 from datetime import datetime, timezone
 from pathlib import Path
-import os
 
 import requests
 import yaml
@@ -142,7 +142,7 @@ def canonical_entries() -> list[dict]:
 
 
 def ranked_entries() -> list[dict]:
-    from free_model_service import get_intelligence
+    from src.free_model_service import get_intelligence
     ranked = get_intelligence().rank(canonical_entries())
     return sorted(ranked, key=_routing_key)
 

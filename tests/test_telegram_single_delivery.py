@@ -1,4 +1,4 @@
-import telegram_single_delivery as delivery
+import src.telegram_single_delivery as delivery
 
 
 def _configure(monkeypatch):

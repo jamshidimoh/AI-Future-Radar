@@ -1,10 +1,8 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.fetch_youtube import _normalize_video_result, _walk_video_renderers
 
-from fetch_youtube import _normalize_video_result, _walk_video_renderers
+ROOT = Path(__file__).resolve().parents[1]
 
 
 # Regression coverage for YouTube channel-page evidence recovery.

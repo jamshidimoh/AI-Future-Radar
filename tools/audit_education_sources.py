@@ -11,8 +11,8 @@ import requests
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-from education_source_policy import MIN_CURRENT_YEAR, assess_source  # noqa: E402
+sys.path.insert(0, str(ROOT))
+from src.education_source_policy import MIN_CURRENT_YEAR, assess_source  # noqa: E402
 
 CURRICULUM = ROOT / "config" / "education_curriculum.yaml"
 MODULES = ROOT / "config" / "education_curriculum_modules.yaml"

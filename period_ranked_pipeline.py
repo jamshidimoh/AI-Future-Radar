@@ -7,15 +7,19 @@ independent metadata; they do not receive additive score bonuses here.
 """
 from __future__ import annotations
 
+import logging
 import time
 
 import main as _pipeline
-from model_release_priority import model_release_bonus
-from publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
-from protected_story_identity import probable_same_story
+from src.logging_setup import configure_logging
+from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
+from src.protected_story_identity import probable_same_story
+from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
 from src.story_gate import _technology_relevant
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
+
+logger = logging.getLogger(__name__)
 
 REGULAR_SAME_STORY_THRESHOLD = 0.82
 EDITORIAL_WEIGHT = 0.75
@@ -114,7 +118,8 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     rotation_days = int(policy.get("rotation_days", 7) or 7)
     try:
         source_history = _pipeline.load_source_history()
-    except Exception:
+    except Exception as exc:
+        logger.warning("Source history unavailable: %s", exc, exc_info=True)
         source_history = []
     recent_source_counts = _rotation_source_counts(source_history, rotation_days)
     contract = load_editorial_contract()
@@ -292,6 +297,7 @@ def _eligibility_split(items, max_protected=2):
 
 
 def main(hooks=None):
+    configure_logging()
     merged = dict(hooks or {})
     merged.setdefault("select_editorial", _global_ranked_selection)
     merged.setdefault("split_protected", _eligibility_split)

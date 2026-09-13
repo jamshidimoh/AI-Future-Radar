@@ -2,15 +2,26 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
-import re
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from src.editorial_quality_policy import news_language_ok, normal_score_allowed, persian_ratio, protected_score_allowed, NORMAL_SCORE_FLOOR, PROTECTED_SCORE_FLOOR
+from src.editorial_quality_policy import (
+    NORMAL_SCORE_FLOOR,
+    PROTECTED_SCORE_FLOOR,
+    news_language_ok,
+    normal_score_allowed,
+    persian_ratio,
+    protected_score_allowed,
+)
+from src.logging_setup import configure_logging
 from src.priority_people import is_substantive_priority_interview
+from src.state_io import StateCorruptionError, load_json_state
 from src.unified_editorial_selection import load_editorial_contract
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
@@ -29,17 +40,16 @@ STRATEGIC_ANALYTICAL_CATEGORIES = {"future", "future_governance", "mind", "mind_
 
 
 def _load_cadence() -> dict:
-    try:
-        data = json.loads(CADENCE_PATH.read_text(encoding="utf-8"))
-        return {
-            "run_number": int(data.get("run_number", 0)),
-            "last_education_run": int(data.get("last_education_run", 0)),
-            "last_education_slot": str(data.get("last_education_slot", "")),
-            "last_published_news_score": data.get("last_published_news_score"),
-            "last_published_normal_news_score": data.get("last_published_normal_news_score", data.get("last_published_news_score")),
-        }
-    except Exception:
-        return {"run_number": 0, "last_education_run": 0, "last_education_slot": "", "last_published_news_score": None, "last_published_normal_news_score": None}
+    data = load_json_state(CADENCE_PATH, {}, label="publication cadence state")
+    if not isinstance(data, dict):
+        data = {}
+    return {
+        "run_number": int(data.get("run_number", 0)),
+        "last_education_run": int(data.get("last_education_run", 0)),
+        "last_education_slot": str(data.get("last_education_slot", "")),
+        "last_published_news_score": data.get("last_published_news_score"),
+        "last_published_normal_news_score": data.get("last_published_normal_news_score", data.get("last_published_news_score")),
+    }
 
 
 def _save_cadence(state: dict) -> None:
@@ -52,7 +62,7 @@ def _tehran_now() -> datetime:
 
 def _education_slot(now: datetime | None = None) -> str | None:
     now = now or _tehran_now()
-    for hour, minute, name in EDUCATION_WINDOWS_TEHRAN:
+    for hour, _, name in EDUCATION_WINDOWS_TEHRAN:
         start = now.replace(hour=hour, minute=0, second=0, microsecond=0)
         end = now.replace(hour=hour + 1, minute=30, second=0, microsecond=0)
         if start <= now <= end:
@@ -115,6 +125,7 @@ def _rewrite_education_persian(item: dict, llm_call, providers) -> dict:
             print(f"[Education Language Gate] rejected min_ratio={min(ratios):.2f}", flush=True)
     except Exception as exc:
         print(f"[Education Language Gate] rewrite failed: {exc}", flush=True)
+        logger.error("Education language rewrite failed: %s", exc, exc_info=True)
     raise RuntimeError("[Education Language Gate] educational prose is not sufficiently Persian")
 
 
@@ -191,9 +202,7 @@ def _is_strategic_analytical_signal(item: dict) -> bool:
         str(item.get(key) or "").strip().casefold()
         for key in ("source", "source_name", "source_type", "source_domain")
     )
-    if any(marker in source_text for marker in ("reddit", "community")):
-        return False
-    return True
+    return not any(marker in source_text for marker in ("reddit", "community"))
 
 
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
@@ -237,15 +246,16 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
 
 
 def main(*, skip_education: bool = False) -> int:
+    configure_logging()
     import period_ranked_pipeline as pipeline
-    from educational_content import build_educational_item, commit_education_lesson
-    from educational_telegram_style import format_educational_post
-    from llm_router_light import call_llm_with_fallback, get_quality_chain
-    from telegram_feedback import ingest_from_env, load_feedback, register_post, save_feedback
     from src.delivery_contract import DeliveryStatus, delivered, policy_blocked, transport_failed
+    from src.educational_content import build_educational_item, commit_education_lesson
+    from src.educational_telegram_style import format_educational_post
+    from src.llm_router_light import call_llm_with_fallback, get_quality_chain
     from src.production_publication_adapter import publish_production_story
     from src.publication_contract import unique_candidates
-    from telegram_single_delivery import send
+    from src.telegram_feedback import ingest_from_env, load_feedback, register_post, save_feedback
+    from src.telegram_single_delivery import send
 
     cadence = _load_cadence()
     run_number = cadence["run_number"] + 1
@@ -279,6 +289,7 @@ def main(*, skip_education: bool = False) -> int:
         except Exception as exc:
             education_item = None
             print(f"[Education Source Gate] DEFERRED slot={education_slot} reason={exc}; news orchestration continues and slot remains due", flush=True)
+            logger.error("Education source gate deferred: %s", exc, exc_info=True)
 
     original_select = pipeline.select_editorial
 
@@ -446,4 +457,8 @@ def main(*, skip_education: bool = False) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except StateCorruptionError as exc:
+        logger.error("[STATE] %s", exc, exc_info=True)
+        raise SystemExit(1) from exc

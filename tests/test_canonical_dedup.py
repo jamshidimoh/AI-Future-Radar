@@ -1,14 +1,12 @@
 import json
-import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.dedup as dedup
+from src.publication_contract import TELEGRAM_SAFE_TEXT_LIMIT, unique_candidates, validate_publication_payload
 
-import dedup
-from publication_contract import TELEGRAM_SAFE_TEXT_LIMIT, unique_candidates, validate_publication_payload
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_tracking_url_and_canonical_url_are_same_story():

@@ -1,11 +1,11 @@
 import tempfile
 from pathlib import Path
 
-from pioneer_radar.epistemic_tensions import related_opponents, tension_for_person
-from pioneer_radar.portfolio_safeguard import analytical_anchor, filter_without_anchor
-from pioneer_radar.prediction_ledger import add_claim, connect, recent_claims, record_outcome
-from pioneer_radar.pioneer_scoring import pioneer_score
-from pioneer_radar.source_priority import source_weight
+from src.pioneer_radar.epistemic_tensions import related_opponents, tension_for_person
+from src.pioneer_radar.pioneer_scoring import pioneer_score
+from src.pioneer_radar.portfolio_safeguard import analytical_anchor, filter_without_anchor
+from src.pioneer_radar.prediction_ledger import add_claim, connect, recent_claims, record_outcome
+from src.pioneer_radar.source_priority import source_weight
 
 
 def test_deep_sources_outrank_social_triggers():

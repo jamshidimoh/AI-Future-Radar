@@ -1,7 +1,7 @@
 import unittest
 
-from src.future_significance import annotate_future_significance, is_low_future_value, score_future_significance
 from src.editorial import select_editorial
+from src.future_significance import annotate_future_significance, is_low_future_value, score_future_significance
 from src.story_gate import gate_story_candidates
 
 

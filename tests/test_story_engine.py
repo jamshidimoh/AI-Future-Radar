@@ -1,13 +1,11 @@
-import sys
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.radar_models import SourceItem
+from src.story_engine import build_stories
 
-from radar_models import SourceItem
-from story_engine import build_stories
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class StoryEngineTests(unittest.TestCase):

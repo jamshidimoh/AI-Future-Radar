@@ -4,9 +4,10 @@ from __future__ import annotations
 import html
 import os
 import re
+
 import requests
 
-from send_telegram import _compact_photo_caption
+from src.send_telegram import _compact_photo_caption
 
 # Telegram sendMessage hard limit is 4096 UTF-8 characters. Keep a safety margin
 # so bidi controls and HTML markup cannot push an educational post over the edge.

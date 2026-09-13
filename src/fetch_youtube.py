@@ -13,12 +13,15 @@ from __future__ import annotations
 
 import html
 import json
+import logging
 import re
 import time
 from datetime import datetime, timezone
 
 import feedparser
 import requests
+
+logger = logging.getLogger(__name__)
 
 try:
     from youtube_transcript_api import YouTubeTranscriptApi
@@ -191,8 +194,9 @@ def _fetch_channel_feed(channel_id: str, channel_name: str):
             if getattr(feed, "bozo", False) and not getattr(feed, "entries", None):
                 raise RuntimeError("invalid RSS response")
             return feed
-        except Exception as exc:
+        except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError, RuntimeError) as exc:
             last_error = exc
+            logger.warning("YouTube RSS attempt failed for %s: %s", channel_name, exc, exc_info=True)
             if attempt < 2:
                 time.sleep(0.75)
     raise RuntimeError(f"YouTube RSS unavailable for {channel_name}: {last_error}")
@@ -209,8 +213,8 @@ def _walk_video_renderers(node, out: list[dict]) -> None:
             if runs and isinstance(runs[0], dict):
                 title = str(runs[0].get("text") or "").strip()
             if not title:
-                title = str((title_obj.get("simpleText") or "")).strip()
-            pub = str(((renderer.get("publishedTimeText") or {}).get("simpleText") or "")).strip()
+                title = str(title_obj.get("simpleText") or "").strip()
+            pub = str((renderer.get("publishedTimeText") or {}).get("simpleText") or "").strip()
             description_parts = []
             for detail in renderer.get("detailedMetadataSnippets") or []:
                 snippet = detail.get("snippet") or {}
@@ -336,7 +340,8 @@ def _get_transcript_snippet(video_id: str, max_chars: int = 3000) -> str:
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["en", "en-US"])
         return " ".join(seg["text"] for seg in transcript)[:max_chars]
-    except Exception:
+    except Exception as exc:
+        logger.warning("YouTube transcript unavailable for %s: %s", video_id, exc, exc_info=True)
         return ""
 
 
@@ -414,7 +419,8 @@ def fetch_youtube_items(youtube_channels, max_age_hours=72, ai_bridge_keywords=N
                     })
                 if entries:
                     source_used = "rss"
-            except Exception as exc:
+            except (ValueError, KeyError, TypeError, AttributeError, RuntimeError) as exc:
+                logger.warning("YouTube RSS fallback failed for %s: %s", channel.get("name", channel_id), exc, exc_info=True)
                 print(f"[WARN] YouTube RSS failed for {channel.get('name', channel_id)}: {exc}", flush=True)
 
         if not entries:

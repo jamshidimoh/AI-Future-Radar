@@ -5,7 +5,7 @@ that the two common cross-language requirements remain explicit: valid Persian
 editorial copy must not be rejected merely because the source is English, while
 unsupported generic impact copy remains rejected.
 """
-from editorial_quality_policy import editorial_value_ok
+from src.editorial_quality_policy import editorial_value_ok
 
 
 def test_cross_language_valid_draft_is_accepted():

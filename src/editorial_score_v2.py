@@ -5,6 +5,7 @@ Radar. Technology-signal features remain outside this score and are owned by
 ``signal_engine``.
 """
 from __future__ import annotations
+
 from typing import Any
 
 WEIGHTS = {"mission_fit": 0.30, "source_authority": 0.20, "evidence_confidence": 0.20, "publication_value": 0.15, "freshness": 0.15}

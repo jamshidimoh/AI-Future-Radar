@@ -1,6 +1,5 @@
 import importlib
 
-
 ranking = importlib.import_module("period_ranked_pipeline")
 
 

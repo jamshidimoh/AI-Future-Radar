@@ -1,13 +1,10 @@
 from pathlib import Path
-import sys
 
 import yaml
 
+import src.dedup as dedup
+
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-
-import dedup
-
 
 REQUIRED_RSS_SOURCES = {
     "OpenAI News": "https://openai.com/news/rss.xml",

@@ -1,5 +1,5 @@
-from fetch_youtube import _normalize_video_result
-from summarize import _VALUE_REPAIR_PROMPT, _normalize, _source_text
+from src.fetch_youtube import _normalize_video_result
+from src.summarize import _VALUE_REPAIR_PROMPT, _normalize, _source_text
 
 
 def test_priority_long_form_channel_enriches_description_with_transcript(monkeypatch):
@@ -9,7 +9,7 @@ def test_priority_long_form_channel_enriches_description_with_transcript(monkeyp
         calls.append(video_id)
         return "The transcript contains the concrete technical evidence."
 
-    monkeypatch.setattr("fetch_youtube._get_transcript_snippet", fake_transcript)
+    monkeypatch.setattr("src.fetch_youtube._get_transcript_snippet", fake_transcript)
     channel = {
         "name": "Dwarkesh Patel",
         "tier": 1,

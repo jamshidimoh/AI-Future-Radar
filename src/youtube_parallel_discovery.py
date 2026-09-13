@@ -6,12 +6,13 @@ changed so one slow source cannot serialize the entire discovery stage.
 """
 from __future__ import annotations
 
+import logging
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
-from fetch_youtube import (
+from src.fetch_youtube import (
     _fetch_channel_feed,
     _fetch_channel_page_items,
     _fetch_via_data_api,
@@ -19,6 +20,8 @@ from fetch_youtube import (
     _resolve_handle_to_channel_id,
     _youtube_api_key,
 )
+
+logger = logging.getLogger(__name__)
 
 _DEFAULT_WORKERS = 6
 _DEFAULT_BATCH_BUDGET_SECONDS = 240
@@ -111,6 +114,7 @@ def _fetch_one_channel(channel: dict, cutoff: float, api_configured: bool) -> tu
                 source_used = "rss"
         except Exception as exc:
             print(f"[WARN] YouTube RSS failed for {name}: {exc}", flush=True)
+            logger.warning("Parallel YouTube RSS failed for %s: %s", name, exc, exc_info=True)
 
     if not entries:
         entries = _fetch_channel_page_items(channel_id, name, cutoff) or []
@@ -191,6 +195,7 @@ def fetch_youtube_items_parallel(youtube_channels, max_age_hours=72, ai_bridge_k
                 results.extend(items)
             except Exception as exc:
                 print(f"[WARN] parallel YouTube worker failed: {exc}", flush=True)
+                logger.warning("Parallel YouTube worker failed: %s", exc, exc_info=True)
     except TimeoutError:
         pending = sum(1 for future in futures if not future.done())
         print(f"[YouTube Discovery Parallel] budget_exhausted pending={pending}", flush=True)

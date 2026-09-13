@@ -6,11 +6,13 @@ and ledger functions; lower layers must not make publication decisions.
 """
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable, Mapping
 from typing import Any
 
 from src.delivery_contract import DeliveryOutcome, DeliveryStatus, duplicate, transport_failed
 
+logger = logging.getLogger(__name__)
 
 Policy = Callable[[Mapping[str, Any]], DeliveryOutcome]
 Deliver = Callable[[Mapping[str, Any]], DeliveryOutcome]
@@ -38,6 +40,7 @@ def _final_story_guard(story: Mapping[str, Any]) -> tuple[bool, str]:
         )
     except Exception as exc:
         print(f"[Final Publication Guard] unavailable: {exc}; publication BLOCKED", flush=True)
+        logger.error("Final publication guard unavailable: %s", exc, exc_info=True)
         return False, "publication_guard_unavailable"
 
 

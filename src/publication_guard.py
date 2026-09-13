@@ -2,10 +2,16 @@
 from __future__ import annotations
 
 import html
-import json
+import logging
 import re
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
+from src.semantic_dedup import _similarity, get_story_signature
+from src.semantic_publication_guard import cross_language_anchor_conflict
+from src.state_io import load_json_state
+
+logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parent.parent
 LEDGER_PATH = ROOT / "data" / "telegram_feedback.json"
@@ -25,7 +31,8 @@ def _canonical_url(value: str) -> str:
         query = [(k, v) for k, v in parse_qsl(p.query, keep_blank_values=True) if k.lower() not in _TRACKING]
         path = re.sub(r"/+", "/", p.path or "/").rstrip("/") or "/"
         return urlunsplit((p.scheme.lower(), p.netloc.lower(), path, urlencode(sorted(query)), ""))
-    except Exception:
+    except (ValueError, AttributeError) as exc:
+        logger.warning("Could not canonicalize publication URL %s: %s", raw, exc, exc_info=True)
         return raw.split("#", 1)[0].rstrip("/")
 
 
@@ -70,24 +77,12 @@ def _normalized_title(value: str) -> str:
 
 
 def _load_records() -> list[dict]:
-    try:
-        data = json.loads(LEDGER_PATH.read_text(encoding="utf-8"))
-        messages = data.get("messages", {}) if isinstance(data, dict) else {}
-        return [x for x in messages.values() if isinstance(x, dict)] if isinstance(messages, dict) else []
-    except Exception as exc:
-        if LEDGER_PATH.exists():
-            print(f"[Final Publication Guard] ledger unreadable: {exc}; publication BLOCKED", flush=True)
-            raise RuntimeError("Publication ledger is unreadable") from exc
-        return []
+    data = load_json_state(LEDGER_PATH, {}, label="publication ledger")
+    messages = data.get("messages", {}) if isinstance(data, dict) else {}
+    return [x for x in messages.values() if isinstance(x, dict)] if isinstance(messages, dict) else []
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
-    try:
-        from semantic_dedup import _similarity, get_story_signature
-        from semantic_publication_guard import cross_language_anchor_conflict
-    except Exception:
-        return 0.0
-
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
     leader = str(record.get("leader") or record.get("watch_person") or "").strip()

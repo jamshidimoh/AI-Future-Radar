@@ -9,7 +9,6 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from math import exp
 
-
 DEFAULT_WEIGHTS = {
     "benchmark": 0.60,
     "task_fit": 0.20,

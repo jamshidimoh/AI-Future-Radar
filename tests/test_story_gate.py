@@ -1,6 +1,6 @@
-from editorial_score_v2 import score_editorial_v2
-from story_gate import gate_story_candidates, story_representative_rank_key, _technology_relevant
-from technology_signal_v2 import calculate_technology_signal_score
+from src.editorial_score_v2 import score_editorial_v2
+from src.story_gate import _technology_relevant, gate_story_candidates, story_representative_rank_key
+from src.technology_signal_v2 import calculate_technology_signal_score
 
 
 def test_cross_pool_duplicate_is_removed_once():
@@ -18,7 +18,7 @@ def test_history_is_shared_across_all_pools():
     protected = [{"title": "NVIDIA unveils next-generation accelerator", "protected_content": True}]
     leader = [{"title": "Completely unrelated AI interview"}]
     regular = [{"title": "Another unrelated technology story"}]
-    from semantic_dedup import get_story_signature
+    from src.semantic_dedup import get_story_signature
     result = gate_story_candidates(protected, leader, regular, [get_story_signature(history_item)], threshold=0.45)
     assert all("NVIDIA" not in item["title"] for item in result)
     assert len(result) == 2

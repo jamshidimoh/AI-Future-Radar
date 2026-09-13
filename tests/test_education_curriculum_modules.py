@@ -1,6 +1,6 @@
 from pathlib import Path
-import yaml
 
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULES = ROOT / "config" / "education_curriculum_modules.yaml"

@@ -1,5 +1,5 @@
-import dedup
-from main import _publication_text_within_limit, TELEGRAM_SAFE_TEXT_LIMIT
+import src.dedup as dedup
+from main import TELEGRAM_SAFE_TEXT_LIMIT, _publication_text_within_limit
 
 
 def test_protected_story_cannot_bypass_global_url_history(monkeypatch):

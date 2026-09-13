@@ -6,10 +6,10 @@ invariants that must hold immediately before a Telegram publication request.
 """
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
-from canonical_story import canonical_url, normalize_title
-from delivery_contract import DeliveryOutcome, from_legacy
+from src.canonical_story import canonical_url, normalize_title
+from src.delivery_contract import DeliveryOutcome, from_legacy
 
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 

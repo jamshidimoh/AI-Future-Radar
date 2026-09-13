@@ -1,12 +1,10 @@
-import sys
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.fetch_youtube import _fetch_channel_feed, _resolve_handle_to_channel_id
 
-from fetch_youtube import _resolve_handle_to_channel_id, _fetch_channel_feed
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class YouTubeResolutionTests(unittest.TestCase):
@@ -15,7 +13,7 @@ class YouTubeResolutionTests(unittest.TestCase):
         self.assertEqual(_resolve_handle_to_channel_id("@eightythousandhours"), "UCafjal1QYJ3rb0Y9xZk1Ezg")
         self.assertEqual(_resolve_handle_to_channel_id("@instituteofartandideas"), "UCTsiZiMomJo6FOyiBaFeaIw")
 
-    @patch("fetch_youtube.requests.Session")
+    @patch("src.fetch_youtube.requests.Session")
     def test_current_handle_fallback_resolves_channel_id(self, mock_session_cls):
         session = Mock()
         response = Mock(status_code=200, text='{"channelId":"UC1234567890123456789012"}')
@@ -23,8 +21,8 @@ class YouTubeResolutionTests(unittest.TestCase):
         mock_session_cls.return_value = session
         self.assertEqual(_resolve_handle_to_channel_id("@futureoflifeinstitute-test"), "UC1234567890123456789012")
 
-    @patch("fetch_youtube.time.sleep")
-    @patch("fetch_youtube.requests.get")
+    @patch("src.fetch_youtube.time.sleep")
+    @patch("src.fetch_youtube.requests.get")
     def test_feed_fetch_uses_bounded_http_and_retries(self, mock_get, _sleep):
         first = Mock()
         first.status_code = 503

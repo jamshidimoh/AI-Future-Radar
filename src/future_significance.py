@@ -6,19 +6,23 @@ technological trajectory, capability change, and future impact.
 """
 from __future__ import annotations
 
+import logging
+import re
 from pathlib import Path
 from typing import Any
-import re
+
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = ROOT / "config" / "future_significance_policy.yaml"
+logger = logging.getLogger(__name__)
 
 
 def _load_policy() -> dict[str, Any]:
     try:
         return yaml.safe_load(POLICY_PATH.read_text(encoding="utf-8")) or {}
-    except Exception:
+    except (OSError, UnicodeDecodeError, yaml.YAMLError) as exc:
+        logger.error("Future-significance policy unavailable: %s", exc, exc_info=True)
         return {}
 
 

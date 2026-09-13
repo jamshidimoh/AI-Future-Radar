@@ -1,13 +1,11 @@
-import sys
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.telegram_single_delivery as telegram_single_delivery
+from src.send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
 
-from send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
-import telegram_single_delivery
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class TelegramFormatTests(unittest.TestCase):
@@ -51,12 +49,12 @@ class TelegramFormatTests(unittest.TestCase):
 
     def test_source_page_image_reads_og_image_from_same_link(self):
         response = Mock(status_code=200, url="https://example.com/article", text='<html><meta property="og:image" content="https://example.com/images/article.jpg"></html>')
-        with patch("send_telegram.requests.get", return_value=response):
+        with patch("src.send_telegram.requests.get", return_value=response):
             self.assertEqual(_source_page_image("https://example.com/article"), "https://example.com/images/article.jpg")
 
     def test_source_page_image_supports_relative_og_image(self):
         response = Mock(status_code=200, url="https://example.com/article", text='<meta property="og:image" content="/images/article.jpg">')
-        with patch("send_telegram.requests.get", return_value=response):
+        with patch("src.send_telegram.requests.get", return_value=response):
             self.assertEqual(_source_page_image("https://example.com/article"), "https://example.com/images/article.jpg")
 
     def test_youtube_source_uses_video_thumbnail(self):

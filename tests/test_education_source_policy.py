@@ -1,4 +1,4 @@
-from education_source_policy import assess_source, validate_current_sources
+from src.education_source_policy import assess_source, validate_current_sources
 
 
 def _src(url, status="dated_current", score=90, org=None):

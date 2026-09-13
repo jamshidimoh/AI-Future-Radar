@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from production_entrypoint import _education_is_due, _education_slot, TEHRAN
+from production_entrypoint import TEHRAN, _education_is_due, _education_slot
 
 
 class ProductionCadenceTests(unittest.TestCase):

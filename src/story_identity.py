@@ -1,12 +1,17 @@
 """Canonical story identity backed by the shared hybrid event matcher."""
 from __future__ import annotations
 
+import logging
 import re
-from typing import Any, Iterable
-from canonical_story import canonical_url
-from event_identity import compare_event_features, event_features, has_material_update
-from semantic_dedup import get_story_signature, _similarity
-from protected_story_identity import probable_same_story
+from collections.abc import Iterable
+from typing import Any
+
+from src.canonical_story import canonical_url
+from src.event_identity import compare_event_features, event_features, has_material_update
+from src.protected_story_identity import probable_same_story
+from src.semantic_dedup import _similarity, get_story_signature
+
+logger = logging.getLogger(__name__)
 
 
 def _canonical_url(item: Any) -> str:
@@ -116,7 +121,8 @@ def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candida
         return False
     try:
         return _similarity(candidate_signature, prior_signature) >= 0.45
-    except Exception:
+    except (TypeError, ValueError, KeyError, AttributeError) as exc:
+        logger.warning("Story identity comparison failed: %s", exc, exc_info=True)
         return False
 
 

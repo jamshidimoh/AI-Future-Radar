@@ -1,6 +1,5 @@
 from scripts.production_acceptance_guard import validate
 
-
 FAIL_CLOSED_EDITORIAL_REJECTION = """
 [Production Selection] total=1
 [Editorial Gate] skipped candidate: Create Slides, Docs, and Templates

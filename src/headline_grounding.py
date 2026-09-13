@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from collections import Counter
 
-from education_editor import normalize_editorial_text
-from llm_router_light import call_llm_with_fallback, get_quality_chain
 from src.editorial_quality_policy import editorial_fields_ok, headline_quality_ok, persian_ratio
+from src.education_editor import normalize_editorial_text
+from src.llm_router_light import call_llm_with_fallback, get_quality_chain
+
+logger = logging.getLogger(__name__)
 
 _GROUNDING_THRESHOLD = 0.70
 
@@ -66,7 +69,8 @@ def _llm_grounded(title: str, summary: str, source: str) -> bool | None:
         data = json.loads(raw or "{}")
         if isinstance(data, dict) and isinstance(data.get("grounded"), bool):
             return bool(data["grounded"])
-    except Exception:
+    except (ValueError, TypeError, KeyError, RuntimeError) as exc:
+        logger.warning("Headline grounding LLM check failed: %s", exc, exc_info=True)
         return None
     return None
 
@@ -127,7 +131,8 @@ def ensure_headline_grounding(data: dict, item: dict) -> dict | None:
             candidate["_title_grounding_provider"] = provider
             print(f"[Headline Grounding] repaired score={repaired_score:.2f}", flush=True)
             return candidate
-    except Exception:
+    except (ValueError, TypeError, KeyError, RuntimeError) as exc:
+        logger.warning("Headline repair failed: %s", exc, exc_info=True)
         pass
 
     fallback = _fallback_title(summary, item)

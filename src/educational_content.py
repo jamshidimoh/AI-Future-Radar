@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import html
 import json
+import logging
 import re
 import time
 from pathlib import Path
@@ -11,11 +12,14 @@ from typing import Any
 import requests
 import yaml
 
-from education_editor import normalize_education_item, terminology_review_prompt
-from education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_current_sources
-from education_dynamic_sources import dynamic_source_candidates, rank_verified_sources
-from llm_router_light import call_llm_with_fallback, get_quality_chain
-from educational_telegram_style import format_educational_post
+from src.education_dynamic_sources import dynamic_source_candidates, rank_verified_sources
+from src.education_editor import normalize_education_item, terminology_review_prompt
+from src.education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_current_sources
+from src.educational_telegram_style import format_educational_post  # noqa: F401
+from src.llm_router_light import call_llm_with_fallback, get_quality_chain
+from src.state_io import load_json_state
+
+logger = logging.getLogger(__name__)
 
 MIN_SOURCE_YEAR = MIN_CURRENT_YEAR
 ROOT = Path(__file__).resolve().parent.parent
@@ -36,16 +40,13 @@ def _default_state():
 
 
 def load_state():
-    if not STATE_PATH.exists():
+    data = load_json_state(STATE_PATH, {}, label="education state")
+    if not isinstance(data, dict):
         return _default_state()
-    try:
-        data = json.loads(STATE_PATH.read_text(encoding="utf-8"))
-        base = _default_state()
-        base.update(data)
-        base["completed"] = list(base.get("completed") or [])
-        return base if isinstance(data, dict) else _default_state()
-    except (OSError, json.JSONDecodeError):
-        return _default_state()
+    base = _default_state()
+    base.update(data)
+    base["completed"] = list(base.get("completed") or [])
+    return base
 
 
 def save_state(state):
@@ -114,7 +115,7 @@ def _next_lesson():
     if not sequence:
         return None, 0, 0
     completed = _completed_ids()
-    for idx, (track, lesson) in enumerate(sequence):
+    for _, lesson in sequence:
         lesson_id = int(lesson.get("id", 0) or 0)
         if lesson_id and lesson_id not in completed:
             return lesson, lesson_id, len(sequence)
@@ -177,6 +178,7 @@ def _fetch_reference(url):
         return text[:5000], year
     except Exception as exc:
         print(f"[Education] reference fetch skipped: {url} | {exc}", flush=True)
+        logger.warning("Education reference fetch skipped for %s: %s", url, exc, exc_info=True)
         return "", None
 
 

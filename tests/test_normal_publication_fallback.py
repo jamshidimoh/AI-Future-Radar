@@ -1,5 +1,5 @@
-from src.delivery_contract import DeliveryStatus, delivered, policy_blocked
 import src.normal_publication_fallback as fallback
+from src.delivery_contract import DeliveryStatus, delivered, policy_blocked
 
 
 def _reset_state():

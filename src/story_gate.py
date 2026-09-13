@@ -1,8 +1,8 @@
 """Canonical Story Gate and canonical score boundary."""
-from future_significance import annotate_future_significance, is_low_future_value
-from editorial_score_v2 import score_editorial_v2
-from story_identity import deduplicate_stories
-from technology_signal_v2 import calculate_technology_signal_score
+from src.editorial_score_v2 import score_editorial_v2
+from src.future_significance import annotate_future_significance, is_low_future_value
+from src.story_identity import deduplicate_stories
+from src.technology_signal_v2 import calculate_technology_signal_score
 
 _TECH_SIGNAL_TERMS = (
     "artificial intelligence", "ai", "machine learning", "deep learning", "llm", "agi",

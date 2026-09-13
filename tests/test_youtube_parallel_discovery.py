@@ -1,7 +1,7 @@
 import time
 from unittest.mock import patch
 
-import youtube_parallel_discovery as parallel
+import src.youtube_parallel_discovery as parallel
 
 
 def _fake_feed(channel_id, channel_name):

@@ -9,9 +9,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.state_io import load_json_state  # noqa: E402
 
 REQUIRED_FIELDS = (
     "case_id",
@@ -122,7 +128,9 @@ def main() -> int:
 
     input_path = Path(args.input)
     output_path = Path(args.output)
-    feedback = json.loads(input_path.read_text(encoding="utf-8"))
+    feedback = load_json_state(input_path, {}, label="Telegram feedback state")
+    if not isinstance(feedback, dict):
+        feedback = {}
     records = build_seed(feedback, limit=args.limit)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as handle:

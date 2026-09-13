@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Iterable, List, Optional
+from collections.abc import Iterable
+from typing import Any
 
-from .priority_people import is_substantive_priority_interview
+from src.priority_people import is_substantive_priority_interview
 
 MAX_NORMAL_NEWS_PER_PERIOD = 3
 MAX_EXTRA_NEWS = 2
 RANK_WINDOW = 4
 
 
-def _score(item: Dict[str, Any]) -> float:
+def _score(item: dict[str, Any]) -> float:
     for key in ("final_editorial_score", "leader_story_score", "mission_score", "editorial_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
@@ -20,11 +21,11 @@ def _score(item: Dict[str, Any]) -> float:
     return 0.0
 
 
-def _eligible(item: Dict[str, Any]) -> bool:
+def _eligible(item: dict[str, Any]) -> bool:
     return not item.get("duplicate") and not item.get("publication_blocked") and item.get("quality_gate", True) is not False
 
 
-def rank_period_candidates(items: Iterable[Dict[str, Any]], normal_window: int = RANK_WINDOW) -> List[Dict[str, Any]]:
+def rank_period_candidates(items: Iterable[dict[str, Any]], normal_window: int = RANK_WINDOW) -> list[dict[str, Any]]:
     """Return global ranking with independent normal-news ranks."""
     eligible = [dict(x) for x in items if _eligible(x)]
     eligible.sort(key=lambda x: (_score(x), str(x.get("published", ""))), reverse=True)
@@ -47,7 +48,7 @@ def rank_period_candidates(items: Iterable[Dict[str, Any]], normal_window: int =
     return ranked
 
 
-def select_news_for_period(items: Iterable[Dict[str, Any]], previous_published_score: Optional[float]) -> List[Dict[str, Any]]:
+def select_news_for_period(items: Iterable[dict[str, Any]], previous_published_score: float | None) -> list[dict[str, Any]]:
     """Select only the normal-news stream using the 1+2 policy."""
     ranked = rank_period_candidates(items, normal_window=RANK_WINDOW)
     normal = [x for x in ranked if x.get("normal_period_rank") is not None]

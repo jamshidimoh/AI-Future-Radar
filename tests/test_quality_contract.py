@@ -1,19 +1,16 @@
 import os
-import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-sys.path.insert(0, str(ROOT))
-
-from src.editorial import classify_editorial_item, filter_ai_relevance, enrich_items, select_editorial
+import main as pipeline
+from src.editorial import classify_editorial_item, enrich_items, filter_ai_relevance, select_editorial
+from src.llm_router_light import _select_hf_model
 from src.semantic_dedup import deduplicate_semantically
 from src.send_telegram import _youtube_thumbnail
-from summarize import _extract_json, _normalize
-from llm_router_light import _select_hf_model
-import main as pipeline
+from src.summarize import _extract_json, _normalize
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class QualityContractTests(unittest.TestCase):
@@ -114,7 +111,7 @@ class QualityContractTests(unittest.TestCase):
             {"id": "paid-model", "free": False, "structured": True, "providers": 4, "throughput": 100, "latency": 10, "context": 10000, "input": 1.0, "output": 1.0},
             {"id": "free-model", "free": True, "structured": True, "providers": 2, "throughput": 80, "latency": 20, "context": 8000, "input": 0.0, "output": 0.0},
         ]
-        with patch.dict(os.environ, {"HF_POLICY": "free-first", "HF_MODEL": "paid-model"}, clear=False), patch("llm_router_light._discover_hf_models", return_value=models):
+        with patch.dict(os.environ, {"HF_POLICY": "free-first", "HF_MODEL": "paid-model"}, clear=False), patch("src.llm_router_light._discover_hf_models", return_value=models):
             self.assertEqual(_select_hf_model(), "free-model")
 
     def test_llm_json_array_is_normalized_to_first_object(self):

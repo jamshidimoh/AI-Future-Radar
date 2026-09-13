@@ -2,9 +2,9 @@ from pathlib import Path
 
 import yaml
 
-from src.source_exclusions import is_excluded_source_text, is_excluded_source_url
 from src.fetch_google_news import _collect_query
 from src.fetch_rss import _merge_rss_sources
+from src.source_exclusions import is_excluded_source_text, is_excluded_source_url
 
 ROOT = Path(__file__).resolve().parents[1]
 

@@ -1,18 +1,18 @@
 """دریافت اخبار به‌روز از Google News RSS با متادیتای کیفیت و Leader Watchlist."""
-import feedparser
-import requests
+import logging
+import random
 import time
 import urllib.parse
-import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
-try:
-    from .source_exclusions import is_excluded_source_text, is_excluded_source_url
-    from .source_authority import resolve_google_news_tier
-except ImportError:
-    from source_exclusions import is_excluded_source_text, is_excluded_source_url
-    from source_authority import resolve_google_news_tier
+import feedparser
+import requests
+
+from src.source_authority import resolve_google_news_tier
+from src.source_exclusions import is_excluded_source_text, is_excluded_source_url
+
+logger = logging.getLogger(__name__)
 
 _FEED_TIMEOUT_SECONDS = 8
 _MAX_WORKERS = 4
@@ -72,8 +72,9 @@ def _parse_feed(url):
                 if attempt < _MAX_RETRIES:
                     time.sleep(1.0 + random.uniform(0.1, 0.4)); continue
             response.raise_for_status(); return feedparser.parse(response.content)
-        except Exception as exc:
+        except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError, RuntimeError) as exc:
             last_error = exc
+            logger.warning("Google News feed parse failed for %s: %s", url, exc, exc_info=True)
             if attempt < _MAX_RETRIES:
                 time.sleep(1.0 + random.uniform(0.1, 0.4))
     raise last_error
@@ -119,7 +120,9 @@ def _collect_query(q, cutoff):
         print(f"[Discovery Exclusion] skipped Google News query targeting excluded source: {query_text}", flush=True); return q, [], None
     encoded_query = urllib.parse.quote(query_text); url = f"https://news.google.com/rss/search?q={encoded_query}&hl=en-US&gl=US&ceid=US:en"
     try: feed = _parse_feed(url)
-    except Exception as exc: return q, [], exc
+    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError, RuntimeError) as exc:
+        logger.warning("Google News query collection failed for %s: %s", query_text, exc, exc_info=True)
+        return q, [], exc
     results = []
     for entry in feed.entries[:15]:
         published = entry.get("published_parsed"); published_str = ""
@@ -156,7 +159,7 @@ def fetch_google_news_items(queries, max_age_hours=36, max_workers=None, inter_q
     budget_seconds = _SERIAL_FETCH_BUDGET_SECONDS if max_seconds is None else max_seconds
     if workers == 1:
         consecutive_failures = 0; deadline = time.monotonic() + budget_seconds
-        for idx, q in enumerate(queries):
+        for q in queries:
             if time.monotonic() >= deadline: break
             q, items, error = _collect_query(q, cutoff)
             if error:

@@ -7,8 +7,9 @@ LLM; downstream scoring can consume these auditable records.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Literal
+from typing import Literal
 
 EvidenceKind = Literal["supporting", "counter"]
 
@@ -32,7 +33,7 @@ class Evidence:
 
 @dataclass
 class EvidenceGraph:
-    evidences: Dict[str, Evidence] = field(default_factory=dict)
+    evidences: dict[str, Evidence] = field(default_factory=dict)
 
     def add(self, evidence: Evidence) -> None:
         existing = self.evidences.get(evidence.evidence_id)
@@ -44,13 +45,13 @@ class EvidenceGraph:
         for evidence in evidences:
             self.add(evidence)
 
-    def supporting(self, claim_id: str | None = None) -> List[Evidence]:
+    def supporting(self, claim_id: str | None = None) -> list[Evidence]:
         return self._by_kind("supporting", claim_id)
 
-    def counter(self, claim_id: str | None = None) -> List[Evidence]:
+    def counter(self, claim_id: str | None = None) -> list[Evidence]:
         return self._by_kind("counter", claim_id)
 
-    def _by_kind(self, kind: EvidenceKind, claim_id: str | None) -> List[Evidence]:
+    def _by_kind(self, kind: EvidenceKind, claim_id: str | None) -> list[Evidence]:
         return [
             e for e in self.evidences.values()
             if e.kind == kind and (claim_id is None or e.claim_id == claim_id)

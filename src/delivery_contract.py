@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Any
 
 
-class DeliveryStatus(str, Enum):
+class DeliveryStatus(str, Enum):  # noqa: UP042
     REJECTED = "rejected"
     DUPLICATE = "duplicate"
     POLICY_BLOCKED = "policy_blocked"

@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from difflib import SequenceMatcher
-from typing import Any, Iterable
+from typing import Any
 
 _GENERIC = {"ai", "artificial", "intelligence", "model", "models", "new", "using", "use", "system", "systems", "technology", "technologies", "tool", "tools", "platform", "platforms", "research", "study", "paper", "news", "future", "digital", "chatgpt", "openai"}
 _STOP = _GENERIC | {"the", "a", "an", "and", "or", "of", "to", "in", "on", "for", "with", "from", "by", "as", "is", "are", "this", "that", "how", "what", "why", "can", "will", "about"}

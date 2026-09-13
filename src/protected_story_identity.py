@@ -49,6 +49,4 @@ def probable_same_story(candidate: dict, stored: dict) -> bool:
         return True
     if shared >= 3 and containment >= 0.65:
         return True
-    if shared >= 4 and sequence >= 0.62:
-        return True
-    return False
+    return shared >= 4 and sequence >= 0.62

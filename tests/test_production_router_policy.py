@@ -1,11 +1,10 @@
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.llm_router_light as router
+from src.production_router_policy import apply
 
-import llm_router_light as router
-from production_router_policy import apply
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _reset(monkeypatch):
@@ -23,7 +22,7 @@ def _reset(monkeypatch):
 
 def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
     _reset(monkeypatch)
-    import summarize
+    import src.summarize as summarize
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
@@ -304,5 +303,5 @@ def test_production_launcher_activates_router_when_production_mode_is_enabled(mo
     monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     sys.modules.pop("scripts.production_with_ranking_audit", None)
-    import scripts.production_with_ranking_audit
+    import scripts.production_with_ranking_audit  # noqa: F401
     assert router._PRODUCTION_POLICY_APPLIED is True

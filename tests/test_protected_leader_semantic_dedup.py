@@ -1,6 +1,6 @@
 import unittest
 
-from story_identity import deduplicate_stories
+from src.story_identity import deduplicate_stories
 
 
 class TestProtectedLeaderSemanticDedup(unittest.TestCase):

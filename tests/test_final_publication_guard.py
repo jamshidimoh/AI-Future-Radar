@@ -1,12 +1,10 @@
 import json
-import sys
 from pathlib import Path
+
+import src.publication_guard as publication_guard
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
-
-import publication_guard
 
 
 def _write_ledger(tmp_path, records):

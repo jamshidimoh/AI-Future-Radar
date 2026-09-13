@@ -1,27 +1,27 @@
+import logging
 import os
-import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from src.dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
+from src.editorial import enrich_items, filter_ai_relevance
+from src.fetch_google_news import fetch_google_news_items
+from src.fetch_rss import fetch_rss_items
+from src.fetch_youtube import fetch_youtube_items
+from src.interview_evidence import has_interview_evidence
+from src.logging_setup import configure_logging
+from src.mission_selector import _source_tier
+from src.publication_contract import unique_candidates
+from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
+from src.signal_engine import enrich_signal_items
+from src.state_io import StateCorruptionError
+from src.story_gate import gate_story_candidates
+from src.summarize import summarize_item
+from src.unified_editorial_selection import select_regular_portfolio
+
+logger = logging.getLogger(__name__)
+
 ROOT = Path(__file__).resolve().parent
-SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
-
-from dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
-from editorial import enrich_items, filter_ai_relevance
-from fetch_google_news import fetch_google_news_items
-from fetch_rss import fetch_rss_items
-from fetch_youtube import fetch_youtube_items
-from interview_evidence import has_interview_evidence
-from mission_selector import _source_tier
-from send_telegram import format_post, resolve_source_image, send_to_telegram_safe
-from signal_engine import enrich_signal_items
-from summarize import summarize_item
-from story_gate import gate_story_candidates
-from publication_contract import unique_candidates
-from unified_editorial_selection import select_regular_portfolio
-
 CONFIG_PATH = ROOT / "config" / "sources.yaml"
 LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
 SELECTION_POLICY_PATH = ROOT / "config" / "selection_policy.yaml"
@@ -36,7 +36,7 @@ def _publication_identity(item: dict) -> str:
 
 def load_yaml(path):
     import yaml
-    with open(path, "r", encoding="utf-8") as f: return yaml.safe_load(f)
+    with open(path, encoding="utf-8") as f: return yaml.safe_load(f)
 
 def _text(item): return " ".join(str(item.get(k) or "") for k in ("title", "summary", "description")).lower()
 def _contains_person(text, name): return str(name or "").strip().lower() in str(text or "").lower()
@@ -56,7 +56,8 @@ def _leader_source_authority(item):
             pass
     try:
         tier = _source_tier(item)
-    except Exception:
+    except Exception as exc:
+        logger.warning("Could not determine source authority: %s", exc, exc_info=True)
         tier = None
     try:
         tier = int(tier) if tier is not None else None
@@ -266,13 +267,14 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
     return recovered
 
 def main(hooks=None):
+    configure_logging()
     hooks = dict(hooks or {}); select_editorial_fn = hooks.get("select_editorial", _select_editorial_default); split_protected_fn = hooks.get("split_protected", _split_protected); summarize_fn = hooks.get("summarize_item", summarize_item); format_fn = hooks.get("format_post", format_post); resolve_image_fn = hooks.get("resolve_source_image", resolve_source_image); deliver_fn = hooks.get("send_to_telegram_safe", send_to_telegram_safe); persist_fn = hooks.get("persist_item_success", _persist_item_success)
     config = load_yaml(CONFIG_PATH); leader_config = load_yaml(LEADER_CONFIG_PATH); selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {}); policy = load_yaml(SELECTION_POLICY_PATH).get("editorial", {}); categories = config["categories"]; max_posts = int(selection.get("max_posts", 4)); max_per_source = int(selection.get("max_items_per_source", 2)); max_per_type = int(selection.get("max_items_per_content_type", 2)); leader_protected_max = int(policy.get("leader_protected_max", 2)); replacement_buffer = max(0, int(selection.get("replacement_buffer", 0) or 0)); runtime_selection_cap = leader_protected_max + max_posts + replacement_buffer; bridge_keywords = config.get("ai_bridge_keywords", []); story_threshold = float(selection.get("story_similarity_threshold", 0.45)); leader_people, leader_priorities = _leader_people(leader_config)
     youtube_channels = _merge_unique_dicts(config.get("youtube_channels", []), leader_config.get("youtube_channels", []), key="name"); leader_channel_names = {x.get("name") for x in leader_config.get("youtube_channels", [])}; base_youtube_channels = [x for x in youtube_channels if x.get("name") not in leader_channel_names]; leader_youtube_channels = [x for x in youtube_channels if x.get("name") in leader_channel_names]; base_queries = list(config.get("google_news_queries", [])); leader_queries = list(leader_config.get("google_news_queries", []))
     print("[1/7] Discovery: RSS / university / scientific / specialist sources"); rss_items = fetch_rss_items(config["rss_sources"], categories); print(f"RSS items: {len(rss_items)}")
     print("[2/7] Discovery: YouTube / interviews / podcasts / lectures"); base_youtube = fetch_youtube_items(base_youtube_channels, max_age_hours=72, ai_bridge_keywords=bridge_keywords); leader_youtube = _mark_leader_items(fetch_youtube_items(leader_youtube_channels, max_age_hours=720, ai_bridge_keywords=bridge_keywords)); youtube_items = base_youtube + leader_youtube; print(f"YouTube items: {len(youtube_items)} | leader-channel items: {len(leader_youtube)}")
     print("[3/7] Discovery: Google News + Leader Watchlist"); base_news = fetch_google_news_items(base_queries, max_age_hours=36, max_workers=4); leader_news = _mark_leader_items(fetch_google_news_items(leader_queries, max_age_hours=720, max_workers=1, inter_query_delay=0.35)); news_items = base_news + leader_news; print(f"Google News items: {len(news_items)} | leader candidates: {len(leader_news)}")
-    all_items = rss_items + youtube_items + news_items; print(f"Raw total: {len(all_items)}"); all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities); verified_leader_interviews = sum(_is_protected_leader_interview(x) or _is_protected_leader_activity(x) for x in all_items); seen_hashes, seen_signatures = load_seen(); source_history = load_source_history(); new_items = filter_new_items(all_items, seen_hashes); print(f"After link dedup: {len(new_items)}")
+    all_items = rss_items + youtube_items + news_items; print(f"Raw total: {len(all_items)}"); all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities); seen_hashes, seen_signatures = load_seen(); source_history = load_source_history(); new_items = filter_new_items(all_items, seen_hashes); print(f"After link dedup: {len(new_items)}")
     protected_items, regular_items = split_protected_fn(new_items, max_protected=leader_protected_max); print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}"); print("[4/7] AI-first relevance gate (regular pool only)"); regular_items = filter_ai_relevance(regular_items, bridge_keywords); print("[5/7] Story clustering and canonical-source selection"); regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy); regular_enriched = enrich_signal_items(regular_enriched); _apply_signal_ranking(regular_enriched); regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_before, regular_before = len([x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")]), len([x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))])
     editorial_pool = gate_story_candidates(protected_items, [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")], [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))], seen_signatures, threshold=story_threshold); editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True); leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal")); regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal"))); protected_after = sum(1 for x in editorial_pool if x.get("protected_content")); print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy); protected_candidates = [x for x in editorial_pool if x.get("protected_content")]; protected_selected = sorted(protected_candidates, key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _direct_interview_signal(x) else 0, x.get("published", "")), reverse=True)[:leader_protected_max]
@@ -332,7 +334,7 @@ def main(hooks=None):
                 continue
             result = deliver_fn(post, image_url=str(item.get("source_image") or ""), source_link=link)
             if hasattr(result, "status"):
-                status_value = getattr(getattr(result, "status"), "value", str(getattr(result, "status")))
+                status_value = getattr(result.status, "value", str(result.status))
                 if status_value == "delivered": sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history); continue
                 if status_value in {"policy_blocked", "rejected", "duplicate"}:
                     print(f"[Publication Contract] candidate rejected reason={getattr(result, 'reason', '')}; continuing to next ranked candidate", flush=True)
@@ -342,8 +344,15 @@ def main(hooks=None):
                 raise RuntimeError(f"Telegram transport failure: {getattr(result, 'reason', 'unknown')}")
             if not result: raise RuntimeError("Telegram delivery returned false")
             sent += 1; persist_fn(item, seen_hashes, seen_signatures, source_history)
-        except Exception as exc: print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
+        except Exception as exc:
+            logger.error("Telegram send failed for %s: %s", item.get("title", "")[:100], exc, exc_info=True)
+            print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
     print(f"[Publication Lazy Refill] initial={initial_selected_count} lazy_replacements={lazy_replacements} final_attempt_queue={len(publication_queue)}", flush=True)
     save_seen(seen_hashes, seen_signatures, source_history); print(f"Posts sent: {sent}/{len(publication_queue)}")
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    try:
+        main()
+    except StateCorruptionError as exc:
+        logger.error("[STATE] %s", exc, exc_info=True)
+        raise SystemExit(1) from exc

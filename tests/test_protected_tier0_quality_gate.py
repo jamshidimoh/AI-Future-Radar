@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from src.editorial_quality_policy import PROTECTED_SCORE_FLOOR, protected_score_allowed
 from scripts.production_acceptance_guard import validate
+from src.editorial_quality_policy import PROTECTED_SCORE_FLOOR, protected_score_allowed
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCTION_ENTRYPOINT = ROOT / "production_entrypoint.py"

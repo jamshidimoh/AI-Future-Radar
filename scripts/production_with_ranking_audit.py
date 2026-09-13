@@ -1,6 +1,7 @@
 """Production launcher with canonical period ranking and audit."""
 from __future__ import annotations
 
+import logging
 import os
 import re
 import sys
@@ -9,12 +10,13 @@ from urllib.parse import urlsplit
 
 import requests
 
+logger = logging.getLogger(__name__)
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import period_ranked_pipeline as pipeline
-from model_release_priority import model_release_bonus
 from src.content_grounding import ensure_source_grounding
 from src.headline_grounding import ensure_headline_grounding
 from src.production_router_policy import apply as apply_production_router_policy
@@ -107,7 +109,7 @@ def _resolve_google_news_url(value):
         return ""
     try:
         host = urlsplit(raw).netloc.lower().split(":", 1)[0]
-    except Exception:
+    except (ValueError, AttributeError):
         return raw
     if host not in _GOOGLE_NEWS_HOSTS:
         return raw
@@ -125,8 +127,9 @@ def _resolve_google_news_url(value):
         resolved = str(response.url or raw).strip()
         response.close()
         return resolved or raw
-    except Exception as exc:
+    except (requests.RequestException, ValueError, AttributeError, TypeError) as exc:
         print(f"[Canonical Source Resolution] fallback=google_news_wrapper reason={type(exc).__name__}", flush=True)
+        logger.warning("Google News wrapper resolution failed: %s", exc, exc_info=True)
         return raw
 
 
@@ -322,7 +325,6 @@ def _audited_main(hooks=None):
 pipeline.main = _audited_main
 
 import production_resilient_runner  # noqa: E402
-
 
 if __name__ == "__main__":
     # The launcher reaches __main__ only for an actual production invocation;

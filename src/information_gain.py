@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from difflib import SequenceMatcher
-from typing import Any, Iterable
+from typing import Any
 
 _GENERIC = {
     "ai", "artificial", "intelligence", "model", "models", "new", "using", "use", "system",

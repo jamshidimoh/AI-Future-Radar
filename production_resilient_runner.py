@@ -8,22 +8,24 @@ from __future__ import annotations
 
 import faulthandler
 import json
+import logging
 import os
 import sys
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-ROOT = Path(__file__).resolve().parent
-SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
+import production_entrypoint
+import src.educational_content as educational_content
+import src.normal_publication_fallback as _normal_fallback
+import src.production_publication_adapter as _publication_adapter
+from src.logging_setup import configure_logging
+from src.state_io import StateCorruptionError
+from src.unified_editorial_selection import load_editorial_contract
 
-import educational_content  # noqa: E402
-import production_entrypoint  # noqa: E402
-import src.normal_publication_fallback as _normal_fallback  # noqa: E402
-import src.production_publication_adapter as _publication_adapter  # noqa: E402
-from src.unified_editorial_selection import load_editorial_contract  # noqa: E402
+logger = logging.getLogger(__name__)
+
+ROOT = Path(__file__).resolve().parent
 
 _ORIGINAL_FETCH_REFERENCE = educational_content._fetch_reference
 _ORIGINAL_SOURCE_CANDIDATES = educational_content._source_candidates
@@ -171,12 +173,12 @@ def _rewrite_education_only_if_needed(item: dict, llm_call, providers) -> dict:
 
 
 def _publish_education_after_news(run_number: int) -> bool:
-    from educational_content import build_educational_item, commit_education_lesson
-    from educational_telegram_style import format_educational_post
-    from llm_router_light import call_llm_with_fallback, get_quality_chain
-    from telegram_feedback import load_feedback, register_post, save_feedback
-    from telegram_single_delivery import send
     from src.education_production_fallback import publish_required_education
+    from src.educational_content import build_educational_item, commit_education_lesson
+    from src.educational_telegram_style import format_educational_post
+    from src.llm_router_light import call_llm_with_fallback, get_quality_chain
+    from src.telegram_feedback import load_feedback, register_post, save_feedback
+    from src.telegram_single_delivery import send
 
     feedback_path = production_entrypoint.FEEDBACK_PATH
     cadence = production_entrypoint._load_cadence()
@@ -200,12 +202,14 @@ def _publish_education_after_news(run_number: int) -> bool:
         )
     except Exception as exc:
         print(f"[Education Publication] independent fallback failed: {exc}", flush=True)
+        logger.error("Independent education fallback failed: %s", exc, exc_info=True)
         return False
     finally:
         production_entrypoint._save_cadence(cadence)
 
 
 def main() -> int:
+    configure_logging()
     _normal_fallback._NORMAL_DELIVERED = 0
     contract = load_editorial_contract()
     production_entrypoint.RANK_WINDOW = int(contract["candidate_window"])
@@ -221,6 +225,8 @@ def main() -> int:
     try:
         try:
             return production_entrypoint.main()
+        except StateCorruptionError:
+            raise
         except RuntimeError as exc:
             message = str(exc)
             education_error = (
@@ -247,4 +253,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except StateCorruptionError as exc:
+        print(f"[STATE] {exc}", file=sys.stderr, flush=True)
+        raise SystemExit(1) from exc

@@ -11,6 +11,7 @@ import argparse
 import copy
 import json
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -18,6 +19,9 @@ import requests
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 STATIC_PATH = ROOT / "config" / "free_model_registry.yaml"
 RUNTIME_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 TIMEOUT = 12
@@ -72,7 +76,7 @@ def _openrouter_benchmarks(token: str | None) -> tuple[dict[str, dict], str]:
     if status >= 400:
         return {}, f"benchmark catalog failed HTTP {status}"
     rows = payload.get("data") or []
-    from free_model_evidence import benchmark_record
+    from src.free_model_evidence import benchmark_record
 
     result: dict[str, dict] = {}
     for row in rows:
@@ -204,7 +208,7 @@ def _fallback_quality(model_id: str) -> tuple[float, float, str]:
 
 
 def _apply_evidence(model: dict, benchmark: dict | None, task_usage: dict[str, float], generated_at: str) -> None:
-    from free_model_evidence import benchmark_score, quality_score
+    from src.free_model_evidence import benchmark_score, quality_score
 
     model_id = str(model.get("id", ""))
     normalized = model_id.lower().removesuffix(":free")

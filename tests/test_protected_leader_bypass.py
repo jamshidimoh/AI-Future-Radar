@@ -1,13 +1,10 @@
-import sys
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-sys.path.insert(0, str(ROOT))
 
 from main import _annotate_named_leader_interviews, _split_protected
 from src.editorial import filter_ai_relevance
 from src.story_identity import deduplicate_stories
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_named_leader_recovered_before_filter():

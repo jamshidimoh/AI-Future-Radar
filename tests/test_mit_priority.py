@@ -1,11 +1,9 @@
-import sys
 import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.editorial import select_editorial
 
-from editorial import select_editorial
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class MITPriorityTests(unittest.TestCase):

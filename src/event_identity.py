@@ -1,5 +1,6 @@
 """Hybrid event identity matcher used by the publication dedup gate."""
 from __future__ import annotations
+
 import re
 from datetime import datetime, timezone
 from difflib import SequenceMatcher

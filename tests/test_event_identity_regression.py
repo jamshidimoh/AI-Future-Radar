@@ -1,13 +1,11 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.dedup as dedup
+from src.event_identity import compare_events
+from src.semantic_dedup import encode_story_signature
+from src.story_identity import deduplicate_stories, is_story_duplicate
 
-from event_identity import compare_events
-from semantic_dedup import encode_story_signature
-from story_identity import deduplicate_stories, is_story_duplicate
-import dedup
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def item(title, summary="", published="2026-09-09T00:00:00+00:00"):

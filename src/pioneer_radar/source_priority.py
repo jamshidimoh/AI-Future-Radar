@@ -1,6 +1,6 @@
 """Source priority rules for deep, evidence-first Pioneer intelligence."""
 
-from strategic_signal import strategic_forecast_score
+from src.strategic_signal import strategic_forecast_score
 
 SOURCE_WEIGHTS = {
     "full_paper": 1.00,

@@ -1,6 +1,6 @@
 import json
 
-import send_telegram
+import src.send_telegram as send_telegram
 
 
 class _FakeResponse:
@@ -16,7 +16,7 @@ class _DynamicResponse:
 
     def __init__(self, message_id):
         self.message_id = message_id
-        self.text = '{"ok": true, "result": {"message_id": %d, "chat": {"id": -100123}}}' % message_id
+        self.text = f'{{"ok": true, "result": {{"message_id": {message_id}, "chat": {{"id": -100123}}}}}}'
 
     def json(self):
         return {"ok": True, "result": {"message_id": self.message_id, "chat": {"id": -100123}}}

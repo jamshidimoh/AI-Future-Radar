@@ -1,13 +1,7 @@
-import sys
 import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
-
-from educational_telegram_style import (
+from src.educational_telegram_style import (
     MAX_DEFINITION,
     MAX_EXAMPLE,
     MAX_MESSAGE,
@@ -16,7 +10,10 @@ from educational_telegram_style import (
     MAX_TAKEAWAY,
     format_educational_post,
 )
-from summarize import _DRAFT_REPAIR_PROMPT, _PROMPT
+from src.summarize import _DRAFT_REPAIR_PROMPT, _PROMPT
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
 
 
 class ExpandedSectionBudgetTests(unittest.TestCase):

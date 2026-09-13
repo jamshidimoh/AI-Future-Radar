@@ -1,4 +1,4 @@
-from story_identity import deduplicate_stories
+from src.story_identity import deduplicate_stories
 
 
 def test_cross_source_same_event_with_different_urls_is_removed():

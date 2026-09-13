@@ -1,5 +1,5 @@
-from interview_evidence import has_interview_evidence
 from main import _is_protected_leader_interview
+from src.interview_evidence import has_interview_evidence
 
 
 def test_google_news_content_type_alone_is_not_interview_evidence():

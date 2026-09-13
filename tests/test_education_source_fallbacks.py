@@ -1,10 +1,8 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.educational_content as educational_content
 
-import educational_content
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_lesson_26_adds_current_fallback_sources_without_duplicates(monkeypatch):

@@ -150,6 +150,7 @@ jobs:
         run: python -u scripts/update_llm_health_state.py run.log
 
       - name: Persist production state
+        if: always()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"

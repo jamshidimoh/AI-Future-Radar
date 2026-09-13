@@ -2,6 +2,7 @@
 import difflib
 import json
 import re
+from dataclasses import dataclass
 
 SEMANTIC_MARKER = "__semantic_story__:"
 _STOPWORDS = {"در", "به", "از", "با", "را", "که", "این", "آن", "و", "یا", "برای", "تا", "بر", "هم", "نیز", "یک", "بی", "چه", "چون", "اگر", "ولی", "اما", "می", "شود", "است", "های", "ها", "کرد", "شد", "دارد", "کند", "خود", "هایش", "روی", "درباره", "پس", "the", "a", "an", "of", "in", "on", "for", "to", "and", "or", "is", "are", "with", "new", "how", "what", "why", "this", "that", "it", "its", "by", "at", "as", "be", "will", "can", "has", "have", "into", "over", "after", "says", "said", "latest", "update", "news", "podcast", "episode", "interview", "talk", "video"}
@@ -74,39 +75,130 @@ def _related_concept_match(a, b):
     return any(a & group and b & group for group in _RELATED_CONCEPT_GROUPS)
 
 
-def _similarity(sig_a, sig_b):
-    a = _decode_signature(sig_a) or get_story_signature(str(sig_a)); b = _decode_signature(sig_b) or get_story_signature(str(sig_b))
-    at, bt = set(a.get("title", [])), set(b.get("title", [])); ac, bc = set(a.get("context", [])), set(b.get("context", [])); aa, ba = set(a.get("anchors", [])), set(b.get("anchors", [])); ae, be = set(a.get("events", [])), set(b.get("events", [])); ap, bp = set(a.get("personnel", [])), set(b.get("personnel", [])); an, bn = set(a.get("numbers", [])), set(b.get("numbers", []))
+@dataclass(frozen=True)
+class _Overlap:
+    title_j: float
+    context_j: float
+    title_c: float
+    context_c: float
+    sequence: float
+    anchor_j: float
+    event_j: float
+    number_j: float
+    shared_anchors: int
+    shared_events: int
+    shared_title_tokens: int
+    shared_personnel: int
+    leader_match: bool
+    numbers_a: set
+    numbers_b: set
+    anchors_a: set
+    anchors_b: set
+    title_a_tokens: set
+    title_b_tokens: set
+    context_a_tokens: set
+    context_b_tokens: set
+
+
+def _signature_pair(sig_a, sig_b) -> tuple[dict, dict]:
+    return (
+        _decode_signature(sig_a) or get_story_signature(str(sig_a)),
+        _decode_signature(sig_b) or get_story_signature(str(sig_b)),
+    )
+
+
+def _overlap(a, b) -> _Overlap:
+    at, bt = set(a.get("title", [])), set(b.get("title", []))
+    ac, bc = set(a.get("context", [])), set(b.get("context", []))
+    aa, ba = set(a.get("anchors", [])), set(b.get("anchors", []))
+    ae, be = set(a.get("events", [])), set(b.get("events", []))
+    ap, bp = set(a.get("personnel", [])), set(b.get("personnel", []))
+    an, bn = set(a.get("numbers", [])), set(b.get("numbers", []))
     leader_a, leader_b = str(a.get("leader", "") or ""), str(b.get("leader", "") or "")
-    leader_match = bool(leader_a and leader_b and leader_a == leader_b)
-    title_j, context_j = _jaccard(at, bt), _jaccard(ac, bc); title_c, context_c = _containment(at, bt), _containment(ac, bc)
-    raw_a, raw_b = str(a.get("title_text", "")) or " ".join(sorted(at)), str(b.get("title_text", "")) or " ".join(sorted(bt))
-    sequence = difflib.SequenceMatcher(None, raw_a, raw_b).ratio() if raw_a and raw_b else 0.0
-    anchor_j, event_j, number_j = _jaccard(aa, ba), _jaccard(ae, be), _jaccard(an, bn)
-    shared_anchors, shared_events, shared_title_tokens = len(aa & ba), len(ae & be), len(at & bt)
-    shared_personnel = len(ap & bp)
-    score = context_j * 0.34 + title_j * 0.24 + max(context_c, title_c) * 0.12 + anchor_j * 0.16 + event_j * 0.06 + sequence * 0.05 + number_j * 0.03
-    if shared_anchors >= 2: score += 0.25
-    elif shared_anchors >= 1 and shared_events >= 1: score += 0.18
-    if leader_match and context_j >= 0.20: score += 0.14
-    if an and bn and an != bn and shared_title_tokens >= 2: score = min(score, 0.42)
-    rewritten_title_match = bool(an and bn and an == bn) and shared_title_tokens >= 2 and sequence >= 0.70
-    if rewritten_title_match: score = max(score, 0.72)
-    close_rewrite_match = not an and not bn and shared_title_tokens >= 2 and (sequence >= 0.62 or context_j >= 0.25) and (shared_events >= 1 or context_j >= 0.20)
-    if close_rewrite_match: score = max(score, 0.68)
-    leader_rewrite_match = leader_match and context_j >= 0.20 and (title_j >= 0.10 or sequence >= 0.35)
-    if leader_rewrite_match: score = max(score, 0.68)
-    related_object_match = shared_anchors >= 1 and shared_title_tokens >= 1 and _related_concept_match(at | ac, bt | bc) and context_j >= 0.16
-    if related_object_match: score = max(score, 0.66)
+    raw_a = str(a.get("title_text", "")) or " ".join(sorted(at))
+    raw_b = str(b.get("title_text", "")) or " ".join(sorted(bt))
+    return _Overlap(
+        title_j=_jaccard(at, bt),
+        context_j=_jaccard(ac, bc),
+        title_c=_containment(at, bt),
+        context_c=_containment(ac, bc),
+        sequence=difflib.SequenceMatcher(None, raw_a, raw_b).ratio() if raw_a and raw_b else 0.0,
+        anchor_j=_jaccard(aa, ba),
+        event_j=_jaccard(ae, be),
+        number_j=_jaccard(an, bn),
+        shared_anchors=len(aa & ba),
+        shared_events=len(ae & be),
+        shared_title_tokens=len(at & bt),
+        shared_personnel=len(ap & bp),
+        leader_match=bool(leader_a and leader_b and leader_a == leader_b),
+        numbers_a=an,
+        numbers_b=bn,
+        anchors_a=aa,
+        anchors_b=ba,
+        title_a_tokens=at,
+        title_b_tokens=bt,
+        context_a_tokens=ac,
+        context_b_tokens=bc,
+    )
+
+
+def _base_score(o: _Overlap) -> float:
+    return o.context_j * 0.34 + o.title_j * 0.24 + max(o.context_c, o.title_c) * 0.12 + o.anchor_j * 0.16 + o.event_j * 0.06 + o.sequence * 0.05 + o.number_j * 0.03
+
+
+def _anchor_bonus(score: float, o: _Overlap) -> float:
+    if o.shared_anchors >= 2:
+        score += 0.25
+    elif o.shared_anchors >= 1 and o.shared_events >= 1:
+        score += 0.18
+    if o.leader_match and o.context_j >= 0.20:
+        score += 0.14
+    return score
+
+
+def _rewrite_floors(score: float, o: _Overlap) -> tuple[float, dict[str, bool]]:
+    if o.numbers_a and o.numbers_b and o.numbers_a != o.numbers_b and o.shared_title_tokens >= 2:
+        score = min(score, 0.42)
+    rewritten_title_match = bool(o.numbers_a and o.numbers_b and o.numbers_a == o.numbers_b) and o.shared_title_tokens >= 2 and o.sequence >= 0.70
+    if rewritten_title_match:
+        score = max(score, 0.72)
+    close_rewrite_match = not o.numbers_a and not o.numbers_b and o.shared_title_tokens >= 2 and (o.sequence >= 0.62 or o.context_j >= 0.25) and (o.shared_events >= 1 or o.context_j >= 0.20)
+    if close_rewrite_match:
+        score = max(score, 0.68)
+    leader_rewrite_match = o.leader_match and o.context_j >= 0.20 and (o.title_j >= 0.10 or o.sequence >= 0.35)
+    if leader_rewrite_match:
+        score = max(score, 0.68)
+    related_object_match = o.shared_anchors >= 1 and o.shared_title_tokens >= 1 and _related_concept_match(o.title_a_tokens | o.context_a_tokens, o.title_b_tokens | o.context_b_tokens) and o.context_j >= 0.16
+    if related_object_match:
+        score = max(score, 0.66)
     # Cross-source organizational events need more than a shared company name.
     # A shared event class plus personnel/leadership language provides the
     # semantic bridge while keeping unrelated product/research stories distinct.
-    organizational_personnel_event = shared_anchors >= 1 and shared_events >= 1 and shared_personnel >= 1 and (context_j >= 0.10 or shared_title_tokens >= 2)
-    if organizational_personnel_event: score = max(score, 0.75)
-    if shared_anchors >= 1 and shared_events >= 1 and context_j >= 0.14:
+    organizational_personnel_event = o.shared_anchors >= 1 and o.shared_events >= 1 and o.shared_personnel >= 1 and (o.context_j >= 0.10 or o.shared_title_tokens >= 2)
+    if organizational_personnel_event:
+        score = max(score, 0.75)
+    if o.shared_anchors >= 1 and o.shared_events >= 1 and o.context_j >= 0.14:
         score = max(score, 0.70)
-    if shared_anchors == 1 and aa == {"ai"} and not rewritten_title_match and not close_rewrite_match and not related_object_match and not leader_rewrite_match: score = min(score, 0.42)
+    return score, {
+        "rewritten_title": rewritten_title_match,
+        "close_rewrite": close_rewrite_match,
+        "leader_rewrite": leader_rewrite_match,
+        "related_object": related_object_match,
+    }
+
+
+def _generic_ai_cap(score: float, o: _Overlap, flags: dict[str, bool]) -> float:
+    if o.shared_anchors == 1 and o.anchors_a == {"ai"} and not any(flags.values()):
+        score = min(score, 0.42)
     return min(1.0, score)
+
+
+def _similarity(sig_a, sig_b):
+    a, b = _signature_pair(sig_a, sig_b)
+    overlap = _overlap(a, b)
+    score = _anchor_bonus(_base_score(overlap), overlap)
+    score, flags = _rewrite_floors(score, overlap)
+    return _generic_ai_cap(score, overlap, flags)
 
 
 def _story_similarity(title_a, title_b): return _similarity(title_a, title_b)

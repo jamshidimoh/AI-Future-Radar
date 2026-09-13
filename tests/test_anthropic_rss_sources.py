@@ -1,13 +1,11 @@
-import sys
 from pathlib import Path
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-
-import fetch_rss
+import src.fetch_rss as fetch_rss
 from scripts import audit_rss_sources
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_anthropic_rss_registry_is_explicitly_unofficial_and_unique():

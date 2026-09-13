@@ -1,6 +1,6 @@
 import json
 
-import send_telegram
+import src.send_telegram as send_telegram
 
 
 class _FakeResponse:

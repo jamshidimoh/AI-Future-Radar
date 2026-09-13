@@ -1,10 +1,8 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+from src.llm_router_light import _provider_timeout, _should_disable_provider
 
-from llm_router_light import _provider_timeout, _should_disable_provider
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_unavailable_provider_codes_are_disabled():

@@ -1,13 +1,10 @@
-import sys
 import unittest
 from pathlib import Path
 
+from src.educational_telegram_style import MAX_MESSAGE, format_educational_post
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
-
-from educational_telegram_style import MAX_MESSAGE, format_educational_post
 
 
 class EducationTelegramBudgetRegressionTests(unittest.TestCase):

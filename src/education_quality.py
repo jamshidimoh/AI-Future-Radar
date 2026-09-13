@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from education_source_policy import validate_current_sources
+from src.education_source_policy import validate_current_sources
 
 # Common Persian transliterations that must never survive the final education draft.
 BANNED_TRANSLITERATIONS = {

@@ -1,11 +1,10 @@
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.llm_router_light as router
+from src.production_router_policy import apply
 
-import llm_router_light as router
-from production_router_policy import apply
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _reset(monkeypatch):
@@ -23,7 +22,7 @@ def _reset(monkeypatch):
 
 def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
     _reset(monkeypatch)
-    import summarize
+    import src.summarize as summarize
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")

@@ -1,12 +1,10 @@
-import sys
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+import src.fetch_youtube as fetch_youtube
 
-import fetch_youtube
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class YouTubeFallbackTests(unittest.TestCase):
@@ -19,7 +17,7 @@ class YouTubeFallbackTests(unittest.TestCase):
     def test_yt_initial_data_page_fallback_extracts_video_metadata(self):
         html = '''<script id="ytInitialData">{"contents":{"videoRenderer":{"videoId":"AbCdEfGhijk","title":{"runs":[{"text":"AI future interview"}]},"publishedTimeText":{"simpleText":"2 hours ago"}}}}</script>'''
         response = Mock(status_code=200, text=html)
-        with patch("fetch_youtube.requests.get", return_value=response):
+        with patch("src.fetch_youtube.requests.get", return_value=response):
             items = fetch_youtube._fetch_channel_page_items(
                 "UC1234567890123456789012", "Test channel", 0
             )
@@ -46,7 +44,7 @@ class YouTubeFallbackTests(unittest.TestCase):
             }]
         }
         with patch.dict("os.environ", {"YOUTUBE_API_KEY": "test-key"}), patch(
-            "fetch_youtube.requests.get",
+            "src.fetch_youtube.requests.get",
             side_effect=[channel_response, playlist_response],
         ):
             items = fetch_youtube._fetch_via_data_api(
@@ -67,9 +65,9 @@ class YouTubeFallbackTests(unittest.TestCase):
             "official": True,
         }
         with patch.dict("os.environ", {}, clear=False), patch(
-            "fetch_youtube._fetch_channel_feed", side_effect=RuntimeError("404")
+            "src.fetch_youtube._fetch_channel_feed", side_effect=RuntimeError("404")
         ), patch(
-            "fetch_youtube._fetch_channel_page_items",
+            "src.fetch_youtube._fetch_channel_page_items",
             return_value=[{
                 "title": "AI safety interview",
                 "link": "https://www.youtube.com/watch?v=AbCdEfGhijk",

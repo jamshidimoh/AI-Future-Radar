@@ -1,14 +1,10 @@
 import json
-import sys
 from pathlib import Path
 
+import scripts.update_llm_health_state as persistence
+from src.free_model_service import FreeModelIntelligence
+
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-sys.path.insert(0, str(ROOT / "scripts"))
-
-import update_llm_health_state as persistence
-
-from free_model_service import FreeModelIntelligence
 
 
 def _entry(model_id, family="openrouter", quality=90):

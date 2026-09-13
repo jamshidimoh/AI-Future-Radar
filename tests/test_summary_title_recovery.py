@@ -1,7 +1,7 @@
 import json
 from unittest.mock import patch
 
-import summarize
+import src.summarize as summarize
 
 
 def test_title_recovery_repairs_valid_persian_title_without_changing_body(monkeypatch):

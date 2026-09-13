@@ -1,14 +1,11 @@
-import sys
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import src.educational_content as education
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
-
-import educational_content as education
 
 
 class EducationSelectionRegressionTests(unittest.TestCase):

@@ -1,27 +1,22 @@
 import os
-import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+from src.dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
+from src.editorial import enrich_items, filter_ai_relevance
+from src.fetch_google_news import fetch_google_news_items
+from src.fetch_rss import fetch_rss_items
+from src.fetch_youtube import fetch_youtube_items
+from src.interview_evidence import has_interview_evidence
+from src.mission_selector import _source_tier
+from src.publication_contract import unique_candidates
+from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
+from src.signal_engine import enrich_signal_items
+from src.story_gate import gate_story_candidates
+from src.summarize import summarize_item
+from src.unified_editorial_selection import select_regular_portfolio
+
 ROOT = Path(__file__).resolve().parent
-SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
-
-from dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
-from editorial import enrich_items, filter_ai_relevance
-from fetch_google_news import fetch_google_news_items
-from fetch_rss import fetch_rss_items
-from fetch_youtube import fetch_youtube_items
-from interview_evidence import has_interview_evidence
-from mission_selector import _source_tier
-from publication_contract import unique_candidates
-from send_telegram import format_post, resolve_source_image, send_to_telegram_safe
-from signal_engine import enrich_signal_items
-from story_gate import gate_story_candidates
-from summarize import summarize_item
-from unified_editorial_selection import select_regular_portfolio
-
 CONFIG_PATH = ROOT / "config" / "sources.yaml"
 LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
 SELECTION_POLICY_PATH = ROOT / "config" / "selection_policy.yaml"

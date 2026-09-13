@@ -5,9 +5,9 @@ import json
 import re
 from collections import Counter
 
-from education_editor import normalize_editorial_text
-from llm_router_light import call_llm_with_fallback, get_quality_chain
 from src.editorial_quality_policy import editorial_fields_ok, headline_quality_ok, persian_ratio
+from src.education_editor import normalize_editorial_text
+from src.llm_router_light import call_llm_with_fallback, get_quality_chain
 
 _GROUNDING_THRESHOLD = 0.70
 

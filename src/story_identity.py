@@ -5,10 +5,10 @@ import re
 from collections.abc import Iterable
 from typing import Any
 
-from canonical_story import canonical_url
-from event_identity import compare_event_features, event_features, has_material_update
-from protected_story_identity import probable_same_story
-from semantic_dedup import _similarity, get_story_signature
+from src.canonical_story import canonical_url
+from src.event_identity import compare_event_features, event_features, has_material_update
+from src.protected_story_identity import probable_same_story
+from src.semantic_dedup import _similarity, get_story_signature
 
 
 def _canonical_url(item: Any) -> str:

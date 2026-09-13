@@ -8,12 +8,8 @@ from datetime import datetime
 import feedparser
 import requests
 
-try:
-    from .source_authority import resolve_google_news_tier
-    from .source_exclusions import is_excluded_source_text, is_excluded_source_url
-except ImportError:
-    from source_authority import resolve_google_news_tier
-    from source_exclusions import is_excluded_source_text, is_excluded_source_url
+from src.source_authority import resolve_google_news_tier
+from src.source_exclusions import is_excluded_source_text, is_excluded_source_url
 
 _FEED_TIMEOUT_SECONDS = 8
 _MAX_WORKERS = 4

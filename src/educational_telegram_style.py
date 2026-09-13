@@ -6,7 +6,7 @@ import re
 from typing import Any
 from urllib.parse import quote
 
-from education_quality import assert_publishable
+from src.education_quality import assert_publishable
 
 RLI = "\u2067"
 LRI = "\u2066"

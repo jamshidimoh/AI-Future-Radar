@@ -4,22 +4,11 @@ from __future__ import annotations
 import json
 import os
 import re
-import sys
 import time
 from pathlib import Path
 
-try:
-    import llm_router_light as router
-except ImportError:  # pragma: no cover
-    src_dir = str(Path(__file__).resolve().parent)
-    if str(src_dir) not in sys.path:
-        sys.path.insert(0, src_dir)
-    import llm_router_light as router
-
-try:
-    from .free_model_registry import build_production_chain
-except ImportError:  # pragma: no cover
-    from free_model_registry import build_production_chain
+import src.llm_router_light as router
+from src.free_model_registry import build_production_chain
 
 ROOT = Path(__file__).resolve().parents[1]
 HEALTH_PATH = ROOT / "data" / "llm_health.json"

@@ -3,7 +3,6 @@ import os
 import signal
 import subprocess
 import sys
-from pathlib import Path
 
 import src.dedup as dedup
 from src.semantic_dedup import encode_story_signature
@@ -55,7 +54,6 @@ def test_incremental_save_survives_actual_sigterm(tmp_path):
     signature=encode_story_signature(item)
     script=f"""
 import sys,time
-sys.path.insert(0,{str(Path(__file__).resolve().parents[1])!r})
 import src.dedup as dedup
 dedup.STATE_FILE={str(state)!r}; dedup.FEEDBACK_FILE={str(feedback)!r}
 dedup.save_seen({{'durable-test-hash'}},[{signature!r}],[{{'ts':1,'source':'test'}}])

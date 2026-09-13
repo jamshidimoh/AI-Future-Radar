@@ -3,9 +3,9 @@ import json
 import os
 import re
 
-from education_editor import news_terminology_review_prompt, normalize_editorial_text
-from llm_router_light import call_llm_with_fallback, get_quality_chain
 from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_ratio
+from src.education_editor import news_terminology_review_prompt, normalize_editorial_text
+from src.llm_router_light import call_llm_with_fallback, get_quality_chain
 
 _DEPTH = {
     "ai": "محتوای محوری کانال است؛ مدل، روش، عدد، قابلیت، محدودیت و پیامد فنی را دقیق حفظ کن.",

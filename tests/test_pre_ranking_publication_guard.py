@@ -1,11 +1,8 @@
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-sys.path.insert(0, str(ROOT))
-
 import period_ranked_pipeline as pipeline
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_pre_ranking_guard_excludes_canonical_and_high_confidence_semantic_conflicts(monkeypatch):

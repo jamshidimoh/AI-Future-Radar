@@ -7,16 +7,14 @@ import traceback
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-for path in (ROOT, SRC):
-    if str(path) not in sys.path:
-        sys.path.insert(0, str(path))
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-import educational_content
 import production_entrypoint
 import production_resilient_runner
-from education_dynamic_sources import rank_verified_sources
-from education_source_policy import assess_source, validate_current_sources
+import src.educational_content as educational_content
+from src.education_dynamic_sources import rank_verified_sources
+from src.education_source_policy import assess_source, validate_current_sources
 
 
 def _deterministic_education_item(lesson: dict, verified_sources: list[dict]) -> dict:
@@ -125,10 +123,10 @@ def main() -> int:
         try:
             item = _build_with_deterministic_recovery()
             if item:
-                from educational_content import commit_education_lesson
-                from educational_telegram_style import format_educational_post
-                from telegram_feedback import load_feedback, register_post, save_feedback
-                from telegram_single_delivery import send
+                from src.educational_content import commit_education_lesson
+                from src.educational_telegram_style import format_educational_post
+                from src.telegram_feedback import load_feedback, register_post, save_feedback
+                from src.telegram_single_delivery import send
                 text = format_educational_post(item)
                 outcome = send(text, image_url="", source_link=str(item.get("link") or item.get("url") or ""))
                 message_id = getattr(outcome, "message_id", None) if outcome is not None else None

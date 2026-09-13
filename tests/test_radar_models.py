@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from radar_models import CanonicalContent, Evidence, SourceItem, Story
+from src.radar_models import CanonicalContent, Evidence, SourceItem, Story
 
 
 def test_source_item_has_stable_discovery_contract():

@@ -86,6 +86,8 @@ replace_function("main.py", "_split_protected", '''def _split_protected(items, m
         str(x.get("published", "")),
     ), reverse=True)
     selected = candidates[:max(0, int(max_protected))]
+    for item in selected:
+        item["protected_slot"] = True
     regular.extend(candidates[len(selected):])
     return selected, regular''')
 
@@ -140,6 +142,7 @@ replace_function("main.py", "_mission_coverage_recovery", '''def _mission_covera
         summary = summarize_fn(candidate)
         if summary:
             candidate.update(summary)
+            candidate["_mission_recovery"] = True
             recovered.append((candidate, summary))
             print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=recovered", flush=True)
         else:
@@ -151,18 +154,19 @@ p = ROOT / "src/story_identity.py"
 s = p.read_text(encoding="utf-8")
 if "from protected_story_identity import probable_same_story" not in s:
     s = s.replace("from semantic_dedup import get_story_signature, _similarity\n", "from semantic_dedup import get_story_signature, _similarity\nfrom protected_story_identity import probable_same_story\n")
-s = s.replace(
-'''        if candidate_is_interview and prior_is_interview and not allow_protected_event_match:
-            return False
-        if not allow_protected_event_match:
-            return False
-''',
-'''        if not allow_protected_event_match:
-            return False
-        if probable_same_story(candidate, comparable):
-            return True
-''', 1)
+# Current-run protected candidates: reject strong title/body rewrites, but never use this broader rule against history.
+needle = '''        if not allow_protected_event_match:\n            return False\n        if probable_same_story(candidate, comparable):\n            return True\n'''
+if needle not in s:
+    needle = '''        if not allow_protected_event_match:\n            return False\n'''
+    replacement = '''        if not allow_protected_event_match:\n            return False\n        if probable_same_story(candidate, comparable):\n            return True\n'''
+    s = s.replace(needle, replacement, 1)
+# Preserve strict history semantics: no broad protected-story matching when checking persisted history.
 p.write_text(s, encoding="utf-8")
+
+run_workflow = ROOT / ".github" / "workflows" / "run.yml"
+run_text = run_workflow.read_text(encoding="utf-8")
+if "Tehran publication windows:" not in run_text:
+    run_workflow.write_text("# Tehran publication windows: cron entries below are expressed in UTC.\n" + run_text, encoding="utf-8")
 
 for path in (ROOT / "main.py", ROOT / "src/story_identity.py"):
     compile(path.read_text(encoding="utf-8"), str(path), "exec")

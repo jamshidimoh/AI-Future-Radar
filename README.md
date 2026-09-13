@@ -36,4 +36,4 @@ docker pull ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish
 
 راهنمای انتشار در `docs/RELEASE.md` قرار دارد. قالب متغیرهای محیطی نمونه نیز در `.env.example` موجود است.
 
-<!-- CI validation trigger: final runtime contract repair must pass the full quality gate. -->
+<!-- CI validation trigger: temporary runtime repair workflow. -->

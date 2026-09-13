@@ -1,0 +1,37 @@
+name: One-shot source authority repair
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message != 'fix: enforce source authority ordering [skip ci]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Apply exact source-tier ordering repair
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('main.py')
+          text = p.read_text(encoding='utf-8')
+          old = 'protected = sorted([x for x in items if x.get("protected_content")], key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("source_tier", 99) or 99) <= 2, str(x.get("published") or "")), reverse=True)[:max_protected]'
+          new = 'protected = sorted([x for x in items if x.get("protected_content")], key=lambda x: (int(x.get("leader_priority", 0) or 0), -int(_source_tier(x)), str(x.get("published") or "")), reverse=True)[:max_protected]'
+          if old not in text:
+              raise SystemExit('expected source-tier ordering expression not found')
+          p.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add main.py
+          git commit -m 'fix: enforce source authority ordering [skip ci]'
+          git push origin HEAD:main

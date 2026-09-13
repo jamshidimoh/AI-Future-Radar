@@ -64,7 +64,7 @@ def test_mission_coverage_targets_are_explicit_opportunities():
     assert contract["ai_core_target_min"] == 1
     assert contract["ai_core_target_max"] == 2
     assert contract["convergence_target"] == 0
-    assert contract["mind_future_target"] == 1
+    assert contract["mind_future_target"] == 2
     assert contract["research_target"] == 0
     assert contract["interview_target_max"] == 1
     assert contract["min_authoritative_items"] == 2

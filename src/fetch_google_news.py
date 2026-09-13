@@ -19,10 +19,15 @@ _MAX_WORKERS = 4
 _MAX_RETRIES = 1
 _RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 _CIRCUIT_BREAK_AFTER = 3
+# Generic companion-discovery vocabulary. It deliberately avoids source-, person-,
+# geography-, or platform-specific terms so the same mechanism works for every watch person.
 _LEADER_SIGNAL_TERMS = (
-    "statement", "says", "said", "post", "posts", "tweet", "tweets", "X post", "Twitter",
-    "interview", "podcast", "talk", "keynote", "conversation", "discussion", "Europe", "EU", "European",
-    "regulation", "policy", "government", "technology", "AI", "future",
+    "statement", "says", "said", "argues", "argued", "warns", "warned", "predicts", "predicted",
+    "calls for", "called for", "supports", "opposes", "criticizes", "criticised", "defends",
+    "interview", "podcast", "talk", "keynote", "conversation", "discussion", "fireside",
+    "transcript", "analysis", "analyses", "perspective", "opinion", "essay", "commentary",
+    "forecast", "prediction", "outlook", "vision", "future", "implications", "impact",
+    "research", "study", "technology", "artificial intelligence", "AI", "AGI",
 )
 _LEADER_INTERVIEW_EVIDENCE_TERMS = (
     "interview", "podcast", "talk", "keynote", "conversation", "discussion", "fireside", "q&a",

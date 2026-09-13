@@ -4,8 +4,6 @@ on:
   workflow_run:
     workflows: ["Run AI Future Radar Bot"]
     types: [completed]
-  push:
-    branches: [main]
 
 permissions:
   actions: read
@@ -14,26 +12,37 @@ permissions:
 
 jobs:
   closure-evidence:
-    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'cancelled' || github.event.workflow_run.conclusion == 'timed_out' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'cancelled' || github.event.workflow_run.conclusion == 'timed_out' }}
     runs-on: ubuntu-latest
     steps:
       - name: Evaluate production evidence
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          TRIGGER_CONCLUSION: ${{ github.event.workflow_run.conclusion || 'push' }}
-          TRIGGER_RUN_NUMBER: ${{ github.event.workflow_run.run_number || 'n/a' }}
+          TRIGGER_CONCLUSION: ${{ github.event.workflow_run.conclusion || 'unknown' }}
+          TRIGGER_RUN_NUMBER: ${{ github.event.workflow_run.run_number || 'unknown' }}
         run: |
           set -euo pipefail
           python - <<'PY'
-          import base64, json, os, re, sys, urllib.error, urllib.request
+          import base64
+          import hashlib
+          import json
+          import os
+          import re
+          import sys
+          import urllib.error
+          import urllib.request
 
           repo = os.environ["REPO"]
           token = os.environ["GH_TOKEN"]
           trigger_conclusion = os.environ.get("TRIGGER_CONCLUSION", "unknown")
           trigger_run_number = os.environ.get("TRIGGER_RUN_NUMBER", "unknown")
           base = f"https://api.github.com/repos/{repo}"
-          headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
+          headers = {
+              "Authorization": f"Bearer {token}",
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+          }
 
           def get_json(path):
               req = urllib.request.Request(base + path, headers=headers)
@@ -43,6 +52,7 @@ jobs:
           class NoRedirect(urllib.request.HTTPRedirectHandler):
               def redirect_request(self, req, fp, code, msg, headers, newurl):
                   return None
+
           opener = urllib.request.build_opener(NoRedirect)
 
           def get_text(path):
@@ -62,11 +72,37 @@ jobs:
           def has(text, pattern):
               return re.search(pattern, text, re.I | re.M) is not None
 
+          def code_fingerprint(sha):
+              commit = get_json(f"/commits/{sha}")
+              tree_sha = ((commit.get("commit") or {}).get("tree") or {}).get("sha")
+              if not tree_sha:
+                  raise RuntimeError(f"missing tree sha for {sha}")
+              tree = get_json(f"/git/trees/{tree_sha}?recursive=1")
+              rows = []
+              for row in tree.get("tree", []):
+                  path = str(row.get("path") or "")
+                  blob_sha = str(row.get("sha") or "")
+                  if not path or path.startswith("data/") or row.get("type") != "blob":
+                      continue
+                  rows.append((path, blob_sha))
+              payload = "\n".join(f"{path}\0{blob}" for path, blob in sorted(rows))
+              return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
           def tier0_quality_floor_clean(text):
               floors = [float(m.group(1)) for m in re.finditer(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", text, re.I)]
               floor = floors[-1] if floors else 60.0
               published = [float(m.group(1)) for m in re.finditer(r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)", text)]
               return all(score >= floor for score in published)
+
+          def publish_evidence(text):
+              published = has(text, r"\[Telegram Published\]")
+              publication_attempted = has(text, r"\[Publication Policy\]\s+PUBLISH\b")
+              zero_publish = has(text, r"Posts sent: 0/") and has(text, r"normal_news=0[^\n]*tier0_news=0")
+              acceptance = has(text, r"\[Production Acceptance\] PASS:")
+              fail_closed_tests = has(text, r"\[Fail-Closed Acceptance Evidence\] PASS")
+              if published:
+                  return True
+              return zero_publish and acceptance and fail_closed_tests and publication_attempted
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=30")
@@ -75,61 +111,75 @@ jobs:
           excluded = []
           for run in runs:
               if run.get("conclusion") != "success":
-                  excluded.append((run.get("run_number"), run.get("conclusion"), "workflow_not_success")); continue
+                  excluded.append((run.get("run_number"), run.get("conclusion"), "workflow_not_success"))
+                  continue
               jobs = get_json(f"/actions/runs/{run['id']}/jobs?per_page=50").get("jobs", [])
               bots = [j for j in jobs if j.get("name") == "run-bot"]
               if not bots:
-                  excluded.append((run.get("run_number"), run.get("conclusion"), "run-bot_missing")); continue
+                  excluded.append((run.get("run_number"), run.get("conclusion"), "run-bot_missing"))
+                  continue
               bot = bots[0]
               if bot.get("conclusion") != "success":
-                  excluded.append((run.get("run_number"), bot.get("conclusion"), "run-bot_not_success")); continue
+                  excluded.append((run.get("run_number"), bot.get("conclusion"), "run-bot_not_success"))
+                  continue
               steps = {s.get("name"): s.get("conclusion") for s in bot.get("steps", [])}
               if steps.get("Run bot with ranking audit") != "success":
-                  excluded.append((run.get("run_number"), bot.get("conclusion"), "runtime_not_reached")); continue
+                  excluded.append((run.get("run_number"), bot.get("conclusion"), "runtime_not_reached"))
+                  continue
               if steps.get("Enforce runtime production acceptance") != "success":
-                  excluded.append((run.get("run_number"), bot.get("conclusion"), "runtime_acceptance_missing")); continue
+                  excluded.append((run.get("run_number"), bot.get("conclusion"), "runtime_acceptance_missing"))
+                  continue
               executable.append(run)
 
           if len(executable) < 3:
-              print(f"CLOSURE: IN PROGRESS — only {len(executable)} executable production runs observed; 3 required.")
+              print(f"CLOSURE: BLOCKED — only {len(executable)} executable production runs observed; 3 required.")
               print("Excluded runs:", excluded)
-              sys.exit(0)
+              sys.exit(1)
 
           window = executable[:3]
-          recent = executable[:12]
+          fingerprints = {}
+          for run in window:
+              fingerprints[run["run_number"]] = code_fingerprint(run["head_sha"])
+          distinct_fingerprints = sorted(set(fingerprints.values()))
           print("Closure window:", [(r.get("run_number"), r.get("id"), r.get("head_sha", "")[:8]) for r in window])
+          print("Code fingerprints:", fingerprints)
+          if len(distinct_fingerprints) != 1:
+              print("CLOSURE: BLOCKED — closure window is not code-pinned; production code changed within the 3-run evidence window")
+              sys.exit(1)
+
           logs, log_errors = {}, {}
-          for run in recent:
+          for run in window:
               jobs = get_json(f"/actions/runs/{run['id']}/jobs?per_page=50").get("jobs", [])
               bots = [j for j in jobs if j.get("name") == "run-bot"]
               if not bots:
-                  log_errors[run["run_number"]] = "run-bot job not found"; continue
+                  log_errors[run["run_number"]] = "run-bot job not found"
+                  continue
               try:
                   logs[run["run_number"]] = get_text(f"/actions/jobs/{bots[0]['id']}/logs")
               except Exception as exc:
                   log_errors[run["run_number"]] = f"{type(exc).__name__}: {exc}"
-          if log_errors or len(logs) < 3:
+          if log_errors or len(logs) != 3:
               print("CLOSURE: BLOCKED — production evidence logs are incomplete; cannot certify closure")
               print("Log errors:", log_errors)
               sys.exit(1)
 
-          def any_recent(pattern): return any(has(text, pattern) for text in logs.values())
-          def all_runs(pattern): return all(r.get("run_number") in logs and has(logs[r.get("run_number")], pattern) for r in window)
+          def all_runs(pattern):
+              return all(has(logs[r["run_number"]], pattern) for r in window)
 
-          published_run = any_recent(r"\[Telegram Published\]")
-          publication_attempted = any_recent(r"\[Publication Policy\]\s+PUBLISH\b")
-          observed_zero_publish = any_recent(r"Posts sent: 0/") and any_recent(r"normal_news=0[^\n]*tier0_news=0")
-          fail_closed_regression = any_recent(r"\[Fail-Closed Acceptance Evidence\] PASS")
-          production_acceptance_pass = any_recent(r"\[Production Acceptance\] PASS:")
-          fail_closed_publication_evidence = publication_attempted and fail_closed_regression and production_acceptance_pass
-          publish_contract = (published_run and (observed_zero_publish or fail_closed_regression)) or fail_closed_publication_evidence
+          def any_runs(pattern):
+              return any(has(logs[r["run_number"]], pattern) for r in window)
 
-          history_dedup_clean = any_recent(r"\[Story Identity\] history_duplicates=0")
-          actual_duplicate_event = r"(?:\[Telegram Published\].*duplicate|\[Publication Ledger\].*duplicate publication|\[Publication Contract\].*duplicate publication)"
-          duplicate_free = history_dedup_clean and not any_recent(actual_duplicate_event)
+          per_run_publish = {r["run_number"]: publish_evidence(logs[r["run_number"]]) for r in window}
+          publish_contract = all(per_run_publish.values())
 
-          runtime_single_message = any_recent(r"\[Telegram Delivery\] full_text=\d+ photo=disabled single_message=true")
-          regression_single_message = any_recent(r"\[Image Delivery Contract Evidence\] PASS")
+          duplicate_free = all(
+              has(logs[r["run_number"]], r"\[Story Identity\] history_duplicates=0")
+              and not has(logs[r["run_number"]], r"(?:\[Telegram Published\].*duplicate|\[Publication Ledger\].*duplicate publication|\[Publication Contract\].*duplicate publication)")
+              for r in window
+          )
+
+          runtime_single_message = all_runs(r"\[Telegram Delivery\] full_text=\d+ photo=disabled single_message=true")
+          regression_single_message = all_runs(r"\[Image Delivery Contract Evidence\] PASS")
           try:
               source_payload = get_json("/contents/src/telegram_single_delivery.py?ref=main")
               source_text = base64.b64decode(source_payload.get("content", "")).decode("utf-8", errors="replace")
@@ -143,54 +193,46 @@ jobs:
           )
           image_contract = runtime_single_message or regression_single_message or static_single_message
 
-          ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_recent(r"normal_rank=\d{2,}")
-          qa_replacement = any_recent(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
-          leader_watch = (
-              all_runs(r"\[Protected Leader Eligibility\] candidates=\d+")
-              and all_runs(r"\[Protected Leader Watch\] selected=\d+ max=\d+")
-          )
-          llm_success = any_recent(r"\[(?:Light Router|LiteLLM Router|Production Circuit)\]\s+success=")
-          failure_observed = (
-              any_recent(r"\[Light Router\]\s+disabled=")
-              or any_recent(r"\[Production Circuit\]\s+failed=.*(?:quota|429|401|402|403|timeout|5\d{2}|overloaded)")
-              or any_recent(r"(?:429|quota|timeout|5\d{2}|401|403)")
-          )
+          ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any_runs(r"normal_rank=\d{2,}")
+          qa_replacement = all_runs(r"(?:translation/QA failed|Editorial Value Gate.*rejected|publishable candidate prepared)")
+          leader_watch = all_runs(r"\[Protected Leader Eligibility\] candidates=\d+") and all_runs(r"\[Protected Leader Watch\] selected=\d+ max=\d+")
+          llm_success = any_runs(r"\[(?:Light Router|LiteLLM Router|Production Circuit)\]\s+success=")
+          failure_observed = any_runs(r"(?:Provider .*attempt failed|\[Production Circuit\]\s+failed=.*(?:quota|429|401|402|403|timeout|5\d{2})|\[Light Router\]\s+failed=)")
           provider_isolated = failure_observed and llm_success
           state_persisted = all_runs(r"Production state persisted")
-          mission_portfolio = all_runs(r"mission_aware=true") and not any_recent(r"generic low[- ]signal")
-          tier0_quality_floor = all(tier0_quality_floor_clean(logs[r.get("run_number")]) for r in window)
+          mission_portfolio = all_runs(r"mission_aware=true") and not any_runs(r"generic low[- ]signal")
+          tier0_quality_floor = all(tier0_quality_floor_clean(logs[r["run_number"]]) for r in window)
 
-          education_published = any_recent(r"\[Education Published\].*telegram_delivery=successful")
-          education_recovery_confirmed = any_recent(r"\[Education Recovery\] CONFIRMED")
+          education_published = any_runs(r"\[Education Published\].*telegram_delivery=successful")
+          education_recovery_confirmed = any_runs(r"\[Education Recovery\] CONFIRMED")
           education_not_due_all = all_runs(r"\[Education Recovery\].*due=false")
           education_contract_not_due = all_runs(r"\[Production Contract\].*education=not_due")
           education_evidence = ((education_published and education_recovery_confirmed) or education_not_due_all or education_contract_not_due)
 
           evidence = {
               "01_three_successful_runs": len(window) == 3,
-              "02_publish_and_fail_closed_zero": publish_contract,
-              "03_no_duplicate_publication": duplicate_free,
-              "04_image_preserves_full_text": image_contract,
-              "05_rank_within_window_no_bypass": ranking_contract,
-              "06_replacement_after_qa": qa_replacement,
-              "07_leader_watch_eligible": leader_watch,
-              "08_provider_failure_isolated": provider_isolated,
-              "09_state_after_confirmed_delivery": state_persisted,
-              "10_mission_portfolio_not_generic": mission_portfolio,
-              "11_tier0_quality_floor": tier0_quality_floor,
-              "12_education_cadence_contract": education_evidence,
+              "02_code_pinned": len(distinct_fingerprints) == 1,
+              "03_publish_and_fail_closed_per_run": publish_contract,
+              "04_no_duplicate_publication": duplicate_free,
+              "05_image_preserves_full_text": image_contract,
+              "06_rank_within_window_no_bypass": ranking_contract,
+              "07_replacement_after_qa": qa_replacement,
+              "08_leader_watch_eligible": leader_watch,
+              "09_provider_failure_isolated": provider_isolated,
+              "10_state_after_confirmed_delivery": state_persisted,
+              "11_mission_portfolio_not_generic": mission_portfolio,
+              "12_tier0_quality_floor": tier0_quality_floor,
+              "13_education_cadence_contract": education_evidence,
           }
-          for key, value in evidence.items(): print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
-          print(f"TIER0_QUALITY_FLOOR clean={tier0_quality_floor}")
-          print(f"EDUCATION_EVIDENCE published={education_published} recovery={education_recovery_confirmed} not_due_all={education_not_due_all} contract_not_due={education_contract_not_due}")
-          print(f"FAIL_CLOSED_EVIDENCE observed_zero={observed_zero_publish} regression_contract={fail_closed_regression} runtime_acceptance={production_acceptance_pass}")
-          print(f"PUBLICATION_EVIDENCE published_run={published_run} publication_attempted={publication_attempted} fail_closed_publication={fail_closed_publication_evidence}")
-          print(f"IMAGE_EVIDENCE runtime={runtime_single_message} regression={regression_single_message} static={static_single_message}")
+          for key, value in evidence.items():
+              print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
+          print(f"PUBLISH_PER_RUN: {per_run_publish}")
           print(f"PROVIDER_EVIDENCE failure_observed={failure_observed} llm_success={llm_success}")
+          print(f"EDUCATION_EVIDENCE published={education_published} recovery={education_recovery_confirmed} not_due_all={education_not_due_all} contract_not_due={education_contract_not_due}")
           blocked = [key for key, value in evidence.items() if not value]
           if blocked:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))
               print("CLOSURE: ACCEPTANCE IN PROGRESS")
               sys.exit(1)
-          print("CLOSURE: CLOSED — deterministic gates and production evidence checks passed.")
+          print("CLOSURE: CLOSED — deterministic, code-pinned production evidence checks passed.")
           PY

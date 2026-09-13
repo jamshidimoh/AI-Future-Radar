@@ -93,13 +93,12 @@ def _prepare_prior(prior: Any) -> tuple[dict[str, Any], str, dict[str, Any], dic
 
 
 def _semantic_story_match(candidate_features: dict[str, Any], prior_features: dict[str, Any], semantic_score: float) -> bool:
-    """Use semantic similarity only when an independent story-identity signal agrees.
+    """Use semantic similarity as a fallback only when event evidence agrees.
 
-    This prevents same-entity/same-topic stories from collapsing merely because
-    their summaries use similar language, while still catching rewritten and
-    cross-source versions of the same event.
+    Independent stories about the same person, company, product family, or topic
+    must remain separate. Cross-source rewrites still need a second identity signal.
     """
-    if semantic_score < 0.78:
+    if semantic_score < 0.65:
         return False
     candidate_title = str(candidate_features.get("title") or "")
     prior_title = str(prior_features.get("title") or "")
@@ -110,14 +109,11 @@ def _semantic_story_match(candidate_features: dict[str, Any], prior_features: di
     prior_context = set(prior_features.get("tokens", ()))
     context_overlap = len(context & prior_context) / len(context | prior_context) if context and prior_context else 0.0
 
-    # Strong paraphrase: high semantic + high title agreement.
-    if title_similarity >= 0.80:
+    if shared_entities and shared_events and (title_similarity >= 0.60 or context_overlap >= 0.35):
         return True
-    # Same named entity + same event family: require meaningful title/context overlap.
-    if shared_entities and shared_events and (title_similarity >= 0.62 or context_overlap >= 0.45):
+    if shared_events and (title_similarity >= 0.72 or context_overlap >= 0.55):
         return True
-    # Same event wording without a recognized entity alias.
-    return shared_events and context_overlap >= 0.62 and title_similarity >= 0.58
+    return title_similarity >= 0.80 and context_overlap >= 0.55
 
 
 def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candidate_features: dict[str, Any], candidate_signature: dict[str, Any], prior: tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None], allow_protected_event_match: bool = True) -> bool:

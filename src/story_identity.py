@@ -31,7 +31,7 @@ def _material_update_tokens(signature: Any) -> set[str]:
     if not isinstance(signature, dict):
         return set()
     text = " ".join(str(signature.get(key) or "") for key in ("title_text", "title", "summary", "description")).casefold()
-    text = text.replace("ي", "ی").replace("ك", "ک").replace("\u200c", " ")
+    text = text.replace("ي", "ی").replace("ك", "ک").replace("‌", " ")
     text = re.sub(r"\s+", " ", text).strip()
     markers: set[str] = set()
     patterns = {
@@ -91,8 +91,8 @@ def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candida
     if candidate_url and prior_url and candidate_url == prior_url:
         return True
     if _is_protected_leader(candidate) or _is_protected_leader(comparable):
-        candidate_identity, candidate_is_interview = _protected_interview_identity(candidate)
-        prior_identity, prior_is_interview = _protected_interview_identity(comparable)
+        candidate_identity, _ = _protected_interview_identity(candidate)
+        prior_identity, _ = _protected_interview_identity(comparable)
         if candidate_identity and prior_identity and candidate_identity == prior_identity:
             return True
         if not allow_protected_event_match:
@@ -103,8 +103,7 @@ def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candida
             leader_a = str(candidate.get("leader") or candidate.get("watch_person") or "").casefold().strip()
             leader_b = str(comparable.get("leader") or comparable.get("watch_person") or "").casefold().strip()
             shared_entities = set(candidate_features.get("entities", ())) & set(prior_features.get("entities", ()))
-            shared_events = set(candidate_features.get("events", ())) & set(prior_features.get("events", ()))
-            if leader_a and leader_a == leader_b and len(shared_entities) >= 2 and shared_events and not has_material_update(candidate, comparable):
+            if leader_a and leader_a == leader_b and len(shared_entities) >= 2 and not has_material_update(candidate, comparable):
                 return True
     kind, _, _ = compare_event_features(candidate_features, prior_features)
     if kind == "DUPLICATE":

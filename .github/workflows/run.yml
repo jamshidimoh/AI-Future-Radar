@@ -1,4 +1,4 @@
-# Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (Tehran local time; cron is UTC)
+# Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (Tehran local time, UTC+3:30; cron is UTC)
 name: Run AI Future Radar Bot
 
 on:

@@ -45,6 +45,27 @@ def _contains_person(text, name): return str(name or "").strip().lower() in str(
 def _has_explicit_interview_evidence(item): return has_interview_evidence(item)
 def _direct_interview_signal(item): return has_interview_evidence(item)
 
+def _leader_source_authority(item):
+    """Normalize leader source authority so higher values mean stronger provenance."""
+    try:
+        existing = item.get("leader_source_authority")
+    except AttributeError:
+        return 0
+    if existing is not None:
+        try:
+            return int(existing)
+        except (TypeError, ValueError):
+            pass
+    try:
+        tier = _source_tier(item)
+    except Exception:
+        tier = None
+    try:
+        tier = int(tier) if tier is not None else None
+    except (TypeError, ValueError):
+        tier = None
+    return max(0, 4 - tier) if tier is not None else 0
+
 def _leader_activity_signal(item):
     ctype = str(item.get("content_type") or "").lower().strip()
     if ctype == "interview": return False

@@ -25,8 +25,6 @@ PROVIDER_COOLDOWN = {
     "quota": 21600.0,
     "auth": 86400.0,
 }
-# A zero-wallet KiraAI account cannot recover within the next run without a
-# balance change, so treat wallet exhaustion as provider-scoped for 24 hours.
 KIRAAI_WALLET_PROVIDER_COOLDOWN = 86400.0
 
 FAIL_RE = re.compile(
@@ -103,20 +101,28 @@ def prune(section: dict, now: float) -> dict:
     return out
 
 
-def _iter_failures(lines: list[str]):
+def _iter_events(lines: list[str]):
+    """Yield ordered (deployment, event_kind, failure_kind, wallet_only) events."""
     for line in lines:
+        success = SUCCESS_RE.search(line)
+        if success:
+            deployment = success.group("deployment")
+            yield deployment, "success", "", False
+            continue
+
         failure = FAIL_RE.search(line)
         if failure:
             deployment = failure.group("deployment")
-            yield deployment, family(deployment), classify(line), is_kira_wallet_only(deployment, line)
+            yield deployment, "failure", classify(line), is_kira_wallet_only(deployment, line)
             continue
+
         provider_failure = PROVIDER_FAIL_RE.search(line)
         if provider_failure:
             provider = provider_failure.group("provider").strip()
             model = provider_failure.group("model").strip()
             deployment = canonical_deployment(provider, model)
             message = provider_failure.group("message").strip()
-            yield deployment, family(deployment), classify(message), is_kira_wallet_only(deployment, message)
+            yield deployment, "failure", classify(message), is_kira_wallet_only(deployment, message)
 
 
 def main() -> int:
@@ -129,20 +135,25 @@ def main() -> int:
     now = time.time()
     models = prune(state.get("models", {}) if isinstance(state.get("models"), dict) else {}, now)
     providers = prune(state.get("providers", {}) if isinstance(state.get("providers"), dict) else {}, now)
-    successes: set[str] = set()
-    failures = list(_iter_failures(log_path.read_text(encoding="utf-8", errors="replace").splitlines()))
+    lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
+    events = list(_iter_events(lines))
+    observed_failures = [event for event in events if event[1] == "failure"]
+    observed_successes = [event for event in events if event[1] == "success"]
 
-    for line in log_path.read_text(encoding="utf-8", errors="replace").splitlines():
-        success = SUCCESS_RE.search(line)
-        if success:
-            successes.add(success.group("deployment"))
+    # Last event wins for each deployment. This matters when parallel publication
+    # requests interleave: a model may succeed once and receive a quota/rate-limit
+    # error on a later request in the same run.
+    last_event: dict[str, tuple[str, str, bool]] = {}
+    for deployment, event_kind, failure_kind, wallet_only in events:
+        last_event[deployment] = (event_kind, failure_kind, wallet_only)
 
-    for deployment in successes:
-        models.pop(deployment, None)
-        providers.pop(family(deployment), None)
+    successful_deployments = {deployment for deployment, event_kind, _, _ in events if event_kind == "success"}
+    for deployment, (event_kind, _, _) in last_event.items():
+        if event_kind == "success":
+            models.pop(deployment, None)
 
-    for deployment, provider, kind, kira_wallet_only in failures:
-        if deployment in successes:
+    for deployment, (event_kind, kind, kira_wallet_only) in last_event.items():
+        if event_kind != "failure":
             continue
         model_seconds = MODEL_COOLDOWN.get(kind)
         if model_seconds:
@@ -152,6 +163,7 @@ def main() -> int:
                 "last_error": kind,
                 "last_success": 0,
             }
+        provider = family(deployment)
         if kira_wallet_only:
             old = providers.get(provider, {})
             providers[provider] = {
@@ -177,15 +189,15 @@ def main() -> int:
         "models": models,
         "providers": providers,
         "telemetry": {
-            "observed_failures": len(failures),
-            "successful_deployments": len(successes),
+            "observed_failures": len(observed_failures),
+            "successful_deployments": len(successful_deployments),
         },
     }
     STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
     tmp = STATE_PATH.with_suffix(STATE_PATH.suffix + ".tmp")
     tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     tmp.replace(STATE_PATH)
-    print(f"[LLM Health Persistence] failures={len(failures)} successes={len(successes)} models={len(models)} providers={len(providers)}")
+    print(f"[LLM Health Persistence] failures={len(observed_failures)} successes={len(successful_deployments)} models={len(models)} providers={len(providers)}")
     return 0
 
 

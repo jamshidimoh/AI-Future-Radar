@@ -6,6 +6,7 @@ from typing import Any, Iterable
 from canonical_story import canonical_url
 from event_identity import compare_event_features, event_features, has_material_update
 from semantic_dedup import get_story_signature, _similarity
+from protected_story_identity import probable_same_story
 
 
 def _canonical_url(item: Any) -> str:
@@ -94,10 +95,10 @@ def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candida
         prior_identity, prior_is_interview = _protected_interview_identity(comparable)
         if candidate_identity and prior_identity and candidate_identity == prior_identity:
             return True
-        if candidate_is_interview and prior_is_interview and not allow_protected_event_match:
-            return False
         if not allow_protected_event_match:
             return False
+        if probable_same_story(candidate, comparable):
+            return True
     kind, _, _ = compare_event_features(candidate_features, prior_features)
     if kind == "DUPLICATE":
         return True

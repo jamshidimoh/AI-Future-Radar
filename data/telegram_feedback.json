@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789297245,
+  "updated_at": 1789297549,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8779,6 +8779,25 @@
       "why_it_matters": "دست‌یابی به عملکرد نزدیک به Fable 5.1 با هزینهٔ ۶۴٪ کمتر، نشان‌دهندهٔ پیشرفت قابل Attentionی در بهینه‌سازی هزینهٔ محاسباتی مدل‌های کدنویسی است؛ این امر می‌تواند دسترسی به ابزارهای هوش مصنوعی پیشرفته را برای شرکت‌های کوچک و متوسط تسهیل کند. استفاده از تقویت یادگیری پس‌آموزش‌دیده بر پایهٔ Kimi K3، رویکردی مقیاس‌پذیر برای ارتقاء مدل‌های موجود بدون نیاز به آموزش از صفر فراهم می‌کند. در نتیجه، SWE-2 می‌تواند به‌عنوان گزینه‌ای اقتصادی برای توسعه نرم‌افزارهای خودکار و تسهیل فرآیندهای برنامه‌نویسی در صنایع مختلف به کار رود.",
       "link": "https://www.marktechpost.com/2026/09/12/cognition-releases-swe-2-a-kimi-k3-post-trained-coding-model-that-matches-fable-5-1-on-frontiercode-at-64-lower-cost/",
       "posted_at": 1789288432
+    },
+    "-1004482051328:1570": {
+      "chat_id": -1004482051328,
+      "message_id": 1570,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "رقابت جهانی برای تأمین مس و راه‌حل‌های نوآورانه برای زباله‌های تور ماهیگیری",
+      "summary": "Emilie Bodoin، بنیان‌گذار و مدیرعامل Pure Lithium، باتری‌های لیتیوم‑فلزی را احیا کرده است؛ این فناوری می‌تواند وزن، ایمنی و کارایی باتری‌های خودروهای الکتریکی را بهبود بخشد و وابستگی به زنجیره‌های معدنی حیاتی را کاهش دهد. ژاپن ۴۶۶ میلیون دلار به شرکت دولتی مس شیلی وام داده تا تقاضای رو به رشد برای مس در زیرساخت‌های انرژی تجدیدپذیر، مراکز داده و وسایل نقلیه الکتریکی را تأمین کند. استارتاپ Bureo تورهای ماهیگیری گمشده را جمع‌آوری و به نخ نایلونی برای تولید پوشاک ضدآب تبدیل می‌کند، که به کاهش آلودگی اقیانوسی کمک می‌کند.",
+      "description": "00:12 - Meet the woman making safer batteries:\nIt was the forgotten idea of a Nobel-winning scientist. Now, Emilie Bodoin is turning it into reality. The Founder and CEO of Pure Lithium has revived the ‘lithium metal battery’ – an alternative to the lithium-ion batteries we know from electric vehicles, and a breakthrough that could make batteries lighter, safer and more efficient – all while reducing dependence on critical mineral supply chains.\n\n04:08 - Why countries are scrambling for copper:\nWhy did Japan just lend $466 million to Chile’s state copper mining company? The answer lies in the energy transition. Whether it’s solar farms, data centres or electric vehicles, tomorrow’s infrastructure relies on critical minerals. And none is more crucial than copper, which is used almost anywhere electricity is generated, transmitted or used.\n\n06:03 - Turning discarded nets into sportswear:\nFishing nets can take decades to break down - and when they’re lost at sea, they can entangle marine life and damage ocean habitats. Start-up Bureo collects discarded nets from around the world, then recycles them into nylon yarn for waterproof jackets, hats and sportswear.\n\n* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "باتری‌های لیتیوم‑فلزی می‌توانند فشار بر منابع معدنی استراتژیک را کاهش دهند، در حالی که تأمین مس برای زیرساخت‌های انرژی پاک ضروری است؛ این دو روند نشان می‌دهد که نوآوری‌های مواد و سرمایه‌گذاری‌های مالی به‌صورت همزمان برای پایداری زنجیره‌های تأمین و کاهش اثرات زیست‌محیطی ضروری هستند. بازیافت تورهای ماهیگیری نیز یک مدل تجاری مقیاس‌پذیر برای تبدیل زباله‌های دریایی به محصولات با ارزش ایجاد می‌کند.",
+      "link": "https://www.youtube.com/watch?v=W2FQsCOU0Eg",
+      "posted_at": 1789295905
     }
   }
 }

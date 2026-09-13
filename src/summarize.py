@@ -3,8 +3,8 @@ import json
 import os
 import re
 
+from education_editor import news_terminology_review_prompt, normalize_editorial_text
 from llm_router_light import call_llm_with_fallback, get_quality_chain
-from education_editor import normalize_editorial_text, news_terminology_review_prompt
 from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_ratio
 
 _DEPTH = {

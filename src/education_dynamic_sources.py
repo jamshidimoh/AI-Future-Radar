@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import re
 
-
 # Curated, durable source pool. Availability is checked at runtime by the
 # existing _fetch_reference + education_source_policy gates.
 SOURCE_POOL = [

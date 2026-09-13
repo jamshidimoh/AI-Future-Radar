@@ -304,5 +304,5 @@ def test_production_launcher_activates_router_when_production_mode_is_enabled(mo
     monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     sys.modules.pop("scripts.production_with_ranking_audit", None)
-    import scripts.production_with_ranking_audit
+    import scripts.production_with_ranking_audit  # noqa: F401
     assert router._PRODUCTION_POLICY_APPLIED is True

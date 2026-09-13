@@ -12,7 +12,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 REQUIRED_FIELDS = (
     "case_id",
     "source_items",

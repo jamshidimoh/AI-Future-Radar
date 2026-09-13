@@ -46,8 +46,8 @@ def test_ledger_requires_confirmed_message_id():
 
 
 def test_final_story_guard_blocks_duplicate_within_current_run(monkeypatch):
-    import src.publication_orchestrator as orchestrator
     import src.publication_guard as publication_guard
+    import src.publication_orchestrator as orchestrator
 
     monkeypatch.setattr(publication_guard, "_load_records", lambda: [])
     orchestrator._CURRENT_RUN_PUBLICATIONS.clear()

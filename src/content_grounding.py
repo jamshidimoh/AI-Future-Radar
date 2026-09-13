@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 import json
-from collections import Counter
 import re
+from collections import Counter
 
-from llm_router_light import call_llm_with_fallback, get_quality_chain
 from education_editor import normalize_editorial_text
+from llm_router_light import call_llm_with_fallback, get_quality_chain
 
 _TOKEN_RE = re.compile(r"[A-Za-z0-9_./+#:-]+|[\u0600-\u06FF]+")
 _STOP = {"the", "and", "for", "with", "from", "this", "that", "about", "into", "این", "آن", "برای", "با", "در", "از", "به", "که", "و", "یک"}

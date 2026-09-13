@@ -29,10 +29,6 @@ def test_same_story_from_different_people_is_one_story():
 
 
 def test_rewritten_story_across_runs_is_rejected():
-    history_item = {
-        "title": "Andrew Ng launches a new AI agents course",
-        "description": "A new course teaches developers how to build AI agents.",
-    }
     candidate = {
         "title": "New developer program teaches practical AI agent building",
         "description": "Andrew Ng's course focuses on building AI agents for developers.",

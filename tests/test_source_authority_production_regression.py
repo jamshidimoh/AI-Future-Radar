@@ -1,7 +1,7 @@
 import unittest
 
-from src.mission_selector import _source_tier
 from main import _split_protected
+from src.mission_selector import _source_tier
 
 
 class SourceAuthorityProductionRegressionTests(unittest.TestCase):

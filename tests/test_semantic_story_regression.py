@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
-from semantic_dedup import deduplicate_semantically, get_story_signature, _similarity
+from semantic_dedup import _similarity, deduplicate_semantically, get_story_signature
 
 
 def test_rewritten_title_same_story_is_rejected():

@@ -11,7 +11,6 @@ from typing import Any
 
 from src.delivery_contract import DeliveryOutcome, DeliveryStatus, duplicate, transport_failed
 
-
 Policy = Callable[[Mapping[str, Any]], DeliveryOutcome]
 Deliver = Callable[[Mapping[str, Any]], DeliveryOutcome]
 Ledger = Callable[[Mapping[str, Any], DeliveryOutcome], None]

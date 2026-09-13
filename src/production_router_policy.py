@@ -66,9 +66,7 @@ def _persistently_unavailable(deployment_id: str) -> bool:
         return True
     family = router._provider_family(deployment_id)
     provider = providers.get(family) if isinstance(providers, dict) else None
-    if isinstance(provider, dict) and float(provider.get("disabled_until", 0) or 0) > now:
-        return True
-    return False
+    return isinstance(provider, dict) and float(provider.get("disabled_until", 0) or 0) > now
 
 
 def _install_production_circuit_breaker() -> None:

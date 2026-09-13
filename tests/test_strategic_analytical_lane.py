@@ -1,7 +1,6 @@
 from production_entrypoint import _is_strategic_analytical_signal, normal_news_policy_allowed
 from src.source_authority import resolve_source_tier
 
-
 HARARI_BASE = {
     "is_leader_watch": True,
     "leader": "Yuval Noah Harari",

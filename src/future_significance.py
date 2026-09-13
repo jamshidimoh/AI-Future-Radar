@@ -6,9 +6,10 @@ technological trajectory, capability change, and future impact.
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
-import re
+
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]

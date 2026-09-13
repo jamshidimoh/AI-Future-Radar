@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STATIC_PATH = ROOT / "config" / "free_model_registry.yaml"
 RUNTIME_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 TIMEOUT = 12
+UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
 
 
 def _load_static() -> dict:
@@ -229,7 +230,7 @@ def refresh() -> dict:
     token_kira = os.getenv("KIRAAI_API_KEY")
     token_gemini = os.getenv("GEMINI_API_KEY")
     token_flr = os.getenv("FREE_LLM_ROUTER_API_KEY")
-    generated_at = datetime.now(timezone.utc).isoformat()
+    generated_at = datetime.now(UTC).isoformat()
 
     or_auth_ok, or_auth_reason = _openrouter_auth(token_or)
     or_models, or_catalog_reason = _openrouter_models(token_or)

@@ -14,7 +14,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import period_ranked_pipeline as pipeline
-from model_release_priority import model_release_bonus
 from src.content_grounding import ensure_source_grounding
 from src.headline_grounding import ensure_headline_grounding
 from src.production_router_policy import apply as apply_production_router_policy
@@ -322,7 +321,6 @@ def _audited_main(hooks=None):
 pipeline.main = _audited_main
 
 import production_resilient_runner  # noqa: E402
-
 
 if __name__ == "__main__":
     # The launcher reaches __main__ only for an actual production invocation;

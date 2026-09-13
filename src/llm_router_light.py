@@ -136,7 +136,7 @@ def _chain_key():
 def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY
     key=_chain_key()
-    if _CHAIN_CACHE is not None and _CHAIN_CACHE_KEY==key: return ProductionQualityChain(_CHAIN_CACHE)
+    if _CHAIN_CACHE is not None and key == _CHAIN_CACHE_KEY: return ProductionQualityChain(_CHAIN_CACHE)
     from free_model_registry import build_production_chain
     chain=build_production_chain(__import__(__name__)); _CHAIN_CACHE=list(chain); _CHAIN_CACHE_KEY=key
     print("[Light Router] chain="+", ".join(n for n,_ in chain),flush=True); return ProductionQualityChain(_CHAIN_CACHE)
@@ -151,7 +151,7 @@ def _get_litellm_router():
     model_list=_litellm_model_list()
     if not model_list: return None
     key=tuple((x["model_info"]["id"],x["litellm_params"]["model"]) for x in model_list)
-    if _LITELLM_ROUTER is not None and _LITELLM_ROUTER_KEY==key: return _LITELLM_ROUTER
+    if _LITELLM_ROUTER is not None and key == _LITELLM_ROUTER_KEY: return _LITELLM_ROUTER
     try:
         from litellm import Router
         _LITELLM_ROUTER=Router(model_list=model_list,num_retries=0,retry_after=0,timeout=8,allowed_fails=1,cooldown_time=45,enable_pre_call_checks=True,fallbacks=[]); _LITELLM_ROUTER_KEY=key

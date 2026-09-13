@@ -3,14 +3,22 @@ from __future__ import annotations
 
 import json
 import os
-import re
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from src.editorial_quality_policy import news_language_ok, normal_score_allowed, persian_ratio, protected_score_allowed, NORMAL_SCORE_FLOOR, PROTECTED_SCORE_FLOOR
+from src.editorial_quality_policy import (
+    NORMAL_SCORE_FLOOR,
+    PROTECTED_SCORE_FLOOR,
+    news_language_ok,
+    normal_score_allowed,
+    persian_ratio,
+    protected_score_allowed,
+)
 from src.priority_people import is_substantive_priority_interview
 from src.unified_editorial_selection import load_editorial_contract
+
+UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
 
 ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
@@ -47,12 +55,12 @@ def _save_cadence(state: dict) -> None:
 
 
 def _tehran_now() -> datetime:
-    return datetime.now(timezone.utc).astimezone(TEHRAN)
+    return datetime.now(UTC).astimezone(TEHRAN)
 
 
 def _education_slot(now: datetime | None = None) -> str | None:
     now = now or _tehran_now()
-    for hour, minute, name in EDUCATION_WINDOWS_TEHRAN:
+    for hour, _, name in EDUCATION_WINDOWS_TEHRAN:
         start = now.replace(hour=hour, minute=0, second=0, microsecond=0)
         end = now.replace(hour=hour + 1, minute=30, second=0, microsecond=0)
         if start <= now <= end:
@@ -191,9 +199,7 @@ def _is_strategic_analytical_signal(item: dict) -> bool:
         str(item.get(key) or "").strip().casefold()
         for key in ("source", "source_name", "source_type", "source_domain")
     )
-    if any(marker in source_text for marker in ("reddit", "community")):
-        return False
-    return True
+    return not any(marker in source_text for marker in ("reddit", "community"))
 
 
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
@@ -241,10 +247,10 @@ def main(*, skip_education: bool = False) -> int:
     from educational_content import build_educational_item, commit_education_lesson
     from educational_telegram_style import format_educational_post
     from llm_router_light import call_llm_with_fallback, get_quality_chain
-    from telegram_feedback import ingest_from_env, load_feedback, register_post, save_feedback
     from src.delivery_contract import DeliveryStatus, delivered, policy_blocked, transport_failed
     from src.production_publication_adapter import publish_production_story
     from src.publication_contract import unique_candidates
+    from telegram_feedback import ingest_from_env, load_feedback, register_post, save_feedback
     from telegram_single_delivery import send
 
     cadence = _load_cadence()

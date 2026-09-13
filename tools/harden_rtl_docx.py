@@ -188,53 +188,52 @@ def harden_settings(root: ET.Element, locale: str) -> int:
 
 
 def process(src: Path, dst: Path, locale: str, validate: bool) -> int:
-    with zipfile.ZipFile(src, "r") as zin:
-        with tempfile.TemporaryDirectory() as td:
-            temp = Path(td)
-            for info in zin.infolist():
-                out = temp / info.filename
-                out.parent.mkdir(parents=True, exist_ok=True)
-                out.write_bytes(zin.read(info.filename))
+    with zipfile.ZipFile(src, "r") as zin, tempfile.TemporaryDirectory() as td:
+        temp = Path(td)
+        for info in zin.infolist():
+            out = temp / info.filename
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_bytes(zin.read(info.filename))
 
-            changes = 0
-            # settings.xml
-            settings = temp / "word" / "settings.xml"
-            if settings.exists():
-                root = ET.parse(settings).getroot()
-                changes += harden_settings(root, locale)
-                ET.ElementTree(root).write(settings, encoding="utf-8", xml_declaration=True)
+        changes = 0
+        # settings.xml
+        settings = temp / "word" / "settings.xml"
+        if settings.exists():
+            root = ET.parse(settings).getroot()
+            changes += harden_settings(root, locale)
+            ET.ElementTree(root).write(settings, encoding="utf-8", xml_declaration=True)
 
-            # styles.xml
-            styles = temp / "word" / "styles.xml"
-            if styles.exists():
-                root = ET.parse(styles).getroot()
-                changes += harden_styles(root, locale)
-                ET.ElementTree(root).write(styles, encoding="utf-8", xml_declaration=True)
+        # styles.xml
+        styles = temp / "word" / "styles.xml"
+        if styles.exists():
+            root = ET.parse(styles).getroot()
+            changes += harden_styles(root, locale)
+            ET.ElementTree(root).write(styles, encoding="utf-8", xml_declaration=True)
 
-            # document + headers/footers
-            word_dir = temp / "word"
-            targets = [word_dir / "document.xml", *sorted(word_dir.glob("header*.xml")), *sorted(word_dir.glob("footer*.xml"))]
-            for path in targets:
-                if not path.exists():
-                    continue
-                root = ET.parse(path).getroot()
-                c, _ = harden_document(root)
-                changes += c
-                ET.ElementTree(root).write(path, encoding="utf-8", xml_declaration=True)
+        # document + headers/footers
+        word_dir = temp / "word"
+        targets = [word_dir / "document.xml", *sorted(word_dir.glob("header*.xml")), *sorted(word_dir.glob("footer*.xml"))]
+        for path in targets:
+            if not path.exists():
+                continue
+            root = ET.parse(path).getroot()
+            c, _ = harden_document(root)
+            changes += c
+            ET.ElementTree(root).write(path, encoding="utf-8", xml_declaration=True)
 
-            if validate:
-                settings_root = ET.parse(settings).getroot() if settings.exists() else None
-                styles_root = ET.parse(styles).getroot() if styles.exists() else None
-                if settings_root is not None and settings_root.find("w:themeFontLang", NS) is None:
-                    raise SystemExit("RTL validation failed: settings.xml missing themeFontLang")
-                if styles_root is not None and styles_root.find(".//w:lang[@w:bidi]", NS) is None:
-                    raise SystemExit("RTL validation failed: styles.xml missing bidi language")
+        if validate:
+            settings_root = ET.parse(settings).getroot() if settings.exists() else None
+            styles_root = ET.parse(styles).getroot() if styles.exists() else None
+            if settings_root is not None and settings_root.find("w:themeFontLang", NS) is None:
+                raise SystemExit("RTL validation failed: settings.xml missing themeFontLang")
+            if styles_root is not None and styles_root.find(".//w:lang[@w:bidi]", NS) is None:
+                raise SystemExit("RTL validation failed: styles.xml missing bidi language")
 
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            with zipfile.ZipFile(dst, "w", compression=zipfile.ZIP_DEFLATED) as zout:
-                for path in temp.rglob("*"):
-                    if path.is_file():
-                        zout.write(path, path.relative_to(temp).as_posix())
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(dst, "w", compression=zipfile.ZIP_DEFLATED) as zout:
+            for path in temp.rglob("*"):
+                if path.is_file():
+                    zout.write(path, path.relative_to(temp).as_posix())
 
     print(f"RTL hardening: changes={changes}; locale={locale}; output={dst}")
     return changes

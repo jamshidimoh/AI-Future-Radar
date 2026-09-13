@@ -125,10 +125,10 @@ def main() -> int:
         try:
             item = _build_with_deterministic_recovery()
             if item:
+                from educational_content import commit_education_lesson
                 from educational_telegram_style import format_educational_post
                 from telegram_feedback import load_feedback, register_post, save_feedback
                 from telegram_single_delivery import send
-                from educational_content import commit_education_lesson
                 text = format_educational_post(item)
                 outcome = send(text, image_url="", source_link=str(item.get("link") or item.get("url") or ""))
                 message_id = getattr(outcome, "message_id", None) if outcome is not None else None

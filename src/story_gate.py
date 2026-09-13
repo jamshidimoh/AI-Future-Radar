@@ -1,6 +1,6 @@
 """Canonical Story Gate and canonical score boundary."""
-from future_significance import annotate_future_significance, is_low_future_value
 from editorial_score_v2 import score_editorial_v2
+from future_significance import annotate_future_significance, is_low_future_value
 from story_identity import deduplicate_stories
 from technology_signal_v2 import calculate_technology_signal_score
 

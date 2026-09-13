@@ -8,6 +8,6 @@ def test_publication_contract_invariants():
 
 def test_rank_baseline_is_strictly_greater():
     previous = 100.0
-    assert 100.1 > previous
-    assert not (100.0 > previous)
-    assert not (99.9 > previous)
+    assert previous < 100.1
+    assert not (previous < 100.0)
+    assert not (previous < 99.9)

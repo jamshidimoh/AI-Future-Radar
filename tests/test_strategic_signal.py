@@ -1,7 +1,7 @@
 import unittest
 
-from src.strategic_signal import strategic_forecast_score
 from src.editorial import _apply_strategic_signal
+from src.strategic_signal import strategic_forecast_score
 
 
 class StrategicSignalTests(unittest.TestCase):

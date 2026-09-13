@@ -1,9 +1,11 @@
 import sys
 import unittest
 from pathlib import Path
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from editorial import filter_ai_relevance
+
 
 class DomainRegressionTests(unittest.TestCase):
     def check(self, title, summary, category="ai", **extra):

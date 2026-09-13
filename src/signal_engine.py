@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
+UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
+
 INTERVIEW_TERMS = {"interview", "conversation", "fireside", "keynote", "podcast", "discussion", "q&a", "dialogue"}
 FUTURE_TERMS = {"future", "forecast", "trajectory", "implications", "next generation", "long term", "long-term", "prediction"}
 NOVELTY_TERMS = {"new", "novel", "first", "breakthrough", "introduces", "introduced", "unveils", "unveiled", "new model", "new architecture"}
@@ -32,8 +34,8 @@ def _age_hours(value: str | None) -> float | None:
         return None
     for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ"):
         try:
-            dt = datetime.strptime(value, fmt).replace(tzinfo=timezone.utc)
-            return max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 3600)
+            dt = datetime.strptime(value, fmt).replace(tzinfo=UTC)
+            return max(0.0, (datetime.now(UTC) - dt).total_seconds() / 3600)
         except ValueError:
             pass
     return None

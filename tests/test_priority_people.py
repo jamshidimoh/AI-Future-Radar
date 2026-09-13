@@ -1,4 +1,4 @@
-from src.priority_people import TOP_AI_VOICES, is_substantive_priority_interview, priority_people_bonus, matched_priority_people, priority_people_features
+from src.priority_people import TOP_AI_VOICES, is_substantive_priority_interview, matched_priority_people, priority_people_bonus, priority_people_features
 
 
 def test_exactly_twenty_unique_priority_voices():

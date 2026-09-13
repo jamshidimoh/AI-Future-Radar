@@ -88,11 +88,10 @@ def has_interview_evidence(item):
     interview_media = source_type in _VIDEO_SOURCE_TYPES or any(
         token in source for token in ("youtube", "podcast", "spotify")
     )
-    if interview_media and (
+    return interview_media and (
         content_type in INTERVIEW_CONTENT_TYPES
         or _contains_interview_term(_text(item))
-    ):
-        return True
+    )
 
     # Generic content_type=interview without trustworthy provenance is not enough.
     return False

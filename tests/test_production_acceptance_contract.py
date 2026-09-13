@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from src.editorial_quality_policy import normal_score_allowed, NORMAL_SCORE_FLOOR
-from scripts.production_acceptance_guard import validate
 from production_entrypoint import _bound_runtime_candidates, _is_tier0_publication_candidate
+from scripts.production_acceptance_guard import validate
+from src.editorial_quality_policy import NORMAL_SCORE_FLOOR, normal_score_allowed
 
 ROOT = Path(__file__).resolve().parents[1]
 MISSION_POLICY = ROOT / "config" / "mission_policy.yaml"

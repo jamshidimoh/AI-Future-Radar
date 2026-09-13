@@ -79,9 +79,7 @@ def is_major_model_release(item):
     model_signal = explicit or named_model
     if not model_signal or not release or not lab:
         return False
-    if content_type not in {"product_news", "official", "news", "research"}:
-        return False
-    return True
+    return content_type in {"product_news", "official", "news", "research"}
 
 
 def model_release_bonus(item):

@@ -1,0 +1,25 @@
+[project]
+name = "ai-future-radar"
+version = "1.0.1"
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 160
+extend-exclude = [".venv", "digital_transformation_booklet"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501", "E701", "E702", "E731", "B905"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.lint.per-file-ignores]
+"main.py" = ["E402"]
+"scripts/education_recovery.py" = ["E402"]
+"scripts/production_with_ranking_audit.py" = ["E402"]
+"tests/*.py" = ["E402"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

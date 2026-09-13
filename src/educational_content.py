@@ -11,11 +11,11 @@ from typing import Any
 import requests
 import yaml
 
+from education_dynamic_sources import dynamic_source_candidates, rank_verified_sources
 from education_editor import normalize_education_item, terminology_review_prompt
 from education_source_policy import MIN_CURRENT_YEAR, assess_source, validate_current_sources
-from education_dynamic_sources import dynamic_source_candidates, rank_verified_sources
+from educational_telegram_style import format_educational_post  # noqa: F401
 from llm_router_light import call_llm_with_fallback, get_quality_chain
-from educational_telegram_style import format_educational_post
 
 MIN_SOURCE_YEAR = MIN_CURRENT_YEAR
 ROOT = Path(__file__).resolve().parent.parent
@@ -114,7 +114,7 @@ def _next_lesson():
     if not sequence:
         return None, 0, 0
     completed = _completed_ids()
-    for idx, (track, lesson) in enumerate(sequence):
+    for _, lesson in sequence:
         lesson_id = int(lesson.get("id", 0) or 0)
         if lesson_id and lesson_id not in completed:
             return lesson, lesson_id, len(sequence)

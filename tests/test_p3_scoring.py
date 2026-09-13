@@ -1,6 +1,8 @@
+from editorial_score_v2 import WEIGHTS as EDITORIAL_WEIGHTS
+from editorial_score_v2 import score_editorial_v2
 from story_gate import gate_story_candidates, story_representative_rank_key
-from technology_signal_v2 import WEIGHTS as SIGNAL_WEIGHTS, calculate_technology_signal_score
-from editorial_score_v2 import WEIGHTS as EDITORIAL_WEIGHTS, score_editorial_v2
+from technology_signal_v2 import WEIGHTS as SIGNAL_WEIGHTS
+from technology_signal_v2 import calculate_technology_signal_score
 
 
 def test_editorial_score_excludes_signal_features():

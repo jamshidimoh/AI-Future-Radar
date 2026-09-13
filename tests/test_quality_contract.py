@@ -8,12 +8,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-from src.editorial import classify_editorial_item, filter_ai_relevance, enrich_items, select_editorial
+import main as pipeline
+from llm_router_light import _select_hf_model
+from src.editorial import classify_editorial_item, enrich_items, filter_ai_relevance, select_editorial
 from src.semantic_dedup import deduplicate_semantically
 from src.send_telegram import _youtube_thumbnail
 from summarize import _extract_json, _normalize
-from llm_router_light import _select_hf_model
-import main as pipeline
 
 
 class QualityContractTests(unittest.TestCase):

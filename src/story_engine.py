@@ -4,8 +4,8 @@ from __future__ import annotations
 import hashlib
 import re
 from collections import defaultdict
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Sequence
 
 from radar_models import SourceItem, Story
 

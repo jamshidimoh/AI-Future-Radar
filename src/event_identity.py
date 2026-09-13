@@ -1,10 +1,13 @@
 """Hybrid event identity matcher used by the publication dedup gate."""
 from __future__ import annotations
+
 import re
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
 from functools import lru_cache
 from typing import Any
+
+UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
 
 ALIASES = {
     "meta": ("meta", "متا"), "mark_zuckerberg": ("mark zuckerberg", "zuckerberg", "مارک زاکربرگ", "زاکربرگ"),
@@ -51,7 +54,7 @@ def jac(a:set[str],b:set[str])->float: return len(a&b)/len(a|b) if a and b else 
 def _time(value: Any):
     if not value: return None
     try:
-        d=datetime.fromisoformat(str(value).replace("Z","+00:00")); return d if d.tzinfo else d.replace(tzinfo=timezone.utc)
+        d=datetime.fromisoformat(str(value).replace("Z","+00:00")); return d if d.tzinfo else d.replace(tzinfo=UTC)
     except ValueError: return None
 
 @lru_cache(maxsize=4096)

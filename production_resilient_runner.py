@@ -174,9 +174,9 @@ def _publish_education_after_news(run_number: int) -> bool:
     from educational_content import build_educational_item, commit_education_lesson
     from educational_telegram_style import format_educational_post
     from llm_router_light import call_llm_with_fallback, get_quality_chain
+    from src.education_production_fallback import publish_required_education
     from telegram_feedback import load_feedback, register_post, save_feedback
     from telegram_single_delivery import send
-    from src.education_production_fallback import publish_required_education
 
     feedback_path = production_entrypoint.FEEDBACK_PATH
     cadence = production_entrypoint._load_cadence()

@@ -4,10 +4,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+import dedup
 from event_identity import compare_events
 from semantic_dedup import encode_story_signature
 from story_identity import deduplicate_stories, is_story_duplicate
-import dedup
 
 
 def item(title, summary="", published="2026-09-09T00:00:00+00:00"):

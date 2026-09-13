@@ -2,6 +2,7 @@
 import json
 import os
 import time
+from contextlib import suppress
 
 try:
     from .canonical_story import canonical_url, normalize_title, story_id, url_id
@@ -27,14 +28,14 @@ def _story_id(item): return story_id(item)
 def _load_state():
     if not os.path.exists(STATE_FILE): return {}
     try:
-        with open(STATE_FILE, "r", encoding="utf-8") as f: return json.load(f)
+        with open(STATE_FILE, encoding="utf-8") as f: return json.load(f)
     except Exception: return {}
 
 
 def _load_feedback_records():
     if not os.path.exists(FEEDBACK_FILE): return []
     try:
-        with open(FEEDBACK_FILE, "r", encoding="utf-8") as f: data = json.load(f)
+        with open(FEEDBACK_FILE, encoding="utf-8") as f: data = json.load(f)
         messages = data.get("messages", {}) if isinstance(data, dict) else {}
         return [m for m in messages.values() if isinstance(m, dict)] if isinstance(messages, dict) else []
     except Exception as exc:
@@ -44,7 +45,8 @@ def _load_feedback_records():
 def _reconcile_feedback(seen_hashes, seen_signatures):
     records = _load_feedback_records()
     if not records: return seen_hashes, seen_signatures, 0
-    try: from semantic_dedup import encode_story_signature
+    try:
+        from semantic_dedup import encode_story_signature
     except Exception: encode_story_signature = None
     before_h, before_s = len(seen_hashes), len(seen_signatures)
     for record in records:
@@ -55,8 +57,8 @@ def _reconcile_feedback(seen_hashes, seen_signatures):
             identity = _story_id(item)
             if identity: seen_signatures.append(STORY_MARKER + identity)
             if encode_story_signature:
-                try: seen_signatures.append(encode_story_signature(item))
-                except Exception: pass
+                with suppress(Exception):
+                    seen_signatures.append(encode_story_signature(item))
     return seen_hashes, seen_signatures, (len(seen_hashes)-before_h)+(len(seen_signatures)-before_s)
 
 
@@ -150,12 +152,11 @@ def _event_match(item, signatures):
             kind,score,_=compare_events(item,prior)
             if kind=="DUPLICATE": return True,score
         if _is_leader_exception(item):
-            from semantic_dedup import get_story_signature, _similarity, SEMANTIC_MARKER
+            from semantic_dedup import SEMANTIC_MARKER, _similarity, get_story_signature
             candidate = get_story_signature(item)
             for stored in signatures or []:
-                if isinstance(stored, str) and stored.startswith(SEMANTIC_MARKER):
-                    if _similarity(candidate, stored) >= 0.45:
-                        return True, 0.45
+                if isinstance(stored, str) and stored.startswith(SEMANTIC_MARKER) and _similarity(candidate, stored) >= 0.45:
+                    return True, 0.45
     except Exception as exc:
         print(f"[Event Identity] history match unavailable: {exc}", flush=True)
     return False,0.0
@@ -163,7 +164,7 @@ def _event_match(item, signatures):
 
 def _semantic_history_match(item, signatures):
     try:
-        from semantic_dedup import get_story_signature,_similarity,SEMANTIC_MARKER
+        from semantic_dedup import SEMANTIC_MARKER, _similarity, get_story_signature
         from semantic_threshold import semantic_threshold
     except Exception: return 0.0
     candidate=get_story_signature(item); threshold=semantic_threshold(item,local=False); best=0.0
@@ -202,7 +203,7 @@ def filter_new_items(items, seen_hashes):
                 rejected_semantic+=1; continue
         except Exception: pass
         try:
-            from semantic_dedup import get_story_signature,_similarity
+            from semantic_dedup import _similarity, get_story_signature
             candidate_sig=get_story_signature(item)
             local_match=max((_similarity(candidate_sig,p) for p in local_semantic),default=0.0)
             from semantic_threshold import semantic_threshold
@@ -216,7 +217,7 @@ def filter_new_items(items, seen_hashes):
 
 
 def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
-    from semantic_dedup import encode_story_signature,get_signature
+    from semantic_dedup import encode_story_signature, get_signature
     if _is_education(item):
         identity=_education_identity(item)
         if identity: seen_signatures.append(STORY_MARKER+identity)
@@ -226,7 +227,7 @@ def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
     if _is_protected_leader(item): seen_signatures.append(PROTECTED_MARKER+link_hash)
     if identity: seen_signatures.append(STORY_MARKER+identity)
     seen_signatures.append(get_signature(item.get("title", ""))); seen_signatures.append(encode_story_signature(item))
-    try: seen_signatures.append(EVENT_MARKER+json.dumps(_event_payload(item),ensure_ascii=False,sort_keys=True,separators=(",",":")))
-    except Exception: pass
+    with suppress(Exception):
+        seen_signatures.append(EVENT_MARKER+json.dumps(_event_payload(item),ensure_ascii=False,sort_keys=True,separators=(",",":")))
     if source_history is not None: source_history.append({"ts":int(time.time()),"source":item.get("source","unknown"),"category":item.get("category","ai"),"content_type":item.get("content_type","news"),"leader":item.get("leader") or item.get("watch_person") or item.get("_leader_match", ""),"story_id":identity})
     return seen_hashes,seen_signatures,source_history

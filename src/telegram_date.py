@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from datetime import datetime
 
 PERSIAN_DIGITS = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")

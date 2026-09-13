@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fetch_youtube import _resolve_handle_to_channel_id, _fetch_channel_feed
+from fetch_youtube import _fetch_channel_feed, _resolve_handle_to_channel_id
 
 
 class YouTubeResolutionTests(unittest.TestCase):

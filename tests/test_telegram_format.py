@@ -6,8 +6,8 @@ from unittest.mock import Mock, patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
 import telegram_single_delivery
+from send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
 
 
 class TelegramFormatTests(unittest.TestCase):

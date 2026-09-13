@@ -1,7 +1,7 @@
 import unittest
 
-from src.editorial import classify_editorial_item, select_editorial
 from main import _annotate_named_leader_interviews, _split_protected
+from src.editorial import classify_editorial_item, select_editorial
 
 
 class ContentSelectionTests(unittest.TestCase):

@@ -8,14 +8,15 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
 AUDIT_DIR = ROOT / "artifacts" / "ranking_audit"
 AUDIT_PATH = AUDIT_DIR / "ranking_audit.jsonl"
 SUMMARY_PATH = AUDIT_DIR / "ranking_audit_summary.json"
+UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
 
 
 def _num(value):
@@ -35,7 +36,7 @@ def _record(item: dict, audit_index: int) -> dict:
         "run_id": os.getenv("GITHUB_RUN_ID") or "local",
         "run_number": os.getenv("GITHUB_RUN_NUMBER") or "local",
         "commit_sha": os.getenv("GITHUB_SHA") or "unknown",
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": datetime.now(UTC).isoformat(),
         "audit_index": audit_index,
         "period_rank": item.get("period_rank"),
         "normal_period_rank": item.get("normal_period_rank"),
@@ -97,7 +98,7 @@ def audit_selection(items: Iterable[dict]) -> Path:
         "commit_sha": os.getenv("GITHUB_SHA") or "unknown",
         "record_count": len(rows),
         "max_period_rank": max((row.get("period_rank") or 0 for row in rows), default=0),
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": datetime.now(UTC).isoformat(),
         "path": _display_path(AUDIT_PATH),
     }
     SUMMARY_PATH.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

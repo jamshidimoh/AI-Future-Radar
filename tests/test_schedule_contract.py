@@ -1,5 +1,5 @@
-from pathlib import Path
 import re
+from pathlib import Path
 
 RUN_WORKFLOW = Path('.github/workflows/run.yml').read_text(encoding='utf-8')
 

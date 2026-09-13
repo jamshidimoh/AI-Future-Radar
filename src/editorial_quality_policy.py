@@ -176,19 +176,14 @@ def headline_quality_ok(title: str) -> bool:
         return False
     if re.search(r"\b(?:BREAKING|SHOCKING|MUST SEE|WOW)\b", value, re.I):
         return False
-    if re.search(r"(.)\1\1\1", value):
-        return False
-    return True
+    return not re.search(r"(.)\1\1\1", value)
 
 
 def terminology_safety_ok(text: str) -> bool:
     value = str(text or "")
     if any(ch in value for ch in _BIDI_CONTROLS):
         return False
-    for token in _LTR_TOKEN_RE.findall(value):
-        if len(token) > LATIN_TOKEN_MAX_CHARS and not _URL_RE.match(token):
-            return False
-    return True
+    return all(not (len(token) > LATIN_TOKEN_MAX_CHARS and not _URL_RE.match(token)) for token in _LTR_TOKEN_RE.findall(value))
 
 
 def editorial_fields_ok(title: str, summary: str, why_it_matters: str) -> bool:

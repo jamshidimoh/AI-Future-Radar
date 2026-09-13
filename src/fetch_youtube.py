@@ -20,6 +20,8 @@ from datetime import datetime, timezone
 import feedparser
 import requests
 
+UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
+
 try:
     from youtube_transcript_api import YouTubeTranscriptApi
     TRANSCRIPT_AVAILABLE = True
@@ -107,7 +109,7 @@ def _parse_relative_age(label: str) -> str:
         "day": 86400, "days": 86400,
         "week": 604800, "weeks": 604800,
     }[match.group(2)]
-    return datetime.fromtimestamp(datetime.now(timezone.utc).timestamp() - value * seconds, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+    return datetime.fromtimestamp(datetime.now(UTC).timestamp() - value * seconds, tz=UTC).strftime("%Y-%m-%d %H:%M")
 
 
 def _youtube_api_key() -> str:
@@ -165,7 +167,7 @@ def _fetch_via_data_api(channel_id: str, channel_name: str, cutoff: float) -> li
                 "title": html.unescape(title),
                 "link": f"https://www.youtube.com/watch?v={video_id}",
                 "summary": html.unescape(str(snippet.get("description") or "")),
-                "published": datetime.fromtimestamp(published_ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M") if published_ts else "",
+                "published": datetime.fromtimestamp(published_ts, tz=UTC).strftime("%Y-%m-%d %H:%M") if published_ts else "",
             })
         if results:
             print(f"[YouTube Data API] channel={channel_name} items={len(results)}", flush=True)
@@ -209,8 +211,8 @@ def _walk_video_renderers(node, out: list[dict]) -> None:
             if runs and isinstance(runs[0], dict):
                 title = str(runs[0].get("text") or "").strip()
             if not title:
-                title = str((title_obj.get("simpleText") or "")).strip()
-            pub = str(((renderer.get("publishedTimeText") or {}).get("simpleText") or "")).strip()
+                title = str(title_obj.get("simpleText") or "").strip()
+            pub = str((renderer.get("publishedTimeText") or {}).get("simpleText") or "").strip()
             description_parts = []
             for detail in renderer.get("detailedMetadataSnippets") or []:
                 snippet = detail.get("snippet") or {}
@@ -287,7 +289,7 @@ def _fetch_channel_page_items(channel_id: str, channel_name: str, cutoff: float)
                 published = _parse_relative_age(item.get("published_label"))
                 if published:
                     try:
-                        ts = datetime.strptime(published, "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc).timestamp()
+                        ts = datetime.strptime(published, "%Y-%m-%d %H:%M").replace(tzinfo=UTC).timestamp()
                         if ts < cutoff:
                             continue
                     except ValueError:

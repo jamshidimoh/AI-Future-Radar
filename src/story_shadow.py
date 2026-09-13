@@ -1,11 +1,14 @@
 """Side-effect-free Story Engine shadow adapter for Radar 2.0."""
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime, timezone
-from typing import Any, Iterable
+from typing import Any
 
 from radar_models import SourceItem
 from story_engine import build_stories
+
+UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
 
 
 def _parse_datetime(value: Any) -> datetime | None:
@@ -22,7 +25,7 @@ def _parse_datetime(value: Any) -> datetime | None:
             return None
 
     if parsed.tzinfo is not None:
-        parsed = parsed.astimezone(timezone.utc).replace(tzinfo=None)
+        parsed = parsed.astimezone(UTC).replace(tzinfo=None)
     return parsed
 
 

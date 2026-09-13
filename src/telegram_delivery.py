@@ -4,6 +4,7 @@ from __future__ import annotations
 import html
 import os
 import re
+
 import requests
 
 from send_telegram import _compact_photo_caption

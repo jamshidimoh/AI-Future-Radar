@@ -1,18 +1,19 @@
 """دریافت اخبار به‌روز از Google News RSS با متادیتای کیفیت و Leader Watchlist."""
-import feedparser
-import requests
+import random
 import time
 import urllib.parse
-import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
+import feedparser
+import requests
+
 try:
-    from .source_exclusions import is_excluded_source_text, is_excluded_source_url
     from .source_authority import resolve_google_news_tier
+    from .source_exclusions import is_excluded_source_text, is_excluded_source_url
 except ImportError:
-    from source_exclusions import is_excluded_source_text, is_excluded_source_url
     from source_authority import resolve_google_news_tier
+    from source_exclusions import is_excluded_source_text, is_excluded_source_url
 
 _FEED_TIMEOUT_SECONDS = 8
 _MAX_WORKERS = 4
@@ -156,7 +157,7 @@ def fetch_google_news_items(queries, max_age_hours=36, max_workers=None, inter_q
     budget_seconds = _SERIAL_FETCH_BUDGET_SECONDS if max_seconds is None else max_seconds
     if workers == 1:
         consecutive_failures = 0; deadline = time.monotonic() + budget_seconds
-        for idx, q in enumerate(queries):
+        for q in queries:
             if time.monotonic() >= deadline: break
             q, items, error = _collect_query(q, cutoff)
             if error:

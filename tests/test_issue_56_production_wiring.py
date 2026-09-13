@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 PRODUCTION_ENTRYPOINT = Path(__file__).resolve().parents[1] / "production_entrypoint.py"
 
 

@@ -2,7 +2,8 @@ import html
 import json
 import os
 import re
-from urllib.parse import quote, urlparse, parse_qs
+from urllib.parse import parse_qs, quote, urlparse
+
 import requests
 
 CATEGORY_EMOJI = {"ai": "🤖", "quantum": "⚛️", "genetics": "🧬", "mind": "🧠", "future": "🔮"}
@@ -154,9 +155,7 @@ def _validate_remote_image(image_url):
             if not _image_signature_ok(prefix):
                 return False
             declared = response.headers.get("Content-Length")
-            if declared and declared.isdigit() and int(declared) < 256:
-                return False
-            return True
+            return not (declared and declared.isdigit() and int(declared) < 256)
     except requests.RequestException as exc:
         print(f"[WARN] Image validation failed: {exc}", flush=True)
         return False
@@ -264,9 +263,7 @@ def _telegram_preflight(token, channel):
         status = member.get("status")
         if chat.get("type") == "channel" and status not in {"administrator", "creator"}:
             return False
-        if chat.get("type") == "channel" and status == "administrator" and member.get("can_post_messages") is False:
-            return False
-        return True
+        return not (chat.get("type") == "channel" and status == "administrator" and member.get("can_post_messages") is False)
     except Exception as exc:
         print(f"[ERROR] Telegram destination verification exception: {exc}", flush=True)
         return False

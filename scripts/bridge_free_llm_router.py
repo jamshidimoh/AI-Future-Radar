@@ -19,6 +19,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 TIMEOUT = 12
+UTC = getattr(datetime, "UTC", timezone.utc)  # noqa: UP017
 MAX_CANDIDATES = 40
 MIN_QUALITY = 50.0
 MAX_QUALITY = 64.0
@@ -111,7 +112,7 @@ def bridge() -> dict:
     accepted = 0
     rejected = 0
     rejection_reasons: dict[str, int] = {}
-    generated_at = str(runtime.get("generated_at") or datetime.now(timezone.utc).isoformat())
+    generated_at = str(runtime.get("generated_at") or datetime.now(UTC).isoformat())
 
     for rank, flr_model in enumerate(flr_models, start=1):
         if not isinstance(flr_model, dict):

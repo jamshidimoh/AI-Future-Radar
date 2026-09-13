@@ -90,8 +90,6 @@ def _is_same_story_cached(
     comparable, prior_url, prior_features, prior_signature = prior
     if candidate_url and prior_url and candidate_url == prior_url:
         return True
-    if _is_protected_leader(candidate):
-        return False
     kind, _, _ = compare_event_features(candidate_features, prior_features)
     if kind == "DUPLICATE":
         return True

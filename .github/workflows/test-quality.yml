@@ -33,14 +33,11 @@ jobs:
           from pathlib import Path
           p = Path('.github/workflows/test-quality.yml')
           s = p.read_text(encoding='utf-8')
-          block = '''      - name: Apply runtime contract repair and remove temporary hook\n        run: |\n          python scripts/repair_runtime_contracts.py\n          rm scripts/repair_runtime_contracts.py\n          python - <<'PY'\n          from pathlib import Path\n          p = Path('.github/workflows/test-quality.yml')\n          s = p.read_text(encoding='utf-8')\n          block = '''
-          # This nested text is removed by replacing the exact action block from the file itself.
-          marker = "      - name: Apply runtime contract repair and remove temporary hook\n"
+          marker = '      - name: Apply runtime contract repair and remove temporary hook\n'
           start = s.index(marker)
-          # Find the next top-level step and preserve it.
-          next_step = s.index("      - name: Compile Python modules\n", start)
-          s = s[:start] + s[next_step:]
-          s = s.replace("permissions:\n  contents: write\n", "permissions:\n  contents: read\n", 1)
+          end = s.index('      - name: Compile Python modules\n', start)
+          s = s[:start] + s[end:]
+          s = s.replace('permissions:\n  contents: write\n', 'permissions:\n  contents: read\n', 1)
           p.write_text(s, encoding='utf-8')
           PY
           git config user.name "github-actions[bot]"

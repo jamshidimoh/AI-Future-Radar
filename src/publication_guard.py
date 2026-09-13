@@ -97,15 +97,19 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     semantic_score = _similarity(get_story_signature(candidate), get_story_signature(stored))
     anchors = shared_anchor_count(f"{candidate_title} {candidate_summary}", f"{stored_title} {stored_summary}")
 
+    # Cross-language or heavily rewritten copies can defeat event classification while
+    # still preserving multiple concrete anchors (proper names, products, numbers,
+    # identifiers). Three non-generic anchors are strong same-story evidence even when
+    # the event matcher conservatively labels the pair NEW/UPDATE.
+    if anchors >= 3:
+        return 0.82
+
     if kind in {"NEW", "UPDATE"}:
         return 0.0
 
     if kind == "DUPLICATE":
         score = max(semantic_score, event_score)
     elif kind == "RELATED" and anchors >= 3 and semantic_score >= 0.60:
-        # Event identity can be conservative with mixed Persian/English titles. Three
-        # concrete shared anchors plus substantial semantic similarity is sufficient for
-        # the final safety net, without treating a shared leader/company as a duplicate.
         score = max(0.82, semantic_score)
     else:
         return 0.0

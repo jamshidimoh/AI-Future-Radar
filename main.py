@@ -66,6 +66,21 @@ def _leader_source_authority(item):
         tier = None
     return max(0, 4 - tier) if tier is not None else 0
 
+def _apply_signal_ranking(items):
+    """Historical pre-selection signal uplift: 30% signal on top of pre-signal editorial score."""
+    for item in items:
+        try:
+            base = float(item.get("editorial_score_pre_signal", item.get("editorial_score", 0)) or 0.0)
+        except (TypeError, ValueError):
+            base = 0.0
+        try:
+            signal = float(item.get("signal_score", 0) or 0.0)
+        except (TypeError, ValueError):
+            signal = 0.0
+        item["editorial_score_pre_signal"] = round(base, 2)
+        item["editorial_score"] = round(base + 0.30 * signal, 2)
+    return items
+
 def _leader_activity_signal(item):
     ctype = str(item.get("content_type") or "").lower().strip()
     if ctype == "interview": return False

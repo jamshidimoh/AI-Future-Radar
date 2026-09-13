@@ -117,9 +117,7 @@ def _semantic_story_match(candidate_features: dict[str, Any], prior_features: di
     if shared_entities and shared_events and (title_similarity >= 0.62 or context_overlap >= 0.45):
         return True
     # Same event wording without a recognized entity alias.
-    if shared_events and context_overlap >= 0.62 and title_similarity >= 0.58:
-        return True
-    return False
+    return shared_events and context_overlap >= 0.62 and title_similarity >= 0.58
 
 
 def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candidate_features: dict[str, Any], candidate_signature: dict[str, Any], prior: tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None], allow_protected_event_match: bool = True) -> bool:

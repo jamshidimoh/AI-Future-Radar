@@ -138,7 +138,6 @@ def main() -> int:
     lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
     events = list(_iter_events(lines))
     observed_failures = [event for event in events if event[1] == "failure"]
-    observed_successes = [event for event in events if event[1] == "success"]
 
     # Last event wins for each deployment. This matters when parallel publication
     # requests interleave: a model may succeed once and receive a quota/rate-limit

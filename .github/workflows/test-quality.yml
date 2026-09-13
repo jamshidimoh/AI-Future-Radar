@@ -25,26 +25,17 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
-      - name: Apply runtime contract repair and remove temporary hook
+      - name: Apply runtime contract repair
         run: |
           python scripts/repair_runtime_contracts.py
           rm scripts/repair_runtime_contracts.py
-          python - <<'PY'
-          from pathlib import Path
-          p = Path('.github/workflows/test-quality.yml')
-          s = p.read_text(encoding='utf-8')
-          marker = '      - name: Apply runtime contract repair and remove temporary hook\n'
-          start = s.index(marker)
-          end = s.index('      - name: Compile Python modules\n', start)
-          s = s[:start] + s[end:]
-          s = s.replace('permissions:\n  contents: write\n', 'permissions:\n  contents: read\n', 1)
-          p.write_text(s, encoding='utf-8')
-          PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add main.py src/story_identity.py .github/workflows/test-quality.yml scripts/repair_runtime_contracts.py
-          git commit -m "fix: restore runtime contract invariants"
-          git push origin HEAD:main
+          git add main.py src/story_identity.py
+          if ! git diff --cached --quiet; then
+            git commit -m "fix: restore runtime contract invariants"
+            git push origin HEAD:main
+          fi
 
       - name: Compile Python modules
         run: python -m compileall -q main.py src tests

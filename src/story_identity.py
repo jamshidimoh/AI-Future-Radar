@@ -29,10 +29,7 @@ def _event_tokens(signature: Any) -> set[str]:
 def _material_update_tokens(signature: Any) -> set[str]:
     if not isinstance(signature, dict):
         return set()
-    text = " ".join(
-        str(signature.get(key) or "")
-        for key in ("title_text", "title", "summary", "description")
-    ).casefold()
+    text = " ".join(str(signature.get(key) or "") for key in ("title_text", "title", "summary", "description")).casefold()
     text = text.replace("ي", "ی").replace("ك", "ک").replace("\u200c", " ")
     text = re.sub(r"\s+", " ", text).strip()
     markers: set[str] = set()
@@ -62,24 +59,24 @@ def _coerce_prior(prior: Any) -> dict[str, Any] | None:
     if any(key in prior for key in ("title_text", "context", "anchors", "events", "personnel", "numbers")) and "title" in prior:
         title = str(prior.get("title_text") or " ".join(str(x) for x in (prior.get("title") or [])))
         context = " ".join(str(x) for x in (prior.get("context") or []))
-        return {"title": title, "summary": context, "description": "", "content": "", "leader": prior.get("leader", "")}
+        return {"title": title, "summary": context, "description": "", "content": "", "leader": prior.get("leader", ""), "protected_content": prior.get("protected_content"), "watch_person": prior.get("watch_person")}
     return prior
 
 
 def _is_protected_leader(item: dict[str, Any]) -> bool:
-    return bool(
-        item.get("protected_content")
-        and (
-            item.get("leader")
-            or item.get("watch_person")
-            or item.get("_named_leader_interview")
-            or item.get("leader_watch_protected")
-        )
-    )
+    return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview") or item.get("leader_watch_protected")))
+
+
+def _protected_interview_identity(item: dict[str, Any]) -> tuple[str, bool]:
+    leader = str(item.get("leader") or item.get("watch_person") or "").strip()
+    explicit = item.get("interview_signal") or item.get("interview_format") or item.get("is_interview")
+    text = re.sub(r"\s+", " ", " ".join(str(item.get(k) or "") for k in ("title", "summary", "description"))).casefold().strip()
+    interview = bool(explicit is True or any(term in text for term in ("interview", "conversation", "fireside", "q&a", "question and answer", "talk with", "talks with", "speaks with", "in conversation", "sits down with", "مصاحبه", "گفتگو", "گفت و گو", "پرسش و پاسخ")))
+    title = re.sub(r"\s+", " ", str(item.get("title") or "")).casefold().strip()
+    return f"{leader.casefold()}::{title}", interview
 
 
 def _prepare_prior(prior: Any) -> tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None] | None:
-    """Normalize one history/current item once for repeated pair comparisons."""
     if not isinstance(prior, dict):
         return None
     comparable = _coerce_prior(prior)
@@ -88,25 +85,24 @@ def _prepare_prior(prior: Any) -> tuple[dict[str, Any], str, dict[str, Any], dic
     return comparable, _canonical_url(comparable), event_features(comparable), get_story_signature(comparable)
 
 
-def _is_same_story_cached(
-    candidate: dict[str, Any],
-    candidate_url: str,
-    candidate_features: dict[str, Any],
-    candidate_signature: dict[str, Any],
-    prior: tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None],
-) -> bool:
+def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candidate_features: dict[str, Any], candidate_signature: dict[str, Any], prior: tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None], allow_protected_event_match: bool = True) -> bool:
     comparable, prior_url, prior_features, prior_signature = prior
     if candidate_url and prior_url and candidate_url == prior_url:
         return True
+    if _is_protected_leader(candidate) or _is_protected_leader(comparable):
+        candidate_identity, candidate_is_interview = _protected_interview_identity(candidate)
+        prior_identity, prior_is_interview = _protected_interview_identity(comparable)
+        if candidate_identity and prior_identity and candidate_identity == prior_identity:
+            return True
+        if candidate_is_interview and prior_is_interview and not allow_protected_event_match:
+            return False
+        if not allow_protected_event_match:
+            return False
     kind, _, _ = compare_event_features(candidate_features, prior_features)
     if kind == "DUPLICATE":
         return True
     if kind == "UPDATE":
         return False
-    # Protected leader interviews need stricter identity semantics: the shared
-    # event matcher decides true duplicate events, while generic semantic
-    # similarity must not suppress a distinct new interview merely because it
-    # covers the same person/topic as an earlier interview.
     if _is_protected_leader(candidate) or _is_protected_leader(comparable):
         return False
     if kind == "RELATED" and has_material_update(candidate, comparable):
@@ -126,17 +122,11 @@ def _build_comparison_cache(items: Iterable[Any]) -> list[tuple[dict[str, Any], 
     return cache
 
 
-def _is_story_duplicate_cached(
-    candidate: dict[str, Any],
-    cache: list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]],
-) -> bool:
+def _is_story_duplicate_cached(candidate: dict[str, Any], cache: list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]], allow_protected_event_match: bool = True) -> bool:
     candidate_url = _canonical_url(candidate)
     candidate_features = event_features(candidate)
     candidate_signature = get_story_signature(candidate)
-    return any(
-        _is_same_story_cached(candidate, candidate_url, candidate_features, candidate_signature, prior)
-        for prior in cache
-    )
+    return any(_is_same_story_cached(candidate, candidate_url, candidate_features, candidate_signature, prior, allow_protected_event_match) for prior in cache)
 
 
 def _is_same_story(candidate: dict[str, Any], prior: Any) -> bool:
@@ -154,23 +144,21 @@ def is_story_duplicate(candidate: dict[str, Any], prior_stories: Iterable[Any]) 
 
 
 def deduplicate_stories(items: Iterable[dict[str, Any]], history: Iterable[Any] = ()) -> list[dict[str, Any]]:
-    """Deduplicate with a precomputed history cache to avoid O(items*history) re-parsing."""
+    """Deduplicate with a precomputed history cache; protected leader interviews use a narrower history policy."""
     accepted: list[dict[str, Any]] = []
     rejected_history = rejected_current = 0
     history_cache = _build_comparison_cache(history)
     accepted_cache: list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]] = []
-
     for item in items or []:
-        if _is_story_duplicate_cached(item, history_cache):
+        if _is_story_duplicate_cached(item, history_cache, allow_protected_event_match=False):
             rejected_history += 1
             continue
-        if _is_story_duplicate_cached(item, accepted_cache):
+        if _is_story_duplicate_cached(item, accepted_cache, allow_protected_event_match=True):
             rejected_current += 1
             continue
         accepted.append(dict(item))
         prepared = _prepare_prior(item)
         if prepared is not None:
             accepted_cache.append(prepared)
-
     print(f"[Story Identity] history_duplicates={rejected_history} current_run_duplicates={rejected_current} accepted={len(accepted)}", flush=True)
     return accepted

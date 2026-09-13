@@ -154,19 +154,21 @@ p = ROOT / "src/story_identity.py"
 s = p.read_text(encoding="utf-8")
 if "from protected_story_identity import probable_same_story" not in s:
     s = s.replace("from semantic_dedup import get_story_signature, _similarity\n", "from semantic_dedup import get_story_signature, _similarity\nfrom protected_story_identity import probable_same_story\n")
-# Current-run protected candidates: reject strong title/body rewrites, but never use this broader rule against history.
 needle = '''        if not allow_protected_event_match:\n            return False\n        if probable_same_story(candidate, comparable):\n            return True\n'''
-if needle not in s:
-    needle = '''        if not allow_protected_event_match:\n            return False\n'''
-    replacement = '''        if not allow_protected_event_match:\n            return False\n        if probable_same_story(candidate, comparable):\n            return True\n'''
+replacement = '''        if not allow_protected_event_match:\n            return False\n        if probable_same_story(candidate, comparable):\n            return True\n        if _is_protected_leader(candidate) and _is_protected_leader(comparable):\n            leader_a = str(candidate.get("leader") or candidate.get("watch_person") or "").casefold().strip()\n            leader_b = str(comparable.get("leader") or comparable.get("watch_person") or "").casefold().strip()\n            shared_entities = set(candidate_features.get("entities", ())) & set(prior_features.get("entities", ()))\n            shared_events = set(candidate_features.get("events", ())) & set(prior_features.get("events", ()))\n            if leader_a and leader_a == leader_b and len(shared_entities) >= 2 and shared_events and not has_material_update(candidate, comparable):\n                return True\n'''
+if needle in s:
     s = s.replace(needle, replacement, 1)
-# Preserve strict history semantics: no broad protected-story matching when checking persisted history.
 p.write_text(s, encoding="utf-8")
 
 run_workflow = ROOT / ".github" / "workflows" / "run.yml"
 run_text = run_workflow.read_text(encoding="utf-8")
+required = "# Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (Tehran local time; cron is UTC)"
 if "Tehran publication windows:" not in run_text:
-    run_workflow.write_text("# Tehran publication windows: cron entries below are expressed in UTC.\n" + run_text, encoding="utf-8")
+    run_workflow.write_text(required + "\n" + run_text, encoding="utf-8")
+elif any(window not in run_text for window in ("05:17", "10:47", "13:47", "17:47", "20:47", "22:47")):
+    lines = run_text.splitlines()
+    lines.insert(0, required)
+    run_workflow.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 for path in (ROOT / "main.py", ROOT / "src/story_identity.py"):
     compile(path.read_text(encoding="utf-8"), str(path), "exec")

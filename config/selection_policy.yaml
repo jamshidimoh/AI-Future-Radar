@@ -32,8 +32,13 @@ editorial:
 # - ai_core_target_min/max and mind_future_target are explicit mission
 #   coverage opportunities. They do not bypass relevance, authority, dedup,
 #   editorial quality, or publication gates.
-# - When an eligible mind/cognition or future/governance candidate exists,
-#   mind_future_target=1 preserves one normal slot for that mission family.
+# - mind_future_target=2 prioritizes up to two normal slots for the mission area
+#   containing consciousness, cognition, philosophy of mind/science/technology,
+#   AI philosophy, and technology-linked future/governance. Awareness/philosophy
+#   candidates are therefore not easily displaced by generic AI news when eligible.
+# - Technology-linked consciousness/philosophy terms are mapped in mission_policy
+#   to mind_cognition and remain subject to authority, quality, deduplication and
+#   publication gates.
 # - Information gain is a bounded soft reranker: the next candidate is evaluated
 #   against already selected topics. Similar stories receive diminishing-return
 #   penalties; distinct high-quality stories receive a modest novelty bonus.
@@ -43,8 +48,12 @@ editorial:
 # - Candidate_window exists to support replacement after summary, editorial, or
 #   downstream publication rejection without relaxing publication quality gates.
 # - replacement_buffer=3 keeps three additional normal candidates available
-#   beyond the publication capacity of 3 so semantic/publication rejection can
-#   be absorbed without lowering the score floor.
+#   beyond the publication capacity of 3 so semantic/publication rejection can be
+#   absorbed without lowering the score floor.
 # - strict_relevance=true enables hard mission-relevance filtering in the
 #   production orchestration path.
-# - 2026-09-12: production routing hardening and fallback reserve tuning.
+# - Education remains an independent scheduled product stream and is recovered
+#   fail-closed when due; its cadence/publication contract is not replaced by the
+#   normal news portfolio selection.
+# - 2026-09-13: consciousness / philosophy-of-science / technology-linked coverage
+#   priority strengthened without bypassing production quality gates.

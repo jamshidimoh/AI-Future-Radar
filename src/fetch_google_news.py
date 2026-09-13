@@ -57,7 +57,9 @@ _LEADER_SIGNAL_CONTEXT_TERMS = (
     "future", "innovation", "economy", "education", "jobs", "labor", "workforce", "health", "science", "research",
     "infrastructure", "energy", "autonomy", "cybersecurity", "security", "consciousness", "singularity", "intimacy",
 )
-_MAX_LEADER_SIGNAL_QUERIES = 24
+# Keep a bounded safety cap, but large enough to cover the current watchlist without
+# silently dropping later people from generic companion discovery.
+_MAX_LEADER_SIGNAL_QUERIES = 64
 
 
 def _parse_feed(url):

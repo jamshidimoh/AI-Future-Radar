@@ -1,4 +1,5 @@
 name: Runtime Contract Repair
+# Temporary, self-removing repair runner for validated runtime contracts.
 
 on:
   push:
@@ -175,6 +176,7 @@ jobs:
           s = s.replace('        if _is_story_duplicate_cached(item, history_cache):', '        if _is_story_duplicate_cached(item, history_cache, allow_protected_event_match=False):', 1)
           s = s.replace('        if _is_story_duplicate_cached(item, accepted_cache):', '        if _is_story_duplicate_cached(item, accepted_cache, allow_protected_event_match=True):', 1)
           p.write_text(s, encoding="utf-8")
+
           for path in ("main.py", "src/story_identity.py"):
               compile(Path(path).read_text(encoding="utf-8"), path, "exec")
           print("RUNTIME_CONTRACT_REPAIR_APPLIED")

@@ -1,6 +1,7 @@
 """Canonical story identity backed by the shared hybrid event matcher."""
 from __future__ import annotations
 
+import difflib
 import logging
 import re
 from collections.abc import Iterable
@@ -119,10 +120,6 @@ def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candida
         return False
     if kind == "RELATED" and has_material_update(candidate, comparable):
         return False
-    # Semantic similarity is now corroborative, not a standalone story identity.
-    # A shared topic/entity is not sufficient to collapse two independent stories.
-    # Only an exceptionally strong rewritten-title match may rescue a weak event
-    # classification; otherwise NEW/RELATED stories remain distinct.
     try:
         semantic_score = _similarity(candidate_signature, prior_signature)
         candidate_title = str(candidate_features.get("title") or "")

@@ -55,5 +55,10 @@ editorial:
 # - Education remains an independent scheduled product stream and is recovered
 #   fail-closed when due; its cadence/publication contract is not replaced by the
 #   normal news portfolio selection.
+# - Strategic Analytical Lane: at most one mission-critical analytical signal per
+#   run may use the normal quota without the ranking score floor, but only after
+#   Leader classification (accepted+analytical+context), leader priority, trusted
+#   Tier-1/2 source validation, deduplication, Persian translation, source grounding,
+#   editorial-value QA and normal Telegram quota checks. It is not a Tier-0 bypass.
 # - 2026-09-13: consciousness / philosophy-of-science / technology-linked coverage
 #   priority strengthened without bypassing production quality gates.

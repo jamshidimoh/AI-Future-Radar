@@ -67,7 +67,15 @@ def _coerce_prior(prior: Any) -> dict[str, Any] | None:
 
 
 def _is_protected_leader(item: dict[str, Any]) -> bool:
-    return bool(item.get("protected_content") and (item.get("leader") or item.get("watch_person") or item.get("_named_leader_interview") or item.get("leader_watch_protected")))
+    return bool(
+        item.get("protected_content")
+        and (
+            item.get("leader")
+            or item.get("watch_person")
+            or item.get("_named_leader_interview")
+            or item.get("leader_watch_protected")
+        )
+    )
 
 
 def _prepare_prior(prior: Any) -> tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None] | None:
@@ -94,6 +102,12 @@ def _is_same_story_cached(
     if kind == "DUPLICATE":
         return True
     if kind == "UPDATE":
+        return False
+    # Protected leader interviews need stricter identity semantics: the shared
+    # event matcher decides true duplicate events, while generic semantic
+    # similarity must not suppress a distinct new interview merely because it
+    # covers the same person/topic as an earlier interview.
+    if _is_protected_leader(candidate) or _is_protected_leader(comparable):
         return False
     if kind == "RELATED" and has_material_update(candidate, comparable):
         return False

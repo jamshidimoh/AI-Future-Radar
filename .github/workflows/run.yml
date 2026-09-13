@@ -1,7 +1,7 @@
 name: Run AI Future Radar Bot
 
 on:
-  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (UTC+3:30). GitHub Actions cron is UTC. Production validation trigger preserved.
+  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (UTC+3:30). GitHub Actions cron is UTC. Production validation trigger preserved; mission/Dedup contract synchronized.
   schedule:
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
@@ -103,15 +103,15 @@ jobs:
 
       - name: Run bot with ranking audit
         env:
-          PYTHONUNBUFFERED: "1"
-          RADAR_PRODUCTION_MODE: "1"
-          RADAR_WATCHDOG_MINUTES: "22"
-          RADAR_SUMMARY_WORKERS: "1"
-          AI_RADAR_EDITORIAL_REVIEW: "0"
-          RADAR_ENABLE_GEMINI_FALLBACK: "0"
-          RADAR_ENABLE_HF_FALLBACK: "1"
-          RADAR_LLM_MAX_TOKENS: "1100"
-          RADAR_ROUTER_BUDGET_SECONDS: "24"
+          PYTHONUNBUFFERED: 1
+          RADAR_PRODUCTION_MODE: 1
+          RADAR_WATCHDOG_MINUTES: 22
+          RADAR_SUMMARY_WORKERS: 1
+          AI_RADAR_EDITORIAL_REVIEW: 0
+          RADAR_ENABLE_GEMINI_FALLBACK: 0
+          RADAR_ENABLE_HF_FALLBACK: 1
+          RADAR_LLM_MAX_TOKENS: 1100
+          RADAR_ROUTER_BUDGET_SECONDS: 24
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -128,7 +128,7 @@ jobs:
 
       - name: Recover required Education publication
         env:
-          PYTHONUNBUFFERED: "1"
+          PYTHONUNBUFFERED: 1
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -140,7 +140,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
-          FORCE_EDUCATION_PUBLICATION: "false"
+          FORCE_EDUCATION_PUBLICATION: false
         run: python -u scripts/education_recovery.py
 
       - name: Enforce runtime production acceptance

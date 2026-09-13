@@ -93,14 +93,19 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     stored_summary = str(record.get("summary") or record.get("description") or "")
     candidate = {"title": candidate_title, "summary": candidate_summary}
     stored = {"title": stored_title, "summary": stored_summary}
+
+    normalized_candidate_summary = _normalized_title(candidate_summary)
+    normalized_stored_summary = _normalized_title(stored_summary)
+    if normalized_candidate_summary and normalized_candidate_summary == normalized_stored_summary:
+        return 1.0
+
     kind, event_score, evidence = compare_events(candidate, stored)
     semantic_score = _similarity(get_story_signature(candidate), get_story_signature(stored))
     anchors = shared_anchor_count(f"{candidate_title} {candidate_summary}", f"{stored_title} {stored_summary}")
 
     # Cross-language or heavily rewritten copies can defeat event classification while
     # still preserving multiple concrete anchors (proper names, products, numbers,
-    # identifiers). Three non-generic anchors are strong same-story evidence even when
-    # the event matcher conservatively labels the pair NEW/UPDATE.
+    # identifiers). Three non-generic anchors are strong same-story evidence.
     if anchors >= 3:
         return 0.82
 

@@ -144,8 +144,8 @@ def fetch_google_news_items(queries, max_age_hours=36, max_workers=None, inter_q
         original_count = len(queries); queries = _expand_leader_signal_queries(queries); added = len(queries) - original_count
         print(f"[Leader Discovery Expansion] original={original_count} expanded={len(queries)} companion={added}", flush=True)
     workers = min(max_workers or _MAX_WORKERS, max(1, len(queries)))
-    if leader_query_mode and workers == 1 and len(queries) > 1:
-        workers = min(_MAX_WORKERS, len(queries)); print(f"[Leader Discovery Parallel] workers={workers}", flush=True)
+    if leader_query_mode and workers > 1:
+        print(f"[Leader Discovery Parallel] workers={workers}", flush=True)
     budget_seconds = _SERIAL_FETCH_BUDGET_SECONDS if max_seconds is None else max_seconds
     if workers == 1:
         consecutive_failures = 0; deadline = time.monotonic() + budget_seconds

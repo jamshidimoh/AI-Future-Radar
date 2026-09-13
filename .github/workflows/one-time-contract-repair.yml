@@ -1,0 +1,105 @@
+name: One-time Contract Repair
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/one-time-contract-repair.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v6
+
+      - name: Apply runtime contract repairs
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path("main.py")
+          s = p.read_text(encoding="utf-8")
+          replacements = [
+            (
+              'def _is_protected_leader_interview(item):\n    return bool(item.get("is_leader_watch") and _has_explicit_interview_evidence(item))',
+              'def _is_protected_leader_interview(item):\n    return bool((item.get("is_leader_watch") or item.get("leader_watch_protected")) and _has_explicit_interview_evidence(item))',
+            ),
+            (
+              'def _is_protected_leader_activity(item):\n    return bool(item.get("is_leader_watch") and _leader_activity_signal(item))',
+              'def _is_protected_leader_activity(item):\n    return bool((item.get("is_leader_watch") or item.get("leader_watch_protected")) and _leader_activity_signal(item))',
+            ),
+            (
+              'def _split_protected(items, max_protected):',
+              'def _split_protected(items, max_protected=2):',
+            ),
+            (
+              '        existing = str(item.get("leader") or item.get("watch_person") or "").strip()\n        if existing:\n            if existing in names:\n                watch_candidates += 1; item["leader_priority"] = priorities.get(existing, int(item.get("leader_priority", 0) or 0))\n            continue',
+              '        existing = str(item.get("leader") or item.get("watch_person") or "").strip()\n        if existing:\n            if existing in names:\n                watch_candidates += 1; item["leader_priority"] = priorities.get(existing, int(item.get("leader_priority", 0) or 0))\n                if has_interview_evidence(item): item["_named_leader_interview"] = True\n            continue',
+            ),
+            (
+              '        if matched_name:\n            item["leader"] = matched_name; item["watch_person"] = matched_name; item["is_leader"] = True; item["is_leader_watch"] = True; item["leader_priority"] = priorities.get(matched_name, 0); matched += 1',
+              '        if matched_name:\n            item["leader"] = matched_name; item["watch_person"] = matched_name; item["is_leader"] = True; item["is_leader_watch"] = True; item["leader_priority"] = priorities.get(matched_name, 0); matched += 1\n            if has_interview_evidence(item): item["_named_leader_interview"] = True',
+            ),
+            (
+              'def _summarize_selected(items, summarize_fn):\n    return [summarize_fn(item) for item in items]',
+              '''def _summarize_selected(items, summarize_fn):
+    workers = max(1, int(os.getenv("RADAR_SUMMARY_WORKERS", "1") or 1))
+    if workers == 1 or len(items) <= 1:
+        return [summarize_fn(item) for item in items]
+    with ThreadPoolExecutor(max_workers=min(workers, len(items))) as executor:
+        futures = [executor.submit(summarize_fn, item) for item in items]
+        return [future.result() for future in futures]''',
+            ),
+            (
+              'def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap):\n    target = min(runtime_selection_cap, max_posts + int(policy.get("leader_protected_max", 2) or 2))\n    if len(selected) >= target: return selected\n    existing = {str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) for x in selected}\n    pool = [x for x in editorial_pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) not in existing]',
+              '''def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap=None, *, cap=None):
+    if runtime_selection_cap is None:
+        runtime_selection_cap = cap if cap is not None else max_posts + int(policy.get("leader_protected_max", 2) or 2)
+    target = min(runtime_selection_cap, max_posts + int(policy.get("leader_protected_max", 2) or 2))
+    selected = filter_new_items(selected, seen_hashes)
+    existing = {str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) for x in selected}
+    pool = [x for x in editorial_pool if not x.get("protected_content") and not x.get("protected_slot") and str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) not in existing]
+    pool = filter_new_items(pool, seen_hashes)''',
+            ),
+            (
+              'def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):\n    target = 1 if any(str(x.get("category") or "") in {"mind", "future", "mind_cognition", "future_governance"} for x in editorial_pool) else 0',
+              '''def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
+    mission_areas = {"mind", "future", "mind_cognition", "future_governance"}
+    def _area(item): return str(item.get("mission_area") or item.get("category") or "").strip().casefold()
+    target = 1 if any(_area(x) in mission_areas for x in editorial_pool) else 0''',
+            ),
+            (
+              '    prepared = sum(1 for x in selected if str(x.get("category") or "") in {"mind", "future", "mind_cognition", "future_governance"} and float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= NORMAL_SCORE_FLOOR and not x.get("_publication_blocked"))',
+              '    prepared = sum(1 for x in selected if _area(x) in mission_areas and float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= NORMAL_SCORE_FLOOR and not x.get("_publication_blocked"))',
+            ),
+            (
+              'str(candidate.get("category") or "")',
+              '_area(candidate)',
+            ),
+          ]
+          for old, new in replacements:
+              if old not in s:
+                  raise SystemExit(f"Expected source fragment not found: {old[:120]}")
+              s = s.replace(old, new, 1)
+          p.write_text(s, encoding="utf-8")
+          compile(p.read_text(encoding="utf-8"), str(p), "exec")
+          print("CONTRACT_REPAIR_SYNTAX_OK")
+
+      - name: Validate targeted contracts
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pytest -q tests/test_canonical_ranking.py::test_protected_leader_capacity_demotes_overflow_candidates tests/test_mission_coverage_recovery.py tests/test_production_ranking_audit_hook.py::test_parallel_summary_preserves_input_order_and_runs_concurrently tests/test_protected_leader_bypass.py tests/test_selection_refill_after_late_dedup.py tests/test_workflow_persistence_contract.py
+
+      - name: Commit repaired runtime and remove one-time workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/one-time-contract-repair.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add main.py .github/workflows/one-time-contract-repair.yml
+          git commit -m "fix: restore generic runtime contract invariants"
+          git push origin HEAD:main

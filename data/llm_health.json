@@ -1,13 +1,6 @@
 {
   "models": {},
-  "providers": {
-    "kiraai": {
-      "disabled_until": 1789292042.709,
-      "failures": 1,
-      "last_error": "wallet_quota",
-      "last_success": 0
-    }
-  },
-  "updated_at": 1789290306.072,
+  "providers": {},
+  "updated_at": 1789293930.886,
   "version": 1
 }

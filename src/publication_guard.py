@@ -7,8 +7,8 @@ import re
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
+from src.event_identity import compare_events
 from src.semantic_dedup import _similarity, get_story_signature
-from src.semantic_publication_guard import cross_language_anchor_conflict
 from src.state_io import load_json_state
 
 logger = logging.getLogger(__name__)
@@ -83,33 +83,35 @@ def _load_records() -> list[dict]:
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
+    """Return semantic conflict only when the event matcher supports same-story identity.
+
+    The final gate is intentionally conservative. A shared person/company/topic is not enough
+    to block publication: updates, follow-up stories, interviews, and separate events must pass.
+    """
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
-    leader = str(record.get("leader") or record.get("watch_person") or "").strip()
-    candidate_text = f"{candidate_title} {candidate_summary}"
-    stored_text = f"{stored_title} {stored_summary}"
+    candidate = {"title": candidate_title, "summary": candidate_summary}
+    stored = {"title": stored_title, "summary": stored_summary}
+    kind, event_score, evidence = compare_events(candidate, stored)
 
-    candidate = get_story_signature({"title": candidate_title, "summary": candidate_summary})
-    stored = get_story_signature({"title": stored_title, "summary": stored_summary})
-    score = _similarity(candidate, stored)
+    if kind in {"NEW", "UPDATE", "RELATED"}:
+        return 0.0
 
-    if cross_language_anchor_conflict(candidate_text, stored_text):
-        score = max(score, 0.70)
-
-    if leader and _normalized_title(leader) in _normalized_title(candidate_text):
-        leader_candidate_text = f"{leader} {candidate_text}"
-        leader_stored_text = f"{leader} {stored_text}"
-        leader_sig = get_story_signature({"title": leader_candidate_text, "summary": candidate_summary})
-        stored_sig = get_story_signature({"title": leader_stored_text, "summary": stored_summary})
-        score = max(score, _similarity(leader_sig, stored_sig))
-        if cross_language_anchor_conflict(leader_candidate_text, leader_stored_text):
-            score = max(score, 0.70)
-
+    candidate_sig = get_story_signature(candidate)
+    stored_sig = get_story_signature(stored)
+    semantic_score = _similarity(candidate_sig, stored_sig)
+    score = max(semantic_score, event_score)
+    logger.debug(
+        "publication semantic comparison kind=%s score=%.3f evidence=%s",
+        kind,
+        score,
+        evidence,
+    )
     return score
 
 
 def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None) -> tuple[bool, str]:
-    """Return (allowed, reason). Any known publication conflict blocks delivery."""
+    """Return (allowed, reason). Known same-story publications block delivery."""
     stored_records = _load_records()
     runtime_records = [x for x in (records or []) if isinstance(x, dict)]
     all_records = runtime_records + stored_records
@@ -132,7 +134,7 @@ def check_before_publish(text: str, source_link: str = "", records: list[dict] |
         if not str(record.get("title") or "").strip():
             continue
         score = _semantic_conflict(candidate_title, candidate_summary, record)
-        if score >= 0.70:
+        if score >= 0.82:
             return False, f"semantic_story_already_published score={score:.3f}"
 
     return True, "no_publication_conflict"

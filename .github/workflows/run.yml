@@ -50,7 +50,6 @@ jobs:
             ('def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):\n    target = 1 if any(str(x.get("category") or "") in {"mind", "future", "mind_cognition", "future_governance"} for x in editorial_pool) else 0', 'def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):\n    mission_areas = {"mind", "future", "mind_cognition", "future_governance"}\n    def _area(item): return str(item.get("mission_area") or item.get("category") or "").strip().casefold()\n    target = 1 if any(_area(x) in mission_areas for x in editorial_pool) else 0'),
             ('    prepared = sum(1 for x in selected if str(x.get("category") or "") in {"mind", "future", "mind_cognition", "future_governance"} and float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= NORMAL_SCORE_FLOOR and not x.get("_publication_blocked"))', '    prepared = sum(1 for x in selected if _area(x) in mission_areas and float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= NORMAL_SCORE_FLOOR and not x.get("_publication_blocked"))'),
             ('str(candidate.get("category") or "")', '_area(candidate)'),
-        ]
           ]
           changed = 0
           for old, new in replacements:
@@ -73,12 +72,14 @@ jobs:
           from pathlib import Path
           p = Path('.github/workflows/run.yml')
           s = p.read_text(encoding='utf-8')
-          start_marker = '      # BEGIN ONE_TIME_CONTRACT_REPAIR\n'
-          end_marker = '      # END ONE_TIME_CONTRACT_REPAIR\n'
-          if start_marker not in s:
-              raise SystemExit('ONE_TIME_REPAIR_START_MARKER_MISSING')
-          block_start = s.index(start_marker)
-          block_end = s.index(end_marker, block_start) + len(end_marker)
+          start_marker = '      # BEGIN_ONE_TIME_REPAIR\n'
+          end_marker = '      # END_ONE_TIME_REPAIR\n'
+          legacy_start = '      # BEGIN ONE_TIME_CONTRACT_REPAIR\n'
+          legacy_end = '      # END ONE_TIME_CONTRACT_REPAIR\n'
+          if legacy_start not in s or legacy_end not in s:
+              raise SystemExit('ONE_TIME_REPAIR_MARKERS_MISSING')
+          block_start = s.index(legacy_start)
+          block_end = s.index(legacy_end, block_start) + len(legacy_end)
           s = s[:block_start] + s[block_end:]
           p.write_text(s, encoding='utf-8')
           print('ONE_TIME_REPAIR_REMOVED')

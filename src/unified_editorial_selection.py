@@ -191,13 +191,74 @@ def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, An
     )
     return item
 
+class _Portfolio:
+    def __init__(self, *, contract: dict[str, Any], limit: int, source_cap: int, type_cap: int, recent: dict[str, int], mission_aware: bool):
+        self.selected: list[dict[str, Any]] = []
+        self.selected_ids: set[int] = set()
+        self.source_counts: dict[str, int] = {}
+        self.type_counts: dict[str, int] = {}
+        self.area_counts: dict[str, int] = {}
+        self.interview_count = 0
+        self.contract = contract
+        self.recent = recent
+        self.limit = limit
+        self.source_cap = source_cap
+        self.type_cap = type_cap
+        self.mission_aware = mission_aware
 
-def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False) -> list[dict[str, Any]]:
-    contract = contract or load_editorial_contract()
-    limit = max(0, int(max_posts or 0))
-    source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
-    type_cap = max(1, int(max_per_type or 1))
-    recent = recent_source_counts or {}
+    def admissible(self, item: dict[str, Any], *, repeat_source: bool) -> bool:
+        source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
+        if self.type_counts.get(ctype, 0) >= self.type_cap:
+            return False
+        if self.mission_aware and _is_interview(item) and self.interview_count >= self.contract["interview_target_max"] > 0:
+            return False
+        if self.mission_aware and self.area_counts.get(area, 0) >= self.contract["max_same_mission_area"]:
+            return False
+        current_source = self.source_counts.get(source, 0)
+        return current_source < self.source_cap if repeat_source else current_source == 0
+
+    def add(self, item: dict[str, Any], reason: str) -> None:
+        _annotate_information_gain(item, self.selected, self.contract)
+        source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
+        self.selected.append(item)
+        self.selected_ids.add(id(item))
+        self.source_counts[source] = self.source_counts.get(source, 0) + 1
+        self.type_counts[ctype] = self.type_counts.get(ctype, 0) + 1
+        if self.mission_aware:
+            self.area_counts[area] = self.area_counts.get(area, 0) + 1
+        if _is_interview(item):
+            self.interview_count += 1
+        item["mission_selection_reason"] = reason
+
+    def remove(self, item: dict[str, Any]) -> None:
+        self.selected.remove(item)
+        self.selected_ids.remove(id(item))
+        self.source_counts[source_key(item)] -= 1
+        self.type_counts[content_type_key(item)] -= 1
+        if self.mission_aware:
+            self.area_counts[mission_area(item)] -= 1
+        if _is_interview(item):
+            self.interview_count -= 1
+
+    def best(self, pool: list[dict[str, Any]], *, prefer_research: bool = False) -> dict[str, Any] | None:
+        candidates = [x for x in pool if self.admissible(x, repeat_source=False)]
+        if not candidates:
+            return None
+        if prefer_research:
+            research_first = [x for x in candidates if _is_research(x)]
+            if research_first:
+                candidates = research_first
+        return max(candidates, key=self.value_key)
+
+    def value_key(self, item: dict[str, Any]) -> tuple:
+        return (
+            portfolio_value(item, self.selected, diversity_weight=self.contract["diversity_weight"], similarity_penalty=self.contract["similarity_penalty"]),
+            -_rank_key(item, self.recent)[0],
+            candidate_score(item),
+        )
+
+
+def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[str, Any], strict_relevance: bool) -> list[dict[str, Any]]:
     eligible: list[dict[str, Any]] = []
     for raw in list(candidates or []):
         item = dict(raw)
@@ -207,127 +268,116 @@ def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts:
             continue
         item["mission_area"] = mission_area(item)
         eligible.append(item)
-    ordered = sorted(eligible, key=lambda x: _rank_key(x, recent))
-    selected: list[dict[str, Any]] = []
-    selected_ids: set[int] = set()
-    source_counts: dict[str, int] = {}
-    type_counts: dict[str, int] = {}
-    area_counts: dict[str, int] = {}
-    interview_count = 0
+    return eligible
 
-    def admissible(item: dict[str, Any], *, repeat_source: bool) -> bool:
-        source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
-        if type_counts.get(ctype, 0) >= type_cap:
-            return False
-        if mission_aware and _is_interview(item) and interview_count >= contract["interview_target_max"] > 0:
-            return False
-        if mission_aware and area_counts.get(area, 0) >= contract["max_same_mission_area"]:
-            return False
-        current_source = source_counts.get(source, 0)
-        return current_source < source_cap if repeat_source else current_source == 0
 
-    def add(item: dict[str, Any], reason: str) -> None:
-        nonlocal interview_count
-        _annotate_information_gain(item, selected, contract)
-        source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
-        selected.append(item)
-        selected_ids.add(id(item))
-        source_counts[source] = source_counts.get(source, 0) + 1
-        type_counts[ctype] = type_counts.get(ctype, 0) + 1
-        if mission_aware:
-            area_counts[area] = area_counts.get(area, 0) + 1
-        if _is_interview(item):
-            interview_count += 1
-        item["mission_selection_reason"] = reason
+def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
+    if not p.mission_aware or p.limit <= 0:
+        return
+    for _ in range(min(p.contract["ai_core_target_min"], p.limit)):
+        candidate = p.best([x for x in ordered if mission_area(x) == "ai_core"], prefer_research=True)
+        if candidate is None:
+            break
+        p.add(candidate, "mission_target:ai_core")
+    for _ in range(min(p.contract["convergence_target"], max(0, p.limit - len(p.selected)))):
+        candidate = p.best([x for x in ordered if mission_area(x) == "convergence"], prefer_research=True)
+        if candidate is None:
+            break
+        p.add(candidate, "mission_target:convergence")
+    for _ in range(min(p.contract["mind_future_target"], max(0, p.limit - len(p.selected)))):
+        candidate = p.best([x for x in ordered if mission_area(x) in {"mind_cognition", "future_governance"}], prefer_research=True)
+        if candidate is None:
+            break
+        p.add(candidate, f"mission_target:{mission_area(candidate)}")
+    for _ in range(min(p.contract["research_target"], max(0, p.limit - len(p.selected)))):
+        candidate = p.best([x for x in ordered if _is_research(x)], prefer_research=True)
+        if candidate is None:
+            break
+        p.add(candidate, "mission_target:research")
 
-    def remove(item: dict[str, Any]) -> None:
-        nonlocal interview_count
-        selected.remove(item)
-        selected_ids.remove(id(item))
-        source_counts[source_key(item)] -= 1
-        type_counts[content_type_key(item)] -= 1
-        if mission_aware:
-            area_counts[mission_area(item)] -= 1
-        if _is_interview(item):
-            interview_count -= 1
 
-    def best(pool: list[dict[str, Any]], *, prefer_research: bool = False) -> dict[str, Any] | None:
-        candidates2 = [x for x in pool if admissible(x, repeat_source=False)]
-        if not candidates2:
-            return None
-        if prefer_research:
-            research_first = [x for x in candidates2 if _is_research(x)]
-            if research_first:
-                candidates2 = research_first
-        return max(candidates2, key=lambda x: (portfolio_value(x, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]), -_rank_key(x, recent)[0], candidate_score(x)))
-
-    if mission_aware and limit > 0:
-        for _ in range(min(contract["ai_core_target_min"], limit)):
-            c = best([x for x in ordered if mission_area(x) == "ai_core"], prefer_research=True)
-            if c is None:
-                break
-            add(c, "mission_target:ai_core")
-        for _ in range(min(contract["convergence_target"], max(0, limit - len(selected)))):
-            c = best([x for x in ordered if mission_area(x) == "convergence"], prefer_research=True)
-            if c is None:
-                break
-            add(c, "mission_target:convergence")
-        for _ in range(min(contract["mind_future_target"], max(0, limit - len(selected)))):
-            c = best([x for x in ordered if mission_area(x) in {"mind_cognition", "future_governance"}], prefer_research=True)
-            if c is None:
-                break
-            add(c, f"mission_target:{mission_area(c)}")
-        for _ in range(min(contract["research_target"], max(0, limit - len(selected)))):
-            c = best([x for x in ordered if _is_research(x)], prefer_research=True)
-            if c is None:
-                break
-            add(c, "mission_target:research")
-
-    while len(selected) < limit:
-        pool = [x for x in eligible if id(x) not in selected_ids and admissible(x, repeat_source=False)]
+def _fill_by_portfolio_value(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:
+    while len(p.selected) < p.limit:
+        pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
         if not pool:
             break
-        for x in pool:
-            _annotate_information_gain(x, selected, contract)
+        for item in pool:
+            _annotate_information_gain(item, p.selected, p.contract)
         best_item = max(
             pool,
             key=lambda x: (
-                portfolio_value(x, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]),
+                portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
                 candidate_score(x),
                 _safe_float(x, "evidence_strength"),
                 str(x.get("published", "")),
             ),
         )
-        if mission_aware and mission_area(best_item) == "ai_core" and area_counts.get("ai_core", 0) >= contract["ai_core_target_max"]:
+        if p.mission_aware and mission_area(best_item) == "ai_core" and p.area_counts.get("ai_core", 0) >= p.contract["ai_core_target_max"]:
             alternative = [x for x in pool if mission_area(x) != "ai_core"]
             if alternative:
-                best_item = max(alternative, key=lambda x: (portfolio_value(x, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]), candidate_score(x)))
+                best_item = max(
+                    alternative,
+                    key=lambda x: (
+                        portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
+                        candidate_score(x),
+                    ),
+                )
             else:
                 break
-        add(best_item, "portfolio_value")
+        p.add(best_item, "portfolio_value")
 
-    if len(selected) < limit and source_cap > 1:
-        while len(selected) < limit:
-            pool = [x for x in eligible if id(x) not in selected_ids and admissible(x, repeat_source=True)]
-            if not pool:
-                break
-            for x in pool:
-                _annotate_information_gain(x, selected, contract)
-            best_item = max(pool, key=lambda x: (portfolio_value(x, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]), candidate_score(x)))
-            add(best_item, "adaptive_source_backfill")
 
-    auth_required = min(contract["min_authoritative_items"], len(selected))
-    while mission_aware and sum(_authority_ok(x) for x in selected) < auth_required:
-        replacement = next((x for x in eligible if id(x) not in selected_ids and _authority_ok(x) and admissible(x, repeat_source=False)), None)
-        removable = [x for x in selected if not _authority_ok(x)]
+def _backfill_repeat_sources(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:
+    if p.source_cap <= 1:
+        return
+    while len(p.selected) < p.limit:
+        pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=True)]
+        if not pool:
+            break
+        for item in pool:
+            _annotate_information_gain(item, p.selected, p.contract)
+        best_item = max(
+            pool,
+            key=lambda x: (
+                portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
+                candidate_score(x),
+            ),
+        )
+        p.add(best_item, "adaptive_source_backfill")
+
+
+def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:
+    auth_required = min(p.contract["min_authoritative_items"], len(p.selected))
+    while p.mission_aware and sum(_authority_ok(x) for x in p.selected) < auth_required:
+        replacement = next((x for x in eligible if id(x) not in p.selected_ids and _authority_ok(x) and p.admissible(x, repeat_source=False)), None)
+        removable = [x for x in p.selected if not _authority_ok(x)]
         if replacement is None or not removable:
             break
-        victim = max(removable, key=lambda x: (_rank_key(x, recent), -candidate_score(x)))
-        remove(victim)
-        add(replacement, "policy_repair:min_authoritative_items")
+        victim = max(removable, key=lambda x: (_rank_key(x, p.recent), -candidate_score(x)))
+        p.remove(victim)
+        p.add(replacement, "policy_repair:min_authoritative_items")
+
+
+def _annotate_final_information_gain(selected: list[dict[str, Any]]) -> None:
     for item in selected:
         item["portfolio_information_gain"] = information_gain_score(item, [x for x in selected if x is not item])
-    return selected[:limit]
+
+
+def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False) -> list[dict[str, Any]]:
+    contract = contract or load_editorial_contract()
+    limit = max(0, int(max_posts or 0))
+    source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
+    type_cap = max(1, int(max_per_type or 1))
+    recent = recent_source_counts or {}
+    eligible = _eligible_candidates(candidates, contract, strict_relevance)
+    ordered = sorted(eligible, key=lambda x: _rank_key(x, recent))
+    portfolio = _Portfolio(contract=contract, limit=limit, source_cap=source_cap, type_cap=type_cap, recent=recent, mission_aware=mission_aware)
+    _fill_mission_targets(portfolio, ordered)
+    _fill_by_portfolio_value(portfolio, eligible)
+    _backfill_repeat_sources(portfolio, eligible)
+    _repair_min_authoritative(portfolio, eligible)
+    _annotate_final_information_gain(portfolio.selected)
+    return portfolio.selected[:limit]
 
 
 def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: dict[str, Any] | None = None) -> None:

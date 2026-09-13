@@ -10,7 +10,7 @@ P0 Ruff repository audit baseline: **21 diagnostics**. This count is recorded in
 
 ## Current data flow
 
-1. `editorial_clean.enrich_items()` computes editorial features and the pre-signal `editorial_score`.
+1. `editorial_core.enrich_items()` computes editorial features and the pre-signal `editorial_score`.
 2. `signal_engine.enrich_signal_items()` computes a separate signal vector and `signal_score`.
 3. `main._apply_signal_ranking()` creates an intermediate `editorial_score = editorial_score_pre_signal + 0.30 * signal_score`.
 4. `main.py` uses that intermediate score for pre-selection ordering before `gate_story_candidates()`.

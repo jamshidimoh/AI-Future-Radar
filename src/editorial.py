@@ -1,14 +1,16 @@
-from src.editorial_clean import (
+"""Editorial orchestration and leader/interview policy."""
+
+from src.editorial_core import (
     classify_editorial_item as _classify_editorial_item,
 )
-from src.editorial_clean import (
+from src.editorial_core import (
     contract_summary,
     filter_low_signal,
 )
-from src.editorial_clean import (
+from src.editorial_core import (
     enrich_items as _enrich_items,
 )
-from src.editorial_clean import (
+from src.editorial_core import (
     filter_ai_relevance as _filter_ai_relevance,
 )
 from src.future_significance import annotate_future_significance
@@ -99,63 +101,50 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
     return enriched
 
 
-def filter_ai_relevance(items, ai_keywords=None):
-    normalized = []
-    rescue = []
-    supplied_keywords = tuple(str(term) for term in (ai_keywords or ()) if str(term).strip())
-    for raw in items or []:
-        item = dict(raw)
-        title = str(item.get("title") or "")
-        summary = str(item.get("summary") or "")
-        evidence = str(item.get("evidence_text") or "").strip()
-        preferred = str(item.get("preferred_source") or "")
-        combined = f"{title} {summary} {evidence}".casefold()
-        bridge_hits = [term for term in _AI_BRIDGE_TERMS if term.casefold() in combined]
-        direct_keyword_hits = [term for term in supplied_keywords if term.casefold() in combined]
-        curated_trusted = bool(item.get("curated_discovery") and preferred and int(item.get("source_tier") or 3) in {1, 2})
-        early_reason = _early_inclusion_reason(item, combined)
+def _prepare_relevance_item(raw, supplied_keywords) -> tuple[dict, bool]:
+    item = dict(raw)
+    title = str(item.get("title") or "")
+    summary = str(item.get("summary") or "")
+    evidence = str(item.get("evidence_text") or "").strip()
+    preferred = str(item.get("preferred_source") or "")
+    combined = f"{title} {summary} {evidence}".casefold()
+    bridge_hits = [term for term in _AI_BRIDGE_TERMS if term.casefold() in combined]
+    direct_keyword_hits = [term for term in supplied_keywords if term.casefold() in combined]
+    curated_trusted = bool(item.get("curated_discovery") and preferred and int(item.get("source_tier") or 3) in {1, 2})
+    early_reason = _early_inclusion_reason(item, combined)
 
-        if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits and not direct_keyword_hits and not early_reason:
-            item["_force_reject_ai_gate"] = True
-        if evidence:
-            item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
-        if bridge_hits:
-            item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
-        item["_curated_trusted_ai_bridge"] = curated_trusted
-        item["_has_direct_ai_evidence"] = bool(bridge_hits or direct_keyword_hits)
+    if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits and not direct_keyword_hits and not early_reason:
+        item["_force_reject_ai_gate"] = True
+    if evidence:
+        item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
+    if bridge_hits:
+        item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
+    item["_curated_trusted_ai_bridge"] = curated_trusted
+    item["_has_direct_ai_evidence"] = bool(bridge_hits or direct_keyword_hits)
 
-        # Existing AI evidence remains on the normal relevance path for generic
-        # interviews; this preserves the established ai_evidence contract. For
-        # substantive strategic/news signals, early inclusion can still annotate
-        # the item even when "AI" appears as a generic keyword.
-        generic_interview_with_ai_evidence = bool(
-            str(item.get("content_type") or "").casefold() == "interview"
-            and not (item.get("is_leader_watch") or item.get("leader_watch_protected"))
-            and direct_keyword_hits
-        )
-        if early_reason and not bridge_hits and not generic_interview_with_ai_evidence:
-            item["early_inclusion"] = True
-            item["early_inclusion_reason"] = early_reason
-            item["relevance_reason"] = f"early_inclusion:{early_reason}"
-            item["_ai_link"] = True
-            item["ai_relevance"] = True
-            item["ai_relevance_confidence"] = 0.55 if early_reason in {"key_actor", "emerging_technology"} else 0.65
-            item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), 5.5)
-            item["ai_relevance_quality"] = "early_inclusion"
-            rescue.append(item)
-        else:
-            normalized.append(item)
-
-    keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
-    result = _filter_ai_relevance(
-        [
-            x for x in normalized
-            if not x.get("_force_reject_ai_gate")
-            and (not x.get("_curated_trusted_ai_bridge") or x.get("_has_direct_ai_evidence"))
-        ],
-        keywords,
+    # Existing AI evidence remains on the normal relevance path for generic
+    # interviews; this preserves the established ai_evidence contract. For
+    # substantive strategic/news signals, early inclusion can still annotate
+    # the item even when "AI" appears as a generic keyword.
+    generic_interview_with_ai_evidence = bool(
+        str(item.get("content_type") or "").casefold() == "interview"
+        and not (item.get("is_leader_watch") or item.get("leader_watch_protected"))
+        and direct_keyword_hits
     )
+    if early_reason and not bridge_hits and not generic_interview_with_ai_evidence:
+        item["early_inclusion"] = True
+        item["early_inclusion_reason"] = early_reason
+        item["relevance_reason"] = f"early_inclusion:{early_reason}"
+        item["_ai_link"] = True
+        item["ai_relevance"] = True
+        item["ai_relevance_confidence"] = 0.55 if early_reason in {"key_actor", "emerging_technology"} else 0.65
+        item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), 5.5)
+        item["ai_relevance_quality"] = "early_inclusion"
+        return item, True
+    return item, False
 
+
+def _accept_trusted_curated(normalized, result):
     trusted_curated = [
         x for x in normalized
         if x.get("_curated_trusted_ai_bridge")
@@ -178,8 +167,10 @@ def filter_ai_relevance(items, ai_keywords=None):
             ai_relevance_quality="bridge",
         )
         result.append(accepted)
+    return result
 
-    result.extend(rescue)
+
+def _finalize_relevance_confidence(result) -> None:
     for item in result:
         if item.get("relevance_reason") == "curated_ai_provenance" or item.get("early_inclusion"):
             continue
@@ -188,6 +179,28 @@ def filter_ai_relevance(items, ai_keywords=None):
         item["ai_relevance_confidence"] = confidence
         item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), confidence * 10.0)
         item["ai_relevance_quality"] = "high" if confidence >= 0.90 else "medium"
+
+
+def filter_ai_relevance(items, ai_keywords=None):
+    normalized = []
+    rescue = []
+    supplied_keywords = tuple(str(term) for term in (ai_keywords or ()) if str(term).strip())
+    for raw in items or []:
+        item, is_rescue = _prepare_relevance_item(raw, supplied_keywords)
+        (rescue if is_rescue else normalized).append(item)
+
+    keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
+    result = _filter_ai_relevance(
+        [
+            x for x in normalized
+            if not x.get("_force_reject_ai_gate")
+            and (not x.get("_curated_trusted_ai_bridge") or x.get("_has_direct_ai_evidence"))
+        ],
+        keywords,
+    )
+    _accept_trusted_curated(normalized, result)
+    result.extend(rescue)
+    _finalize_relevance_confidence(result)
     print(f"[Early Inclusion] rescued={len(rescue)} | direct/curated={len(result) - len(rescue)}", flush=True)
     return result
 

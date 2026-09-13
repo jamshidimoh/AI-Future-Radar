@@ -1,0 +1,726 @@
+{
+  "items": [
+    {
+      "category": "ai",
+      "source_tier": 1,
+      "summary": "Frontier capability update.",
+      "title": "OpenAI launches a new reasoning model"
+    },
+    {
+      "category": "ai",
+      "source_tier": 2,
+      "summary": "A benchmark result.",
+      "title": "Neural circuits improve machine learning"
+    },
+    {
+      "category": "quantum",
+      "source_tier": 1,
+      "summary": "No artificial intelligence connection.",
+      "title": "Quantum processor reaches a new milestone"
+    },
+    {
+      "content_type": "interview",
+      "is_leader_watch": true,
+      "leader": "Jensen Huang",
+      "source_tier": 1,
+      "summary": "Jensen Huang discusses infrastructure.",
+      "title": "Nvidia CEO interview on AI factories"
+    },
+    {
+      "is_leader_watch": true,
+      "leader": "Dario Amodei",
+      "source_tier": 1,
+      "summary": "Dario Amodei announces leadership change.",
+      "title": "Anthropic appoints a new CFO"
+    },
+    {
+      "category": "future",
+      "source_tier": 2,
+      "summary": "Regulators discuss safety.",
+      "title": "AI governance proposal changes frontier model policy"
+    },
+    {
+      "category": "ai",
+      "source_tier": 2,
+      "summary": "A consequential technology incident.",
+      "title": "AI security breach exposes an agent system"
+    },
+    {
+      "category": "quantum",
+      "source_tier": 1,
+      "summary": "A laboratory reports a new qubit result.",
+      "title": "Quantum computing processor research"
+    },
+    {
+      "content_type": "interview",
+      "source_tier": 2,
+      "summary": "An interview about neural methods.",
+      "title": "Machine learning interview with a university researcher"
+    },
+    {
+      "curated_discovery": true,
+      "preferred_source": "Nature",
+      "source_tier": 1,
+      "summary": "Curated source update.",
+      "title": "Institute publishes an annual technology report"
+    },
+    {
+      "evidence_text": "Machine learning evidence from the original research paper.",
+      "source_tier": 2,
+      "summary": "Deployment details.",
+      "title": "Evidence-backed model deployment report"
+    },
+    {
+      "category": "bci",
+      "source_tier": 1,
+      "summary": "Neurotechnology advances.",
+      "title": "Brain computer interface clinical result"
+    },
+    {
+      "category": "robotics",
+      "source_tier": 1,
+      "summary": "Physical AI platform.",
+      "title": "Humanoid robot foundation model released"
+    },
+    {
+      "category": "genetics",
+      "source_tier": 2,
+      "summary": "Computational biology update.",
+      "title": "Synthetic biology protein design breakthrough"
+    },
+    {
+      "category": "community",
+      "source_tier": 3,
+      "summary": "Community event with no technology link.",
+      "title": "Local gardening club meets this weekend"
+    },
+    {
+      "category": "future",
+      "source_tier": 2,
+      "summary": "Economy and governance implications.",
+      "title": "A policy memo considers future of AI jobs"
+    },
+    {
+      "category": "ai",
+      "source_tier": 1,
+      "summary": "Safety incident and response.",
+      "title": "AI agent data leak triggers regulatory action"
+    },
+    {
+      "category": "mind",
+      "source_tier": 1,
+      "summary": "Cognitive science research.",
+      "title": "Consciousness study explores machine awareness"
+    },
+    {
+      "category": "ai",
+      "content_type": "news",
+      "source_tier": 3,
+      "summary": "Researchers describe a machine learning result and future implications.",
+      "title": "Synthetic report 18: machine learning"
+    },
+    {
+      "category": "ai",
+      "content_type": "research",
+      "source_tier": 2,
+      "summary": "Researchers describe a neural networks result and future implications.",
+      "title": "Synthetic report 19: neural networks"
+    },
+    {
+      "category": "quantum",
+      "content_type": "news",
+      "source_tier": 2,
+      "summary": "Researchers describe a robotics result and future implications.",
+      "title": "Synthetic report 20: robotics"
+    },
+    {
+      "category": "quantum",
+      "content_type": "news",
+      "source_tier": 2,
+      "summary": "Researchers describe a quantum hardware result and future implications.",
+      "title": "Synthetic report 21: quantum hardware"
+    },
+    {
+      "category": "quantum",
+      "content_type": "news",
+      "source_tier": 3,
+      "summary": "Researchers describe a governance result and future implications.",
+      "title": "Synthetic report 22: governance"
+    },
+    {
+      "category": "ai",
+      "content_type": "news",
+      "source_tier": 3,
+      "summary": "Researchers describe a neural networks result and future implications.",
+      "title": "Synthetic report 23: neural networks"
+    },
+    {
+      "category": "quantum",
+      "content_type": "news",
+      "source_tier": 2,
+      "summary": "Researchers describe a robotics result and future implications.",
+      "title": "Synthetic report 24: robotics"
+    },
+    {
+      "category": "quantum",
+      "content_type": "research",
+      "source_tier": 2,
+      "summary": "Researchers describe a robotics result and future implications.",
+      "title": "Synthetic report 25: robotics"
+    },
+    {
+      "category": "ai",
+      "content_type": "research",
+      "source_tier": 3,
+      "summary": "Researchers describe a machine learning result and future implications.",
+      "title": "Synthetic report 26: machine learning"
+    },
+    {
+      "category": "ai",
+      "content_type": "research",
+      "source_tier": 3,
+      "summary": "Researchers describe a machine learning result and future implications.",
+      "title": "Synthetic report 27: machine learning"
+    },
+    {
+      "category": "quantum",
+      "content_type": "news",
+      "source_tier": 3,
+      "summary": "Researchers describe a quantum hardware result and future implications.",
+      "title": "Synthetic report 28: quantum hardware"
+    },
+    {
+      "category": "quantum",
+      "content_type": "interview",
+      "source_tier": 1,
+      "summary": "Researchers describe a robotics result and future implications.",
+      "title": "Synthetic report 29: robotics"
+    },
+    {
+      "category": "quantum",
+      "content_type": "interview",
+      "source_tier": 3,
+      "summary": "Researchers describe a governance result and future implications.",
+      "title": "Synthetic report 30: governance"
+    },
+    {
+      "category": "ai",
+      "content_type": "research",
+      "source_tier": 3,
+      "summary": "Researchers describe a machine learning result and future implications.",
+      "title": "Synthetic report 31: machine learning"
+    },
+    {
+      "category": "quantum",
+      "content_type": "research",
+      "source_tier": 2,
+      "summary": "Researchers describe a quantum hardware result and future implications.",
+      "title": "Synthetic report 32: quantum hardware"
+    },
+    {
+      "category": "quantum",
+      "content_type": "news",
+      "source_tier": 2,
+      "summary": "Researchers describe a robotics result and future implications.",
+      "title": "Synthetic report 33: robotics"
+    },
+    {
+      "category": "quantum",
+      "content_type": "research",
+      "source_tier": 1,
+      "summary": "Researchers describe a governance result and future implications.",
+      "title": "Synthetic report 34: governance"
+    },
+    {
+      "category": "ai",
+      "content_type": "research",
+      "source_tier": 2,
+      "summary": "Researchers describe a machine learning result and future implications.",
+      "title": "Synthetic report 35: machine learning"
+    },
+    {
+      "category": "ai",
+      "content_type": "news",
+      "source_tier": 2,
+      "summary": "Researchers describe a neural networks result and future implications.",
+      "title": "Synthetic report 36: neural networks"
+    },
+    {
+      "category": "quantum",
+      "content_type": "research",
+      "source_tier": 1,
+      "summary": "Researchers describe a governance result and future implications.",
+      "title": "Synthetic report 37: governance"
+    },
+    {
+      "category": "ai",
+      "content_type": "news",
+      "source_tier": 3,
+      "summary": "Researchers describe a machine learning result and future implications.",
+      "title": "Synthetic report 38: machine learning"
+    },
+    {
+      "category": "quantum",
+      "content_type": "research",
+      "source_tier": 1,
+      "summary": "Researchers describe a governance result and future implications.",
+      "title": "Synthetic report 39: governance"
+    }
+  ],
+  "outputs": {
+    "bridge_only": [
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "OpenAI launches a new reasoning model"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "Neural circuits improve machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "quantum_ai_bridge",
+        "title": "Quantum processor reaches a new milestone"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "Anthropic appoints a new CFO"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "Machine learning interview with a university researcher"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.95,
+        "ai_relevance_quality": "high",
+        "early_inclusion": false,
+        "evidence_strength": 9.5,
+        "relevance_reason": "ai_evidence",
+        "title": "Evidence-backed model deployment report"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "A policy memo considers future of AI jobs"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "AI agent data leak triggers regulatory action"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 18: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 19: neural networks"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 23: neural networks"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 26: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 27: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 31: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 35: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 36: neural networks"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 38: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "bridge",
+        "early_inclusion": false,
+        "evidence_strength": 5.5,
+        "relevance_reason": "curated_ai_provenance",
+        "title": "Institute publishes an annual technology report"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.65,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:leader_interview",
+        "title": "Nvidia CEO interview on AI factories"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.65,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:strategic_ai_or_tech",
+        "title": "AI governance proposal changes frontier model policy"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.65,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:strategic_ai_or_tech",
+        "title": "AI security breach exposes an agent system"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:emerging_technology",
+        "title": "Quantum computing processor research"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:emerging_technology",
+        "title": "Brain computer interface clinical result"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:emerging_technology",
+        "title": "Humanoid robot foundation model released"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:emerging_technology",
+        "title": "Synthetic biology protein design breakthrough"
+      }
+    ],
+    "supplied": [
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "OpenAI launches a new reasoning model"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "Neural circuits improve machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "quantum_ai_bridge",
+        "title": "Quantum processor reaches a new milestone"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "Anthropic appoints a new CFO"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "Machine learning interview with a university researcher"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.95,
+        "ai_relevance_quality": "high",
+        "early_inclusion": false,
+        "evidence_strength": 9.5,
+        "relevance_reason": "ai_evidence",
+        "title": "Evidence-backed model deployment report"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "A policy memo considers future of AI jobs"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "ai_evidence",
+        "title": "AI agent data leak triggers regulatory action"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 18: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 19: neural networks"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 23: neural networks"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 26: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 27: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 31: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 35: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 36: neural networks"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.85,
+        "ai_relevance_quality": "medium",
+        "early_inclusion": false,
+        "evidence_strength": 8.5,
+        "relevance_reason": "future_technology_bridge",
+        "title": "Synthetic report 38: machine learning"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "bridge",
+        "early_inclusion": false,
+        "evidence_strength": 5.5,
+        "relevance_reason": "curated_ai_provenance",
+        "title": "Institute publishes an annual technology report"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.65,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:leader_interview",
+        "title": "Nvidia CEO interview on AI factories"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.65,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:strategic_ai_or_tech",
+        "title": "AI governance proposal changes frontier model policy"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.65,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:strategic_ai_or_tech",
+        "title": "AI security breach exposes an agent system"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:emerging_technology",
+        "title": "Quantum computing processor research"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:emerging_technology",
+        "title": "Brain computer interface clinical result"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:emerging_technology",
+        "title": "Humanoid robot foundation model released"
+      },
+      {
+        "_ai_link": true,
+        "ai_relevance_confidence": 0.55,
+        "ai_relevance_quality": "early_inclusion",
+        "early_inclusion": true,
+        "evidence_strength": 5.5,
+        "relevance_reason": "early_inclusion:emerging_technology",
+        "title": "Synthetic biology protein design breakthrough"
+      }
+    ]
+  }
+}

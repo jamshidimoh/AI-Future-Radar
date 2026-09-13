@@ -5,7 +5,7 @@ import math
 from copy import deepcopy
 from pathlib import Path
 
-from src.editorial_clean import enrich_items as enrich_editorial_items
+from src.editorial_core import enrich_items as enrich_editorial_items
 from src.signal_engine import enrich_with_signal
 
 ROOT = Path(__file__).resolve().parents[1]

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789282754,
+  "updated_at": 1789283377,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8742,6 +8742,25 @@
       "why_it_matters": "این تحقیق نشان می‌دهد که افزودن ساختارهای زیستی پیچیده مانند کانکتوم میوه‌مگس به یک LLM بزرگ، حتی با بهبود جزئی در معیارهای زبان‌پذیری، نمی‌تواند به‌صورت قابل‌Attentionی عملکرد را ارتقا دهد؛ کنترل‌های هم‌پارامتری بهتر عمل می‌کنند. این نتیجه برای پژوهشگران هوش مصنوعی که به دنبال ترکیب داده‌های گرافی زیستی با مدل‌های زبانی هستند، هشدار مهمی است و نشان می‌دهد که صرف هزینهٔ محاسباتی برای ادغام چنین گراف‌هایی ممکن است بازدهی نداشته باشد. همچنین محدودیت حافظهٔ 0.6 توکن نشان می‌دهد که مقیاس‌پذیری این رویکرد در محیط‌های عملیاتی دشوار است.",
       "link": "https://www.marktechpost.com/2026/09/12/fly-language-model-flm-wires-the-full-fruit-fly-connectome-into-a-frozen-1-2b-llm-and-its-own-controls-show-the-wiring-does-not-help/",
       "posted_at": 1789282754
+    },
+    "-1004482051328:1567": {
+      "chat_id": -1004482051328,
+      "message_id": 1567,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "هوش مصنوعی: چه می‌تواند انجام دهد و چه نمی‌تواند - گفت‌وگوی Simon Baron‑Cohen",
+      "summary": "در این سخنرانی، روانشناس بالینی Simon Baron‑Cohen به بررسی ماهیت هوش انسانی می‌پردازد و مرزهای واضحی بین توانایی‌های واقعی هوش مصنوعی و محدودیت‌های آن ترسیم می‌کند. او ارتباط بین هوش و تشخیص الگو را مورد بحث قرار می‌دهد و اشاره می‌کند که هوش صرفاً محاسبه و به‌خاطر سپاری اطلاعات نیست، بلکه شامل قضاوت، درک و تشخیص است که در حال حاضر توسط ماشین‌ها قابل تقلید نیست. بارون‑کوهن هشدار می‌دهد که اشتباه گرفتن ظاهر تفکر ماشینی با تفکر واقعی می‌تواند خطراتی برای آموزش، کار و درک ما از ذهن انسان به‌وجود آورد. میزبان گفتگو Maria Balaska است و در قالب یک گفت‌وگوی فلسفی‑روانی به مخاطبان نشان می‌دهد که چه جنبه‌هایی از هوش انسانی همچنان برای هوش مصنوعی دست‌نیافتنی باقی می‌ماند.",
+      "description": "Simon Baron-Cohen unpacks the reality of artificial intelligence, drawing clear lines for what A.I. can and cannot do.\n\nWhat is the relationship between intelligence and pattern recognition?\n\nWith a free trial, you can watch the full talk NOW at https://iai.tv/video/the-thoughts-computers-cant-think?utm_source=YouTube&amp;utm_medium=description\n\nIntelligence is often measured by facts known and judgements made. Schools reward memorization, work requires discernment, while AI now reduces intelligence to calculation. But intelligence is more than what can be counted, calculated, or measured. Join clinical psychologist Simon Baron-Cohen, the world’s leading autism expert, to explore what the human mind is, how modern education and technology are reshaping how we think, and what is at risk when we mistake a computer's appearance of thought for thought itself. Maria Balaska hosts.\n\n#ai  #artificialintelligence  #technology #psychology #consciousness \n\nOne of Britain’s most influential psychologists, Simon Baron-Cohen is renowned for his pioneering research on autism, empathy, and the cognitive differences between individuals.\n\nMaria Balaska is a philosopher whose work brings together continental philosophy, ethics, psychoanalysis, and political thought.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=the-thoughts-computers-cant-think\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses artificial intelligence",
+      "why_it_matters": "این بحث نشان می‌دهد که حتی با پیشرفت‌های چشمگیر در Machine Learning، هوش مصنوعی هنوز نمی‌تواند جایگزین قضاوت انسانی، درک زمینه‌ای و توانایی تشخیص الگوهای پیچیده شود؛ مسائلی که در تصمیم‌گیری‌های شغلی، آموزشی و اخلاقی اساسی هستند. بنابراین، درک محدودیت‌های AI به‌ویژه در حوزه‌های حساس مانند بهداشت روان و آموزش، از اهمیت ویژه‌ای برخوردار است و می‌تواند از بروز سوءاستفاده‌های ناشی از اعتماد بیش از حد به سیستم‌های خودکار جلوگیری کند.",
+      "link": "https://www.youtube.com/watch?v=vPXCm74-nNY",
+      "posted_at": 1789283377
     }
   }
 }

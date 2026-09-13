@@ -1,7 +1,7 @@
 name: Run AI Future Radar Bot
 
 on:
-  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (UTC+3:30). GitHub Actions cron is UTC.
+  # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (UTC+3:30). GitHub Actions cron is UTC. Production validation trigger preserved.
   schedule:
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
@@ -44,7 +44,7 @@ jobs:
       - name: Run production regression checks
         run: |
           python -m compileall -q scripts src *.py
-          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py
+          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py
 
       - name: Emit fail-closed closure evidence
         run: |
@@ -98,10 +98,9 @@ jobs:
       - name: Telegram production preflight
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL: "-1004482051328"
+          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
         run: python -u scripts/telegram_preflight.py
 
-      # Final repair validation: keep the production path unchanged; this push exists only to re-run it on the repaired main.
       - name: Run bot with ranking audit
         env:
           PYTHONUNBUFFERED: "1"
@@ -114,7 +113,7 @@ jobs:
           RADAR_LLM_MAX_TOKENS: "1100"
           RADAR_ROUTER_BUDGET_SECONDS: "24"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL: "-1004482051328"
+          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -131,7 +130,7 @@ jobs:
         env:
           PYTHONUNBUFFERED: "1"
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL: "-1004482051328"
+          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -151,7 +150,6 @@ jobs:
         run: python -u scripts/update_llm_health_state.py run.log
 
       - name: Persist production state
-        if: always()
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -185,6 +183,7 @@ jobs:
           exit 1
 
       - name: Upload production diagnostics and ranking audit
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ai-future-radar-push-${{ github.run_number }}
@@ -193,3 +192,4 @@ jobs:
             artifacts/ranking_audit/
             artifacts/free_model_registry.runtime.yaml
           retention-days: 14
+          if-no-files-found: warn

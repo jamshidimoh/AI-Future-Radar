@@ -119,11 +119,22 @@ def _is_same_story_cached(candidate: dict[str, Any], candidate_url: str, candida
         return False
     if kind == "RELATED" and has_material_update(candidate, comparable):
         return False
+    # Semantic similarity is now corroborative, not a standalone story identity.
+    # A shared topic/entity is not sufficient to collapse two independent stories.
+    # Only an exceptionally strong rewritten-title match may rescue a weak event
+    # classification; otherwise NEW/RELATED stories remain distinct.
     try:
-        return _similarity(candidate_signature, prior_signature) >= 0.45
+        semantic_score = _similarity(candidate_signature, prior_signature)
+        candidate_title = str(candidate_features.get("title") or "")
+        prior_title = str(prior_features.get("title") or "")
+        title_similarity = difflib.SequenceMatcher(None, candidate_title, prior_title).ratio() if candidate_title and prior_title else 0.0
+        shared_entities = set(candidate_features.get("entities", ())) & set(prior_features.get("entities", ()))
+        shared_events = set(candidate_features.get("events", ())) & set(prior_features.get("events", ()))
+        if semantic_score >= 0.88 and (title_similarity >= 0.86 or (len(shared_entities) >= 2 and bool(shared_events))):
+            return True
     except (TypeError, ValueError, KeyError, AttributeError) as exc:
         logger.warning("Story identity comparison failed: %s", exc, exc_info=True)
-        return False
+    return False
 
 
 def _build_comparison_cache(items: Iterable[Any]) -> list[tuple[dict[str, Any], str, dict[str, Any], dict[str, Any] | None]]:

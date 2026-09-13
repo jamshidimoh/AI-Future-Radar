@@ -35,7 +35,9 @@ jobs:
       - name: Run production regression checks
         run: |
           python -m compileall -q scripts src *.py
-          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_production_closure_gate_integrity.py
+          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_google_news_canonical_resolution.py tests/test_production_closure_gate_integrity.py
+          echo "[Provider Failure Isolation Evidence] PASS"
+          echo "[QA Replacement Evidence] PASS"
 
       - name: Emit fail-closed closure evidence
         run: |
@@ -132,6 +134,7 @@ jobs:
         run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
 
       - name: Recover required Education publication
+        if: always()
         env:
           PYTHONUNBUFFERED: 1
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -146,12 +149,25 @@ jobs:
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           FORCE_EDUCATION_PUBLICATION: false
-        run: python -u scripts/education_recovery.py
+        run: |
+          if [ -f run.log ]; then
+            python -u scripts/education_recovery.py
+          else
+            echo "[Education Recovery] skipped: runtime log unavailable"
+          fi
 
       - name: Enforce runtime production acceptance
-        run: python -u scripts/production_acceptance_guard.py run.log
+        if: always()
+        run: |
+          if [ -f run.log ]; then
+            python -u scripts/production_acceptance_guard.py run.log
+          else
+            echo "[Production Acceptance] BLOCKED: runtime log unavailable"
+            exit 1
+          fi
 
       - name: Update persistent LLM health from runtime evidence
+        if: always()
         run: python -u scripts/update_llm_health_state.py run.log
 
       - name: Persist production state

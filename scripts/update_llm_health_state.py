@@ -7,11 +7,11 @@ import sys
 import time
 from pathlib import Path
 
-from src.state_io import load_json_state
-
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+from src.state_io import load_json_state
 
 STATE_PATH = ROOT / "data" / "llm_health.json"
 
@@ -143,9 +143,6 @@ def main() -> int:
     events = list(_iter_events(lines))
     observed_failures = [event for event in events if event[1] == "failure"]
 
-    # Last event wins for each deployment. This matters when parallel publication
-    # requests interleave: a model may succeed once and receive a quota/rate-limit
-    # error on a later request in the same run.
     last_event: dict[str, tuple[str, str, bool]] = {}
     for deployment, event_kind, failure_kind, wallet_only in events:
         last_event[deployment] = (event_kind, failure_kind, wallet_only)
@@ -174,8 +171,6 @@ def main() -> int:
                 "last_error": "wallet",
             }
         elif kind in PROVIDER_COOLDOWN:
-            # Provider-wide account/auth failures disable the family, but ordinary
-            # rate limits remain model-scoped so healthy sibling models continue.
             old = providers.get(provider, {})
             providers[provider] = {
                 "failures": int(old.get("failures", 0) or 0) + 1,

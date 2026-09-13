@@ -193,6 +193,8 @@ def _split_protected(items, max_protected=2):
         str(x.get("published", "")),
     ), reverse=True)
     selected = candidates[:max(0, int(max_protected))]
+    for item in selected:
+        item["protected_slot"] = True
     regular.extend(candidates[len(selected):])
     return selected, regular
 
@@ -257,6 +259,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
         summary = summarize_fn(candidate)
         if summary:
             candidate.update(summary)
+            candidate["_mission_recovery"] = True
             recovered.append((candidate, summary))
             print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=recovered", flush=True)
         else:

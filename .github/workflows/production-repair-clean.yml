@@ -1,15 +1,17 @@
 name: Clean Production Repair
 on:
-  push:
-    branches: [production-repair-clean]
+  pull_request:
+    branches: [main]
 permissions:
   contents: write
 jobs:
   repair:
-    if: ${{ !contains(github.event.head_commit.message, '[clean-repair]') }}
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
@@ -28,30 +30,25 @@ jobs:
               if anchor not in s:
                   raise SystemExit('authority insertion anchor not found')
               s = s.replace(anchor, anchor + '\n' + fn, 1)
-          p.write_text(s, encoding='utf-8')
+              p.write_text(s, encoding='utf-8')
 
           g = Path('src/fetch_google_news.py')
           s = g.read_text(encoding='utf-8')
           old = '''    workers = min(max_workers or _MAX_WORKERS, max(1, len(queries)))\n    if leader_query_mode and workers == 1 and len(queries) > 1:\n        workers = min(_MAX_WORKERS, len(queries)); print(f"[Leader Discovery Parallel] workers={workers}", flush=True)\n'''
           new = '''    workers = min(max_workers or _MAX_WORKERS, max(1, len(queries)))\n    if leader_query_mode and workers > 1:\n        print(f"[Leader Discovery Parallel] workers={workers}", flush=True)\n'''
-          if old not in s:
-              raise SystemExit('google news worker override not found')
-          g.write_text(s.replace(old, new, 1), encoding='utf-8')
+          if old in s:
+              g.write_text(s.replace(old, new, 1), encoding='utf-8')
 
-          Path('tests/test_leader_source_authority_contract.py').write_text('''from main import _leader_source_authority\n\ndef test_authority_maps_source_tier_to_higher_is_better():\n    assert _leader_source_authority({"source": "official", "source_tier": 1}) == 3\n    assert _leader_source_authority({"source": "Reuters", "source_tier": 2}) == 2\n    assert _leader_source_authority({"source": "other", "source_tier": 3}) == 1\n\ndef test_authority_uses_source_tier_correction():\n    assert _leader_source_authority({"source": "Google News (Bitcoin World)", "source_tier": 1}) == 1\n''', encoding='utf-8')
+          test = Path('tests/test_leader_source_authority_contract.py')
+          test.write_text('''from main import _leader_source_authority\n\ndef test_authority_maps_source_tier_to_higher_is_better():\n    assert _leader_source_authority({"source": "official", "source_tier": 1}) == 3\n    assert _leader_source_authority({"source": "Reuters", "source_tier": 2}) == 2\n    assert _leader_source_authority({"source": "other", "source_tier": 3}) == 1\n\ndef test_authority_uses_source_tier_correction():\n    assert _leader_source_authority({"source": "Google News (Bitcoin World)", "source_tier": 1}) == 1\n''', encoding='utf-8')
 
-          # Remove rollback/temporary workflows that can overwrite production fixes.
           for name in [
               '.github/workflows/restore-known-good-main.yml',
               '.github/workflows/restore-and-finalize.yml',
               '.github/workflows/one-shot-production-repair.yml',
               '.github/workflows/production-repair-clean.yml',
-              '.github/REPAIR_NOTE.md',
-              '.github/KEEP',
-              '.github/KEEP2',
-              '.github/cleanup-now',
-              '.github/DO_NOT_USE',
-              '.github/repair-temp.yml',
+              '.github/REPAIR_NOTE.md', '.github/KEEP', '.github/KEEP2',
+              '.github/cleanup-now', '.github/DO_NOT_USE', '.github/repair-temp.yml',
               'NOOP.txt', 'tmp.txt', 'tempbranch', 'IGNORE.txt', 'x',
               'BRANCH_MARKER2.txt', 'BRANCH_MARKER.txt',
           ]:
@@ -66,9 +63,9 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
+          if git diff --cached --quiet; then
+            echo 'No repair changes required.'
+            exit 0
+          fi
           git commit -m 'fix: stabilize production leader authority and discovery [clean-repair]'
-          git push origin HEAD:production-repair-clean
-          
-          git rm -f .github/workflows/production-repair-clean.yml || true
-          git commit -m 'chore: remove clean repair workflow [skip ci]' || true
-          git push origin HEAD:production-repair-clean || true
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}

@@ -1,4 +1,4 @@
-"""Final, fail-closed publication gate shared with pre-ranking."""
+"""Final, fail-closed publication gate shared with ranking and delivery."""
 from __future__ import annotations
 
 import html
@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-from src.event_identity import compare_events
+from src.event_identity import compare_events, events
 from src.semantic_dedup import _similarity, get_story_signature
 from src.semantic_publication_guard import shared_anchor_count
 from src.state_io import load_json_state
@@ -17,10 +17,7 @@ logger = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent
 LEDGER_PATH = ROOT / "data" / "telegram_feedback.json"
 
-_TRACKING = {
-    "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
-    "utm_id", "gclid", "fbclid", "mc_cid", "mc_eid", "ref", "ref_src",
-}
+_TRACKING = {"utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "gclid", "fbclid", "mc_cid", "mc_eid", "ref", "ref_src"}
 
 
 def _canonical_url(value: str) -> str:
@@ -35,13 +32,6 @@ def _canonical_url(value: str) -> str:
     except (ValueError, AttributeError) as exc:
         logger.warning("Could not canonicalize publication URL %s: %s", raw, exc, exc_info=True)
         return raw.split("#", 1)[0].rstrip("/")
-
-
-def _plain(value: str) -> str:
-    text = html.unescape(str(value or ""))
-    text = text.replace("\u2066", " ").replace("\u2067", " ").replace("\u2069", " ").replace("\u200f", " ")
-    text = re.sub(r"<[^>]+>", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
 
 
 def _telegram_lines(text: str) -> list[str]:
@@ -84,18 +74,11 @@ def _load_records() -> list[dict]:
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
-    """Return semantic conflict only with evidence for the same underlying event.
-
-    Exact URL/title/summary are hard blocks. Event identity is authoritative for a
-    classified DUPLICATE. For cross-language rewrites, concrete shared anchors plus
-    a shared event type provide the missing evidence when token similarity is low.
-    Generic shared words alone never reach the publication-block threshold.
-    """
+    """Return semantic conflict only with evidence for the same underlying event."""
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
     candidate = {"title": candidate_title, "summary": candidate_summary}
     stored = {"title": stored_title, "summary": stored_summary}
-
     normalized_candidate_summary = _normalized_title(candidate_summary)
     normalized_stored_summary = _normalized_title(stored_summary)
     if normalized_candidate_summary and normalized_candidate_summary == normalized_stored_summary:
@@ -103,38 +86,20 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
 
     kind, event_score, evidence = compare_events(candidate, stored)
     semantic_score = _similarity(get_story_signature(candidate), get_story_signature(stored))
-    anchors = shared_anchor_count(
-        f"{candidate_title} {candidate_summary}",
-        f"{stored_title} {stored_summary}",
-    )
+    anchors = shared_anchor_count(f"{candidate_title} {candidate_summary}", f"{stored_title} {stored_summary}")
+    shared_events = set(evidence.get("shared_events") or [])
+    shared_events |= events(f"{candidate_title} {candidate_summary}") & events(f"{stored_title} {stored_summary}")
 
     if kind == "DUPLICATE":
         return 1.0
-
     if kind == "UPDATE":
-        # A material update of the same event is not a new publication conflict when
-        # it materially changes the underlying facts, e.g. revised scope/severity.
         return 0.0
-
-    # Cross-language rewrite: event classifier may conservatively label the pair
-    # RELATED because lexical similarity is low. Block only when concrete anchors
-    # and a shared event type independently support the same story.
-    shared_events = evidence.get("shared_events") or []
-    if kind == "RELATED" and anchors >= 3 and shared_events:
+    if anchors >= 3 and shared_events:
         return 1.0
-
-    # Conservative generic fallback for rewritten stories that escaped event typing.
     if anchors >= 3 and (event_score >= 0.45 or semantic_score >= 0.65):
         return 0.82
 
-    logger.debug(
-        "publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f evidence=%s",
-        kind,
-        anchors,
-        semantic_score,
-        event_score,
-        evidence,
-    )
+    logger.debug("publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f shared_events=%s evidence=%s", kind, anchors, semantic_score, event_score, sorted(shared_events), evidence)
     return 0.0
 
 
@@ -145,11 +110,9 @@ def check_before_publish(text: str, source_link: str = "", records: list[dict] |
     all_records = runtime_records + stored_records
     if not all_records:
         return True, "ledger_empty"
-
     candidate_title, candidate_summary = _extract_candidate(text)
     candidate_url = _canonical_url(source_link)
     title_key = _normalized_title(candidate_title)
-
     for record in all_records:
         record_url = _canonical_url(record.get("link", ""))
         if candidate_url and record_url and candidate_url == record_url:
@@ -157,12 +120,10 @@ def check_before_publish(text: str, source_link: str = "", records: list[dict] |
         stored_title = _normalized_title(record.get("title", ""))
         if title_key and stored_title and title_key == stored_title:
             return False, "exact_story_title_already_published"
-
     for record in all_records:
         if not str(record.get("title") or "").strip():
             continue
         score = _semantic_conflict(candidate_title, candidate_summary, record)
         if score >= 0.82:
             return False, f"semantic_story_already_published score={score:.3f}"
-
     return True, "no_publication_conflict"

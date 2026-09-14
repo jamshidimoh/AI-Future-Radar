@@ -30,6 +30,11 @@ from src.youtube_parallel_discovery import fetch_youtube_items_parallel
 # the global router merely by importing this module during unit-test collection.
 if os.getenv("RADAR_PRODUCTION_MODE") == "1":
     apply_production_router_policy()
+    # Ranking scores are a prioritization signal, not a reason to suppress the
+    # whole publication cycle when editorial/grounding gates have already passed.
+    # Keep this production-only and leave the regression-test policy unchanged.
+    pipeline._pipeline.NORMAL_SCORE_FLOOR = 55.0
+    pipeline._pipeline.PROTECTED_SUMMARY_SCORE_FLOOR = 55.0
 
 _original_main = pipeline.main
 _original_rank = pipeline._global_ranked_selection

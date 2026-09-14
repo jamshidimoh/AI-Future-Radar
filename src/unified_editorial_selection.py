@@ -305,7 +305,10 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
     # Mission targets are coverage opportunities. The content-type ceiling is
     # intentionally soft here: it must not starve an uncovered mission lane.
     for _ in range(min(p.contract["ai_core_target_min"], p.limit)):
-        candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+        candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+        # The type ceiling is soft only when it would otherwise starve the AI lane.
+        if not candidates:
+            candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
         candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
         if candidate is None:
             break

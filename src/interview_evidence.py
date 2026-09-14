@@ -66,20 +66,22 @@ def has_interview_evidence(item):
         if isinstance(value, str) and value.strip().casefold() in {"true", "yes", "1", "interview"}:
             return True
 
-    # Explicit format in the title is strong evidence regardless of source.
     if _contains_interview_term(item.get("title")):
         return True
 
     content_type = str(item.get("content_type") or "").strip().casefold()
+    classification = item.get("leader_signal_classification") or {}
+    classified_interview = bool(
+        isinstance(classification, dict) and classification.get("interview")
+    )
 
-    # A verified leader-watch item classified upstream as an interview is valid
-    # format evidence, except when the only provenance is a Google News aggregation.
-    # This preserves the established leader-priority contract without allowing
-    # generic Google News labels to create false protected interviews.
+    # The leader discovery classifier is explicit format evidence. It is safe to
+    # consume here because the item already carries watchlist identity and the
+    # classifier only marks interview when interview-format terms are present.
     if (
         content_type in INTERVIEW_CONTENT_TYPES
         and _has_verified_leader_context(item)
-        and not _is_google_news_aggregation(item)
+        and (classified_interview or not _is_google_news_aggregation(item))
     ):
         return True
 
@@ -92,6 +94,3 @@ def has_interview_evidence(item):
         content_type in INTERVIEW_CONTENT_TYPES
         or _contains_interview_term(_text(item))
     )
-
-    # Generic content_type=interview without trustworthy provenance is not enough.
-    return False

@@ -11,7 +11,9 @@ google_news_queries:
     curated_discovery: true
 
   # Dedicated AI-linked philosophy / consciousness lane.
-  # These are authoritative scholarly/reference publishers, not generic philosophy feeds.
+  # Only authoritative scholarly/reference publishers are executable here.
+  # Index/discussion layers are recorded in config/mind_philosophy_sources.yaml
+  # and are intentionally not normal publication inputs.
   - name: "Stanford Encyclopedia of Philosophy — AI / Mind"
     query: "site:plato.stanford.edu (artificial intelligence OR philosophy of AI OR machine consciousness OR consciousness OR functionalism OR computationalism)"
     category: mind
@@ -35,42 +37,3 @@ google_news_queries:
     content_type: research
     preferred_source: "Oxford Academic"
     curated_discovery: true
-
-  # These remain discovery/index layers rather than normal publication authorities.
-  # They are intentionally represented here only as query targets for future recovery/audit,
-  # not as elevated Tier-1 sources.
-  - name: "PhilPapers — AI / Mind discovery"
-    query: "site:philpapers.org (artificial intelligence OR philosophy of AI OR machine consciousness OR AI consciousness)"
-    category: mind
-    tier: 3
-    content_type: preprint
-    preferred_source: "PhilPapers"
-    curated_discovery: true
-    discovery_only: true
-
-  - name: "PhilSci-Archive — AI / Philosophy of Science discovery"
-    query: "site:philsci-archive.pitt.edu (artificial intelligence OR AI scientific discovery OR philosophy of AI OR AI minds)"
-    category: mind
-    tier: 3
-    content_type: preprint
-    preferred_source: "PhilSci-Archive"
-    curated_discovery: true
-    discovery_only: true
-
-  - name: "The Brains Blog — mind / consciousness discussion"
-    query: "site:brainsblog.com (artificial intelligence consciousness OR philosophy of mind AI OR machine consciousness)"
-    category: mind
-    tier: 3
-    content_type: analysis
-    preferred_source: "The Brains Blog"
-    curated_discovery: true
-    discovery_only: true
-
-  - name: "LessWrong — AI consciousness frontier discussion"
-    query: "site:lesswrong.com (AI consciousness OR machine consciousness OR philosophy of AI OR sentience AI)"
-    category: mind
-    tier: 3
-    content_type: analysis
-    preferred_source: "LessWrong"
-    curated_discovery: true
-    discovery_only: true

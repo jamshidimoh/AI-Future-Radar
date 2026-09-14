@@ -151,11 +151,11 @@ def _event_match(item, signatures):
 def _semantic_publication_match(candidate_signature, stored_signature):
     """Use a lower semantic floor only when the scorer identifies a rewrite pattern."""
     if not isinstance(stored_signature, str) or not stored_signature.startswith(SEMANTIC_MARKER): return False
-    score = _similarity(candidate_signature, stored_signature)
-    if score < 0.66: return False
     candidate = _decode_signature(candidate_signature) or get_story_signature(str(candidate_signature))
     stored = _decode_signature(stored_signature) or get_story_signature(str(stored_signature))
     overlap = _overlap(candidate, stored)
+    score = _similarity(candidate, stored)
+    if score < 0.66: return False
     _, flags = _rewrite_floors(score, overlap)
     return any(flags.values())
 

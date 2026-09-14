@@ -92,14 +92,28 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     title_similarity = float(evidence.get("title_similarity", 0.0) or 0.0)
     context_jaccard = float(evidence.get("context_jaccard", 0.0) or 0.0)
 
-    if kind == "DUPLICATE":
-        return 1.0
     if kind == "UPDATE":
+        # Material updates to the same event must remain blocked only when the
+        # event identity itself is strong. Otherwise a shared company/person can
+        # create a false update relationship between unrelated stories.
+        if anchors >= 3 and shared_events:
+            return 1.0
+        if title_similarity >= 0.90 and context_jaccard >= 0.45:
+            return 1.0
+        return 0.0
+    if kind == "DUPLICATE":
+        # Event identity is authoritative when it has corroborating event overlap;
+        # a same-person/company relationship alone is insufficient.
+        if shared_events and (anchors >= 3 or semantic_score >= 0.80):
+            return 1.0
+        if title_similarity >= 0.90 and context_jaccard >= 0.45:
+            return 1.0
         return 0.0
 
-    # Shared people/companies/years are not enough to establish the same story.
-    # Require explicit event overlap, or a very strong title/context match.
-    if anchors >= 3 and shared_events and (event_score >= 0.45 or semantic_score >= 0.65):
+    # Cross-language rewrites often have low lexical/semantic similarity. Shared
+    # concrete anchors plus the same event class are sufficient; the previous
+    # 0.45 event-score threshold incorrectly rejected this class of duplicate.
+    if anchors >= 3 and shared_events and (event_score >= 0.20 or semantic_score >= 0.65):
         return 1.0
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:
         return 0.85

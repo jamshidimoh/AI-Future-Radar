@@ -327,7 +327,7 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
             # Mission opportunities may legitimately be below the global quality floor
             # when they are still strong enough to preserve the radar's mind/research lane.
-            opportunity_floor = min(floor, 0.70) if target_key in {"mind_future_target", "research_target"} else floor
+            opportunity_floor = floor
             if top_global > 0 and candidate_score(candidate) < top_global * opportunity_floor:
                 break
             candidate_area = mission_area(candidate)

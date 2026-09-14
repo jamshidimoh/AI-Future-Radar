@@ -1,755 +1,761 @@
 {
   "candidates": [
     {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "research",
-      "editorial_score": 9.8,
-      "evidence_strength": 3.0,
-      "is_leader_watch": true,
-      "leader": "Jensen Huang",
-      "mission_area": "ai_core",
-      "published": "2026-09-01",
-      "research_signal": true,
-      "signal_score": 4.9,
-      "source": "OpenAI",
-      "source_tier": 3,
+      "title": "Ai Core candidate 0 machine learning",
       "summary": "Research and policy context for ai core candidate 0.",
-      "title": "Ai Core candidate 0 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
+      "source": "OpenAI",
+      "content_type": "research",
       "category": "ai",
-      "content_type": "news",
-      "editorial_score": 9.4,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
       "mission_area": "ai_core",
-      "published": "2026-09-02",
-      "research_signal": false,
-      "signal_score": 4.7,
-      "source": "Anthropic",
-      "source_tier": 3,
-      "summary": "Research and policy context for ai core candidate 1.",
-      "title": "Ai Core candidate 1 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "interview",
-      "editorial_score": 9.2,
+      "editorial_score": 9.8,
+      "signal_score": 4.9,
       "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
-      "published": "2026-09-03",
-      "research_signal": false,
-      "signal_score": 4.6,
-      "source": "Reuters",
       "source_tier": 3,
-      "summary": "Research and policy context for ai core candidate 2.",
-      "title": "Ai Core candidate 2 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "news",
-      "editorial_score": 8.8,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
-      "published": "2026-09-04",
-      "research_signal": false,
-      "signal_score": 4.4,
-      "source": "OpenAI",
-      "source_tier": 1,
-      "summary": "Research and policy context for ai core candidate 3.",
-      "title": "Ai Core candidate 3 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "research",
-      "editorial_score": 8.5,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-05",
-      "research_signal": true,
-      "signal_score": 4.25,
-      "source": "Reuters",
-      "source_tier": 3,
-      "summary": "Research and policy context for convergence candidate 4.",
-      "title": "Convergence candidate 4 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "news",
-      "editorial_score": 8.0,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-06",
-      "research_signal": false,
-      "signal_score": 4.0,
-      "source": "Reuters",
-      "source_tier": 2,
-      "summary": "Research and policy context for convergence candidate 5.",
-      "title": "Convergence candidate 5 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "research",
-      "editorial_score": 10.8,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-07",
-      "research_signal": true,
-      "signal_score": 5.4,
-      "source": "Quantum Weekly",
-      "source_tier": 3,
-      "summary": "Research and policy context for convergence candidate 6.",
-      "title": "Convergence candidate 6 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "mind",
-      "content_type": "research",
-      "editorial_score": 9.0,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "mind_cognition",
-      "published": "2026-09-08",
-      "research_signal": true,
-      "signal_score": 4.5,
-      "source": "OpenAI",
-      "source_tier": 3,
-      "summary": "Research and policy context for mind cognition candidate 7.",
-      "title": "Mind Cognition candidate 7 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "mind",
-      "content_type": "interview",
-      "editorial_score": 8.7,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "mind_cognition",
-      "published": "2026-09-09",
-      "research_signal": false,
-      "signal_score": 4.35,
-      "source": "Anthropic",
-      "source_tier": 2,
-      "summary": "Research and policy context for mind cognition candidate 8.",
-      "title": "Mind Cognition candidate 8 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
-      "content_type": "news",
-      "editorial_score": 8.9,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "future_governance",
-      "published": "2026-09-10",
-      "research_signal": false,
-      "signal_score": 4.45,
-      "source": "NIST",
-      "source_tier": 3,
-      "summary": "Research and policy context for future governance candidate 9.",
-      "title": "Future Governance candidate 9 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
-      "content_type": "research",
-      "editorial_score": 8.2,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "future_governance",
-      "published": "2026-09-11",
-      "research_signal": true,
-      "signal_score": 4.1,
-      "source": "Reuters",
-      "source_tier": 2,
-      "summary": "Research and policy context for future governance candidate 10.",
-      "title": "Future Governance candidate 10 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
-      "content_type": "news",
-      "editorial_score": 10.0,
-      "evidence_strength": 3.0,
-      "is_leader_watch": true,
-      "leader": "Jensen Huang",
-      "mission_area": "future_governance",
-      "published": "2026-09-12",
-      "research_signal": false,
-      "signal_score": 5.0,
-      "source": "community reddit",
-      "source_tier": 3,
-      "summary": "Research and policy context for future governance candidate 11.",
-      "title": "Future Governance candidate 11 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
-      "content_type": "research",
-      "editorial_score": 6.7,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "future_governance",
-      "published": "2026-09-13",
-      "research_signal": true,
-      "signal_score": 3.35,
-      "source": "Anthropic",
-      "source_tier": 2,
-      "summary": "Research and policy context for future governance candidate 12.",
-      "title": "Future Governance candidate 12 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "research",
-      "editorial_score": 6.6,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-14",
-      "research_signal": true,
-      "signal_score": 3.3,
-      "source": "OpenAI",
-      "source_tier": 2,
-      "summary": "Research and policy context for convergence candidate 13.",
-      "title": "Convergence candidate 13 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "news",
-      "editorial_score": 5.5,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
-      "published": "2026-09-15",
-      "research_signal": true,
-      "signal_score": 2.75,
-      "source": "Reuters",
-      "source_tier": 2,
-      "summary": "Research and policy context for ai core candidate 14.",
-      "title": "Ai Core candidate 14 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "interview",
-      "editorial_score": 5.5,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
-      "published": "2026-09-16",
-      "research_signal": false,
-      "signal_score": 2.75,
-      "source": "Anthropic",
-      "source_tier": 2,
-      "summary": "Research and policy context for ai core candidate 15.",
-      "title": "Ai Core candidate 15 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "mind",
-      "content_type": "news",
-      "editorial_score": 7.41,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "mind_cognition",
-      "published": "2026-09-17",
-      "research_signal": false,
-      "signal_score": 3.705,
-      "source": "Reuters",
-      "source_tier": 2,
-      "summary": "Research and policy context for mind cognition candidate 16.",
-      "title": "Mind Cognition candidate 16 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "interview",
-      "editorial_score": 5.99,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-18",
-      "research_signal": false,
-      "signal_score": 2.995,
-      "source": "OpenAI",
-      "source_tier": 2,
-      "summary": "Research and policy context for convergence candidate 17.",
-      "title": "Convergence candidate 17 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
-      "content_type": "community",
-      "editorial_score": 6.84,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "future_governance",
-      "published": "2026-09-19",
-      "research_signal": false,
-      "signal_score": 3.42,
-      "source": "community reddit",
-      "source_tier": 1,
-      "summary": "Research and policy context for future governance candidate 18.",
-      "title": "Future Governance candidate 18 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "research",
-      "editorial_score": 7.89,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
-      "published": "2026-09-20",
-      "research_signal": true,
-      "signal_score": 3.945,
-      "source": "Reuters",
-      "source_tier": 3,
-      "summary": "Research and policy context for ai core candidate 19.",
-      "title": "Ai Core candidate 19 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
-      "content_type": "interview",
-      "editorial_score": 5.18,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "future_governance",
-      "published": "2026-09-21",
-      "research_signal": false,
-      "signal_score": 2.59,
-      "source": "OpenAI",
-      "source_tier": 3,
-      "summary": "Research and policy context for future governance candidate 20.",
-      "title": "Future Governance candidate 20 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "mind",
-      "content_type": "community",
-      "editorial_score": 5.32,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "mind_cognition",
-      "published": "2026-09-22",
-      "research_signal": false,
-      "signal_score": 2.66,
-      "source": "community reddit",
-      "source_tier": 2,
-      "summary": "Research and policy context for mind cognition candidate 21.",
-      "title": "Mind Cognition candidate 21 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "research",
-      "editorial_score": 7.09,
-      "evidence_strength": 6.0,
-      "is_leader_watch": true,
-      "leader": "Jensen Huang",
-      "mission_area": "convergence",
-      "published": "2026-09-23",
-      "research_signal": true,
-      "signal_score": 3.545,
-      "source": "OpenAI",
-      "source_tier": 2,
-      "summary": "Research and policy context for convergence candidate 22.",
-      "title": "Convergence candidate 22 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "research",
-      "editorial_score": 6.43,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-24",
-      "research_signal": true,
-      "signal_score": 3.215,
-      "source": "OpenAI",
-      "source_tier": 3,
-      "summary": "Research and policy context for convergence candidate 23.",
-      "title": "Convergence candidate 23 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "mind",
-      "content_type": "news",
-      "editorial_score": 4.51,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "mind_cognition",
-      "published": "2026-09-25",
-      "research_signal": false,
-      "signal_score": 2.255,
-      "source": "OpenAI",
-      "source_tier": 3,
-      "summary": "Research and policy context for mind cognition candidate 24.",
-      "title": "Mind Cognition candidate 24 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "mind",
-      "content_type": "interview",
-      "editorial_score": 7.02,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "mind_cognition",
-      "published": "2026-09-26",
-      "research_signal": false,
-      "signal_score": 3.51,
-      "source": "community reddit",
-      "source_tier": 1,
-      "summary": "Research and policy context for mind cognition candidate 25.",
-      "title": "Mind Cognition candidate 25 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "mind",
-      "content_type": "news",
-      "editorial_score": 4.85,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "mind_cognition",
-      "published": "2026-09-27",
-      "research_signal": false,
-      "signal_score": 2.425,
-      "source": "OpenAI",
-      "source_tier": 3,
-      "summary": "Research and policy context for mind cognition candidate 26.",
-      "title": "Mind Cognition candidate 26 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "community",
-      "editorial_score": 7.24,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
-      "published": "2026-09-28",
-      "research_signal": false,
-      "signal_score": 3.62,
-      "source": "community reddit",
-      "source_tier": 3,
-      "summary": "Research and policy context for ai core candidate 27.",
-      "title": "Ai Core candidate 27 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "interview",
-      "editorial_score": 5.58,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
       "published": "2026-09-01",
-      "research_signal": false,
-      "signal_score": 2.79,
-      "source": "OpenAI",
-      "source_tier": 1,
-      "summary": "Research and policy context for ai core candidate 28.",
-      "title": "Ai Core candidate 28 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
-      "content_type": "community",
-      "editorial_score": 6.74,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "future_governance",
-      "published": "2026-09-02",
-      "research_signal": false,
-      "signal_score": 3.37,
-      "source": "OpenAI",
-      "source_tier": 1,
-      "summary": "Research and policy context for future governance candidate 29.",
-      "title": "Future Governance candidate 29 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "research",
-      "editorial_score": 5.08,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
-      "published": "2026-09-03",
-      "research_signal": true,
-      "signal_score": 2.54,
-      "source": "Reuters",
-      "source_tier": 1,
-      "summary": "Research and policy context for ai core candidate 30.",
-      "title": "Ai Core candidate 30 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "ai",
-      "content_type": "interview",
-      "editorial_score": 6.09,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "ai_core",
-      "published": "2026-09-04",
-      "research_signal": false,
-      "signal_score": 3.045,
-      "source": "OpenAI",
-      "source_tier": 3,
-      "summary": "Research and policy context for ai core candidate 31.",
-      "title": "Ai Core candidate 31 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "interview",
-      "editorial_score": 6.45,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-05",
-      "research_signal": false,
-      "signal_score": 3.225,
-      "source": "OpenAI",
-      "source_tier": 1,
-      "summary": "Research and policy context for convergence candidate 32.",
-      "title": "Convergence candidate 32 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
-      "content_type": "community",
-      "editorial_score": 7.69,
-      "evidence_strength": 3.0,
-      "is_leader_watch": true,
       "leader": "Jensen Huang",
-      "mission_area": "future_governance",
-      "published": "2026-09-06",
-      "research_signal": false,
-      "signal_score": 3.845,
+      "is_leader_watch": true,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Ai Core candidate 1 machine learning",
+      "summary": "Research and policy context for ai core candidate 1.",
       "source": "Anthropic",
-      "source_tier": 3,
-      "summary": "Research and policy context for future governance candidate 33.",
-      "title": "Future Governance candidate 33 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "community",
-      "editorial_score": 7.85,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-07",
-      "research_signal": false,
-      "signal_score": 3.925,
-      "source": "OpenAI",
-      "source_tier": 2,
-      "summary": "Research and policy context for convergence candidate 34.",
-      "title": "Convergence candidate 34 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "mind",
-      "content_type": "community",
-      "editorial_score": 7.6,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "mind_cognition",
-      "published": "2026-09-08",
-      "research_signal": false,
-      "signal_score": 3.8,
-      "source": "OpenAI",
-      "source_tier": 3,
-      "summary": "Research and policy context for mind cognition candidate 35.",
-      "title": "Mind Cognition candidate 35 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "interview",
-      "editorial_score": 5.95,
-      "evidence_strength": 3.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-09",
-      "research_signal": false,
-      "signal_score": 2.975,
-      "source": "Anthropic",
-      "source_tier": 3,
-      "summary": "Research and policy context for convergence candidate 36.",
-      "title": "Convergence candidate 36 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
-      "content_type": "community",
-      "editorial_score": 6.35,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
-      "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-10",
-      "research_signal": false,
-      "signal_score": 3.175,
-      "source": "community reddit",
-      "source_tier": 2,
-      "summary": "Research and policy context for convergence candidate 37.",
-      "title": "Convergence candidate 37 machine learning"
-    },
-    {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "quantum",
       "content_type": "news",
-      "editorial_score": 7.81,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 9.4,
+      "signal_score": 4.7,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-02",
       "leader": "",
-      "mission_area": "convergence",
-      "published": "2026-09-11",
-      "research_signal": false,
-      "signal_score": 3.905,
-      "source": "Reuters",
-      "source_tier": 2,
-      "summary": "Research and policy context for convergence candidate 38.",
-      "title": "Convergence candidate 38 machine learning"
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
     },
     {
-      "_ai_link": true,
-      "ai_relevance": true,
-      "category": "future",
+      "title": "Ai Core candidate 2 machine learning",
+      "summary": "Research and policy context for ai core candidate 2.",
+      "source": "Reuters",
       "content_type": "interview",
-      "editorial_score": 6.99,
-      "evidence_strength": 6.0,
-      "is_leader_watch": false,
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 9.2,
+      "signal_score": 4.6,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-03",
       "leader": "",
-      "mission_area": "future_governance",
-      "published": "2026-09-12",
-      "research_signal": false,
-      "signal_score": 3.495,
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Ai Core candidate 3 machine learning",
+      "summary": "Research and policy context for ai core candidate 3.",
       "source": "OpenAI",
+      "content_type": "news",
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 8.8,
+      "signal_score": 4.4,
+      "evidence_strength": 6.0,
       "source_tier": 1,
+      "published": "2026-09-04",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Convergence candidate 4 machine learning",
+      "summary": "Research and policy context for convergence candidate 4.",
+      "source": "Reuters",
+      "content_type": "research",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 8.5,
+      "signal_score": 4.25,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-05",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Convergence candidate 5 machine learning",
+      "summary": "Research and policy context for convergence candidate 5.",
+      "source": "Reuters",
+      "content_type": "news",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 8.0,
+      "signal_score": 4.0,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-06",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Convergence candidate 6 machine learning",
+      "summary": "Research and policy context for convergence candidate 6.",
+      "source": "Quantum Weekly",
+      "content_type": "research",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 10.8,
+      "signal_score": 5.4,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-07",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Mind Cognition candidate 7 machine learning",
+      "summary": "Research and policy context for mind cognition candidate 7.",
+      "source": "OpenAI",
+      "content_type": "research",
+      "category": "mind",
+      "mission_area": "mind_cognition",
+      "editorial_score": 9.0,
+      "signal_score": 4.5,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-08",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Mind Cognition candidate 8 machine learning",
+      "summary": "Research and policy context for mind cognition candidate 8.",
+      "source": "Anthropic",
+      "content_type": "interview",
+      "category": "mind",
+      "mission_area": "mind_cognition",
+      "editorial_score": 8.7,
+      "signal_score": 4.35,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-09",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Future Governance candidate 9 machine learning",
+      "summary": "Research and policy context for future governance candidate 9.",
+      "source": "NIST",
+      "content_type": "news",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 8.9,
+      "signal_score": 4.45,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-10",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Future Governance candidate 10 machine learning",
+      "summary": "Research and policy context for future governance candidate 10.",
+      "source": "Reuters",
+      "content_type": "research",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 8.2,
+      "signal_score": 4.1,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-11",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Future Governance candidate 11 machine learning",
+      "summary": "Research and policy context for future governance candidate 11.",
+      "source": "community reddit",
+      "content_type": "news",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 10.0,
+      "signal_score": 5.0,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-12",
+      "leader": "Jensen Huang",
+      "is_leader_watch": true,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Future Governance candidate 12 machine learning",
+      "summary": "Research and policy context for future governance candidate 12.",
+      "source": "Anthropic",
+      "content_type": "research",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 6.7,
+      "signal_score": 3.35,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-13",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Convergence candidate 13 machine learning",
+      "summary": "Research and policy context for convergence candidate 13.",
+      "source": "OpenAI",
+      "content_type": "research",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 6.6,
+      "signal_score": 3.3,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-14",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Ai Core candidate 14 machine learning",
+      "summary": "Research and policy context for ai core candidate 14.",
+      "source": "Reuters",
+      "content_type": "news",
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 5.5,
+      "signal_score": 2.75,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-15",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Ai Core candidate 15 machine learning",
+      "summary": "Research and policy context for ai core candidate 15.",
+      "source": "Anthropic",
+      "content_type": "interview",
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 7.26,
+      "signal_score": 3.63,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-16",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Future Governance candidate 16 machine learning",
+      "summary": "Research and policy context for future governance candidate 16.",
+      "source": "community reddit",
+      "content_type": "research",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 4.2,
+      "signal_score": 2.1,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-17",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Convergence candidate 17 machine learning",
+      "summary": "Research and policy context for convergence candidate 17.",
+      "source": "Anthropic",
+      "content_type": "interview",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 6.77,
+      "signal_score": 3.385,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-18",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Future Governance candidate 18 machine learning",
+      "summary": "Research and policy context for future governance candidate 18.",
+      "source": "Anthropic",
+      "content_type": "community",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 5.96,
+      "signal_score": 2.98,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-19",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Mind Cognition candidate 19 machine learning",
+      "summary": "Research and policy context for mind cognition candidate 19.",
+      "source": "OpenAI",
+      "content_type": "research",
+      "category": "mind",
+      "mission_area": "mind_cognition",
+      "editorial_score": 5.49,
+      "signal_score": 2.745,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-20",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Future Governance candidate 20 machine learning",
+      "summary": "Research and policy context for future governance candidate 20.",
+      "source": "Anthropic",
+      "content_type": "news",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 6.88,
+      "signal_score": 3.44,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-21",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Future Governance candidate 21 machine learning",
+      "summary": "Research and policy context for future governance candidate 21.",
+      "source": "community reddit",
+      "content_type": "community",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 5.32,
+      "signal_score": 2.66,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-22",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Convergence candidate 22 machine learning",
+      "summary": "Research and policy context for convergence candidate 22.",
+      "source": "Reuters",
+      "content_type": "news",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 5.76,
+      "signal_score": 2.88,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-23",
+      "leader": "Jensen Huang",
+      "is_leader_watch": true,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Convergence candidate 23 machine learning",
+      "summary": "Research and policy context for convergence candidate 23.",
+      "source": "Reuters",
+      "content_type": "news",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 7.77,
+      "signal_score": 3.885,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-24",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Convergence candidate 24 machine learning",
+      "summary": "Research and policy context for convergence candidate 24.",
+      "source": "Reuters",
+      "content_type": "news",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 6.75,
+      "signal_score": 3.375,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-25",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Convergence candidate 25 machine learning",
+      "summary": "Research and policy context for convergence candidate 25.",
+      "source": "Reuters",
+      "content_type": "research",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 7.43,
+      "signal_score": 3.715,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-26",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Convergence candidate 26 machine learning",
+      "summary": "Research and policy context for convergence candidate 26.",
+      "source": "community reddit",
+      "content_type": "news",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 7.02,
+      "signal_score": 3.51,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-27",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Mind Cognition candidate 27 machine learning",
+      "summary": "Research and policy context for mind cognition candidate 27.",
+      "source": "OpenAI",
+      "content_type": "news",
+      "category": "mind",
+      "mission_area": "mind_cognition",
+      "editorial_score": 6.24,
+      "signal_score": 3.12,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-28",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Ai Core candidate 28 machine learning",
+      "summary": "Research and policy context for ai core candidate 28.",
+      "source": "community reddit",
+      "content_type": "community",
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 7.95,
+      "signal_score": 3.975,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-01",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Ai Core candidate 29 machine learning",
+      "summary": "Research and policy context for ai core candidate 29.",
+      "source": "Anthropic",
+      "content_type": "news",
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 4.34,
+      "signal_score": 2.17,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-02",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Future Governance candidate 30 machine learning",
+      "summary": "Research and policy context for future governance candidate 30.",
+      "source": "OpenAI",
+      "content_type": "interview",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 6.74,
+      "signal_score": 3.37,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-03",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Mind Cognition candidate 31 machine learning",
+      "summary": "Research and policy context for mind cognition candidate 31.",
+      "source": "Reuters",
+      "content_type": "news",
+      "category": "mind",
+      "mission_area": "mind_cognition",
+      "editorial_score": 5.08,
+      "signal_score": 2.54,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-04",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Convergence candidate 32 machine learning",
+      "summary": "Research and policy context for convergence candidate 32.",
+      "source": "OpenAI",
+      "content_type": "interview",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 4.74,
+      "signal_score": 2.37,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-05",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Ai Core candidate 33 machine learning",
+      "summary": "Research and policy context for ai core candidate 33.",
+      "source": "community reddit",
+      "content_type": "community",
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 7.99,
+      "signal_score": 3.995,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-06",
+      "leader": "Jensen Huang",
+      "is_leader_watch": true,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Ai Core candidate 34 machine learning",
+      "summary": "Research and policy context for ai core candidate 34.",
+      "source": "Anthropic",
+      "content_type": "community",
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 6.33,
+      "signal_score": 3.165,
+      "evidence_strength": 6.0,
+      "source_tier": 2,
+      "published": "2026-09-07",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Mind Cognition candidate 35 machine learning",
+      "summary": "Research and policy context for mind cognition candidate 35.",
+      "source": "community reddit",
+      "content_type": "news",
+      "category": "mind",
+      "mission_area": "mind_cognition",
+      "editorial_score": 6.77,
+      "signal_score": 3.385,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-08",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Convergence candidate 36 machine learning",
+      "summary": "Research and policy context for convergence candidate 36.",
+      "source": "Anthropic",
+      "content_type": "community",
+      "category": "quantum",
+      "mission_area": "convergence",
+      "editorial_score": 7.31,
+      "signal_score": 3.655,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-09",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Future Governance candidate 37 machine learning",
+      "summary": "Research and policy context for future governance candidate 37.",
+      "source": "community reddit",
+      "content_type": "community",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 6.35,
+      "signal_score": 3.175,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-10",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
+    },
+    {
+      "title": "Ai Core candidate 38 machine learning",
+      "summary": "Research and policy context for ai core candidate 38.",
+      "source": "Reuters",
+      "content_type": "research",
+      "category": "ai",
+      "mission_area": "ai_core",
+      "editorial_score": 7.81,
+      "signal_score": 3.905,
+      "evidence_strength": 3.0,
+      "source_tier": 3,
+      "published": "2026-09-11",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": true
+    },
+    {
+      "title": "Future Governance candidate 39 machine learning",
       "summary": "Research and policy context for future governance candidate 39.",
-      "title": "Future Governance candidate 39 machine learning"
+      "source": "Anthropic",
+      "content_type": "news",
+      "category": "future",
+      "mission_area": "future_governance",
+      "editorial_score": 4.74,
+      "signal_score": 2.37,
+      "evidence_strength": 6.0,
+      "source_tier": 1,
+      "published": "2026-09-12",
+      "leader": "",
+      "is_leader_watch": false,
+      "ai_relevance": true,
+      "_ai_link": true,
+      "research_signal": false
     }
   ],
   "contract": {
-    "ai_core_target_max": 2,
-    "ai_core_target_min": 1,
-    "candidate_window": 6,
-    "community_max": 0,
-    "convergence_target": 1,
-    "diversity_weight": 8.0,
-    "hard_max_same_source": 2,
-    "interview_target_max": 1,
-    "max_items_per_content_type": 2,
-    "max_items_per_source": 2,
     "max_posts": 3,
-    "max_same_mission_area": 6,
-    "min_authoritative_items": 2,
-    "min_unique_sources": 3,
-    "mind_future_target": 2,
-    "preferred_max_same_source": 1,
+    "candidate_window": 6,
     "replacement_buffer": 3,
+    "max_items_per_source": 2,
+    "max_items_per_content_type": 1,
+    "preferred_max_same_source": 1,
+    "hard_max_same_source": 2,
+    "min_unique_sources": 3,
+    "min_authoritative_items": 2,
+    "community_max": 0,
+    "max_same_mission_area": 6,
+    "ai_core_target_min": 1,
+    "ai_core_target_max": 2,
+    "convergence_target": 1,
+    "mind_future_target": 2,
+    "research_target": 1,
+    "interview_target_max": 1,
+    "diversity_quality_floor_ratio": 0.8,
+    "diversity_weight": 8.0,
+    "similarity_penalty": 12.0,
     "required_areas": [
       "ai_core",
       "convergence",
       "mind_cognition",
       "future_governance"
-    ],
-    "research_target": 1,
-    "similarity_penalty": 12.0
+    ]
   },
   "grid": [
     {
+      "max_posts": 3,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": false,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
@@ -766,14 +772,14 @@
           "mission_target:mind_cognition",
           44.54
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 3,
-      "mission_aware": true,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 3,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": true,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
@@ -790,14 +796,14 @@
           "mission_target:mind_cognition",
           44.54
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 3,
-      "mission_aware": true,
-      "strict_relevance": true
+      ]
     },
     {
+      "max_posts": 3,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": false,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -814,14 +820,14 @@
           "portfolio_value",
           37.171
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 3,
-      "mission_aware": false,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 3,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": true,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -838,62 +844,62 @@
           "portfolio_value",
           37.171
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
+      ]
+    },
+    {
       "max_posts": 3,
+      "max_per_source": 1,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "policy_repair:min_authoritative_items",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "policy_repair:min_authoritative_items",
+          44.54
+        ]
+      ]
+    },
+    {
+      "max_posts": 3,
+      "max_per_source": 1,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "policy_repair:min_authoritative_items",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "policy_repair:min_authoritative_items",
+          44.54
+        ]
+      ]
+    },
+    {
+      "max_posts": 3,
+      "max_per_source": 1,
+      "max_per_type": 2,
       "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          45.758
-        ],
-        [
-          "Convergence candidate 5 machine learning",
-          "policy_repair:min_authoritative_items",
-          0.0
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 3,
-      "mission_aware": true,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          45.758
-        ],
-        [
-          "Convergence candidate 5 machine learning",
-          "policy_repair:min_authoritative_items",
-          0.0
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 3,
-      "mission_aware": true,
-      "strict_relevance": true
-    },
-    {
+      "strict_relevance": false,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -910,14 +916,14 @@
           "portfolio_value",
           35.889
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 3,
-      "mission_aware": false,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 3,
+      "max_per_source": 1,
+      "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": true,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -934,62 +940,62 @@
           "portfolio_value",
           35.889
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
+      ]
+    },
+    {
       "max_posts": 3,
+      "max_per_source": 2,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "mission_target:convergence",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ]
+      ]
+    },
+    {
+      "max_posts": 3,
+      "max_per_source": 2,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "mission_target:convergence",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ]
+      ]
+    },
+    {
+      "max_posts": 3,
+      "max_per_source": 2,
+      "max_per_type": 1,
       "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Ai Core candidate 0 machine learning",
-          "mission_target:ai_core",
-          35.889
-        ],
-        [
-          "Convergence candidate 5 machine learning",
-          "mission_target:convergence",
-          35.889
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          44.54
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 3,
-      "mission_aware": true,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Ai Core candidate 0 machine learning",
-          "mission_target:ai_core",
-          35.889
-        ],
-        [
-          "Convergence candidate 5 machine learning",
-          "mission_target:convergence",
-          35.889
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          44.54
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 3,
-      "mission_aware": true,
-      "strict_relevance": true
-    },
-    {
+      "strict_relevance": false,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -1006,14 +1012,14 @@
           "portfolio_value",
           37.171
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 3,
-      "mission_aware": false,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 3,
+      "max_per_source": 2,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": true,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -1030,62 +1036,62 @@
           "portfolio_value",
           37.171
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
+      ]
+    },
+    {
       "max_posts": 3,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "policy_repair:min_authoritative_items",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "policy_repair:min_authoritative_items",
+          44.54
+        ]
+      ]
+    },
+    {
+      "max_posts": 3,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "policy_repair:min_authoritative_items",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "policy_repair:min_authoritative_items",
+          44.54
+        ]
+      ]
+    },
+    {
+      "max_posts": 3,
+      "max_per_source": 2,
+      "max_per_type": 2,
       "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          45.758
-        ],
-        [
-          "Convergence candidate 5 machine learning",
-          "policy_repair:min_authoritative_items",
-          0.0
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 3,
-      "mission_aware": true,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          45.758
-        ],
-        [
-          "Convergence candidate 5 machine learning",
-          "policy_repair:min_authoritative_items",
-          0.0
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 3,
-      "mission_aware": true,
-      "strict_relevance": true
-    },
-    {
+      "strict_relevance": false,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -1102,14 +1108,14 @@
           "portfolio_value",
           35.889
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 3,
-      "mission_aware": false,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 3,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": true,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -1126,130 +1132,115 @@
           "portfolio_value",
           35.889
         ]
-      ],
-      "max_per_source": 2,
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "mission_target:convergence",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ]
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "mission_target:convergence",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ]
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Convergence candidate 6 machine learning",
+          "portfolio_value",
+          36.637
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "portfolio_value",
+          45.758
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "portfolio_value",
+          37.171
+        ]
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Convergence candidate 6 machine learning",
+          "portfolio_value",
+          36.637
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "portfolio_value",
+          45.758
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "portfolio_value",
+          37.171
+        ]
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 1,
       "max_per_type": 2,
-      "max_posts": 3,
-      "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
+      "mission_aware": true,
+      "strict_relevance": false,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
           "mission_target:ai_core",
           35.889
-        ],
-        [
-          "Convergence candidate 5 machine learning",
-          "mission_target:convergence",
-          35.889
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          44.54
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 4,
-      "mission_aware": true,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Ai Core candidate 0 machine learning",
-          "mission_target:ai_core",
-          35.889
-        ],
-        [
-          "Convergence candidate 5 machine learning",
-          "mission_target:convergence",
-          35.889
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          44.54
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 4,
-      "mission_aware": true,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "portfolio_value",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "portfolio_value",
-          45.758
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "portfolio_value",
-          37.171
-        ],
-        [
-          "Convergence candidate 34 machine learning",
-          "portfolio_value",
-          0.0
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 4,
-      "mission_aware": false,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "portfolio_value",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "portfolio_value",
-          45.758
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "portfolio_value",
-          37.171
-        ],
-        [
-          "Convergence candidate 34 machine learning",
-          "portfolio_value",
-          0.0
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 4,
-      "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          45.758
         ],
         [
           "Future Governance candidate 9 machine learning",
@@ -1257,28 +1248,28 @@
           37.171
         ],
         [
-          "Convergence candidate 5 machine learning",
-          "policy_repair:min_authoritative_items",
-          0.0
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 4,
-      "mission_aware": true,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          0.0
-        ],
-        [
           "Mind Cognition candidate 8 machine learning",
           "mission_target:mind_cognition",
-          45.758
+          44.54
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "policy_repair:min_authoritative_items",
+          35.889
+        ]
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 1,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
         ],
         [
           "Future Governance candidate 9 machine learning",
@@ -1286,76 +1277,81 @@
           37.171
         ],
         [
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ],
+        [
           "Convergence candidate 5 machine learning",
           "policy_repair:min_authoritative_items",
-          0.0
+          35.889
         ]
-      ],
+      ]
+    },
+    {
+      "max_posts": 4,
       "max_per_source": 1,
       "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Convergence candidate 6 machine learning",
+          "portfolio_value",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 7 machine learning",
+          "portfolio_value",
+          44.54
+        ],
+        [
+          "Ai Core candidate 1 machine learning",
+          "portfolio_value",
+          35.889
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "portfolio_value",
+          37.171
+        ]
+      ]
+    },
+    {
       "max_posts": 4,
+      "max_per_source": 1,
+      "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Convergence candidate 6 machine learning",
+          "portfolio_value",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 7 machine learning",
+          "portfolio_value",
+          44.54
+        ],
+        [
+          "Ai Core candidate 1 machine learning",
+          "portfolio_value",
+          35.889
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "portfolio_value",
+          37.171
+        ]
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 2,
+      "max_per_type": 1,
       "mission_aware": true,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "portfolio_value",
-          35.889
-        ],
-        [
-          "Mind Cognition candidate 7 machine learning",
-          "portfolio_value",
-          44.54
-        ],
-        [
-          "Ai Core candidate 1 machine learning",
-          "portfolio_value",
-          35.889
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "portfolio_value",
-          37.171
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 4,
-      "mission_aware": false,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "portfolio_value",
-          35.889
-        ],
-        [
-          "Mind Cognition candidate 7 machine learning",
-          "portfolio_value",
-          44.54
-        ],
-        [
-          "Ai Core candidate 1 machine learning",
-          "portfolio_value",
-          35.889
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "portfolio_value",
-          37.171
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 4,
-      "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
+      "strict_relevance": false,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
@@ -1373,18 +1369,18 @@
           44.54
         ],
         [
-          "Future Governance candidate 33 machine learning",
+          "Future Governance candidate 18 machine learning",
           "adaptive_source_backfill",
           37.171
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 4,
-      "mission_aware": true,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 4,
+      "max_per_source": 2,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": true,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
@@ -1402,86 +1398,81 @@
           44.54
         ],
         [
-          "Future Governance candidate 33 machine learning",
+          "Future Governance candidate 18 machine learning",
           "adaptive_source_backfill",
           37.171
         ]
-      ],
+      ]
+    },
+    {
+      "max_posts": 4,
       "max_per_source": 2,
       "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Convergence candidate 6 machine learning",
+          "portfolio_value",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "portfolio_value",
+          44.54
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "portfolio_value",
+          37.171
+        ],
+        [
+          "Ai Core candidate 34 machine learning",
+          "adaptive_source_backfill",
+          35.889
+        ]
+      ]
+    },
+    {
       "max_posts": 4,
+      "max_per_source": 2,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Convergence candidate 6 machine learning",
+          "portfolio_value",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "portfolio_value",
+          44.54
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "portfolio_value",
+          37.171
+        ],
+        [
+          "Ai Core candidate 34 machine learning",
+          "adaptive_source_backfill",
+          35.889
+        ]
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 2,
+      "max_per_type": 2,
       "mission_aware": true,
-      "strict_relevance": true
-    },
-    {
+      "strict_relevance": false,
       "expected": [
         [
-          "Convergence candidate 6 machine learning",
-          "portfolio_value",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "portfolio_value",
-          45.758
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "portfolio_value",
-          37.171
-        ],
-        [
-          "Convergence candidate 34 machine learning",
-          "portfolio_value",
-          0.0
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 4,
-      "mission_aware": false,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "portfolio_value",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "portfolio_value",
-          45.758
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "portfolio_value",
-          37.171
-        ],
-        [
-          "Convergence candidate 34 machine learning",
-          "portfolio_value",
-          0.0
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 4,
-      "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          45.758
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
         ],
         [
           "Future Governance candidate 9 machine learning",
@@ -1489,28 +1480,28 @@
           37.171
         ],
         [
-          "Convergence candidate 5 machine learning",
-          "policy_repair:min_authoritative_items",
-          0.0
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 4,
-      "mission_aware": true,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          0.0
-        ],
-        [
           "Mind Cognition candidate 8 machine learning",
           "mission_target:mind_cognition",
-          45.758
+          44.54
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "policy_repair:min_authoritative_items",
+          35.889
+        ]
+      ]
+    },
+    {
+      "max_posts": 4,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
         ],
         [
           "Future Governance candidate 9 machine learning",
@@ -1518,18 +1509,23 @@
           37.171
         ],
         [
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ],
+        [
           "Convergence candidate 5 machine learning",
           "policy_repair:min_authoritative_items",
-          0.0
+          35.889
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 4,
-      "mission_aware": true,
-      "strict_relevance": true
+      ]
     },
     {
+      "max_posts": 4,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": false,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -1551,14 +1547,14 @@
           "portfolio_value",
           37.171
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 4,
-      "mission_aware": false,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 4,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": true,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -1580,14 +1576,14 @@
           "portfolio_value",
           37.171
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 4,
-      "mission_aware": false,
-      "strict_relevance": true
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": false,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
@@ -1604,14 +1600,14 @@
           "mission_target:mind_cognition",
           44.54
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 6,
-      "mission_aware": true,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": true,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
@@ -1628,19 +1624,19 @@
           "mission_target:mind_cognition",
           44.54
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 6,
-      "mission_aware": true,
-      "strict_relevance": true
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": false,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
           "portfolio_value",
-          0.0
+          36.637
         ],
         [
           "Mind Cognition candidate 8 machine learning",
@@ -1651,25 +1647,20 @@
           "Future Governance candidate 9 machine learning",
           "portfolio_value",
           37.171
-        ],
-        [
-          "Convergence candidate 34 machine learning",
-          "portfolio_value",
-          0.0
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
-      "max_posts": 6,
-      "mission_aware": false,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 1,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": true,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
           "portfolio_value",
-          0.0
+          36.637
         ],
         [
           "Mind Cognition candidate 8 machine learning",
@@ -1680,88 +1671,83 @@
           "Future Governance candidate 9 machine learning",
           "portfolio_value",
           37.171
+        ]
+      ]
+    },
+    {
+      "max_posts": 6,
+      "max_per_source": 1,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
         ],
         [
-          "Convergence candidate 34 machine learning",
+          "Convergence candidate 6 machine learning",
+          "mission_target:convergence",
+          0.0
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "mission_target:future_governance",
+          37.171
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ],
+        [
+          "Convergence candidate 5 machine learning",
           "portfolio_value",
           0.0
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 1,
+      ]
+    },
+    {
       "max_posts": 6,
+      "max_per_source": 1,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Ai Core candidate 0 machine learning",
+          "mission_target:ai_core",
+          35.889
+        ],
+        [
+          "Convergence candidate 6 machine learning",
+          "mission_target:convergence",
+          0.0
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "mission_target:future_governance",
+          37.171
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "portfolio_value",
+          0.0
+        ]
+      ]
+    },
+    {
+      "max_posts": 6,
+      "max_per_source": 1,
+      "max_per_type": 2,
       "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Ai Core candidate 0 machine learning",
-          "mission_target:ai_core",
-          0.0
-        ],
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          35.889
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          44.54
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "mission_target:future_governance",
-          37.171
-        ],
-        [
-          "Ai Core candidate 14 machine learning",
-          "mission_target:research",
-          0.0
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 6,
-      "mission_aware": true,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Ai Core candidate 0 machine learning",
-          "mission_target:ai_core",
-          0.0
-        ],
-        [
-          "Convergence candidate 6 machine learning",
-          "mission_target:convergence",
-          35.889
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          44.54
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "mission_target:future_governance",
-          37.171
-        ],
-        [
-          "Ai Core candidate 14 machine learning",
-          "mission_target:research",
-          0.0
-        ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 6,
-      "mission_aware": true,
-      "strict_relevance": true
-    },
-    {
+      "strict_relevance": false,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -1788,14 +1774,14 @@
           "portfolio_value",
           0.0
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 6,
-      "mission_aware": false,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 1,
+      "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": true,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -1822,14 +1808,14 @@
           "portfolio_value",
           0.0
         ]
-      ],
-      "max_per_source": 1,
-      "max_per_type": 2,
-      "max_posts": 6,
-      "mission_aware": false,
-      "strict_relevance": true
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 2,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": false,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
@@ -1847,18 +1833,18 @@
           44.54
         ],
         [
-          "Future Governance candidate 33 machine learning",
+          "Future Governance candidate 18 machine learning",
           "adaptive_source_backfill",
           37.171
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 6,
-      "mission_aware": true,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 2,
+      "max_per_type": 1,
+      "mission_aware": true,
+      "strict_relevance": true,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
@@ -1876,81 +1862,81 @@
           44.54
         ],
         [
-          "Future Governance candidate 33 machine learning",
+          "Future Governance candidate 18 machine learning",
           "adaptive_source_backfill",
           37.171
         ]
-      ],
+      ]
+    },
+    {
+      "max_posts": 6,
       "max_per_source": 2,
       "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": false,
+      "expected": [
+        [
+          "Convergence candidate 6 machine learning",
+          "portfolio_value",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "portfolio_value",
+          44.54
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "portfolio_value",
+          37.171
+        ],
+        [
+          "Ai Core candidate 34 machine learning",
+          "adaptive_source_backfill",
+          35.889
+        ]
+      ]
+    },
+    {
       "max_posts": 6,
+      "max_per_source": 2,
+      "max_per_type": 1,
+      "mission_aware": false,
+      "strict_relevance": true,
+      "expected": [
+        [
+          "Convergence candidate 6 machine learning",
+          "portfolio_value",
+          35.889
+        ],
+        [
+          "Mind Cognition candidate 8 machine learning",
+          "portfolio_value",
+          44.54
+        ],
+        [
+          "Future Governance candidate 9 machine learning",
+          "portfolio_value",
+          37.171
+        ],
+        [
+          "Ai Core candidate 34 machine learning",
+          "adaptive_source_backfill",
+          35.889
+        ]
+      ]
+    },
+    {
+      "max_posts": 6,
+      "max_per_source": 2,
+      "max_per_type": 2,
       "mission_aware": true,
-      "strict_relevance": true
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "portfolio_value",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "portfolio_value",
-          45.758
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "portfolio_value",
-          37.171
-        ],
-        [
-          "Convergence candidate 34 machine learning",
-          "portfolio_value",
-          0.0
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 6,
-      "mission_aware": false,
-      "strict_relevance": false
-    },
-    {
-      "expected": [
-        [
-          "Convergence candidate 6 machine learning",
-          "portfolio_value",
-          0.0
-        ],
-        [
-          "Mind Cognition candidate 8 machine learning",
-          "portfolio_value",
-          45.758
-        ],
-        [
-          "Future Governance candidate 9 machine learning",
-          "portfolio_value",
-          37.171
-        ],
-        [
-          "Convergence candidate 34 machine learning",
-          "portfolio_value",
-          0.0
-        ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 1,
-      "max_posts": 6,
-      "mission_aware": false,
-      "strict_relevance": true
-    },
-    {
+      "strict_relevance": false,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
           "mission_target:ai_core",
-          0.0
+          35.889
         ],
         [
           "Convergence candidate 6 machine learning",
@@ -1958,38 +1944,38 @@
           0.0
         ],
         [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          44.54
-        ],
-        [
           "Future Governance candidate 9 machine learning",
           "mission_target:future_governance",
           37.171
         ],
         [
-          "Ai Core candidate 14 machine learning",
-          "mission_target:research",
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "portfolio_value",
           0.0
         ],
         [
-          "Convergence candidate 34 machine learning",
+          "Convergence candidate 36 machine learning",
           "adaptive_source_backfill",
           0.0
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 6,
-      "mission_aware": true,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": true,
+      "strict_relevance": true,
       "expected": [
         [
           "Ai Core candidate 0 machine learning",
           "mission_target:ai_core",
-          0.0
+          35.889
         ],
         [
           "Convergence candidate 6 machine learning",
@@ -1997,33 +1983,33 @@
           0.0
         ],
         [
-          "Mind Cognition candidate 8 machine learning",
-          "mission_target:mind_cognition",
-          44.54
-        ],
-        [
           "Future Governance candidate 9 machine learning",
           "mission_target:future_governance",
           37.171
         ],
         [
-          "Ai Core candidate 14 machine learning",
-          "mission_target:research",
+          "Mind Cognition candidate 8 machine learning",
+          "mission_target:mind_cognition",
+          44.54
+        ],
+        [
+          "Convergence candidate 5 machine learning",
+          "portfolio_value",
           0.0
         ],
         [
-          "Convergence candidate 34 machine learning",
+          "Convergence candidate 36 machine learning",
           "adaptive_source_backfill",
           0.0
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 6,
-      "mission_aware": true,
-      "strict_relevance": true
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": false,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -2055,14 +2041,14 @@
           "adaptive_source_backfill",
           0.0
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 6,
-      "mission_aware": false,
-      "strict_relevance": false
+      ]
     },
     {
+      "max_posts": 6,
+      "max_per_source": 2,
+      "max_per_type": 2,
+      "mission_aware": false,
+      "strict_relevance": true,
       "expected": [
         [
           "Convergence candidate 6 machine learning",
@@ -2094,12 +2080,7 @@
           "adaptive_source_backfill",
           0.0
         ]
-      ],
-      "max_per_source": 2,
-      "max_per_type": 2,
-      "max_posts": 6,
-      "mission_aware": false,
-      "strict_relevance": true
+      ]
     }
   ],
   "reasons": [
@@ -2108,7 +2089,6 @@
     "mission_target:convergence",
     "mission_target:future_governance",
     "mission_target:mind_cognition",
-    "mission_target:research",
     "policy_repair:min_authoritative_items",
     "portfolio_value"
   ]

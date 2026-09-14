@@ -49,6 +49,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "ai_core_target_min": int(mission.get("ai_core_target_min", 1) or 0),
         "ai_core_target_max": int(mission.get("ai_core_target_max", 2) or 99),
         "convergence_target": int(mission.get("convergence_target", 0) or 0),
+        "mind_cognition_target": int(mission.get("mind_cognition_target", 0) or 0),
         "mind_future_target": int(mission.get("mind_future_target", 0) or 0),
         "research_target": int(mission.get("research_target", 0) or 0),
         "interview_target_max": int(mission.get("interview_target_max", 1) or 0),
@@ -316,7 +317,8 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
 
     for target_key, area_predicate in (
         ("convergence_target", lambda x: mission_area(x) == "convergence"),
-        ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
+        ("mind_cognition_target", lambda x: mission_area(x) == "mind_cognition"),
+        ("mind_future_target", lambda x: mission_area(x) == "future_governance"),
         ("research_target", _is_research),
     ):
         for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):

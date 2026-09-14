@@ -6,8 +6,8 @@ selection:
   max_items_per_content_type: 2
   story_similarity_threshold: 0.45
   diversity_mode: adaptive
-  diversity_weight: 4.0
-  similarity_penalty: 4.0
+  diversity_weight: 8.0
+  similarity_penalty: 12.0
   preferred_max_same_source: 1
   distinct_sources_first: true
   replacement_buffer: 3

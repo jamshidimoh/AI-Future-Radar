@@ -13,7 +13,7 @@ from src.unified_editorial_selection import load_editorial_contract, select_regu
 _AI_BRIDGE_TERMS = (
     "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral", "OpenAI", "Anthropic", "DeepMind",
     "transformer", "neural network", "reasoning model", "large language model", "artificial intelligence",
-    "machine learning", "AI", "AGI", "ai consciousness", "ai philosophy", "ai cognition", "ai mind",
+    "machine learning", "AGI", "ai consciousness", "ai philosophy", "ai cognition", "ai mind",
     "ai governance", "ai policy", "ai safety", "ai security", "ai agents", "agentic ai", "ai alignment", "ai regulation",
     "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی بزرگ", "مدل بنیادی", "عامل هوشمند",
     "حکمرانی هوش مصنوعی", "سیاست‌گذاری هوش مصنوعی", "فلسفه هوش مصنوعی", "آگاهی مصنوعی", "هوش ماشین"

@@ -1,14 +1,17 @@
-"""Editorial orchestration with explicit mind/cognition and interview recall protection."""
-from __future__ import annotations
-
-import re
+"""Editorial orchestration and leader/interview policy."""
 
 from src.editorial_core import (
     classify_editorial_item as _classify_editorial_item,
+)
+from src.editorial_core import (
     contract_summary,
-    enrich_items as _enrich_items,
-    filter_ai_relevance as _filter_ai_relevance,
     filter_low_signal,
+)
+from src.editorial_core import (
+    enrich_items as _enrich_items,
+)
+from src.editorial_core import (
+    filter_ai_relevance as _filter_ai_relevance,
 )
 from src.future_significance import annotate_future_significance
 from src.interview_evidence import has_interview_evidence
@@ -16,13 +19,15 @@ from src.strategic_signal import strategic_forecast_score
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 _AI_BRIDGE_TERMS = (
-    "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral", "OpenAI", "Anthropic", "DeepMind",
-    "transformer", "neural network", "reasoning model", "large language model", "artificial intelligence",
-    "machine learning", "AGI", "ai consciousness", "ai philosophy", "ai cognition", "ai mind",
-    "ai governance", "ai policy", "ai safety", "ai security", "ai agents", "agentic ai", "ai alignment", "ai regulation",
-    "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی بزرگ", "مدل بنیادی", "عامل هوشمند",
-    "حکمرانی هوش مصنوعی", "سیاست‌گذاری هوش مصنوعی", "فلسفه هوش مصنوعی", "آگاهی مصنوعی", "هوش ماشین"
+    "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral",
+    "OpenAI", "Anthropic", "transformer", "neural network", "reasoning model",
+    "large language model", "artificial intelligence", "machine learning",
+    "AI consciousness", "AI philosophy", "AI cognition", "AI mind", "AI governance",
+    "AI policy", "AI safety", "AI security", "AI agents", "agentic AI", "AI alignment",
+    "AI regulation", "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق",
+    "مدل زبانی بزرگ", "شبکه عصبی", "عامل هوشمند", "عامل‌های هوشمند",
 )
+
 _MIND_TERMS = (
     "consciousness", "machine consciousness", "AI consciousness", "artificial consciousness", "sentience", "qualia",
     "self-awareness", "awareness", "cognitive science", "cognition", "cognitive", "mind", "brain", "neuroscience",
@@ -32,76 +37,51 @@ _MIND_TERMS = (
     "علوم شناختی", "ذهن", "فلسفه ذهن", "فلسفه علم", "فلسفه فناوری", "فلسفه هوش مصنوعی", "معرفت شناسی", "معرفت‌شناسی",
     "علوم اعصاب", "مغز"
 )
-_INTERVIEW_TERMS = (
-    "interview", "conversation", "fireside", "keynote", "podcast", "discussion", "q&a", "talk with", "speaks with",
-    "in conversation", "sits down with", "مصاحبه", "گفتگو", "گفت‌وگو"
-)
+
 _EARLY_STRATEGIC_TERMS = (
-    "ai governance", "ai policy", "ai regulation", "artificial intelligence regulation", "technology policy", "digital policy",
-    "frontier model", "ai safety", "ai security", "ai agents", "agentic ai", "ai infrastructure", "ai chip", "ai data center",
-    "هوش مصنوعی", "حکمرانی هوش مصنوعی", "سیاست‌گذاری هوش مصنوعی", "تنظیم‌گری هوش مصنوعی"
+    "ai governance", "ai policy", "ai regulation", "artificial intelligence regulation",
+    "technology policy", "digital policy", "frontier model", "ai safety", "ai security",
+    "ai agents", "agentic ai", "ai infrastructure", "ai chip", "ai data center",
+    "هوش مصنوعی", "حکمرانی هوش مصنوعی", "سیاست‌گذاری هوش مصنوعی", "تنظیم‌گری هوش مصنوعی",
 )
 _CONSEQUENTIAL_TERMS = (
-    "breach", "hack", "hacked", "security incident", "safety incident", "rogue agent", "misuse", "shutdown", "recall",
-    "regulatory action", "critical vulnerability", "data leak", "agent hijack"
+    "breach", "hack", "hacked", "security incident", "safety incident", "rogue agent",
+    "misuse", "shutdown", "recall", "regulatory action", "critical vulnerability",
+    "data leak", "agent hijack",
 )
 _EMERGING_TERMS = (
-    "quantum computing", "quantum computer", "quantum chip", "qubit", "brain-computer interface", "bci", "neurotechnology",
-    "humanoid robot", "physical ai", "robot foundation model", "ai accelerator", "gpu", "npu", "tpu", "photonic computing",
-    "neuromorphic", "synthetic biology", "protein design", "computational biology"
+    "quantum computing", "quantum computer", "quantum chip", "qubit", "brain-computer interface",
+    "bci", "neurotechnology", "humanoid robot", "physical ai", "robot foundation model",
+    "ai accelerator", "gpu", "npu", "tpu", "photonic computing", "neuromorphic",
+    "synthetic biology", "protein design", "computational biology",
 )
 
 
-def _evidence_text(item: dict) -> str:
-    fields = ("title", "summary", "description", "evidence_text", "tags", "keywords")
-    return " ".join(str(item.get(k) or "") for k in fields).casefold()
+def _contains_any(text, terms):
+    return any(str(term).casefold() in text for term in terms)
 
 
-def _has_any(text: str, terms) -> bool:
-    for term in terms:
-        normalized = str(term).casefold()
-        if normalized in {"ai", "agi"}:
-            if re.search(rf"\b{re.escape(normalized)}\b", text, re.I):
-                return True
-        elif normalized in text:
-            return True
-    return False
+def _mind_lane_candidate(item, combined):
+    metadata = " ".join(str(item.get(k) or "") for k in ("category", "mission_area", "content_type", "tags", "keywords")).casefold()
+    mind_signal = _contains_any(f"{combined} {metadata}", _MIND_TERMS)
+    ai_bridge = _contains_any(combined, _AI_BRIDGE_TERMS)
+    return mind_signal and ai_bridge
 
 
-def _is_mind_lane_candidate(item: dict, text: str) -> bool:
-    category = str(item.get("category") or "").casefold()
-    area = str(item.get("mission_area") or "").casefold()
-    mind_signal = _has_any(text, _MIND_TERMS) or category == "mind" or area == "mind_cognition"
-    return mind_signal and _has_any(text, _AI_BRIDGE_TERMS)
-
-
-def _is_specialist_interview(item: dict, text: str) -> bool:
-    interview = str(item.get("content_type") or "").casefold() == "interview" or _has_any(text, _INTERVIEW_TERMS)
-    if not interview:
-        return False
-    return _has_any(text, _AI_BRIDGE_TERMS) and (
-        _has_any(text, _MIND_TERMS)
-        or str(item.get("category") or "").casefold() in {"ai", "mind", "future"}
-        or str(item.get("mission_area") or "").casefold() in {"mind_cognition", "future_governance"}
-    )
-
-
-def _leader_interview(item: dict) -> bool:
-    return bool(item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("is_leader")) and has_interview_evidence(item)
-
-
-def _early_reason(item: dict, text: str) -> str:
-    if _leader_interview(item):
+def _early_inclusion_reason(item, combined):
+    leader = bool(item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("is_leader"))
+    interview = has_interview_evidence(item)
+    if leader and interview:
         return "leader_interview"
-    if _is_mind_lane_candidate(item, text):
-        return "mind_cognition_lane"
-    if _is_specialist_interview(item, text):
-        return "specialist_interview"
-    if _has_any(text, _EARLY_STRATEGIC_TERMS) and (_has_any(text, _AI_BRIDGE_TERMS) or str(item.get("category") or "").casefold() in {"ai", "future"}):
+    if leader and str(item.get("leader") or item.get("watch_person") or "").strip():
+        return "key_actor"
+    # Strategic signals take precedence over generic consequence language such as
+    # "regulator" when an item is explicitly about AI/technology policy.
+    if _contains_any(combined, _EARLY_STRATEGIC_TERMS) and (_contains_any(combined, _AI_BRIDGE_TERMS) or str(item.get("category") or "").casefold() in {"ai", "future"}):
         return "strategic_ai_or_tech"
-    if _has_any(text, _CONSEQUENTIAL_TERMS) and _has_any(text, _AI_BRIDGE_TERMS + _EARLY_STRATEGIC_TERMS):
+    if _contains_any(combined, _CONSEQUENTIAL_TERMS) and _contains_any(combined, _AI_BRIDGE_TERMS + _EARLY_STRATEGIC_TERMS):
         return "consequential_ai_or_tech"
-    if _has_any(text, _EMERGING_TERMS):
+    if _contains_any(combined, _EMERGING_TERMS):
         try:
             tier = int(item.get("source_tier") or 3)
         except (TypeError, ValueError):
@@ -118,9 +98,12 @@ def classify_editorial_item(item, prior=None):
         result["leader"] = named
         result["leader_signal"] = True
         if named and has_interview_evidence({**item, **result}):
-            result.update(interview_signal=True, editorial_class="leader_interview", editorial_confidence=1.0)
+            result["interview_signal"] = True
+            result["editorial_class"] = "leader_interview"
+            result["editorial_confidence"] = 1.0
         elif not named:
-            result.update(editorial_class="fallback", editorial_confidence=0.35)
+            result["editorial_class"] = "fallback"
+            result["editorial_confidence"] = 0.35
     return result
 
 
@@ -137,52 +120,69 @@ def enrich_items(items, leader_priorities, source_history=None, policy=None):
     return enriched
 
 
-def _prepare_relevance_item(raw: dict, supplied_keywords: tuple[str, ...]) -> tuple[dict, bool]:
+def _prepare_relevance_item(raw, supplied_keywords) -> tuple[dict, bool]:
     item = dict(raw)
+    title = str(item.get("title") or "")
+    summary = str(item.get("summary") or "")
     evidence = str(item.get("evidence_text") or "").strip()
+    preferred = str(item.get("preferred_source") or "")
+    combined = f"{title} {summary} {evidence}".casefold()
+    bridge_hits = [term for term in _AI_BRIDGE_TERMS if term.casefold() in combined]
+    direct_keyword_hits = [term for term in supplied_keywords if term.casefold() in combined]
+    curated_trusted = bool(item.get("curated_discovery") and preferred and int(item.get("source_tier") or 3) in {1, 2})
+    early_reason = _early_inclusion_reason(item, combined)
+
+    if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits and not direct_keyword_hits and not early_reason:
+        item["_force_reject_ai_gate"] = True
     if evidence:
         item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
-    text = _evidence_text(item)
-    bridge_hits = _has_any(text, _AI_BRIDGE_TERMS) or _has_any(text, supplied_keywords)
-    reason = _early_reason(item, text)
-    try:
-        source_tier = int(item.get("source_tier") or 3)
-    except (TypeError, ValueError):
-        source_tier = 3
-    curated = bool(item.get("curated_discovery") and item.get("preferred_source") and source_tier in {1, 2})
-    if reason and bridge_hits:
-        item.update(
-            early_inclusion=True,
-            early_inclusion_reason=reason,
-            relevance_reason="ai_evidence" if reason == "specialist_interview" else f"early_inclusion:{reason}",
-            _ai_link=True,
-            ai_relevance=True,
-            ai_relevance_confidence=0.90 if reason == "mind_cognition_lane" else 0.85,
-            evidence_strength=max(float(item.get("evidence_strength", 0) or 0), 8.5),
-            ai_relevance_quality="protected_mission_lane",
-        )
-        if _is_mind_lane_candidate(item, text):
-            item["mission_area"] = "mind_cognition"
-            item["topic_family"] = "consciousness_cognition"
-        else:
-            item["topic_family"] = "ai_core"
+    if bridge_hits:
+        item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
+    item["_curated_trusted_ai_bridge"] = curated_trusted
+    item["_has_direct_ai_evidence"] = bool(bridge_hits or direct_keyword_hits)
+
+    generic_interview_with_ai_evidence = bool(
+        str(item.get("content_type") or "").casefold() == "interview"
+        and not (item.get("is_leader_watch") or item.get("leader_watch_protected"))
+        and direct_keyword_hits
+    )
+    if early_reason and not bridge_hits and not generic_interview_with_ai_evidence:
+        item["early_inclusion"] = True
+        item["early_inclusion_reason"] = early_reason
+        item["relevance_reason"] = f"early_inclusion:{early_reason}"
+        item["_ai_link"] = True
+        item["ai_relevance"] = True
+        item["ai_relevance_confidence"] = 0.55 if early_reason in {"key_actor", "emerging_technology"} else 0.65
+        item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), 5.5)
+        item["ai_relevance_quality"] = "early_inclusion"
         return item, True
-    item["_curated_trusted_ai_bridge"] = curated
-    item["_has_direct_ai_evidence"] = bridge_hits
     return item, False
 
 
-def _accept_trusted_curated(normalized: list[dict], result: list[dict]) -> None:
+def _accept_trusted_curated(normalized, result):
+    trusted_curated = [
+        x for x in normalized
+        if x.get("_curated_trusted_ai_bridge")
+        and not x.get("_force_reject_ai_gate")
+        and not x.get("_has_direct_ai_evidence")
+    ]
     present = {str(x.get("title") or "") for x in result}
-    for item in normalized:
-        if not item.get("_curated_trusted_ai_bridge") or item.get("_has_direct_ai_evidence"):
-            continue
-        title = str(item.get("title") or "")
-        if title in present:
+    for item in trusted_curated:
+        if str(item.get("title") or "") in present:
             continue
         accepted = dict(item)
-        accepted.update(_ai_link=True, relevance_reason="curated_ai_provenance", topic_family="ai_core", relevance_evidence=["curated AI provenance"], evidence_level="B", ai_relevance_confidence=0.55, evidence_strength=5.5, ai_relevance_quality="bridge")
+        accepted.update(
+            _ai_link=True,
+            relevance_reason="curated_ai_provenance",
+            topic_family="ai_core",
+            relevance_evidence=["curated AI provenance"],
+            evidence_level="B",
+            ai_relevance_confidence=0.55,
+            evidence_strength=5.5,
+            ai_relevance_quality="bridge",
+        )
         result.append(accepted)
+    return result
 
 
 def _finalize_relevance_confidence(result) -> None:
@@ -197,23 +197,55 @@ def _finalize_relevance_confidence(result) -> None:
 
 
 def filter_ai_relevance(items, ai_keywords=None):
-    normalized, rescue = [], []
-    supplied = tuple(str(x) for x in (ai_keywords or ()) if str(x).strip())
+    normalized = []
+    rescue = []
+    supplied_keywords = tuple(str(term) for term in (ai_keywords or []) if str(term).strip())
     for raw in items or []:
-        item, rescued = _prepare_relevance_item(raw, supplied)
-        (rescue if rescued else normalized).append(item)
+        item, is_rescue = _prepare_relevance_item(raw, supplied_keywords)
+        (rescue if is_rescue else normalized).append(item)
+
     keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
     result = _filter_ai_relevance(
-        [x for x in normalized if not x.get("_force_reject_ai_gate") and (not x.get("_curated_trusted_ai_bridge") or x.get("_has_direct_ai_evidence"))],
+        [
+            x for x in normalized
+            if not x.get("_force_reject_ai_gate")
+            and (not x.get("_curated_trusted_ai_bridge") or x.get("_has_direct_ai_evidence"))
+        ],
         keywords,
     )
     _accept_trusted_curated(normalized, result)
+
+    # Structural recall guard: mind/cognition/philosophy and substantive AI-linked
+    # interviews get a second, auditable opportunity only when the canonical AI
+    # gate did not already retain them. This does not bypass authority, dedup,
+    # story gate, ranking, or final publication safety.
+    present = {str(x.get("title") or "") for x in result}
+    for item in normalized:
+        title = str(item.get("title") or "")
+        if title in present:
+            continue
+        combined = f"{item.get('title', '')} {item.get('summary', '')} {item.get('description', '')} {item.get('evidence_text', '')} {item.get('tags', '')} {item.get('keywords', '')}".casefold()
+        if not _mind_lane_candidate(item, combined):
+            continue
+        rescued = dict(item)
+        rescued.update(
+            early_inclusion=True,
+            early_inclusion_reason="mind_cognition_lane",
+            relevance_reason="early_inclusion:mind_cognition_lane",
+            _ai_link=True,
+            ai_relevance=True,
+            ai_relevance_confidence=0.90,
+            evidence_strength=max(float(item.get("evidence_strength", 0) or 0), 8.5),
+            ai_relevance_quality="protected_mission_lane",
+            topic_family="consciousness_cognition",
+            mission_area="mind_cognition",
+        )
+        result.append(rescued)
+        present.add(title)
+
     result.extend(rescue)
     _finalize_relevance_confidence(result)
-    print(
-        f"[Early Inclusion] rescued={len(rescue)} | mind_lane={sum(x.get('early_inclusion_reason') == 'mind_cognition_lane' for x in rescue)} | interviews={sum(x.get('early_inclusion_reason') in {'specialist_interview','leader_interview'} for x in rescue)} | direct/curated={len(result)-len(rescue)}",
-        flush=True,
-    )
+    print(f"[Early Inclusion] rescued={len(rescue)} | mind_lane={sum(x.get('early_inclusion_reason') == 'mind_cognition_lane' for x in rescue)} | direct/curated={len(result) - len(rescue)}", flush=True)
     return result
 
 
@@ -224,7 +256,16 @@ def _apply_strategic_signal(item):
     return item
 
 
+def _is_protected_leader(item):
+    return bool(item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("leader_signal"))
+
+
+def _leader_name(item):
+    return str(item.get("leader") or item.get("watch_person") or "").strip()
+
+
 def _annotate_selection_value(item):
+    """Add future-significance value without changing any hard quality gate."""
     annotate_future_significance(item)
     item["final_editorial_score"] = item["radar_composite_score"]
     return item
@@ -233,11 +274,12 @@ def _annotate_selection_value(item):
 def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, policy=None):
     policy = policy or {}
     protected_limit = int(policy.get("protected_slots", policy.get("leader_interview_slots", 2)) or 0)
-    protected, regular, seen = [], [], set()
+    protected, regular = [], []
+    seen = set()
     for raw in items or []:
         item = dict(raw)
-        name = str(item.get("leader") or item.get("watch_person") or "").strip().casefold()
-        if (item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("leader_signal")) and name:
+        name = _leader_name(item).casefold()
+        if _is_protected_leader(item) and name:
             if name in seen:
                 continue
             seen.add(name)
@@ -252,7 +294,7 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
         item["editorial_class"] = "leader_interview" if interviewed else item.get("editorial_class", "leader_activity")
         item["leader_watch_protected"] = True
         item["leader_signal"] = True
-        item["selection_reason"] = f"protected:{item.get('leader') or item.get('watch_person')}"
+        item["selection_reason"] = f"protected:{_leader_name(item)}"
     for item in regular:
         _annotate_selection_value(item)
     selected_regular = select_regular_portfolio(
@@ -265,10 +307,9 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
         strict_relevance=bool(policy.get("strict_relevance", False)),
     )
     for item in selected_regular:
-        if item.get("mission_area") == "mind_cognition":
-            item["selection_lane"] = "mind_cognition_protected"
-        if item.get("interview_signal") or str(item.get("content_type") or "").casefold() == "interview":
-            item["selection_lane"] = item.get("selection_lane", "interview")
+        if item.get("is_leader_watch") and not _leader_name(item):
+            item["editorial_slot"] = "fallback"
+            item["editorial_class"] = "fallback"
     return protected + selected_regular
 
 

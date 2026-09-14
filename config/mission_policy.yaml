@@ -14,7 +14,6 @@ mission:
   ai_core_target_min: 1
   ai_core_target_max: 2
   convergence_target: 1
-  mind_cognition_target: 1
   mind_future_target: 1
   future_governance_target: 0
   research_target: 0

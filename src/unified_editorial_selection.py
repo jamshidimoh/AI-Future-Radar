@@ -320,15 +320,23 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
             if not pool:
                 break
-            top_global = max((candidate_score(x) for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)), default=0.0)
+            baseline_pool = [
+                x for x in ordered
+                if id(x) not in p.selected_ids
+                and p.admissible(x, repeat_source=False)
+                and (target_key != "mind_future_target" or mission_area(x) != "ai_core")
+            ]
+            baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
             candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
             if candidate is None:
                 break
             floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
-            # Mission opportunities may legitimately be below the global quality floor
-            # when they are still strong enough to preserve the radar's mind/research lane.
-            opportunity_floor = floor
-            if top_global > 0 and candidate_score(candidate) < top_global * opportunity_floor:
+            # All mission opportunities respect the same quality floor. For the
+            # mind/future lane, compare against the strongest remaining non-AI
+            # candidate so an already-covered AI duplicate does not suppress a
+            # substantive cross-domain story, while weak future signals still lose
+            # to stronger non-AI candidates.
+            if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
                 break
             candidate_area = mission_area(candidate)
             reason = f"mission_target:{candidate_area}" if candidate_area in {"mind_cognition", "future_governance"} else f"mission_target:{target_key.removesuffix('_target')}"

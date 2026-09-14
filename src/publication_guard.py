@@ -84,11 +84,12 @@ def _load_records() -> list[dict]:
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
-    """Return semantic conflict only when there is evidence for the same event.
+    """Return semantic conflict only with evidence for the same underlying event.
 
-    Shared entities/terms alone are insufficient. Exact URL/title remain hard blocks,
-    while event classification, semantic similarity and multiple concrete anchors
-    provide the generic same-story evidence used for rewritten and cross-language copies.
+    Exact URL/title/summary are hard blocks. Event identity is authoritative for a
+    classified DUPLICATE. For cross-language rewrites, concrete shared anchors plus
+    a shared event type provide the missing evidence when token similarity is low.
+    Generic shared words alone never reach the publication-block threshold.
     """
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
@@ -102,24 +103,28 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
 
     kind, event_score, evidence = compare_events(candidate, stored)
     semantic_score = _similarity(get_story_signature(candidate), get_story_signature(stored))
-    anchors = shared_anchor_count(f"{candidate_title} {candidate_summary}", f"{stored_title} {stored_summary}")
-
-    if kind in {"NEW", "UPDATE"}:
-        return 0.0
+    anchors = shared_anchor_count(
+        f"{candidate_title} {candidate_summary}",
+        f"{stored_title} {stored_summary}",
+    )
 
     if kind == "DUPLICATE":
-        return max(semantic_score, event_score)
+        return 1.0
 
-    # RELATED events are blocked only when both the semantic match and concrete
-    # anchors support the same underlying story. This avoids the previous false
-    # positive where any three shared English tokens forced a duplicate decision.
-    if kind == "RELATED" and anchors >= 3 and semantic_score >= 0.60:
-        return max(0.82, semantic_score)
+    if kind == "UPDATE":
+        # A material update of the same event is not a new publication conflict when
+        # it materially changes the underlying facts, e.g. revised scope/severity.
+        return 0.0
 
-    # Event classification can be imperfect for rewritten/cross-language copies.
-    # Require both multiple concrete anchors and a meaningful semantic match before
-    # treating the item as a same-story publication conflict.
-    if anchors >= 3 and semantic_score >= 0.65:
+    # Cross-language rewrite: event classifier may conservatively label the pair
+    # RELATED because lexical similarity is low. Block only when concrete anchors
+    # and a shared event type independently support the same story.
+    shared_events = evidence.get("shared_events") or []
+    if kind == "RELATED" and anchors >= 3 and shared_events:
+        return 1.0
+
+    # Conservative generic fallback for rewritten stories that escaped event typing.
+    if anchors >= 3 and (event_score >= 0.45 or semantic_score >= 0.65):
         return 0.82
 
     logger.debug(

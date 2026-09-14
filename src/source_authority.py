@@ -56,7 +56,7 @@ def _name_match(value: str, markers: tuple[str, ...]) -> bool:
 
 def _configured_tier(value: object) -> int:
     try:
-        tier = int(value)
+        tier = int(str(value))
     except (TypeError, ValueError):
         tier = 3
     return tier if tier >= 3 else 3

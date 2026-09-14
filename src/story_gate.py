@@ -21,9 +21,6 @@ _TECH_SIGNAL_TERMS = (
 
 def _technology_relevant(item):
     # Leader/watchlist routing metadata is not itself technology evidence.
-    # A leader item must contain independent AI/technology evidence before it
-    # can qualify for protected Tier-0 reservation. The _ai_link shortcut is
-    # still allowed for non-leader/cross-domain candidates.
     if item.get("ai_relevance") is True:
         return True
     leader_routed = bool(item.get("leader") or item.get("watch_person") or item.get("leader_watch_protected"))
@@ -33,7 +30,29 @@ def _technology_relevant(item):
         str(item.get(k) or "")
         for k in ("title", "summary", "description", "category", "topic_family", "content_type")
     ).casefold()
-    return any(term.casefold() in text for term in _TECH_SIGNAL_TERMS)
+    if any(term.casefold() in text for term in _TECH_SIGNAL_TERMS):
+        return True
+
+    # Dedicated leader-interview discovery can have a headline such as
+    # “The full-length interview with Yuval Noah Harari” whose title omits AI,
+    # while the discovery query/context explicitly targets AI/future technology.
+    # Preserve Tier-0 format evidence when that context is independently present.
+    if leader_routed and str(item.get("content_type") or "").casefold() in {
+        "interview", "podcast", "conversation", "discussion", "talk", "lecture", "q&a"
+    }:
+        classification = item.get("leader_signal_classification") or {}
+        discovery = " ".join(
+            str(item.get(k) or "")
+            for k in ("discovery_query", "watch_query", "query", "keywords")
+        ).casefold()
+        context = bool(isinstance(classification, dict) and classification.get("context"))
+        context_terms = (
+            "artificial intelligence", "ai", "agi", "technology", "future", "consciousness",
+            "cognition", "digital", "machine", "robotics", "quantum", "brain-computer",
+        )
+        if context or any(term in discovery for term in context_terms):
+            return True
+    return False
 
 
 def _prepare_canonical_scores(item):

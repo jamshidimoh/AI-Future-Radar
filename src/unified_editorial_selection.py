@@ -48,10 +48,11 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "max_same_mission_area": int(mission.get("max_same_mission_area", 2) or 2),
         "ai_core_target_min": int(mission.get("ai_core_target_min", 1) or 0),
         "ai_core_target_max": int(mission.get("ai_core_target_max", 2) or 99),
-        "convergence_target": int(mission.get("convergence_target", 1) or 0),
-        "mind_future_target": int(mission.get("mind_future_target", 1) or 0),
-        "research_target": int(mission.get("research_target", 1) or 0),
+        "convergence_target": int(mission.get("convergence_target", 0) or 0),
+        "mind_future_target": int(mission.get("mind_future_target", 0) or 0),
+        "research_target": int(mission.get("research_target", 0) or 0),
         "interview_target_max": int(mission.get("interview_target_max", 1) or 0),
+        "diversity_quality_floor_ratio": float(selection_cfg.get("diversity_quality_floor_ratio", 0.80) or 0.80),
         "diversity_weight": float(selection_cfg.get("diversity_weight", 8.0) or 8.0),
         "similarity_penalty": float(selection_cfg.get("similarity_penalty", 12.0) or 12.0),
         "required_areas": ("ai_core", "convergence", "mind_cognition", "future_governance"),
@@ -191,6 +192,7 @@ def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, An
     )
     return item
 
+
 class _Portfolio:
     def __init__(self, *, contract: dict[str, Any], limit: int, source_cap: int, type_cap: int, recent: dict[str, int], mission_aware: bool):
         self.selected: list[dict[str, Any]] = []
@@ -271,57 +273,76 @@ def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[st
     return eligible
 
 
+def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Return the best candidate only when diversity does not require a material quality sacrifice."""
+    candidates = [x for x in pool if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+    if not candidates:
+        return None
+    top_score = max((candidate_score(x) for x in candidates), default=0.0)
+    if top_score <= 0.0:
+        return None
+    floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+    viable = [x for x in candidates if candidate_score(x) >= top_score * floor]
+    if not viable:
+        viable = [max(candidates, key=lambda x: candidate_score(x))]
+    return max(
+        viable,
+        key=lambda x: (
+            portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
+            candidate_score(x),
+            _safe_float(x, "evidence_strength"),
+            str(x.get("published", "")),
+        ),
+    )
+
+
 def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
     if not p.mission_aware or p.limit <= 0:
         return
+    # ai_core_target_min is the only mandatory mission floor. Other target fields
+    # are explicit coverage opportunities and must remain quality-competitive.
     for _ in range(min(p.contract["ai_core_target_min"], p.limit)):
-        candidate = p.best([x for x in ordered if mission_area(x) == "ai_core"], prefer_research=True)
+        candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+        candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
         if candidate is None:
             break
         p.add(candidate, "mission_target:ai_core")
-    for _ in range(min(p.contract["convergence_target"], max(0, p.limit - len(p.selected)))):
-        candidate = p.best([x for x in ordered if mission_area(x) == "convergence"], prefer_research=True)
-        if candidate is None:
-            break
-        p.add(candidate, "mission_target:convergence")
-    for _ in range(min(p.contract["mind_future_target"], max(0, p.limit - len(p.selected)))):
-        candidate = p.best([x for x in ordered if mission_area(x) in {"mind_cognition", "future_governance"}], prefer_research=True)
-        if candidate is None:
-            break
-        p.add(candidate, f"mission_target:{mission_area(candidate)}")
-    for _ in range(min(p.contract["research_target"], max(0, p.limit - len(p.selected)))):
-        candidate = p.best([x for x in ordered if _is_research(x)], prefer_research=True)
-        if candidate is None:
-            break
-        p.add(candidate, "mission_target:research")
+
+    for target_key, area_predicate, reason in (
+        ("convergence_target", lambda x: mission_area(x) == "convergence", "convergence"),
+        ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}, "mind_future"),
+        ("research_target", _is_research, "research"),
+    ):
+        for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
+            pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+            if not pool:
+                break
+            top_global = max((candidate_score(x) for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)), default=0.0)
+            candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+            if candidate is None:
+                break
+            floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+            if top_global > 0 and candidate_score(candidate) < top_global * floor:
+                break
+            p.add(candidate, f"mission_target:{reason}")
 
 
 def _fill_by_portfolio_value(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:
     while len(p.selected) < p.limit:
-        pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
-        if not pool:
+        unique_pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+        if not unique_pool:
             break
-        for item in pool:
-            _annotate_information_gain(item, p.selected, p.contract)
-        best_item = max(
-            pool,
-            key=lambda x: (
-                portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
-                candidate_score(x),
-                _safe_float(x, "evidence_strength"),
-                str(x.get("published", "")),
-            ),
-        )
+        best_item = _quality_floor_candidate(p, unique_pool)
+        if best_item is None:
+            break
         if p.mission_aware and mission_area(best_item) == "ai_core" and p.area_counts.get("ai_core", 0) >= p.contract["ai_core_target_max"]:
-            alternative = [x for x in pool if mission_area(x) != "ai_core"]
+            alternative = [x for x in unique_pool if mission_area(x) != "ai_core"]
             if alternative:
-                best_item = max(
-                    alternative,
-                    key=lambda x: (
-                        portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
-                        candidate_score(x),
-                    ),
-                )
+                alt = _quality_floor_candidate(p, alternative)
+                if alt is not None:
+                    best_item = alt
+                else:
+                    break
             else:
                 break
         p.add(best_item, "portfolio_value")
@@ -334,10 +355,15 @@ def _backfill_repeat_sources(p: _Portfolio, eligible: list[dict[str, Any]]) -> N
         pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=True)]
         if not pool:
             break
-        for item in pool:
+        top_score = max((candidate_score(x) for x in pool), default=0.0)
+        floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+        viable = [x for x in pool if top_score <= 0 or candidate_score(x) >= top_score * floor]
+        if not viable:
+            viable = [max(pool, key=candidate_score)]
+        for item in viable:
             _annotate_information_gain(item, p.selected, p.contract)
         best_item = max(
-            pool,
+            viable,
             key=lambda x: (
                 portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
                 candidate_score(x),

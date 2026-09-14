@@ -11,6 +11,9 @@ selection:
   preferred_max_same_source: 1
   distinct_sources_first: true
   replacement_buffer: 3
+  # Diversity is a soft preference. A materially weaker candidate must not win
+  # solely because it opens a new mission area or source.
+  diversity_quality_floor_ratio: 0.80
 
 editorial:
   leader_priority_weight: 2
@@ -38,9 +41,8 @@ editorial:
 # - mind_future_target=2 prioritizes up to two normal slots for the mission area
 #   containing consciousness, cognition, philosophy of mind/science/technology,
 #   AI philosophy, and technology-linked future/governance. Awareness/philosophy
-#   candidates are therefore not easily displaced by generic AI news when eligible.
-# - max_same_mission_area=1 in mission_policy makes these coverage opportunities
-#   structurally diverse: a run cannot consume all normal capacity in one area.
+#   candidates are therefore considered when they are sufficiently competitive.
+# - max_same_mission_area=6 is a portfolio ceiling, not a diversity quota.
 # - Technology-linked consciousness/philosophy terms are mapped in mission_policy
 #   to mind_cognition and remain subject to authority, quality, deduplication and
 #   publication gates.

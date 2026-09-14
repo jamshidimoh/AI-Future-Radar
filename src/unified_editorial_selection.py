@@ -208,9 +208,9 @@ class _Portfolio:
         self.type_cap = type_cap
         self.mission_aware = mission_aware
 
-    def admissible(self, item: dict[str, Any], *, repeat_source: bool) -> bool:
+    def admissible(self, item: dict[str, Any], *, repeat_source: bool, ignore_type_cap: bool = False) -> bool:
         source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
-        if self.type_counts.get(ctype, 0) >= self.type_cap:
+        if not ignore_type_cap and self.type_counts.get(ctype, 0) >= self.type_cap:
             return False
         if self.mission_aware and _is_interview(item) and self.interview_count >= self.contract["interview_target_max"] > 0:
             return False
@@ -302,10 +302,10 @@ def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[
 def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
     if not p.mission_aware or p.limit <= 0:
         return
-    # ai_core_target_min is the only mandatory mission floor. Other target fields
-    # are explicit coverage opportunities and must remain quality-competitive.
+    # Mission targets are coverage opportunities. The content-type ceiling is
+    # intentionally soft here: it must not starve an uncovered mission lane.
     for _ in range(min(p.contract["ai_core_target_min"], p.limit)):
-        candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+        candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
         candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
         if candidate is None:
             break
@@ -317,13 +317,13 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         ("research_target", _is_research),
     ):
         for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
-            pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+            pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
             if not pool:
                 break
             baseline_pool = [
                 x for x in ordered
                 if id(x) not in p.selected_ids
-                and p.admissible(x, repeat_source=False)
+                and p.admissible(x, repeat_source=False, ignore_type_cap=True)
                 and (target_key != "mind_future_target" or mission_area(x) != "ai_core")
             ]
             baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)

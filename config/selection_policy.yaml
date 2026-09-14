@@ -6,8 +6,8 @@ selection:
   max_items_per_content_type: 2
   story_similarity_threshold: 0.45
   diversity_mode: adaptive
-  diversity_weight: 8.0
-  similarity_penalty: 12.0
+  diversity_weight: 4.0
+  similarity_penalty: 4.0
   preferred_max_same_source: 1
   distinct_sources_first: true
   replacement_buffer: 3
@@ -42,8 +42,9 @@ editorial:
 # - diversity_quality_floor_ratio=0.80 remains unchanged; lane coverage never
 #   admits a candidate below the quality floor when a qualifying alternative exists.
 # - max_same_mission_area=2 prevents an AI-only or single-domain publication run.
-# - Information gain is a bounded soft reranker. It never bypasses relevance,
-#   authority, source, content-type, community, interview, or publication gates.
+# - Information gain is a bounded soft reranker. Quality remains the dominant
+#   signal inside a mission lane; novelty is used to break close-score ties rather
+#   than displacing materially stronger mind/cognition or research candidates.
 # - Community/aggregator sources are not eligible for the normal portfolio.
 # - candidate_window and replacement_buffer preserve additional candidates for
 #   post-summary or publication rejection without lowering quality floors.

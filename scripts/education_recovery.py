@@ -107,10 +107,11 @@ def _build_with_deterministic_recovery() -> dict | None:
 def main() -> int:
     cadence = production_entrypoint._load_cadence()
     forced = os.getenv("FORCE_EDUCATION_PUBLICATION", "").strip().lower() in {"1", "true", "yes"}
-    due, slot = production_entrypoint._education_is_due(production_entrypoint._tehran_now(), cadence.get("last_education_slot", ""))
+    now = production_entrypoint._tehran_now()
+    due, slot = production_entrypoint._education_is_due(now, cadence.get("last_education_slot", ""))
     if forced:
         due = True
-        slot = f"manual-validation:{production_entrypoint._tehran_now().date().isoformat()}"
+        slot = f"manual-validation:{now.date().isoformat()}"
         print("[Education Recovery] CONTROLLED MANUAL VALIDATION MODE enabled", flush=True)
     print(f"[Education Recovery] due={due} slot={slot} last_slot={cadence.get('last_education_slot', '')} last_run={cadence.get('last_education_run', 0)}", flush=True)
     if not due:
@@ -120,7 +121,11 @@ def main() -> int:
     try:
         lesson, lesson_id, total = educational_content._next_lesson()
         if not lesson or not int(lesson_id):
-            print(f"[Education Recovery] EXHAUSTED total={total} completed={len(educational_content._completed_ids())}; no lesson reuse permitted", flush=True)
+            cadence = production_entrypoint._load_cadence()
+            cadence["last_education_slot"] = slot or cadence.get("last_education_slot", "")
+            cadence["last_education_run"] = run_number
+            production_entrypoint._save_cadence(cadence)
+            print(f"[Education Recovery] EXHAUSTED total={total} completed={len(educational_content._completed_ids())}; no lesson reuse permitted; slot recorded", flush=True)
             return 0
     except Exception as exc:
         print(f"[Education Recovery] exhaustion check failed: {exc!r}; continuing normal recovery", flush=True)

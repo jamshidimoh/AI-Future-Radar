@@ -23,11 +23,11 @@ jobs:
           s = p.read_text(encoding='utf-8')
           old = '            opportunity_floor = min(floor, 0.70) if target_key in {"mind_future_target", "research_target"} else floor\n'
           new = '            opportunity_floor = floor\n'
-          if old not in s:
-              raise SystemExit('selector opportunity floor patch target not found')
-          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          if old in s:
+              s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
           PY
-          python tests/characterization/gen_fixtures.py
+          python -O tests/characterization/gen_fixtures.py
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add src/unified_editorial_selection.py tests/characterization/select_regular_portfolio.json

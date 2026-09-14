@@ -95,10 +95,12 @@ jobs:
               publication_attempted = has(text, r"\[Publication Policy\]\s+PUBLISH\b")
               zero_publish = has(text, r"Posts sent: 0/") and has(text, r"normal_news=0[^\n]*tier0_news=0")
               acceptance = has(text, r"\[Production Acceptance\] PASS:")
-              fail_closed_tests = has(text, r"\[Fail-Closed Acceptance Evidence\] PASS")
+              fail_closed_acceptance = has(text, r"\[Production Acceptance\] PASS:\s+production acceptance PASS:\s+fail-closed")
               if published:
                   return True
-              return zero_publish and acceptance and fail_closed_tests and publication_attempted
+              # A zero-publish run is valid only when the executable acceptance guard
+              # itself proves complete selected-set accounting and no posts were sent.
+              return zero_publish and acceptance and fail_closed_acceptance and publication_attempted
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=30")

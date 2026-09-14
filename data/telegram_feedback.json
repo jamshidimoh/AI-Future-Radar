@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789410371,
+  "updated_at": 1789410944,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9549,6 +9549,25 @@
       "why_it_matters": "این فناوری پتانسیل بالایی برای کاهش آلودگی پلاستیکی و کاهش ردپای کربن صنعت ساختمان دارد. با تبدیل زباله به ماده اولیه، چرخه عمر مواد بهبود یافته و وابستگی به منابع طبیعی کاهش می‌یابد. موفقیت این استارتاپ می‌تواند الگویی برای اقتصاد چرخشی در بخش‌های دیگر صنعت باشد.",
       "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPRmxJMVVlSGlqV3l1aXB4Q2pPVWMwOXZJTWZ6cDJ1MmhBd05tdmpFRDlJRGtkX1M2X2JtMHQ1QUJWNVljdTVwd0ZEUXVDaG5RX3FHVGNvVFdVcWVVb1ZKb2Y4VDNzY25KaTFEQnRpLVNIN0wxT05XM1RibGZGTVU5VGpycnBLLTF4Q292b3NzaHhUVUxzY1BJMWpjWUQ?oc=5",
       "posted_at": 1789410371
+    },
+    "-1004482051328:1615": {
+      "chat_id": -1004482051328,
+      "message_id": 1615,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Y Combinator",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "Mass Magnetics: بازیافت آهنرباهای نادر برای رباتیک و دفاع آمریکا",
+      "summary": "آهنرباها به‌عنوان اجزای حیاتی در آینده رباتیک، صنایع دفاعی و سایر بخش‌های کلیدی ایالات متحده شناخته می‌شوند. با این حال، به‌طور سنتی ۹۰ درصد از مواد آهنربای نادر زمین دور ریخته می‌شوند. تیم Mass Magnetics با بازیافت آهنرباهای موتورهای خودروهای الکتریکی (EV) قدیمی، آهنرباهای جدید تولید می‌کند. هدف نهایی این شرکت، تولید مقیاس‌پذیر آهنرباهای آمریکایی است تا وابستگی به منابع خارجی کاهش یابد.",
+      "description": "Magnets are becoming critical to the future of robotics, defense, and other major US industries.\n\nBut 90% of rare earth magnet material is conventionally thrown away.\n\nThe team at Mass Magnetics are recycling magnets from old EV motors into new ones, with the goal of making American magnets at scale.",
+      "why_it_matters": "این فناوری با حل مشکل اتلاف ۹۰ درصدی مواد نادر زمین، زنجیره تأمین داخلی ایالات متحده را برای صنایع استراتژیک مانند رباتیک و دفاع تقویت می‌کند. بازیافت آهنرباهای موتورهای خودروهای الکتریکی نه‌تنها پایداری زیست‌محیطی را افزایش می‌دهد، بلکه امنیت ملی را از طریق کاهش وابستگی به واردات مواد خام حیاتی تضمین می‌کند. این رویکرد امکان تولید مقیاس‌پذیر و مستقل آهنرباهای آمریکایی را فراهم می‌آورد.",
+      "link": "https://www.youtube.com/shorts/hkfCJip_HXQ",
+      "posted_at": 1789410944
     }
   }
 }

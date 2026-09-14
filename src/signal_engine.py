@@ -164,6 +164,15 @@ def enrich_with_signal(item: dict) -> dict:
         str(enriched.get("content_type") or "").lower() in {"interview", "podcast", "talk", "lecture"}
         or any(term in _text(enriched) for term in INTERVIEW_TERMS)
     )
+    # A qualifying mind/cognition mission candidate has already passed the
+    # independent AI-link, source-tier and evidence gates. Give that protected
+    # mission lane a deterministic signal floor so portfolio coverage cannot be
+    # erased by generic model-release/news signals. This is not a bonus for weak
+    # content: only editorial.py can set protected_mission_lane=True after its
+    # explicit recall checks.
+    if enriched.get("protected_mission_lane") and str(enriched.get("mission_area") or "").casefold() == "mind_cognition":
+        score = max(score, 62.0)
+        enriched["mission_signal_floor_applied"] = True
     # Interview status is metadata for downstream policy/routing. It is deliberately
     # not a ranking bonus: leader authority and protected-stream eligibility belong
     # to the policy/ranking layers, preventing double counting.

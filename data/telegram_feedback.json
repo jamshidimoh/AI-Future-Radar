@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789394032,
+  "updated_at": 1789394931,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9168,6 +9168,25 @@
       "why_it_matters": "این تحلیل نشان می‌دهد که صرف توسعه سخت‌افزار جدید بدون در نظر گرفتن قفل‌های معماری Transformer، ممکن است منجر به شکست تجاری شود. محدودیت‌های ذاتی حافظه و محاسبات در این معماری، زنجیره تأمین را برای بازیگران جدید دشوار می‌کند. درک این واقعیت برای سرمایه‌گذاران و مهندسان ضروری است تا استراتژی‌های خود را با محدودیت‌های فنی موجود همسو کنند.",
       "link": "https://www.youtube.com/shorts/Rnv7GLfU9Uc",
       "posted_at": 1789394032
+    },
+    "-1004482051328:1594": {
+      "chat_id": -1004482051328,
+      "message_id": 1594,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "ماریانا پوپسکو: مرزهای خلاقیت انسانی و هوش مصنوعی در معماری",
+      "summary": "ماریانا پوپسکو، استاد دانشگاه MIT CSAIL، به بررسی نقش هوش مصنوعی در معماری و طراحی می‌پردازد. او تفاوت میان استفاده از AI به عنوان یک ابزار کمکی و واگذاری تصمیم‌گیری‌های خلاقانه به این سیستم‌ها را تحلیل می‌کند. پوپسکو استدلال می‌کند که علی‌رغم پیشرفت‌های دیجیتال، ارتباط میان دنیای مجازی و فیزیکی همچنان به خلاقیت و Agentic AI انسانی وابسته است.",
+      "description": "How should we think about AI in architecture and design? MIT CSAIL Assistant Professor Mariana Popescu explores the difference between using AI as a tool and letting AI make creative decisions, and why the relationship between the digital and physical worlds still requires human creativity and agency.\n\n#AI #ArtificialIntelligence #MITCSAIL #Architecture #ComputationalDesign #Design #Engineering #Building32",
+      "why_it_matters": "این دیدگاه نشان می‌دهد که هوش مصنوعی در حال حاضر جایگزین کامل قضاوت انسانی در طراحی نیست، بلکه ابزاری برای تقویت فرآیندهای خلاقانه است. درک این مرزها برای معماران و مهندسان حیاتی است تا از اتکای کورکورانه به الگوریتم‌ها جلوگیری کنند. حفظ Agentic AI انسانی تضمین می‌کند که خروجی‌های طراحی نه تنها از نظر فنی دقیق، بلکه از نظر مفهومی و کاربردی نیز با نیازهای واقعی سازگار باشند.",
+      "link": "https://www.youtube.com/shorts/TToLjqB83MY",
+      "posted_at": 1789394931
     }
   }
 }

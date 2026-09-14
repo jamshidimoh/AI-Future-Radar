@@ -20,8 +20,11 @@ def _clip(value: Any) -> float:
 
 
 def build_features(item: dict[str, Any]) -> dict[str, float]:
-    try: tier = int(item.get("source_tier", item.get("tier", 3)) or 3)
-    except (TypeError, ValueError): tier = 3
+    try:
+        tier_value = item.get("source_tier", item.get("tier", 3))
+        tier = int(tier_value or 3)
+    except (TypeError, ValueError):
+        tier = 3
     source_authority = {1: 1.0, 2: 0.75, 3: 0.45}.get(tier, 0.30)
     try: age = float(item.get("freshness_hours"))
     except (TypeError, ValueError): age = None

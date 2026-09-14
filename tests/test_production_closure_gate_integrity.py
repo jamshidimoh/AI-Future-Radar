@@ -30,6 +30,13 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     assert "if log_errors or len(logs) != 3:" in text
 
 
+def test_closure_gate_uses_runtime_acceptance_for_zero_publish():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "fail_closed_acceptance = has(text, r\"\\[Production Acceptance\\] PASS:\\s+production acceptance PASS:\\s+fail-closed\")" in text
+    assert "return zero_publish and acceptance and fail_closed_acceptance and publication_attempted" in text
+    assert "[Fail-Closed Acceptance Evidence] PASS" not in text
+
+
 def test_closure_gate_blocks_unresolved_evidence_with_failure_status():
     text = WORKFLOW.read_text(encoding="utf-8")
     marker = 'print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))'

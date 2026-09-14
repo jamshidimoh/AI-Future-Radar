@@ -3,9 +3,9 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, cast
 
-from src.radar_models import SourceItem
+from src.radar_models import ContentType, SourceItem
 from src.story_engine import build_stories
 
 
@@ -45,6 +45,9 @@ def source_item_from_legacy(item: dict[str, Any], index: int = 0) -> SourceItem:
     if leader and leader not in people:
         people.insert(0, leader)
 
+    raw_content_type = str(item.get("content_type") or "news").strip()
+    content_type: ContentType = cast(ContentType, raw_content_type)
+
     return SourceItem(
         source_id=str(item.get("source_id") or item.get("source") or f"legacy-{index}"),
         source_name=str(item.get("source") or item.get("source_name") or "unknown"),
@@ -53,7 +56,7 @@ def source_item_from_legacy(item: dict[str, Any], index: int = 0) -> SourceItem:
         summary=str(item.get("summary") or ""),
         description=str(item.get("description") or item.get("content") or ""),
         source_type=str(item.get("source_type") or item.get("type") or ""),
-        content_type=str(item.get("content_type") or "news"),
+        content_type=content_type,
         published_at=_parse_datetime(item.get("published_at") or item.get("published")),
         image_url=str(item.get("source_image") or item.get("image_url") or "") or None,
         people=people,

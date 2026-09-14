@@ -74,7 +74,7 @@ def _load_records() -> list[dict]:
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
-    """Return semantic conflict only with evidence for the same underlying event."""
+    """Return semantic conflict only with strong evidence for the same underlying event."""
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
     candidate = {"title": candidate_title, "summary": candidate_summary}
@@ -89,17 +89,32 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     anchors = shared_anchor_count(f"{candidate_title} {candidate_summary}", f"{stored_title} {stored_summary}")
     shared_events = set(evidence.get("shared_events") or [])
     shared_events |= events(f"{candidate_title} {candidate_summary}") & events(f"{stored_title} {stored_summary}")
+    title_similarity = float(evidence.get("title_similarity", 0.0) or 0.0)
+    context_jaccard = float(evidence.get("context_jaccard", 0.0) or 0.0)
 
     if kind == "DUPLICATE":
         return 1.0
     if kind == "UPDATE":
         return 0.0
-    if anchors >= 3 and shared_events:
-        return 1.0
-    if anchors >= 3 and (event_score >= 0.45 or semantic_score >= 0.65):
-        return 0.82
 
-    logger.debug("publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f shared_events=%s evidence=%s", kind, anchors, semantic_score, event_score, sorted(shared_events), evidence)
+    # Shared people/companies/years are not enough to establish the same story.
+    # Require explicit event overlap, or a very strong title/context match.
+    if anchors >= 3 and shared_events and (event_score >= 0.45 or semantic_score >= 0.65):
+        return 1.0
+    if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:
+        return 0.85
+
+    logger.debug(
+        "publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f title=%.3f context=%.3f shared_events=%s evidence=%s",
+        kind,
+        anchors,
+        semantic_score,
+        event_score,
+        title_similarity,
+        context_jaccard,
+        sorted(shared_events),
+        evidence,
+    )
     return 0.0
 
 

@@ -18,6 +18,7 @@ USER_AGENT = "AI-Future-Radar/1.0 RSS audit"
 SOURCE_CONFIGS = (
     ROOT / "config" / "sources.yaml",
     ROOT / "config" / "anthropic_rss_sources.yaml",
+    ROOT / "config" / "radar_rss_sources.yaml",
 )
 
 

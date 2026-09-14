@@ -3,12 +3,15 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
+import requests
+
 from src.dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
 from src.editorial import enrich_items, filter_ai_relevance
 from src.fetch_google_news import fetch_google_news_items
 from src.fetch_rss import fetch_rss_items
 from src.fetch_youtube import fetch_youtube_items
 from src.interview_evidence import has_interview_evidence
+from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
 from src.publication_contract import unique_candidates
@@ -225,12 +228,23 @@ def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_
         pool = [x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
     return unique_candidates(selected)
 
+def _safe_summarize(item, summarize_fn):
+    """Isolate recoverable provider failures at candidate boundary; never fabricate a summary."""
+    try:
+        return summarize_fn(item)
+    except (QuotaExceeded, TimeoutError, requests.exceptions.RequestException) as exc:
+        identity = _publication_identity(item)
+        print(f"[Editorial Gate] provider failure isolated candidate={identity[:120]} exception={type(exc).__name__}: {exc}", flush=True)
+        item["_publication_blocked"] = True
+        item["_summary_provider_failure"] = type(exc).__name__
+        return None
+
 def _summarize_selected(items, summarize_fn):
     workers = max(1, int(os.getenv("RADAR_SUMMARY_WORKERS", "1") or 1))
     if workers == 1 or len(items) <= 1:
-        return [summarize_fn(item) for item in items]
+        return [_safe_summarize(item, summarize_fn) for item in items]
     with ThreadPoolExecutor(max_workers=min(workers, len(items))) as executor:
-        return list(executor.map(summarize_fn, items))
+        return list(executor.map(lambda item: _safe_summarize(item, summarize_fn), items))
 
 def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
     mission_areas = {"mind", "future", "mind_cognition", "future_governance"}
@@ -255,7 +269,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
         candidate = chosen[0]
         identity = str(candidate.get("canonical_url") or candidate.get("link") or candidate.get("url") or candidate.get("title") or id(candidate))
         pool = [x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
-        summary = summarize_fn(candidate)
+        summary = _safe_summarize(candidate, summarize_fn)
         if summary:
             candidate.update(summary)
             candidate["_mission_recovery"] = True
@@ -314,7 +328,7 @@ def main(hooks=None):
                 try: normal_rank = int(normal_rank)
                 except (TypeError, ValueError): continue
                 if normal_rank > int(policy.get("candidate_window", 6) or 6) or score < NORMAL_SCORE_FLOOR: continue
-            candidate = dict(candidate); summary = summarize_fn(candidate)
+            candidate = dict(candidate); summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
                 print(f"[Publication Lazy Refill] summary blocked; skipping candidate: {str(candidate.get('title',''))[:120]}", flush=True); continue
             candidate.update(summary); candidate["source_image"] = resolve_image_fn(candidate); publication_attempted.add(identity); lazy_replacements += 1

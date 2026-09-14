@@ -11,8 +11,6 @@ selection:
   preferred_max_same_source: 1
   distinct_sources_first: true
   replacement_buffer: 3
-  # Diversity is a soft preference. A materially weaker candidate must not win
-  # solely because it opens a new mission area or source.
   diversity_quality_floor_ratio: 0.80
 
 editorial:
@@ -31,41 +29,28 @@ editorial:
 #   per source is preferred first; a second item is allowed only during adaptive
 #   backfill when capacity remains.
 # - max_items_per_content_type=1 prevents a run from becoming a single-format
-#   feed. Subsequent periods can still rotate back to a previously used format.
-# - Within a run, distinct sources are preferred first; source repetition is
-#   allowed only during adaptive backfill when capacity remains.
-# - Historical source usage is a bounded preference signal, never a hard exclusion.
-# - ai_core_target_min/max and mind_future_target are explicit mission
-#   coverage opportunities. They do not bypass relevance, authority, dedup,
-#   editorial quality, or publication gates.
-# - mind_future_target=2 prioritizes up to two normal slots for the mission area
-#   containing consciousness, cognition, philosophy of mind/science/technology,
-#   AI philosophy, and technology-linked future/governance. Awareness/philosophy
-#   candidates are therefore considered when they are sufficiently competitive.
+#   feed. Interviews therefore retain one explicit format slot per run.
+# - ai_core_target_min/max and mind_future_target are explicit mission coverage
+#   controls. They do not bypass relevance, authority, deduplication or final
+#   publication safety checks.
+# - mind_future_target=2 is the existing normal-slot coverage opportunity for
+#   consciousness, cognition, philosophy of mind/science/technology, AI
+#   philosophy, and technology-linked future/governance.
+# - diversity_quality_floor_ratio=0.80 remains unchanged; mind recall is solved
+#   upstream at relevance qualification rather than by weakening ranking quality.
 # - max_same_mission_area=6 is a portfolio ceiling, not a diversity quota.
 # - Technology-linked consciousness/philosophy terms are mapped in mission_policy
 #   to mind_cognition and remain subject to authority, quality, deduplication and
 #   publication gates.
-# - Information gain is a bounded soft reranker: the next candidate is evaluated
-#   against already selected topics. Similar stories receive diminishing-return
-#   penalties; distinct high-quality stories receive a modest novelty bonus.
-# - Information gain never bypasses relevance, authority, source, content-type,
-#   community, interview, or publication-quality gates.
+# - Information gain is a bounded soft reranker. It never bypasses relevance,
+#   authority, source, content-type, community, interview, or publication gates.
 # - Community/aggregator sources are not eligible for the normal portfolio.
-# - Candidate_window exists to support replacement after summary, editorial, or
-#   downstream publication rejection without relaxing publication quality gates.
-# - replacement_buffer=3 keeps three additional normal candidates available
-#   beyond the publication capacity of 3 so semantic/publication rejection can be
-#   absorbed without lowering the score floor.
-# - strict_relevance=true enables hard mission-relevance filtering in the
-#   production orchestration path.
+# - candidate_window and replacement_buffer preserve additional candidates for
+#   post-summary or publication rejection without lowering quality floors.
+# - strict_relevance=true enables hard mission-relevance filtering in production.
 # - Education remains an independent scheduled product stream and is recovered
-#   fail-closed when due; its cadence/publication contract is not replaced by the
-#   normal news portfolio selection.
+#   fail-closed when due.
 # - Strategic Analytical Lane: at most one mission-critical analytical signal per
 #   run may use the normal quota without the ranking score floor, but only after
-#   Leader classification (accepted+analytical+context), leader priority, trusted
-#   Tier-1/2 source validation, deduplication, Persian translation, source grounding,
-#   editorial-value QA and normal Telegram quota checks. It is not a Tier-0 bypass.
-# - 2026-09-14: portfolio diversity strengthened so AI, convergence and mind/future
-#   signals compete as distinct coverage areas instead of one dominant news class.
+#   trusted source validation, deduplication, source grounding, editorial QA and
+#   normal Telegram quota checks. It is not a Tier-0 bypass.

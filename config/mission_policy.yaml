@@ -8,20 +8,14 @@ mission:
   operational_publication_capacity: 3
   min_unique_sources: 3
   max_same_source: 1
-  # Diversity is a portfolio preference, not a hard one-item-per-area ceiling.
-  # Hard-capping each mission area at one caused strong same-area stories to be
-  # dropped even when no better coverage opportunity existed. Coverage targets
-  # remain opportunities and quality remains the primary constraint.
   max_same_mission_area: 6
   min_authoritative_items: 2
   stale_hours: 72
   ai_core_target_min: 1
   ai_core_target_max: 2
-  # Cross-domain coverage is an opportunity, not a mandatory slot. A convergence
-  # story competes on quality and only wins when a strong candidate exists.
   convergence_target: 0
-  # Mind/cognition and future/governance are coverage opportunities, not forced
-  # weak-content slots. They are selected when suitable candidates exist.
+  # Mind/cognition remains an explicit coverage opportunity; the recall guard in
+  # editorial.py ensures qualifying candidates reach this existing mission target.
   mind_future_target: 2
   research_target: 0
   interview_target_max: 1
@@ -36,7 +30,7 @@ areas:
     keywords: ["quantum", "quantum computing", "robotics", "humanoid", "brain-computer", "bci", "neurotechnology", "biotech", "synthetic biology", "genomics", "crispr", "protein", "materials", "semiconductor", "energy", "space"]
   mind_cognition:
     label: "ذهن، شناخت و آگاهی"
-    keywords: ["consciousness", "sentience", "cognitive science", "cognition", "mind", "brain", "neuroscience", "philosophy of mind", "philosophy of science", "philosophy of technology", "philosophy of ai", "epistemology of ai", "technology and consciousness", "artificial consciousness", "machine consciousness", "machine awareness", "awareness", "science and technology studies"]
+    keywords: ["consciousness", "machine consciousness", "ai consciousness", "sentience", "qualia", "self-awareness", "awareness", "cognitive science", "cognition", "cognitive", "mind", "brain", "neuroscience", "computational neuroscience", "predictive processing", "active inference", "global workspace", "integrated information", "philosophy of mind", "philosophy of science", "philosophy of technology", "philosophy of ai", "epistemology of ai", "technology and consciousness", "artificial consciousness", "machine awareness", "science and technology studies"]
   future_governance:
     label: "آینده‌پژوهی، جامعه و حکمرانی فناوری"
     keywords: ["future of ai", "foresight", "governance", "policy", "jobs", "economy", "geopolitics", "existential risk", "alignment", "regulation", "future of work", "society"]

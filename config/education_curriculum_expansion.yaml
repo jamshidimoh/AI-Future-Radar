@@ -1,0 +1,87 @@
+education_curriculum_expansion:
+  enabled: true
+  version: "2026.09"
+  reviewed_at: "2026-09-14"
+  policy:
+    rule: "Add new, non-repeating educational pairs as the existing curriculum is consumed. Prefer durable concepts that expand AI, agent, evaluation, infrastructure, multimodality, safety, and reliability coverage. Runtime freshness and authority gates remain mandatory."
+  lessons:
+    - id: 115
+      status: established
+      title: "Retrieval-Augmented Generation و Grounded Generation"
+      domain: "AI systems"
+      a: {term: "Retrieval-Augmented Generation (RAG)", fa: "تولید تقویت‌شده با بازیابی", seed: "الگویی که پیش از تولید پاسخ، اطلاعات مرتبط را از یک مجموعه منبع بازیابی می‌کند و آن اطلاعات را در اختیار مدل قرار می‌دهد تا پاسخ به شواهد بیرونی متصل شود."}
+      b: {term: "Grounded Generation", fa: "تولید متکی بر شواهد", seed: "تولید پاسخ با تکیه بر اطلاعات یا شواهدی که سامانه به‌صورت صریح در اختیار مدل قرار داده است و می‌توان مبنای پاسخ را نسبت به آن بررسی کرد."}
+      relation: "RAG یک معماری مشخص برای بازیابی و سپس تولید است؛ grounded generation مفهوم وسیع‌تری برای پیوند دادن خروجی مدل با شواهد در دسترس است."
+      sources:
+        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
+        - {name: "Microsoft Learn AI", url: "https://learn.microsoft.com/en-us/ai/", year: 2026}
+    - id: 116
+      status: established
+      title: "AI Evaluation و Continuous Evaluation"
+      domain: "AI evaluation"
+      a: {term: "AI Evaluation", fa: "ارزیابی هوش مصنوعی", seed: "فرایند سنجش یک سامانه یا مدل با معیارها و آزمون‌های مشخص برای بررسی کیفیت، قابلیت اطمینان، ایمنی یا تناسب آن با هدف."}
+      b: {term: "Continuous Evaluation", fa: "ارزیابی پیوسته", seed: "اجرای ارزیابی به‌صورت تکرارشونده در طول چرخه توسعه و بهره‌برداری تا تغییرات مدل، داده یا محیط باعث افت نامشهود کیفیت نشوند."}
+      relation: "AI evaluation یک فعالیت کلی است؛ continuous evaluation همان فعالیت را به یک چرخه مستمر در طول عمر سامانه تبدیل می‌کند."
+      sources:
+        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
+        - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering", year: 2026}
+    - id: 117
+      status: established
+      title: "AI Observability و AI Tracing"
+      domain: "AI reliability"
+      a: {term: "AI Observability", fa: "قابلیت مشاهده سامانه AI", seed: "توانایی فهم رفتار، خطا، کارایی و وضعیت یک سامانه AI از طریق سیگنال‌های ثبت‌شده در زمان اجرا."}
+      b: {term: "AI Tracing", fa: "ردگیری اجرای AI", seed: "ثبت مسیر گام‌به‌گام اجرای درخواست، فراخوانی ابزار، مدل، زمان‌بندی و نتیجه‌ها برای بررسی و اشکال‌زدایی رفتار سامانه."}
+      relation: "Observability دامنه وسیع‌تری از مشاهده وضعیت سامانه است؛ tracing یکی از ابزارهای کلیدی برای مشاهده مسیر دقیق اجرای یک درخواست است."
+      sources:
+        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
+        - {name: "OpenAI Platform Documentation", url: "https://platform.openai.com/docs/", year: 2026}
+    - id: 118
+      status: emerging
+      title: "Model Routing و Model Cascading"
+      domain: "AI infrastructure"
+      a: {term: "Model Routing", fa: "مسیریابی مدل", seed: "انتخاب یک مدل مناسب برای هر درخواست بر پایه ویژگی‌های کار، هزینه، کیفیت، ظرفیت یا محدودیت‌های عملیاتی."}
+      b: {term: "Model Cascading", fa: "زنجیره‌سازی مدل‌ها", seed: "فرایندی که در آن یک سامانه می‌تواند از یک مدل اولیه استفاده کند و در صورت نامناسب بودن نتیجه یا برآورده نشدن شرایط، به مدل دیگری منتقل شود."}
+      relation: "Routing بیشتر بر انتخاب مدل برای یک درخواست تمرکز دارد؛ cascading توالی تصمیم و انتقال بین مدل‌ها را نیز در بر می‌گیرد."
+      sources:
+        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
+        - {name: "OpenAI Platform Documentation", url: "https://platform.openai.com/docs/", year: 2026}
+    - id: 119
+      status: established
+      title: "Structured Output و Schema-Constrained Generation"
+      domain: "LLM systems"
+      a: {term: "Structured Output", fa: "خروجی ساختاریافته", seed: "تولید پاسخ در یک ساختار قابل پیش‌بینی مانند مجموعه‌ای از فیلدها یا قالب داده‌ای که برنامه بتواند آن را مستقیماً پردازش کند."}
+      b: {term: "Schema-Constrained Generation", fa: "تولید مقید به شِمای داده", seed: "هدایت تولید مدل با یک schema مشخص تا پاسخ از نظر ساختار داده با قرارداد مورد انتظار سامانه سازگار بماند."}
+      relation: "Structured output نتیجه قابل پردازش را توصیف می‌کند؛ schema-constrained generation یکی از روش‌های کنترل تولید برای رسیدن به آن نتیجه است."
+      sources:
+        - {name: "OpenAI Platform Documentation", url: "https://platform.openai.com/docs/", year: 2026}
+        - {name: "Google AI Developers", url: "https://ai.google.dev/", year: 2026}
+    - id: 120
+      status: established
+      title: "Multimodal AI و Multimodal Agent"
+      domain: "multimodal AI"
+      a: {term: "Multimodal AI", fa: "هوش مصنوعی چندوجهی", seed: "سامانه‌ای که می‌تواند بیش از یک نوع داده مانند متن، تصویر، صدا یا ویدئو را دریافت، پردازش یا تولید کند."}
+      b: {term: "Multimodal Agent", fa: "عامل چندوجهی", seed: "عامل AI که در چرخه تصمیم و اقدام خود از ورودی یا خروجی‌های چندوجهی استفاده می‌کند و آن‌ها را با ابزارها و برنامه‌ریزی عامل ترکیب می‌کند."}
+      relation: "Multimodal AI یک قابلیت یا معماری پردازشی را توصیف می‌کند؛ multimodal agent این قابلیت را در یک چرخه عامل‌محور به کار می‌گیرد."
+      sources:
+        - {name: "Google AI Developers", url: "https://ai.google.dev/", year: 2026}
+        - {name: "Microsoft Learn AI", url: "https://learn.microsoft.com/en-us/ai/", year: 2026}
+    - id: 121
+      status: established
+      title: "AI Safety Evaluation و Red Teaming"
+      domain: "AI safety"
+      a: {term: "AI Safety Evaluation", fa: "ارزیابی ایمنی AI", seed: "آزمون نظام‌مند رفتار یک سامانه هوش مصنوعی برای شناسایی ریسک‌ها، شکست‌ها و شرایطی که می‌توانند باعث پیامد نامطلوب شوند."}
+      b: {term: "Red Teaming", fa: "آزمون مهاجمانه", seed: "تلاش برنامه‌ریزی‌شده برای پیدا کردن راه‌های سوءاستفاده، شکست یا دور زدن کنترل‌های سامانه با قرار دادن آن در سناریوهای چالش‌برانگیز."}
+      relation: "Safety evaluation حوزه وسیع سنجش ریسک است؛ red teaming یک روش فعال و مهاجمانه برای آشکار کردن شکست‌های احتمالی است."
+      sources:
+        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
+        - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering", year: 2026}
+    - id: 122
+      status: established
+      title: "AI Governance و AI Assurance"
+      domain: "AI governance"
+      a: {term: "AI Governance", fa: "حاکمیت هوش مصنوعی", seed: "مجموعه سیاست‌ها، نقش‌ها، تصمیم‌ها و سازوکارهای نظارتی برای هدایت توسعه و استفاده مسئولانه از سامانه‌های AI."}
+      b: {term: "AI Assurance", fa: "تضمین AI", seed: "فرایندهای جمع‌آوری شواهد و بررسی‌های نظام‌مند برای اطمینان از اینکه یک سامانه AI با الزامات، کنترل‌ها و معیارهای تعریف‌شده سازگار است."}
+      relation: "Governance چارچوب تصمیم‌گیری و مسئولیت را مشخص می‌کند؛ assurance شواهد و ارزیابی لازم برای اعتماد به اجرای آن چارچوب را فراهم می‌کند."
+      sources:
+        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
+        - {name: "Microsoft Learn AI", url: "https://learn.microsoft.com/en-us/ai/", year: 2026}

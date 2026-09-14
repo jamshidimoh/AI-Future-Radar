@@ -8,15 +8,15 @@ mission:
   operational_publication_capacity: 3
   min_unique_sources: 3
   max_same_source: 1
-  max_same_mission_area: 6
+  max_same_mission_area: 2
   min_authoritative_items: 2
   stale_hours: 72
   ai_core_target_min: 1
   ai_core_target_max: 2
-  convergence_target: 0
-  # Mind/cognition remains an explicit coverage opportunity; the recall guard in
-  # editorial.py ensures qualifying candidates reach this existing mission target.
-  mind_future_target: 2
+  convergence_target: 1
+  mind_cognition_target: 1
+  mind_future_target: 1
+  future_governance_target: 0
   research_target: 0
   interview_target_max: 1
   community_max: 0

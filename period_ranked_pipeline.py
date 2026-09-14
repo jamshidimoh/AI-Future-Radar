@@ -7,6 +7,7 @@ independent metadata; they do not receive additive score bonuses here.
 """
 from __future__ import annotations
 
+import difflib
 import logging
 import time
 
@@ -16,6 +17,7 @@ from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
 from src.protected_story_identity import probable_same_story
 from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
+from src.semantic_dedup import get_story_signature
 from src.story_gate import _technology_relevant
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
@@ -64,9 +66,6 @@ def _base_score(item):
 
 
 def _is_protected_publication_story(item):
-    # Only stories that actually received a reserved protected slot can be
-    # Tier-0. Discovery/eligibility metadata must not leak into ranking as a
-    # second route around the protected capacity.
     return bool(item.get("protected_slot"))
 
 
@@ -136,12 +135,31 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     return selected
 
 
+def _semantic_comparison_possible(candidate_title, candidate_summary, record):
+    """Cheap necessary-condition filter before the expensive semantic guard.
+
+    This function can only reject a comparison from further work; it never
+    declares a duplicate. The full publication guard remains authoritative.
+    """
+    candidate_signature = get_story_signature({"title": candidate_title, "summary": candidate_summary})
+    stored_signature = get_story_signature(record)
+    shared_anchors = len(set(candidate_signature.get("anchors", [])) & set(stored_signature.get("anchors", [])))
+    if shared_anchors >= 2:
+        return True
+    candidate_title_text = str(candidate_signature.get("title_text") or "")
+    stored_title_text = str(stored_signature.get("title_text") or "")
+    if not candidate_title_text or not stored_title_text:
+        return False
+    return difflib.SequenceMatcher(None, candidate_title_text, stored_title_text).ratio() >= 0.75
+
+
 def _exclude_published_candidates(items):
     records = _load_records()
     if not records or not items:
         return items
     kept, blocked = [], {"canonical_url": 0, "title": 0, "semantic": 0}
     semantic_bypassed = protected_same_story_blocked = 0
+    semantic_prefiltered = 0
     for item in items:
         candidate_url = _canonical_url(item.get("canonical_url") or item.get("link") or item.get("url") or "")
         title = _normalized_title(item.get("title") or "")
@@ -172,6 +190,9 @@ def _exclude_published_candidates(items):
                 for record in records:
                     if not str(record.get("title") or "").strip():
                         continue
+                    if not _semantic_comparison_possible(title, summary, record):
+                        semantic_prefiltered += 1
+                        continue
                     if _semantic_conflict(title, summary, record) >= REGULAR_SAME_STORY_THRESHOLD:
                         conflict, conflict_record = "semantic", record
                         break
@@ -182,8 +203,8 @@ def _exclude_published_candidates(items):
             continue
         kept.append(item)
     total_blocked = sum(blocked.values())
-    if total_blocked or semantic_bypassed or protected_same_story_blocked:
-        print(f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} protected_semantic_bypassed={semantic_bypassed} protected_same_story_blocked={protected_same_story_blocked} regular_semantic_threshold={REGULAR_SAME_STORY_THRESHOLD:.2f} remaining={len(kept)}", flush=True)
+    if total_blocked or semantic_bypassed or protected_same_story_blocked or semantic_prefiltered:
+        print(f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} semantic_prefiltered={semantic_prefiltered} protected_semantic_bypassed={semantic_bypassed} protected_same_story_blocked={protected_same_story_blocked} regular_semantic_threshold={REGULAR_SAME_STORY_THRESHOLD:.2f} remaining={len(kept)}", flush=True)
     return kept
 
 
@@ -254,9 +275,6 @@ def _eligibility_split(items, max_protected=2):
         is_interview = _pipeline._is_protected_leader_interview(item)
         is_activity = not is_interview and _pipeline._is_protected_leader_activity(item)
         if is_interview or is_activity:
-            # Watchlist membership and generic speech/activity verbs are not an
-            # editorial bypass. Interviews may remain protected, while activity
-            # stories require both a concrete event and independent AI/tech evidence.
             if (is_activity and not _substantive_protected_activity(item)) or not _technology_relevant(item):
                 item["protected_content"] = False
                 item["leader_watch_protected"] = False

@@ -5,6 +5,12 @@
       "disabled_until": 1789381874.018,
       "last_error": "model",
       "last_success": 0
+    },
+    "Groq:openai/gpt-oss-120b": {
+      "failures": 1,
+      "disabled_until": 1789364184.535,
+      "last_error": "rate_limit",
+      "last_success": 0
     }
   },
   "providers": {},

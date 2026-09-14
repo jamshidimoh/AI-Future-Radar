@@ -1,0 +1,217 @@
+# Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 (Tehran local time, UTC+3:30; GitHub Actions cron is UTC)
+# Production trigger: scheduled or explicitly dispatched. Code pushes must not trigger a production publication run.
+name: Run AI Future Radar Bot
+
+on:
+  schedule:
+    - cron: "47 1 * * *"
+    - cron: "17 7,10,14,17,19 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-future-radar-production
+  cancel-in-progress: false
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 26
+    steps:
+      - name: Checkout current ref
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run production regression checks
+        run: |
+          python -m compileall -q scripts src *.py
+          python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_google_news_canonical_resolution.py tests/test_production_closure_gate_integrity.py
+          echo "[Provider Failure Isolation Evidence] PASS"
+          echo "[QA Replacement Evidence] PASS"
+
+      - name: Emit fail-closed closure evidence
+        run: |
+          python -m pytest -q tests/test_production_acceptance_guard.py -k "all_selected_candidates_rejected_downstream_is_fail_closed_pass or zero_publication_without_rejection_evidence_is_failure"
+          echo "[Fail-Closed Acceptance Evidence] PASS"
+
+      - name: Emit single-message publication evidence
+        run: |
+          python -m pytest -q tests/test_telegram_single_delivery.py tests/test_telegram_single_delivery_adapter.py tests/test_telegram_format.py
+          echo "[Image Delivery Contract Evidence] PASS"
+
+      - name: Refresh and validate free-model registry
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
+          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
+        run: python -u scripts/refresh_free_model_registry.py --strict
+
+      - name: Bridge Free LLM Router discovery into runtime registry
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
+        run: python -u scripts/bridge_free_llm_router.py
+
+      - name: Nara live provider-state check
+        env:
+          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
+        run: |
+          python - <<'PY'
+          import os
+          import requests
+
+          key = os.getenv("NARAROUTER_API_KEY", "").strip()
+          if not key:
+              print("[Nara Smoke] state=not_configured")
+              raise SystemExit(0)
+
+          r = requests.post(
+              "https://router.bynara.id/v1/chat/completions",
+              headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+              json={
+                  "model": "auto/bynara",
+                  "messages": [{"role": "user", "content": "Reply only with OK"}],
+                  "max_tokens": 8,
+                  "temperature": 0,
+              },
+              timeout=15,
+          )
+          print(f"[Nara Smoke] status={r.status_code}")
+          if r.ok:
+              data = r.json()
+              text = (((data.get("choices") or [{}])[0].get("message") or {}).get("content") or "").strip()
+              if not text:
+                  raise RuntimeError("Nara returned HTTP success without message content")
+              print(f"[Nara Smoke] state=healthy text={text[:32]}")
+          elif r.status_code in {401, 402, 403, 404, 429, 503}:
+              print(f"[Nara Smoke] state=provider_unavailable status={r.status_code}; runtime fallback remains authoritative")
+          else:
+              r.raise_for_status()
+          PY
+
+      - name: Telegram production preflight
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+        run: python -u scripts/telegram_preflight.py
+
+      - name: Run bot with ranking audit
+        env:
+          PYTHONUNBUFFERED: 1
+          RADAR_PRODUCTION_MODE: 1
+          RADAR_WATCHDOG_MINUTES: 22
+          RADAR_SUMMARY_WORKERS: 1
+          AI_RADAR_EDITORIAL_REVIEW: 0
+          RADAR_ENABLE_GEMINI_FALLBACK: 0
+          RADAR_ENABLE_HF_FALLBACK: 1
+          RADAR_LLM_MAX_TOKENS: 1100
+          RADAR_ROUTER_BUDGET_SECONDS: 24
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
+          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_MODEL: ${{ vars.HF_MODEL }}
+          HF_POLICY: free-first
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
+
+      - name: Recover required Education publication
+        if: always()
+        env:
+          PYTHONUNBUFFERED: 1
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
+          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_MODEL: ${{ vars.HF_MODEL }}
+          HF_POLICY: free-first
+          FORCE_EDUCATION_PUBLICATION: false
+        run: |
+          if [ -f run.log ]; then
+            python -u scripts/education_recovery.py
+          else
+            echo "[Education Recovery] skipped: runtime log unavailable"
+          fi
+
+      - name: Enforce runtime production acceptance
+        if: always()
+        run: |
+          if [ -f run.log ]; then
+            python -u scripts/production_acceptance_guard.py run.log
+          else
+            echo "[Production Acceptance] BLOCKED: runtime log unavailable"
+            exit 1
+          fi
+
+      - name: Update persistent LLM health from runtime evidence
+        if: always()
+        run: python -u scripts/update_llm_health_state.py run.log
+
+      - name: Persist production state
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          STATE_DIR="$(mktemp -d)"
+          STATE_FILES="data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json"
+          for f in $STATE_FILES; do
+            mkdir -p "$STATE_DIR/$(dirname "$f")"
+            cp "$f" "$STATE_DIR/$f"
+          done
+          for attempt in 1 2 3; do
+            git fetch origin main --depth=50
+            git reset --hard origin/main
+            for f in $STATE_FILES; do
+              cp "$STATE_DIR/$f" "$f"
+            done
+            git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
+            if git diff --cached --quiet; then
+              echo "No production state changes to commit."
+              exit 0
+            fi
+            git commit -m "chore: persist production state [skip ci]"
+            if git push origin HEAD:main; then
+              echo "Production state persisted on attempt ${attempt} without rebasing production code."
+              exit 0
+            fi
+            git reset --hard origin/main
+            sleep $((attempt * 2))
+          done
+          echo "Unable to persist production state after 3 attempts."
+          exit 1
+
+      - name: Upload production diagnostics and ranking audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-future-radar-push-${{ github.run_number }}
+          path: |
+            run.log
+            artifacts/ranking_audit/
+            artifacts/free_model_registry.runtime.yaml
+          retention-days: 14
+          if-no-files-found: warn

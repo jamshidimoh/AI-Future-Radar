@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 import src.publication_guard as publication_guard
 

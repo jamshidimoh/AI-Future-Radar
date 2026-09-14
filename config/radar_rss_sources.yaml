@@ -92,6 +92,32 @@ rss_sources:
     official: false
     mission: "ai"
 
+  - name: "Techmeme"
+    url: "https://www.techmeme.com/feed.xml"
+    tier: 2
+    type: "curated_tech_media"
+    content_type: "news"
+    official: true
+    mission: "ai"
+    discovery_only: true
+
+  - name: "TechCrunch"
+    url: "https://techcrunch.com/feed/"
+    tier: 2
+    type: "specialist_media"
+    content_type: "news"
+    official: true
+    mission: "ai"
+
+  - name: "Hacker News"
+    url: "https://news.ycombinator.com/rss"
+    tier: 2
+    type: "developer_community"
+    content_type: "community"
+    official: true
+    mission: "ai"
+    discovery_only: true
+
   - name: "MarkTechPost"
     url: "https://www.marktechpost.com/feed/"
     tier: 2

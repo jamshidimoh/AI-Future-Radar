@@ -1,0 +1,83 @@
+# AI Future Radar — philosophy / mind / consciousness evidence architecture
+# This registry separates discovery value from citation authority.
+# It is governance metadata: normal publication inputs remain controlled by
+# the canonical source/query registries and downstream quality gates.
+
+lane:
+  id: "mind_philosophy"
+  label: "ذهن، آگاهی و فلسفه علم × AI"
+  mission_area: "mind_cognition"
+  bridge_required: true
+  description: >-
+    Coverage spans philosophy of science, philosophy of mind, consciousness,
+    AI consciousness, computationalism, functionalism, cognition, epistemology,
+    scientific discovery, meaning, intentionality, agency and moral status when
+    materially connected to AI or machine intelligence.
+
+source_roles:
+  primary_research:
+    authority: 1
+    publication_eligible: true
+    description: "Peer-reviewed research, scholarly journals and first-party research outputs."
+  reference:
+    authority: 1
+    publication_eligible: true
+    description: "Authoritative scholarly reference and university-publisher material used for conceptual grounding."
+  index:
+    authority: 3
+    publication_eligible: false
+    description: "Discovery/indexing only; never treated as equivalent to the indexed primary work."
+  frontier_discussion:
+    authority: 3
+    publication_eligible: false
+    description: "Expert discussion useful for signal discovery and interpretation, not a normal authority tier."
+
+sources:
+  - name: "Stanford Encyclopedia of Philosophy"
+    role: reference
+    domains: ["plato.stanford.edu"]
+    normal_publication: true
+    purpose: "Canonical conceptual/reference layer"
+
+  - name: "Cambridge University Press"
+    role: reference
+    domains: ["cambridge.org"]
+    normal_publication: true
+    purpose: "Peer-reviewed/open scholarly chapters and research synthesis"
+
+  - name: "Oxford Academic"
+    role: reference
+    domains: ["academic.oup.com"]
+    normal_publication: true
+    purpose: "Scholarly AI, consciousness, mind and ethics literature"
+
+  - name: "PhilPapers"
+    role: index
+    domains: ["philpapers.org"]
+    normal_publication: false
+    purpose: "Bibliographic discovery and taxonomy, not authority substitution"
+
+  - name: "PhilSci-Archive"
+    role: index
+    domains: ["philsci-archive.pitt.edu"]
+    normal_publication: false
+    purpose: "Philosophy-of-science preprint discovery"
+
+  - name: "The Brains Blog"
+    role: frontier_discussion
+    domains: ["thebrainsblog.blogspot.com"]
+    normal_publication: false
+    purpose: "Specialist discussion and interpretation"
+
+  - name: "LessWrong"
+    role: frontier_discussion
+    domains: ["lesswrong.com"]
+    normal_publication: false
+    purpose: "Frontier discussion / hypothesis discovery"
+
+selection_rules:
+  - "Discovery/index/frontier sources never inherit Tier-1 authority from the topic they discuss."
+  - "A discovery lead should be replaced by, or grounded against, an authoritative primary/reference source before normal publication whenever feasible."
+  - "AI linkage is required for this lane; philosophy or consciousness without a material AI connection is out of scope for the normal Radar portfolio."
+  - "Conceptual/reference updates can publish when materially relevant to AI even if they are not breaking news; they remain subject to freshness, relevance, deduplication and editorial gates."
+  - "No arXiv dependency is introduced by this lane."

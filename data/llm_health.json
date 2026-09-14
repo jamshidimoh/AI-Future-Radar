@@ -7,8 +7,14 @@
       "last_success": 0
     },
     "Groq:openai/gpt-oss-120b": {
+      "failures": 2,
+      "disabled_until": 1789365281.204,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "Groq:qwen/qwen3.6-27b": {
       "failures": 1,
-      "disabled_until": 1789364184.535,
+      "disabled_until": 1789365281.204,
       "last_error": "rate_limit",
       "last_success": 0
     }

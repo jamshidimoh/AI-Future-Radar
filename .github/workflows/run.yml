@@ -2,6 +2,7 @@ name: Run AI Future Radar Bot
 
 on:
   schedule:
+    # Tehran publication windows: 04:47 UTC (~08:17 Tehran) and 07:17, 10:17, 14:17, 17:17, 19:17 UTC.
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
   workflow_dispatch:
@@ -137,9 +138,85 @@ jobs:
           for attempt in 1 2 3; do
             git fetch origin main --depth=50
             git reset --hard origin/main
-            for f in $STATE_FILES; do
-              cp "$STATE_DIR/$f" "$f"
-            done
+            python - "$STATE_DIR" <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          root = pathlib.Path(".")
+          local_root = pathlib.Path(sys.argv[1])
+
+          def load(path, default):
+              try:
+                  return json.loads(path.read_text(encoding="utf-8"))
+              except Exception:
+                  return default
+
+          def dump(path, value):
+              path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+          # Preserve newer remote state while merging this run's additive changes.
+          remote_seen = load(root / "data/seen.json", {})
+          local_seen = load(local_root / "data/seen.json", {})
+          if isinstance(remote_seen, dict) and isinstance(local_seen, dict):
+              merged_seen = dict(remote_seen)
+              for key in ("seen_hashes", "seen_signatures", "seen_identities"):
+                  rv = list(remote_seen.get(key) or [])
+                  lv = list(local_seen.get(key) or [])
+                  merged_seen[key] = list(dict.fromkeys(rv + lv))
+              dump(root / "data/seen.json", merged_seen)
+
+          remote_feedback = load(root / "data/telegram_feedback.json", {})
+          local_feedback = load(local_root / "data/telegram_feedback.json", {})
+          if isinstance(remote_feedback, dict) and isinstance(local_feedback, dict):
+              merged_feedback = dict(remote_feedback)
+              messages = dict(remote_feedback.get("messages") or {})
+              messages.update(local_feedback.get("messages") or {})
+              merged_feedback["messages"] = messages
+              for key in ("last_update_id", "updated_at"):
+                  merged_feedback[key] = max(int(remote_feedback.get(key, 0) or 0), int(local_feedback.get(key, 0) or 0))
+              dump(root / "data/telegram_feedback.json", merged_feedback)
+
+          remote_education = load(root / "data/education_state.json", {})
+          local_education = load(local_root / "data/education_state.json", {})
+          if isinstance(remote_education, dict) and isinstance(local_education, dict):
+              merged_education = dict(remote_education)
+              merged_completed = sorted(set(int(x) for x in (remote_education.get("completed") or []) + (local_education.get("completed") or [])))
+              merged_education["completed"] = merged_completed
+              merged_education["next_slot"] = max(int(remote_education.get("next_slot", 0) or 0), int(local_education.get("next_slot", 0) or 0))
+              merged_education["next_lesson"] = max(int(remote_education.get("next_lesson", 0) or 0), int(local_education.get("next_lesson", 0) or 0))
+              merged_education["updated_at"] = max(int(remote_education.get("updated_at", 0) or 0), int(local_education.get("updated_at", 0) or 0))
+              dump(root / "data/education_state.json", merged_education)
+
+          remote_publication = load(root / "data/publication_state.json", {})
+          local_publication = load(local_root / "data/publication_state.json", {})
+          if isinstance(remote_publication, dict) and isinstance(local_publication, dict):
+              merged_publication = dict(remote_publication)
+              for key in ("run_number", "last_education_run"):
+                  merged_publication[key] = max(int(remote_publication.get(key, 0) or 0), int(local_publication.get(key, 0) or 0))
+              remote_slot = str(remote_publication.get("last_education_slot", "") or "")
+              local_slot = str(local_publication.get("last_education_slot", "") or "")
+              merged_publication["last_education_slot"] = local_slot or remote_slot
+              for key in ("last_published_news_score", "last_published_normal_news_score"):
+                  rv = remote_publication.get(key)
+                  lv = local_publication.get(key)
+                  merged_publication[key] = lv if isinstance(lv, (int, float)) else rv
+              dump(root / "data/publication_state.json", merged_publication)
+
+          remote_health = load(root / "data/llm_health.json", {})
+          local_health = load(local_root / "data/llm_health.json", {})
+          if isinstance(remote_health, dict) and isinstance(local_health, dict):
+              merged_health = dict(remote_health)
+              for key in ("observed_failures", "observed_events"):
+                  merged_health[key] = max(int(remote_health.get(key, 0) or 0), int(local_health.get(key, 0) or 0))
+              remote_models = dict(remote_health.get("models") or {})
+              remote_models.update(local_health.get("models") or {})
+              merged_health["models"] = remote_models
+              remote_providers = dict(remote_health.get("providers") or {})
+              remote_providers.update(local_health.get("providers") or {})
+              merged_health["providers"] = remote_providers
+              dump(root / "data/llm_health.json", merged_health)
+          PY
             git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
             if git diff --cached --quiet; then
               echo "No production state changes to commit."
@@ -147,7 +224,7 @@ jobs:
             fi
             git commit -m "chore: persist production state [skip ci]"
             if git push origin HEAD:main; then
-              echo "Production state persisted on attempt ${attempt} without rebasing production code."
+              echo "Production state persisted on attempt ${attempt} with remote-state merge."
               exit 0
             fi
             git reset --hard origin/main

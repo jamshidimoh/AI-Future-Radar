@@ -4,15 +4,17 @@
 
 ## وضعیت محصول
 
-**Production hardening / routing validation — 2026-09-14**
+**Production hardening / final mind-cognition validation — 2026-09-14**
 
 پذیرش قبلی در `2026-09-05` با workflow run `33948969943` سبز شده بود، اما اجرای بعدی Production Closure Gate در `2026-09-06` با run `34016810047` به دلیل ناقص بودن شواهد معیار `02_publish_and_fail_closed_zero` متوقف شد. بنابراین برچسب `CLOSED` فعلاً معتبر نیست و تا تولید یک پنجره شواهد جدید و سبز نباید دوباره اعلام شود.
 
 در همین بازنگری، یک نقص واقعی در provenance نیز اصلاح شد: Google News دیگر نمی‌تواند Tier پرس‌وجو را به ناشر ناشناخته منتقل کند؛ Tier مؤثر از هویت ناشر/دامنه تعیین می‌شود و ناشر ناشناخته در Google News حداکثر Tier-3 باقی می‌ماند. تست‌های regression مربوط به این قاعده نیز اضافه شده‌اند.
 
-در 2026-09-14 نیز یک نقص ساختاری در بقای candidateهای حوزه آگاهی، علوم شناختی، فلسفه ذهن/علم/فناوری و مصاحبه‌های تخصصی اصلاح شد. این اصلاح در PR مربوطه با یک Recall Guard پس از AI Relevance Gate انجام شده و gate اصلی و quality floor تضعیف نشده‌اند؛ تست‌های regression نیز این رفتار و رد محتوای غیرمرتبط را پوشش می‌دهند. اجرای Production واقعی روی همین commit برای اثبات رفتار end-to-end در حال اعتبارسنجی است.
+در 2026-09-14 یک نقص ساختاری در بقای candidateهای حوزه آگاهی، علوم شناختی، فلسفه ذهن/علم/فناوری و مصاحبه‌های تخصصی اصلاح شد. اکنون این حوزه یک mission lane مستقل با Recall Guard، تشخیص AI-link، شرط منبع معتبر، evidence floor و signal floor مشخص دارد؛ AI Gate عمومی و quality floor عمومی تضعیف نشده‌اند. AI rights، machine mind، consciousness، cognitive science و philosophy of AI نیز صریحاً در همین lane پوشش داده می‌شوند.
 
-پروژه اکنون در مرز **Production Hardening** قرار دارد. هیچ Gate برای سبز شدن مصنوعی ضعیف نشده است؛ ابتدا نقص‌های داده، provenance و شواهد اصلاح و سپس Acceptance دوباره اجرا می‌شود.
+اجرای Production نهایی روی همین نسخه باید نشان دهد که candidate معتبر mind/cognition از Discovery تا Telegram زنده می‌ماند، در صورت وجود در Portfolio انتخاب می‌شود و به‌دلیل score عمومی پایین‌تر حذف نمی‌شود. محتوای pure non-AI همچنان باید رد شود.
+
+پروژه اکنون در مرز **Production Hardening / Final Validation** قرار دارد. هیچ Gate عمومی برای سبز شدن مصنوعی ضعیف نشده است؛ lane جدید فقط برای candidateهایی فعال می‌شود که AI linkage، evidence و source-quality لازم را داشته باشند.
 
 وضعیت تفصیلی در `docs/PRODUCTION_CLOSURE_STATUS.md` ثبت شده است. مسیر تولید اصلی با GitHub Actions طبق زمان‌بندی یا اجرای دستی فعال است و Push به `main` نباید به‌تنهایی Production را اجرا کند.
 

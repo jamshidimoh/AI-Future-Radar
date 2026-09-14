@@ -47,8 +47,8 @@ _EMERGING_TERMS = (
 )
 
 
-def _combined_text(item: dict) -> str:
-    fields = ("title", "summary", "description", "evidence_text", "category", "mission_area", "content_type", "tags", "keywords")
+def _evidence_text(item: dict) -> str:
+    fields = ("title", "summary", "description", "evidence_text", "tags", "keywords")
     return " ".join(str(item.get(k) or "") for k in fields).casefold()
 
 
@@ -137,7 +137,7 @@ def _prepare_relevance_item(raw: dict, supplied_keywords: tuple[str, ...]) -> tu
     evidence = str(item.get("evidence_text") or "").strip()
     if evidence:
         item["description"] = " ".join(part for part in (item.get("description"), evidence) if part).strip()
-    text = _combined_text(item)
+    text = _evidence_text(item)
     bridge_hits = _has_any(text, _AI_BRIDGE_TERMS) or _has_any(text, supplied_keywords)
     reason = _early_reason(item, text)
     curated = bool(item.get("curated_discovery") and item.get("preferred_source") and int(item.get("source_tier") or 3) in {1, 2})
@@ -155,6 +155,8 @@ def _prepare_relevance_item(raw: dict, supplied_keywords: tuple[str, ...]) -> tu
         if _is_mind_lane_candidate(item, text):
             item["mission_area"] = "mind_cognition"
             item["topic_family"] = "consciousness_cognition"
+        else:
+            item["topic_family"] = "ai_core"
         return item, True
     item["_curated_trusted_ai_bridge"] = curated
     item["_has_direct_ai_evidence"] = bridge_hits

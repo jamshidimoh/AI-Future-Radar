@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   run-bot:
-    if: github.event_name != 'push' || startsWith(github.event.head_commit.message, 'TEMP_PRODUCTION_VALIDATION:')
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore: persist production state [skip ci]')
     runs-on: ubuntu-latest
     timeout-minutes: 26
     steps:

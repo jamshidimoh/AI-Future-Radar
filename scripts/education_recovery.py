@@ -97,9 +97,9 @@ def _build_with_deterministic_recovery() -> dict | None:
         return None
     item = _deterministic_education_item(lesson, verified_sources)
     item["education_total"] = total
-    item["education_track"] = "emerging" if lesson_id >= 101 else "foundation"
-    item["education_track_label"] = "ترمینولوژی روز و فناوری‌های نو" if lesson_id >= 101 else "مفاهیم پایه و بنیادی"
-    item["education_number"] = lesson_id - 100 if lesson_id >= 101 else lesson_id
+    item["education_track"] = "expansion" if lesson_id >= 115 else ("emerging" if lesson_id >= 101 else "foundation")
+    item["education_track_label"] = "مسیر توسعه و موضوعات تکمیلی" if lesson_id >= 115 else ("ترمینولوژی روز و فناوری‌های نو" if lesson_id >= 101 else "مفاهیم پایه و بنیادی")
+    item["education_number"] = lesson_id - 114 if lesson_id >= 115 else (lesson_id - 100 if lesson_id >= 101 else lesson_id)
     print(f"[Education Recovery] deterministic lesson fallback selected lesson={lesson_id}", flush=True)
     return item
 
@@ -117,6 +117,13 @@ def main() -> int:
         print("[Education Recovery] no recovery required", flush=True)
         return 0
     run_number = int(cadence.get("run_number", 0) or 0)
+    try:
+        lesson, lesson_id, total = educational_content._next_lesson()
+        if not lesson or not int(lesson_id):
+            print(f"[Education Recovery] EXHAUSTED total={total} completed={len(educational_content._completed_ids())}; no lesson reuse permitted", flush=True)
+            return 0
+    except Exception as exc:
+        print(f"[Education Recovery] exhaustion check failed: {exc!r}; continuing normal recovery", flush=True)
     ok = production_resilient_runner._publish_education_after_news(run_number)
     if not ok and int(cadence.get("last_education_run", -1) or -1) != run_number:
         print("[Education Recovery] normal publisher did not confirm; checking deterministic source-grounded fallback", flush=True)

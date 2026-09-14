@@ -11,11 +11,9 @@ import yaml
 from src.information_gain import information_gain_score, max_topic_similarity, portfolio_value, topic_fingerprint
 
 logger = logging.getLogger(__name__)
-
 ROOT = Path(__file__).resolve().parents[1]
 MISSION_PATH = ROOT / "config" / "mission_policy.yaml"
 SELECTION_PATH = ROOT / "config" / "selection_policy.yaml"
-
 _AREA_MAP = {"ai": "ai_core", "ai_core": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "future": "future_governance", "future_governance": "future_governance", "mind": "mind_cognition", "mind_cognition": "mind_cognition", "convergence": "convergence"}
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
 _INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
@@ -126,13 +124,6 @@ def _source_tier(item: dict[str, Any]) -> int | None:
 
 
 def _is_community(item: dict[str, Any]) -> bool:
-    """Identify actual community sources, not merely low-authority publishers.
-
-    Tier-3 means unverified/lower authority; it is not synonymous with Reddit or
-    another community source. Treating every Tier-3 Google News publisher as a
-    community source previously collapsed the normal portfolio to a single item
-    even when the candidate was a legitimate news publisher.
-    """
     value = " ".join(str(item.get(k) or "").strip().casefold() for k in ("source", "source_name", "source_type", "source_domain"))
     return any(m in value for m in _COMMUNITY_MARKERS)
 
@@ -182,15 +173,7 @@ def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, An
     item["topic_fingerprint"] = topic_fingerprint(item)
     item["information_gain_score"] = information_gain_score(item, selected)
     item["topic_similarity_to_selected"] = round(max_topic_similarity(item, selected), 3)
-    item["portfolio_value_score"] = round(
-        portfolio_value(
-            item,
-            selected,
-            diversity_weight=contract["diversity_weight"],
-            similarity_penalty=contract["similarity_penalty"],
-        ),
-        3,
-    )
+    item["portfolio_value_score"] = round(portfolio_value(item, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]), 3)
     return item
 
 
@@ -254,11 +237,7 @@ class _Portfolio:
         return max(candidates, key=self.value_key)
 
     def value_key(self, item: dict[str, Any]) -> tuple:
-        return (
-            portfolio_value(item, self.selected, diversity_weight=self.contract["diversity_weight"], similarity_penalty=self.contract["similarity_penalty"]),
-            -_rank_key(item, self.recent)[0],
-            candidate_score(item),
-        )
+        return (portfolio_value(item, self.selected, diversity_weight=self.contract["diversity_weight"], similarity_penalty=self.contract["similarity_penalty"]), -_rank_key(item, self.recent)[0], candidate_score(item))
 
 
 def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[str, Any], strict_relevance: bool) -> list[dict[str, Any]]:
@@ -275,7 +254,6 @@ def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[st
 
 
 def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[str, Any] | None:
-    """Select for information gain only after protecting a minimum quality ratio."""
     candidates = [x for x in pool if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
     if not candidates:
         return None
@@ -289,25 +267,14 @@ def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[
     unseen_area = [x for x in viable if mission_area(x) not in p.area_counts]
     if unseen_area:
         viable = unseen_area
-    return max(
-        viable,
-        key=lambda x: (
-            portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
-            candidate_score(x),
-            _safe_float(x, "evidence_strength"),
-            str(x.get("published", "")),
-        ),
-    )
+    return max(viable, key=lambda x: (portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]), candidate_score(x), _safe_float(x, "evidence_strength"), str(x.get("published", ""))))
 
 
 def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
     if not p.mission_aware or p.limit <= 0:
         return
-    # Mission targets are coverage opportunities. The content-type ceiling is
-    # intentionally soft here: it must not starve an uncovered mission lane.
     for _ in range(min(p.contract["ai_core_target_min"], p.limit)):
         candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
-        # The type ceiling is soft only when it would otherwise starve the AI lane.
         if not candidates:
             candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
         candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
@@ -315,35 +282,42 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             break
         p.add(candidate, "mission_target:ai_core")
 
+    # A new independent mind floor is opt-in. Older characterization contracts
+    # that only declare mind_future_target retain the legacy combined behavior.
+    mind_target = p.contract.get("mind_cognition_target", 0)
+    for _ in range(min(mind_target, max(0, p.limit - len(p.selected)))):
+        pool = [x for x in ordered if mission_area(x) == "mind_cognition" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+        if not pool:
+            pool = [x for x in ordered if mission_area(x) == "mind_cognition" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+        if not pool:
+            break
+        baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and mission_area(x) != "ai_core"]
+        baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
+        candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+        if candidate is None:
+            break
+        floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+        if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
+            break
+        p.add(candidate, "mission_target:mind_cognition")
+
     for target_key, area_predicate in (
         ("convergence_target", lambda x: mission_area(x) == "convergence"),
-        ("mind_cognition_target", lambda x: mission_area(x) == "mind_cognition"),
-        ("mind_future_target", lambda x: mission_area(x) == "future_governance"),
+        ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
         ("research_target", _is_research),
     ):
         for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
             pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
-            # The type ceiling is soft only when it would otherwise starve the target lane.
             if not pool:
                 pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
             if not pool:
                 break
-            baseline_pool = [
-                x for x in ordered
-                if id(x) not in p.selected_ids
-                and p.admissible(x, repeat_source=False)
-                and (target_key != "mind_future_target" or mission_area(x) != "ai_core")
-            ]
+            baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and (target_key != "mind_future_target" or mission_area(x) != "ai_core")]
             baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
             candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
             if candidate is None:
                 break
             floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
-            # All mission opportunities respect the same quality floor. For the
-            # mind/future lane, compare against the strongest remaining non-AI
-            # candidate so an already-covered AI duplicate does not suppress a
-            # substantive cross-domain story, while weak future signals still lose
-            # to stronger non-AI candidates.
             if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
                 break
             candidate_area = mission_area(candidate)
@@ -386,13 +360,7 @@ def _backfill_repeat_sources(p: _Portfolio, eligible: list[dict[str, Any]]) -> N
             viable = [max(pool, key=candidate_score)]
         for item in viable:
             _annotate_information_gain(item, p.selected, p.contract)
-        best_item = max(
-            viable,
-            key=lambda x: (
-                portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]),
-                candidate_score(x),
-            ),
-        )
+        best_item = max(viable, key=lambda x: (portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]), candidate_score(x)))
         p.add(best_item, "adaptive_source_backfill")
 
 
@@ -405,16 +373,11 @@ def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> 
             break
         def _repair_priority(x: dict[str, Any]) -> tuple:
             reason = str(x.get("mission_selection_reason") or "")
-            if reason == "mission_target:convergence":
-                lane_priority = 0
-            elif reason == "mission_target:future_governance":
-                lane_priority = 1
-            elif reason == "portfolio_value":
-                lane_priority = 2
-            elif reason == "adaptive_source_backfill":
-                lane_priority = 3
-            else:
-                lane_priority = 4
+            if reason == "mission_target:convergence": lane_priority = 0
+            elif reason == "mission_target:future_governance": lane_priority = 1
+            elif reason == "portfolio_value": lane_priority = 2
+            elif reason == "adaptive_source_backfill": lane_priority = 3
+            else: lane_priority = 4
             return (lane_priority, candidate_score(x), _safe_float(x, "evidence_strength"), _rank_key(x, p.recent))
         victim = min(removable, key=_repair_priority)
         p.remove(victim)

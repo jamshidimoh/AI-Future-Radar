@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789381079,
+  "updated_at": 1789391775,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9074,6 +9074,25 @@
       "why_it_matters": "متن‌باز شدن OSMO موانع پیچیدگی زیرساختی را برای توسعه‌دهندگان Physical AI کاهش می‌دهد و یکپارچگی بین محیط‌های شبیه‌سازی و سخت‌افزار واقعی را تسهیل می‌کند. با حذف نیاز به کدنویسی دستی برای مدیریت منابع، این ابزار چرخه توسعه رباتیک را از آموزش تا تست سخت‌افزاری بهینه می‌سازد. دسترسی به این ابزار متن‌باز، امکان استفاده از معماری‌های مقیاس‌پذیر NVIDIA را برای جوامع علمی و صنعتی گسترش می‌دهد.",
       "link": "https://www.marktechpost.com/2026/09/14/nvidia-open-sources-osmo-one-yaml-orchestrates-physical-ai-training-simulation-and-robot-testing/",
       "posted_at": 1789381079
+    },
+    "-1004482051328:1589": {
+      "chat_id": -1004482051328,
+      "message_id": 1589,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Mariana Popescu: بافت‌های نخی به‌عنوان قالب‌های بتنی سبک در ساخت‌وساز پایدار",
+      "summary": "Mariana Popescu، استاد کمکی MIT CSAIL، رویکردی نوین برای ساخت‌وساز پایدار ارائه می‌دهد که در آن از ترکیب طراحی محاسباتی، ساخت دیجیتال و ماشین‌آلات بافندگی صنعتی برای تولید قالب‌های بتنی سبک استفاده می‌شود. این روش با بهره‌گیری از متون بافته‌شده به‌عنوان فرم‌ورک، امکان ایجاد هندسه‌های پیچیده را فراهم کرده و همزمان مصرف مصالح و تولید پسماند را کاهش می‌دهد. او با اشاره به پروژه‌هایی مانند پل بافته‌شده کوچک، نشان می‌دهد که این تکنیک پتانسیل بالایی برای بهینه‌سازی ساختارها دارد. Popescu تأکید می‌کند که پایداری محیطی نباید به‌ایجاز زیبایی‌شناسی یا تجربه انسانی در معماری منجر شود.",
+      "description": "What if the future of sustainable construction looked less like traditional building and more like knitting?\n\nSpeaking with Building 32 host Karen Given, MIT CSAIL Assistant Professor Mariana Popescu explains how, using a combination of computational design, digital fabrication, and industrial knitting machines, she is rethinking how we build complex structures. Her research explores using knitted textiles as lightweight, efficient concrete formworks, allowing architects and engineers to create complex geometries while using less material and producing less waste.\nMariana discusses the origins of her work with fabric formwork, her early experiments with knitted structures, and how a small knitted bridge helped demonstrate the potential of the technique. She also explains why sustainability doesn't have to come at the expense of beauty or human experience.\n\nEpisode Resources: \n\nMore about Necto: https://necto-venice.com/\nBiennale Architettura 2025: https://www.labiennale.org/it/architettura/2025 \nKnitCandela in Mexico City: https://maadpope.com/knitcandela/\nSee the piece Mariana showed Karen: https://maadpope.com/knitcrete/\n\nLearn more about Mariana Popescu: \nPersonal website: https://maadpope.com/PI\nSpotlight: https://cap.csail.mit.edu/engage/spotlights/mariana-popescu\n\nBuilding 32 episodes, meet the host, and more: csail.mit.edu/podcast \n\nConnect with CSAIL Alliances: \nOn our site: cap.csail.mit.edu/about-us/meet-our-team \nOn LinkedIn: linkedin.com/company/mit-csail\n\n#MITCSAIL #Building32 #Architecture #SustainableDesign #ComputationalDesign #DigitalFabrication #AI #Engineering",
+      "why_it_matters": "این پژوهش با جایگزینی قالب‌های سنتی سنگین با متون بافته‌شده، چرخه عمر ساخت‌وساز را با کاهش چشمگیر مصرف مصالح و پسماند متحول می‌کند. ادغام طراحی محاسباتی با بافندگی صنعتی، مهندسان را قادر می‌سازد تا فرم‌های ارگانیک و پیچیده‌ای را با کارایی مصالح بهینه‌سازی‌شده اجرا کنند. این رویکرد نشان می‌دهد که فناوری‌های دیجیتال می‌توانند راه‌حلی عملی برای چالش‌های زیست‌محیطی در صنعت ساختمان ارائه دهند، بدون آنکه از استانداردهای زیبایی‌شناختی معماری کاسته شود.",
+      "link": "https://www.youtube.com/watch?v=tLQm_UmB9cs",
+      "posted_at": 1789391775
     }
   }
 }

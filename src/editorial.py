@@ -3,8 +3,13 @@ from __future__ import annotations
 
 import re
 
-from src.editorial_core import classify_editorial_item as _classify_editorial_item
-from src.editorial_core import contract_summary, enrich_items as _enrich_items, filter_ai_relevance as _filter_ai_relevance, filter_low_signal
+from src.editorial_core import (
+    classify_editorial_item as _classify_editorial_item,
+    contract_summary,
+    enrich_items as _enrich_items,
+    filter_ai_relevance as _filter_ai_relevance,
+    filter_low_signal,
+)
 from src.future_significance import annotate_future_significance
 from src.interview_evidence import has_interview_evidence
 from src.strategic_signal import strategic_forecast_score
@@ -140,7 +145,11 @@ def _prepare_relevance_item(raw: dict, supplied_keywords: tuple[str, ...]) -> tu
     text = _evidence_text(item)
     bridge_hits = _has_any(text, _AI_BRIDGE_TERMS) or _has_any(text, supplied_keywords)
     reason = _early_reason(item, text)
-    curated = bool(item.get("curated_discovery") and item.get("preferred_source") and int(item.get("source_tier") or 3) in {1, 2})
+    try:
+        source_tier = int(item.get("source_tier") or 3)
+    except (TypeError, ValueError):
+        source_tier = 3
+    curated = bool(item.get("curated_discovery") and item.get("preferred_source") and source_tier in {1, 2})
     if reason and bridge_hits:
         item.update(
             early_inclusion=True,

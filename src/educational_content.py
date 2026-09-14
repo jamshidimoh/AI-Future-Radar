@@ -35,10 +35,8 @@ LESSON_15_CURRENT_SOURCES = [
     {"name": "Google Developers: What's new with Agents: ADK, Agent Engine, and A2A Enhancements", "url": "https://developers.googleblog.com/en/agents-adk-agent-engine-a2a-enhancements-google-io/", "year": 2025},
 ]
 
-
 def _default_state():
     return {"version": 6, "next_lesson": 1, "next_slot": 0, "completed": [], "updated_at": 0}
-
 
 def load_state():
     data = load_json_state(STATE_PATH, {}, label="education state")
@@ -49,7 +47,6 @@ def load_state():
     base["completed"] = list(base.get("completed") or [])
     return base
 
-
 def save_state(state):
     STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
     state["updated_at"] = int(time.time())
@@ -57,31 +54,25 @@ def save_state(state):
     tmp.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
     tmp.replace(STATE_PATH)
 
-
 def _load_yaml_file(path: Path) -> dict:
     if not path.exists():
         return {}
     with path.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
-
 def load_curriculum():
     return _load_yaml_file(CURRICULUM_PATH)
-
 
 def load_curriculum_modules():
     data = _load_yaml_file(MODULES_PATH)
     return data.get("education_curriculum_modules", {})
 
-
 def load_emerging():
     return _load_yaml_file(EMERGING_PATH)
-
 
 def load_curriculum_expansion():
     data = _load_yaml_file(EXPANSION_PATH)
     return data.get("education_curriculum_expansion", {})
-
 
 def load_source_fallbacks() -> dict[str, list[dict[str, Any]]]:
     try:
@@ -90,20 +81,16 @@ def load_source_fallbacks() -> dict[str, list[dict[str, Any]]]:
     except (TypeError, ValueError):
         return {}
 
-
 def _base_lessons():
     return list(load_curriculum().get("education", {}).get("lessons") or []) + list(load_curriculum_modules().get("lessons") or [])
-
 
 def _emerging_lessons():
     data = load_emerging().get("emerging_terminology", {})
     return list(data.get("lessons") or []) if data.get("enabled", True) else []
 
-
 def _expansion_lessons():
     data = load_curriculum_expansion()
     return list(data.get("lessons") or []) if data.get("enabled", True) else []
-
 
 def _lesson_sequence():
     sequence = [("foundation", lesson) for lesson in _base_lessons()]
@@ -111,11 +98,9 @@ def _lesson_sequence():
     sequence.extend(("expansion", lesson) for lesson in _expansion_lessons())
     return sequence
 
-
 def _completed_ids(state=None):
     state = state or load_state()
     return {int(x) for x in (state.get("completed") or []) if str(x).lstrip("-").isdigit()}
-
 
 def _next_lesson():
     """Return the first uncompleted lesson in curriculum order; never wrap.
@@ -134,7 +119,6 @@ def _next_lesson():
     print(f"[Education Selection] curriculum exhausted: total={len(sequence)} completed={len(completed)}; publication blocked", flush=True)
     return None, 0, len(sequence)
 
-
 def _extract_source_year(raw_html: str) -> int | None:
     structured_patterns = [
         r'"datePublished"\s*:\s*"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}',
@@ -144,8 +128,8 @@ def _extract_source_year(raw_html: str) -> int | None:
     ]
     years = []
     for pattern in structured_patterns:
-        for match in re.finditer(pattern, raw_html, flags=re.I):
-            year_match = re.search(r"20\d{2}", match.group(1))
+        for source_match in re.finditer(pattern, raw_html, flags=re.I):
+            year_match = re.search(r"20\d{2}", source_match.group(1))
             if year_match:
                 years.append(int(year_match.group(0)))
     if years:
@@ -158,11 +142,10 @@ def _extract_source_year(raw_html: str) -> int | None:
         r"(20\d{2})[-/]\d{1,2}[-/]\d{1,2}",
     ]
     for pattern in patterns:
-        match = re.search(pattern, raw_html, flags=re.I)
-        if match:
-            return int(match.group(1))
+        date_match = re.search(pattern, raw_html, flags=re.I)
+        if date_match:
+            return int(date_match.group(1))
     return None
-
 
 def _fetch_reference(url):
     try:
@@ -193,7 +176,6 @@ def _fetch_reference(url):
         logger.warning("Education reference fetch skipped for %s: %s", url, exc, exc_info=True)
         return "", None
 
-
 def _parse_json(raw, keys):
     try:
         text = str(raw or "").strip()
@@ -205,7 +187,6 @@ def _parse_json(raw, keys):
     except (ValueError, TypeError, json.JSONDecodeError) as exc:
         print(f"[Education] generated JSON invalid: {exc}", flush=True)
         return None
-
 
 def _source_candidates(lesson: dict[str, Any]) -> list[dict[str, Any]]:
     lesson_id = str(int(lesson.get("id", 0) or 0))
@@ -221,7 +202,6 @@ def _source_candidates(lesson: dict[str, Any]) -> list[dict[str, Any]]:
         seen.add(url)
         deduped.append(dict(source))
     return dynamic_source_candidates(lesson, deduped, limit=8)
-
 
 def _generate(lesson):
     a, b = lesson["a"], lesson["b"]
@@ -282,7 +262,6 @@ JSON: {"term_a_definition":"...","term_a_simple":"...","term_b_definition":"..."
         final["_review_provider"] = reviewed_provider
     return final, verified_sources
 
-
 def build_educational_item():
     if not load_curriculum().get("education", {}).get("enabled", True):
         return None
@@ -303,7 +282,6 @@ def build_educational_item():
         track_label = "مفاهیم پایه و بنیادی"
         education_number = lesson_id
     return {"content_type": "education", "category": "ai", "education_id": lesson_id, "education_total": total, "education_track": track, "education_track_label": track_label, "education_number": education_number, "education_status": lesson.get("status", "established"), "education_title": lesson.get("title", ""), "education_term_a": lesson["a"]["term"], "education_term_a_fa": lesson["a"]["fa"], "education_term_b": lesson["b"]["term"], "education_term_b_fa": lesson["b"]["fa"], "education_sources": verified_sources, **generated}
-
 
 def commit_education_lesson(lesson_id):
     state = load_state()

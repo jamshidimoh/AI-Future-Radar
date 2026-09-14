@@ -5,9 +5,11 @@ import time
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+from pathlib import Path
 
 import feedparser
 import requests
+import yaml
 
 from src.source_authority import resolve_google_news_tier
 from src.source_exclusions import is_excluded_source_text, is_excluded_source_url
@@ -19,6 +21,8 @@ _MAX_WORKERS = 4
 _MAX_RETRIES = 1
 _RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 _CIRCUIT_BREAK_AFTER = 3
+_ROOT = Path(__file__).resolve().parents[1]
+_SUPPLEMENTAL_QUERY_PATH = _ROOT / "config" / "radar_google_news_queries.yaml"
 # Generic companion-discovery vocabulary. It deliberately avoids source-, person-,
 # geography-, or platform-specific terms so the same mechanism works for every watch person.
 _LEADER_SIGNAL_TERMS = (
@@ -78,6 +82,29 @@ def _parse_feed(url):
             if attempt < _MAX_RETRIES:
                 time.sleep(1.0 + random.uniform(0.1, 0.4))
     raise last_error
+
+
+def _load_supplemental_queries():
+    if not _SUPPLEMENTAL_QUERY_PATH.exists():
+        return []
+    try:
+        payload = yaml.safe_load(_SUPPLEMENTAL_QUERY_PATH.read_text(encoding="utf-8")) or {}
+        queries = payload.get("google_news_queries", [])
+        return [dict(q) for q in queries if isinstance(q, dict) and str(q.get("query") or "").strip()]
+    except (OSError, UnicodeDecodeError, yaml.YAMLError, TypeError, ValueError) as exc:
+        logger.warning("Supplemental Google News query registry unavailable: %s", exc, exc_info=True)
+        return []
+
+
+def _merge_queries(queries):
+    merged = list(queries or [])
+    seen = {str(q.get("query") or "").strip().lower() for q in merged if isinstance(q, dict)}
+    for query in _load_supplemental_queries():
+        key = str(query.get("query") or "").strip().lower()
+        if key and key not in seen and not is_excluded_source_text(query.get("query")):
+            merged.append(query)
+            seen.add(key)
+    return merged
 
 
 def _is_strong_curated_query(q: dict) -> bool:
@@ -147,7 +174,7 @@ _SERIAL_FETCH_BUDGET_SECONDS = 90
 
 
 def fetch_google_news_items(queries, max_age_hours=36, max_workers=None, inter_query_delay=0.0, max_seconds=None):
-    cutoff = time.time() - (max_age_hours * 3600); results = []; queries = list(queries or [])
+    cutoff = time.time() - (max_age_hours * 3600); results = []; queries = _merge_queries(queries)
     if not queries: return results
     leader_query_mode = any(str(q.get("watch_person") or "").strip() for q in queries)
     if leader_query_mode:

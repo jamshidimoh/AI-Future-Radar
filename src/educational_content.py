@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CURRICULUM_PATH = ROOT / "config" / "education_curriculum.yaml"
 MODULES_PATH = ROOT / "config" / "education_curriculum_modules.yaml"
 EMERGING_PATH = ROOT / "config" / "emerging_terminology.yaml"
+EXPANSION_PATH = ROOT / "config" / "education_curriculum_expansion.yaml"
 SOURCE_FALLBACKS_PATH = ROOT / "config" / "education_source_fallbacks.yaml"
 STATE_PATH = ROOT / "data" / "education_state.json"
 
@@ -77,6 +78,11 @@ def load_emerging():
     return _load_yaml_file(EMERGING_PATH)
 
 
+def load_curriculum_expansion():
+    data = _load_yaml_file(EXPANSION_PATH)
+    return data.get("education_curriculum_expansion", {})
+
+
 def load_source_fallbacks() -> dict[str, list[dict[str, Any]]]:
     try:
         mapping = _load_yaml_file(SOURCE_FALLBACKS_PATH).get("education_source_fallbacks") or {}
@@ -94,9 +100,15 @@ def _emerging_lessons():
     return list(data.get("lessons") or []) if data.get("enabled", True) else []
 
 
+def _expansion_lessons():
+    data = load_curriculum_expansion()
+    return list(data.get("lessons") or []) if data.get("enabled", True) else []
+
+
 def _lesson_sequence():
     sequence = [("foundation", lesson) for lesson in _base_lessons()]
     sequence.extend(("emerging", lesson) for lesson in _emerging_lessons())
+    sequence.extend(("expansion", lesson) for lesson in _expansion_lessons())
     return sequence
 
 
@@ -280,8 +292,17 @@ def build_educational_item():
     generated, verified_sources = _generate(lesson)
     if not generated:
         raise RuntimeError("[Education Contract] no publishable lesson: source policy requires two independent current sources")
-    track = "emerging" if lesson_id >= 101 else "foundation"
-    return {"content_type": "education", "category": "ai", "education_id": lesson_id, "education_total": total, "education_track": track, "education_track_label": "ترمینولوژی روز و فناوری‌های نو" if track == "emerging" else "مفاهیم پایه و بنیادی", "education_number": lesson_id - 100 if track == "emerging" else lesson_id, "education_status": lesson.get("status", "established"), "education_title": lesson.get("title", ""), "education_term_a": lesson["a"]["term"], "education_term_a_fa": lesson["a"]["fa"], "education_term_b": lesson["b"]["term"], "education_term_b_fa": lesson["b"]["fa"], "education_sources": verified_sources, **generated}
+    track = "expansion" if lesson_id >= 115 else ("emerging" if lesson_id >= 101 else "foundation")
+    if track == "expansion":
+        track_label = "مسیر توسعه و موضوعات تکمیلی"
+        education_number = lesson_id - 114
+    elif track == "emerging":
+        track_label = "ترمینولوژی روز و فناوری‌های نو"
+        education_number = lesson_id - 100
+    else:
+        track_label = "مفاهیم پایه و بنیادی"
+        education_number = lesson_id
+    return {"content_type": "education", "category": "ai", "education_id": lesson_id, "education_total": total, "education_track": track, "education_track_label": track_label, "education_number": education_number, "education_status": lesson.get("status", "established"), "education_title": lesson.get("title", ""), "education_term_a": lesson["a"]["term"], "education_term_a_fa": lesson["a"]["fa"], "education_term_b": lesson["b"]["term"], "education_term_b_fa": lesson["b"]["fa"], "education_sources": verified_sources, **generated}
 
 
 def commit_education_lesson(lesson_id):
@@ -295,7 +316,8 @@ def commit_education_lesson(lesson_id):
     if lesson_id not in completed:
         completed.append(lesson_id)
     total = len(sequence)
-    pending = [(idx, lesson) for idx, (_, lesson) in enumerate(sequence) if int(lesson.get("id", 0) or 0) not in set(completed)]
+    completed_set = set(completed)
+    pending = [(idx, lesson) for idx, (_, lesson) in enumerate(sequence) if int(lesson.get("id", 0) or 0) not in completed_set]
     if pending:
         next_slot, next_lesson = pending[0]
         state["next_slot"] = next_slot

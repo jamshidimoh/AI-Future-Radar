@@ -3,7 +3,7 @@ selection:
   max_posts: 3
   candidate_window: 6
   max_items_per_source: 2
-  max_items_per_content_type: 3
+  max_items_per_content_type: 2
   story_similarity_threshold: 0.45
   diversity_mode: adaptive
   diversity_weight: 8.0
@@ -28,10 +28,9 @@ editorial:
 # - max_items_per_source=2 is the adaptive ceiling and hard ceiling. One item
 #   per source is preferred first; a second item is allowed only during adaptive
 #   backfill when capacity remains.
-# - max_items_per_content_type=3 is a soft portfolio ceiling aligned with the
-#   three-slot publication capacity; mission-lane coverage must not be starved
-#   merely because several strong lanes are research. Interview-specific
-#   protection remains controlled by interview_target_max.
+# - max_items_per_content_type=2 is a soft portfolio ceiling; mission-lane
+#   coverage must not be starved merely because several strong lanes are research.
+#   Interview-specific protection remains controlled by interview_target_max.
 # - Mission coverage is now explicit: one AI-core lane, one mind/cognition lane,
 #   and one convergence lane are preferred when qualifying candidates exist.
 #   The remaining capacity is optimized by quality, information gain and diversity.

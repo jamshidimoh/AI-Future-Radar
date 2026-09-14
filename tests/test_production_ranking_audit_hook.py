@@ -1,8 +1,11 @@
 import threading
 import time
 
+import pytest
+
 import scripts.production_with_ranking_audit as launcher
 from main import _summarize_selected
+from src.llm_router_light import QuotaExceeded
 
 
 def test_audited_main_wraps_existing_selection_hook(monkeypatch):
@@ -61,3 +64,41 @@ def test_parallel_summary_preserves_input_order_and_runs_concurrently(monkeypatc
 
     assert [result["title"] for result in results] == ["done-a", "done-b", "done-c", "done-d"]
     assert state["peak"] == 2
+
+
+def test_summary_provider_failure_isolated_and_next_candidates_continue():
+    calls = []
+
+    def summarize(item):
+        calls.append(item["title"])
+        if item["title"] == "broken":
+            raise QuotaExceeded("provider quota exhausted")
+        return {"title": f"done-{item['title']}"}
+
+    items = [{"title": "broken"}, {"title": "healthy"}]
+    results = _summarize_selected(items, summarize)
+
+    assert results == [None, {"title": "done-healthy"}]
+    assert items[0]["_publication_blocked"] is True
+    assert items[0]["_summary_provider_failure"] == "QuotaExceeded"
+    assert calls == ["broken", "healthy"]
+
+
+def test_summary_request_failure_isolated_without_swallowing_unexpected_errors():
+    requests = pytest.importorskip("requests")
+
+    def summarize(item):
+        if item["title"] == "request-failed":
+            raise requests.exceptions.Timeout("provider timed out")
+        if item["title"] == "code-bug":
+            raise ValueError("unexpected implementation error")
+        return {"title": f"done-{item['title']}"}
+
+    items = [{"title": "request-failed"}, {"title": "healthy"}]
+    results = _summarize_selected(items, summarize)
+
+    assert results == [None, {"title": "done-healthy"}]
+    assert items[0]["_publication_blocked"] is True
+
+    with pytest.raises(ValueError, match="unexpected implementation error"):
+        _summarize_selected([{ "title": "code-bug" }], summarize)

@@ -1,0 +1,45 @@
+name: Temporary selector patch
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor == 'github-actions[bot]' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply selector patch
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/unified_editorial_selection.py')
+          s = p.read_text(encoding='utf-8')
+          old = '''            floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))\n            if top_global > 0 and candidate_score(candidate) < top_global * floor:\n                break\n            candidate_area = mission_area(candidate)'''
+          new = '''            floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))\n            # Mission opportunities may legitimately be below the global quality floor\n            # when they are still strong enough to preserve the radar's mind/research lane.\n            opportunity_floor = min(floor, 0.70) if target_key in {"mind_future_target", "research_target"} else floor\n            if top_global > 0 and candidate_score(candidate) < top_global * opportunity_floor:\n                break\n            candidate_area = mission_area(candidate)'''
+          if old not in s:
+              raise SystemExit('target block 1 not found')
+          s = s.replace(old, new, 1)
+          old = '''        victim = max(removable, key=lambda x: (_rank_key(x, p.recent), -candidate_score(x)))\n        p.remove(victim)'''
+          new = '''        def _repair_priority(x: dict[str, Any]) -> tuple:\n            reason = str(x.get("mission_selection_reason") or "")\n            if reason == "mission_target:convergence":\n                lane_priority = 0\n            elif reason == "mission_target:future_governance":\n                lane_priority = 1\n            elif reason == "portfolio_value":\n                lane_priority = 2\n            elif reason == "adaptive_source_backfill":\n                lane_priority = 3\n            else:\n                lane_priority = 4\n            return (lane_priority, candidate_score(x), _safe_float(x, "evidence_strength"), _rank_key(x, p.recent))\n        victim = min(removable, key=_repair_priority)\n        p.remove(victim)'''
+          if old not in s:
+              raise SystemExit('target block 2 not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit selector patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/unified_editorial_selection.py
+          if git diff --cached --quiet; then
+            echo 'NO_CHANGES'
+            exit 0
+          fi
+          git commit -m 'fix: preserve mission lane during authority repair'
+          git push origin main

@@ -158,6 +158,14 @@ def validate(log_text: str) -> tuple[bool, str]:
             f"normal_max={normal_max}, rejection_accounting={rejection_accounting}, education={education}"
         )
 
+    if published_news > 0 and education != "confirmed" and accounted < selected:
+        return False, (
+            "production contract violation: published production run left selected candidates unaccounted; "
+            f"selected={selected}, published={published_news}, accounted={accounted}, "
+            f"editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, "
+            f"publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, education={education}"
+        )
+
     return True, f"production acceptance PASS: selected={selected}, published_news={published_news}, education={education}"
 
 

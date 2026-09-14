@@ -2,10 +2,10 @@ import period_ranked_pipeline as pipeline
 from src.publication_guard import _semantic_conflict as publication_semantic_conflict
 
 
-def _candidate(title="A new AI story", protected=False):
+def _candidate(title="OpenAI launches a new LLM model", protected=False):
     item = {
         "title": title,
-        "summary": "A substantive technology development.",
+        "summary": "OpenAI released a new LLM model for advanced AI workloads.",
         "link": "https://example.com/new-story",
     }
     if protected:
@@ -16,14 +16,14 @@ def _candidate(title="A new AI story", protected=False):
 
 
 def test_regular_topic_similarity_below_same_story_threshold_is_not_blocked(monkeypatch):
-    monkeypatch.setattr(pipeline, "_load_records", lambda: [{"title": "Older related story", "link": "https://example.com/old"}])
+    monkeypatch.setattr(pipeline, "_load_records", lambda: [{"title": "OpenAI discusses a different LLM topic", "summary": "OpenAI discusses a different LLM topic.", "link": "https://example.com/old"}])
     monkeypatch.setattr(pipeline, "_semantic_conflict", lambda *args: 0.70)
     result = pipeline._exclude_published_candidates([_candidate()])
     assert len(result) == 1
 
 
 def test_regular_high_confidence_semantic_identity_is_blocked(monkeypatch):
-    monkeypatch.setattr(pipeline, "_load_records", lambda: [{"title": "Older same story", "link": "https://example.com/old"}])
+    monkeypatch.setattr(pipeline, "_load_records", lambda: [{"title": "OpenAI introduces its latest LLM model", "summary": "OpenAI introduces its latest LLM model for advanced AI workloads.", "link": "https://example.com/old"}])
     monkeypatch.setattr(pipeline, "_semantic_conflict", lambda *args: 0.90)
     result = pipeline._exclude_published_candidates([_candidate()])
     assert result == []

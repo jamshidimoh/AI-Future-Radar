@@ -1,5 +1,12 @@
 {
-  "models": {},
+  "models": {
+    "NaraRouter:auto/bynara": {
+      "failures": 1,
+      "disabled_until": 1789381874.018,
+      "last_error": "model",
+      "last_success": 0
+    }
+  },
   "providers": {},
   "updated_at": 1789352663.9123816,
   "version": 1,
@@ -7,5 +14,7 @@
     "observed_failures": 3,
     "observed_events": 19,
     "updated_at": 1789352663.9123816
-  }
+  },
+  "observed_failures": 0,
+  "observed_events": 0
 }

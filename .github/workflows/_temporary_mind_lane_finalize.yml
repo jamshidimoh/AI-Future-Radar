@@ -1,0 +1,75 @@
+name: _temporary_mind_lane_finalize
+on:
+  push:
+    branches: [fix/mind-cognition-floor]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply independent mind lane repair
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          selector = Path('src/unified_editorial_selection.py')
+          text = selector.read_text(encoding='utf-8')
+          old = '        "convergence_target": int(mission.get("convergence_target", 0) or 0),\n        "mind_future_target": int(mission.get("mind_future_target", 0) or 0),'
+          new = '        "convergence_target": int(mission.get("convergence_target", 0) or 0),\n        "mind_cognition_target": int(mission.get("mind_cognition_target", 0) or 0),\n        "mind_future_target": int(mission.get("mind_future_target", 0) or 0),'
+          if old not in text:
+              raise SystemExit('contract insertion anchor not found')
+          text = text.replace(old, new, 1)
+
+          old_block = '''    for target_key, area_predicate in (\n        ("convergence_target", lambda x: mission_area(x) == "convergence"),\n        ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),\n        ("research_target", _is_research),\n    ):'''
+          new_block = '''    for target_key, area_predicate in (\n        ("convergence_target", lambda x: mission_area(x) == "convergence"),\n        ("mind_cognition_target", lambda x: mission_area(x) == "mind_cognition"),\n        ("mind_future_target", lambda x: mission_area(x) == "future_governance"),\n        ("research_target", _is_research),\n    ):'''
+          if old_block not in text:
+              raise SystemExit('mission target loop anchor not found')
+          text = text.replace(old_block, new_block, 1)
+
+          old_reason = '            reason = f"mission_target:{candidate_area}" if candidate_area in {"mind_cognition", "future_governance"} else f"mission_target:{target_key.removesuffix(\'_target\')}"'
+          new_reason = '            reason = f"mission_target:{candidate_area}" if candidate_area in {"mind_cognition", "future_governance"} else f"mission_target:{target_key.removesuffix(\'_target\')}"'
+          if old_reason not in text:
+              raise SystemExit('reason anchor not found')
+
+          selector.write_text(text, encoding='utf-8')
+
+          mission = Path('config/mission_policy.yaml')
+          mtext = mission.read_text(encoding='utf-8')
+          old = '  convergence_target: 1\n  mind_future_target: 1'
+          new = '  convergence_target: 1\n  mind_cognition_target: 1\n  mind_future_target: 1'
+          if old not in mtext:
+              raise SystemExit('mission config anchor not found')
+          mission.write_text(mtext.replace(old, new, 1), encoding='utf-8')
+
+          policy = Path('config/selection_policy.yaml')
+          ptext = policy.read_text(encoding='utf-8')
+          ptext = ptext.replace('one mind/cognition lane,\n#   and one convergence lane', 'one independent mind/cognition lane,\n#   and one convergence lane', 1)
+          policy.write_text(ptext, encoding='utf-8')
+          PY
+
+      - name: Replace placeholder regression test
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tests/test_mind_cognition_floor_contract.py')
+          p.write_text('''from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio\n\n\ndef _item(title, source, score, category, content_type="research"):\n    return {\n        "title": title,\n        "summary": title,\n        "source": source,\n        "source_tier": 1,\n        "final_editorial_score": score,\n        "category": category,\n        "content_type": content_type,\n        "research_signal": content_type == "research",\n        "_ai_link": True,\n        "ai_relevance": True,\n    }\n\n\ndef test_mind_cognition_has_independent_contract_floor():\n    contract = load_editorial_contract()\n    assert contract["mind_cognition_target"] >= 1\n\n\ndef test_three_slot_portfolio_cannot_starve_mind_for_future_governance():\n    candidates = [\n        _item("Frontier AI capability", "OpenAI", 100, "ai"),\n        _item("Quantum computing breakthrough for AI", "Nature", 91, "quantum"),\n        _item("Consciousness and AI cognition research", "Nature Neuroscience", 88, "mind"),\n        _item("Philosophy of science and AI discovery", "Stanford Encyclopedia of Philosophy", 86, "mind"),\n        _item("Strong future governance analysis", "NIST", 99, "future", "news"),\n    ]\n    selected = select_regular_portfolio(\n        candidates,\n        max_posts=3,\n        max_per_source=1,\n        max_per_type=2,\n        recent_source_counts={},\n        contract=load_editorial_contract(),\n        mission_aware=True,\n        strict_relevance=True,\n    )\n    areas = [item["mission_area"] for item in selected]\n    assert areas == ["ai_core", "convergence", "mind_cognition"]\n''', encoding='utf-8')
+          PY
+
+      - name: Validate targeted tests
+        run: |
+          python -m pytest -q tests/test_mission_lane_coverage_contract.py tests/test_mind_cognition_floor_contract.py tests/test_characterization.py
+
+      - name: Remove temporary workflow and commit
+        run: |
+          rm -f .github/workflows/_temporary_mind_lane_finalize.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/unified_editorial_selection.py config/mission_policy.yaml config/selection_policy.yaml tests/test_mind_cognition_floor_contract.py .github/workflows/_temporary_mind_lane_finalize.yml
+          git commit -m 'fix: give mind cognition an independent mission floor'
+          git push origin HEAD:fix/mind-cognition-floor

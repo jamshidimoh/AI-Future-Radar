@@ -18,7 +18,6 @@ permissions:
 
 jobs:
   run-bot:
-    if: github.event_name != 'push' || github.event.head_commit.message == 'ci: production validation'
     runs-on: ubuntu-latest
     timeout-minutes: 26
     steps:

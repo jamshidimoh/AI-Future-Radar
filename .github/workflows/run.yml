@@ -52,11 +52,6 @@ jobs:
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
         run: python -u scripts/bridge_free_llm_router.py
 
-      - name: Nara live provider-state check
-        env:
-          NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
-        run: python -u scripts/check_nara_provider.py
-
       - name: Telegram production preflight
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -157,12 +152,22 @@ jobs:
           def dump(path, value):
               path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
+          def merge_list(a, b):
+              out = list(a or [])
+              seen = {json.dumps(x, ensure_ascii=False, sort_keys=True) for x in out}
+              for value in b or []:
+                  marker = json.dumps(value, ensure_ascii=False, sort_keys=True)
+                  if marker not in seen:
+                      out.append(value)
+                      seen.add(marker)
+              return out
+
           remote_seen = load(root / "data/seen.json", {})
           local_seen = load(local_root / "data/seen.json", {})
           if isinstance(remote_seen, dict) and isinstance(local_seen, dict):
               merged_seen = dict(remote_seen)
               for key in ("seen_hashes", "seen_signatures", "seen_identities"):
-                  merged_seen[key] = list(dict.fromkeys(list(remote_seen.get(key) or []) + list(local_seen.get(key) or [])))
+                  merged_seen[key] = merge_list(remote_seen.get(key), local_seen.get(key))
               dump(root / "data/seen.json", merged_seen)
 
           remote_feedback = load(root / "data/telegram_feedback.json", {})
@@ -180,7 +185,7 @@ jobs:
           local_education = load(local_root / "data/education_state.json", {})
           if isinstance(remote_education, dict) and isinstance(local_education, dict):
               merged_education = dict(remote_education)
-              merged_education["completed"] = sorted(set(int(x) for x in (remote_education.get("completed") or []) + (local_education.get("completed") or [])))
+              merged_education["completed"] = merge_list(remote_education.get("completed"), local_education.get("completed"))
               for key in ("next_slot", "next_lesson", "updated_at"):
                   merged_education[key] = max(int(remote_education.get(key, 0) or 0), int(local_education.get(key, 0) or 0))
               dump(root / "data/education_state.json", merged_education)

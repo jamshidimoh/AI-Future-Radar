@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789408118,
+  "updated_at": 1789408400,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9455,6 +9455,25 @@
       "why_it_matters": "قوانین الزام‌آور و مبتنی بر قابلیت می‌توانند چارچوبی واضح برای ارزیابی و کنترل ریسک‌های ایمنی هوش مصنوعی فراهم کنند و از بروز حوادث ناشی از مدل‌های پیشرفته جلوگیری نمایند. این اقدام، اگر به‌سرعت اجرا شود، می‌تواند بریتانیا را به‌عنوان پیشرو در تنظیمات AI معرفی کند و به سایر کشورها الگوی قانونی ارائه دهد. در عین حال، محدودیت‌های اجرایی و تعریف دقیق «قابلیت‌ها» می‌تواند چالش‌های فنی و قانونی جدی ایجاد کند که نیاز به همکاری نزدیک بین دولت، صنعت و جامعه علمی دارد.",
       "link": "https://www.techmeme.com/260914/p22#a260914p22",
       "posted_at": 1789408118
+    },
+    "-1004482051328:1610": {
+      "chat_id": -1004482051328,
+      "message_id": 1610,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (accessnewswire.com)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "پخش مستند «AM I?» درباره آگاهی هوش مصنوعی در نیویورک",
+      "summary": "سازمان Humanarium نخستین نمایش مستند «AM I?» را در نیویورک برگزار کرد. این اثر به بررسی موضوع پیچیده آگاهی در هوش مصنوعی می‌پردازد. رویداد مذکور فرصتی برای گفت‌وگو درباره مرزهای شناختی ماشین‌ها فراهم می‌آورد. این مستند بخشی از تلاش‌های گسترده‌تر برای درک ماهیت آگاهی مصنوعی است.",
+      "why_it_matters": "برگزاری این رویداد نشان‌دهنده افزایش Attention عمومی و رسانه‌ای به مسئله آگاهی ماشین‌ها است. مستند «AM I?» با رویکردی مستندسازانه، شکاف میان ادعاهای فنی و واقعیت‌های علوم شناختی را برجسته می‌کند. این نوع رویدادها می‌توانند بر درک جامعه از محدودیت‌های فعلی سیستم‌های هوش مصنوعی تأثیر بگذارند. همچنین پلتفرمی برای نقد و بررسی اخلاقی توسعه AGI فراهم می‌کنند.",
+      "link": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxPWXNOWjFBdkw0WlJyNFZNb1RGRWhCa3NQOUxNS0VDMjZpYXJwajFPTGJVZkRKTmlkakg4bEFnNC1IQ0hnWDFaTTRPSVhfcVotZVhCWGx4clNLeDlFSXRVZ2pwZTRJNzgzbGdPVmRDQjhUWENLcXY5NWZWMnU4a25XR2lqTFhqY1RNMlVRMm5DbV9ESmpVRV9RRnRsRGxLNThCeWppTy1CRW45bnJsUEQ0MmVvcjNXVWRvYmdnRGxqdXFramJNblY3MXBWNXluZ1lVcnZFYmxqUlhNTmZsckNIQTZ1VEQ?oc=5",
+      "posted_at": 1789408400
     }
   }
 }

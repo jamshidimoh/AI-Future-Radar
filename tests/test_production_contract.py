@@ -19,7 +19,7 @@ def _load(path):
 
 def test_production_contract_is_explicit_and_versioned():
     data = _load(CONTRACT)
-    assert data["contract"]["version"] == 2
+    assert data["contract"]["version"] == 3
     assert data["contract"]["mission_policy"] == "config/mission_policy.yaml"
     assert data["contract"]["selection_policy"] == "config/selection_policy.yaml"
     assert data["contract"]["architecture_document"] == "ARCHITECTURE.md"
@@ -67,14 +67,14 @@ def test_mission_diversity_is_explicit_and_canonical():
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
     assert contract["preferred_max_same_source_per_run"] == mission["max_same_source"]
     assert contract["hard_max_same_source_per_run"] == _load(SELECTION)["selection"]["max_items_per_source"]
-    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 6
+    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 2
     assert contract["min_authoritative_items"] == mission["min_authoritative_items"]
     assert contract["community_max"] == mission["community_max"]
     assert contract["ai_core_target"] == [
         mission["ai_core_target_min"], mission["ai_core_target_max"]
     ] == [1, 2]
-    assert contract["convergence_target"] == mission["convergence_target"] == 0
-    assert contract["mind_future_target"] == mission["mind_future_target"] == 2
+    assert contract["convergence_target"] == mission["convergence_target"] == 1
+    assert contract["mind_future_target"] == mission["mind_future_target"] == 1
     assert contract["research_target"] == mission["research_target"] == 0
     assert contract["interview_target_max"] == mission["interview_target_max"]
 

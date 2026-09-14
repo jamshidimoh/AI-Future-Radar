@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789361680,
+  "updated_at": 1789362728,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8838,6 +8838,25 @@
       "why_it_matters": "این اعتراف از سوی یک متخصص کلیدی، شکاف بین ادعاهای عمومی شرکت‌های فناوری درباره ایمنی و واقعیت‌های درون‌سازمانی را آشکار می‌کند. وجود چنین نگرانی‌هایی در میان توسعه‌دهندگان Anthropic، ضرورت نظارت دقیق‌تر و شفافیت بیشتر در توسعه مدل‌های پیشرفته را برجسته می‌سازد. این موضوع می‌تواند بر سیاست‌گذاری‌های آینده و اعتماد عمومی به فناوری‌های نوظهور تأثیر مستقیم بگذارد.",
       "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1IMkFTZ25QYzR0R0V3UnUteU9DTl9KZzRRd0ZKMjhYS0tqVUFDYjlLaFYtSW45eVpjeGg3Q0EybnlKQ1JLUWZiQ25DTVBYUjJlVEhGeVQtR1JuQQ?oc=5",
       "posted_at": 1789352663
+    },
+    "-1004482051328:1574": {
+      "chat_id": -1004482051328,
+      "message_id": 1574,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Bioengineer.org)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "آیا هوش مصنوعی می‌تواند قوانین خود را بازنویسی کند؟ نظریه‌ای جدید می‌گوید معنا از اینجا آغاز می‌شود",
+      "summary": "مقاله‌ای در Bioengineer.org به بررسی نظریه‌ای جدید می‌پردازد که می‌گوید توانایی هوش مصنوعی برای بازنویسی قوانین خود، نقطه شروع معنا در سیستم‌های هوش مصنوعی است. این نظریه بر این باور استوار است که معنای واقعی یک سیستم هوش مصنوعی زمانی شکل می‌گیرد که بتواند خود را بازتعریف و بازنویسی کند. مقاله به بررسی پیامدهای این ایده برای درک بهتر هوش مصنوعی می‌پردازد.",
+      "why_it_matters": "اگر هوش مصنوعی بتواند قوانین خود را بازنویسی کند، می‌تواند به سطوح جدیدی از خودآگاهی و انعطاف‌پذیری دست یابد که برای توسعه سیستم‌های هوشمند با قابلیت تصمیم‌گیری مستقل حیاتی است. این مفهوم می‌تواند به بازنگری در چارچوب‌های اخلاقی و ایمنی هوش مصنوعی منجر شود، زیرا توانایی بازنویسی قوانین ممکن است خطرات پیش‌بینی‌نشده‌ای ایجاد کند. درک این نظریه برای پژوهشگران و سیاست‌گذاران مهم است تا بتوانند راهکارهای مناسب برای کنترل و بهره‌برداری ایمن از هوش مصنوعی ارائه دهند.",
+      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPZlQ5MW1Zd0E5c2NudW9KOUh3MGNDR2g1R09nRHJ0Q0pXd2VIWDdyMk5Xb1hvZWgyV2FoTkNSNVRyb3dsMEdqdDBTYWFwMTdoZmRVeGFDODZiX2ZBdDZqb1dlZ0RFeXJLZXU4QlpXZWNoY09LZmFDTjNqNVVDS1ZJV2dVTEd2ZWlIVDBLNlQxXzhfTlNTdl93eWtndnBMb1E?oc=5",
+      "posted_at": 1789362727
     }
   }
 }

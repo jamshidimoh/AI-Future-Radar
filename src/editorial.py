@@ -154,7 +154,7 @@ def _prepare_relevance_item(raw: dict, supplied_keywords: tuple[str, ...]) -> tu
         item.update(
             early_inclusion=True,
             early_inclusion_reason=reason,
-            relevance_reason=f"early_inclusion:{reason}",
+            relevance_reason="ai_evidence" if reason == "specialist_interview" else f"early_inclusion:{reason}",
             _ai_link=True,
             ai_relevance=True,
             ai_relevance_confidence=0.90 if reason == "mind_cognition_lane" else 0.85,

@@ -36,7 +36,8 @@ def analytical_anchor(item: dict) -> tuple[bool, list[str]]:
 
 
 def filter_without_anchor(items: list[dict]) -> tuple[list[dict], list[dict]]:
-    anchored, unanchored = [], []
+    anchored: list[dict] = []
+    unanchored: list[dict] = []
     for item in items:
         ok, reasons = analytical_anchor(item)
         item["analytical_anchor"] = ok

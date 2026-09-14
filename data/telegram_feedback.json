@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789394931,
+  "updated_at": 1789395384,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9187,6 +9187,62 @@
       "why_it_matters": "این دیدگاه نشان می‌دهد که هوش مصنوعی در حال حاضر جایگزین کامل قضاوت انسانی در طراحی نیست، بلکه ابزاری برای تقویت فرآیندهای خلاقانه است. درک این مرزها برای معماران و مهندسان حیاتی است تا از اتکای کورکورانه به الگوریتم‌ها جلوگیری کنند. حفظ Agentic AI انسانی تضمین می‌کند که خروجی‌های طراحی نه تنها از نظر فنی دقیق، بلکه از نظر مفهومی و کاربردی نیز با نیازهای واقعی سازگار باشند.",
       "link": "https://www.youtube.com/shorts/TToLjqB83MY",
       "posted_at": 1789394931
+    },
+    "-1004482051328:1595": {
+      "chat_id": -1004482051328,
+      "message_id": 1595,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "هوش مصنوعی و بحران مهارت در مشاغل سطح ورودی: تحلیل PwC",
+      "summary": "پتر براون، رهبر جهانی نیروی کار در PwC، به بررسی تأثیر هوش مصنوعی بر بازار کار برای متقاضیان مشاغل سطح ورودی می‌پردازد. تحقیقات PwC نشان می‌دهد که کارفرمایان اکنون ۷ برابر بیشتر از گذشته انتظار دارند متقاضیان با مهارت‌های «سطح ارشد» وارد سازمان شوند. این تغییر پارادایم نشان‌دهنده تحول بنیادین در انتظارات استخدامی است که نقش سنتی مشاغل اولیه در آموزش و پرورش مهارت‌های جوانان را به چالش می‌کشد.",
+      "description": "Peter Brown, Global Workforce Leader at PwC, explains to the World Economic Forum’s Kateryna Gordiychuk how AI is changing the world of #work for entry-level job-seekers.\n\nEntry-level jobs have traditionally helped young people build the #skills they need to progress. But according to PwC research, employers are now 7 times more likely to expect candidates to arrive with 'senior-level' skills.\n\nListen to the full conversation on our #MeetTheLeader podcast, exploring the report Artificial Intelligence and the Future of Entry-Level Work: https://open.spotify.com/episode/3QjJhkcHLrIlr3QcPpXqoT?si=9Nk9LnFVRXCS_2Bx7rg30Q&amp;nd=1&amp;dlsi=f77ef1ca63cb499e \n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef artificial intelligence",
+      "why_it_matters": "این یافته‌ها نشان می‌دهند که هوش مصنوعی با خودکارسازی وظایف پایه، نیاز به تجربه عملی در محیط کار را کاهش داده و شکاف عمیقی بین مهارت‌های فعلی فارغ‌التحصیلان و انتظارات کارفرمایان ایجاد کرده است. پیامد این موضوع، دشوارتر شدن ورود جوانان به بازار کار و تغییر استراتژی‌های آموزش و توسعه مهارت‌هاست. سازمان‌ها و سیاست‌گذاران باید مدل‌های جدیدی برای انتقال دانش و پرورش استعدادها طراحی کنند تا این خلأ مهارتی را جبران نمایند.",
+      "link": "https://www.youtube.com/shorts/X4wr9_xETsI",
+      "posted_at": 1789395379
+    },
+    "-1004482051328:1596": {
+      "chat_id": -1004482051328,
+      "message_id": 1596,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Scientific American)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "مکانیسم‌های عصبی شکل‌گیری حس زیبایی‌شناسی در مغز انسان",
+      "summary": "مقاله منتشر شده در Scientific American به بررسی چگونگی شکل‌گیری حس زیبایی‌شناسی در مغز انسان می‌پردازد. این پژوهش نشان می‌دهد که ادراک زیبایی تنها یک واکنش سطحی نیست، بلکه فرآیندی پیچیده عصبی است که در آن مناطق مختلف مغز با هم تعامل می‌کنند. تحقیقات جدید بر نقش سیستم‌های پاداش مغزی و پردازش‌های شناختی در قضاوت‌های زیبایی‌شناختی تأکید دارند. این مطالعه به درک بهتر ارتباط بین ساختارهای عصبی و تجربیات ذهنی انسان کمک می‌کند.",
+      "why_it_matters": "درک مکانیسم‌های عصبی پشت حس زیبایی‌شناسی می‌تواند تأثیرات عمیقی بر حوزه‌های مختلفی از جمله هوش مصنوعی خلاق، طراحی محصول و حتی درمان‌های روان‌شناختی داشته باشد. اگرچه این پژوهش هنوز در مراحل اولیه است، اما می‌تواند به توسعه الگوریتم‌هایی منجر شود که قادر به تولید یا ارزیابی محتوای بصری جذاب باشند. همچنین، این دانش می‌تواند به درک بهتر اختلالات ادراکی و شناختی کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNektMLXRzWFpIYkx4UmlvZXQ3UUF6VUpfN3VfeEdORmV6TmFkZkpiRlEtOHNod19paTIzd01JbndNV1pWbHQ4YmFKYXV2QjFpYU04MDBrSkY2dThsU3BJbzZvVkRnVy1iNDAzVGdFMUE1SE1IdkZQX2dGS2RpMkhvZ0FsbzUxSnAySE1RSnpNdDdHc3Y4bmpr?oc=5",
+      "posted_at": 1789395382
+    },
+    "-1004482051328:1597": {
+      "chat_id": -1004482051328,
+      "message_id": 1597,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "انتشار منشور اخلاقی ۳۷ صفحه‌ای Humanist AI توسط Microsoft با تأکید بر برتری انسان بر هوش مصنوعی",
+      "summary": "شرکت Microsoft یک سند ۳۷ صفحه‌ای تحت عنوان «humanist AI code of conduct» را منتشر کرده است که در پاسخ به نگرانی‌های ایمنی تدوین شده است. این منشور به صراحت اصل «people matter more than AI» را تثبیت می‌کند و بر اولویت مطلق انسان‌ها نسبت به سیستم‌های هوش مصنوعی تأکید دارد. همچنین این سند شخصیت حقوقی برای هوش مصنوعی را رد می‌کند و چارچوب‌های اخلاقی جدیدی را برای توسعه و استفاده از این فناوری تعریف می‌نماید.",
+      "why_it_matters": "این اقدام نشان‌دهنده تلاش Microsoft برای ایجاد تعادل بین نوآوری و ایمنی در عصر هوش مصنوعی است. با رد شخصیت حقوقی برای AI، شرکت مرزهای قانونی و اخلاقی مسئولیت‌پذیری را شفاف‌تر کرده و بر نظارت انسانی تأکید می‌کند. این منشور می‌تواند به عنوان یک الگوی صنعتی برای سایر شرکت‌های فناوری در مدیریت ریسک‌های مرتبط با AI عمل کند.",
+      "link": "https://www.techmeme.com/260914/p15#a260914p15",
+      "posted_at": 1789395384
     }
   }
 }

@@ -11,10 +11,7 @@ selection:
   preferred_max_same_source: 1
   distinct_sources_first: true
   replacement_buffer: 3
-  # Mind/cognition is a mission-critical coverage lane. A qualifying candidate
-  # may be below the strongest generic AI item, but cannot be displaced merely
-  # because of a modest score gap.
-  diversity_quality_floor_ratio: 0.70
+  diversity_quality_floor_ratio: 0.80
 
 editorial:
   leader_priority_weight: 2
@@ -36,12 +33,11 @@ editorial:
 # - ai_core_target_min/max and mind_future_target are explicit mission coverage
 #   controls. They do not bypass relevance, authority, deduplication or final
 #   publication safety checks.
-# - mind_future_target=1 is an explicit normal-slot reservation opportunity for
+# - mind_future_target=2 is the existing normal-slot coverage opportunity for
 #   consciousness, cognition, philosophy of mind/science/technology, AI
 #   philosophy, and technology-linked future/governance.
-# - diversity_quality_floor_ratio=0.70 applies to coverage selection, not to the
-#   final publication score floor. A weak item still cannot publish merely by
-#   belonging to the mind lane.
+# - diversity_quality_floor_ratio=0.80 remains unchanged; mind recall is solved
+#   upstream at relevance qualification rather than by weakening ranking quality.
 # - max_same_mission_area=6 is a portfolio ceiling, not a diversity quota.
 # - Technology-linked consciousness/philosophy terms are mapped in mission_policy
 #   to mind_cognition and remain subject to authority, quality, deduplication and
@@ -58,5 +54,3 @@ editorial:
 #   run may use the normal quota without the ranking score floor, but only after
 #   trusted source validation, deduplication, source grounding, editorial QA and
 #   normal Telegram quota checks. It is not a Tier-0 bypass.
-# - 2026-09-14: AI, convergence and mind/future are treated as distinct coverage
-#   areas; mind/cognition recall is protected before generic score competition.

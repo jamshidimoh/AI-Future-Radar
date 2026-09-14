@@ -47,7 +47,10 @@ def add_claim(conn: sqlite3.Connection, *, person: str, claim: str, topic: str,
         (person, claim, topic, claim_date, source_url, evidence, horizon, confidence, notes),
     )
     conn.commit()
-    return int(cur.lastrowid)
+    row_id = cur.lastrowid
+    if row_id is None:
+        raise RuntimeError("SQLite did not return a row id for inserted claim")
+    return int(row_id)
 
 
 def recent_claims(conn: sqlite3.Connection, person: str, topic: str, limit: int = 5) -> list[dict]:

@@ -14,12 +14,9 @@ mission:
   ai_core_target_min: 1
   ai_core_target_max: 2
   convergence_target: 0
-  # Mind/cognition is now an explicit protected coverage opportunity: when a
-  # qualifying candidate survives discovery/relevance/story gates, the normal
-  # portfolio must actively attempt to place it rather than leaving the lane
-  # to generic score competition.
-  mind_future_target: 1
-  mind_future_protected_min: 1
+  # Mind/cognition remains an explicit coverage opportunity; the recall guard in
+  # editorial.py ensures qualifying candidates reach this existing mission target.
+  mind_future_target: 2
   research_target: 0
   interview_target_max: 1
   community_max: 0

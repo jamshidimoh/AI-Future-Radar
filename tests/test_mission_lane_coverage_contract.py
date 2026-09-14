@@ -1,4 +1,10 @@
+from pathlib import Path
+
+import yaml
+
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _item(title, source, score, category, content_type="research"):
@@ -17,12 +23,13 @@ def _item(title, source, score, category, content_type="research"):
 
 
 def test_production_contract_requires_core_mission_lanes_when_candidates_exist():
-    contract = load_editorial_contract()
-    assert contract["ai_core_target_min"] >= 1
-    assert contract["convergence_target"] >= 1
-    assert contract["mind_cognition_target"] >= 1
-    assert contract["max_same_mission_area"] <= 2
-    assert contract["max_items_per_content_type"] >= 2
+    mission = yaml.safe_load((ROOT / "config/mission_policy.yaml").read_text(encoding="utf-8"))["mission"]
+    selection = load_editorial_contract()
+    assert mission["ai_core_target_min"] >= 1
+    assert mission["convergence_target"] >= 1
+    assert mission["mind_future_target"] >= 1
+    assert selection["max_same_mission_area"] <= 2
+    assert selection["max_items_per_content_type"] >= 2
 
 
 def test_three_slot_portfolio_prefers_ai_convergence_and_mind_over_ai_only():

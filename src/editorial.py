@@ -18,16 +18,15 @@ from src.interview_evidence import has_interview_evidence
 from src.strategic_signal import strategic_forecast_score
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
+# Keep the canonical bridge vocabulary unchanged for the existing AI gate.
+# Mind/cognition gets a separate vocabulary used only by the recall guard below.
 _AI_BRIDGE_TERMS = (
     "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral",
     "OpenAI", "Anthropic", "transformer", "neural network", "reasoning model",
     "large language model", "artificial intelligence", "machine learning",
-    "AI consciousness", "AI philosophy", "AI cognition", "AI mind", "AI governance",
-    "AI policy", "AI safety", "AI security", "AI agents", "agentic AI", "AI alignment",
-    "AI regulation", "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق",
+    "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق",
     "مدل زبانی بزرگ", "شبکه عصبی", "عامل هوشمند", "عامل‌های هوشمند",
 )
-
 _MIND_TERMS = (
     "consciousness", "machine consciousness", "AI consciousness", "artificial consciousness", "sentience", "qualia",
     "self-awareness", "awareness", "cognitive science", "cognition", "cognitive", "mind", "brain", "neuroscience",
@@ -36,6 +35,10 @@ _MIND_TERMS = (
     "technology and consciousness", "machine awareness", "science and technology studies", "آگاهی", "خودآگاهی", "شناخت",
     "علوم شناختی", "ذهن", "فلسفه ذهن", "فلسفه علم", "فلسفه فناوری", "فلسفه هوش مصنوعی", "معرفت شناسی", "معرفت‌شناسی",
     "علوم اعصاب", "مغز"
+)
+_MIND_AI_BRIDGE_TERMS = (
+    "AI consciousness", "AI philosophy", "AI cognition", "AI mind", "artificial consciousness", "machine consciousness",
+    "artificial intelligence", "machine learning", "AI", "AGI", "هوش مصنوعی", "فلسفه هوش مصنوعی", "آگاهی مصنوعی", "هوش ماشین"
 )
 
 _EARLY_STRATEGIC_TERMS = (
@@ -64,7 +67,7 @@ def _contains_any(text, terms):
 def _mind_lane_candidate(item, combined):
     metadata = " ".join(str(item.get(k) or "") for k in ("category", "mission_area", "content_type", "tags", "keywords")).casefold()
     mind_signal = _contains_any(f"{combined} {metadata}", _MIND_TERMS)
-    ai_bridge = _contains_any(combined, _AI_BRIDGE_TERMS)
+    ai_bridge = _contains_any(combined, _MIND_AI_BRIDGE_TERMS)
     return mind_signal and ai_bridge
 
 
@@ -75,8 +78,6 @@ def _early_inclusion_reason(item, combined):
         return "leader_interview"
     if leader and str(item.get("leader") or item.get("watch_person") or "").strip():
         return "key_actor"
-    # Strategic signals take precedence over generic consequence language such as
-    # "regulator" when an item is explicitly about AI/technology policy.
     if _contains_any(combined, _EARLY_STRATEGIC_TERMS) and (_contains_any(combined, _AI_BRIDGE_TERMS) or str(item.get("category") or "").casefold() in {"ai", "future"}):
         return "strategic_ai_or_tech"
     if _contains_any(combined, _CONSEQUENTIAL_TERMS) and _contains_any(combined, _AI_BRIDGE_TERMS + _EARLY_STRATEGIC_TERMS):
@@ -204,7 +205,10 @@ def filter_ai_relevance(items, ai_keywords=None):
         item, is_rescue = _prepare_relevance_item(raw, supplied_keywords)
         (rescue if is_rescue else normalized).append(item)
 
-    keywords = list(dict.fromkeys(list(ai_keywords or []) + list(_AI_BRIDGE_TERMS)))
+    # Preserve the canonical AI gate exactly. The expanded mind vocabulary is
+    # intentionally NOT injected into its keyword list; it is only used below
+    # as a post-gate recall guard.
+    keywords = list(ai_keywords or [])
     result = _filter_ai_relevance(
         [
             x for x in normalized
@@ -215,11 +219,18 @@ def filter_ai_relevance(items, ai_keywords=None):
     )
     _accept_trusted_curated(normalized, result)
 
-    # Structural recall guard: mind/cognition/philosophy and substantive AI-linked
-    # interviews get a second, auditable opportunity only when the canonical AI
-    # gate did not already retain them. This does not bypass authority, dedup,
-    # story gate, ranking, or final publication safety.
     present = {str(x.get("title") or "") for x in result}
+    for item in list(result):
+        combined = f"{item.get('title', '')} {item.get('summary', '')} {item.get('description', '')} {item.get('evidence_text', '')} {item.get('tags', '')} {item.get('keywords', '')}".casefold()
+        if _mind_lane_candidate(item, combined):
+            item["mission_area"] = "mind_cognition"
+            item["topic_family"] = "consciousness_cognition"
+            if str(item.get("content_type") or "").casefold() == "interview":
+                item["early_inclusion"] = True
+                item["early_inclusion_reason"] = "specialist_interview"
+                item["relevance_reason"] = "ai_evidence"
+                item["_ai_link"] = True
+
     for item in normalized:
         title = str(item.get("title") or "")
         if title in present:

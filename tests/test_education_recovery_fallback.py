@@ -93,3 +93,45 @@ def test_deterministic_recovery_still_fails_closed_without_two_current_sources(m
     monkeypatch.setattr(module.educational_content, "_next_lesson", lambda: (lesson, 105, 120))
     monkeypatch.setattr(module, "_collect_verified_current_sources", lambda _: [])
     assert module._build_with_deterministic_recovery() is None
+
+
+def test_expansion_is_loaded_after_existing_curriculum():
+    sequence = module.educational_content._lesson_sequence()
+    ids = [int(lesson.get("id", 0) or 0) for _, lesson in sequence]
+    assert 115 in ids
+    assert ids[-1] >= 122
+    assert ids.index(115) > ids.index(114)
+    tracks = {lesson_id: track for track, lesson in sequence for lesson_id in [int(lesson.get("id", 0) or 0)]}
+    assert tracks[115] == "expansion"
+
+
+def test_expansion_prevents_premature_exhaustion_with_all_previous_lessons_completed(monkeypatch):
+    expansion_lesson = {"id": 115, "title": "x", "a": {"term": "A"}, "b": {"term": "B"}}
+    monkeypatch.setattr(module.educational_content, "_lesson_sequence", lambda: [
+        ("foundation", {"id": 1}),
+        ("emerging", {"id": 114}),
+        ("expansion", expansion_lesson),
+    ])
+    monkeypatch.setattr(module.educational_content, "_completed_ids", lambda: {1, 114})
+    lesson, lesson_id, total = module.educational_content._next_lesson()
+    assert lesson_id == 115
+    assert lesson == expansion_lesson
+    assert total == 3
+
+
+def test_recovery_treats_true_exhaustion_as_non_fatal(monkeypatch, capsys):
+    monkeypatch.setattr(module.production_entrypoint, "_load_cadence", lambda: {
+        "run_number": 513,
+        "last_education_run": 469,
+        "last_education_slot": "manual-validation:2026-09-10",
+    })
+    monkeypatch.setattr(module.production_entrypoint, "_tehran_now", lambda: None)
+    monkeypatch.setattr(module.production_entrypoint, "_education_is_due", lambda now, last_slot: (True, "2026-09-14:morning"))
+    monkeypatch.setattr(module.educational_content, "_next_lesson", lambda: (None, 0, 68))
+    monkeypatch.setattr(module.educational_content, "_completed_ids", lambda: set(range(1, 69)))
+    monkeypatch.setattr(module.production_resilient_runner, "_publish_education_after_news", lambda run_number: (_ for _ in ()).throw(AssertionError("must not retry exhausted curriculum")))
+    result = module.main()
+    captured = capsys.readouterr().out
+    assert result == 0
+    assert "EXHAUSTED" in captured
+    assert "no lesson reuse permitted" in captured

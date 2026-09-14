@@ -74,7 +74,7 @@ def _load_records() -> list[dict]:
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
-    """Return semantic conflict only with strong evidence for the same underlying event."""
+    """Return semantic conflict only with strong, corroborated same-story evidence."""
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
     candidate = {"title": candidate_title, "summary": candidate_summary}
@@ -93,18 +93,18 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     context_jaccard = float(evidence.get("context_jaccard", 0.0) or 0.0)
 
     if kind == "UPDATE":
-        # Material updates to the same event must remain blocked only when the
-        # event identity itself is strong. Otherwise a shared company/person can
-        # create a false update relationship between unrelated stories.
-        if anchors >= 3 and shared_events:
+        if anchors >= 3 and shared_events and semantic_score >= 0.65:
             return 1.0
         if title_similarity >= 0.90 and context_jaccard >= 0.45:
             return 1.0
         return 0.0
     if kind == "DUPLICATE":
-        # Event identity is authoritative when it has corroborating event overlap;
-        # a same-person/company relationship alone is insufficient.
-        if shared_events and (anchors >= 3 or semantic_score >= 0.80):
+        # A high raw semantic score alone is not sufficient: unrelated stories
+        # about the same entity/topic can score highly. Require corroboration
+        # from concrete anchors + the same event class, or very strong title and
+        # context identity. This preserves distinct events such as IPO vs model
+        # launch while still blocking cross-source rewrites.
+        if shared_events and anchors >= 3 and semantic_score >= 0.65:
             return 1.0
         if title_similarity >= 0.90 and context_jaccard >= 0.45:
             return 1.0

@@ -1,9 +1,6 @@
 name: Run AI Future Radar Bot
 
 on:
-  push:
-    branches:
-      - main
   schedule:
     # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 Tehran (UTC+3:30). GitHub Actions cron is UTC; corresponding UTC windows are 01:47, 07:17, 10:17, 14:17, 17:17, 19:17.
     - cron: "47 1 * * *"

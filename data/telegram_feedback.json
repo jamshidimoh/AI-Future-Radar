@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789408400,
+  "updated_at": 1789409575,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9474,6 +9474,25 @@
       "why_it_matters": "برگزاری این رویداد نشان‌دهنده افزایش Attention عمومی و رسانه‌ای به مسئله آگاهی ماشین‌ها است. مستند «AM I?» با رویکردی مستندسازانه، شکاف میان ادعاهای فنی و واقعیت‌های علوم شناختی را برجسته می‌کند. این نوع رویدادها می‌توانند بر درک جامعه از محدودیت‌های فعلی سیستم‌های هوش مصنوعی تأثیر بگذارند. همچنین پلتفرمی برای نقد و بررسی اخلاقی توسعه AGI فراهم می‌کنند.",
       "link": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxPWXNOWjFBdkw0WlJyNFZNb1RGRWhCa3NQOUxNS0VDMjZpYXJwajFPTGJVZkRKTmlkakg4bEFnNC1IQ0hnWDFaTTRPSVhfcVotZVhCWGx4clNLeDlFSXRVZ2pwZTRJNzgzbGdPVmRDQjhUWENLcXY5NWZWMnU4a25XR2lqTFhqY1RNMlVRMm5DbV9ESmpVRV9RRnRsRGxLNThCeWppTy1CRW45bnJsUEQ0MmVvcjNXVWRvYmdnRGxqdXFramJNblY3MXBWNXluZ1lVcnZFYmxqUlhNTmZsckNIQTZ1VEQ?oc=5",
       "posted_at": 1789408400
+    },
+    "-1004482051328:1611": {
+      "chat_id": -1004482051328,
+      "message_id": 1611,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Economist)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "The Economist: بحث درباره هوشیاری AI برعکس شکل گرفته است",
+      "summary": "مقاله The Economist استدلال می‌کند که چارچوب فعلی بحث درباره هوشیاری هوش مصنوعی معکوس است و به جای تمرکز بر تعاریف انتزاعی، باید بر عملکرد و پیچیدگی سیستم‌ها متمرکز شد. نویسنده اشاره می‌کند که معیارهای سنتی برای سنجش آگاهی در موجودات بیولوژیکی لزوماً برای سیستم‌های مصنوعی قابل تعمیم نیستند. این دیدگاه پیشنهاد می‌کند که ما باید به جای پرسش «آیا AI آگاه است؟»، به بررسی این موضوع بپردازیم که چگونه این سیستم‌ها رفتارهای شبیه به آگاهی را شبیه‌سازی می‌کنند. مقاله تأکید دارد که این تغییر نگرش می‌تواند به درک بهتر محدودیت‌ها و قابلیت‌های واقعی مدل‌های زبانی بزرگ کمک کند.",
+      "why_it_matters": "این تغییر پارادایم در بحث هوشیاری AI می‌تواند بر توسعه اخلاقی و فنی سیستم‌های هوشمند تأثیر بگذارد. با تمرکز بر عملکرد به جای ماهیت، محققان می‌توانند معیارهای دقیق‌تری برای ارزیابی رفتارهای شبیه به آگاهی ایجاد کنند. این رویکرد همچنین به کاهش سوءتفاهم‌های عمومی درباره قابلیت‌های واقعی AI کمک می‌کند و از انتساب نادرست ویژگی‌های انسانی به ماشین‌ها جلوگیری می‌نماید.",
+      "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxONDdRWlVvZkZLS2c4UXowVUNCSjJYeE9OLTBzZmdUNHd3QXJ3c29sbmVZVklMUFpHRHYtS2ppb1g3WU1OdnIyb0NwWjdPTmxfekkzU0hCR1RGdjVfdmxzc3JQalZPUVhNOEswTmRMZ1drSjJWZ0pzbHpCTjcwVWJxRFBsMG9NZl8tc0wtazIxRDlXVmVYNDBSSDllUTh2Ti1NWUR2b21IV0xiRlE?oc=5",
+      "posted_at": 1789409575
     }
   }
 }

@@ -12,8 +12,11 @@ WEIGHTS = {"mission_fit": 0.30, "source_authority": 0.20, "evidence_confidence":
 
 
 def _clip(value: Any) -> float:
-    try: return max(0.0, min(1.0, float(value)))
-    except (TypeError, ValueError): return 0.0
+    try:
+        numeric = 0.0 if value is None else value
+        return max(0.0, min(1.0, float(numeric)))
+    except (TypeError, ValueError):
+        return 0.0
 
 
 def build_features(item: dict[str, Any]) -> dict[str, float]:

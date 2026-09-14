@@ -26,8 +26,11 @@ def build_features(item: dict[str, Any]) -> dict[str, float]:
     except (TypeError, ValueError):
         tier = 3
     source_authority = {1: 1.0, 2: 0.75, 3: 0.45}.get(tier, 0.30)
-    try: age = float(item.get("freshness_hours"))
-    except (TypeError, ValueError): age = None
+    try:
+        raw_age = item.get("freshness_hours")
+        age = float(raw_age) if raw_age is not None else None
+    except (TypeError, ValueError):
+        age = None
     freshness = 0.40 if age is None else 1.0 if age <= 24 else 0.90 if age <= 48 else 0.80 if age <= 72 else 0.60 if age <= 168 else 0.30 if age <= 720 else 0.10
     ctype = str(item.get("content_type") or "").strip().lower()
     cls = str(item.get("editorial_class") or "").strip().lower()

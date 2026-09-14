@@ -1,5 +1,6 @@
 from src.editorial_quality_policy import (
     BODY_PERSIAN_RATIO_MIN,
+    NORMAL_SCORE_FLOOR,
     TITLE_PERSIAN_RATIO_MIN,
     length_ok,
     news_language_ok,
@@ -40,15 +41,18 @@ def test_compact_complete_summary_is_not_rejected_for_length():
     assert length_ok(summary, why, source)
 
 
-def test_normal_score_uses_bounded_absolute_floor_not_stale_baseline():
+def test_normal_score_uses_absolute_quality_floor_not_stale_baseline():
+    assert NORMAL_SCORE_FLOOR == 55.0
     assert normal_score_allowed(87.06, 88.0)
     assert normal_score_allowed(84.9, 88.0)
     assert normal_score_allowed(87.97, 97.97)
     assert normal_score_allowed(62.0, 80.5)
-    assert not normal_score_allowed(59.99, 97.97)
+    assert normal_score_allowed(55.00, 97.97)
+    assert not normal_score_allowed(54.99, 97.97)
 
 
 def test_previous_score_is_diagnostic_only_when_baseline_is_stale():
     assert normal_score_allowed(70.0, 77.16)
     assert normal_score_allowed(60.0, 25.23)
-    assert not normal_score_allowed(59.9, 77.16)
+    assert normal_score_allowed(55.0, 77.16)
+    assert not normal_score_allowed(54.9, 77.16)

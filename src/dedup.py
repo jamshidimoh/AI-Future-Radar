@@ -193,7 +193,7 @@ def filter_new_items(items, seen_hashes):
         local_match=max((_similarity(candidate_sig,p) for p in local_semantic),default=0.0)
         local_rewrite_match=any(_semantic_publication_match(candidate_sig,p) for p in local_semantic)
         if local_rewrite_match or local_match>=semantic_threshold(item,local=True): rejected_semantic+=1; continue
-        local_semantic.append(candidate_sig); local_event_items.append(dict(item)); result.append(item)
+        local_semantic.append(encode_story_signature(item)); local_event_items.append(dict(item)); result.append(item)
     print(f"[Canonical Story Gate] kept={len(result)} | url_rejected={rejected_url} | story_rejected={rejected_story} | semantic_rejected={rejected_semantic} | protected_event_blocked={protected_event_blocked}")
     return result
 

@@ -317,13 +317,16 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         ("research_target", _is_research),
     ):
         for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
-            pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+            pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+            # The type ceiling is soft only when it would otherwise starve the target lane.
+            if not pool:
+                pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
             if not pool:
                 break
             baseline_pool = [
                 x for x in ordered
                 if id(x) not in p.selected_ids
-                and p.admissible(x, repeat_source=False, ignore_type_cap=True)
+                and p.admissible(x, repeat_source=False)
                 and (target_key != "mind_future_target" or mission_area(x) != "ai_core")
             ]
             baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)

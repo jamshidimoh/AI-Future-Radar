@@ -18,8 +18,6 @@ from src.interview_evidence import has_interview_evidence
 from src.strategic_signal import strategic_forecast_score
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
-# Keep the canonical bridge vocabulary unchanged for the existing AI gate.
-# Mind/cognition gets a separate vocabulary used only by the recall guard below.
 _AI_BRIDGE_TERMS = (
     "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral",
     "OpenAI", "Anthropic", "transformer", "neural network", "reasoning model",
@@ -38,9 +36,8 @@ _MIND_TERMS = (
 )
 _MIND_AI_BRIDGE_TERMS = (
     "AI consciousness", "AI philosophy", "AI cognition", "AI mind", "artificial consciousness", "machine consciousness",
-    "artificial intelligence", "machine learning", "AI", "AGI", "هوش مصنوعی", "فلسفه هوش مصنوعی", "آگاهی مصنوعی", "هوش ماشین"
+    "artificial intelligence", "machine learning", "AGI", "هوش مصنوعی", "فلسفه هوش مصنوعی", "آگاهی مصنوعی", "هوش ماشین"
 )
-
 _EARLY_STRATEGIC_TERMS = (
     "ai governance", "ai policy", "ai regulation", "artificial intelligence regulation",
     "technology policy", "digital policy", "frontier model", "ai safety", "ai security",
@@ -132,7 +129,6 @@ def _prepare_relevance_item(raw, supplied_keywords) -> tuple[dict, bool]:
     direct_keyword_hits = [term for term in supplied_keywords if term.casefold() in combined]
     curated_trusted = bool(item.get("curated_discovery") and preferred and int(item.get("source_tier") or 3) in {1, 2})
     early_reason = _early_inclusion_reason(item, combined)
-
     if str(item.get("category") or "").casefold() == "quantum" and not bridge_hits and not direct_keyword_hits and not early_reason:
         item["_force_reject_ai_gate"] = True
     if evidence:
@@ -141,7 +137,6 @@ def _prepare_relevance_item(raw, supplied_keywords) -> tuple[dict, bool]:
         item["description"] = " ".join(part for part in (item.get("description"), "artificial intelligence") if part).strip()
     item["_curated_trusted_ai_bridge"] = curated_trusted
     item["_has_direct_ai_evidence"] = bool(bridge_hits or direct_keyword_hits)
-
     generic_interview_with_ai_evidence = bool(
         str(item.get("content_type") or "").casefold() == "interview"
         and not (item.get("is_leader_watch") or item.get("leader_watch_protected"))
@@ -161,27 +156,13 @@ def _prepare_relevance_item(raw, supplied_keywords) -> tuple[dict, bool]:
 
 
 def _accept_trusted_curated(normalized, result):
-    trusted_curated = [
-        x for x in normalized
-        if x.get("_curated_trusted_ai_bridge")
-        and not x.get("_force_reject_ai_gate")
-        and not x.get("_has_direct_ai_evidence")
-    ]
+    trusted_curated = [x for x in normalized if x.get("_curated_trusted_ai_bridge") and not x.get("_force_reject_ai_gate") and not x.get("_has_direct_ai_evidence")]
     present = {str(x.get("title") or "") for x in result}
     for item in trusted_curated:
         if str(item.get("title") or "") in present:
             continue
         accepted = dict(item)
-        accepted.update(
-            _ai_link=True,
-            relevance_reason="curated_ai_provenance",
-            topic_family="ai_core",
-            relevance_evidence=["curated AI provenance"],
-            evidence_level="B",
-            ai_relevance_confidence=0.55,
-            evidence_strength=5.5,
-            ai_relevance_quality="bridge",
-        )
+        accepted.update(_ai_link=True, relevance_reason="curated_ai_provenance", topic_family="ai_core", relevance_evidence=["curated AI provenance"], evidence_level="B", ai_relevance_confidence=0.55, evidence_strength=5.5, ai_relevance_quality="bridge")
         result.append(accepted)
     return result
 
@@ -198,39 +179,24 @@ def _finalize_relevance_confidence(result) -> None:
 
 
 def filter_ai_relevance(items, ai_keywords=None):
-    normalized = []
-    rescue = []
+    normalized, rescue = [], []
     supplied_keywords = tuple(str(term) for term in (ai_keywords or []) if str(term).strip())
     for raw in items or []:
         item, is_rescue = _prepare_relevance_item(raw, supplied_keywords)
         (rescue if is_rescue else normalized).append(item)
-
-    # Preserve the canonical AI gate exactly. The expanded mind vocabulary is
-    # intentionally NOT injected into its keyword list; it is only used below
-    # as a post-gate recall guard.
-    keywords = list(ai_keywords or [])
-    result = _filter_ai_relevance(
-        [
-            x for x in normalized
-            if not x.get("_force_reject_ai_gate")
-            and (not x.get("_curated_trusted_ai_bridge") or x.get("_has_direct_ai_evidence"))
-        ],
-        keywords,
-    )
+    result = _filter_ai_relevance([x for x in normalized if not x.get("_force_reject_ai_gate") and (not x.get("_curated_trusted_ai_bridge") or x.get("_has_direct_ai_evidence"))], list(ai_keywords or []))
     _accept_trusted_curated(normalized, result)
-
     present = {str(x.get("title") or "") for x in result}
     for item in list(result):
         combined = f"{item.get('title', '')} {item.get('summary', '')} {item.get('description', '')} {item.get('evidence_text', '')} {item.get('tags', '')} {item.get('keywords', '')}".casefold()
         if _mind_lane_candidate(item, combined):
             item["mission_area"] = "mind_cognition"
             item["topic_family"] = "consciousness_cognition"
-            if str(item.get("content_type") or "").casefold() == "interview":
+            if not item.get("early_inclusion"):
                 item["early_inclusion"] = True
-                item["early_inclusion_reason"] = "specialist_interview"
-                item["relevance_reason"] = "ai_evidence"
+                item["early_inclusion_reason"] = "specialist_interview" if str(item.get("content_type") or "").casefold() == "interview" else "mind_cognition_lane"
+                item["relevance_reason"] = "ai_evidence" if item["early_inclusion_reason"] == "specialist_interview" else "early_inclusion:mind_cognition_lane"
                 item["_ai_link"] = True
-
     for item in normalized:
         title = str(item.get("title") or "")
         if title in present:
@@ -239,21 +205,9 @@ def filter_ai_relevance(items, ai_keywords=None):
         if not _mind_lane_candidate(item, combined):
             continue
         rescued = dict(item)
-        rescued.update(
-            early_inclusion=True,
-            early_inclusion_reason="mind_cognition_lane",
-            relevance_reason="early_inclusion:mind_cognition_lane",
-            _ai_link=True,
-            ai_relevance=True,
-            ai_relevance_confidence=0.90,
-            evidence_strength=max(float(item.get("evidence_strength", 0) or 0), 8.5),
-            ai_relevance_quality="protected_mission_lane",
-            topic_family="consciousness_cognition",
-            mission_area="mind_cognition",
-        )
+        rescued.update(early_inclusion=True, early_inclusion_reason="mind_cognition_lane", relevance_reason="early_inclusion:mind_cognition_lane", _ai_link=True, ai_relevance=True, ai_relevance_confidence=0.90, evidence_strength=max(float(item.get("evidence_strength", 0) or 0), 8.5), ai_relevance_quality="protected_mission_lane", topic_family="consciousness_cognition", mission_area="mind_cognition")
         result.append(rescued)
         present.add(title)
-
     result.extend(rescue)
     _finalize_relevance_confidence(result)
     print(f"[Early Inclusion] rescued={len(rescue)} | mind_lane={sum(x.get('early_inclusion_reason') == 'mind_cognition_lane' for x in rescue)} | direct/curated={len(result) - len(rescue)}", flush=True)
@@ -308,15 +262,7 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
         item["selection_reason"] = f"protected:{_leader_name(item)}"
     for item in regular:
         _annotate_selection_value(item)
-    selected_regular = select_regular_portfolio(
-        regular,
-        max_posts=max_posts,
-        max_per_source=max_per_source,
-        max_per_type=max_per_type,
-        contract=load_editorial_contract(),
-        mission_aware=bool(policy.get("mission_aware", True)),
-        strict_relevance=bool(policy.get("strict_relevance", False)),
-    )
+    selected_regular = select_regular_portfolio(regular, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, contract=load_editorial_contract(), mission_aware=bool(policy.get("mission_aware", True)), strict_relevance=bool(policy.get("strict_relevance", False)))
     for item in selected_regular:
         if item.get("is_leader_watch") and not _leader_name(item):
             item["editorial_slot"] = "fallback"
@@ -324,7 +270,4 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
     return protected + selected_regular
 
 
-__all__ = [
-    "_apply_strategic_signal", "classify_editorial_item", "contract_summary", "enrich_items",
-    "filter_ai_relevance", "filter_low_signal", "select_editorial",
-]
+__all__ = ["_apply_strategic_signal", "classify_editorial_item", "contract_summary", "enrich_items", "filter_ai_relevance", "filter_low_signal", "select_editorial"]

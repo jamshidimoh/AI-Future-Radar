@@ -8,17 +8,18 @@ mission:
   operational_publication_capacity: 3
   min_unique_sources: 3
   max_same_source: 1
-  # Normal portfolio capacity is three items. A one-area-per-slot ceiling prevents
-  # a high-volume AI-core stream from crowding out convergence and mind/future signals.
-  max_same_mission_area: 1
+  # Diversity is a portfolio preference, not a hard one-item-per-area ceiling.
+  # Hard-capping each mission area at one caused strong same-area stories to be
+  # dropped even when no better coverage opportunity existed. Coverage targets
+  # remain opportunities and quality remains the primary constraint.
+  max_same_mission_area: 6
   min_authoritative_items: 2
   stale_hours: 72
   ai_core_target_min: 1
   ai_core_target_max: 2
   convergence_target: 1
-  # Up to two normal slots are reserved as coverage opportunities for
-  # mind/cognition/consciousness/philosophy and future/governance. With the
-  # one-area ceiling, repeated selection naturally moves to a different area.
+  # Mind/cognition and future/governance are coverage opportunities, not forced
+  # weak-content slots. They are selected when suitable candidates exist.
   mind_future_target: 2
   research_target: 0
   interview_target_max: 1

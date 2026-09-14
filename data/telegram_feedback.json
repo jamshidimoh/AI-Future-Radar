@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789370017,
+  "updated_at": 1789381079,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9037,6 +9037,43 @@
       "why_it_matters": "ورود Lyft به حوزه ربات‌تاکسی نشان می‌دهد که شرکت‌های حمل‌ونقل بزرگ به سرعت فناوری‌های خودران و هوش مصنوعی را به سرویس‌های تجاری تبدیل می‌کنند. این تحول می‌تواند هزینه‌های سفر را برای مسافران کاهش داده و بهره‌وری ناوگان را بهبود بخشد، در حالی که چالش‌های نظارتی و ایمنی همچنان مطرح است. موفقیت Lyft در این زمینه می‌تواند الگوی مهمی برای سایر اپراتورهای حمل‌ونقل باشد و سرعت پذیرش گسترده ربات‌تاکسی‌ها را در شهرهای مختلف تسریع کند.",
       "link": "https://techcrunch.com/2026/09/13/techcrunch-mobility-lyft-has-entered-the-robotaxi-chat/",
       "posted_at": 1789370016
+    },
+    "-1004482051328:1587": {
+      "chat_id": -1004482051328,
+      "message_id": 1587,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "Fyxer دستیار اجرایی هوشمند خود را با ترکیب مدل‌های OpenAI و تحلیل ۵۰۰ هزار ساعت داده ساخت",
+      "summary": "Fyxer با ادغام مدل‌های OpenAI و استخراج بینش از بیش از ۵۰۰,۰۰۰ ساعت فرآیندهای کاری دستیاران اجرایی، دستیار هوشمندی توسعه داده که پیوستگی موضوعات را در ایمیل‌ها و جلسات حفظ می‌کند. این شرکت وظایف پیچیده را به ده‌ها مدل تخصصی تقسیم کرده تا زمینه، نیت و لحن هر کاربر را یاد بگیرد. در حال حاضر ۵۳٪ از پیش‌نویس‌های ایمیل تولیدشده بدون نیاز به ویرایش پذیرفته می‌شوند و بیش از ۹۰٪ مشتریان پس از ۹۰ روز همچنان سرویس را استفاده می‌کنند. درآمد سالانه تکرارشونده Fyxer در سال ۲۰۲۵ از ۱ میلیون دلار به ۳۲ میلیون دلار رسیده است.",
+      "description": "See how Fyxer built an AI executive assistant that follows the thread across emails, meetings and everyday work. By combining OpenAI models with insights from more than 500,000 hours of executive assistant workflows, Fyxer breaks complex tasks into dozens of specialised models that learn each user’s context, intent and tone. Today, 53% of its AI-generated email drafts are accepted without edits, more than 90% of customers are still paying and using Fyxer after 90 days, and the company grew from $1 million to $32 million in annual recurring revenue in 2025. Hear how Fyxer uses fine-tuning, evaluation and real-world feedback to build AI that helps people spend more time on the work they love.\n\nRead the full customer story here - www.openai.com/index/fyxer artificial intelligence",
+      "why_it_matters": "این موفقیت نشان می‌دهد که استفاده از fine-tuning و بازخورد واقعی برای ساخت مدل‌های تخصصی، اعتماد کاربران به هوش مصنوعی را به‌طور معناداری افزایش می‌دهد. پذیرش بالای پیش‌نویس‌ها بدون ویرایش، اثربخشی عملیاتی این رویکرد را در محیط‌های کاری پیچیده تأیید می‌کند. رشد سریع درآمد و نرخ نگهداری مشتری، پتانسیل تجاری ابزارهای هوش مصنوعی را در مدیریت کارهای اجرایی روزمره به اثبات می‌رساند.",
+      "link": "https://www.youtube.com/watch?v=uA5PiAXKGis",
+      "posted_at": 1789381077
+    },
+    "-1004482051328:1588": {
+      "chat_id": -1004482051328,
+      "message_id": 1588,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "NVIDIA پروژه OSMO را متن‌باز کرد: ارکستراسیون آموزش و شبیه‌سازی فیزیکی با یک فایل YAML",
+      "summary": "شرکت NVIDIA پروژه OSMO، یک ارکستراتور جریان کاری مبتنی بر Kubernetes را تحت مجوز Apache-2.0 متن‌باز کرد. این ابزار که در نسخه 6.3.1 منتشر شده، به تیم‌های رباتیک اجازه می‌دهد وظایف آموزش، شبیه‌سازی و تست سخت‌افزار را تنها با یک فایل YAML تعریف کنند. OSMO وظایف را بدون نیاز به کدنویسی زیرساختی، به صورت خودکار به لایه‌های محاسباتی مناسب از جمله خوشه‌های GB200 و دستگاه‌های Jetson AGX Thor هدایت می‌کند. این سیستم در حال حاضر به‌طور داخلی برای پروژه‌های Project GR00T، Isaac Lab و Isaac Sim مورد استفاده قرار می‌گیرد.",
+      "why_it_matters": "متن‌باز شدن OSMO موانع پیچیدگی زیرساختی را برای توسعه‌دهندگان Physical AI کاهش می‌دهد و یکپارچگی بین محیط‌های شبیه‌سازی و سخت‌افزار واقعی را تسهیل می‌کند. با حذف نیاز به کدنویسی دستی برای مدیریت منابع، این ابزار چرخه توسعه رباتیک را از آموزش تا تست سخت‌افزاری بهینه می‌سازد. دسترسی به این ابزار متن‌باز، امکان استفاده از معماری‌های مقیاس‌پذیر NVIDIA را برای جوامع علمی و صنعتی گسترش می‌دهد.",
+      "link": "https://www.marktechpost.com/2026/09/14/nvidia-open-sources-osmo-one-yaml-orchestrates-physical-ai-training-simulation-and-robot-testing/",
+      "posted_at": 1789381079
     }
   }
 }

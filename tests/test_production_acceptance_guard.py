@@ -17,6 +17,14 @@ Posts sent: 0/1
 
 SUCCESSFUL_PUBLICATION = """
 [Production Selection] total=2
+[Editorial Gate] skipped candidate: candidate two
+Posts sent: 1/2
+[Production Contract] normal_news=1 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+"""
+
+
+PARTIAL_PUBLICATION_WITHOUT_ACCOUNTING = """
+[Production Selection] total=2
 Posts sent: 1/2
 [Production Contract] normal_news=1 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
 """
@@ -79,10 +87,16 @@ def test_zero_publication_without_rejection_evidence_is_failure():
     assert "did not provide evidence" in message
 
 
-def test_successful_publication_remains_pass():
+def test_successful_publication_remains_pass_when_all_selected_are_accounted_for():
     ok, message = validate(SUCCESSFUL_PUBLICATION)
     assert ok is True
     assert "published_news=1" in message
+
+
+def test_partial_publication_without_selected_set_accounting_is_failure():
+    ok, message = validate(PARTIAL_PUBLICATION_WITHOUT_ACCOUNTING)
+    assert ok is False
+    assert "left selected candidates unaccounted" in message
 
 
 def test_confirmed_education_recovery_is_accounted_for():

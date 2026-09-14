@@ -1,5 +1,7 @@
 """Explicit paradigm/tension map for comparative analysis."""
 
+from typing import Any, cast
+
 TENSIONS = [
     {
         "id": "llm_vs_world_models",
@@ -28,16 +30,17 @@ TENSIONS = [
 ]
 
 
-def tension_for_person(person: str) -> list[dict]:
+def tension_for_person(person: str) -> list[dict[str, Any]]:
     name = str(person or "").casefold()
-    return [t for t in TENSIONS if any(name == p.casefold() for side in t["people"].values() for p in side)]
+    return [t for t in TENSIONS if any(name == p.casefold() for side in cast(dict[str, list[str]], t["people"]).values() for p in side)]
 
 
 def related_opponents(person: str) -> list[str]:
-    out = []
+    out: list[str] = []
     for tension in tension_for_person(person):
-        for people in tension["people"].values():
-            for p in people:
+        people = cast(dict[str, list[str]], tension["people"])
+        for side_people in people.values():
+            for p in side_people:
                 if p.casefold() != str(person or "").casefold():
                     out.append(p)
     return sorted(set(out))

@@ -247,7 +247,15 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
 
 def main(*, skip_education: bool = False) -> int:
     configure_logging()
+    import main as pipeline_module
     import period_ranked_pipeline as pipeline
+
+    # main.py still exposes legacy local summary gates for compatibility. Bind them
+    # to the authoritative editorial policy at runtime so summary/refill decisions
+    # cannot silently drift from the final production publication contract.
+    pipeline_module.NORMAL_SCORE_FLOOR = NORMAL_SCORE_FLOOR
+    pipeline_module.PROTECTED_SUMMARY_SCORE_FLOOR = PROTECTED_SCORE_FLOOR
+
     from src.delivery_contract import DeliveryStatus, delivered, policy_blocked, transport_failed
     from src.educational_content import build_educational_item, commit_education_lesson
     from src.educational_telegram_style import format_educational_post

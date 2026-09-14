@@ -8,18 +8,17 @@ mission:
   operational_publication_capacity: 3
   min_unique_sources: 3
   max_same_source: 1
-  # Mission areas are balanced through explicit coverage opportunities.
-  # These are not unconditional publication quotas: candidates must still pass
-  # relevance, authority, quality, deduplication and publication gates.
-  max_same_mission_area: 6
+  # Normal portfolio capacity is three items. A one-area-per-slot ceiling prevents
+  # a high-volume AI-core stream from crowding out convergence and mind/future signals.
+  max_same_mission_area: 1
   min_authoritative_items: 2
   stale_hours: 72
   ai_core_target_min: 1
   ai_core_target_max: 2
-  convergence_target: 0
-  # Two normal slots are prioritized for mind/cognition, consciousness,
-  # philosophy of mind/science, and technology-linked philosophical analysis.
-  # This is a coverage priority, not a quality bypass.
+  convergence_target: 1
+  # Up to two normal slots are reserved as coverage opportunities for
+  # mind/cognition/consciousness/philosophy and future/governance. With the
+  # one-area ceiling, repeated selection naturally moves to a different area.
   mind_future_target: 2
   research_target: 0
   interview_target_max: 1
@@ -39,20 +38,15 @@ areas:
     label: "آینده‌پژوهی، جامعه و حکمرانی فناوری"
     keywords: ["future of ai", "foresight", "governance", "policy", "jobs", "economy", "geopolitics", "existential risk", "alignment", "regulation", "future of work", "society"]
 
-# Strategic signal terms receive a capped boost. They indicate a change in trajectory,
-# not merely popularity.
 frontier_signals: ["breakthrough", "new capability", "state of the art", "frontier", "first", "new model", "new architecture", "autonomous", "scaling", "reasoning", "agentic", "world model", "scientific discovery", "clinical", "deployment", "commercialized"]
 trend_signals: ["roadmap", "benchmark", "adoption", "infrastructure", "investment", "standard", "platform", "ecosystem", "policy", "regulation", "research direction", "trend"]
 low_signal_terms: ["top 10", "best tools", "prompt collection", "weekly roundup", "productivity tips", "how to use chatgpt", "10 tools", "20 tools"]
 
-# Evidence hierarchy: official research > peer-reviewed science > university/research lab > specialist media > community.
 source_tiers:
   1: ["MIT CSAIL", "Stanford HAI", "BAIR", "Google DeepMind", "OpenAI", "Anthropic", "MIT News", "Nature", "Quanta Magazine", "CMU", "Carnegie Mellon", "NIST", "IEEE"]
   2: ["MIT Technology Review", "IEEE Spectrum", "Ars Technica", "Reuters", "Wired", "Scientific American", "New Scientist"]
   3: ["Reddit", "community", "aggregator"]
 
-# Protected sources are priority candidates, not AI-gate bypasses. They still need
-# normal relevance, deduplication, language, editorial-quality and publication gates.
 protected_sources:
   - name: "MIT CSAIL - Building 32"
     match: ["MIT CSAIL", "Building 32", "cap.csail.mit.edu"]
@@ -60,7 +54,6 @@ protected_sources:
     selection_mode: "priority"
     duplicate_key: "source"
 
-# Category rotation prevents the same area from dominating successive runs.
 rotation:
   window_runs: 6
   max_same_area_in_window: 3

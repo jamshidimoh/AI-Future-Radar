@@ -2,10 +2,10 @@
 
 A selected candidate must end in an auditable terminal state: publication,
 explicit editorial/policy/publication rejection, or an upstream structural
-rejection such as canonical-story deduplication. Protected Tier-0 publication
-is a valid failover path only when every non-published selected candidate is
-fully accounted for and every published Tier-0 item satisfies the absolute
-quality floor.
+rejection such as canonical-story deduplication. Mission portfolio coverage is
+also a production invariant: when the runtime explicitly reports an unmet
+mission-coverage target, acceptance must fail closed rather than passing on
+publication accounting alone.
 """
 from __future__ import annotations
 
@@ -32,6 +32,9 @@ TIER0_PUBLICATION_PATTERN = re.compile(
 TIER0_FLOOR_PATTERN = re.compile(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", re.I)
 EDUCATION_CONFIRMED_PATTERN = re.compile(
     r"\[Education Published\].*?CONFIRMED\b.*?telegram_delivery=successful"
+)
+MISSION_COVERAGE_PATTERN = re.compile(
+    r"\[Mission Coverage Recovery\].*?target=(\d+).*?prepared=(\d+).*?attempts=(\d+).*?recovered=(\d+).*?status=(\w+)"
 )
 
 
@@ -74,6 +77,20 @@ def _observed_tier0_floor(lines):
     return value
 
 
+def _mission_coverage_status(lines):
+    """Return the last explicit runtime mission-coverage result, if present."""
+    match = _last_match(lines, (MISSION_COVERAGE_PATTERN,))
+    if match is None:
+        return None
+    return {
+        "target": int(match.group(1)),
+        "prepared": int(match.group(2)),
+        "attempts": int(match.group(3)),
+        "recovered": int(match.group(4)),
+        "status": match.group(5).casefold(),
+    }
+
+
 def validate(log_text: str) -> tuple[bool, str]:
     lines = log_text.splitlines()
     candidate_match = _last_match(lines, CANDIDATE_PATTERNS)
@@ -83,6 +100,20 @@ def validate(log_text: str) -> tuple[bool, str]:
         return False, "missing production candidate-count evidence"
     if contract_match is None:
         return False, "missing production contract summary"
+
+    mission_coverage = _mission_coverage_status(lines)
+    if mission_coverage and mission_coverage["status"] == "unmet":
+        return False, (
+            "production contract violation: mission portfolio coverage remained unmet; "
+            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, "
+            f"attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}"
+        )
+    if mission_coverage and mission_coverage["recovered"] + mission_coverage["prepared"] < mission_coverage["target"]:
+        return False, (
+            "production contract violation: mission portfolio coverage evidence is inconsistent; "
+            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, "
+            f"recovered={mission_coverage['recovered']}"
+        )
 
     summary_budget_match = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))
     selected = int(summary_budget_match.group(1)) if summary_budget_match is not None else int(candidate_match.group(1))

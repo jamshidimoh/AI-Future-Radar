@@ -325,7 +325,10 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             if candidate is None:
                 break
             floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
-            if top_global > 0 and candidate_score(candidate) < top_global * floor:
+            # Mission opportunities may legitimately be below the global quality floor
+            # when they are still strong enough to preserve the radar's mind/research lane.
+            opportunity_floor = min(floor, 0.70) if target_key in {"mind_future_target", "research_target"} else floor
+            if top_global > 0 and candidate_score(candidate) < top_global * opportunity_floor:
                 break
             candidate_area = mission_area(candidate)
             reason = f"mission_target:{candidate_area}" if candidate_area in {"mind_cognition", "future_governance"} else f"mission_target:{target_key.removesuffix('_target')}"
@@ -384,7 +387,20 @@ def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> 
         removable = [x for x in p.selected if not _authority_ok(x)]
         if replacement is None or not removable:
             break
-        victim = max(removable, key=lambda x: (_rank_key(x, p.recent), -candidate_score(x)))
+        def _repair_priority(x: dict[str, Any]) -> tuple:
+            reason = str(x.get("mission_selection_reason") or "")
+            if reason == "mission_target:convergence":
+                lane_priority = 0
+            elif reason == "mission_target:future_governance":
+                lane_priority = 1
+            elif reason == "portfolio_value":
+                lane_priority = 2
+            elif reason == "adaptive_source_backfill":
+                lane_priority = 3
+            else:
+                lane_priority = 4
+            return (lane_priority, candidate_score(x), _safe_float(x, "evidence_strength"), _rank_key(x, p.recent))
+        victim = min(removable, key=_repair_priority)
         p.remove(victim)
         p.add(replacement, "policy_repair:min_authoritative_items")
 

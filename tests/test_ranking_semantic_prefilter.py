@@ -3,12 +3,12 @@ from period_ranked_pipeline import _semantic_comparison_possible
 
 def test_semantic_prefilter_keeps_shared_anchor_candidates_for_full_guard():
     candidate = {
-        "title": "OpenAI launches a new reasoning model",
-        "summary": "OpenAI released a new reasoning model for advanced AI workloads.",
+        "title": "OpenAI launches a new LLM reasoning model",
+        "summary": "OpenAI released a new LLM reasoning model for advanced AI workloads.",
     }
     record = {
-        "title": "OpenAI introduces its latest reasoning model",
-        "summary": "The company introduced the latest reasoning model for advanced AI workloads.",
+        "title": "OpenAI introduces its latest LLM reasoning model",
+        "summary": "The company introduced the latest LLM reasoning model for advanced AI workloads.",
     }
     assert _semantic_comparison_possible(candidate["title"], candidate["summary"], record)
 

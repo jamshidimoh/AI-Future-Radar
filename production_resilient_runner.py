@@ -28,30 +28,12 @@ logger = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent
 
 _ORIGINAL_FETCH_REFERENCE = educational_content._fetch_reference
-_ORIGINAL_SOURCE_CANDIDATES = educational_content._source_candidates
 _ORIGINAL_REWRITE_EDUCATION_PERSIAN = production_entrypoint._rewrite_education_persian
 _ORIGINAL_PUBLISH_PRODUCTION_STORY = _publication_adapter.publish_production_story
 
 DEFAULT_WATCHDOG_MINUTES = 22
 EDUCATION_LANGUAGE_MIN_RATIO = 0.70
 EDUCATION_WINDOWS_TEHRAN = (5, 20)
-LESSON_41_CURRENT_SOURCES = [
-    {
-        "name": "Anthropic: Demystifying evals for AI agents",
-        "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
-        "year": 2026,
-    },
-    {
-        "name": "OpenAI Academy: Workspace agents",
-        "url": "https://openai.com/academy/workspace-agents/",
-        "year": 2026,
-    },
-    {
-        "name": "NIST: AI Agent Standards Initiative",
-        "url": "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative",
-        "year": 2026,
-    },
-]
 
 
 def _watchdog_minutes() -> int:
@@ -97,26 +79,6 @@ def _fetch_reference_with_canonical_year(url: str):
         year = 2026
         print(f"[Education Source Gate] canonical-year override year=2026 url={url}", flush=True)
     return excerpt, year
-
-
-def _source_candidates_with_current_overrides(lesson: dict):
-    candidates = _ORIGINAL_SOURCE_CANDIDATES(lesson)
-    lesson_id = int(lesson.get("id", 0) or 0)
-    if lesson_id != 41:
-        return candidates
-    stale_urls = {
-        "https://www.anthropic.com/research/building-effective-agents",
-        "https://platform.openai.com/docs/guides/agents",
-    }
-    filtered = [x for x in candidates if str(x.get("url", "")).rstrip("/") not in {u.rstrip("/") for u in stale_urls}]
-    seen = {str(x.get("url", "")).rstrip("/") for x in filtered}
-    for source in LESSON_41_CURRENT_SOURCES:
-        url = str(source["url"]).rstrip("/")
-        if url not in seen:
-            filtered.append(dict(source))
-            seen.add(url)
-    print("[Education Source Gate] lesson=41 current-source override enabled", flush=True)
-    return filtered
 
 
 def _parse_education_json(raw):
@@ -218,7 +180,6 @@ def main() -> int:
     watchdog_seconds = _watchdog_minutes() * 60
     faulthandler.dump_traceback_later(watchdog_seconds, exit=False, file=sys.stderr)
     educational_content._fetch_reference = _fetch_reference_with_canonical_year
-    educational_content._source_candidates = _source_candidates_with_current_overrides
     production_entrypoint._rewrite_education_persian = _rewrite_education_only_if_needed
     production_entrypoint._education_is_due = _education_is_due_by_tehran_window
 

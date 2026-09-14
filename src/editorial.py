@@ -30,13 +30,16 @@ _MIND_TERMS = (
     "self-awareness", "awareness", "cognitive science", "cognition", "cognitive", "mind", "brain", "neuroscience",
     "computational neuroscience", "predictive processing", "active inference", "global workspace", "integrated information",
     "philosophy of mind", "philosophy of science", "philosophy of technology", "philosophy of AI", "epistemology of AI",
-    "technology and consciousness", "machine awareness", "science and technology studies", "آگاهی", "خودآگاهی", "شناخت",
-    "علوم شناختی", "ذهن", "فلسفه ذهن", "فلسفه علم", "فلسفه فناوری", "فلسفه هوش مصنوعی", "معرفت شناسی", "معرفت‌شناسی",
-    "علوم اعصاب", "مغز"
+    "technology and consciousness", "machine awareness", "science and technology studies", "AI rights", "rights of AI",
+    "AI personhood", "machine rights", "artificial minds", "machine minds", "AI ethics", "ethics of AI",
+    "آگاهی", "خودآگاهی", "شناخت", "علوم شناختی", "ذهن", "فلسفه ذهن", "فلسفه علم", "فلسفه فناوری",
+    "فلسفه هوش مصنوعی", "معرفت شناسی", "معرفت‌شناسی", "علوم اعصاب", "مغز", "حقوق هوش مصنوعی", "شخصیت هوش مصنوعی",
 )
 _MIND_AI_BRIDGE_TERMS = (
     "AI consciousness", "AI philosophy", "AI cognition", "AI mind", "artificial consciousness", "machine consciousness",
-    "artificial intelligence", "machine learning", "AGI", "هوش مصنوعی", "فلسفه هوش مصنوعی", "آگاهی مصنوعی", "هوش ماشین"
+    "artificial intelligence", "machine learning", "AGI", "AI rights", "rights of AI", "AI personhood", "machine rights",
+    "artificial minds", "machine minds", "AI ethics", "ethics of AI", "هوش مصنوعی", "فلسفه هوش مصنوعی",
+    "آگاهی مصنوعی", "هوش ماشین", "حقوق هوش مصنوعی",
 )
 _EARLY_STRATEGIC_TERMS = (
     "ai governance", "ai policy", "ai regulation", "artificial intelligence regulation",
@@ -178,6 +181,21 @@ def _finalize_relevance_confidence(result) -> None:
         item["ai_relevance_quality"] = "high" if confidence >= 0.90 else "medium"
 
 
+def _mark_mind_lane(item, reason="mind_cognition_lane"):
+    item["mission_area"] = "mind_cognition"
+    item["topic_family"] = "consciousness_cognition"
+    item["protected_mission_lane"] = True
+    item["early_inclusion"] = True
+    item["early_inclusion_reason"] = reason
+    item["relevance_reason"] = "ai_evidence" if reason == "specialist_interview" else "early_inclusion:mind_cognition_lane"
+    item["_ai_link"] = True
+    item["ai_relevance"] = True
+    item["ai_relevance_confidence"] = max(float(item.get("ai_relevance_confidence", 0) or 0), 0.90)
+    item["evidence_strength"] = max(float(item.get("evidence_strength", 0) or 0), 8.5)
+    item["ai_relevance_quality"] = "protected_mission_lane"
+    return item
+
+
 def filter_ai_relevance(items, ai_keywords=None):
     normalized, rescue = [], []
     supplied_keywords = tuple(str(term) for term in (ai_keywords or []) if str(term).strip())
@@ -190,13 +208,7 @@ def filter_ai_relevance(items, ai_keywords=None):
     for item in list(result):
         combined = f"{item.get('title', '')} {item.get('summary', '')} {item.get('description', '')} {item.get('evidence_text', '')} {item.get('tags', '')} {item.get('keywords', '')}".casefold()
         if _mind_lane_candidate(item, combined):
-            item["mission_area"] = "mind_cognition"
-            item["topic_family"] = "consciousness_cognition"
-            if not item.get("early_inclusion"):
-                item["early_inclusion"] = True
-                item["early_inclusion_reason"] = "specialist_interview" if str(item.get("content_type") or "").casefold() == "interview" else "mind_cognition_lane"
-                item["relevance_reason"] = "ai_evidence" if item["early_inclusion_reason"] == "specialist_interview" else "early_inclusion:mind_cognition_lane"
-                item["_ai_link"] = True
+            _mark_mind_lane(item, "specialist_interview" if str(item.get("content_type") or "").casefold() in {"interview", "podcast", "talk", "lecture", "conversation", "discussion"} else "mind_cognition_lane")
     for item in normalized:
         title = str(item.get("title") or "")
         if title in present:
@@ -204,13 +216,12 @@ def filter_ai_relevance(items, ai_keywords=None):
         combined = f"{item.get('title', '')} {item.get('summary', '')} {item.get('description', '')} {item.get('evidence_text', '')} {item.get('tags', '')} {item.get('keywords', '')}".casefold()
         if not _mind_lane_candidate(item, combined):
             continue
-        rescued = dict(item)
-        rescued.update(early_inclusion=True, early_inclusion_reason="mind_cognition_lane", relevance_reason="early_inclusion:mind_cognition_lane", _ai_link=True, ai_relevance=True, ai_relevance_confidence=0.90, evidence_strength=max(float(item.get("evidence_strength", 0) or 0), 8.5), ai_relevance_quality="protected_mission_lane", topic_family="consciousness_cognition", mission_area="mind_cognition")
+        rescued = _mark_mind_lane(dict(item))
         result.append(rescued)
         present.add(title)
     result.extend(rescue)
     _finalize_relevance_confidence(result)
-    print(f"[Early Inclusion] rescued={len(rescue)} | mind_lane={sum(x.get('early_inclusion_reason') == 'mind_cognition_lane' for x in rescue)} | direct/curated={len(result) - len(rescue)}", flush=True)
+    print(f"[Early Inclusion] rescued={len(rescue)} | mind_lane={sum(bool(x.get('protected_mission_lane')) for x in result)} | direct/curated={len(result) - len(rescue)}", flush=True)
     return result
 
 

@@ -2,7 +2,7 @@ name: Run AI Future Radar Bot
 
 on:
   schedule:
-    # Tehran publication windows: 04:47 UTC (~08:17 Tehran) and 07:17, 10:17, 14:17, 17:17, 19:17 UTC.
+    # Tehran publication windows: 01:47, 07:17, 10:17, 14:17, 17:17, 19:17 UTC.
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
   workflow_dispatch:
@@ -155,15 +155,12 @@ jobs:
           def dump(path, value):
               path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-          # Preserve newer remote state while merging this run's additive changes.
           remote_seen = load(root / "data/seen.json", {})
           local_seen = load(local_root / "data/seen.json", {})
           if isinstance(remote_seen, dict) and isinstance(local_seen, dict):
               merged_seen = dict(remote_seen)
               for key in ("seen_hashes", "seen_signatures", "seen_identities"):
-                  rv = list(remote_seen.get(key) or [])
-                  lv = list(local_seen.get(key) or [])
-                  merged_seen[key] = list(dict.fromkeys(rv + lv))
+                  merged_seen[key] = list(dict.fromkeys(list(remote_seen.get(key) or []) + list(local_seen.get(key) or [])))
               dump(root / "data/seen.json", merged_seen)
 
           remote_feedback = load(root / "data/telegram_feedback.json", {})
@@ -181,11 +178,9 @@ jobs:
           local_education = load(local_root / "data/education_state.json", {})
           if isinstance(remote_education, dict) and isinstance(local_education, dict):
               merged_education = dict(remote_education)
-              merged_completed = sorted(set(int(x) for x in (remote_education.get("completed") or []) + (local_education.get("completed") or [])))
-              merged_education["completed"] = merged_completed
-              merged_education["next_slot"] = max(int(remote_education.get("next_slot", 0) or 0), int(local_education.get("next_slot", 0) or 0))
-              merged_education["next_lesson"] = max(int(remote_education.get("next_lesson", 0) or 0), int(local_education.get("next_lesson", 0) or 0))
-              merged_education["updated_at"] = max(int(remote_education.get("updated_at", 0) or 0), int(local_education.get("updated_at", 0) or 0))
+              merged_education["completed"] = sorted(set(int(x) for x in (remote_education.get("completed") or []) + (local_education.get("completed") or [])))
+              for key in ("next_slot", "next_lesson", "updated_at"):
+                  merged_education[key] = max(int(remote_education.get(key, 0) or 0), int(local_education.get(key, 0) or 0))
               dump(root / "data/education_state.json", merged_education)
 
           remote_publication = load(root / "data/publication_state.json", {})
@@ -194,13 +189,10 @@ jobs:
               merged_publication = dict(remote_publication)
               for key in ("run_number", "last_education_run"):
                   merged_publication[key] = max(int(remote_publication.get(key, 0) or 0), int(local_publication.get(key, 0) or 0))
-              remote_slot = str(remote_publication.get("last_education_slot", "") or "")
-              local_slot = str(local_publication.get("last_education_slot", "") or "")
-              merged_publication["last_education_slot"] = local_slot or remote_slot
+              merged_publication["last_education_slot"] = str(local_publication.get("last_education_slot") or remote_publication.get("last_education_slot") or "")
               for key in ("last_published_news_score", "last_published_normal_news_score"):
-                  rv = remote_publication.get(key)
-                  lv = local_publication.get(key)
-                  merged_publication[key] = lv if isinstance(lv, (int, float)) else rv
+                  local_value = local_publication.get(key)
+                  merged_publication[key] = local_value if isinstance(local_value, (int, float)) else remote_publication.get(key)
               dump(root / "data/publication_state.json", merged_publication)
 
           remote_health = load(root / "data/llm_health.json", {})
@@ -209,12 +201,10 @@ jobs:
               merged_health = dict(remote_health)
               for key in ("observed_failures", "observed_events"):
                   merged_health[key] = max(int(remote_health.get(key, 0) or 0), int(local_health.get(key, 0) or 0))
-              remote_models = dict(remote_health.get("models") or {})
-              remote_models.update(local_health.get("models") or {})
-              merged_health["models"] = remote_models
-              remote_providers = dict(remote_health.get("providers") or {})
-              remote_providers.update(local_health.get("providers") or {})
-              merged_health["providers"] = remote_providers
+              for key in ("models", "providers"):
+                  merged = dict(remote_health.get(key) or {})
+                  merged.update(local_health.get(key) or {})
+                  merged_health[key] = merged
               dump(root / "data/llm_health.json", merged_health)
           PY
             git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json

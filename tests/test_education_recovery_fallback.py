@@ -125,6 +125,7 @@ def test_recovery_treats_true_exhaustion_as_non_fatal(monkeypatch, capsys):
         "last_education_run": 469,
         "last_education_slot": "manual-validation:2026-09-10",
     })
+    monkeypatch.setattr(module.production_entrypoint, "_save_cadence", lambda state: None)
     monkeypatch.setattr(module.production_entrypoint, "_tehran_now", lambda: None)
     monkeypatch.setattr(module.production_entrypoint, "_education_is_due", lambda now, last_slot: (True, "2026-09-14:morning"))
     monkeypatch.setattr(module.educational_content, "_next_lesson", lambda: (None, 0, 68))

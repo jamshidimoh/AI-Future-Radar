@@ -1,0 +1,39 @@
+name: Surgical Closure Fix
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: startsWith(github.event.head_commit.message, 'chore: add temporary surgical closure fix')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Fix production trigger gate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('.github/workflows/run.yml')
+          s = p.read_text()
+          old = "if: github.event_name != 'push' || startsWith(github.event.head_commit.message, 'TEMP_PRODUCTION_VALIDATION:')"
+          new = "if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore: persist production state [skip ci]')"
+          if old not in s:
+              raise SystemExit('expected production trigger gate not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/run.yml
+          git commit -m "fix: restore normal production workflow trigger"
+          git push origin HEAD:main
+      - name: Remove temporary fixer
+        run: |
+          git rm .github/workflows/_surgical_closure_fix.yml
+          git commit -m "chore: remove temporary surgical closure fix [skip ci]"
+          git push origin HEAD:main

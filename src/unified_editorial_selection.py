@@ -274,7 +274,7 @@ def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[st
 
 
 def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[str, Any] | None:
-    """Return the best candidate only when diversity does not require a material quality sacrifice."""
+    """Select for information gain only after protecting a minimum quality ratio."""
     candidates = [x for x in pool if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
     if not candidates:
         return None
@@ -285,6 +285,9 @@ def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[
     viable = [x for x in candidates if candidate_score(x) >= top_score * floor]
     if not viable:
         viable = [max(candidates, key=lambda x: candidate_score(x))]
+    unseen_area = [x for x in viable if mission_area(x) not in p.area_counts]
+    if unseen_area:
+        viable = unseen_area
     return max(
         viable,
         key=lambda x: (
@@ -308,10 +311,10 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             break
         p.add(candidate, "mission_target:ai_core")
 
-    for target_key, area_predicate, reason in (
-        ("convergence_target", lambda x: mission_area(x) == "convergence", "convergence"),
-        ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}, "mind_future"),
-        ("research_target", _is_research, "research"),
+    for target_key, area_predicate in (
+        ("convergence_target", lambda x: mission_area(x) == "convergence"),
+        ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
+        ("research_target", _is_research),
     ):
         for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
             pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
@@ -324,7 +327,9 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
             if top_global > 0 and candidate_score(candidate) < top_global * floor:
                 break
-            p.add(candidate, f"mission_target:{reason}")
+            candidate_area = mission_area(candidate)
+            reason = f"mission_target:{candidate_area}" if candidate_area in {"mind_cognition", "future_governance"} else f"mission_target:{target_key.removesuffix('_target')}"
+            p.add(candidate, reason)
 
 
 def _fill_by_portfolio_value(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:

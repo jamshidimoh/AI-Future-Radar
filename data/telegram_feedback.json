@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789392792,
+  "updated_at": 1789394032,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9130,6 +9130,44 @@
       "why_it_matters": "این پیشرفت فنی می‌تواند مانع اصلی استقرار هوش مصنوعی در صنایع حیاتی مانند حمل‌ونقل، پزشکی و انرژی را برطرف کند. با تضمین عملکرد قابل اعتماد در شرایط بحرانی، این روش ریسک خطاهای فاجعه‌بار را کاهش داده و اعتماد به سیستم‌های خودکار را افزایش می‌دهد. این قابلیت، گامی ضروری برای گذار از آزمایشگاه به کاربردهای واقعی و ایمن در دنیای فیزیکی محسوب می‌شود.",
       "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNTTQwamVjSjl2c2tLMlZBZWdqb2xSQlU2V3Qxb2U1MEk1b2tXbWxVRWQ3OHUwUjQwbnhmQXN4OHZCbG1jUU9BVVJZSnZSWHkxYmd4NTJyV3JXSTl6cF9IR3Y4VEJsYm5LSHRwMWczaDB0NDdLZjBCMkZDX2Vyc0VueFdIQW9JUQ?oc=5",
       "posted_at": 1789392792
+    },
+    "-1004482051328:1592": {
+      "chat_id": -1004482051328,
+      "message_id": 1592,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "یگلیاس: کارکنان OpenAI باید از حمایت از Leading the Future علیه مقررات فدرال بگذرند",
+      "summary": "متیو یگلیاس در تحلیل خود استدلال می‌کند که کارکنان OpenAI باید در برابر حمایت شرکت از ابتکار Leading the Future، که هدف آن تضعیف مقررات فدرال است، موضع بگیرند. او با اشاره به استعفای جیکوب کاکسون از Anthropic به دلیل نگرانی‌های اخلاقی، بر ضرورت اقدام داخلی کارکنان تأکید دارد. همچنین یگلیاس کنگره ایالات متحده را به برگزاری جلسات استماع برای بررسی ریسک‌های هوش مصنوعی فرا می‌خواند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این تحلیل نشان‌دهنده شکاف فزاینده بین استراتژی‌های لابی‌گری شرکت‌های بزرگ هوش مصنوعی و نگرانی‌های کارکنان متخصص درباره پیامدهای نظارتی است. حمایت از ابتکارهایی مانند Leading the Future می‌تواند منجر به کاهش شفافیت و نظارت دولتی بر توسعه مدل‌های پیشرفته شود. در نتیجه، فشار بر کنگره برای برگزاری جلسات استماع، تلاشی برای ایجاد تعادل بین نوآوری و ایمنی عمومی در برابر ریسک‌های سیستمیک هوش مصنوعی است.",
+      "link": "https://www.techmeme.com/260914/p17#a260914p17",
+      "posted_at": 1789394029
+    },
+    "-1004482051328:1593": {
+      "chat_id": -1004482051328,
+      "message_id": 1593,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - No Priors Podcast",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چالش‌های زنجیره تأمین و محدودیت‌های حافظه در استارتاپ‌های تراشه‌های هوش مصنوعی",
+      "summary": "رنه هاس (Rene Haas) واقعیت خشن زنجیره تأمین را برای سازندگان جوان تراشه‌های هوش مصنوعی تشریح می‌کند. او استدلال می‌کند که تا زمانی که معماری Transformer واحد اصلی هوش مصنوعی باقی بماند، محدودیت‌های محاسباتی و حافظه همچنان پابرجا خواهند بود. این شرایط باعث می‌شود بسیاری از استارتاپ‌های این حوزه با چالش‌های جدی روبرو شده و احتمال شکست آن‌ها افزایش یابد.",
+      "description": "As long as the transformer remains the core unit of AI, compute and memory will stay constrained.\n\nRene Haas breaks down why young AI chipmakers face a brutal supply chain reality: artificial intelligence",
+      "why_it_matters": "این تحلیل نشان می‌دهد که صرف توسعه سخت‌افزار جدید بدون در نظر گرفتن قفل‌های معماری Transformer، ممکن است منجر به شکست تجاری شود. محدودیت‌های ذاتی حافظه و محاسبات در این معماری، زنجیره تأمین را برای بازیگران جدید دشوار می‌کند. درک این واقعیت برای سرمایه‌گذاران و مهندسان ضروری است تا استراتژی‌های خود را با محدودیت‌های فنی موجود همسو کنند.",
+      "link": "https://www.youtube.com/shorts/Rnv7GLfU9Uc",
+      "posted_at": 1789394032
     }
   }
 }

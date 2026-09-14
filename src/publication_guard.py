@@ -84,10 +84,11 @@ def _load_records() -> list[dict]:
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
-    """Return semantic conflict only when the event matcher supports same-story identity.
+    """Return semantic conflict only when there is evidence for the same event.
 
-    A shared person/company/topic is not enough to block publication. Updates, follow-up
-    stories, interviews, and separate events must remain publishable.
+    Shared entities/terms alone are insufficient. Exact URL/title remain hard blocks,
+    while event classification, semantic similarity and multiple concrete anchors
+    provide the generic same-story evidence used for rewritten and cross-language copies.
     """
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
@@ -103,30 +104,33 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     semantic_score = _similarity(get_story_signature(candidate), get_story_signature(stored))
     anchors = shared_anchor_count(f"{candidate_title} {candidate_summary}", f"{stored_title} {stored_summary}")
 
-    # Cross-language or heavily rewritten copies can defeat event classification while
-    # still preserving multiple concrete anchors (proper names, products, numbers,
-    # identifiers). Three non-generic anchors are strong same-story evidence.
-    if anchors >= 3:
-        return 0.82
-
     if kind in {"NEW", "UPDATE"}:
         return 0.0
 
     if kind == "DUPLICATE":
-        score = max(semantic_score, event_score)
-    elif kind == "RELATED" and anchors >= 3 and semantic_score >= 0.60:
-        score = max(0.82, semantic_score)
-    else:
-        return 0.0
+        return max(semantic_score, event_score)
+
+    # RELATED events are blocked only when both the semantic match and concrete
+    # anchors support the same underlying story. This avoids the previous false
+    # positive where any three shared English tokens forced a duplicate decision.
+    if kind == "RELATED" and anchors >= 3 and semantic_score >= 0.60:
+        return max(0.82, semantic_score)
+
+    # Event classification can be imperfect for rewritten/cross-language copies.
+    # Require both multiple concrete anchors and a meaningful semantic match before
+    # treating the item as a same-story publication conflict.
+    if anchors >= 3 and semantic_score >= 0.65:
+        return 0.82
 
     logger.debug(
-        "publication semantic comparison kind=%s anchors=%d score=%.3f evidence=%s",
+        "publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f evidence=%s",
         kind,
         anchors,
-        score,
+        semantic_score,
+        event_score,
         evidence,
     )
-    return score
+    return 0.0
 
 
 def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None) -> tuple[bool, str]:

@@ -11,8 +11,8 @@ from src.unified_editorial_selection import load_editorial_contract, select_regu
 _AI_BRIDGE_TERMS = (
     "Claude", "GPT", "Gemini", "Qwen", "Llama", "DeepSeek", "Mistral", "OpenAI", "Anthropic",
     "DeepMind", "transformer", "neural network", "reasoning model", "large language model",
-    "artificial intelligence", "machine learning", "AI", "AGI", "هوش مصنوعی", "هوشِ مصنوعی",
-    "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی بزرگ", "مدل بنیادی", "عامل هوشمند",
+    "artificial intelligence", "machine learning", "AI consciousness", "AI philosophy", "AI cognition", "AI mind", "AGI",
+    "هوش مصنوعی", "هوشِ مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی بزرگ", "مدل بنیادی", "عامل هوشمند",
     "حکمرانی هوش مصنوعی", "فلسفه هوش مصنوعی", "آگاهی مصنوعی", "هوش ماشین"
 )
 _MIND_TERMS = (
@@ -201,10 +201,10 @@ def select_editorial(items, max_posts=4, max_per_source=2, max_per_type=2, polic
         regular,
         max_posts=max_posts,
         max_per_source=max_per_source,
-        max_per_type=max_per_type,
         contract=load_editorial_contract(),
         mission_aware=bool(policy.get("mission_aware", True)),
         strict_relevance=bool(policy.get("strict_relevance", False)),
+        max_per_type=max_per_type,
     )
     for item in selected_regular:
         if item.get("mission_area") == "mind_cognition":

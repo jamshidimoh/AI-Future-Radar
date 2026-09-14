@@ -17,7 +17,9 @@ mission:
   stale_hours: 72
   ai_core_target_min: 1
   ai_core_target_max: 2
-  convergence_target: 1
+  # Cross-domain coverage is an opportunity, not a mandatory slot. A convergence
+  # story competes on quality and only wins when a strong candidate exists.
+  convergence_target: 0
   # Mind/cognition and future/governance are coverage opportunities, not forced
   # weak-content slots. They are selected when suitable candidates exist.
   mind_future_target: 2

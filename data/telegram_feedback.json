@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789330465,
+  "updated_at": 1789352663,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -8818,6 +8818,26 @@
       "why_it_matters": "معرفی GPT-6 Astra نشان‌دهنده تمرکز OpenAI بر کاربردهای عملیاتی و سازمانی هوش مصنوعی است. این حرکت می‌تواند استانداردهای جدیدی را در اتوماسیون هوشمند و بهره‌وری کاری تعریف کند. با این حال، فقدان جزئیات فنی در این گزارش اولیه، ارزیابی دقیق توانمندی‌ها و محدودیت‌های مدل را برای متخصصان دشوار می‌سازد.",
       "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5CMVNUYU5VZ0ZwQm56OGo4bVhKSmtEU1dLT01wR0hmbzE2ektwRS1LNnVqRkVha3ZzLXJyVE9GdHpMREM5dnRXS1Q2MHJoNGV3RFVLZ3VvZ3dwcGphbnI2RWx4dnFBMWM0Zmc?oc=5&hl=en-US&gl=US&ceid=US:en",
       "posted_at": 1789300552
+    },
+    "-1004482051328:1573": {
+      "chat_id": -1004482051328,
+      "message_id": 1573,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (BBC)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "title": "تحقیق BBC: ترس واقعی کارکنان Anthropic از آینده بشریت",
+      "summary": "پژوهشگر سابق Anthropic در گفت‌وگو با BBC اعلام کرد که کارکنان این شرکت هوش مصنوعی به‌طور واقعی از آینده بشریت می‌ترسند. این اظهارات نشان‌دهنده نگرانی عمیق درون‌سازمانی نسبت به پیامدهای توسعه سریع سیستم‌های هوش مصنوعی است. گزارش تأکید می‌کند که این ترس صرفاً نظری نیست، بلکه بازتابی از دیدگاه متخصصان مستقیماً درگیر با فناوری است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این اعتراف از سوی یک متخصص کلیدی، شکاف بین ادعاهای عمومی شرکت‌های فناوری درباره ایمنی و واقعیت‌های درون‌سازمانی را آشکار می‌کند. وجود چنین نگرانی‌هایی در میان توسعه‌دهندگان Anthropic، ضرورت نظارت دقیق‌تر و شفافیت بیشتر در توسعه مدل‌های پیشرفته را برجسته می‌سازد. این موضوع می‌تواند بر سیاست‌گذاری‌های آینده و اعتماد عمومی به فناوری‌های نوظهور تأثیر مستقیم بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1IMkFTZ25QYzR0R0V3UnUteU9DTl9KZzRRd0ZKMjhYS0tqVUFDYjlLaFYtSW45eVpjeGg3Q0EybnlKQ1JLUWZiQ25DTVBYUjJlVEhGeVQtR1JuQQ?oc=5",
+      "posted_at": 1789352663
     }
   }
 }

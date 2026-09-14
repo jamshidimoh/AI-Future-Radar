@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789409921,
+  "updated_at": 1789410371,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9512,6 +9512,43 @@
       "why_it_matters": "این تغییر پارادایم در درک هوشیاری AI، مرزهای اخلاقی و حقوقی مرتبط با سیستم‌های پیشرفته را بازتعریف می‌کند. اگر معیارهای آگاهی از عملکرد صرف جدا شوند، خطر نسبت دادن نادرست حقوق یا احساسات به الگوریتم‌ها کاهش می‌یابد. این دیدگاه به توسعه‌دهندگان و سیاست‌گذاران کمک می‌کند تا بر اساس شواهد عصب‌شناختی و فلسفی دقیق‌تر، نه فقط خروجی‌های زبانی، قضاوت کنند. در نتیجه، مسیر تحقیقات علوم شناختی و ایمنی AI به سمت درک عمیق‌تر ماهیت آگاهی هدایت خواهد شد.",
       "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxONDdRWlVvZkZLS2c4UXowVUNCSjJYeE9OLTBzZmdUNHd3QXJ3c29sbmVZVklMUFpHRHYtS2ppb1g3WU1OdnIyb0NwWjdPTmxfekkzU0hCR1RGdjVfdmxzc3JQalZPUVhNOEswTmRMZ1drSjJWZ0pzbHpCTjcwVWJxRFBsMG9NZl8tc0wtazIxRDlXVmVYNDBSSDllUTh2Ti1NWUR2b21IV0xiRlE?oc=5",
       "posted_at": 1789409921
+    },
+    "-1004482051328:1613": {
+      "chat_id": -1004482051328,
+      "message_id": 1613,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "Nvidia کارت گرافیک RTX Pro 5500 Blackwell Workstation Edition را رونمایی کرد",
+      "summary": "Nvidia کارت گرافیک RTX Pro 5500 Blackwell Workstation Edition را رونمایی کرد. این مدل با 84 GB حافظه GDDR7 نسبت به RTX 5090 که تنها 32 GB دارد، ارائه می‌شود، در حالی که مشخصات عملکردی مشابه RTX 5090 را حفظ می‌کند. هدف این کارت، بهینه‌سازی برای بارهای کاری هوش مصنوعی و محاسباتی است نه صرفاً بازی. این محصول توسط Zhiye Liu در Tom's Hardware گزارش شده است.",
+      "why_it_matters": "افزایش ظرفیت حافظه تا 84 GB به کاربران حرفه‌ای اجازه می‌دهد مدل‌های بزرگ هوش مصنوعی و مجموعه‌های داده حجیم را بدون نیاز به تقسیم بار یا استفاده از چند کارت گرافیک اجرا کنند، که هزینه و پیچیدگی زیرساخت را کاهش می‌دهد. حفظ مشخصات مشابه RTX 5090 تضمین می‌کند که عملکرد رندرینگ و پردازش گرافیکی نیز حفظ می‌شود، بنابراین این کارت می‌تواند به عنوان یک راه‌حل همه‌کاره برای ایستگاه‌های کاری پیشرفته به کار رود. با تمرکز بر حاشیه‌های AI، Nvidia سعی دارد بازار محاسباتی تخصصی را گسترش دهد، اگرچه هزینهٔ بالای حافظه GDDR7 ممکن است پذیرش گسترده را محدود کند.",
+      "link": "https://www.techmeme.com/260914/p31#a260914p31",
+      "posted_at": 1789410368
+    },
+    "-1004482051328:1614": {
+      "chat_id": -1004482051328,
+      "message_id": 1614,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (MIT News)",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "استارتاپ MIT پلاستیک‌های بازیافتی را به مصالح ساختمانی مقاوم تبدیل می‌کند",
+      "summary": "یک شرکت ناشناخته از زیرمجموعه‌های MIT (spinout) فناوری جدیدی توسعه داده است که پسماندهای پلاستیکی را به مصالح ساختمانی با دوام و مقاوم تبدیل می‌کند. این روش نوآورانه با هدف کاهش حجم زباله‌های پلاستیکی و همزمان ارائه راه‌حلی پایدار برای صنعت ساختمان طراحی شده است. اگرچه جزئیات فنی دقیق در این خبر کوتاه ذکر نشده، اما تمرکز اصلی بر تبدیل یک مشکل زیست‌محیطی به یک منبع ارزشمند مهندسی است.",
+      "why_it_matters": "این فناوری پتانسیل بالایی برای کاهش آلودگی پلاستیکی و کاهش ردپای کربن صنعت ساختمان دارد. با تبدیل زباله به ماده اولیه، چرخه عمر مواد بهبود یافته و وابستگی به منابع طبیعی کاهش می‌یابد. موفقیت این استارتاپ می‌تواند الگویی برای اقتصاد چرخشی در بخش‌های دیگر صنعت باشد.",
+      "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPRmxJMVVlSGlqV3l1aXB4Q2pPVWMwOXZJTWZ6cDJ1MmhBd05tdmpFRDlJRGtkX1M2X2JtMHQ1QUJWNVljdTVwd0ZEUXVDaG5RX3FHVGNvVFdVcWVVb1ZKb2Y4VDNzY25KaTFEQnRpLVNIN0wxT05XM1RibGZGTVU5VGpycnBLLTF4Q292b3NzaHhUVUxzY1BJMWpjWUQ?oc=5",
+      "posted_at": 1789410371
     }
   }
 }

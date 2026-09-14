@@ -215,7 +215,7 @@ def _walk_video_renderers(node, out: list[dict]) -> None:
             if not title:
                 title = str(title_obj.get("simpleText") or "").strip()
             pub = str((renderer.get("publishedTimeText") or {}).get("simpleText") or "").strip()
-            description_parts = []
+            description_parts: list[str] = []
             for detail in renderer.get("detailedMetadataSnippets") or []:
                 snippet = detail.get("snippet") or {}
                 runs = snippet.get("runs") or []
@@ -288,7 +288,7 @@ def _fetch_channel_page_items(channel_id: str, channel_name: str, cutoff: float)
                 if not video_id or video_id in seen:
                     continue
                 seen.add(video_id)
-                published = _parse_relative_age(item.get("published_label"))
+                published = _parse_relative_age(str(item.get("published_label") or ""))
                 if published:
                     try:
                         ts = datetime.strptime(published, "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc).timestamp()

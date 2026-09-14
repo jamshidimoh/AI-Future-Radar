@@ -7,6 +7,7 @@ import os
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Any, cast
 
 from src.editorial_quality_policy import (
     NORMAL_SCORE_FLOOR,
@@ -157,22 +158,12 @@ def normal_news_policy_allowed(score: float, previous_normal_score: float | None
 
 
 def _is_tier0_publication_candidate(item: dict) -> bool:
-    """Return whether production publication may use the protected Tier-0 lane."""
     return is_substantive_priority_interview(item) or bool(
         item.get("critical_ai_incident") and item.get("protected_slot")
     )
 
 
 def _is_strategic_analytical_signal(item: dict) -> bool:
-    """Return whether a bounded analytical leader signal may use the strategic lane.
-
-    This lane is intentionally narrower than ordinary Leader protection. It requires
-    an accepted analytical/context signal from the existing Leader classifier,
-    a high-priority futurist/mind category, and a Tier-1/2 source. It never bypasses
-    deduplication, translation, source grounding, editorial-value QA, or the normal
-    three-message Telegram quota; it only prevents the generic ranking score from
-    becoming a second publication-quality gate for one mission-critical insight.
-    """
     classification = item.get("leader_signal_classification") or {}
     if not isinstance(classification, dict):
         return False
@@ -198,20 +189,11 @@ def _is_strategic_analytical_signal(item: dict) -> bool:
         source_tier = 3
     if source_tier > 2:
         return False
-    source_text = " ".join(
-        str(item.get(key) or "").strip().casefold()
-        for key in ("source", "source_name", "source_type", "source_domain")
-    )
+    source_text = " ".join(str(item.get(key) or "").strip().casefold() for key in ("source", "source_name", "source_type", "source_domain"))
     return not any(marker in source_text for marker in ("reddit", "community"))
 
 
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
-    """Bound runtime candidates while preserving the normal replacement buffer.
-
-    ``max_posts`` is the hard normal publication capacity. ``replacement_buffer``
-    is additional pre-summary capacity used only to survive later LLM/editorial
-    rejection. It must not increase the Telegram publication quota.
-    """
     candidates = list(candidates or [])
     protected_limit = max(0, int(policy.get("leader_protected_max", 2) or 0))
     normal_capacity = max(0, int(max_posts or 0))
@@ -249,10 +231,8 @@ def main(*, skip_education: bool = False) -> int:
     configure_logging()
     import main as pipeline_module
     import period_ranked_pipeline as pipeline
+    pipeline = cast(Any, pipeline)
 
-    # main.py still exposes legacy local summary gates for compatibility. Bind them
-    # to the authoritative editorial policy at runtime so summary/refill decisions
-    # cannot silently drift from the final production publication contract.
     pipeline_module.NORMAL_SCORE_FLOOR = NORMAL_SCORE_FLOOR
     pipeline_module.PROTECTED_SUMMARY_SCORE_FLOOR = PROTECTED_SCORE_FLOOR
 
@@ -316,7 +296,7 @@ def main(*, skip_education: bool = False) -> int:
         return ([education_item] if education_item else []) + candidates
 
     original_summarize = pipeline.summarize_item
-    render_state = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "delivery_transport_failed": False}
+    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "delivery_transport_failed": False}
 
     def summarize_with_education(item):
         if item.get("content_type") == "education":

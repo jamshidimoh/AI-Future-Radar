@@ -12,11 +12,11 @@ SHORT_SOURCE_WHY_MIN_CHARS = 100
 # Editorial quality is enforced by language, evidence, specificity and value gates.
 # The ranking score is a prioritization signal, not a stale-state publication floor.
 NORMAL_SCORE_TOLERANCE = 10.0
-NORMAL_SCORE_FLOOR = 60.0
+NORMAL_SCORE_FLOOR = 55.0
 # Protected Tier-0 stories are allowed to bypass the normal publication quota,
 # but never the minimum editorial quality floor. This prevents watchlist metadata
 # from becoming a second path around quality-ranked publication.
-PROTECTED_SCORE_FLOOR = 60.0
+PROTECTED_SCORE_FLOOR = 55.0
 TITLE_MAX_CHARS = 160
 LATIN_TOKEN_MAX_CHARS = 64
 _BIDI_CONTROLS = "\u202A\u202B\u202C\u202D\u202E\u2066\u2067\u2069\u200E\u200F"

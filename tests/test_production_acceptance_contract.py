@@ -96,10 +96,12 @@ def test_acceptance_prefers_final_summary_budget_over_ranked_candidate_count():
 [Selection Timing] original_select candidates=15 candidate_window=6 elapsed=1.0s
 [Publication Summary Budget] input=5 protected=2 normal_window=3 output=5 normal_limit=5 replacement_buffer=2 score_floor=55.0
 [Production Contract] normal_news=3 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+[Publication Contract] candidate rejected reason=downstream-qa;
+[Publication Contract] candidate rejected reason=downstream-policy;
 Posts sent: 3/5
 """
     ok, reason = validate(log)
-    assert ok
+    assert ok, reason
     assert "selected=5" in reason
 
 

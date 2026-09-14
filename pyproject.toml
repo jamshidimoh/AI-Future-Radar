@@ -28,3 +28,10 @@ python_version = "3.11"
 ignore_missing_imports = true
 explicit_package_bases = true
 files = ["src", "main.py", "production_entrypoint.py", "production_resilient_runner.py", "period_ranked_pipeline.py"]
+
+[[tool.mypy.overrides]]
+module = "production_entrypoint"
+# production_entrypoint deliberately monkeypatches the legacy `main` module at
+# runtime. The dynamic attributes are validated by import/production tests; the
+# static checker cannot see those runtime assignments.
+disable_error_code = ["attr-defined"]

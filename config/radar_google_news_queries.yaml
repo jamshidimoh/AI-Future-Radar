@@ -11,9 +11,6 @@ google_news_queries:
     curated_discovery: true
 
   # Dedicated AI-linked philosophy / consciousness lane.
-  # Only authoritative scholarly/reference publishers are executable here.
-  # Index/discussion layers are recorded in config/mind_philosophy_sources.yaml
-  # and are intentionally not normal publication inputs.
   - name: "Stanford Encyclopedia of Philosophy — AI / Mind"
     query: "site:plato.stanford.edu (artificial intelligence OR philosophy of AI OR machine consciousness OR consciousness OR functionalism OR computationalism)"
     category: mind
@@ -37,3 +34,106 @@ google_news_queries:
     content_type: research
     preferred_source: "Oxford Academic"
     curated_discovery: true
+
+  # High-recall mind / cognition / consciousness discovery.
+  - name: "AI Consciousness"
+    query: "AI consciousness cognitive science latest"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Artificial Consciousness"
+    query: "artificial consciousness machine consciousness latest"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Neuroscience and AI"
+    query: "consciousness artificial intelligence neuroscience latest"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Cognitive Science and AI"
+    query: "cognitive science artificial intelligence perception memory reasoning"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Philosophy of Mind and AI"
+    query: "philosophy of mind artificial intelligence consciousness"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Philosophy of Science and AI"
+    query: "philosophy of science artificial intelligence scientific discovery"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "AI Epistemology"
+    query: "epistemology of artificial intelligence scientific knowledge"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Philosophy of Technology and AI"
+    query: "philosophy of technology AI consciousness cognition"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "AI Scientific Method"
+    query: "AI and scientific method philosophy science"
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "AI Scientific Discovery Interview"
+    query: "AI scientific discovery philosophy epistemology interview"
+    category: mind
+    tier: 1
+    content_type: interview
+
+  # Named consciousness/mind thinkers.
+  - {name: "David Chalmers interview", query: "David Chalmers AI consciousness interview", category: mind, tier: 1, content_type: interview}
+  - {name: "Anil Seth interview", query: "Anil Seth AI consciousness interview", category: mind, tier: 1, content_type: interview}
+  - {name: "Christof Koch interview", query: "Christof Koch AI consciousness interview", category: mind, tier: 1, content_type: interview}
+  - {name: "Joscha Bach interview", query: "Joscha Bach AI consciousness AGI interview", category: mind, tier: 1, content_type: interview}
+  - {name: "Susan Blackmore interview", query: "Susan Blackmore AI consciousness interview", category: mind, tier: 1, content_type: interview}
+  - {name: "Bernardo Kastrup interview", query: "Bernardo Kastrup AI consciousness interview", category: mind, tier: 1, content_type: interview}
+  - {name: "Murray Shanahan interview", query: "Murray Shanahan AI consciousness interview", category: mind, tier: 1, content_type: interview}
+  - {name: "Ryota Kanai interview", query: "Ryota Kanai AI consciousness interview", category: mind, tier: 1, content_type: interview}
+
+  # Authority-focused scientific reporting.
+  - {name: "Quanta consciousness AI", query: "site:quantamagazine.org consciousness artificial intelligence", category: mind, tier: 1, content_type: research, preferred_source: "Quanta Magazine", curated_discovery: true}
+  - {name: "MIT News consciousness AI", query: "site:news.mit.edu consciousness artificial intelligence brain cognition", category: mind, tier: 1, content_type: research, preferred_source: "MIT News", curated_discovery: true}
+  - {name: "Nature consciousness AI", query: "site:nature.com artificial intelligence consciousness cognition neuroscience", category: mind, tier: 1, content_type: research, preferred_source: "Nature", curated_discovery: true}
+  - {name: "Scientific American consciousness AI", query: "site:scientificamerican.com consciousness artificial intelligence cognition", category: mind, tier: 2, content_type: research, preferred_source: "Scientific American", curated_discovery: true}
+  - {name: "MIT Technology Review mind AI", query: "site:technologyreview.com AI consciousness cognition philosophy", category: mind, tier: 2, content_type: research, preferred_source: "MIT Technology Review", curated_discovery: true}
+
+  # CEO / AI leader interview lane. Exact-format discovery is intentionally separate
+  # from product/announcement queries so interviews are not crowded out by releases.
+  - {name: "Sam Altman interview", query: "\"Sam Altman\" interview AI AGI", category: ai, tier: 1, content_type: interview}
+  - {name: "Dario Amodei interview", query: "\"Dario Amodei\" interview AI future", category: ai, tier: 1, content_type: interview}
+  - {name: "Demis Hassabis interview", query: "\"Demis Hassabis\" interview AI AGI", category: ai, tier: 1, content_type: interview}
+  - {name: "Jensen Huang interview", query: "\"Jensen Huang\" interview AI future robotics", category: ai, tier: 1, content_type: interview}
+  - {name: "Yann LeCun interview", query: "\"Yann LeCun\" interview AI future world model", category: ai, tier: 1, content_type: interview}
+  - {name: "Geoffrey Hinton interview", query: "\"Geoffrey Hinton\" interview AI future", category: ai, tier: 1, content_type: interview}
+  - {name: "Yoshua Bengio interview", query: "\"Yoshua Bengio\" interview AI safety AGI", category: ai, tier: 1, content_type: interview}
+  - {name: "Ilya Sutskever interview", query: "\"Ilya Sutskever\" interview AI safety superintelligence", category: ai, tier: 1, content_type: interview}
+  - {name: "Fei-Fei Li interview", query: "\"Fei-Fei Li\" interview AI future world models", category: ai, tier: 1, content_type: interview}
+  - {name: "Andrew Ng interview", query: "\"Andrew Ng\" interview AI agents education", category: ai, tier: 1, content_type: interview}
+  - {name: "Eric Schmidt interview", query: "\"Eric Schmidt\" interview AI future", category: future, tier: 1, content_type: interview}
+  - {name: "Mustafa Suleyman interview", query: "\"Mustafa Suleyman\" interview AI future", category: future, tier: 1, content_type: interview}
+  - {name: "Yuval Noah Harari interview", query: "\"Yuval Noah Harari\" interview AI future", category: future, tier: 1, content_type: interview}
+  - {name: "Nick Bostrom interview", query: "\"Nick Bostrom\" interview AI superintelligence", category: future, tier: 1, content_type: interview}
+  - {name: "Max Tegmark interview", query: "\"Max Tegmark\" interview AI future intelligence", category: future, tier: 1, content_type: interview}
+  - {name: "Stuart Russell interview", query: "\"Stuart Russell\" interview AI alignment AGI", category: future, tier: 1, content_type: interview}
+  - {name: "Ray Kurzweil interview", query: "\"Ray Kurzweil\" interview AI singularity future", category: future, tier: 1, content_type: interview}
+
+  # Format/publisher discovery for long-form conversations.
+  - {name: "Lex Fridman Sam Altman", query: "site:lexfridman.com Sam Altman interview", category: ai, tier: 1, content_type: interview}
+  - {name: "Sam Altman video interview", query: "site:youtube.com Sam Altman interview AI", category: ai, tier: 1, content_type: interview}
+  - {name: "Dario Amodei video interview", query: "site:youtube.com Dario Amodei interview AI", category: ai, tier: 1, content_type: interview}
+  - {name: "Demis Hassabis video interview", query: "site:youtube.com Demis Hassabis interview AI", category: ai, tier: 1, content_type: interview}
+  - {name: "David Chalmers video interview", query: "site:youtube.com David Chalmers consciousness AI interview", category: mind, tier: 1, content_type: interview}
+
+  # Interdisciplinary emerging-tech signals.
+  - {name: "BCI and cognition", query: "brain computer interface AI cognition neuroscience latest", category: mind, tier: 1, content_type: research}
+  - {name: "AI neuroscience", query: "AI neuroscience perception intelligence cognition latest", category: mind, tier: 1, content_type: research}
+  - {name: "AI intentionality and agency", query: "AI philosophy agency intentionality meaning cognition", category: mind, tier: 1, content_type: research}
+  - {name: "Machine sentience", query: "machine sentience moral status AI cognition", category: mind, tier: 1, content_type: research}
+  - {name: "AI agents and cognition", query: "AI agents human cognition cognitive science", category: mind, tier: 1, content_type: research}

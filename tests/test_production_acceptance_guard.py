@@ -75,6 +75,23 @@ Posts sent: 1/3
 """
 
 
+UNMET_MISSION_COVERAGE = """
+[Production Selection] total=6
+[Mission Coverage Recovery] attempt=1 area=ai title=wrong lane status=failed
+[Mission Coverage Recovery] target=1 prepared=0 attempts=3 recovered=0 status=unmet
+[Production Contract] normal_news=2 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 2/6
+"""
+
+
+SATISFIED_MISSION_COVERAGE = """
+[Production Selection] total=3
+[Mission Coverage Recovery] target=1 prepared=0 attempts=1 recovered=1 status=ok
+[Production Contract] normal_news=3 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 3/3
+"""
+
+
 def test_all_selected_candidates_rejected_downstream_is_fail_closed_pass():
     ok, message = validate(FAIL_CLOSED_EDITORIAL_REJECTION)
     assert ok is True
@@ -121,3 +138,15 @@ def test_tier0_only_publication_without_complete_protection_evidence_fails():
     ok, message = validate(INVALID_TIER0_FALLBACK)
     assert ok is False
     assert "Tier-0-only publication" in message
+
+
+def test_unmet_mission_coverage_is_fail_closed():
+    ok, message = validate(UNMET_MISSION_COVERAGE)
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in message
+
+
+def test_satisfied_mission_coverage_remains_acceptable():
+    ok, message = validate(SATISFIED_MISSION_COVERAGE)
+    assert ok is True
+    assert "published_news=3" in message

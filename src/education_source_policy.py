@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from urllib.parse import urlparse
 
+from src.source_exclusions import is_excluded_source_url
+
 MIN_CURRENT_YEAR = 2025
 MIN_INDEPENDENT_CURRENT_SOURCES = 2
 
@@ -38,17 +40,11 @@ PRIMARY_DOMAINS = {
     "deepmind.google", "research.google", "microsoft.com", "ibm.com", "nvidia.com",
 }
 
-# Narrow, auditable exceptions for authoritative pages whose HTML contains
-# misleading historical dates. These are URL-specific and do not relax the
-# general freshness or independence policy.
 VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents": 2026,
     "https://www.openai.com/academy/workspace-agents": 2026,
     "https://openai.com/academy/workspace-agents": 2026,
     "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative": 2026,
-    # Lesson 41 legacy fallback URLs: verified current corporate documentation
-    # is maintained on these official domains; the override only stabilizes CI
-    # date extraction and does not change the independent-organization check.
     "https://www.anthropic.com/research/building-effective-agents": 2026,
     "https://platform.openai.com/docs/guides/agents": 2026,
 }
@@ -106,6 +102,8 @@ def is_maintained_current(url: str) -> bool:
 
 def assess_source(*, url: str, reachable: bool, detected_year: int | None, declared_year: int | None = None) -> dict:
     normalized = str(url or "").strip().rstrip("/").lower()
+    if is_excluded_source_url(normalized):
+        return {"current": False, "status": "excluded_source", "organization": organization(url), "authority_tier": authority_tier(url), "authority_score": 0}
     override_year = VERIFIED_SOURCE_YEAR_OVERRIDES.get(normalized)
     if override_year is not None:
         detected_year = int(override_year)
@@ -123,6 +121,9 @@ def assess_source(*, url: str, reachable: bool, detected_year: int | None, decla
 def validate_current_sources(sources: list[dict]) -> tuple[bool, list[dict], str]:
     valid = []
     for source in sources:
+        url = str(source.get("url", ""))
+        if is_excluded_source_url(url):
+            continue
         if not bool(source.get("current_verified", False)):
             continue
         item = dict(source)

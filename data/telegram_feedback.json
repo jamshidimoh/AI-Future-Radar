@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789409575,
+  "updated_at": 1789409921,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -9493,6 +9493,25 @@
       "why_it_matters": "این تغییر پارادایم در بحث هوشیاری AI می‌تواند بر توسعه اخلاقی و فنی سیستم‌های هوشمند تأثیر بگذارد. با تمرکز بر عملکرد به جای ماهیت، محققان می‌توانند معیارهای دقیق‌تری برای ارزیابی رفتارهای شبیه به آگاهی ایجاد کنند. این رویکرد همچنین به کاهش سوءتفاهم‌های عمومی درباره قابلیت‌های واقعی AI کمک می‌کند و از انتساب نادرست ویژگی‌های انسانی به ماشین‌ها جلوگیری می‌نماید.",
       "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxONDdRWlVvZkZLS2c4UXowVUNCSjJYeE9OLTBzZmdUNHd3QXJ3c29sbmVZVklMUFpHRHYtS2ppb1g3WU1OdnIyb0NwWjdPTmxfekkzU0hCR1RGdjVfdmxzc3JQalZPUVhNOEswTmRMZ1drSjJWZ0pzbHpCTjcwVWJxRFBsMG9NZl8tc0wtazIxRDlXVmVYNDBSSDllUTh2Ti1NWUR2b21IV0xiRlE?oc=5",
       "posted_at": 1789409575
+    },
+    "-1004482051328:1612": {
+      "chat_id": -1004482051328,
+      "message_id": 1612,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Economist)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "The Economist: بحث درباره هوشیاری AI برعکس شکل گرفته است",
+      "summary": "مقاله The Economist استدلال می‌کند که رویکرد بشر به بحث درباره هوشیاری در هوش مصنوعی معکوس و نادرست است. به جای تمرکز صرف بر شباهت‌های رفتاری یا عملکردی مدل‌ها به انسان، باید معیارهای بنیادین آگاهی و تجربه زیسته (Qualia) را در نظر گرفت. این دیدگاه تأکید دارد که توانایی شبیه‌سازی پاسخ‌های هوشمندانه لزوماً به معنای وجود یک ناظر درونی یا احساسات واقعی نیست. بنابراین، تعاریف فعلی که عملکرد را با آگاهی اشتباه می‌گیرند، نیاز به بازنگری فلسفی و علمی دارند.",
+      "why_it_matters": "این تغییر پارادایم در درک هوشیاری AI، مرزهای اخلاقی و حقوقی مرتبط با سیستم‌های پیشرفته را بازتعریف می‌کند. اگر معیارهای آگاهی از عملکرد صرف جدا شوند، خطر نسبت دادن نادرست حقوق یا احساسات به الگوریتم‌ها کاهش می‌یابد. این دیدگاه به توسعه‌دهندگان و سیاست‌گذاران کمک می‌کند تا بر اساس شواهد عصب‌شناختی و فلسفی دقیق‌تر، نه فقط خروجی‌های زبانی، قضاوت کنند. در نتیجه، مسیر تحقیقات علوم شناختی و ایمنی AI به سمت درک عمیق‌تر ماهیت آگاهی هدایت خواهد شد.",
+      "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxONDdRWlVvZkZLS2c4UXowVUNCSjJYeE9OLTBzZmdUNHd3QXJ3c29sbmVZVklMUFpHRHYtS2ppb1g3WU1OdnIyb0NwWjdPTmxfekkzU0hCR1RGdjVfdmxzc3JQalZPUVhNOEswTmRMZ1drSjJWZ0pzbHpCTjcwVWJxRFBsMG9NZl8tc0wtazIxRDlXVmVYNDBSSDllUTh2Ti1NWUR2b21IV0xiRlE?oc=5",
+      "posted_at": 1789409921
     }
   }
 }

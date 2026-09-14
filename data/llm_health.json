@@ -14,7 +14,7 @@
     },
     "Groq:qwen/qwen3.6-27b": {
       "failures": 3,
-      "disabled_until": 1789413175.655,
+      "disabled_until": 1789413521.464,
       "last_error": "rate_limit",
       "last_success": 0
     },

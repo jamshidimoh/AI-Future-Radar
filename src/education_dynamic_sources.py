@@ -68,9 +68,10 @@ def dynamic_source_candidates(lesson: dict, existing: list[dict] | None = None, 
     """
     existing = list(existing or [])
     seen = {str(x.get("url", "")).rstrip("/").lower() for x in existing if x.get("url")}
-    scored = []
+    scored: list[dict] = []
     for source in SOURCE_POOL:
-        if _same_url(source.get("url"), "") or str(source.get("url")).rstrip("/").lower() in seen:
+        url = str(source.get("url") or "")
+        if _same_url(url, "") or url.rstrip("/").lower() in seen:
             continue
         score = _topic_score(lesson, source)
         if score <= 0:

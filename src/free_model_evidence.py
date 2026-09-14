@@ -88,7 +88,7 @@ def benchmark_record(benchmark: dict) -> dict:
     """Normalize an OpenRouter benchmark item into reusable evidence fields."""
     return {
         "benchmark_source": str(benchmark.get("source") or "unknown"),
-        "benchmark_model_id": normalize_model_id(benchmark.get("model_permaslug")),
+        "benchmark_model_id": normalize_model_id(str(benchmark.get("model_permaslug") or "")),
         "intelligence_index": _number(benchmark.get("intelligence_index"), -1),
         "agentic_index": _number(benchmark.get("agentic_index"), -1),
         "coding_index": _number(benchmark.get("coding_index"), -1),

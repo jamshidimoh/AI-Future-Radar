@@ -12,15 +12,15 @@ PRODUCTION_ENTRYPOINT = ROOT / "production_entrypoint.py"
 def test_rank_one_uses_absolute_quality_floor_not_adaptive_baseline():
     assert normal_score_allowed(73.30, 73.30)
     assert normal_score_allowed(63.29, 73.30)
-    assert normal_score_allowed(63.30, 73.30)
-    assert not normal_score_allowed(59.99, 73.30)
+    assert normal_score_allowed(55.00, 73.30)
+    assert not normal_score_allowed(54.99, 73.30)
 
 
 def test_normal_score_rejection_diagnostic_uses_absolute_floor():
     text = PRODUCTION_ENTRYPOINT.read_text(encoding="utf-8")
     assert "normal_score_policy_blocked:{score}<floor:{NORMAL_SCORE_FLOOR}" in text
     assert "normal_score_policy_blocked:{score}<={previous_normal_score}" not in text
-    assert NORMAL_SCORE_FLOOR == 60.0
+    assert NORMAL_SCORE_FLOOR == 55.0
 
 
 def test_mission_portfolio_is_explicit_and_not_generic_ai_only():
@@ -94,7 +94,7 @@ def test_production_state_preserves_real_baseline_fields():
 def test_acceptance_prefers_final_summary_budget_over_ranked_candidate_count():
     log = """
 [Selection Timing] original_select candidates=15 candidate_window=6 elapsed=1.0s
-[Publication Summary Budget] input=5 protected=2 normal_window=3 output=5 normal_limit=5 replacement_buffer=2 score_floor=60.0
+[Publication Summary Budget] input=5 protected=2 normal_window=3 output=5 normal_limit=5 replacement_buffer=2 score_floor=55.0
 [Production Contract] normal_news=3 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
 Posts sent: 3/5
 """

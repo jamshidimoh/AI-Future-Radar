@@ -1,0 +1,11 @@
+# Supplemental Google News discovery queries.
+# Discovery leads still pass through the normal relevance, event identity,
+# quality, ranking and publication contracts. No source bypass is created here.
+google_news_queries:
+  - name: "Hugging Face Papers"
+    query: "site:huggingface.co/papers (AI OR artificial intelligence OR machine learning OR robotics OR multimodal)"
+    category: ai
+    tier: 1
+    content_type: research
+    preferred_source: "Hugging Face Papers"
+    curated_discovery: true

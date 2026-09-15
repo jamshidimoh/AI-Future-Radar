@@ -19,7 +19,7 @@ from src.protected_story_identity import probable_same_story
 from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
 from src.semantic_dedup import get_story_signature
 from src.story_gate import _technology_relevant
-from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
+from src.unified_editorial_selection import load_editorial_contract, mission_area, select_regular_portfolio
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +112,25 @@ def _rotation_source_counts(history, rotation_days):
     return counts
 
 
+def _window_counts(history, window_items):
+    """Cross-run rotation counts over the last `window_items` published, non-education
+    items (a proxy for "the last `window_runs` runs" — see mission_policy.yaml's
+    rotation block, which sets window_runs/max_same_source_in_window/
+    max_same_area_in_window). Unlike _rotation_source_counts (a calendar-day lookback
+    used only as a soft ranking penalty), these counts feed a hard cap in
+    unified_editorial_selection._Portfolio.admissible.
+    """
+    recent = [r for r in (history or []) if str(r.get("content_type") or "").strip().lower() != "education"]
+    recent = recent[-max(0, int(window_items or 0)):] if window_items else []
+    source_counts, area_counts = {}, {}
+    for record in recent:
+        source = str(record.get("source") or "unknown").strip().lower() or "unknown"
+        source_counts[source] = source_counts.get(source, 0) + 1
+        area = mission_area(record)
+        area_counts[area] = area_counts.get(area, 0) + 1
+    return source_counts, area_counts
+
+
 def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type, policy):
     policy = policy or {}
     rotation_days = int(policy.get("rotation_days", 7) or 7)
@@ -126,12 +145,14 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
     limit = min(len(normal), max(requested + buffer, int(contract["candidate_window"] or 0)))
     strict_relevance = bool(policy.get("strict_relevance", False))
-    selected = select_regular_portfolio(normal, max_posts=limit, max_per_source=max_per_source, max_per_type=max_per_type, recent_source_counts=recent_source_counts, contract=contract, mission_aware=bool(policy.get("mission_aware", False)), strict_relevance=strict_relevance)
+    window_items = int(contract.get("window_runs", 6) or 6) * max(1, requested)
+    window_source_counts, window_area_counts = _window_counts(source_history, window_items)
+    selected = select_regular_portfolio(normal, max_posts=limit, max_per_source=max_per_source, max_per_type=max_per_type, recent_source_counts=recent_source_counts, contract=contract, mission_aware=bool(policy.get("mission_aware", False)), strict_relevance=strict_relevance, window_source_counts=window_source_counts, window_area_counts=window_area_counts)
     source_counts = {}
     for item in selected:
         key = _source_key(item)
         source_counts[key] = source_counts.get(key, 0) + 1
-    print(f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} source_counts={source_counts} recent_source_counts={recent_source_counts} adaptive=true preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))} strict_relevance={strict_relevance}", flush=True)
+    print(f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} source_counts={source_counts} recent_source_counts={recent_source_counts} window_items={window_items} window_source_counts={window_source_counts} window_area_counts={window_area_counts} adaptive=true preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))} strict_relevance={strict_relevance}", flush=True)
     return selected
 
 

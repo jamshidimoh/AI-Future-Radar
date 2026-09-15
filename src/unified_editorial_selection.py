@@ -30,7 +30,9 @@ def _load_yaml(path: Path) -> dict[str, Any]:
 
 
 def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str, Any]:
-    mission = _load_yaml(MISSION_PATH).get("mission", {})
+    mission_doc = _load_yaml(MISSION_PATH)
+    mission = mission_doc.get("mission", {})
+    rotation_cfg = mission_doc.get("rotation", {})
     selection_cfg = selection or _load_yaml(SELECTION_PATH).get("selection", {})
     return {
         "max_posts": int(selection_cfg.get("max_posts", mission.get("operational_publication_capacity", 4)) or 4),
@@ -55,6 +57,9 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "diversity_weight": float(selection_cfg.get("diversity_weight", 8.0) or 8.0),
         "similarity_penalty": float(selection_cfg.get("similarity_penalty", 12.0) or 12.0),
         "required_areas": ("ai_core", "convergence", "mind_cognition", "future_governance"),
+        "window_runs": int(rotation_cfg.get("window_runs", 6) or 6),
+        "max_same_source_in_window": int(rotation_cfg.get("max_same_source_in_window", 2) or 2),
+        "max_same_area_in_window": int(rotation_cfg.get("max_same_area_in_window", 3) or 3),
     }
 
 
@@ -148,7 +153,12 @@ def _safe_float(item: dict[str, Any], key: str) -> float:
 
 def _rank_key(item: dict[str, Any], recent_source_counts: dict[str, int]) -> tuple:
     source = source_key(item)
-    recent_penalty = min(3, max(0, int(recent_source_counts.get(source, 0) or 0))) * 2.0
+    # Uncapped: a source that keeps reappearing keeps accumulating penalty rather
+    # than saturating after 3 occurrences. A saturating penalty let a
+    # consistently high-scoring source (e.g. one aggregator outscoring everything
+    # else) dominate the feed indefinitely, since 3+ repeats always cost the same
+    # fixed 6 points regardless of how often it had actually been reused.
+    recent_penalty = max(0, int(recent_source_counts.get(source, 0) or 0)) * 2.0
     effective_score = candidate_score(item) - recent_penalty
     confidence = max(0.0, min(1.0, _safe_float(item, "ai_relevance_confidence")))
     evidence_strength = _safe_float(item, "evidence_strength")
@@ -178,7 +188,7 @@ def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, An
 
 
 class _Portfolio:
-    def __init__(self, *, contract: dict[str, Any], limit: int, source_cap: int, type_cap: int, recent: dict[str, int], mission_aware: bool):
+    def __init__(self, *, contract: dict[str, Any], limit: int, source_cap: int, type_cap: int, recent: dict[str, int], mission_aware: bool, window_source_counts: dict[str, int] | None = None, window_area_counts: dict[str, int] | None = None):
         self.selected: list[dict[str, Any]] = []
         self.selected_ids: set[int] = set()
         self.source_counts: dict[str, int] = {}
@@ -191,8 +201,10 @@ class _Portfolio:
         self.source_cap = source_cap
         self.type_cap = type_cap
         self.mission_aware = mission_aware
+        self.window_source_counts = window_source_counts or {}
+        self.window_area_counts = window_area_counts or {}
 
-    def admissible(self, item: dict[str, Any], *, repeat_source: bool, ignore_type_cap: bool = False) -> bool:
+    def admissible(self, item: dict[str, Any], *, repeat_source: bool, ignore_type_cap: bool = False, ignore_window_cap: bool = False) -> bool:
         source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
         if not ignore_type_cap and self.type_counts.get(ctype, 0) >= self.type_cap:
             return False
@@ -200,6 +212,16 @@ class _Portfolio:
             return False
         if self.mission_aware and self.area_counts.get(area, 0) >= self.contract["max_same_mission_area"]:
             return False
+        if not ignore_window_cap:
+            # Cross-run rotation cap: a single source/area must not keep dominating
+            # the feed across the last `window_runs` runs, independent of how well
+            # it scores within a single run. This is a hard cap with a bypass
+            # fallback (see _fill_by_portfolio_value / _backfill_repeat_sources)
+            # so a starved candidate pool never blocks publication entirely.
+            if self.window_source_counts.get(source, 0) >= int(self.contract.get("max_same_source_in_window", 2) or 2):
+                return False
+            if self.mission_aware and self.window_area_counts.get(area, 0) >= int(self.contract.get("max_same_area_in_window", 3) or 3):
+                return False
         current_source = self.source_counts.get(source, 0)
         return current_source < self.source_cap if repeat_source else current_source == 0
 
@@ -277,6 +299,10 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
         if not candidates:
             candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+        if not candidates:
+            # ai_core is normally the deepest candidate pool; only reach past the
+            # rotation window cap here if nothing else qualifies at all.
+            candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)]
         candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
         if candidate is None:
             break
@@ -301,6 +327,12 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             if not pool:
                 pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
             if not pool:
+                # These lanes (convergence / mind_cognition / future_governance / research)
+                # are already the scarcest candidate pools. The rotation window cap exists
+                # to stop a dominant source from crowding out other sources, not to make an
+                # already-rare lane even harder to fill — so it is relaxed here as a last resort.
+                pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)]
+            if not pool:
                 break
             baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and (target_key not in {"mind_future_target", "mind_cognition_target"} or mission_area(x) != "ai_core")]
             baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
@@ -324,7 +356,13 @@ def _fill_by_portfolio_value(p: _Portfolio, eligible: list[dict[str, Any]]) -> N
     while len(p.selected) < p.limit:
         unique_pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
         if not unique_pool:
-            break
+            # The rotation window cap (see admissible()) is a hard cap by design,
+            # but it must never be the sole reason a run publishes nothing. If
+            # relaxing only the window cap recovers candidates, use it as a
+            # last-resort bypass before giving up on this slot.
+            unique_pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_window_cap=True)]
+            if not unique_pool:
+                break
         best_item = _quality_floor_candidate(p, unique_pool)
         if best_item is None:
             break
@@ -347,7 +385,9 @@ def _backfill_repeat_sources(p: _Portfolio, eligible: list[dict[str, Any]]) -> N
     while len(p.selected) < p.limit:
         pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=True)]
         if not pool:
-            break
+            pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=True, ignore_window_cap=True)]
+            if not pool:
+                break
         top_score = max((candidate_score(x) for x in pool), default=0.0)
         floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
         viable = [x for x in pool if top_score <= 0 or candidate_score(x) >= top_score * floor]
@@ -384,7 +424,7 @@ def _annotate_final_information_gain(selected: list[dict[str, Any]]) -> None:
         item["portfolio_information_gain"] = information_gain_score(item, [x for x in selected if x is not item])
 
 
-def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False) -> list[dict[str, Any]]:
+def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False, window_source_counts: dict[str, int] | None = None, window_area_counts: dict[str, int] | None = None) -> list[dict[str, Any]]:
     contract = contract or load_editorial_contract()
     limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
@@ -392,7 +432,7 @@ def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts:
     recent = recent_source_counts or {}
     eligible = _eligible_candidates(candidates, contract, strict_relevance)
     ordered = sorted(eligible, key=lambda x: _rank_key(x, recent))
-    portfolio = _Portfolio(contract=contract, limit=limit, source_cap=source_cap, type_cap=type_cap, recent=recent, mission_aware=mission_aware)
+    portfolio = _Portfolio(contract=contract, limit=limit, source_cap=source_cap, type_cap=type_cap, recent=recent, mission_aware=mission_aware, window_source_counts=window_source_counts, window_area_counts=window_area_counts)
     _fill_mission_targets(portfolio, ordered)
     _fill_by_portfolio_value(portfolio, eligible)
     _backfill_repeat_sources(portfolio, eligible)

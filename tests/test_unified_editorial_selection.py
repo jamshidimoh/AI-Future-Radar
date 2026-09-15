@@ -96,3 +96,71 @@ def test_high_value_convergence_can_win_on_score_without_a_mandatory_slot():
     titles = [x["title"] for x in selected]
     assert "Transformative robotics breakthrough" in titles
     assert "Weak policy commentary" not in titles
+
+
+def test_editorial_contract_loads_rotation_window_from_mission_policy():
+    mission = _load("config/mission_policy.yaml")["mission"]
+    rotation = _load("config/mission_policy.yaml")["rotation"]
+    contract = load_editorial_contract()
+    assert contract["window_runs"] == rotation["window_runs"]
+    assert contract["max_same_source_in_window"] == rotation["max_same_source_in_window"]
+    assert contract["max_same_area_in_window"] == rotation["max_same_area_in_window"]
+    assert mission["max_same_source"] <= rotation["max_same_source_in_window"]
+
+
+def test_window_source_cap_blocks_a_dominant_source_when_an_alternative_exists():
+    candidates = [
+        item("Repeat source pick 1", "MarkTechPost", 100, area="ai"),
+        item("Repeat source pick 2", "MarkTechPost", 99, area="ai"),
+        item("Repeat source pick 3", "MarkTechPost", 98, area="ai"),
+        item("Fresh alternative source", "Ars Technica", 90, area="ai"),
+    ]
+    contract = load_editorial_contract()
+    contract["convergence_target"] = contract["mind_cognition_target"] = contract["mind_future_target"] = contract["research_target"] = 0
+    contract["ai_core_target_min"] = 0
+    # MarkTechPost already hit its cross-run cap over the last window.
+    selected = select_regular_portfolio(
+        candidates, max_posts=1, max_per_source=2, max_per_type=3,
+        recent_source_counts={}, contract=contract, mission_aware=True, strict_relevance=True,
+        window_source_counts={"marktechpost": contract["max_same_source_in_window"]}, window_area_counts={},
+    )
+    assert [x["title"] for x in selected] == ["Fresh alternative source"]
+
+
+def test_window_source_cap_is_bypassed_rather_than_publishing_nothing():
+    candidates = [
+        item("Only available source pick 1", "MarkTechPost", 100, area="ai"),
+        item("Only available source pick 2", "MarkTechPost", 99, area="ai"),
+    ]
+    contract = load_editorial_contract()
+    contract["convergence_target"] = contract["mind_cognition_target"] = contract["mind_future_target"] = contract["research_target"] = 0
+    contract["ai_core_target_min"] = 0
+    # Every candidate is from a source already at its window cap; the run must
+    # still publish rather than yield zero items.
+    selected = select_regular_portfolio(
+        candidates, max_posts=1, max_per_source=2, max_per_type=3,
+        recent_source_counts={}, contract=contract, mission_aware=True, strict_relevance=True,
+        window_source_counts={"marktechpost": contract["max_same_source_in_window"]}, window_area_counts={},
+    )
+    assert len(selected) == 1
+    assert selected[0]["source"] == "MarkTechPost"
+
+
+def test_window_area_cap_prefers_an_underrepresented_area():
+    candidates = [
+        item("AI core pick", "OpenAI", 100, area="ai"),
+        item("Second AI core pick", "Anthropic", 95, area="ai"),
+        item("Convergence pick", "MIT CSAIL", 80, area="robotics", content_type="research", research_signal=True),
+    ]
+    contract = load_editorial_contract()
+    contract["convergence_target"] = contract["mind_cognition_target"] = contract["mind_future_target"] = contract["research_target"] = 0
+    contract["ai_core_target_min"] = 0
+    contract["ai_core_target_max"] = 2
+    selected = select_regular_portfolio(
+        candidates, max_posts=3, max_per_source=1, max_per_type=3,
+        recent_source_counts={}, contract=contract, mission_aware=True, strict_relevance=True,
+        window_source_counts={}, window_area_counts={"ai_core": contract["max_same_area_in_window"]},
+    )
+    titles = [x["title"] for x in selected]
+    assert "Convergence pick" in titles
+    assert len(titles) <= 2

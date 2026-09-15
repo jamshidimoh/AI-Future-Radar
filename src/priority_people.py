@@ -8,7 +8,7 @@ import yaml
 
 from src.expert_registry import apply_expert_features
 
-TOP_AI_VOICES={"elon musk","sam altman","demis hassabis","dario amodei","jensen huang","yann lecun","yoshua bengio","geoffrey hinton","andrew ng","eric schmidt","ilya sutskever","noam shazeer","fei-fei li","stuart russell","nick bostrom","yuval noah harari","mustafa suleyman","mark zuckerberg","satya nadella","lisa su"}
+TOP_AI_VOICES={"elon musk","sam altman","demis hassabis","dario amodei","jensen huang","yann lecun","yoshua bengio","andrew ng","eric schmidt","ilya sutskever","noam shazeer","fei-fei li","stuart russell","nick bostrom","yuval noah harari","mustafa suleyman","mark zuckerberg","satya nadella","lisa su"}
 PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","altman","سم آلتمن","سم التمن"),"demis hassabis":("demis hassabis","hassabis"),"dario amodei":("dario amodei","amodei"),"jensen huang":("jensen huang","huang"),"yann lecun":("yann lecun","yann le cun","lecun"),"yoshua bengio":("yoshua bengio","bengio"),"geoffrey hinton":("geoffrey hinton","hinton"),"andrew ng":("andrew ng",),"eric schmidt":("eric schmidt","schmidt"),"ilya sutskever":("ilya sutskever","sutskever"),"noam shazeer":("noam shazeer","shazeer"),"fei-fei li":("fei-fei li","fei fei li","fei-fei","fei fei"),"stuart russell":("stuart russell","russell"),"nick bostrom":("nick bostrom","bostrom"),"yuval noah harari":("yuval noah harari","yuval harari","harari"),"mustafa suleyman":("mustafa suleyman","suleyman"),"mark zuckerberg":("mark zuckerberg","zuckerberg"),"satya nadella":("satya nadella","nadella"),"lisa su":("lisa su",)}
 INTERVIEW_TYPES={"interview","podcast","talk","lecture","fireside","conversation","discussion","q&a"}
 INTERVIEW_TERMS=("interview","podcast","fireside chat","conversation","q&a","keynote q&a","question and answer","speaks with","talks with","in conversation","sit-down","سخنرانی","مصاحبه","پادکست","گفتگو","گفت‌وگو","پرسش و پاسخ")
@@ -20,6 +20,10 @@ _IDEA_CACHE: list[dict[str, object]] | None = None
 _NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\w){re.escape(alias)}(?!\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
 _SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
 _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TERMS), re.I)
+
+_WORD_TERM_RE_CACHE: dict[str, re.Pattern[str]] = {}
+_UNSAFE_IDEA_TERMS = {"phi", "iit", "bci"}
+
 
 def _bounded(value: object, limit: int) -> str:
     return str(value or "")[:limit]
@@ -80,14 +84,66 @@ def _load_ideas() -> list[dict[str, object]]:
         _IDEA_CACHE = []
     return _IDEA_CACHE
 
+def _term_pattern(term: str) -> re.Pattern[str]:
+    normalized = _normalize(term.strip().lower())
+    cached = _WORD_TERM_RE_CACHE.get(normalized)
+    if cached is not None:
+        return cached
+    escaped = re.escape(normalized).replace(r"\ ", r"\\s+")
+    pattern = re.compile(rf"(?<!\w){escaped}(?!\w)", re.I)
+    _WORD_TERM_RE_CACHE[normalized] = pattern
+    return pattern
+
+def _idea_terms(idea: dict[str, object]) -> list[str]:
+    terms: list[str] = []
+    for raw in (idea.get("ai_bridge_terms") or []):
+        term = str(raw).strip().lower()
+        if not term or term in _UNSAFE_IDEA_TERMS:
+            continue
+        terms.append(term)
+    return terms
+
+def _idea_area(idea: dict[str, object]) -> str:
+    return str(idea.get("mission_area") or "").strip().lower()
+
+def _apply_directional_idea_metadata(item, ideas: list[str], matched_details: list[dict[str, object]]) -> None:
+    item["priority_idea_areas"] = sorted({x for x in (_idea_area(d) for d in matched_details) if x})
+    matched_people = matched_priority_people(item)
+    item["priority_idea_people"] = matched_people
+    ai_people = {str(x).casefold() for x in TOP_AI_VOICES}
+    mind_people = {
+        str(x.get("name") or "").casefold()
+        for group in ("consciousness_and_mind_ai", "futurists_and_long_term_thinkers")
+        for x in []
+    }
+    watch_names = {str(d.get("name") or "").casefold() for d in _load_ideas() if d.get("name")}
+    _ = watch_names
+    categories = {str(item.get("person_category") or item.get("leader_category") or "").casefold()}
+    explicit_names = {p.casefold() for p in matched_people}
+    item["person_idea_direction"] = ""
+    if ideas and explicit_names:
+        has_ai = bool(explicit_names & ai_people) or any(c in {"ai_architect", "ai_scientist", "ai_builder", "technology_strategist"} for c in categories)
+        has_mind = bool(explicit_names - ai_people)
+        if has_ai and any(a == "mind_cognition" for a in item["priority_idea_areas"]):
+            item["person_idea_direction"] = "ai_to_mind"
+        elif has_mind and any(a == "ai_core" for a in item["priority_idea_areas"]):
+            item["person_idea_direction"] = "mind_to_ai"
+        elif has_mind:
+            item["person_idea_direction"] = "mind_to_mind"
+        elif has_ai:
+            item["person_idea_direction"] = "ai_to_ai"
+
 def _match_priority_ideas(item, text: str) -> list[str]:
     matches: list[str] = []
+    details: list[dict[str, object]] = []
     for idea in _load_ideas():
-        terms = [str(x).strip().lower() for x in (idea.get("ai_bridge_terms") or []) if str(x).strip()]
+        terms = _idea_terms(idea)
         if not terms:
             continue
-        if any(_normalize(term) in text for term in terms):
+        if any(_term_pattern(_normalize(term)).search(text) for term in terms):
             matches.append(str(idea.get("name") or "").strip())
+            details.append(idea)
+    _apply_directional_idea_metadata(item, matches, details)
     return sorted(set(x for x in matches if x))
 
 def _apply_idea_signal(item, text: str) -> list[str]:

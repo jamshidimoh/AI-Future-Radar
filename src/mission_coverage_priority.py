@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from contextlib import suppress
 from typing import Any
 
 from src.unified_editorial_selection import mission_area
@@ -69,10 +70,8 @@ def annotate_recovery_candidates(items: Iterable[dict[str, Any]], history: Itera
         item["historical_mission_area_count"] = int(counts.get(area, 0) or 0)
         item["mission_coverage_bonus"] = bonus
         if bonus > 0:
-            try:
+            with suppress(TypeError, ValueError):
                 item["final_editorial_score"] = round(_score(item) + bonus, 2)
-            except (TypeError, ValueError):
-                pass
         prepared.append(item)
     prepared.sort(key=lambda x: (float(x.get("mission_coverage_bonus", 0) or 0), _score(x), str(x.get("published", ""))), reverse=True)
     return prepared

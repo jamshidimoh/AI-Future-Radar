@@ -308,7 +308,7 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             if candidate is None:
                 break
             floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
-            if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
+            if target_key in {"mind_future_target", "research_target"} and baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
                 break
             candidate_area = mission_area(candidate)
             if target_key == "mind_cognition_target" or candidate_area == "mind_cognition":

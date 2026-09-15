@@ -1,3 +1,7 @@
+from pathlib import Path
+
+import yaml
+
 import src.priority_people as priority_people
 
 
@@ -31,8 +35,6 @@ def test_mind_to_ai_direction_is_explicit(monkeypatch):
 
 
 def test_friston_is_mapped_to_mind_domain_in_pioneers():
-    from pathlib import Path
-    import yaml
     data = yaml.safe_load(Path("config/pioneers.yaml").read_text(encoding="utf-8"))
     row = next(x for x in data["people"] if x["name"] == "Karl Friston")
     assert row["category"] == "mind_consciousness"

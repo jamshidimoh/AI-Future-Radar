@@ -19,7 +19,6 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
           p = Path('src/unified_editorial_selection.py')
           s = p.read_text(encoding='utf-8')
           start = s.index('def _fill_mission_targets(')
@@ -65,8 +64,12 @@ jobs:
                       break
                   p.add(candidate, "mission_target:mind_cognition")
 
+              # The dedicated mind/cognition floor supersedes the legacy combined
+              # mind/future opportunity whenever it is explicitly configured.
+              legacy_targets = 0 if mind_target > 0 else p.contract.get("mind_future_target", 0)
               for target_key, area_predicate in (("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}), ("research_target", _is_research)):
-                  for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
+                  target_count = legacy_targets if target_key == "mind_future_target" else p.contract.get(target_key, 0)
+                  for _ in range(min(target_count, max(0, p.limit - len(p.selected)))):
                       pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
                       if not pool:
                           pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
@@ -97,5 +100,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           rm -f .github/workflows/_temporary_mind_floor_order_fix.yml
           git add src/unified_editorial_selection.py .github/workflows/_temporary_mind_floor_order_fix.yml
-          git commit -m 'fix: order convergence before mind cognition floor'
+          git commit -m 'fix: make mind cognition floor authoritative over legacy target'
           git push origin HEAD:${{ github.head_ref }}

@@ -33,6 +33,7 @@ mission:
   community_max: 0
   ai_core_target: [1, 2]
   convergence_target: 1
+  mind_cognition_target: 1
   mind_future_target: 1
   research_target: 0
   interview_target_max: 1

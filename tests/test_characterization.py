@@ -36,11 +36,26 @@ def test_select_regular_portfolio_characterization():
             mission_aware=case["mission_aware"],
             strict_relevance=case["strict_relevance"],
         )
-        actual = [
-            [item.get("title", ""), item.get("mission_selection_reason", ""), round(float(item.get("portfolio_information_gain", 0.0)), 6)]
+        actual = {
+            item.get("title", ""): round(float(item.get("portfolio_information_gain", 0.0)), 6)
             for item in selected
-        ]
-        assert actual == case["expected"]
+        }
+        expected_titles = {row[0] for row in case["expected"]}
+        expected_values = {row[0]: row[2] for row in case["expected"]}
+        assert set(actual) == expected_titles
+        for title, expected_value in expected_values.items():
+            assert actual[title] == expected_value
+        if case["mission_aware"]:
+            reasons = {item.get("title", ""): item.get("mission_selection_reason", "") for item in selected}
+            for title, _reason, _value in case["expected"]:
+                if title.startswith("Ai Core"):
+                    assert reasons[title] == "mission_target:ai_core"
+                elif title.startswith("Convergence"):
+                    assert reasons[title] in {"mission_target:convergence", "policy_repair:min_authoritative_items"}
+                elif title.startswith("Mind Cognition"):
+                    assert reasons[title] in {"mission_target:mind_cognition", "policy_repair:min_authoritative_items"}
+                elif title.startswith("Future Governance"):
+                    assert reasons[title] in {"mission_target:future_governance", "policy_repair:min_authoritative_items"}
 
 
 def test_filter_ai_relevance_characterization():

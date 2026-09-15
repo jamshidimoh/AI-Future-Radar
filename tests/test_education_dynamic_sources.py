@@ -41,3 +41,16 @@ def test_rank_verified_sources_prefers_relevance_then_authority():
     ]
     ranked = module.rank_verified_sources(sources)
     assert ranked[0]["url"] == "https://high.example"
+
+
+def test_dynamic_candidates_never_return_globally_excluded_urls():
+    module = importlib.import_module("src.education_dynamic_sources")
+    lesson = {
+        "id": 999,
+        "title": "AI",
+        "a": {"term": "AI", "seed": "AI"},
+        "b": {"term": "agents", "seed": "agents"},
+    }
+    blocked = {"name": "blocked", "url": "https://arxiv.org/abs/1234.5678"}
+    candidates = module.dynamic_source_candidates(lesson, [blocked], limit=20)
+    assert all("arxiv.org" not in str(item.get("url", "")).casefold() for item in candidates)

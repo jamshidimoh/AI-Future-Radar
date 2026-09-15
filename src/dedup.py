@@ -203,7 +203,7 @@ def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
     if _is_education(item):
         identity=_education_identity(item)
         if identity: seen_signatures.append(STORY_MARKER+identity)
-        if source_history is not None: source_history.append({"ts":int(time.time()),"source":item.get("source","education"),"category":item.get("category","ai"),"content_type":"education","leader":"","story_id":identity})
+        if source_history is not None: source_history.append({"ts":int(time.time()),"source":item.get("source","education"),"category":item.get("category","ai"),"mission_area":item.get("mission_area",""),"content_type":"education","leader":"","story_id":identity})
         return seen_hashes,seen_signatures,source_history
     link_hash,identity=_hash_link(item.get("link", "")),_story_id(item); seen_hashes.add(link_hash)
     if _is_protected_leader(item): seen_signatures.append(PROTECTED_MARKER+link_hash)
@@ -211,5 +211,5 @@ def mark_as_seen(item, seen_hashes, seen_signatures, source_history=None):
     seen_signatures.append(get_signature(item.get("title", ""))); seen_signatures.append(encode_story_signature(item))
     try: seen_signatures.append(EVENT_MARKER+json.dumps(_event_payload(item),ensure_ascii=False,sort_keys=True,separators=(",",":")))
     except Exception as exc: logger.warning("Could not encode event identity history: %s", exc, exc_info=True)
-    if source_history is not None: source_history.append({"ts":int(time.time()),"source":item.get("source","unknown"),"category":item.get("category","ai"),"content_type":item.get("content_type","news"),"leader":item.get("leader") or item.get("watch_person") or item.get("_leader_match", ""),"story_id":identity})
+    if source_history is not None: source_history.append({"ts":int(time.time()),"source":item.get("source","unknown"),"category":item.get("category","ai"),"mission_area":item.get("mission_area",""),"content_type":item.get("content_type","news"),"leader":item.get("leader") or item.get("watch_person") or item.get("_leader_match", ""),"story_id":identity})
     return seen_hashes,seen_signatures,source_history

@@ -52,6 +52,13 @@ protected_sources:
     selection_mode: "priority"
     duplicate_key: "source"
 
+# Cross-run rotation cap, enforced by src/unified_editorial_selection.py
+# (load_editorial_contract + _Portfolio.admissible) via
+# period_ranked_pipeline.py's _window_counts. window_runs is approximated as
+# window_runs * max_posts most-recently-published, non-education items. This
+# is a hard cap with a last-resort bypass so a starved candidate pool never
+# blocks publication outright (see the ignore_window_cap fallbacks in
+# unified_editorial_selection.py).
 rotation:
   window_runs: 6
   max_same_area_in_window: 3

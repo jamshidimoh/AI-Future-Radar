@@ -98,3 +98,24 @@ def test_tier0_exact_url_repeat_is_still_blocked(monkeypatch):
     monkeypatch.setattr(pipeline, "_load_records", lambda: [record])
     monkeypatch.setattr(pipeline, "_semantic_conflict", lambda *args, **kwargs: 0.95)
     assert pipeline._exclude_published_candidates([candidate]) == []
+
+
+def test_window_counts_scopes_to_last_n_non_education_items():
+    history = [
+        {"ts": 1, "source": "MarkTechPost", "category": "ai", "content_type": "research"},
+        {"ts": 2, "source": "MarkTechPost", "category": "ai", "content_type": "research"},
+        {"ts": 3, "source": "education", "category": "ai", "content_type": "education"},
+        {"ts": 4, "source": "Simon Willison", "category": "ai", "content_type": "analysis"},
+        {"ts": 5, "source": "Nature", "category": "mind", "content_type": "research"},
+    ]
+    source_counts, area_counts = pipeline._window_counts(history, window_items=3)
+    # Education entries are excluded from the window before slicing, and only the
+    # last 3 non-education entries are counted.
+    assert source_counts == {"marktechpost": 1, "simon willison": 1, "nature": 1}
+    assert area_counts["mind_cognition"] == 1
+
+
+def test_window_counts_empty_history_returns_empty_counts():
+    source_counts, area_counts = pipeline._window_counts([], window_items=6)
+    assert source_counts == {}
+    assert area_counts == {}

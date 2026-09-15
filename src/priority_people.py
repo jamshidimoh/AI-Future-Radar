@@ -74,8 +74,10 @@ def _load_ideas() -> list[dict[str, object]]:
     raw = payload.get("ideas_and_theories", [])
     if isinstance(raw, dict):
         _IDEA_CACHE = [dict(value, name=str(key)) for key, value in raw.items() if isinstance(value, dict)]
-    else:
+    elif isinstance(raw, list):
         _IDEA_CACHE = [x for x in raw if isinstance(x, dict)]
+    else:
+        _IDEA_CACHE = []
     return _IDEA_CACHE
 
 def _match_priority_ideas(item, text: str) -> list[str]:

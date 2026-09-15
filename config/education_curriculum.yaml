@@ -11,7 +11,6 @@ education:
       - ai.google.dev
       - hai.stanford.edu
       - oecd.org
-      - arxiv.org
     rule: "Use primary standards, official technical documentation, major research papers and current authoritative reports. Do not invent citations."
   lessons:
     - id: 1
@@ -74,7 +73,6 @@ education:
       b: {term: "Transformer", fa: "ترنسفورمر", seed: "معماری عصبی مبتنی بر مکانیزم‌های attention که برای پردازش توالی‌ها طراحی شد و پایه بسیاری از مدل‌های زبانی مدرن است."}
       relation: "Attention یک مکانیزم است؛ Transformer معماری‌ای است که از attention به‌صورت مرکزی استفاده می‌کند."
       sources:
-        - {name: "Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762"}
         - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
     - id: 9
       title: "Foundation Model و LLM"
@@ -91,7 +89,6 @@ education:
       relation: "Pre-training قابلیت عمومی می‌سازد؛ fine-tuning آن را برای هدف مشخص‌تر تنظیم می‌کند."
       sources:
         - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-        - {name: "LoRA", url: "https://arxiv.org/abs/2106.09685"}
     - id: 11
       title: "Prompt و In-context Learning"
       a: {term: "Prompt", fa: "پرامپت", seed: "ورودی متنی یا چندوجهی که رفتار و پاسخ مدل مولد را شرطی می‌کند."}
@@ -99,7 +96,6 @@ education:
       relation: "Prompt وسیله تعامل است؛ in-context learning یکی از توانایی‌هایی است که می‌تواند از طریق prompt و مثال در اختیار مدل قرار گیرد."
       sources:
         - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-        - {name: "Language Models are Few-Shot Learners", url: "https://arxiv.org/abs/2005.14165"}
     - id: 12
       title: "Hallucination و Grounding"
       a: {term: "Hallucination", fa: "توهم‌زایی مدل", seed: "تولید خروجی نادرست یا ساختگی که ممکن است با لحن مطمئن ارائه شود."}
@@ -114,7 +110,6 @@ education:
       b: {term: "Vector Database", fa: "پایگاه داده برداری", seed: "سامانه‌ای برای ذخیره و بازیابی نمایش‌های برداری بر اساس شباهت، که برای جست‌وجوی معنایی کاربرد دارد."}
       relation: "RAG یک معماری/الگوست؛ vector database می‌تواند یکی از اجزای بازیابی آن باشد."
       sources:
-        - {name: "Retrieval-Augmented Generation", url: "https://arxiv.org/abs/2005.11401"}
         - {name: "Google AI Embeddings", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
     - id: 14
       title: "Multimodal AI و Vision-Language Model"
@@ -122,7 +117,6 @@ education:
       b: {term: "Vision-Language Model (VLM)", fa: "مدل بینایی-زبانی", seed: "مدلی که اطلاعات تصویری و زبانی را در یک سامانه برای درک یا تولید ترکیبی به کار می‌گیرد."}
       relation: "VLM یک نمونه مهم از AI چندوجهی است؛ multimodal مفهوم گسترده‌تری است."
       sources:
-        - {name: "A Survey on Multimodal Large Language Models", url: "https://arxiv.org/abs/2306.13549"}
         - {name: "Google AI Embeddings 2", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
     - id: 15
       title: "AI Agent و Tool Use"
@@ -130,8 +124,8 @@ education:
       b: {term: "Tool Use", fa: "استفاده از ابزار", seed: "توانایی مدل یا عامل برای فراخوانی ابزارهای بیرونی مانند جست‌وجو، API، پایگاه داده یا اجرای کد برای انجام کار."}
       relation: "Tool use یکی از قابلیت‌های سازنده agentic systems است؛ یک agent معمولاً از ابزارها برای تبدیل پاسخ متنی به عمل استفاده می‌کند."
       sources:
-        - {name: "NIST SP 1500-29: AI Terminology", url: "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=959510"}
-        - {name: "ReAct: Reasoning and Acting", url: "https://arxiv.org/abs/2210.03629"}
+        - {name: "NIST: Lessons Learned from the Consortium — Tool Use in Agent Systems", url: "https://www.nist.gov/news-events/news/2025/08/lessons-learned-consortium-tool-use-agent-systems", year: 2025}
+        - {name: "Google Developers: Agents, Agent Engine and A2A Enhancements", url: "https://developers.googleblog.com/en/agents-adk-agent-engine-a2a-enhancements-google-io/", year: 2025}
     - id: 16
       title: "Context Window و Memory"
       a: {term: "Context Window", fa: "پنجره زمینه", seed: "مقدار اطلاعاتی که مدل می‌تواند در یک درخواست و پاسخ به‌عنوان زمینه پردازش کند؛ معمولاً با token اندازه‌گیری می‌شود."}
@@ -146,7 +140,6 @@ education:
       b: {term: "Instruction Tuning", fa: "تنظیم دستوری", seed: "آموزش مدل با نمونه‌های دستور-پاسخ برای بهتر دنبال کردن دستورهای کاربر."}
       relation: "هر دو برای بهبود رفتار مدل استفاده می‌شوند، اما instruction tuning معمولاً با داده‌های نمونه‌ای و RLHF با سیگنال ترجیح انسانی و مرحله تقویتی شناخته می‌شود."
       sources:
-        - {name: "Training language models to follow instructions with human feedback", url: "https://arxiv.org/abs/2203.02155"}
         - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
     - id: 18
       title: "LoRA و Parameter-Efficient Fine-Tuning"
@@ -154,7 +147,6 @@ education:
       b: {term: "Parameter-Efficient Fine-Tuning (PEFT)", fa: "ریزتنظیم کم‌پارامتر", seed: "خانواده روش‌هایی که برای سازگار کردن مدل، به‌جای آموزش همه پارامترها تنها بخش کوچکی از پارامترها را تغییر می‌دهند."}
       relation: "LoRA یکی از روش‌های شناخته‌شده PEFT است."
       sources:
-        - {name: "LoRA paper", url: "https://arxiv.org/abs/2106.09685"}
         - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
     - id: 19
       title: "Benchmark و Evaluation"

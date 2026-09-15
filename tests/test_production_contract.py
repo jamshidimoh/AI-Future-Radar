@@ -117,17 +117,21 @@ def test_weak_leader_activity_cannot_remain_tier0(monkeypatch):
         lambda: {"candidate_window": 6, "replacement_buffer": 3, "max_posts": 3},
     )
 
+    # _prepare_rank_features is intentionally stubbed in this focused test,
+    # so seed the downstream ranking fields that the real preparer normally sets.
     weak = {
         "title": "Weak leader activity",
         "leader": "Leader",
         "protected_slot": True,
         "_rank_is_tier0": True,
         "editorial_score": 31.38,
+        "final_editorial_score": 31.38,
     }
     strong = {
         "title": "Strong normal story",
         "_rank_is_tier0": False,
         "editorial_score": 63.0,
+        "final_editorial_score": 63.0,
     }
 
     ranked = period_ranked_pipeline._global_ranked_selection(
@@ -139,4 +143,3 @@ def test_weak_leader_activity_cannot_remain_tier0(monkeypatch):
     assert weak["protected_content"] is False
     assert weak in ranked
     assert strong in ranked
-

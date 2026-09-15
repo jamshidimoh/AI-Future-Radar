@@ -55,7 +55,7 @@ def mission_coverage_bonus(item: dict[str, Any], area_counts: dict[str, int], co
         return 0.0
     if _tier(item) not in {1, 2}:
         return 0.0
-    return 1.5 if count == 0 else 0.75
+    return 1.5 if count == 0 else 1.0
 
 
 def annotate_recovery_candidates(items: Iterable[dict[str, Any]], history: Iterable[dict[str, Any]], contract: dict[str, Any]) -> list[dict[str, Any]]:
@@ -64,8 +64,15 @@ def annotate_recovery_candidates(items: Iterable[dict[str, Any]], history: Itera
     prepared: list[dict[str, Any]] = []
     for raw in items or []:
         item = dict(raw)
-        item["historical_mission_area_count"] = int(counts.get(mission_area(item), 0) or 0)
-        item["mission_coverage_bonus"] = mission_coverage_bonus(item, counts, contract)
+        area = mission_area(item)
+        bonus = mission_coverage_bonus(item, counts, contract)
+        item["historical_mission_area_count"] = int(counts.get(area, 0) or 0)
+        item["mission_coverage_bonus"] = bonus
+        if bonus > 0:
+            try:
+                item["final_editorial_score"] = round(_score(item) + bonus, 2)
+            except (TypeError, ValueError):
+                pass
         prepared.append(item)
     prepared.sort(key=lambda x: (float(x.get("mission_coverage_bonus", 0) or 0), _score(x), str(x.get("published", ""))), reverse=True)
     return prepared

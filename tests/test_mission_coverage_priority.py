@@ -1,6 +1,6 @@
+from period_ranked_pipeline import canonical_rank_score
 from src.mission_coverage_priority import annotate_recovery_candidates, historical_area_counts, mission_coverage_bonus
 from src.unified_editorial_selection import mission_area
-from period_ranked_pipeline import canonical_rank_score
 
 
 def test_mission_area_uses_keyword_classification_before_research_fallback():

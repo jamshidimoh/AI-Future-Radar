@@ -23,6 +23,17 @@ _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TER
 _WORD_TERM_RE_CACHE: dict[str, re.Pattern[str]] = {}
 _UNSAFE_IDEA_TERMS = {"phi", "iit", "bci"}
 _MIND_CATEGORIES = {"mind_consciousness", "philosophy_of_mind", "cognitive_science"}
+_AI_PERSON_GROUPS = {"featured_ai_leaders", "ai_builders", "technology_strategists_and_industry_thinkers"}
+_MIND_PERSON_GROUPS = {"consciousness_and_mind_ai"}
+_IDEA_SUBLANE_BY_NAME = {
+    "consciousness": "ai_consciousness",
+    "predictive_processing": "human_mind",
+    "global_workspace": "human_mind",
+    "integrated_information": "human_mind",
+    "embodied_and_extended_mind": "human_mind",
+    "philosophy_of_mind_and_ai": "philosophy_of_mind",
+    "future_of_mind": "future_of_mind",
+}
 
 
 def _bounded(value: object, limit: int) -> str:
@@ -121,6 +132,10 @@ def _idea_terms(idea: dict[str, object]) -> list[str]:
 def _idea_area(idea: dict[str, object]) -> str:
     return str(idea.get("mission_area") or "").strip().lower()
 
+def _idea_sublane(idea: dict[str, object]) -> str:
+    name = str(idea.get("name") or "").strip().lower()
+    return _IDEA_SUBLANE_BY_NAME.get(name, "")
+
 def _person_groups(people: list[str]) -> set[str]:
     normalized = {_normalize(x) for x in people}
     groups: set[str] = set()
@@ -131,13 +146,15 @@ def _person_groups(people: list[str]) -> set[str]:
 
 def _apply_directional_idea_metadata(item, ideas: list[str], matched_details: list[dict[str, object]]) -> None:
     areas = sorted({x for x in (_idea_area(d) for d in matched_details) if x})
+    sublanes = sorted({x for x in (_idea_sublane(d) for d in matched_details) if x})
     item["priority_idea_areas"] = areas
+    item["priority_idea_sublanes"] = sublanes
     matched_people = matched_priority_people(item)
     item["priority_idea_people"] = matched_people
     groups = _person_groups(matched_people)
     item["person_idea_direction"] = ""
-    has_ai_person = bool(set(matched_people) & TOP_AI_VOICES) or bool(groups & {"ai_builders", "featured_ai_leaders", "technology_strategists_and_industry_thinkers"})
-    has_mind_person = bool(groups & {"consciousness_and_mind_ai"}) or bool(str(item.get("person_category") or item.get("leader_category") or "").strip().lower() in _MIND_CATEGORIES)
+    has_ai_person = bool(set(matched_people) & TOP_AI_VOICES) or bool(groups & _AI_PERSON_GROUPS)
+    has_mind_person = bool(groups & _MIND_PERSON_GROUPS) or bool(str(item.get("person_category") or item.get("leader_category") or "").strip().lower() in _MIND_CATEGORIES)
     if ideas and matched_people:
         if has_ai_person and "mind_cognition" in areas:
             item["person_idea_direction"] = "ai_to_mind"

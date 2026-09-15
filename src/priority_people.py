@@ -124,7 +124,10 @@ def _term_pattern(term: str) -> re.Pattern[str]:
 
 def _idea_terms(idea: dict[str, object]) -> list[str]:
     terms: list[str] = []
-    for raw in (idea.get("ai_bridge_terms") or []):
+    raw_terms = idea.get("ai_bridge_terms")
+    if not isinstance(raw_terms, list):
+        return terms
+    for raw in raw_terms:
         term = str(raw).strip().lower()
         if not term or term in _UNSAFE_IDEA_TERMS:
             continue
@@ -139,10 +142,10 @@ def _idea_sublane(idea: dict[str, object]) -> str:
     return _IDEA_SUBLANE_BY_NAME.get(name, "")
 
 def _person_groups(people: list[str]) -> set[str]:
-    normalized = {_normalize(x) for x in people}
+    normalized = {_normalize(x).strip().lower() for x in people}
     groups: set[str] = set()
     for row in _load_watchlist_people():
-        if _normalize(str(row.get("name") or "")) in normalized:
+        if _normalize(str(row.get("name") or "")).strip().lower() in normalized:
             groups.add(str(row.get("group") or "").strip().lower())
     return groups
 

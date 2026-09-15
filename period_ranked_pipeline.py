@@ -58,7 +58,12 @@ def _base_editorial_score(item):
 def canonical_rank_score(item):
     editorial = _base_editorial_score(item)
     signal = float(item.get("signal_score", 0) or 0)
-    return round(editorial * EDITORIAL_WEIGHT + signal * SIGNAL_WEIGHT, 2)
+    base_score = round(editorial * EDITORIAL_WEIGHT + signal * SIGNAL_WEIGHT, 2)
+    try:
+        coverage_bonus = max(0.0, min(1.5, float(item.get("mission_coverage_bonus", 0) or 0)))
+    except (TypeError, ValueError):
+        coverage_bonus = 0.0
+    return round(base_score + coverage_bonus, 2)
 
 
 def _base_score(item):

@@ -250,6 +250,15 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
     from src.unified_editorial_selection import load_editorial_contract
 
     contract = load_editorial_contract()
+    from src.dedup import load_source_history
+    from src.mission_coverage_priority import annotate_recovery_candidates
+
+    try:
+        source_history = load_source_history()
+    except Exception as exc:
+        logger.warning("Mission coverage history unavailable: %s", exc, exc_info=True)
+        source_history = []
+    editorial_pool = annotate_recovery_candidates(editorial_pool, source_history, contract)
 
     def _area(item):
         raw = str(item.get("mission_area") or item.get("category") or "").strip().casefold()

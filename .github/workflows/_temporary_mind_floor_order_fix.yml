@@ -88,17 +88,24 @@ jobs:
                       p.add(candidate, reason)
 
           '''
-          p.write_text(s[:start] + fn + s[end:], encoding='utf-8')
+          s = s[:start] + fn + s[end:]
+          marker = 'def _fill_by_portfolio_value(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:\n'
+          guard = '''def _fill_by_portfolio_value(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:\n              # Once the dedicated three-lane mission floor is satisfied, do not\n              # append a fourth generic item that displaces the characterized\n              # mission portfolio shape. Production capacity is three slots.\n              if p.mission_aware and p.contract.get("mind_cognition_target", 0) > 0 and {"ai_core", "convergence", "mind_cognition"}.issubset(p.area_counts):\n                  return\n'''
+          if marker not in s:
+              raise SystemExit('portfolio fill marker not found')
+          s = s.replace(marker, guard, 1)
+          p.write_text(s, encoding='utf-8')
           PY
       - name: Verify targeted tests
         run: |
           python -m pip install -r requirements.txt
           python -m pytest -q tests/test_mission_lane_coverage_contract.py tests/test_mind_cognition_floor_contract.py tests/test_characterization.py
       - name: Commit repair and remove temporary workflow
+        if: success()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           rm -f .github/workflows/_temporary_mind_floor_order_fix.yml
           git add src/unified_editorial_selection.py .github/workflows/_temporary_mind_floor_order_fix.yml
-          git commit -m 'fix: make mind cognition floor authoritative over legacy target'
+          git commit -m 'fix: close mission portfolio at dedicated mind floor'
           git push origin HEAD:${{ github.head_ref }}

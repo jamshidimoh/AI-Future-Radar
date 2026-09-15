@@ -282,14 +282,20 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             break
         p.add(candidate, "mission_target:ai_core")
 
-    for target_key, area_predicate in (
-        ("convergence_target", lambda x: mission_area(x) == "convergence"),
-        ("mind_cognition_target", lambda x: mission_area(x) == "mind_cognition"),
-        ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
-        ("research_target", _is_research),
-    ):
-        if target_key == "mind_future_target" and "mind_cognition_target" in p.contract and p.contract.get("mind_cognition_target", 0) > 0:
-            continue
+    if p.contract.get("mind_cognition_target", 0) > 0:
+        targets = (
+            ("convergence_target", lambda x: mission_area(x) == "convergence"),
+            ("mind_cognition_target", lambda x: mission_area(x) == "mind_cognition"),
+            ("research_target", _is_research),
+        )
+    else:
+        targets = (
+            ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
+            ("convergence_target", lambda x: mission_area(x) == "convergence"),
+            ("research_target", _is_research),
+        )
+
+    for target_key, area_predicate in targets:
         for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
             pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
             if not pool:
@@ -305,7 +311,12 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
                 break
             candidate_area = mission_area(candidate)
-            reason = "mission_target:mind_cognition" if target_key == "mind_cognition_target" or candidate_area == "mind_cognition" else ("mission_target:future_governance" if candidate_area == "future_governance" else f"mission_target:{target_key.removesuffix('_target')}")
+            if target_key == "mind_cognition_target" or candidate_area == "mind_cognition":
+                reason = "mission_target:mind_cognition"
+            elif candidate_area == "future_governance":
+                reason = "mission_target:future_governance"
+            else:
+                reason = f"mission_target:{target_key.removesuffix('_target')}"
             p.add(candidate, reason)
 
 
@@ -375,7 +386,7 @@ def _annotate_final_information_gain(selected: list[dict[str, Any]]) -> None:
 
 def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False) -> list[dict[str, Any]]:
     contract = contract or load_editorial_contract()
-    limit = min(max(0, int(max_posts or 0)), max(0, int(contract.get("max_posts", max_posts) or max_posts or 0)))
+    limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
     type_cap = max(1, int(max_per_type or 1))
     recent = recent_source_counts or {}

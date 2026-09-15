@@ -25,10 +25,11 @@ def test_historical_area_counts_ignore_education_and_use_recent_window():
 def test_underrepresented_authoritative_mind_candidate_gets_bounded_bonus():
     contract = {"window_runs": 6, "max_posts": 3, "mind_cognition_target": 1}
     item = {"mission_area": "mind_cognition", "final_editorial_score": 54.15, "source_tier": 1}
-    assert mission_coverage_bonus(item, {"ai_core": 53, "mind_cognition": 1}, contract) == 0.75
-    annotated = annotate_recovery_candidates([item], [], contract)[0]
-    assert annotated["mission_coverage_bonus"] == 1.5
-    assert annotated["historical_mission_area_count"] == 0
+    assert mission_coverage_bonus(item, {"ai_core": 53, "mind_cognition": 1}, contract) == 1.0
+    annotated = annotate_recovery_candidates([item], [{"mission_area": "mind_cognition", "content_type": "news"}], contract)[0]
+    assert annotated["mission_coverage_bonus"] == 1.0
+    assert annotated["historical_mission_area_count"] == 1
+    assert annotated["final_editorial_score"] == 55.15
 
 
 def test_coverage_bonus_is_bounded_and_additive():

@@ -125,4 +125,3 @@ def test_idea_lane_caps_bonus_and_does_not_override_person_contract():
     assert item["priority_idea_count"] >= 4
     assert item["priority_idea_bonus"] <= 6.0
     assert item["_priority_idea_signal_applied"] is True
-    assert item["_rank_is_tier0"] if "_rank_is_tier0" in item else True

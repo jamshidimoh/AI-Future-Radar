@@ -36,7 +36,7 @@ people:
   - {name: "Dwarkesh Patel", category: science_communicator, priority: 94, technology_impact: 8, scientific_authority: 8, future_vision: 9, public_influence: 9, trend_score: 10, audience_score: 9}
   - {name: "Sean Carroll", category: science_communicator, priority: 86, technology_impact: 6, scientific_authority: 10, future_vision: 9, public_influence: 9, trend_score: 8, audience_score: 9}
   - {name: "Michael Levin", category: bio_embodied_intelligence, priority: 91, technology_impact: 9, scientific_authority: 10, future_vision: 10, public_influence: 8, trend_score: 10, audience_score: 8}
-  - {name: "Karl Friston", category: bio_embodied_intelligence, priority: 88, technology_impact: 8, scientific_authority: 10, future_vision: 10, public_influence: 7, trend_score: 9, audience_score: 7}
+  - {name: "Karl Friston", category: mind_consciousness, priority: 88, technology_impact: 8, scientific_authority: 10, future_vision: 10, public_influence: 7, trend_score: 9, audience_score: 7}
   - {name: "Chris Olah", category: silent_frontier_pioneer, priority: 92, technology_impact: 9, scientific_authority: 10, future_vision: 9, public_influence: 7, trend_score: 10, audience_score: 7}
   - {name: "Christopher Olah", category: silent_frontier_pioneer, priority: 92, technology_impact: 9, scientific_authority: 10, future_vision: 9, public_influence: 7, trend_score: 10, audience_score: 7}
   - {name: "Sam Marks", category: silent_frontier_pioneer, priority: 79, technology_impact: 7, scientific_authority: 9, future_vision: 8, public_influence: 6, trend_score: 9, audience_score: 6}

@@ -20,6 +20,21 @@ _IDEA_CACHE: list[dict[str, object]] | None = None
 _NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\w){re.escape(alias)}(?!\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
 _SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
 _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TERMS), re.I)
+_WORD_TERM_RE_CACHE: dict[str, re.Pattern[str]] = {}
+_UNSAFE_IDEA_TERMS = {"phi", "iit", "bci"}
+_MIND_CATEGORIES = {"mind_consciousness", "philosophy_of_mind", "cognitive_science"}
+_AI_PERSON_GROUPS = {"featured_ai_leaders", "ai_builders", "technology_strategists_and_industry_thinkers"}
+_MIND_PERSON_GROUPS = {"consciousness_and_mind_ai"}
+_IDEA_SUBLANE_BY_NAME = {
+    "consciousness": "ai_consciousness",
+    "predictive_processing": "human_mind",
+    "global_workspace": "human_mind",
+    "integrated_information": "human_mind",
+    "embodied_and_extended_mind": "human_mind",
+    "philosophy_of_mind_and_ai": "philosophy_of_mind",
+    "future_of_mind": "future_of_mind",
+}
+
 
 def _bounded(value: object, limit: int) -> str:
     return str(value or "")[:limit]
@@ -71,7 +86,7 @@ def _load_ideas() -> list[dict[str, object]]:
     except (OSError, UnicodeDecodeError, yaml.YAMLError):
         _IDEA_CACHE = []
         return _IDEA_CACHE
-    raw = payload.get("ideas_and_theories", [])
+    raw = payload.get("ideas_and_theories", []) if isinstance(payload, dict) else []
     if isinstance(raw, dict):
         _IDEA_CACHE = [dict(value, name=str(key)) for key, value in raw.items() if isinstance(value, dict)]
     elif isinstance(raw, list):
@@ -80,14 +95,92 @@ def _load_ideas() -> list[dict[str, object]]:
         _IDEA_CACHE = []
     return _IDEA_CACHE
 
+def _load_watchlist_people() -> list[dict[str, object]]:
+    try:
+        payload = yaml.safe_load(IDEAS_PATH.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        return []
+    people = payload.get("people", {}) if isinstance(payload, dict) else {}
+    rows: list[dict[str, object]] = []
+    if isinstance(people, dict):
+        for group, cfg in people.items():
+            if not isinstance(cfg, dict):
+                continue
+            for name in cfg.get("names", []) or []:
+                rows.append({"name": str(name), "group": str(group), "priority": cfg.get("priority", 0)})
+    return rows
+
+def _term_pattern(term: str) -> re.Pattern[str]:
+    normalized = _normalize(term.strip().lower())
+    cached = _WORD_TERM_RE_CACHE.get(normalized)
+    if cached is not None:
+        return cached
+    parts = [re.escape(part) for part in normalized.split() if part]
+    separator = r"\s+"
+    expression = separator.join(parts)
+    pattern = re.compile(rf"(?<!\w){expression}(?!\w)", re.I)
+    _WORD_TERM_RE_CACHE[normalized] = pattern
+    return pattern
+
+def _idea_terms(idea: dict[str, object]) -> list[str]:
+    terms: list[str] = []
+    raw_terms = idea.get("ai_bridge_terms")
+    if not isinstance(raw_terms, list):
+        return terms
+    for raw in raw_terms:
+        term = str(raw).strip().lower()
+        if not term or term in _UNSAFE_IDEA_TERMS:
+            continue
+        terms.append(term)
+    return terms
+
+def _idea_area(idea: dict[str, object]) -> str:
+    return str(idea.get("mission_area") or "").strip().lower()
+
+def _idea_sublane(idea: dict[str, object]) -> str:
+    name = str(idea.get("name") or "").strip().lower()
+    return _IDEA_SUBLANE_BY_NAME.get(name, "")
+
+def _person_groups(people: list[str]) -> set[str]:
+    normalized = {_normalize(x).strip().lower() for x in people}
+    groups: set[str] = set()
+    for row in _load_watchlist_people():
+        if _normalize(str(row.get("name") or "")).strip().lower() in normalized:
+            groups.add(str(row.get("group") or "").strip().lower())
+    return groups
+
+def _apply_directional_idea_metadata(item, ideas: list[str], matched_details: list[dict[str, object]]) -> None:
+    areas = sorted({x for x in (_idea_area(d) for d in matched_details) if x})
+    sublanes = sorted({x for x in (_idea_sublane(d) for d in matched_details) if x})
+    item["priority_idea_areas"] = areas
+    item["priority_idea_sublanes"] = sublanes
+    matched_people = matched_priority_people(item)
+    item["priority_idea_people"] = matched_people
+    groups = _person_groups(matched_people)
+    item["person_idea_direction"] = ""
+    has_ai_person = bool(set(matched_people) & TOP_AI_VOICES) or bool(groups & _AI_PERSON_GROUPS)
+    has_mind_person = bool(groups & _MIND_PERSON_GROUPS) or bool(str(item.get("person_category") or item.get("leader_category") or "").strip().lower() in _MIND_CATEGORIES)
+    if ideas and matched_people:
+        if has_ai_person and "mind_cognition" in areas:
+            item["person_idea_direction"] = "ai_to_mind"
+        elif has_mind_person and (any(area in {"ai_core", "convergence"} for area in areas) or "future_of_mind" in sublanes):
+            item["person_idea_direction"] = "mind_to_ai"
+        elif has_mind_person:
+            item["person_idea_direction"] = "mind_to_mind"
+        elif has_ai_person:
+            item["person_idea_direction"] = "ai_to_ai"
+
 def _match_priority_ideas(item, text: str) -> list[str]:
     matches: list[str] = []
+    details: list[dict[str, object]] = []
     for idea in _load_ideas():
-        terms = [str(x).strip().lower() for x in (idea.get("ai_bridge_terms") or []) if str(x).strip()]
+        terms = _idea_terms(idea)
         if not terms:
             continue
-        if any(_normalize(term) in text for term in terms):
+        if any(_term_pattern(term).search(text) for term in terms):
             matches.append(str(idea.get("name") or "").strip())
+            details.append(idea)
+    _apply_directional_idea_metadata(item, matches, details)
     return sorted(set(x for x in matches if x))
 
 def _apply_idea_signal(item, text: str) -> list[str]:

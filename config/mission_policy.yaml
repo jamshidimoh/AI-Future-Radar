@@ -17,6 +17,7 @@ mission:
   mind_cognition_target: 1
   mind_future_target: 1
   future_governance_target: 0
+  deep_ideas_target: 0
   research_target: 0
   interview_target_max: 1
   community_max: 0

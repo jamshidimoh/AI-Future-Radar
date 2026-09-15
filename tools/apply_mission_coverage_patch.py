@@ -117,7 +117,7 @@ def _tier(item: dict[str, Any]) -> int | None:
 
 def historical_area_counts(history: Iterable[dict[str, Any]], window_items: int) -> dict[str, int]:
     recent = [x for x in history or [] if str(x.get("content_type") or "").strip().casefold() != "education"]
-    recent = recent[-max(0, int(window_items or 0):] if window_items else []
+    recent = recent[-max(0, int(window_items or 0)):] if window_items else []
     counts: dict[str, int] = {}
     for record in recent:
         area = mission_area(record)

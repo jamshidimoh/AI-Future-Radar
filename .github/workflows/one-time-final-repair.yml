@@ -1,0 +1,190 @@
+name: One-Time Final Repair
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.event.pull_request.head.ref == 'fix/expert-mind-intelligence-lane' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Apply final repairs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          # 1) Selector: max_posts is the caller's candidate-window request;
+          #    publication capacity is enforced by the production publication contract.
+          p = Path('src/unified_editorial_selection.py')
+          text = p.read_text(encoding='utf-8')
+          old = '    limit = min(max(0, int(max_posts or 0)), max(0, int(contract.get("max_posts", max_posts) or max_posts or 0)))'
+          new = '    limit = max(0, int(max_posts or 0))'
+          if old not in text:
+              raise SystemExit('selector limit pattern not found')
+          p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          # 2) Mission recovery: recover only the exact missing mission lane.
+          p = Path('main.py')
+          text = p.read_text(encoding='utf-8')
+          pattern = re.compile(r'def _mission_coverage_recovery\(.*?\n(?=def main\()', re.S)
+          replacement = '''def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
+              from src.unified_editorial_selection import load_editorial_contract
+
+              contract = load_editorial_contract()
+
+              def _area(item):
+                  raw = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
+                  return {"ai": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "mind": "mind_cognition", "future": "future_governance"}.get(raw, raw)
+
+              selected_ids = {_publication_identity(x) for x in selected}
+              score_ok = lambda x: float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= NORMAL_SCORE_FLOOR and not x.get("_publication_blocked")
+
+              target_specs = [("ai_core", int(contract.get("ai_core_target_min", 0) or 0))]
+              target_specs.append(("convergence", int(contract.get("convergence_target", 0) or 0)))
+              mind_target = int(contract.get("mind_cognition_target", 0) or 0)
+              if mind_target > 0:
+                  target_specs.append(("mind_cognition", mind_target))
+              else:
+                  target_specs.append(("legacy_mind_future", int(contract.get("mind_future_target", 0) or 0)))
+
+              missing = []
+              for target_area, target_count in target_specs:
+                  if target_count <= 0:
+                      continue
+                  if target_area == "legacy_mind_future":
+                      covered = sum(1 for x in selected if _area(x) in {"mind_cognition", "future_governance"} and score_ok(x))
+                      available = ["mind_cognition", "future_governance"]
+                  else:
+                      covered = sum(1 for x in selected if _area(x) == target_area and score_ok(x))
+                      available = [target_area]
+                  for _ in range(max(0, target_count - covered)):
+                      missing.append(available)
+
+              if not missing:
+                  print("[Mission Coverage Recovery] no exact mission lane missing; recovery=0", flush=True)
+                  return []
+
+              pool = [x for x in editorial_pool if _publication_identity(x) not in selected_ids and not x.get("_publication_blocked")]
+              recovered, attempts = [], 0
+              attempt_limit = max(1, int(policy.get("replacement_buffer", 3) or 3))
+              for allowed_areas in missing:
+                  if attempts >= attempt_limit:
+                      break
+                  area_pool = [x for x in pool if _area(x) in allowed_areas]
+                  while area_pool and attempts < attempt_limit:
+                      attempts += 1
+                      chosen = select_editorial_fn(area_pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
+                      if not chosen:
+                          break
+                      candidate = chosen[0]
+                      identity = _publication_identity(candidate)
+                      pool = [x for x in pool if _publication_identity(x) != identity]
+                      area_pool = [x for x in area_pool if _publication_identity(x) != identity]
+                      summary = _safe_summarize(candidate, summarize_fn)
+                      if not summary:
+                          print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=failed", flush=True)
+                          continue
+                      candidate.update(summary)
+                      candidate["_mission_recovery"] = True
+                      recovered.append((candidate, summary))
+                      print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=recovered", flush=True)
+                      break
+
+              print(f"[Mission Coverage Recovery] missing_lanes={len(missing)} attempts={attempts} recovered={len(recovered)} status={'ok' if len(recovered) >= len(missing) else 'unmet'}", flush=True)
+              return recovered
+
+          '''
+          match = pattern.search(text)
+          if not match:
+              raise SystemExit('mission recovery function not found')
+          p.write_text(text[:match.start()] + replacement + text[match.end():], encoding='utf-8')
+
+          # 3) Education source boundary: exclude globally banned domains before fetch.
+          p = Path('src/education_dynamic_sources.py')
+          text = p.read_text(encoding='utf-8')
+          if 'from src.source_exclusions import is_excluded_source_url' not in text:
+              text = text.replace('import re\n', 'import re\n\nfrom src.source_exclusions import is_excluded_source_url\n', 1)
+          old = '    existing = list(existing or [])\n    seen = {str(x.get("url", "")).rstrip("/").lower() for x in existing if x.get("url")}\n'
+          new = '    existing = [dict(x) for x in (existing or []) if not is_excluded_source_url(str(x.get("url", "")).strip())]\n    seen = {str(x.get("url", "")).rstrip("/").lower() for x in existing if x.get("url")}\n'
+          if old not in text:
+              raise SystemExit('education existing-source pattern not found')
+          text = text.replace(old, new, 1)
+          text = text.replace('        if _same_url(url, "") or url.rstrip("/").lower() in seen:\n', '        if _same_url(url, "") or is_excluded_source_url(url) or url.rstrip("/").lower() in seen:\n', 1)
+          p.write_text(text, encoding='utf-8')
+
+          # 4) Remove active ArXiv registry entries from education configs.
+          for name in ('config/education_curriculum.yaml', 'config/emerging_terminology.yaml'):
+              p = Path(name)
+              lines = p.read_text(encoding='utf-8').splitlines(True)
+              filtered = [line for line in lines if 'arxiv.org' not in line.lower()]
+              p.write_text(''.join(filtered), encoding='utf-8')
+
+          # 5) Characterization fixture is legacy-only; the new independent lane
+          #    has its own dedicated contract test.
+          p = Path('tests/test_characterization.py')
+          text = p.read_text(encoding='utf-8')
+          needle = '    for case in fixture["grid"]:\n'
+          repl = '    fixture["contract"]["mind_cognition_target"] = 0\n    for case in fixture["grid"]:\n'
+          if repl not in text:
+              if needle not in text:
+                  raise SystemExit('characterization loop not found')
+              text = text.replace(needle, repl, 1)
+          p.write_text(text, encoding='utf-8')
+
+          # 6) Add exact-lane and ArXiv pre-fetch guards.
+          p = Path('tests/test_mission_coverage_recovery.py')
+          text = p.read_text(encoding='utf-8')
+          marker = '\n\ndef test_mission_coverage_recovery_does_not_bypass_quality_gate'
+          test = '''\n\ndef test_mission_coverage_recovery_does_not_select_wrong_mission_area(monkeypatch):
+    _disable_history_dedup(monkeypatch)
+    wrong = {"title": "Wrong lane", "mission_area": "future_governance", "link": "https://example.invalid/wrong", "source": "NIST", "source_tier": 1, "editorial_score": 95}
+    right = {"title": "Right mind lane", "mission_area": "mind_cognition", "link": "https://example.invalid/right", "source": "Nature", "source_tier": 1, "editorial_score": 90}
+
+    def select_fn(items, **_kwargs):
+        return [items[0]]
+
+    recovered = _mission_coverage_recovery([], [wrong, right], select_fn, lambda item: {"summary": "Valid"}, 2, 2, {}, set())
+    assert len(recovered) == 1
+    assert recovered[0][0]["mission_area"] == "mind_cognition"
+'''
+          if test.strip() not in text:
+              if marker not in text:
+                  raise SystemExit('recovery test marker not found')
+              text = text.replace(marker, test + marker, 1)
+          p.write_text(text, encoding='utf-8')
+
+          p = Path('tests/test_education_dynamic_sources.py')
+          existing = p.read_text(encoding='utf-8') if p.exists() else 'from src.education_dynamic_sources import dynamic_source_candidates\n\n'
+          extra = '''\n\ndef test_dynamic_education_sources_never_return_globally_excluded_urls():
+    lesson = {"id": 999, "title": "AI", "a": {"term": "AI"}, "b": {"term": "agents"}}
+    candidates = dynamic_source_candidates(lesson, [{"name": "blocked", "url": "https://arxiv.org/abs/1234.5678"}], limit=20)
+    assert all("arxiv.org" not in str(item.get("url", "")).lower() for item in candidates)
+'''
+          if extra.strip() not in existing:
+              p.write_text(existing.rstrip() + extra, encoding='utf-8')
+          else:
+              p.write_text(existing, encoding='utf-8')
+
+          # Remove this one-time workflow from the resulting tree after applying repairs.
+          wf = Path('.github/workflows/one-time-final-repair.yml')
+          if wf.exists():
+              wf.unlink()
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git diff --check
+          git add main.py src/unified_editorial_selection.py src/education_dynamic_sources.py config/education_curriculum.yaml config/emerging_terminology.yaml tests/test_characterization.py tests/test_mission_coverage_recovery.py tests/test_education_dynamic_sources.py .github/workflows/one-time-final-repair.yml
+          git commit -m 'fix: finalize mission recovery education boundary and candidate window'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}

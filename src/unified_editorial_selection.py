@@ -288,7 +288,7 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
         ("research_target", _is_research),
     ):
-        if target_key == "mind_future_target" and "mind_cognition_target" in p.contract:
+        if target_key == "mind_future_target" and "mind_cognition_target" in p.contract and p.contract.get("mind_cognition_target", 0) > 0:
             continue
         for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
             pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
@@ -296,7 +296,7 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
                 pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
             if not pool:
                 break
-            baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and (target_key != "mind_future_target" or mission_area(x) != "ai_core")]
+            baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and (target_key not in {"mind_future_target", "mind_cognition_target"} or mission_area(x) != "ai_core")]
             baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
             candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
             if candidate is None:
@@ -375,7 +375,7 @@ def _annotate_final_information_gain(selected: list[dict[str, Any]]) -> None:
 
 def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False) -> list[dict[str, Any]]:
     contract = contract or load_editorial_contract()
-    limit = max(0, int(max_posts or 0))
+    limit = min(max(0, int(max_posts or 0)), max(0, int(contract.get("max_posts", max_posts) or max_posts or 0)))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
     type_cap = max(1, int(max_per_type or 1))
     recent = recent_source_counts or {}

@@ -3,7 +3,7 @@
 people:
   - {name: "Elon Musk", category: ai_architect, priority: 100, technology_impact: 10, scientific_authority: 6, future_vision: 9, public_influence: 10, trend_score: 10, audience_score: 10}
   - {name: "Sam Altman", category: ai_architect, priority: 100, technology_impact: 10, scientific_authority: 7, future_vision: 9, public_influence: 10, trend_score: 10, audience_score: 10}
-  - {name: "Demis Hassabis", category: ai_architect, priority: 98, technology_impact: 10, scientific_authority: 10, future_vision: 9, public_influence: 9, trend_score: 9, audience_score: 9}
+  - {name: "Demis Hassabis", category: ai_architect, priority: 98, technology_impact: 10, scientific_authority: 10, future_vision: 9, public_influence: 9, trend_score: 10, audience_score: 9}
   - {name: "Dario Amodei", category: ai_architect, priority: 97, technology_impact: 10, scientific_authority: 8, future_vision: 9, public_influence: 9, trend_score: 10, audience_score: 9}
   - {name: "Jensen Huang", category: ai_architect, priority: 96, technology_impact: 10, scientific_authority: 7, future_vision: 9, public_influence: 10, trend_score: 10, audience_score: 10}
   - {name: "Ilya Sutskever", category: ai_architect, priority: 95, technology_impact: 10, scientific_authority: 10, future_vision: 9, public_influence: 8, trend_score: 9, audience_score: 8}

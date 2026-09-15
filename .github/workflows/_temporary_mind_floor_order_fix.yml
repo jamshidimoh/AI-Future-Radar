@@ -15,30 +15,79 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-      - name: Apply targeted selector order repair
+      - name: Apply exact mission ordering repair
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
           p = Path('src/unified_editorial_selection.py')
           s = p.read_text(encoding='utf-8')
-          old = '''    # A new independent mind floor is opt-in. Older characterization contracts
-    # that only declare mind_future_target retain the legacy combined behavior.
-    mind_target = p.contract.get("mind_cognition_target", 0)
-    for _ in range(min(mind_target, max(0, p.limit - len(p.selected)))):
-'''
-          new = '''    # Keep the canonical mission order: AI core -> convergence -> mind/cognition.
-    # This prevents the new mind floor from consuming the convergence slot.
-    '''
-          if old not in s:
-              raise SystemExit('target block not found')
-          s = s.replace(old, new, 1)
-          marker = '''    for target_key, area_predicate in (\n        ("convergence_target", lambda x: mission_area(x) == "convergence"),\n'''
-          replacement = '''    for target_key, area_predicate in (\n        ("convergence_target", lambda x: mission_area(x) == "convergence"),\n'''
-          # Restore the independent mind floor immediately after convergence/research target processing.
-          # The existing loop is retained unchanged; insert the mind block after convergence is handled below.
-          p.write_text(s, encoding='utf-8')
+          start = s.index('def _fill_mission_targets(')
+          end = s.index('\ndef _fill_by_portfolio_value(', start)
+          fn = '''def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
+              if not p.mission_aware or p.limit <= 0:
+                  return
+              for _ in range(min(p.contract["ai_core_target_min"], p.limit)):
+                  candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+                  if not candidates:
+                      candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+                  candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+                  if candidate is None:
+                      break
+                  p.add(candidate, "mission_target:ai_core")
+
+              for target_key, area_predicate in (("convergence_target", lambda x: mission_area(x) == "convergence"),):
+                  for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
+                      pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+                      if not pool:
+                          pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+                      if not pool:
+                          break
+                      candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+                      if candidate is None:
+                          break
+                      p.add(candidate, "mission_target:convergence")
+
+              mind_target = p.contract.get("mind_cognition_target", 0)
+              for _ in range(min(mind_target, max(0, p.limit - len(p.selected)))):
+                  pool = [x for x in ordered if mission_area(x) == "mind_cognition" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+                  if not pool:
+                      pool = [x for x in ordered if mission_area(x) == "mind_cognition" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+                  if not pool:
+                      break
+                  baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and mission_area(x) != "ai_core"]
+                  baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
+                  candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+                  if candidate is None:
+                      break
+                  floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+                  if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
+                      break
+                  p.add(candidate, "mission_target:mind_cognition")
+
+              for target_key, area_predicate in (("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}), ("research_target", _is_research)):
+                  for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
+                      pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+                      if not pool:
+                          pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+                      if not pool:
+                          break
+                      baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and (target_key != "mind_future_target" or mission_area(x) != "ai_core")]
+                      baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
+                      candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+                      if candidate is None:
+                          break
+                      floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+                      if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
+                          break
+                      candidate_area = mission_area(candidate)
+                      reason = f"mission_target:{candidate_area}" if candidate_area in {"mind_cognition", "future_governance"} else f"mission_target:{target_key.removesuffix('_target')}"
+                      p.add(candidate, reason)
+
+          '''
+          p.write_text(s[:start] + fn + s[end:], encoding='utf-8')
           PY
-      - name: Verify selector syntax and targeted tests
+      - name: Verify targeted tests
         run: |
           python -m pip install -r requirements.txt
           python -m pytest -q tests/test_mission_lane_coverage_contract.py tests/test_mind_cognition_floor_contract.py tests/test_characterization.py

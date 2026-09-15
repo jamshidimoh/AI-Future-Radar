@@ -20,9 +20,9 @@ _IDEA_CACHE: list[dict[str, object]] | None = None
 _NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\w){re.escape(alias)}(?!\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
 _SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
 _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TERMS), re.I)
-
 _WORD_TERM_RE_CACHE: dict[str, re.Pattern[str]] = {}
 _UNSAFE_IDEA_TERMS = {"phi", "iit", "bci"}
+_MIND_CATEGORIES = {"mind_consciousness", "philosophy_of_mind", "cognitive_science"}
 
 
 def _bounded(value: object, limit: int) -> str:
@@ -75,7 +75,7 @@ def _load_ideas() -> list[dict[str, object]]:
     except (OSError, UnicodeDecodeError, yaml.YAMLError):
         _IDEA_CACHE = []
         return _IDEA_CACHE
-    raw = payload.get("ideas_and_theories", [])
+    raw = payload.get("ideas_and_theories", []) if isinstance(payload, dict) else []
     if isinstance(raw, dict):
         _IDEA_CACHE = [dict(value, name=str(key)) for key, value in raw.items() if isinstance(value, dict)]
     elif isinstance(raw, list):
@@ -83,6 +83,21 @@ def _load_ideas() -> list[dict[str, object]]:
     else:
         _IDEA_CACHE = []
     return _IDEA_CACHE
+
+def _load_watchlist_people() -> list[dict[str, object]]:
+    try:
+        payload = yaml.safe_load(IDEAS_PATH.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        return []
+    people = payload.get("people", {}) if isinstance(payload, dict) else {}
+    rows: list[dict[str, object]] = []
+    if isinstance(people, dict):
+        for group, cfg in people.items():
+            if not isinstance(cfg, dict):
+                continue
+            for name in cfg.get("names", []) or []:
+                rows.append({"name": str(name), "group": str(group), "priority": cfg.get("priority", 0)})
+    return rows
 
 def _term_pattern(term: str) -> re.Pattern[str]:
     normalized = _normalize(term.strip().lower())
@@ -106,31 +121,31 @@ def _idea_terms(idea: dict[str, object]) -> list[str]:
 def _idea_area(idea: dict[str, object]) -> str:
     return str(idea.get("mission_area") or "").strip().lower()
 
+def _person_groups(people: list[str]) -> set[str]:
+    normalized = {_normalize(x) for x in people}
+    groups: set[str] = set()
+    for row in _load_watchlist_people():
+        if _normalize(str(row.get("name") or "")) in normalized:
+            groups.add(str(row.get("group") or "").strip().lower())
+    return groups
+
 def _apply_directional_idea_metadata(item, ideas: list[str], matched_details: list[dict[str, object]]) -> None:
-    item["priority_idea_areas"] = sorted({x for x in (_idea_area(d) for d in matched_details) if x})
+    areas = sorted({x for x in (_idea_area(d) for d in matched_details) if x})
+    item["priority_idea_areas"] = areas
     matched_people = matched_priority_people(item)
     item["priority_idea_people"] = matched_people
-    ai_people = {str(x).casefold() for x in TOP_AI_VOICES}
-    mind_people = {
-        str(x.get("name") or "").casefold()
-        for group in ("consciousness_and_mind_ai", "futurists_and_long_term_thinkers")
-        for x in []
-    }
-    watch_names = {str(d.get("name") or "").casefold() for d in _load_ideas() if d.get("name")}
-    _ = watch_names
-    categories = {str(item.get("person_category") or item.get("leader_category") or "").casefold()}
-    explicit_names = {p.casefold() for p in matched_people}
+    groups = _person_groups(matched_people)
     item["person_idea_direction"] = ""
-    if ideas and explicit_names:
-        has_ai = bool(explicit_names & ai_people) or any(c in {"ai_architect", "ai_scientist", "ai_builder", "technology_strategist"} for c in categories)
-        has_mind = bool(explicit_names - ai_people)
-        if has_ai and any(a == "mind_cognition" for a in item["priority_idea_areas"]):
+    has_ai_person = bool(set(matched_people) & TOP_AI_VOICES) or bool(groups & {"ai_builders", "featured_ai_leaders", "technology_strategists_and_industry_thinkers"})
+    has_mind_person = bool(groups & {"consciousness_and_mind_ai"}) or bool(str(item.get("person_category") or item.get("leader_category") or "").strip().lower() in _MIND_CATEGORIES)
+    if ideas and matched_people:
+        if has_ai_person and "mind_cognition" in areas:
             item["person_idea_direction"] = "ai_to_mind"
-        elif has_mind and any(a == "ai_core" for a in item["priority_idea_areas"]):
+        elif has_mind_person and any(area in {"ai_core", "convergence"} for area in areas):
             item["person_idea_direction"] = "mind_to_ai"
-        elif has_mind:
+        elif has_mind_person:
             item["person_idea_direction"] = "mind_to_mind"
-        elif has_ai:
+        elif has_ai_person:
             item["person_idea_direction"] = "ai_to_ai"
 
 def _match_priority_ideas(item, text: str) -> list[str]:

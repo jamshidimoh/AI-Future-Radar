@@ -11,7 +11,6 @@ emerging_terminology:
       - anthropic.com
       - ibm.com
       - martinfowler.com
-      - arxiv.org
       - openai.com
       - developers.google.com
       - nist.gov
@@ -51,7 +50,6 @@ emerging_terminology:
       relation: "Agentic loop خودِ چرخه اجراست؛ loop engineering به طراحی، ارزیابی و کنترل این چرخه می‌پردازد."
       sources:
         - {name: "IBM: What is Loop Engineering?", url: "https://www.ibm.com/think/topics/loop-engineering"}
-        - {name: "arXiv: Engineering the Loops that Replace Step-by-Step Prompting", url: "https://arxiv.org/abs/2607.00038"}
     - id: 105
       status: emerging
       title: "Harness Engineering و AI Agent Harness"

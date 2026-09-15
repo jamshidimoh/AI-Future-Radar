@@ -116,7 +116,9 @@ def _term_pattern(term: str) -> re.Pattern[str]:
     if cached is not None:
         return cached
     parts = [re.escape(part) for part in normalized.split() if part]
-    pattern = re.compile(rf"(?<!\w){r'\\s+'.join(parts)}(?!\w)", re.I)
+    separator = r"\s+"
+    expression = separator.join(parts)
+    pattern = re.compile(rf"(?<!\w){expression}(?!\w)", re.I)
     _WORD_TERM_RE_CACHE[normalized] = pattern
     return pattern
 

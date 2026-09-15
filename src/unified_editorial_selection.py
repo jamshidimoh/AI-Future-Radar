@@ -1,4 +1,422 @@
+"""Unified, deterministic editorial portfolio selection contract."""
 from __future__ import annotations
 
-# PATCHED IN PLACE: mission target ordering must remain AI -> convergence -> mind.
-# The complete file is intentionally not reconstructed here.
+import logging
+from collections.abc import Iterable
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+from src.information_gain import information_gain_score, max_topic_similarity, portfolio_value, topic_fingerprint
+
+logger = logging.getLogger(__name__)
+ROOT = Path(__file__).resolve().parents[1]
+MISSION_PATH = ROOT / "config" / "mission_policy.yaml"
+SELECTION_PATH = ROOT / "config" / "selection_policy.yaml"
+_AREA_MAP = {"ai": "ai_core", "ai_core": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "future": "future_governance", "future_governance": "future_governance", "mind": "mind_cognition", "mind_cognition": "mind_cognition", "convergence": "convergence"}
+_RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
+_INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
+_COMMUNITY_MARKERS = ("reddit", "community")
+_GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
+
+
+def _load_yaml(path: Path) -> dict[str, Any]:
+    try:
+        return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeDecodeError, yaml.YAMLError) as exc:
+        logger.error("Editorial contract unavailable at %s: %s", path, exc, exc_info=True)
+        return {}
+
+
+def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str, Any]:
+    mission = _load_yaml(MISSION_PATH).get("mission", {})
+    selection_cfg = selection or _load_yaml(SELECTION_PATH).get("selection", {})
+    return {
+        "max_posts": int(selection_cfg.get("max_posts", mission.get("operational_publication_capacity", 4)) or 4),
+        "candidate_window": int(selection_cfg.get("candidate_window", 6) or 6),
+        "replacement_buffer": int(selection_cfg.get("replacement_buffer", 2) or 2),
+        "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
+        "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),
+        "preferred_max_same_source": int(mission.get("max_same_source", 1) or 1),
+        "hard_max_same_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
+        "min_unique_sources": int(mission.get("min_unique_sources", 3) or 3),
+        "min_authoritative_items": int(mission.get("min_authoritative_items", 2) or 2),
+        "community_max": int(mission.get("community_max", 0) or 0),
+        "max_same_mission_area": int(mission.get("max_same_mission_area", 2) or 2),
+        "ai_core_target_min": int(mission.get("ai_core_target_min", 1) or 0),
+        "ai_core_target_max": int(mission.get("ai_core_target_max", 2) or 99),
+        "convergence_target": int(mission.get("convergence_target", 0) or 0),
+        "mind_cognition_target": int(mission.get("mind_cognition_target", 0) or 0),
+        "mind_future_target": int(mission.get("mind_future_target", 0) or 0),
+        "research_target": int(mission.get("research_target", 0) or 0),
+        "interview_target_max": int(mission.get("interview_target_max", 1) or 0),
+        "diversity_quality_floor_ratio": float(selection_cfg.get("diversity_quality_floor_ratio", 0.80) or 0.80),
+        "diversity_weight": float(selection_cfg.get("diversity_weight", 8.0) or 8.0),
+        "similarity_penalty": float(selection_cfg.get("similarity_penalty", 12.0) or 12.0),
+        "required_areas": ("ai_core", "convergence", "mind_cognition", "future_governance"),
+    }
+
+
+def source_key(item: dict[str, Any]) -> str:
+    return str(item.get("source") or item.get("source_name") or item.get("source_domain") or "unknown").strip().casefold() or "unknown"
+
+
+def content_type_key(item: dict[str, Any]) -> str:
+    return str(item.get("content_type") or "unknown").strip().casefold() or "unknown"
+
+
+def mission_area(item: dict[str, Any]) -> str:
+    explicit = str(item.get("mission_area") or "").strip().casefold()
+    if explicit in _AREA_MAP.values():
+        return explicit
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _AREA_MAP:
+        return _AREA_MAP[category]
+    if item.get("research_signal") or content_type_key(item) in _RESEARCH_TYPES:
+        return "ai_core"
+    return "ai_core"
+
+
+def _mission_text(item: dict[str, Any]) -> str:
+    return " ".join(str(item.get(k) or "") for k in ("title", "summary", "description", "category", "mission_area", "content_type", "tags", "keywords")).casefold()
+
+
+def _keyword_match_area(item: dict[str, Any]) -> str | None:
+    text = _mission_text(item)
+    matches: list[tuple[int, str]] = []
+    for area, cfg in _load_yaml(MISSION_PATH).get("areas", {}).items():
+        for keyword in cfg.get("keywords", []) or []:
+            key = str(keyword).strip().casefold()
+            if not key or key not in text:
+                continue
+            if area == "ai_core" and key in _GENERIC_AI_TERMS:
+                continue
+            matches.append((len(key), area))
+    return max(matches, key=lambda x: x[0])[1] if matches else None
+
+
+def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
+    explicit = str(item.get("mission_area") or "").strip().casefold()
+    if explicit in _AREA_MAP.values():
+        return True
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _AREA_MAP:
+        item["mission_area"] = _AREA_MAP[category]
+        return True
+    matched_area = _keyword_match_area(item)
+    if matched_area:
+        item["mission_area"] = matched_area
+        return True
+    if not strict:
+        return True
+    return item.get("_ai_link") is True or item.get("ai_relevance") is True
+
+
+def _source_tier(item: dict[str, Any]) -> int | None:
+    raw = item.get("source_tier", item.get("tier"))
+    if raw in (None, ""):
+        return None
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _is_community(item: dict[str, Any]) -> bool:
+    value = " ".join(str(item.get(k) or "").strip().casefold() for k in ("source", "source_name", "source_type", "source_domain"))
+    return any(m in value for m in _COMMUNITY_MARKERS)
+
+
+def candidate_score(item: dict[str, Any]) -> float:
+    for key in ("final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
+        try:
+            value = float(item.get(key, 0) or 0)
+        except (TypeError, ValueError):
+            value = 0.0
+        if value:
+            return value
+    return 0.0
+
+
+def _safe_float(item: dict[str, Any], key: str) -> float:
+    try:
+        return float(item.get(key, 0) or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _rank_key(item: dict[str, Any], recent_source_counts: dict[str, int]) -> tuple:
+    source = source_key(item)
+    recent_penalty = min(3, max(0, int(recent_source_counts.get(source, 0) or 0))) * 2.0
+    effective_score = candidate_score(item) - recent_penalty
+    confidence = max(0.0, min(1.0, _safe_float(item, "ai_relevance_confidence")))
+    evidence_strength = _safe_float(item, "evidence_strength")
+    source_tier = _source_tier(item)
+    authority = 0 if source_tier is None else max(0, 4 - source_tier)
+    return (-effective_score, -confidence, -evidence_strength, -authority, -_safe_float(item, "signal_score"), -_safe_float(item, "mission_score"), recent_source_counts.get(source, 0), str(item.get("published", "")))
+
+
+def _is_research(item: dict[str, Any]) -> bool:
+    return content_type_key(item) in _RESEARCH_TYPES or bool(item.get("research_signal"))
+
+
+def _is_interview(item: dict[str, Any]) -> bool:
+    return content_type_key(item) in _INTERVIEW_TYPES or bool(item.get("interview_signal"))
+
+
+def _authority_ok(item: dict[str, Any]) -> bool:
+    return _source_tier(item) in {1, 2}
+
+
+def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, Any]], contract: dict[str, Any]) -> dict[str, Any]:
+    item["topic_fingerprint"] = topic_fingerprint(item)
+    item["information_gain_score"] = information_gain_score(item, selected)
+    item["topic_similarity_to_selected"] = round(max_topic_similarity(item, selected), 3)
+    item["portfolio_value_score"] = round(portfolio_value(item, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]), 3)
+    return item
+
+
+class _Portfolio:
+    def __init__(self, *, contract: dict[str, Any], limit: int, source_cap: int, type_cap: int, recent: dict[str, int], mission_aware: bool):
+        self.selected: list[dict[str, Any]] = []
+        self.selected_ids: set[int] = set()
+        self.source_counts: dict[str, int] = {}
+        self.type_counts: dict[str, int] = {}
+        self.area_counts: dict[str, int] = {}
+        self.interview_count = 0
+        self.contract = contract
+        self.recent = recent
+        self.limit = limit
+        self.source_cap = source_cap
+        self.type_cap = type_cap
+        self.mission_aware = mission_aware
+
+    def admissible(self, item: dict[str, Any], *, repeat_source: bool, ignore_type_cap: bool = False) -> bool:
+        source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
+        if not ignore_type_cap and self.type_counts.get(ctype, 0) >= self.type_cap:
+            return False
+        if self.mission_aware and _is_interview(item) and self.interview_count >= self.contract["interview_target_max"] > 0:
+            return False
+        if self.mission_aware and self.area_counts.get(area, 0) >= self.contract["max_same_mission_area"]:
+            return False
+        current_source = self.source_counts.get(source, 0)
+        return current_source < self.source_cap if repeat_source else current_source == 0
+
+    def add(self, item: dict[str, Any], reason: str) -> None:
+        _annotate_information_gain(item, self.selected, self.contract)
+        source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
+        self.selected.append(item)
+        self.selected_ids.add(id(item))
+        self.source_counts[source] = self.source_counts.get(source, 0) + 1
+        self.type_counts[ctype] = self.type_counts.get(ctype, 0) + 1
+        if self.mission_aware:
+            self.area_counts[area] = self.area_counts.get(area, 0) + 1
+        if _is_interview(item):
+            self.interview_count += 1
+        item["mission_selection_reason"] = reason
+
+    def remove(self, item: dict[str, Any]) -> None:
+        self.selected.remove(item)
+        self.selected_ids.remove(id(item))
+        self.source_counts[source_key(item)] -= 1
+        self.type_counts[content_type_key(item)] -= 1
+        if self.mission_aware:
+            self.area_counts[mission_area(item)] -= 1
+        if _is_interview(item):
+            self.interview_count -= 1
+
+    def best(self, pool: list[dict[str, Any]], *, prefer_research: bool = False) -> dict[str, Any] | None:
+        candidates = [x for x in pool if self.admissible(x, repeat_source=False)]
+        if not candidates:
+            return None
+        if prefer_research:
+            research_first = [x for x in candidates if _is_research(x)]
+            if research_first:
+                candidates = research_first
+        return max(candidates, key=self.value_key)
+
+    def value_key(self, item: dict[str, Any]) -> tuple:
+        return (portfolio_value(item, self.selected, diversity_weight=self.contract["diversity_weight"], similarity_penalty=self.contract["similarity_penalty"]), -_rank_key(item, self.recent)[0], candidate_score(item))
+
+
+def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[str, Any], strict_relevance: bool) -> list[dict[str, Any]]:
+    eligible: list[dict[str, Any]] = []
+    for raw in list(candidates or []):
+        item = dict(raw)
+        if _is_community(item) and contract["community_max"] <= 0:
+            continue
+        if not is_mission_relevant(item, strict=strict_relevance):
+            continue
+        item["mission_area"] = mission_area(item)
+        eligible.append(item)
+    return eligible
+
+
+def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[str, Any] | None:
+    candidates = [x for x in pool if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+    if not candidates:
+        return None
+    top_score = max((candidate_score(x) for x in candidates), default=0.0)
+    if top_score <= 0.0:
+        return None
+    floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+    viable = [x for x in candidates if candidate_score(x) >= top_score * floor]
+    if not viable:
+        viable = [max(candidates, key=lambda x: candidate_score(x))]
+    unseen_area = [x for x in viable if mission_area(x) not in p.area_counts]
+    if unseen_area:
+        viable = unseen_area
+    return max(viable, key=lambda x: (portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]), candidate_score(x), _safe_float(x, "evidence_strength"), str(x.get("published", ""))))
+
+
+def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
+    if not p.mission_aware or p.limit <= 0:
+        return
+    for _ in range(min(p.contract["ai_core_target_min"], p.limit)):
+        candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+        if not candidates:
+            candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+        candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+        if candidate is None:
+            break
+        p.add(candidate, "mission_target:ai_core")
+
+    # A new independent mind floor is opt-in. Older characterization contracts
+    # that only declare mind_future_target retain the legacy combined behavior.
+    mind_target = p.contract.get("mind_cognition_target", 0)
+    for _ in range(min(mind_target, max(0, p.limit - len(p.selected)))):
+        pool = [x for x in ordered if mission_area(x) == "mind_cognition" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+        if not pool:
+            pool = [x for x in ordered if mission_area(x) == "mind_cognition" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+        if not pool:
+            break
+        baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and mission_area(x) != "ai_core"]
+        baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
+        candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+        if candidate is None:
+            break
+        floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+        if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
+            break
+        p.add(candidate, "mission_target:mind_cognition")
+
+    for target_key, area_predicate in (
+        ("convergence_target", lambda x: mission_area(x) == "convergence"),
+        ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
+        ("research_target", _is_research),
+    ):
+        for _ in range(min(p.contract.get(target_key, 0), max(0, p.limit - len(p.selected)))):
+            pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+            if not pool:
+                pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
+            if not pool:
+                break
+            baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and (target_key != "mind_future_target" or mission_area(x) != "ai_core")]
+            baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
+            candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+            if candidate is None:
+                break
+            floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+            if baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
+                break
+            candidate_area = mission_area(candidate)
+            reason = f"mission_target:{candidate_area}" if candidate_area in {"mind_cognition", "future_governance"} else f"mission_target:{target_key.removesuffix('_target')}"
+            p.add(candidate, reason)
+
+
+def _fill_by_portfolio_value(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:
+    while len(p.selected) < p.limit:
+        unique_pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False)]
+        if not unique_pool:
+            break
+        best_item = _quality_floor_candidate(p, unique_pool)
+        if best_item is None:
+            break
+        if p.mission_aware and mission_area(best_item) == "ai_core" and p.area_counts.get("ai_core", 0) >= p.contract["ai_core_target_max"]:
+            alternative = [x for x in unique_pool if mission_area(x) != "ai_core"]
+            if alternative:
+                alt = _quality_floor_candidate(p, alternative)
+                if alt is not None:
+                    best_item = alt
+                else:
+                    break
+            else:
+                break
+        p.add(best_item, "portfolio_value")
+
+
+def _backfill_repeat_sources(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:
+    if p.source_cap <= 1:
+        return
+    while len(p.selected) < p.limit:
+        pool = [x for x in eligible if id(x) not in p.selected_ids and p.admissible(x, repeat_source=True)]
+        if not pool:
+            break
+        top_score = max((candidate_score(x) for x in pool), default=0.0)
+        floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
+        viable = [x for x in pool if top_score <= 0 or candidate_score(x) >= top_score * floor]
+        if not viable:
+            viable = [max(pool, key=candidate_score)]
+        for item in viable:
+            _annotate_information_gain(item, p.selected, p.contract)
+        best_item = max(viable, key=lambda x: (portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]), candidate_score(x)))
+        p.add(best_item, "adaptive_source_backfill")
+
+
+def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:
+    auth_required = min(p.contract["min_authoritative_items"], len(p.selected))
+    while p.mission_aware and sum(_authority_ok(x) for x in p.selected) < auth_required:
+        replacement = next((x for x in eligible if id(x) not in p.selected_ids and _authority_ok(x) and p.admissible(x, repeat_source=False)), None)
+        removable = [x for x in p.selected if not _authority_ok(x)]
+        if replacement is None or not removable:
+            break
+        def _repair_priority(x: dict[str, Any]) -> tuple:
+            reason = str(x.get("mission_selection_reason") or "")
+            if reason == "mission_target:convergence": lane_priority = 0
+            elif reason == "mission_target:future_governance": lane_priority = 1
+            elif reason == "portfolio_value": lane_priority = 2
+            elif reason == "adaptive_source_backfill": lane_priority = 3
+            else: lane_priority = 4
+            return (lane_priority, candidate_score(x), _safe_float(x, "evidence_strength"), _rank_key(x, p.recent))
+        victim = min(removable, key=_repair_priority)
+        p.remove(victim)
+        p.add(replacement, "policy_repair:min_authoritative_items")
+
+
+def _annotate_final_information_gain(selected: list[dict[str, Any]]) -> None:
+    for item in selected:
+        item["portfolio_information_gain"] = information_gain_score(item, [x for x in selected if x is not item])
+
+
+def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False) -> list[dict[str, Any]]:
+    contract = contract or load_editorial_contract()
+    limit = max(0, int(max_posts or 0))
+    source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
+    type_cap = max(1, int(max_per_type or 1))
+    recent = recent_source_counts or {}
+    eligible = _eligible_candidates(candidates, contract, strict_relevance)
+    ordered = sorted(eligible, key=lambda x: _rank_key(x, recent))
+    portfolio = _Portfolio(contract=contract, limit=limit, source_cap=source_cap, type_cap=type_cap, recent=recent, mission_aware=mission_aware)
+    _fill_mission_targets(portfolio, ordered)
+    _fill_by_portfolio_value(portfolio, eligible)
+    _backfill_repeat_sources(portfolio, eligible)
+    _repair_min_authoritative(portfolio, eligible)
+    _annotate_final_information_gain(portfolio.selected)
+    return portfolio.selected[:limit]
+
+
+def assert_portfolio_contract(selected: Iterable[dict[str, Any]], *, contract: dict[str, Any] | None = None) -> None:
+    contract = contract or load_editorial_contract()
+    items = list(selected or [])
+    source_counts: dict[str, int] = {}
+    area_counts: dict[str, int] = {}
+    for item in items:
+        source_counts[source_key(item)] = source_counts.get(source_key(item), 0) + 1
+        area_counts[mission_area(item)] = area_counts.get(mission_area(item), 0) + 1
+    assert max(source_counts.values(), default=0) <= contract["hard_max_same_source"]
+    assert max(area_counts.values(), default=0) <= contract["max_same_mission_area"]
+    if len(items) >= contract["min_unique_sources"]:
+        assert len(source_counts) >= contract["min_unique_sources"]
+    assert sum(_authority_ok(x) for x in items) >= min(contract["min_authoritative_items"], len(items))
+    assert sum(_is_community(x) for x in items) <= contract["community_max"]

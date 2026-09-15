@@ -72,7 +72,10 @@ def _load_ideas() -> list[dict[str, object]]:
         _IDEA_CACHE = []
         return _IDEA_CACHE
     raw = payload.get("ideas_and_theories", [])
-    _IDEA_CACHE = [x for x in raw.values() if isinstance(x, dict)] if isinstance(raw, dict) else []
+    if isinstance(raw, dict):
+        _IDEA_CACHE = [dict(value, name=str(key)) for key, value in raw.items() if isinstance(value, dict)]
+    else:
+        _IDEA_CACHE = [x for x in raw if isinstance(x, dict)]
     return _IDEA_CACHE
 
 def _match_priority_ideas(item, text: str) -> list[str]:
@@ -94,7 +97,6 @@ def _apply_idea_signal(item, text: str) -> list[str]:
             current = float(item.get("signal_score", 0) or 0)
         except (TypeError, ValueError):
             current = 0.0
-        # Ideas are discovery/ranking signals, never Tier-0 authorization.
         idea_bonus = min(6.0, 2.0 + 1.5 * max(0, len(ideas) - 1))
         item["priority_idea_bonus"] = idea_bonus
         item["signal_score"] = current + idea_bonus

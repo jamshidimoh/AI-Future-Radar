@@ -73,15 +73,17 @@ def content_type_key(item: dict[str, Any]) -> str:
 
 def mission_area(item: dict[str, Any]) -> str:
     explicit = str(item.get("mission_area") or "").strip().casefold()
-    if explicit in _AREA_MAP.values():
+    if explicit in _AREA_MAP.values() or explicit in {"unclassified", "unknown"}:
         return explicit
     category = str(item.get("category") or "").strip().casefold()
     if category in _AREA_MAP:
         return _AREA_MAP[category]
-    if item.get("research_signal") or content_type_key(item) in _RESEARCH_TYPES:
+    matched_area = _keyword_match_area(item)
+    if matched_area:
+        return matched_area
+    if item.get("_ai_link") is True or item.get("ai_relevance") is True:
         return "ai_core"
-    return "ai_core"
-
+    return "unclassified"
 
 def _mission_text(item: dict[str, Any]) -> str:
     return " ".join(str(item.get(k) or "") for k in ("title", "summary", "description", "category", "mission_area", "content_type", "tags", "keywords")).casefold()

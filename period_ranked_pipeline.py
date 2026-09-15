@@ -291,3 +291,8 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     print(f"[Normal Ranking Window] retained={len(normal_window)} normal_candidate_window={candidate_window} replacement_buffer={contract.get('replacement_buffer',0)} publication_capacity={contract['max_posts']}", flush=True)
     print(f"[Ranking Timing] total elapsed={time.monotonic()-started:.3f}s", flush=True)
     return ranked
+
+
+def _eligibility_split(items, max_protected=2):
+    """Compatibility entry point for legacy tests; ownership stays in main.py."""
+    return _pipeline._split_protected(items, max_protected=max_protected)

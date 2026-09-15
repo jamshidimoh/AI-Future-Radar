@@ -96,3 +96,32 @@ def test_watchlist_metadata_does_not_make_short_news_item_tier_zero():
         "is_leader_watch": True,
     }
     assert not is_substantive_priority_interview(item)
+
+
+def test_idea_lane_boosts_relevant_content_without_tier_zero():
+    item = {
+        "title": "Predictive processing offers a new lens for AI cognition",
+        "content_type": "research",
+        "summary": "The study compares predictive processing and generative models for machine cognition and perception.",
+        "source": "Nature",
+    }
+    people, tier0, bonus = priority_people_features(item)
+    assert people == []
+    assert tier0 is False
+    assert bonus == 0.0
+    assert "predictive_processing" in item["priority_ideas"]
+    assert item["priority_idea_bonus"] > 0
+    assert item["signal_score"] == item["priority_idea_bonus"]
+
+
+def test_idea_lane_caps_bonus_and_does_not_override_person_contract():
+    item = {
+        "title": "Machine consciousness, predictive processing, global workspace and IIT",
+        "content_type": "news",
+        "summary": "A comparative AI consciousness report discusses machine consciousness, predictive processing, global workspace theory, integrated information theory, qualia and sentience.",
+        "source": "Nature",
+    }
+    priority_people_features(item)
+    assert item["priority_idea_count"] >= 4
+    assert item["priority_idea_bonus"] <= 6.0
+    assert item["_priority_idea_signal_applied"] is True

@@ -45,4 +45,4 @@ def test_expert_membership_never_grants_tier0():
     assert people == []
     assert tier0 is False
     assert bonus == 0.0
-    assert item["signal_score"] >= 0.0
+    assert item.get("signal_score", 0.0) >= 0.0

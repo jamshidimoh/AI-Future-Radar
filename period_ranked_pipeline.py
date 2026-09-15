@@ -12,13 +12,11 @@ import logging
 import time
 
 import main as _pipeline
-from src.logging_setup import configure_logging
 from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
 from src.protected_story_identity import probable_same_story
 from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
 from src.semantic_dedup import get_story_signature
-from src.story_gate import _technology_relevant
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 logger = logging.getLogger(__name__)

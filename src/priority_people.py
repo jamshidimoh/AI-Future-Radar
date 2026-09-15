@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import re
 
+from src.expert_registry import apply_expert_features
+
 TOP_AI_VOICES={"elon musk","sam altman","demis hassabis","dario amodei","jensen huang","yann lecun","yoshua bengio","geoffrey hinton","andrew ng","eric schmidt","ilya sutskever","noam shazeer","fei-fei li","stuart russell","nick bostrom","yuval noah harari","mustafa suleyman","mark zuckerberg","satya nadella","lisa su"}
 PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","altman","سم آلتمن","سم التمن"),"demis hassabis":("demis hassabis","hassabis"),"dario amodei":("dario amodei","amodei"),"jensen huang":("jensen huang","huang"),"yann lecun":("yann lecun","yann le cun","lecun"),"yoshua bengio":("yoshua bengio","bengio"),"geoffrey hinton":("geoffrey hinton","hinton"),"andrew ng":("andrew ng",),"eric schmidt":("eric schmidt","schmidt"),"ilya sutskever":("ilya sutskever","sutskever"),"noam shazeer":("noam shazeer","shazeer"),"fei-fei li":("fei-fei li","fei fei li","fei-fei","fei fei"),"stuart russell":("stuart russell","russell"),"nick bostrom":("nick bostrom","bostrom"),"yuval noah harari":("yuval noah harari","yuval harari","harari"),"mustafa suleyman":("mustafa suleyman","suleyman"),"mark zuckerberg":("mark zuckerberg","zuckerberg"),"satya nadella":("satya nadella","nadella"),"lisa su":("lisa su",)}
 INTERVIEW_TYPES={"interview","podcast","talk","lecture","fireside","conversation","discussion","q&a"}
@@ -57,12 +59,15 @@ def matched_priority_people(item, *, text: str | None = None):
 def priority_people_features(item):
     if item.get("_publication_blocked"):
         return [], False, 0.0
+    # Expert registry enriches signal_score only; it does not grant Tier-0.
+    apply_expert_features(item)
     text = _text(item)
     people = matched_priority_people(item, text=text)
     if not people:
         return people, False, 0.0
     protected_ranked_story = bool(item.get("protected_content") and item.get("_rank_is_tier0"))
-    is_tier0 = protected_ranked_story or (_interview_context(item) and len(text) >= 100)
+    is_substantive_interview = _interview_context(item) and len(text) >= 100
+    is_tier0 = protected_ranked_story or is_substantive_interview
     return people, is_tier0, 50.0 if is_tier0 else 0.0
 
 def is_substantive_priority_interview(item):

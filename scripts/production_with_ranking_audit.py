@@ -36,9 +36,9 @@ if os.getenv("RADAR_PRODUCTION_MODE") == "1":
     pipeline._pipeline.NORMAL_SCORE_FLOOR = 55.0
     pipeline._pipeline.PROTECTED_SUMMARY_SCORE_FLOOR = 55.0
 
-_original_main = pipeline._pipeline.main
+_original_main = pipeline.main
 _original_rank = pipeline._global_ranked_selection
-_original_summarize = pipeline._pipeline.summarize_item
+_original_summarize = pipeline.summarize_item
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 _GOOGLE_NEWS_HOSTS = {"news.google.com", "news.googleusercontent.com"}
 _CANONICAL_RESOLVE_TIMEOUT_SECONDS = 6
@@ -285,7 +285,7 @@ def _audited_main(hooks=None):
     explicit_select = merged.get("select_editorial")
     original_format = merged.get("format_post")
     original_summarize = merged.get("summarize_item") or _original_summarize
-    original_deliver = merged.get("send_to_telegram_safe") or pipeline._pipeline.send_to_telegram_safe
+    original_deliver = merged.get("send_to_telegram_safe") or pipeline.send_to_telegram_safe
 
     def production_select(items, max_posts, max_per_source, max_per_type, policy):
         if explicit_select is not None:
@@ -321,7 +321,7 @@ def _audited_main(hooks=None):
         return ensure_headline_grounding(source_grounded, item)
 
     def rtl_format(item, source_name, link, **kwargs):
-        formatter = original_format or pipeline._pipeline.format_post
+        formatter = original_format or pipeline.format_post
         return _fit_formatted_payload(formatter, item, source_name, link, kwargs)
 
     def single_message_deliver(text, image_url="", source_link=""):

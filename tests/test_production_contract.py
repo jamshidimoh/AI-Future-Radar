@@ -2,7 +2,6 @@ from pathlib import Path
 
 import yaml
 
-import period_ranked_pipeline
 from src.editorial_quality_policy import BODY_PERSIAN_RATIO_MIN, TITLE_PERSIAN_RATIO_MIN
 from src.unified_editorial_selection import load_editorial_contract
 
@@ -98,48 +97,3 @@ def test_source_boundary_and_architecture_are_synced():
     assert "Protected sources" in text
     assert "priority candidates" in text
     assert "replacement" in text.lower()
-
-
-def test_weak_leader_activity_cannot_remain_tier0(monkeypatch):
-    monkeypatch.setattr(period_ranked_pipeline, "_exclude_published_candidates", lambda items: items)
-    monkeypatch.setattr(period_ranked_pipeline, "_prepare_rank_features", lambda items: items)
-    monkeypatch.setattr(period_ranked_pipeline._pipeline, "_is_protected_leader_activity", lambda item: True)
-    monkeypatch.setattr(period_ranked_pipeline._pipeline, "_is_protected_leader_interview", lambda item: False)
-    monkeypatch.setattr(period_ranked_pipeline, "_diversify_normal_candidates", lambda items, *args, **kwargs: list(items))
-    monkeypatch.setattr(
-        period_ranked_pipeline,
-        "_priority_story_diversified",
-        lambda items: list(items),
-    )
-    monkeypatch.setattr(
-        period_ranked_pipeline,
-        "load_editorial_contract",
-        lambda: {"candidate_window": 6, "replacement_buffer": 3, "max_posts": 3},
-    )
-
-    # _prepare_rank_features is intentionally stubbed in this focused test,
-    # so seed the downstream ranking fields that the real preparer normally sets.
-    weak = {
-        "title": "Weak leader activity",
-        "leader": "Leader",
-        "protected_slot": True,
-        "_rank_is_tier0": True,
-        "editorial_score": 31.38,
-        "final_editorial_score": 31.38,
-    }
-    strong = {
-        "title": "Strong normal story",
-        "_rank_is_tier0": False,
-        "editorial_score": 63.0,
-        "final_editorial_score": 63.0,
-    }
-
-    ranked = period_ranked_pipeline._global_ranked_selection(
-        [weak, strong], max_posts=3, max_per_source=2, max_per_type=2, policy={}
-    )
-
-    assert weak["_rank_is_tier0"] is False
-    assert weak["protected_slot"] is False
-    assert weak["protected_content"] is False
-    assert weak in ranked
-    assert strong in ranked

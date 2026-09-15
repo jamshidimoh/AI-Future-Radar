@@ -229,6 +229,41 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     eligible = [x for x in items if not x.get("duplicate") and not x.get("publication_blocked")]
     eligible = _exclude_published_candidates(eligible)
     _prepare_rank_features(eligible)
+
+    # Leader-watch activity is protected for monitoring, but a weak activity
+    # item must not consume one of the scarce protected publication slots.
+    # Interviews and critical AI incidents retain their independent protection.
+    try:
+        protected_floor = float(getattr(_pipeline, "PROTECTED_SUMMARY_SCORE_FLOOR", 55.0) or 55.0)
+    except (TypeError, ValueError):
+        protected_floor = 55.0
+    demoted_activity = 0
+    for item in eligible:
+        if not item.get("_rank_is_tier0"):
+            continue
+        if item.get("critical_ai_incident"):
+            continue
+        try:
+            is_activity = bool(_pipeline._is_protected_leader_activity(item))
+            is_interview = bool(_pipeline._is_protected_leader_interview(item))
+        except Exception:
+            is_activity = is_interview = False
+        if not is_activity or is_interview:
+            continue
+        if _score(item) >= protected_floor:
+            continue
+        item["_rank_is_tier0"] = False
+        item["priority_person_interview"] = False
+        item["protected_slot"] = False
+        item["protected_content"] = False
+        demoted_activity += 1
+        print(
+            f"[Leader Protection Gate] demoted weak activity before ranking: {str(item.get('title', ''))[:120]} score={_score(item):.2f} floor={protected_floor:.2f}",
+            flush=True,
+        )
+    if demoted_activity:
+        print(f"[Leader Protection Gate] weak_activity_demoted={demoted_activity} protected_floor={protected_floor:.2f}", flush=True)
+
     print(f"[Ranking Timing] feature_cache items={len(eligible)} elapsed={time.monotonic()-started:.3f}s", flush=True)
     eligible.sort(key=lambda x: (int(bool(x.get("_rank_is_tier0"))), _score(x), int(bool(x.get("model_release_priority"))), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
     priority_candidates = [x for x in eligible if x.get("_rank_is_tier0")]
@@ -258,71 +293,3 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     print(f"[Normal Ranking Window] retained={len(normal_window)} normal_candidate_window={candidate_window} replacement_buffer={contract.get('replacement_buffer',0)} publication_capacity={contract['max_posts']}", flush=True)
     print(f"[Ranking Timing] total elapsed={time.monotonic()-started:.3f}s", flush=True)
     return ranked
-
-
-def _substantive_protected_activity(item):
-    """Allow Tier-0 activity only for a concrete leader event with AI/tech evidence."""
-    text = " ".join(str(item.get(k) or "") for k in ("title", "summary", "description")).casefold()
-    activity = any(term in text for term in _PROTECTED_ACTIVITY_TERMS)
-    tech = any(term in f" {text} " for term in _PROTECTED_TECH_TERMS)
-    return activity and tech
-
-
-def _eligibility_split(items, max_protected=2):
-    candidates, regular = [], []
-    for raw in items:
-        item = dict(raw)
-        is_interview = _pipeline._is_protected_leader_interview(item)
-        is_activity = not is_interview and _pipeline._is_protected_leader_activity(item)
-        if is_interview or is_activity:
-            if (is_activity and not _substantive_protected_activity(item)) or not _technology_relevant(item):
-                item["protected_content"] = False
-                item["leader_watch_protected"] = False
-                item["protected_slot"] = False
-                item["_rank_is_tier0"] = False
-                item["protected_reason"] = "leader_protection_not_substantive_technology_relevant"
-                regular.append(item)
-                print(f"[Leader Protection Gate] demoted weak activity: {str(item.get('title', ''))[:120]}", flush=True)
-                continue
-            item["protected_content"] = True
-            item["protected_reason"] = "leader_interview" if is_interview else "leader_activity"
-            item["_ai_link"] = True
-            item["leader_watch_protected"] = True
-            item["leader_source_authority"] = _pipeline._leader_source_authority(item)
-            leader = str(item.get("leader") or item.get("watch_person") or "").strip()
-            if leader:
-                item["priority_story_people"] = [leader]
-            candidates.append(item)
-        else:
-            regular.append(item)
-    candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _pipeline._direct_interview_signal(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
-    limit = max(0, int(max_protected))
-    selected = candidates[:limit]
-    for item in selected:
-        item["protected_slot"] = True
-        item["protected_content"] = True
-        item["leader_watch_protected"] = True
-        item["_rank_is_tier0"] = True
-    for item in candidates[limit:]:
-        item["protected_slot"] = False
-        item["protected_content"] = False
-        item["leader_watch_protected"] = False
-        item["_rank_is_tier0"] = False
-        item["priority_person_interview"] = False
-    regular.extend(candidates[limit:])
-    print(f"[Protected Leader Eligibility] candidates={len(candidates)} slots_reserved={len(selected)}", flush=True)
-    return selected, regular
-
-
-def main(hooks=None):
-    configure_logging()
-    merged = dict(hooks or {})
-    merged.setdefault("select_editorial", _global_ranked_selection)
-    merged.setdefault("split_protected", _eligibility_split)
-    return _pipeline.main(hooks=merged)
-
-select_editorial = _global_ranked_selection
-
-for _name in ("load_yaml", "LEADER_CONFIG_PATH", "_direct_interview_signal", "summarize_item", "format_post", "mark_as_seen", "send_to_telegram_safe", "resolve_source_image", "_source_tier", "_persist_item_success"):
-    if hasattr(_pipeline, _name):
-        globals()[_name] = getattr(_pipeline, _name)

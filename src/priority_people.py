@@ -162,7 +162,7 @@ def _apply_directional_idea_metadata(item, ideas: list[str], matched_details: li
             item["person_idea_direction"] = "ai_to_mind"
         elif has_mind_person and any(area in {"ai_core", "convergence"} for area in areas):
             item["person_idea_direction"] = "mind_to_ai"
-        elif has_mind_person and "future_mind" in sublanes:
+        elif has_mind_person and "future_of_mind" in sublanes:
             item["person_idea_direction"] = "mind_to_ai"
         elif has_mind_person:
             item["person_idea_direction"] = "mind_to_mind"

@@ -8,7 +8,7 @@ import yaml
 
 from src.expert_registry import apply_expert_features
 
-TOP_AI_VOICES={"elon musk","sam altman","demis hassabis","dario amodei","jensen huang","yann lecun","yoshua bengio","andrew ng","eric schmidt","ilya sutskever","noam shazeer","fei-fei li","stuart russell","nick bostrom","yuval noah harari","mustafa suleyman","mark zuckerberg","satya nadella","lisa su"}
+TOP_AI_VOICES={"elon musk","sam altman","demis hassabis","dario amodei","jensen huang","yann lecun","yoshua bengio","geoffrey hinton","andrew ng","eric schmidt","ilya sutskever","noam shazeer","fei-fei li","stuart russell","nick bostrom","yuval noah harari","mustafa suleyman","mark zuckerberg","satya nadella","lisa su"}
 PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","altman","سم آلتمن","سم التمن"),"demis hassabis":("demis hassabis","hassabis"),"dario amodei":("dario amodei","amodei"),"jensen huang":("jensen huang","huang"),"yann lecun":("yann lecun","yann le cun","lecun"),"yoshua bengio":("yoshua bengio","bengio"),"geoffrey hinton":("geoffrey hinton","hinton"),"andrew ng":("andrew ng",),"eric schmidt":("eric schmidt","schmidt"),"ilya sutskever":("ilya sutskever","sutskever"),"noam shazeer":("noam shazeer","shazeer"),"fei-fei li":("fei-fei li","fei fei li","fei-fei","fei fei"),"stuart russell":("stuart russell","russell"),"nick bostrom":("nick bostrom","bostrom"),"yuval noah harari":("yuval noah harari","yuval harari","harari"),"mustafa suleyman":("mustafa suleyman","suleyman"),"mark zuckerberg":("mark zuckerberg","zuckerberg"),"satya nadella":("satya nadella","nadella"),"lisa su":("lisa su",)}
 INTERVIEW_TYPES={"interview","podcast","talk","lecture","fireside","conversation","discussion","q&a"}
 INTERVIEW_TERMS=("interview","podcast","fireside chat","conversation","q&a","keynote q&a","question and answer","speaks with","talks with","in conversation","sit-down","سخنرانی","مصاحبه","پادکست","گفتگو","گفت‌وگو","پرسش و پاسخ")
@@ -161,6 +161,8 @@ def _apply_directional_idea_metadata(item, ideas: list[str], matched_details: li
         if has_ai_person and "mind_cognition" in areas:
             item["person_idea_direction"] = "ai_to_mind"
         elif has_mind_person and any(area in {"ai_core", "convergence"} for area in areas):
+            item["person_idea_direction"] = "mind_to_ai"
+        elif has_mind_person and "future_mind" in sublanes:
             item["person_idea_direction"] = "mind_to_ai"
         elif has_mind_person:
             item["person_idea_direction"] = "mind_to_mind"

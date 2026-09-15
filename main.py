@@ -247,37 +247,85 @@ def _summarize_selected(items, summarize_fn):
         return list(executor.map(lambda item: _safe_summarize(item, summarize_fn), items))
 
 def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
-    mission_areas = {"mind", "future", "mind_cognition", "future_governance"}
+    from src.unified_editorial_selection import load_editorial_contract
+
+    contract = load_editorial_contract()
+
     def _area(item):
-        return str(item.get("mission_area") or item.get("category") or "").strip().casefold()
-    target = 1 if any(_area(x) in mission_areas for x in editorial_pool) else 0
-    if target <= 0:
-        print("[Mission Coverage Recovery] prepared_publishable=0 score_floor=60.0", flush=True)
+        raw = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
+        return {"ai": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "mind": "mind_cognition", "future": "future_governance"}.get(raw, raw)
+
+    selected_ids = {_publication_identity(x) for x in selected}
+
+    def _score_ok(item):
+        try:
+            score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
+        except (TypeError, ValueError):
+            score = 0.0
+        return score >= NORMAL_SCORE_FLOOR and not item.get("_publication_blocked")
+
+    specs = [
+        ("ai_core", int(contract.get("ai_core_target_min", 0) or 0)),
+        ("convergence", int(contract.get("convergence_target", 0) or 0)),
+    ]
+    mind_target = int(contract.get("mind_cognition_target", 0) or 0)
+    specs.append(("mind_cognition", mind_target) if mind_target > 0 else ("legacy_mind_future", int(contract.get("mind_future_target", 0) or 0)))
+
+    missing = []
+    for area, count in specs:
+        if count <= 0:
+            continue
+        allowed = {"mind_cognition", "future_governance"} if area == "legacy_mind_future" else {area}
+        covered = sum(1 for x in selected if _area(x) in allowed and _score_ok(x))
+        missing.extend([allowed] * max(0, count - covered))
+
+    if not missing:
+        print("[Mission Coverage Recovery] no exact mission lane missing; recovery=0", flush=True)
         return []
-    prepared = sum(1 for x in selected if _area(x) in mission_areas and float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= NORMAL_SCORE_FLOOR and not x.get("_publication_blocked"))
-    if prepared >= target:
-        print(f"[Mission Coverage Recovery] prepared_publishable={prepared} score_floor={NORMAL_SCORE_FLOOR}", flush=True)
-        return []
-    selected_ids = {str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) for x in selected}
-    pool = [x for x in editorial_pool if not x.get("_publication_blocked") and str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) not in selected_ids]
+
+    pool = [x for x in editorial_pool if _publication_identity(x) not in selected_ids and not x.get("_publication_blocked")]
     recovered, attempts = [], 0
-    while prepared + len(recovered) < target and pool and attempts < max(1, int(policy.get("replacement_buffer", 3) or 3)):
-        attempts += 1
-        chosen = select_editorial_fn(pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
-        if not chosen:
+    attempt_limit = max(1, int(policy.get("replacement_buffer", 3) or 3))
+
+    for allowed_areas in missing:
+        if attempts >= attempt_limit:
             break
-        candidate = chosen[0]
-        identity = str(candidate.get("canonical_url") or candidate.get("link") or candidate.get("url") or candidate.get("title") or id(candidate))
-        pool = [x for x in pool if str(x.get("canonical_url") or x.get("link") or x.get("url") or x.get("title") or id(x)) != identity]
-        summary = _safe_summarize(candidate, summarize_fn)
-        if summary:
+        area_pool = [x for x in pool if _area(x) in allowed_areas]
+        while area_pool and attempts < attempt_limit:
+            attempts += 1
+            chosen = select_editorial_fn(
+                area_pool,
+                max_posts=1,
+                max_per_source=max_per_source,
+                max_per_type=max_per_type,
+                policy=policy,
+            )
+            if not chosen:
+                break
+            candidate = chosen[0]
+            identity = _publication_identity(candidate)
+            pool = [x for x in pool if _publication_identity(x) != identity]
+            area_pool = [x for x in area_pool if _publication_identity(x) != identity]
+            summary = _safe_summarize(candidate, summarize_fn)
+            if not summary:
+                print(
+                    f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=failed",
+                    flush=True,
+                )
+                continue
             candidate.update(summary)
             candidate["_mission_recovery"] = True
             recovered.append((candidate, summary))
-            print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=recovered", flush=True)
-        else:
-            print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=failed", flush=True)
-    print(f"[Mission Coverage Recovery] target={target} prepared={prepared} attempts={attempts} recovered={len(recovered)} status={'ok' if prepared + len(recovered) >= target else 'unmet'}", flush=True)
+            print(
+                f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=recovered",
+                flush=True,
+            )
+            break
+
+    print(
+        f"[Mission Coverage Recovery] missing_lanes={len(missing)} attempts={attempts} recovered={len(recovered)} status={'ok' if len(recovered) >= len(missing) else 'unmet'}",
+        flush=True,
+    )
     return recovered
 
 def main(hooks=None):

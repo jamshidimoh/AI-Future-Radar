@@ -21,7 +21,7 @@ def test_semantic_similarity_characterization():
 
 
 def test_select_regular_portfolio_characterization():
-    fixture = json.loads((ROOT / "characterization" / "select_regular_portfolio.json").read_text(encoding="utf-8"))
+    fixture = json.loads((ROOT / "select_regular_portfolio.json").read_text(encoding="utf-8"))
     legacy_contract = dict(fixture["contract"])
     legacy_contract["mind_cognition_target"] = 0
     for case in fixture["grid"]:
@@ -43,7 +43,7 @@ def test_select_regular_portfolio_characterization():
 
 
 def test_filter_ai_relevance_characterization():
-    fixture = json.loads((ROOT / "characterization" / "filter_ai_relevance.json").read_text(encoding="utf-8"))
+    fixture = json.loads((ROOT / "filter_ai_relevance.json").read_text(encoding="utf-8"))
     for keywords, label in ((["machine learning", "neural"], "supplied"), (None, "bridge_only")):
         result = filter_ai_relevance(fixture["items"], keywords)
         actual = [

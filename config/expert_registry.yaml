@@ -1,0 +1,21 @@
+# Canonical expert registry policy layer.
+# Identity/domain priors are editorial signals, not publication authorization.
+registry:
+  source: config/pioneers.yaml
+  duplicate_aliases:
+    Christopher Olah: Chris Olah
+  domain_map:
+    mind_consciousness: mind_cognition
+    future_civilization: future_governance
+    existential_risk: future_governance
+    public_intellectual: future_governance
+    ai_safety: future_governance
+    bio_embodied_intelligence: convergence
+    ai_architect: ai_core
+    ai_scientist: ai_core
+    ai_society: future_governance
+    science_communicator: null
+    silent_frontier_pioneer: ai_core
+  scoring:
+    max_bonus: 8.0
+    min_lane_score: 70.0

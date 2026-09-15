@@ -306,6 +306,12 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             identity = _publication_identity(candidate)
             pool = [x for x in pool if _publication_identity(x) != identity]
             area_pool = [x for x in area_pool if _publication_identity(x) != identity]
+            if not _score_ok(candidate):
+                print(
+                    f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=below_score_floor",
+                    flush=True,
+                )
+                continue
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
                 print(

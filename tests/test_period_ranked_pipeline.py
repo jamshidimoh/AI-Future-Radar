@@ -1,7 +1,7 @@
 import period_ranked_pipeline as pipeline
 
 
-def test_global_ranking_respects_three_post_publication_capacity():
+def test_global_ranking_returns_top_four_only():
     items = [
         {"title":"A","editorial_score":91,"source":"source-a","content_type":"research","category":"ai"},
         {"title":"B","editorial_score":95,"source":"source-b","content_type":"news","category":"quantum"},
@@ -11,11 +11,11 @@ def test_global_ranking_respects_three_post_publication_capacity():
     ]
     ranked = pipeline._global_ranked_selection(items, 1, 2, 2, {})
     titles = [x["title"] for x in ranked]
-    assert len(ranked) == 3
+    assert len(ranked) == 4
     assert titles[0] == "E"
-    assert set(titles) == {"A", "D", "E"}
-    assert len({x["source"] for x in ranked}) == 3
-    assert [x["period_rank"] for x in ranked] == [1,2,3]
+    assert set(titles) == {"A", "B", "D", "E"}
+    assert len({x["source"] for x in ranked}) == 4
+    assert [x["period_rank"] for x in ranked] == [1,2,3,4]
 
 
 def test_protected_leader_is_reserved_and_selected():

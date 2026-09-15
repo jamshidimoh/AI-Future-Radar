@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   repair:
-    if: github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[one-time-repair]')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main

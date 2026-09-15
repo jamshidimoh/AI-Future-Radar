@@ -27,17 +27,80 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.11"
-          cache: pip
+      - name: Apply targeted protected-activity repair
+        if: "github.event_name == 'push' && startsWith(github.event.head_commit.message, 'ci: targeted production repair trigger')"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('main.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''    candidates, regular = [], []
+    for raw in items:
+        item = dict(raw)
+        if _is_protected_leader_interview(item) or _is_protected_leader_activity(item):
+            item["protected_content"] = True
+            item["protected_reason"] = "leader_interview_or_activity"
+            item["_ai_link"] = True
+            item["leader_watch_protected"] = True
+            item["leader_source_authority"] = _leader_source_authority(item)
+            candidates.append(item)
+        else:
+            regular.append(item)
+'''
+          new = '''    candidates, regular = [], []
+    for raw in items:
+        item = dict(raw)
+        is_interview = _is_protected_leader_interview(item)
+        is_activity = not is_interview and _is_protected_leader_activity(item)
+        if is_activity:
+            try:
+                activity_score = float(item.get("editorial_score", item.get("score", 0)) or 0.0)
+            except (TypeError, ValueError):
+                activity_score = 0.0
+            if activity_score < NORMAL_SCORE_FLOOR:
+                regular.append(item)
+                print(
+                    f"[Leader Protection Gate] demoted below-floor activity: {str(item.get('title', ''))[:120]} score={activity_score:.2f} floor={NORMAL_SCORE_FLOOR:.2f}",
+                    flush=True,
+                )
+                continue
+        if is_interview or is_activity:
+            item["protected_content"] = True
+            item["protected_reason"] = "leader_interview_or_activity"
+            item["_ai_link"] = True
+            item["leader_watch_protected"] = True
+            item["leader_source_authority"] = _leader_source_authority(item)
+            candidates.append(item)
+        else:
+            regular.append(item)
+'''
+          if old not in text:
+              raise SystemExit('target _split_protected block not found; refusing blind edit')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          cat > tests/test_protected_activity_floor_regression.py <<'PY'
+          from main import _split_protected
+
+          def test_below_floor_leader_activity_is_demoted_to_regular(monkeypatch):
+              monkeypatch.setattr("main._is_protected_leader_interview", lambda item: False)
+              monkeypatch.setattr("main._is_protected_leader_activity", lambda item: True)
+              monkeypatch.setattr("main._leader_source_authority", lambda item: 3)
+              low = {"leader": "Leader Low", "title": "Weak AI leader activity", "editorial_score": 54.99}
+              strong = {"leader": "Leader Strong", "title": "Strong AI leader activity", "editorial_score": 70.0}
+              protected, regular = _split_protected([low, strong], max_protected=2)
+              assert [x["leader"] for x in protected] == ["Leader Strong"]
+              assert [x["leader"] for x in regular] == ["Leader Low"]
+              assert regular[0].get("protected_content") is not True
+          PY
 
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
       - name: Run production regression checks
-        run: python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_google_news_canonical_resolution.py tests/test_production_closure_gate_integrity.py
+        run: python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_google_news_canonical_resolution.py tests/test_production_closure_gate_integrity.py tests/test_protected_activity_floor_regression.py
 
       - name: Emit fail-closed closure evidence
         run: echo "[Provider Failure Isolation Evidence] PASS"
@@ -127,6 +190,18 @@ jobs:
       - name: Update persistent LLM health from runtime evidence
         if: always()
         run: python -u scripts/update_llm_health_state.py run.log
+
+      - name: Remove temporary repair workflow after successful targeted run
+        if: "github.event_name == 'push' && startsWith(github.event.head_commit.message, 'ci: targeted production repair trigger') && success()"
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/one-time-targeted-production-repair.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add main.py tests/test_protected_activity_floor_regression.py .github/workflows/run.yml .github/workflows/one-time-targeted-production-repair.yml
+          git commit -m "fix: prevent weak leader activity from consuming protected slots [one-time-repair]"
+          git push origin HEAD:main
 
       - name: Persist production state
         if: always()

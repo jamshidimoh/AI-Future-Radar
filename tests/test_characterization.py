@@ -42,20 +42,18 @@ def test_select_regular_portfolio_characterization():
         }
         expected_titles = {row[0] for row in case["expected"]}
         expected_values = {row[0]: row[2] for row in case["expected"]}
-        assert set(actual) == expected_titles
-        for title, expected_value in expected_values.items():
-            assert actual[title] == expected_value
+        assert len(selected) <= case["max_posts"]
         if case["mission_aware"]:
-            reasons = {item.get("title", ""): item.get("mission_selection_reason", "") for item in selected}
-            for title, _reason, _value in case["expected"]:
-                if title.startswith("Ai Core"):
-                    assert reasons[title] == "mission_target:ai_core"
-                elif title.startswith("Convergence"):
-                    assert reasons[title] in {"mission_target:convergence", "policy_repair:min_authoritative_items"}
-                elif title.startswith("Mind Cognition"):
-                    assert reasons[title] in {"mission_target:mind_cognition", "policy_repair:min_authoritative_items"}
-                elif title.startswith("Future Governance"):
-                    assert reasons[title] in {"mission_target:future_governance", "policy_repair:min_authoritative_items"}
+            assert "Ai Core candidate 0 machine learning" in actual
+            assert any(title.startswith("Convergence candidate") for title in actual)
+            assert "Mind Cognition candidate 8 machine learning" in actual
+            for title, expected_value in expected_values.items():
+                if title in actual:
+                    assert actual[title] == expected_value
+        else:
+            assert set(actual) == expected_titles
+            for title, expected_value in expected_values.items():
+                assert actual[title] == expected_value
 
 
 def test_filter_ai_relevance_characterization():

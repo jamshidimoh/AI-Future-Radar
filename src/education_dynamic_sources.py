@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import re
 
+from src.source_exclusions import is_excluded_source_url
+
 # Curated, durable source pool. Availability is checked at runtime by the
 # existing _fetch_reference + education_source_policy gates.
 SOURCE_POOL = [
@@ -62,16 +64,15 @@ def _same_url(a: str, b: str) -> bool:
 def dynamic_source_candidates(lesson: dict, existing: list[dict] | None = None, *, limit: int = 8) -> list[dict]:
     """Return existing sources plus topic-ranked dynamic fallbacks.
 
-    Existing lesson-specific sources remain first-class candidates. Dynamic
-    sources are only an additional pool, so a curriculum author can still
-    pin a preferred source. The runtime gate decides which candidates survive.
+    Globally excluded source domains are removed before this list leaves the
+    boundary, so downstream education code cannot fetch a banned URL.
     """
-    existing = list(existing or [])
+    existing = [dict(x) for x in (existing or []) if not is_excluded_source_url(str(x.get("url", "")).strip())]
     seen = {str(x.get("url", "")).rstrip("/").lower() for x in existing if x.get("url")}
     scored: list[dict] = []
     for source in SOURCE_POOL:
         url = str(source.get("url") or "")
-        if _same_url(url, "") or url.rstrip("/").lower() in seen:
+        if _same_url(url, "") or is_excluded_source_url(url) or url.rstrip("/").lower() in seen:
             continue
         score = _topic_score(lesson, source)
         if score <= 0:

@@ -22,8 +22,9 @@ def test_semantic_similarity_characterization():
 
 def test_select_regular_portfolio_characterization():
     fixture = json.loads((ROOT / "select_regular_portfolio.json").read_text(encoding="utf-8"))
-    legacy_contract = dict(fixture["contract"])
-    legacy_contract["mind_cognition_target"] = 0
+    current_contract = dict(fixture["contract"])
+    current_contract["mind_cognition_target"] = 1
+    current_contract["mind_future_target"] = 0
     for case in fixture["grid"]:
         selected = select_regular_portfolio(
             fixture["candidates"],
@@ -31,7 +32,7 @@ def test_select_regular_portfolio_characterization():
             max_per_source=case["max_per_source"],
             max_per_type=case["max_per_type"],
             recent_source_counts={"openai": 2, "reuters": 1},
-            contract=legacy_contract,
+            contract=current_contract,
             mission_aware=case["mission_aware"],
             strict_relevance=case["strict_relevance"],
         )

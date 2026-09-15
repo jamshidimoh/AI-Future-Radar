@@ -290,8 +290,8 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         )
     else:
         targets = (
-            ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
             ("convergence_target", lambda x: mission_area(x) == "convergence"),
+            ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
             ("research_target", _is_research),
         )
 

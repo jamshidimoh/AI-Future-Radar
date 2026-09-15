@@ -115,8 +115,8 @@ def _term_pattern(term: str) -> re.Pattern[str]:
     cached = _WORD_TERM_RE_CACHE.get(normalized)
     if cached is not None:
         return cached
-    escaped = re.escape(normalized).replace(r"\ ", r"\\s+")
-    pattern = re.compile(rf"(?<!\w){escaped}(?!\w)", re.I)
+    parts = [re.escape(part) for part in normalized.split() if part]
+    pattern = re.compile(rf"(?<!\w){r'\\s+'.join(parts)}(?!\w)", re.I)
     _WORD_TERM_RE_CACHE[normalized] = pattern
     return pattern
 
@@ -172,7 +172,7 @@ def _match_priority_ideas(item, text: str) -> list[str]:
         terms = _idea_terms(idea)
         if not terms:
             continue
-        if any(_term_pattern(_normalize(term)).search(text) for term in terms):
+        if any(_term_pattern(term).search(text) for term in terms):
             matches.append(str(idea.get("name") or "").strip())
             details.append(idea)
     _apply_directional_idea_metadata(item, matches, details)

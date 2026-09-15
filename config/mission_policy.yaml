@@ -8,7 +8,9 @@ mission:
   operational_publication_capacity: 3
   min_unique_sources: 3
   max_same_source: 1
-  max_same_mission_area: 2
+  # Candidate selection needs a wider lane buffer than the final 3-post
+  # publication capacity; final publication guards still enforce quality.
+  max_same_mission_area: 3
   min_authoritative_items: 2
   stale_hours: 72
   ai_core_target_min: 1

@@ -1,7 +1,10 @@
-"""Generic priority-person detection for substantive interviews and protected leader activity."""
+"""Generic priority-person and high-value ideas detection for substantive radar signals."""
 from __future__ import annotations
 
 import re
+from pathlib import Path
+
+import yaml
 
 from src.expert_registry import apply_expert_features
 
@@ -10,6 +13,9 @@ PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","alt
 INTERVIEW_TYPES={"interview","podcast","talk","lecture","fireside","conversation","discussion","q&a"}
 INTERVIEW_TERMS=("interview","podcast","fireside chat","conversation","q&a","keynote q&a","question and answer","speaks with","talks with","in conversation","sit-down","سخنرانی","مصاحبه","پادکست","گفتگو","گفت‌وگو","پرسش و پاسخ")
 MAX_FIELD_CHARS={"title":1200,"summary":4000,"description":4000,"source":600,"content_type":200,"speakers":1200,"speaker":600,"watch_person":600,"leader":600,"key_quote":1600}
+ROOT = Path(__file__).resolve().parents[1]
+IDEAS_PATH = ROOT / "config" / "leader_watchlist.yaml"
+_IDEA_CACHE: list[dict[str, object]] | None = None
 
 _NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\w){re.escape(alias)}(?!\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
 _SINGLE_NAME_PATTERNS={canonical: tuple(re.compile(rf"\b{re.escape(alias)}\b", re.I) for alias in aliases if " " not in alias and alias.isascii()) for canonical, aliases in PERSON_ALIASES.items()}
@@ -56,12 +62,55 @@ def matched_priority_people(item, *, text: str | None = None):
             matches.append(canonical)
     return sorted(set(matches))
 
+def _load_ideas() -> list[dict[str, object]]:
+    global _IDEA_CACHE
+    if _IDEA_CACHE is not None:
+        return _IDEA_CACHE
+    try:
+        payload = yaml.safe_load(IDEAS_PATH.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        _IDEA_CACHE = []
+        return _IDEA_CACHE
+    raw = payload.get("ideas_and_theories", [])
+    _IDEA_CACHE = [x for x in raw.values() if isinstance(x, dict)] if isinstance(raw, dict) else []
+    return _IDEA_CACHE
+
+def _match_priority_ideas(item, text: str) -> list[str]:
+    matches: list[str] = []
+    for idea in _load_ideas():
+        terms = [str(x).strip().lower() for x in (idea.get("ai_bridge_terms") or []) if str(x).strip()]
+        if not terms:
+            continue
+        if any(_normalize(term) in text for term in terms):
+            matches.append(str(idea.get("name") or "").strip())
+    return sorted(set(x for x in matches if x))
+
+def _apply_idea_signal(item, text: str) -> list[str]:
+    ideas = _match_priority_ideas(item, text)
+    item["priority_ideas"] = ideas
+    item["priority_idea_count"] = len(ideas)
+    if ideas and not item.get("_priority_idea_signal_applied"):
+        try:
+            current = float(item.get("signal_score", 0) or 0)
+        except (TypeError, ValueError):
+            current = 0.0
+        # Ideas are discovery/ranking signals, never Tier-0 authorization.
+        idea_bonus = min(6.0, 2.0 + 1.5 * max(0, len(ideas) - 1))
+        item["priority_idea_bonus"] = idea_bonus
+        item["signal_score"] = current + idea_bonus
+        item["_priority_idea_signal_applied"] = True
+    elif ideas:
+        item.setdefault("priority_idea_bonus", min(6.0, 2.0 + 1.5 * max(0, len(ideas) - 1)))
+    else:
+        item.setdefault("priority_idea_bonus", 0.0)
+    return ideas
+
 def priority_people_features(item):
     if item.get("_publication_blocked"):
         return [], False, 0.0
-    # Expert registry enriches signal_score only; it does not grant Tier-0.
     apply_expert_features(item)
     text = _text(item)
+    _apply_idea_signal(item, text)
     people = matched_priority_people(item, text=text)
     if not people:
         return people, False, 0.0

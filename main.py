@@ -15,6 +15,7 @@ from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
 from src.publication_contract import unique_candidates
+from src.rejection_telemetry import build_event, emit
 from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
 from src.signal_engine import enrich_signal_items
 from src.state_io import StateCorruptionError
@@ -35,6 +36,37 @@ NORMAL_SCORE_FLOOR = 60.0
 
 def _publication_identity(item: dict) -> str:
     return str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item))
+
+
+def _runtime_telemetry_event(item: dict, *, stage: str, decision: str, reason_code: str, details=None, attempt=None) -> None:
+    try:
+        identity = _publication_identity(item)
+        trace_id = __import__("hashlib").sha1(identity.encode("utf-8", errors="ignore")).hexdigest()[:16]
+        run_id = str(os.getenv("GITHUB_RUN_ID") or os.getenv("RADAR_RUN_ID") or "local")
+        raw_run_number = os.getenv("GITHUB_RUN_NUMBER") or os.getenv("RADAR_RUN_NUMBER")
+        try:
+            run_number = int(raw_run_number) if raw_run_number is not None else None
+        except (TypeError, ValueError):
+            run_number = None
+        path = Path(os.getenv("RADAR_REJECTION_TRACE_PATH", "artifacts/rejection_trace/rejection_trace.jsonl"))
+        emit(
+            build_event(
+                run_id=run_id,
+                run_number=run_number,
+                trace_id=trace_id,
+                item_id=identity,
+                stage=stage,
+                decision=decision,
+                reason_code=reason_code,
+                item=item,
+                details=details,
+                attempt=attempt,
+                replacement_eligible=item.get("replacement_eligible"),
+            ),
+            path,
+        )
+    except Exception:
+        return
 
 
 def load_yaml(path):
@@ -234,6 +266,18 @@ def _safe_summarize(item, summarize_fn):
         return summarize_fn(item)
     except (QuotaExceeded, TimeoutError, requests.exceptions.RequestException) as exc:
         identity = _publication_identity(item)
+        reason_code = {
+            QuotaExceeded: "provider_quota_exceeded",
+            TimeoutError: "provider_timeout",
+            requests.exceptions.RequestException: "provider_request_failure",
+        }.get(type(exc), "provider_generation_failure")
+        _runtime_telemetry_event(
+            item,
+            stage="summarization",
+            decision="unavailable",
+            reason_code=reason_code,
+            details={"exception_type": type(exc).__name__, "exception": str(exc)[:500]},
+        )
         print(f"[Editorial Gate] provider failure isolated candidate={identity[:120]} exception={type(exc).__name__}: {exc}", flush=True)
         item["_publication_blocked"] = True
         item["_summary_provider_failure"] = type(exc).__name__
@@ -316,6 +360,19 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             pool = [x for x in pool if _publication_identity(x) != identity]
             area_pool = [x for x in area_pool if _publication_identity(x) != identity]
             if not _score_ok(candidate):
+                try:
+                    score = float(candidate.get("final_editorial_score", candidate.get("editorial_score", 0)) or 0)
+                except (TypeError, ValueError):
+                    score = 0.0
+                reason_code = "protected_score_floor" if candidate.get("protected_content") else "normal_score_floor"
+                _runtime_telemetry_event(
+                    candidate,
+                    stage="selection",
+                    decision="reject",
+                    reason_code=reason_code,
+                    details={"score": score, "floor": PROTECTED_SUMMARY_SCORE_FLOOR if candidate.get("protected_content") else NORMAL_SCORE_FLOOR, "mission_area": _area(candidate)},
+                    attempt=attempts,
+                )
                 print(
                     f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=below_score_floor",
                     flush=True,
@@ -323,6 +380,14 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                 continue
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
+                _runtime_telemetry_event(
+                    candidate,
+                    stage="mission_recovery",
+                    decision="reject",
+                    reason_code="mission_recovery_candidate_failure",
+                    details={"mission_area": _area(candidate), "attempt": attempts},
+                    attempt=attempts,
+                )
                 print(
                     f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=failed",
                     flush=True,
@@ -337,8 +402,17 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             )
             break
 
+    recovery_status = "ok" if len(recovered) >= len(missing) else "unmet"
+    if recovery_status == "unmet":
+        _runtime_telemetry_event(
+            {"title": "mission-coverage-recovery", "mission_area": "recovery", "source": "runtime"},
+            stage="mission_recovery",
+            decision="unmet",
+            reason_code="mission_coverage_unmet",
+            details={"missing_lanes": len(missing), "attempts": attempts, "recovered": len(recovered)},
+        )
     print(
-        f"[Mission Coverage Recovery] missing_lanes={len(missing)} attempts={attempts} recovered={len(recovered)} status={'ok' if len(recovered) >= len(missing) else 'unmet'}",
+        f"[Mission Coverage Recovery] missing_lanes={len(missing)} attempts={attempts} recovered={len(recovered)} status={recovery_status}",
         flush=True,
     )
     return recovered
@@ -394,7 +468,7 @@ def main(hooks=None):
             candidate = dict(candidate); summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
                 print(f"[Publication Lazy Refill] summary blocked; skipping candidate: {str(candidate.get('title',''))[:120]}", flush=True); continue
-            candidate.update(summary); candidate["source_image"] = resolve_image_fn(candidate); publication_attempted.add(identity); lazy_replacements += 1
+            candidate.update(summary); candidate["source_image"] = resolve_source_image(candidate); publication_attempted.add(identity); lazy_replacements += 1
             print(f"[Publication Lazy Refill] prepared replacement={lazy_replacements}/{replacement_limit} normal_rank={candidate.get('normal_period_rank')} score={candidate.get('final_editorial_score', candidate.get('editorial_score', 0))} title={str(candidate.get('title',''))[:120]}", flush=True)
             return candidate
         return None

@@ -1,7 +1,6 @@
-"""Production launcher wrapper adding one bounded Mind/Ideas/Voices slot."""
+"""Production launcher adding two bounded Mind/Ideas/Voices protected slots."""
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import Path
 
@@ -9,16 +8,17 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.protected_editorial_lane import choose_additive_candidate
+from src.protected_editorial_lane import choose_additive_candidates
 
-# Importing the existing audited launcher installs all existing production hooks
-# without changing their implementation.
+# Reuse the existing audited production launcher and all existing contracts.
 import scripts.production_with_ranking_audit  # noqa: E402,F401
 import production_entrypoint  # noqa: E402
 import production_resilient_runner  # noqa: E402
 
 _ORIGINAL_BOUND = production_entrypoint._bound_runtime_candidates
-_ORIGINAL_SELECT = production_resilient_runner.production_entrypoint
+_ORIGINAL_TIER0 = production_entrypoint._is_tier0_publication_candidate
+
+SPECIAL_MAX_PER_PERIOD = 2
 
 
 def _protected_bound_runtime_candidates(candidates, max_posts: int, policy: dict):
@@ -26,37 +26,50 @@ def _protected_bound_runtime_candidates(candidates, max_posts: int, policy: dict
     if len(bounded) < 3:
         return bounded
 
-    # Never alter the first three normal candidates. The extra slot is selected
-    # only from the already-ranked replacement pool after those three items.
+    # Keep the canonical first three normal candidates untouched. Select up to
+    # two additional protected editorial candidates from the existing replacement
+    # pool only; no new discovery or alternate ranking engine is introduced here.
     main_three = bounded[:3]
-    additive = choose_additive_candidate(
+    specials = choose_additive_candidates(
         bounded[3:],
         existing_ids={id(item) for item in main_three},
         max_rank=production_entrypoint.RANK_WINDOW,
+        max_items=SPECIAL_MAX_PER_PERIOD,
     )
-    if additive is None:
-        print("[Mind/Ideas/Voices Lane] no qualifying additive candidate", flush=True)
-        return bounded
+    for item in specials:
+        item["protected_editorial_lane"] = "mind_ideas_voices"
+        item["protected_slot"] = True
+        item["protected_content"] = True
+        item["protected_lane_reason"] = "bounded_additive_mind_ideas_voices"
 
-    additive["protected_editorial_lane"] = "mind_ideas_voices"
-    additive["protected_lane_reason"] = "ranked_replacement_candidate"
+    if not specials:
+        print("[Mind/Ideas/Voices Lane] no qualifying additive candidates", flush=True)
+        return main_three
+
     print(
-        "[Mind/Ideas/Voices Lane] additive candidate selected "
-        f"rank={additive.get('normal_period_rank')} score={additive.get('final_editorial_score', additive.get('editorial_score'))} "
-        f"type={additive.get('content_type')} mission={additive.get('mission_area')}",
+        f"[Mind/Ideas/Voices Lane] protected_additive={len(specials)} max={SPECIAL_MAX_PER_PERIOD}",
         flush=True,
     )
-    return main_three + [additive] + bounded[3:]
+    for item in specials:
+        print(
+            "[Mind/Ideas/Voices Lane] candidate "
+            f"rank={item.get('normal_period_rank')} score={item.get('final_editorial_score', item.get('editorial_score'))} "
+            f"type={item.get('content_type')} mission={item.get('mission_area')} source={item.get('source')}",
+            flush=True,
+        )
+    return main_three + specials
 
 
-# The existing policy function counts all normal publications against the normal
-# quota. Increase that quota only at production-runtime wrapper level so the
-# fourth item can actually be published; selection still guarantees the first
-# three are untouched and the fourth must be the protected-lane candidate.
-production_entrypoint.MAX_NORMAL_NEWS_PER_PERIOD = max(
-    3, int(os.getenv("RADAR_MIND_IDEAS_VOICES_TOTAL_CAP", "4") or 4)
-)
+# Route the two additive items through the existing protected publication budget.
+# This is deliberately narrower than the generic Tier-0 detector: only items
+# explicitly marked by this wrapper qualify. Their eligibility was checked above
+# against the existing rank window, score floor, deduplication and source rules.
+def _tier0_or_special(item):
+    return _ORIGINAL_TIER0(item) or item.get("protected_editorial_lane") == "mind_ideas_voices"
+
+
 production_entrypoint._bound_runtime_candidates = _protected_bound_runtime_candidates
+production_entrypoint._is_tier0_publication_candidate = _tier0_or_special
 
 if __name__ == "__main__":
     raise SystemExit(production_resilient_runner.main())

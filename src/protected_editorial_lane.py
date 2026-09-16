@@ -111,9 +111,7 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
         return True
     if content_type in INTERVIEW_TYPES and (registry_person or explicit_person or mission in MISSION_AREAS):
         return True
-    if mission in {"future", "future_governance", "convergence", "ai", "ai_core", "mind"} and (registry_person or explicit_person):
-        return True
-    return False
+    return mission in {"future", "future_governance", "convergence", "ai", "ai_core", "mind"} and (registry_person or explicit_person)
 
 
 def mind_ideas_voices_score(item: dict[str, Any]) -> float:
@@ -169,10 +167,11 @@ def choose_additive_candidates(
         item["mind_editorial_score"] = mind_ideas_voices_score(item)
         eligible.append(item)
     eligible.sort(key=lambda item: (-float(item.get("mind_editorial_score", 0.0) or 0.0), str(item.get("published") or "")),)
-    if max_items is None:
-        selected = eligible[:max(0, max_rank)]
-    else:
-        selected = eligible[:max(0, max_items)]
+    selected = (
+        eligible[:max(0, max_rank)]
+        if max_items is None
+        else eligible[:max(0, max_items)]
+    )
     for index, item in enumerate(selected, start=1):
         item["mind_period_rank"] = index
         item["period_rank"] = 1000 + index

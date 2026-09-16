@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789561868,
+  "updated_at": 1789563042,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -10580,6 +10580,44 @@
       "why_it_matters": "این نوآوری نشان می‌دهد که برای رسیدن به هوش مصنوعی واقعی، صرفاً توسعهٔ مدل‌های پیچیده کافی نیست؛ بلکه نیاز به درک و شبیه‌سازی ادراک انسانی وجود دارد. ادغام داده‌های چندحسی می‌تواند باعث کاهش سوگیری‌های مدل و افزایش قابلیت Explainability شود، که در کاربردهای حساس مانند پزشکی و خودران حیاتی است. با این حال، چالش‌های مقیاس‌پذیری و مصرف انرژی برای پردازش حجم عظیم داده‌های حسی، محدودیت‌های قابل Attentionی را ایجاد می‌کند. در نهایت، این پژوهش مسیر جدیدی برای توسعهٔ سیستم‌های هوش مصنوعی با قابلیت‌های انسانی‌تر و کاربردی‌تر فراهم می‌کند.",
       "link": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxPMzdxbmo5UGo3M1dEelJQQnpTcHVBam4wS3pwRU9nSThfWVdRVXlBb1diYWF5RkhOLVN5NlUtN1RVNG1VRWdUWEVuNHFxc1JuWTFQOWFIN3JXQkMyaERtdW0xNFo3T2Q2SWVUSzFfbkFReWp6Yi1RblJmOTBaZV9hWjNLZmtlaU9zNEVRVk5jTTU2OWE4UmFsY0xhZ2laWUNJcWd2VVFiekw5OWJWemxwTmtXQkM5YU5PX1hoXzRkR1o0M2kwWFpQVWQ5UFFxTWpfRjRDMG5YUlc3cUdkMHhSWE5SR0V0N1ZzeUE?oc=5",
       "posted_at": 1789561859
+    },
+    "-1004482051328:1672": {
+      "chat_id": -1004482051328,
+      "message_id": 1672,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Reuters)",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "watch_person": "",
+      "title": "ناظران داده اسپانیا اولین گزارش نفوذ داده مرتبط با AI Agent را منتشر کردند",
+      "summary": "سازمان ناظر داده اسپانیا (AEPD) اولین گزارش رسمی خود را درباره نفوذ داده‌ای منتشر کرد که به‌طور مستقیم به استفاده از یک AI Agent مرتبط است. این گزارش نشان می‌دهد که یک سرویس هوش مصنوعی به‌صورت ناخواسته به داده‌های شخصی کاربران دسترسی پیدا کرده و اطلاعات حساس را در معرض خطر قرار داده است. بر اساس جزئیات ارائه‌شده، حدود ۲۲,۰۰۰ رکورد شامل نام، ایمیل و شماره تلفن افراد تحت تأثیر قرار گرفته‌اند. AEPD به‌سرعت اقدامات اصلاحی و توصیه‌های امنیتی برای شرکت‌های فناوری ارائه داده و خواستار ارتقاء نظارت بر استفاده از مدل‌های هوش مصنوعی می‌شود.",
+      "why_it_matters": "این گزارش اولین نمونه مستند از خطرات عملیاتی ناشی از ادغام عوامل هوش مصنوعی در پردازش داده‌های شخصی است؛ نشان می‌دهد که حتی سرویس‌های معتبر می‌توانند به‌صورت ناخواسته داده‌های حساس را فاش کنند. نتایج آن برای تنظیم‌کنندگان و شرکت‌های فناوری اهمیت دارد، زیرا فشار برای اعمال چارچوب‌های نظارتی دقیق‌تر و استانداردهای امنیتی قوی‌تر در زمینه هوش مصنوعی را افزایش می‌دهد. همچنین، این حادثه به کاربران هشدار می‌دهد که داده‌های شخصی‌شان ممکن است در محیط‌های هوش مصنوعی به خطر بیفتد، که می‌تواند اعتماد عمومی به فناوری‌های هوش مصنوعی را تحت تأثیر قرار دهد.",
+      "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPLUtrSDJveHRTZDZNeXRVeHZvdjh0TWl1TUc2ZE1lMHpsb0VXWDRvbmVDUUNoSUJ4c3VvTDFQQi11RWpCckRvTDZjM0YtdFRfM3FpYVZjSXp1eXU3TzZKZGFmcElqdWxxMXpsYWNwRV9VSGxCV2FXSS11VFFWdE95eHd2NUw0SlM2cl9Tc1VJdmktLU1VVGtnbDZ0dmluMENkajVNZU1zNFFUbXFtc3A0UXAwSnF3azhUMmc?oc=5",
+      "posted_at": 1789563038
+    },
+    "-1004482051328:1673": {
+      "chat_id": -1004482051328,
+      "message_id": 1673,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Scientific American)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "آیا پرندگان از پرواز لذت می‌برند؟ پژوهشگران به کوکاتوس‌ها سؤال می‌پرسند",
+      "summary": "پژوهشگران در مقاله‌ای منتشر شده در Scientific American سؤالی را به پرندگان کوکاتوس می‌پرسند تا بفهمند آیا پرواز برای آن‌ها لذت‌بخش است یا نه. در این مطالعه، پرندگان با استفاده از یک دستگاه آزمایشی که امکان انتخاب بین پرواز و عدم پرواز را می‌دهد، آزمایش می‌شوند. نتایج اولیه نشان می‌دهد که کوکاتوس‌ها در شرایط خاصی ترجیح می‌دهند پرواز کنند، اما در سایر شرایط ممکن است ترجیح دیگری داشته باشند. این تحقیق به درک بهتر رفتار و انگیزه‌های پرندگان کمک می‌کند و می‌تواند در طراحی محیط‌های نگهداری و آموزش پرندگان کاربرد داشته باشد.",
+      "why_it_matters": "درک اینکه آیا پرندگان از پرواز لذت می‌برند، می‌تواند به بهبود شرایط نگهداری و رفاه حیوانات کمک کند. اگر پرواز برای آن‌ها لذت‌بخش باشد، می‌توان محیط‌های طبیعی‌تری طراحی کرد که به فعالیت‌های پرواز تشویق کنند. این دانش همچنین می‌تواند در مطالعات رفتارشناسی و روان‌شناسی حیوانات کاربرد داشته باشد، زیرا نشان می‌دهد که انگیزه‌های حیوانات ممکن است مشابه انگیزه‌های انسان‌ها باشد. در نهایت، این تحقیق می‌تواند به توسعه روش‌های آموزشی و درمانی برای پرندگان آسیب‌دیده کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNSXVMUzFvbl9Pei0xUF9xNlpsbXFJR0tWTkpNZWRlYWpwQU9WQnRTd1FYV2NNcGZ5X2ExWEoyVHpxZGpQSkRwR0szQWM4RlA2dTdsclE1NzN1bHcweTRxMU5lQ3FtcHhDUEJTcVd4ZUdxTVNyR290NTFXdEUtVXQzYzRtTWFRLU1aaVp5bHhTOW41U3hwQkU4?oc=5",
+      "posted_at": 1789563042
     }
   }
 }

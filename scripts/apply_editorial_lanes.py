@@ -1,5 +1,5 @@
-import re
 from pathlib import Path
+import re
 
 
 def patch(path, pattern, replacement, count=1, flags=re.S):
@@ -26,7 +26,6 @@ patch(
     r"def _item_final_score\(item: dict\) -> float:\n    if _is_mind_ideas_voices\(item\):",
     "def _is_technical_trend(item: dict) -> bool:\n    return bool(item.get(\"technical_trend_lane_selected\") or item.get(\"editorial_lane\") == \"technical_trend\")\n\n\ndef _item_final_score(item: dict) -> float:\n    if _is_technical_trend(item):\n        try:\n            return float(item.get(\"technical_trend_score\", 0.0) or 0.0)\n        except (TypeError, ValueError):\n            return 0.0\n    if _is_mind_ideas_voices(item):",
 )
-
 patch(
     "production_entrypoint.py",
     r"def _bound_runtime_candidates\(candidates, max_posts: int, policy: dict\):\n    candidates = list\(candidates or \[\]\)\n    mind = \[item for item in candidates if _is_mind_ideas_voices\(item\)\]\[:MAX_MIND_IDEAS_VOICES_PER_PERIOD\]\n    non_mind = \[item for item in candidates if not _is_mind_ideas_voices\(item\)\]\n",
@@ -105,27 +104,11 @@ patch(
     r"    content_type = str\(item.get\(\"content_type\"\) or \"\"\)\.strip\(\)\.casefold\(\)\n    if mission == \"mind_cognition\" or thematic:\n        return True\n    if content_type in INTERVIEW_TYPES and \(registry_person or explicit_person or mission in MISSION_AREAS\):\n",
     '    content_type = str(item.get("content_type") or "").strip().casefold()\n    interview = _interview_signal(item)\n    if mission == "mind_cognition" or thematic:\n        return True\n    if interview and (registry_person or explicit_person or mission in MISSION_AREAS or thematic):\n',
 )
-
 patch(
     "main.py",
     r"except \(QuotaExceeded, TimeoutError, requests\.exceptions\.RequestException\) as exc:",
     "except (QuotaExceeded, TimeoutError, ValueError, requests.exceptions.RequestException) as exc:",
     flags=0,
 )
-
-Path("tests/test_technical_trend_lane.py").write_text(
-    '''from src.technical_trend_lane import choose_technical_trend_candidate, is_technical_trend_candidate\n\n\ndef test_top_technical_candidate_only():\n    items = [\n        {\"title\": \"MCP protocol for AI agents\", \"summary\": \"Model Context Protocol architecture and runtime\", \"source_type\": \"technical\", \"source_tier\": 1, \"category\": \"ai\"},\n        {\"title\": \"General AI news\", \"summary\": \"A new model was released\", \"source_type\": \"news\", \"source_tier\": 1, \"category\": \"ai\"},\n    ]\n    selected = choose_technical_trend_candidate(items)\n    assert len(selected) == 1\n    assert selected[0][\"technical_trend_lane_selected\"] is True\n\n\ndef test_arxiv_reddit_excluded():\n    assert not is_technical_trend_candidate({\"title\": \"New transformer architecture\", \"summary\": \"AI inference architecture benchmark\", \"source\": \"arXiv\", \"source_type\": \"research\", \"source_tier\": 1, \"category\": \"ai\"})\n    assert not is_technical_trend_candidate({\"title\": \"AI inference architecture discussion\", \"summary\": \"runtime and protocol trend\", \"source\": \"Reddit community\", \"source_type\": \"technical\", \"source_tier\": 1, \"category\": \"ai\"})\n''',
-    encoding="utf-8",
-)
-Path("tests/test_mind_interview_recall.py").write_text(
-    '''from src.protected_editorial_lane import SPECIAL_MAX_PER_PERIOD, is_mind_ideas_voices_candidate, mind_ideas_voices_score\n\n\ndef test_podcast_conversation_recall():\n    item = {\"title\": \"Podcast: a conversation about AI consciousness\", \"summary\": \"A deep discussion with a researcher\", \"content_type\": \"video\", \"source_type\": \"podcast\", \"source\": \"Specialist Podcast\", \"source_tier\": 1, \"category\": \"mind\"}\n    before = mind_ideas_voices_score(item)\n    assert is_mind_ideas_voices_candidate(item)\n    assert mind_ideas_voices_score(item) == before\n\n\ndef test_mind_cap_unchanged():\n    assert SPECIAL_MAX_PER_PERIOD == 2\n''',
-    encoding="utf-8",
-)
-
-p = Path("tests/test_mission_coverage_priority.py")
-s = p.read_text(encoding="utf-8")
-if 'assert annotated["final_editorial_score"] == 55.15' in s:
-    s = s.replace('assert annotated["final_editorial_score"] == 55.15', 'assert annotated["final_editorial_score"] == 55.0\n    assert annotated["mind_lane_selected"] is True', 1)
-    p.write_text(s, encoding="utf-8")
 
 print("EDITORIAL_LANES_MIGRATION_PATCHED")

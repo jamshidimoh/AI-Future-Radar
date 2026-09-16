@@ -1,8 +1,8 @@
 {
   "models": {
     "NaraRouter:auto/bynara": {
-      "failures": 1,
-      "disabled_until": 1789557918.994,
+      "failures": 2,
+      "disabled_until": 1789568209.329,
       "last_error": "model",
       "last_success": 0
     },
@@ -19,14 +19,14 @@
       "last_success": 0
     },
     "OpenRouter:google/gemma-4-31b-it:free": {
-      "failures": 1,
-      "disabled_until": 1789549111.579,
+      "failures": 2,
+      "disabled_until": 1789550209.329,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "OpenRouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1789549111.579,
+      "failures": 2,
+      "disabled_until": 1789550209.329,
       "last_error": "rate_limit",
       "last_success": 0
     },
@@ -35,9 +35,21 @@
       "disabled_until": 1789539918.994,
       "last_error": "rate_limit",
       "last_success": 0
+    },
+    "KiraAI:qwen3.8-flash": {
+      "failures": 1,
+      "disabled_until": 1789550209.329,
+      "last_error": "quota",
+      "last_success": 0
     }
   },
-  "providers": {},
+  "providers": {
+    "kiraai": {
+      "failures": 1,
+      "disabled_until": 1789633009.329,
+      "last_error": "wallet"
+    }
+  },
   "updated_at": 1789352663.9123816,
   "version": 1,
   "telemetry": {

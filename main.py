@@ -292,7 +292,7 @@ def _safe_summarize(item, summarize_fn):
     """Isolate recoverable provider failures at candidate boundary; never fabricate a summary."""
     try:
         return summarize_fn(item)
-    except (QuotaExceeded, TimeoutError, requests.exceptions.RequestException) as exc:
+    except (QuotaExceeded, TimeoutError, ValueError, requests.exceptions.RequestException) as exc:
         identity = _publication_identity(item)
         reason_code = {
             QuotaExceeded: "provider_quota_exceeded",

@@ -29,7 +29,8 @@ def test_underrepresented_authoritative_mind_candidate_gets_bounded_bonus():
     annotated = annotate_recovery_candidates([item], [{"mission_area": "mind_cognition", "content_type": "news"}], contract)[0]
     assert annotated["mission_coverage_bonus"] == 1.0
     assert annotated["historical_mission_area_count"] == 1
-    assert annotated["final_editorial_score"] == 55.15
+    assert annotated["final_editorial_score"] == 55.0
+    assert annotated["mind_lane_selected"] is True
 
 
 def test_coverage_bonus_is_bounded_and_additive():

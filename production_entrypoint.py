@@ -20,6 +20,7 @@ from src.editorial_quality_policy import (
 from src.logging_setup import configure_logging
 from src.priority_people import is_substantive_priority_interview
 from src.protected_editorial_lane import SPECIAL_MAX_PER_PERIOD, choose_additive_candidates
+from src.technical_trend_lane import choose_technical_trend_candidate
 from src.state_io import StateCorruptionError, load_json_state
 from src.unified_editorial_selection import load_editorial_contract
 
@@ -31,6 +32,8 @@ CADENCE_PATH = ROOT / "data" / "publication_state.json"
 EDITORIAL_CONTRACT = load_editorial_contract()
 MAX_NORMAL_NEWS_PER_PERIOD = 3
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = SPECIAL_MAX_PER_PERIOD
+MAX_TECHNICAL_TREND_PER_PERIOD = 1
+NORMAL_RELATIVE_SCORE_GAP = 8.0
 RANK_WINDOW = int(EDITORIAL_CONTRACT["candidate_window"])
 PROTECTED_SUMMARY_SCORE_FLOOR = PROTECTED_SCORE_FLOOR
 EDU_FIELDS = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
@@ -150,7 +153,16 @@ def _is_mind_ideas_voices(item: dict) -> bool:
     )
 
 
+def _is_technical_trend(item: dict) -> bool:
+    return bool(item.get("technical_trend_lane_selected") or item.get("editorial_lane") == "technical_trend")
+
+
 def _item_final_score(item: dict) -> float:
+    if _is_technical_trend(item):
+        try:
+            return float(item.get("technical_trend_score", 0.0) or 0.0)
+        except (TypeError, ValueError):
+            return 0.0
     if _is_mind_ideas_voices(item):
         try:
             return float(item.get("mind_editorial_score", 0.0) or 0.0)
@@ -203,10 +215,25 @@ def _is_strategic_analytical_signal(item: dict) -> bool:
     return not any(marker in source_text for marker in ("reddit", "community"))
 
 
+def _competitive_normal_candidates(candidates):
+    candidates = list(candidates or [])
+    regular = [x for x in candidates if not _is_mind_ideas_voices(x) and not _is_technical_trend(x) and not x.get("_rank_is_tier0")]
+    protected = [x for x in candidates if x.get("_rank_is_tier0")]
+    if not regular:
+        return candidates
+    scores = [float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0.0) for x in regular]
+    best = max(scores)
+    cutoff = max(float(NORMAL_SCORE_FLOOR), best - NORMAL_RELATIVE_SCORE_GAP)
+    kept = [x for x in regular if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0.0) >= cutoff]
+    print(f"[Normal Competitive Gate] candidates={len(regular)} best={best:.2f} cutoff={cutoff:.2f} gap={NORMAL_RELATIVE_SCORE_GAP:.1f} kept={len(kept)} dropped={len(regular)-len(kept)}", flush=True)
+    return protected + kept
+
+
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
     mind = [item for item in candidates if _is_mind_ideas_voices(item)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
-    non_mind = [item for item in candidates if not _is_mind_ideas_voices(item)]
+    technical = [item for item in candidates if _is_technical_trend(item)][:MAX_TECHNICAL_TREND_PER_PERIOD]
+    non_mind = [item for item in candidates if not _is_mind_ideas_voices(item) and not _is_technical_trend(item)]
     protected_limit = max(0, int(policy.get("leader_protected_max", 2) or 0))
     normal_capacity = max(0, int(max_posts or 0))
     replacement_buffer = max(0, int(policy.get("replacement_buffer", EDITORIAL_CONTRACT.get("replacement_buffer", 0)) or 0))
@@ -226,14 +253,14 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     normals = [item for item in non_mind if item.get("normal_period_rank") is not None][:normal_limit]
     bounded = []
     seen = set()
-    for item in protected + normals + mind:
+    for item in protected + normals + technical + mind:
         key = id(item)
         if key in seen:
             continue
         seen.add(key)
         bounded.append(item)
     print(
-        f"[Selection Budget Guard] normal={len(normals)} protected={len(protected)} mind_ideas_voices={len(mind)} output={len(bounded)} normal_capacity={normal_capacity} normal_limit={normal_limit} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD}",
+        f"[Selection Budget Guard] normal={len(normals)} protected={len(protected)} technical_trend={len(technical)} mind_ideas_voices={len(mind)} output={len(bounded)} normal_capacity={normal_capacity} normal_limit={normal_limit} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD}",
         flush=True,
     )
     return bounded
@@ -301,13 +328,17 @@ def main(*, skip_education: bool = False) -> int:
         print(f"[Selection Timing] feedback items={len(items)} elapsed={time.monotonic() - started:.3f}s", flush=True)
         rank_started = time.monotonic()
         candidate_window = int(EDITORIAL_CONTRACT["candidate_window"])
-        normal_candidates = unique_candidates(original_select(items, max(candidate_window, min(len(items), max_posts)), max_per_source, max_per_type, policy))
+        normal_candidates = _competitive_normal_candidates(unique_candidates(original_select(items, max(candidate_window, min(len(items), max_posts)), max_per_source, max_per_type, policy)))
         normal_ids = {id(item) for item in normal_candidates}
         mind_candidates = choose_additive_candidates(items, existing_ids=normal_ids, max_items=MAX_MIND_IDEAS_VOICES_PER_PERIOD)
+        mind_ids = {id(item) for item in mind_candidates}
         for item in mind_candidates:
             print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
-        candidates = unique_candidates(normal_candidates + mind_candidates)
-        print(f"[Dual Lane Selection] normal={len(normal_candidates)} mind_ideas_voices={len(mind_candidates)} mind_cap={MAX_MIND_IDEAS_VOICES_PER_PERIOD} mind_score_floor=not_applied", flush=True)
+        technical_candidates = choose_technical_trend_candidate(items, existing_ids=normal_ids | mind_ids, max_items=MAX_TECHNICAL_TREND_PER_PERIOD)
+        for item in technical_candidates:
+            print(f"[Technical Trend Selection] rank={item.get('technical_trend_period_rank')} score={item.get('technical_trend_score')} source={item.get('source')} title={str(item.get('title', ''))[:120]}", flush=True)
+        candidates = unique_candidates(normal_candidates + technical_candidates + mind_candidates)
+        print(f"[Triple Lane Selection] normal={len(normal_candidates)} technical_trend={len(technical_candidates)} mind_ideas_voices={len(mind_candidates)} technical_cap={MAX_TECHNICAL_TREND_PER_PERIOD} mind_cap={MAX_MIND_IDEAS_VOICES_PER_PERIOD} mind_score_floor=not_applied", flush=True)
         print(f"[Selection Timing] original_select candidates={len(candidates)} candidate_window={candidate_window} elapsed={time.monotonic() - rank_started:.3f}s", flush=True)
         return ([education_item] if education_item else []) + _bound_runtime_candidates(candidates, max_posts=max_posts, policy=policy)
 

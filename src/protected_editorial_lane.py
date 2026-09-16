@@ -22,6 +22,7 @@ SPECIAL_RANK_WINDOW = 12
 INTERVIEW_TYPES = {
     "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a",
 }
+INTERVIEW_SIGNAL_TERMS = (r"interview", r"podcast", r"conversation", r"fireside", r"q&a", r"discussion", r"guest", r"episode")
 MISSION_AREAS = {"mind", "mind_cognition", "future", "future_governance", "convergence", "ai", "ai_core"}
 SPECIAL_SIGNAL_PATTERNS = (
     r"\bconsciousness\b", r"\bartificial consciousness\b", r"\bmachine consciousness\b",
@@ -94,6 +95,13 @@ def _thematic_signal(item: dict[str, Any]) -> bool:
     return any(re.search(pattern, _text(item)) for pattern in SPECIAL_SIGNAL_PATTERNS)
 
 
+def _interview_signal(item: dict[str, Any]) -> bool:
+    content_type = str(item.get("content_type") or "").strip().casefold()
+    source_type = str(item.get("source_type") or item.get("type") or item.get("format") or "").strip().casefold()
+    text = _text(item)
+    return content_type in INTERVIEW_TYPES or source_type in INTERVIEW_TYPES or any(re.search(pattern, text) for pattern in INTERVIEW_SIGNAL_TERMS)
+
+
 def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     """Eligibility gate only; deliberately does not reference a normal score floor."""
     if str(item.get("content_type") or "").strip().casefold() == "education":
@@ -107,9 +115,10 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     registry_person = _named_registry_person(item)
     explicit_person = _explicit_person_signal(item)
     content_type = str(item.get("content_type") or "").strip().casefold()
+    interview = _interview_signal(item)
     if mission == "mind_cognition" or thematic:
         return True
-    if content_type in INTERVIEW_TYPES and (registry_person or explicit_person or mission in MISSION_AREAS):
+    if interview and (registry_person or explicit_person or mission in MISSION_AREAS or thematic):
         return True
     return mission in {"future", "future_governance", "convergence", "ai", "ai_core", "mind"} and (registry_person or explicit_person)
 

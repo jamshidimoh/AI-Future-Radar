@@ -79,3 +79,86 @@ def _recency_bonus(item: dict[str, Any]) -> float:
     if not raw:
         return 0.0
     value = raw.replace("Z", "+00:00")
+    try:
+        dt = datetime.fromisoformat(value)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        age_days = max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 86400.0)
+    except ValueError:
+        return 0.0
+    if age_days <= 3:
+        return 10.0
+    if age_days <= 7:
+        return 7.0
+    if age_days <= 14:
+        return 4.0
+    if age_days <= 30:
+        return 2.0
+    return 0.0
+
+
+def is_technical_trend_candidate(item: dict[str, Any]) -> bool:
+    if item.get("duplicate") or item.get("publication_blocked"):
+        return False
+    if item.get("protected_slot") or item.get("_rank_is_tier0"):
+        return False
+    if item.get("mind_lane_selected") or item.get("protected_editorial_lane") == "mind_ideas_voices":
+        return False
+    if str(item.get("content_type") or "").strip().casefold() == "education":
+        return False
+    source = _source_text(item)
+    if any(marker in source for marker in EXCLUDED_SOURCE_MARKERS):
+        return False
+    text = _text(item)
+    signal_count = _technical_signal_count(text)
+    if signal_count < 2 or not _ai_related(text):
+        return False
+    mission = str(item.get("mission_area") or item.get("category") or "").casefold()
+    technical_mission = any(token in mission for token in ("ai", "technology", "technical", "convergence", "quantum", "genetics", "future"))
+    source_type = str(item.get("source_type") or "").strip().casefold()
+    return technical_mission or source_type in TECHNICAL_SOURCE_TYPES or bool(item.get("official"))
+
+
+def technical_trend_score(item: dict[str, Any]) -> float:
+    text = _text(item)
+    signals = _technical_signal_count(text)
+    score = min(32.0, signals * 6.0)
+    technical_depth = sum(bool(re.search(pattern, text)) for pattern in (
+        r"architecture", r"protocol", r"runtime", r"infrastructure", r"serving", r"inference", r"kernel", r"memory", r"compiler",
+        r"معماری", r"پروتکل", r"زیرساخت", r"استنتاج",
+    ))
+    score += min(22.0, technical_depth * 5.0)
+    score += _source_authority(item)
+    score += _recency_bonus(item)
+    if str(item.get("content_type") or "").casefold() in {"research", "technical", "official"}:
+        score += 5.0
+    if bool(item.get("technical_report")) or bool(item.get("technical_depth_signal")):
+        score += 6.0
+    return round(min(100.0, score), 2)
+
+
+def choose_technical_trend_candidate(
+    candidates: Iterable[dict[str, Any]],
+    *,
+    existing_ids: set[int] | None = None,
+    max_items: int = MAX_TECHNICAL_TREND_PER_PERIOD,
+) -> list[dict[str, Any]]:
+    existing_ids = existing_ids or set()
+    eligible = []
+    for raw in candidates or []:
+        if id(raw) in existing_ids or not is_technical_trend_candidate(raw):
+            continue
+        item = raw
+        item["technical_trend_score"] = technical_trend_score(item)
+        eligible.append(item)
+    eligible.sort(key=lambda item: (-float(item.get("technical_trend_score", 0.0) or 0.0), str(item.get("published") or "")))
+    selected = eligible[:max(0, int(max_items))]
+    for index, item in enumerate(selected, start=1):
+        item["technical_trend_lane_selected"] = True
+        item["editorial_lane"] = "technical_trend"
+        item["technical_trend_period_rank"] = index
+        item["normal_period_rank"] = None
+        item["mind_period_rank"] = None
+        item["technical_lane_independent"] = True
+        item["technical_lane_reason"] = "top_independent_technical_trend_score"
+    return selected

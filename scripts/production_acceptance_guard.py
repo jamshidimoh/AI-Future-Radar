@@ -20,7 +20,7 @@ CANDIDATE_PATTERNS = (
 )
 SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output=(\d+)")
 CONTRACT_PATTERN = re.compile(
-    r"\[Production Contract\].*?normal_news=(\d+).*?normal_max=(\d+).*?(?:mind_ideas_voices=(\d+)\s+mind_max=(\d+)\s+)?tier0_news=(\d+).*?education=(\w+)"
+    r"\[Production Contract\].*?normal_news=(\d+).*?normal_max=(\d+).*?(?:mind_ideas_voices=(\d+)\s+mind_max=(\d+)\s+)?tier0_news=(\d+).*?tier0_quota_exempt=(\w+).*?education=(\w+)"
 )
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
@@ -107,7 +107,8 @@ def validate(log_text: str) -> tuple[bool, str]:
     mind_news = int(contract_match.group(3) or 0)
     mind_max = int(contract_match.group(4) or 0)
     tier0_news = int(contract_match.group(5))
-    education = contract_match.group(6)
+    tier0_quota_exempt = contract_match.group(6).lower() == "true"
+    education = contract_match.group(7)
     if _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
         education = "confirmed"
 

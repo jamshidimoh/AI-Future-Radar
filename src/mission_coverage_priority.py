@@ -5,6 +5,7 @@ from collections.abc import Iterable
 from contextlib import suppress
 from typing import Any
 
+from src.mind_cognition_lane import apply_mind_cognition_floor, prepare_mind_cognition_contract
 from src.unified_editorial_selection import mission_area
 
 _TARGET_KEYS = {
@@ -60,18 +61,34 @@ def mission_coverage_bonus(item: dict[str, Any], area_counts: dict[str, int], co
 
 
 def annotate_recovery_candidates(items: Iterable[dict[str, Any]], history: Iterable[dict[str, Any]], contract: dict[str, Any]) -> list[dict[str, Any]]:
+    source_items = [dict(raw) for raw in items or []]
+    for item in source_items:
+        if mission_area(item) == "mind_cognition":
+            apply_mind_cognition_floor(item)
+    prepare_mind_cognition_contract(source_items, contract)
+
     window_items = int(contract.get("window_runs", 6) or 6) * max(1, int(contract.get("max_posts", 3) or 3))
     counts = historical_area_counts(history, window_items)
     prepared: list[dict[str, Any]] = []
-    for raw in items or []:
-        item = dict(raw)
+    for item in source_items:
         area = mission_area(item)
+        original_score = float(item.get("mind_cognition_original_score", _score(item)) or 0.0)
         bonus = mission_coverage_bonus(item, counts, contract)
         item["historical_mission_area_count"] = int(counts.get(area, 0) or 0)
         item["mission_coverage_bonus"] = bonus
         if bonus > 0:
             with suppress(TypeError, ValueError):
                 item["final_editorial_score"] = round(_score(item) + bonus, 2)
+        if area == "mind_cognition":
+            item["mind_cognition_original_score"] = original_score
         prepared.append(item)
-    prepared.sort(key=lambda x: (float(x.get("mission_coverage_bonus", 0) or 0), _score(x), str(x.get("published", ""))), reverse=True)
+    prepared.sort(
+        key=lambda x: (
+            1 if mission_area(x) == "mind_cognition" else 0,
+            float(x.get("mind_cognition_original_score", _score(x)) or 0),
+            float(x.get("mission_coverage_bonus", 0) or 0),
+            str(x.get("published", "")),
+        ),
+        reverse=True,
+    )
     return prepared

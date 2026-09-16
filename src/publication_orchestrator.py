@@ -60,7 +60,7 @@ def _publication_reason_code(reason: str | None) -> str:
         return "protected_score_floor"
     if value == "normal_quota_exhausted":
         return "publication_quota_exhausted"
-    if value == "normal_rank_outside_window":
+    if value == "normal_rank_outside_window" or value.startswith("normal_rank_outside_window:"):
         return "normal_rank_outside_window"
     if value == "strategic_analytical_lane_exhausted":
         return "strategic_analytical_lane_exhausted"

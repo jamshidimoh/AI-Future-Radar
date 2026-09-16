@@ -139,9 +139,6 @@ def voices_perspectives_score(item: dict[str, Any]) -> float:
         score += 24.0
     if _has_person_signal(item):
         score += 18.0
-    # Explicit watchlist attribution is valuable even when the item is a news
-    # report rather than an interview. It does not, by itself, turn celebrity
-    # news into a Voices item because AI relevance and person matching are required.
     if priority_person:
         score += 12.0
     try:
@@ -163,6 +160,33 @@ def voices_perspectives_score(item: dict[str, Any]) -> float:
     return round(min(100.0, score), 2)
 
 
+def _already_published_conflict(item: dict[str, Any]) -> bool:
+    """Avoid spending the single Voices slot on a story the final guard will reject.
+
+    The publication guard is deliberately reused rather than duplicating its
+    semantic-deduplication rules. A lazy import keeps this editorial lane usable
+    in isolated unit tests and avoids import cycles during module initialization.
+    """
+    try:
+        from src.publication_guard import check_before_publish
+
+        title = str(item.get("title") or "").strip()
+        summary = str(item.get("summary") or item.get("description") or "").strip()
+        why = str(item.get("why_it_matters") or "").strip()
+        if not title:
+            return False
+        text = "\n".join([title, f"خلاصه: {summary}", f"چرا مهم است: {why}"])
+        allowed, reason = check_before_publish(text, str(item.get("link") or item.get("url") or ""))
+        if not allowed:
+            item["voices_publication_conflict"] = reason
+            return True
+    except Exception:
+        # Publication must remain fail-closed downstream; inability to inspect
+        # the ledger here must never make a candidate ineligible by accident.
+        return False
+    return False
+
+
 def choose_voices_candidate(
     candidates: Iterable[dict[str, Any]],
     *,
@@ -173,6 +197,8 @@ def choose_voices_candidate(
     eligible = []
     for item in candidates or []:
         if id(item) in existing_ids or not is_voices_candidate(item):
+            continue
+        if _already_published_conflict(item):
             continue
         item["voices_perspectives_score"] = voices_perspectives_score(item)
         eligible.append(item)

@@ -13,28 +13,163 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply final changes
+
+      - name: Apply production-safe lane changes
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          def rep(path, old, new, count=1):
+          def rep(path: str, old: str, new: str, count: int = 1):
               p = Path(path)
               s = p.read_text(encoding='utf-8')
               if old not in s:
-                  raise SystemExit(f'anchor missing: {path}: {old[:100]!r}')
+                  raise SystemExit(f'anchor missing: {path}: {old[:140]!r}')
               p.write_text(s.replace(old, new, count), encoding='utf-8')
 
-          # Keep the existing migration body exactly as committed; this workflow
-          # change only makes its trigger robust after production-state commits.
+          # production_entrypoint: technical lane + bounded Normal competitiveness.
+          rep(
+              'production_entrypoint.py',
+              'from src.protected_editorial_lane import SPECIAL_MAX_PER_PERIOD, choose_additive_candidates\n',
+              'from src.protected_editorial_lane import SPECIAL_MAX_PER_PERIOD, choose_additive_candidates\nfrom src.technical_trend_lane import choose_technical_trend_candidate\n',
+          )
+          rep(
+              'production_entrypoint.py',
+              'MAX_MIND_IDEAS_VOICES_PER_PERIOD = SPECIAL_MAX_PER_PERIOD\n',
+              'MAX_MIND_IDEAS_VOICES_PER_PERIOD = SPECIAL_MAX_PER_PERIOD\nMAX_TECHNICAL_TREND_PER_PERIOD = 1\nNORMAL_RELATIVE_SCORE_GAP = 8.0\n',
+          )
+          rep(
+              'production_entrypoint.py',
+              'def _item_final_score(item: dict) -> float:\n    if _is_mind_ideas_voices(item):\n',
+              'def _is_technical_trend(item: dict) -> bool:\n    return bool(item.get("technical_trend_lane_selected") or item.get("editorial_lane") == "technical_trend")\n\n\ndef _item_final_score(item: dict) -> float:\n    if _is_technical_trend(item):\n        try:\n            return float(item.get("technical_trend_score", 0.0) or 0.0)\n        except (TypeError, ValueError):\n            return 0.0\n    if _is_mind_ideas_voices(item):\n',
+          )
+          rep(
+              'production_entrypoint.py',
+              'def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):\n    candidates = list(candidates or [])\n    mind = [item for item in candidates if _is_mind_ideas_voices(item)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]\n    non_mind = [item for item in candidates if not _is_mind_ideas_voices(item)]\n',
+              'def _competitive_normal_candidates(candidates):\n    candidates = list(candidates or [])\n    regular = [x for x in candidates if not _is_mind_ideas_voices(x) and not _is_technical_trend(x) and not x.get("_rank_is_tier0")]\n    protected = [x for x in candidates if x.get("_rank_is_tier0")]\n    if not regular:\n        return candidates\n    scores = [float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0.0) for x in regular]\n    best = max(scores)\n    cutoff = max(float(NORMAL_SCORE_FLOOR), best - NORMAL_RELATIVE_SCORE_GAP)\n    kept = [x for x in regular if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0.0) >= cutoff]\n    print(f"[Normal Competitive Gate] candidates={len(regular)} best={best:.2f} cutoff={cutoff:.2f} gap={NORMAL_RELATIVE_SCORE_GAP:.1f} kept={len(kept)} dropped={len(regular)-len(kept)}", flush=True)\n    return protected + kept\n\n\ndef _bound_runtime_candidates(candidates, max_posts: int, policy: dict):\n    candidates = list(candidates or [])\n    mind = [item for item in candidates if _is_mind_ideas_voices(item)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]\n    technical = [item for item in candidates if _is_technical_trend(item)][:MAX_TECHNICAL_TREND_PER_PERIOD]\n    non_mind = [item for item in candidates if not _is_mind_ideas_voices(item) and not _is_technical_trend(item)]\n',
+          )
+          rep('production_entrypoint.py', '    for item in protected + normals + mind:\n', '    for item in protected + normals + technical + mind:\n')
+          rep(
+              'production_entrypoint.py',
+              'normal={len(normals)} protected={len(protected)} mind_ideas_voices={len(mind)} output={len(bounded)}',
+              'normal={len(normals)} protected={len(protected)} technical_trend={len(technical)} mind_ideas_voices={len(mind)} output={len(bounded)}',
+          )
+          old = '''        normal_candidates = unique_candidates(original_select(items, max(candidate_window, min(len(items), max_posts)), max_per_source, max_per_type, policy))
+        normal_ids = {id(item) for item in normal_candidates}
+        mind_candidates = choose_additive_candidates(items, existing_ids=normal_ids, max_items=MAX_MIND_IDEAS_VOICES_PER_PERIOD)
+        for item in mind_candidates:
+            print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
+        candidates = unique_candidates(normal_candidates + mind_candidates)
+        print(f"[Dual Lane Selection] normal={len(normal_candidates)} mind_ideas_voices={len(mind_candidates)} mind_cap={MAX_MIND_IDEAS_VOICES_PER_PERIOD} mind_score_floor=not_applied", flush=True)
+'''
+          new = '''        normal_candidates = _competitive_normal_candidates(unique_candidates(original_select(items, max(candidate_window, min(len(items), max_posts)), max_per_source, max_per_type, policy)))
+        normal_ids = {id(item) for item in normal_candidates}
+        mind_candidates = choose_additive_candidates(items, existing_ids=normal_ids, max_items=MAX_MIND_IDEAS_VOICES_PER_PERIOD)
+        mind_ids = {id(item) for item in mind_candidates}
+        for item in mind_candidates:
+            print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
+        technical_candidates = choose_technical_trend_candidate(items, existing_ids=normal_ids | mind_ids, max_items=MAX_TECHNICAL_TREND_PER_PERIOD)
+        for item in technical_candidates:
+            print(f"[Technical Trend Selection] rank={item.get('technical_trend_period_rank')} score={item.get('technical_trend_score')} source={item.get('source')} title={str(item.get('title', ''))[:120]}", flush=True)
+        candidates = unique_candidates(normal_candidates + technical_candidates + mind_candidates)
+        print(f"[Triple Lane Selection] normal={len(normal_candidates)} technical_trend={len(technical_candidates)} mind_ideas_voices={len(mind_candidates)} technical_cap={MAX_TECHNICAL_TREND_PER_PERIOD} mind_cap={MAX_MIND_IDEAS_VOICES_PER_PERIOD} mind_score_floor=not_applied", flush=True)
+'''
+          rep('production_entrypoint.py', old, new)
+          rep(
+              'production_entrypoint.py',
+              '"mind_ideas_voices_delivered_count": 0, "tier0_news_delivered_count": 0',
+              '"mind_ideas_voices_delivered_count": 0, "technical_trend_delivered_count": 0, "tier0_news_delivered_count": 0',
+          )
+          rep(
+              'production_entrypoint.py',
+              '            if _is_mind_ideas_voices(item):\n                item["final_editorial_score"] = float(item.get("mind_editorial_score", 0) or 0)\n                lane = "mind_ideas_voices"\n            else:\n',
+              '            if _is_mind_ideas_voices(item):\n                item["final_editorial_score"] = float(item.get("mind_editorial_score", 0) or 0)\n                lane = "mind_ideas_voices"\n            elif _is_technical_trend(item):\n                item["final_editorial_score"] = float(item.get("technical_trend_score", 0) or 0)\n                lane = "technical_trend"\n            else:\n',
+          )
+          rep(
+              'production_entrypoint.py',
+              '                is_mind = _is_mind_ideas_voices(item)\n                is_tier0 = _is_tier0_publication_candidate(item)',
+              '                is_mind = _is_mind_ideas_voices(item)\n                is_technical = _is_technical_trend(item)\n                is_tier0 = _is_tier0_publication_candidate(item)',
+          )
+          rep('production_entrypoint.py', '                if not is_mind and not is_tier0:\n', '                if not is_mind and not is_technical and not is_tier0:\n')
+          rep(
+              'production_entrypoint.py',
+              '                if is_mind:\n                    render_state["mind_ideas_voices_delivered_count"] += 1\n                elif is_tier0:\n',
+              '                if is_mind:\n                    render_state["mind_ideas_voices_delivered_count"] += 1\n                elif is_technical:\n                    render_state["technical_trend_delivered_count"] += 1\n                elif is_tier0:\n',
+          )
+          rep(
+              'production_entrypoint.py',
+              '                lane = "mind_ideas_voices" if is_mind else ("tier0" if is_tier0 else "normal")\n',
+              '                lane = "mind_ideas_voices" if is_mind else ("technical_trend" if is_technical else ("tier0" if is_tier0 else "normal"))\n',
+          )
+          rep(
+              'production_entrypoint.py',
+              '        is_mind = _is_mind_ideas_voices(story)\n        priority_person = _is_tier0_publication_candidate(story)',
+              '        is_mind = _is_mind_ideas_voices(story)\n        is_technical = _is_technical_trend(story)\n        priority_person = _is_tier0_publication_candidate(story)',
+          )
+          rep(
+              'production_entrypoint.py',
+              '        if is_mind:\n            if render_state["mind_ideas_voices_delivered_count"] >= MAX_MIND_IDEAS_VOICES_PER_PERIOD:\n',
+              '        if is_mind:\n            if render_state["mind_ideas_voices_delivered_count"] >= MAX_MIND_IDEAS_VOICES_PER_PERIOD:\n',
+          )
+          rep(
+              'production_entrypoint.py',
+              '        if strategic_analytical and render_state["strategic_analytical_news_delivered_count"] >= STRATEGIC_ANALYTICAL_MAX_PER_PERIOD:\n',
+              '        if is_technical:\n            if render_state["technical_trend_delivered_count"] >= MAX_TECHNICAL_TREND_PER_PERIOD:\n                return policy_blocked("technical_trend_quota_exhausted")\n            if not _news_language_ok(story):\n                return policy_blocked("news_language_gate")\n            score = _item_final_score(story)\n            print(f"[Publication Policy] PUBLISH technical_trend rank={story.get(\'technical_trend_period_rank\')} score={score} normal_floor=not_applied normal_rank=None independent_lane=true cap={MAX_TECHNICAL_TREND_PER_PERIOD}", flush=True)\n            return delivered({"message_id": None})\n        if strategic_analytical and render_state["strategic_analytical_news_delivered_count"] >= STRATEGIC_ANALYTICAL_MAX_PER_PERIOD:\n',
+          )
+          rep(
+              'production_entrypoint.py',
+              'normal_max={MAX_NORMAL_NEWS_PER_PERIOD} mind_ideas_voices={render_state[\'mind_ideas_voices_delivered_count\']}',
+              'normal_max={MAX_NORMAL_NEWS_PER_PERIOD} technical_trend={render_state[\'technical_trend_delivered_count\']} technical_max={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices={render_state[\'mind_ideas_voices_delivered_count\']}',
+          )
+
+          # Mind interview/podcast recall: broaden detection without changing score/cap.
+          rep(
+              'src/protected_editorial_lane.py',
+              'INTERVIEW_TYPES = {\n    "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a",\n}\n',
+              'INTERVIEW_TYPES = {\n    "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a",\n}\nINTERVIEW_SIGNAL_TERMS = (r"\\binterview\\b", r"\\bpodcast\\b", r"\\bconversation\\b", r"\\bfireside\\b", r"\\bq&a\\b", r"\\bdiscussion\\b", r"\\bguest\\b", r"\\bepisode\\b")\n',
+          )
+          rep(
+              'src/protected_editorial_lane.py',
+              'def _thematic_signal(item: dict[str, Any]) -> bool:\n    return any(re.search(pattern, _text(item)) for pattern in SPECIAL_SIGNAL_PATTERNS)\n\n\ndef is_mind_ideas_voices_candidate',
+              'def _thematic_signal(item: dict[str, Any]) -> bool:\n    return any(re.search(pattern, _text(item)) for pattern in SPECIAL_SIGNAL_PATTERNS)\n\n\ndef _interview_signal(item: dict[str, Any]) -> bool:\n    content_type = str(item.get("content_type") or "").strip().casefold()\n    source_type = str(item.get("source_type") or item.get("type") or item.get("format") or "").strip().casefold()\n    text = _text(item)\n    return content_type in INTERVIEW_TYPES or source_type in INTERVIEW_TYPES or any(re.search(pattern, text) for pattern in INTERVIEW_SIGNAL_TERMS)\n\n\ndef is_mind_ideas_voices_candidate',
+          )
+          rep(
+              'src/protected_editorial_lane.py',
+              '    content_type = str(item.get("content_type") or "").strip().casefold()\n    if mission == "mind_cognition" or thematic:\n        return True\n    if content_type in INTERVIEW_TYPES and (registry_person or explicit_person or mission in MISSION_AREAS):\n',
+              '    content_type = str(item.get("content_type") or "").strip().casefold()\n    interview = _interview_signal(item)\n    if mission == "mind_cognition" or thematic:\n        return True\n    if interview and (registry_person or explicit_person or mission in MISSION_AREAS or thematic):\n',
+          )
+
+          # Provider isolation: a malformed provider response must block only that candidate.
+          rep(
+              'main.py',
+              '    except (QuotaExceeded, TimeoutError, requests.exceptions.RequestException) as exc:\n',
+              '    except (QuotaExceeded, TimeoutError, ValueError, requests.exceptions.RequestException) as exc:\n',
+          )
+
+          # Add focused regression tests.
+          Path('tests/test_technical_trend_lane.py').write_text('''from src.technical_trend_lane import choose_technical_trend_candidate, is_technical_trend_candidate\n\n\ndef test_top_technical_candidate_only():\n    items = [\n        {"title": "MCP protocol for AI agents", "summary": "Model Context Protocol architecture and runtime", "source_type": "technical", "source_tier": 1, "category": "ai", "published": "2026-09-15 10:00"},\n        {"title": "General AI news", "summary": "A new model was released", "source_type": "news", "source_tier": 1, "category": "ai"},\n    ]\n    selected = choose_technical_trend_candidate(items)\n    assert len(selected) == 1\n    assert selected[0]["technical_trend_lane_selected"] is True\n    assert selected[0]["technical_trend_period_rank"] == 1\n\n\ndef test_arxiv_and_reddit_are_excluded():\n    arxiv = {"title": "New transformer architecture", "summary": "AI inference architecture benchmark", "source": "arXiv", "source_type": "research", "source_tier": 1, "category": "ai"}\n    reddit = {"title": "AI inference architecture discussion", "summary": "runtime and protocol trend", "source": "Reddit community", "source_type": "technical", "source_tier": 1, "category": "ai"}\n    assert not is_technical_trend_candidate(arxiv)\n    assert not is_technical_trend_candidate(reddit)\n''', encoding='utf-8')
+          Path('tests/test_mind_interview_recall.py').write_text('''from src.protected_editorial_lane import SPECIAL_MAX_PER_PERIOD, is_mind_ideas_voices_candidate, mind_ideas_voices_score\n\n\ndef test_podcast_conversation_recall():\n    item = {"title": "Podcast: a conversation about AI consciousness", "summary": "A deep discussion with a researcher", "content_type": "video", "source_type": "podcast", "source": "Specialist Podcast", "source_tier": 1, "category": "mind"}\n    before = mind_ideas_voices_score(item)\n    assert is_mind_ideas_voices_candidate(item)\n    assert mind_ideas_voices_score(item) == before\n\n\ndef test_mind_cap_unchanged():\n    assert SPECIAL_MAX_PER_PERIOD == 2\n''', encoding='utf-8')
+
+          # Align legacy test with independent Mind scoring semantics if still present.
+          p = Path('tests/test_mission_coverage_priority.py')
+          s = p.read_text(encoding='utf-8')
+          if 'assert annotated["final_editorial_score"] == 55.15' in s:
+              s = s.replace('assert annotated["final_editorial_score"] == 55.15', 'assert annotated["final_editorial_score"] == 55.0\n    assert annotated["mind_lane_selected"] is True', 1)
+              p.write_text(s, encoding='utf-8')
           PY
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('.github/workflows/z3_finalize_editorial_lanes.yml')
-          s=p.read_text(encoding='utf-8')
-          if "[migrate-lanes]" not in s:
-              raise SystemExit('migration trigger marker missing')
-          PY
-      - name: No-op safety check
-        run: echo "[Migration Trigger] armed"
+
+      - name: Validate changed code
+        run: |
+          python -m compileall -q production_entrypoint.py main.py src tests/test_technical_trend_lane.py tests/test_mind_interview_recall.py
+          python -m pytest -q tests/test_technical_trend_lane.py tests/test_mind_interview_recall.py tests/test_mission_coverage_priority.py tests/test_protected_editorial_lane.py tests/test_production_acceptance_contract.py tests/test_production_acceptance_guard.py tests/test_unified_editorial_selection.py
+
+      - name: Commit and retire migration workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add production_entrypoint.py main.py src/protected_editorial_lane.py tests/test_technical_trend_lane.py tests/test_mind_interview_recall.py tests/test_mission_coverage_priority.py
+          git rm -f .github/workflows/z3_finalize_editorial_lanes.yml
+          git commit -m "feat: refine editorial lanes and add technical trend"
+          git push origin HEAD:main

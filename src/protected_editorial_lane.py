@@ -1,10 +1,4 @@
-"""Independent Mind/Ideas/Voices editorial lane.
-
-This lane has its own relevance score and selection policy. It is deliberately
-independent from the normal-news ranking floor: NORMAL_SCORE_FLOOR is never used
-for eligibility or selection here. Shared publication-history, source-safety and
-final editorial quality contracts remain enforced downstream.
-"""
+"""Independent Mind/Ideas/Voices editorial lane."""
 from __future__ import annotations
 
 import re
@@ -22,7 +16,7 @@ SPECIAL_RANK_WINDOW = 12
 INTERVIEW_TYPES = {
     "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a",
 }
-INTERVIEW_SIGNAL_TERMS = (r"interview", r"podcast", r"conversation", r"fireside", r"q&a", r"discussion", r"guest", r"episode")
+INTERVIEW_SIGNAL_TERMS = (r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfireside\b", r"\bq&a\b", r"\bdiscussion\b", r"\bguest\b", r"\bepisode\b")
 MISSION_AREAS = {"mind", "mind_cognition", "future", "future_governance", "convergence", "ai", "ai_core"}
 SPECIAL_SIGNAL_PATTERNS = (
     r"\bconsciousness\b", r"\bartificial consciousness\b", r"\bmachine consciousness\b",
@@ -114,7 +108,6 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     thematic = _thematic_signal(item)
     registry_person = _named_registry_person(item)
     explicit_person = _explicit_person_signal(item)
-    content_type = str(item.get("content_type") or "").strip().casefold()
     interview = _interview_signal(item)
     if mission == "mind_cognition" or thematic:
         return True
@@ -138,64 +131,34 @@ def mind_ideas_voices_score(item: dict[str, Any]) -> float:
     elif mission in {"future", "future_governance", "convergence"}:
         score += 28.0
     elif mission in {"ai", "ai_core"}:
-        score += 18.0
+        score += 20.0
     if thematic:
-        score += 24.0
+        score += 30.0
     if registry_person:
-        score += 18.0
+        score += 16.0
     elif explicit_person:
-        score += 14.0
+        score += 12.0
     if content_type in INTERVIEW_TYPES:
         score += 10.0
-    try:
-        source_tier = int(item.get("source_tier", 3) or 3)
-    except (TypeError, ValueError):
-        source_tier = 3
-    score += {1: 8.0, 2: 5.0, 3: 1.0}.get(source_tier, 0.0)
-    if str(item.get("source_type") or "").casefold() in {"official", "university", "scientific", "specialist"}:
-        score += 4.0
-    return round(min(100.0, score), 2)
+    elif _interview_signal(item):
+        score += 6.0
+    return min(100.0, round(score, 2))
 
 
-def choose_additive_candidates(
-    candidates: Iterable[dict[str, Any]],
-    *,
-    existing_ids: set[int],
-    max_rank: int = SPECIAL_RANK_WINDOW,
-    max_items: int | None = SPECIAL_MAX_PER_PERIOD,
-) -> list[dict[str, Any]]:
-    """Select second-lane candidates using only the independent lane score.
-
-    ``max_rank`` applies to the lane's own ranking, not ``normal_period_rank``.
-    No NORMAL_SCORE_FLOOR or other normal-news score threshold is applied.
-    """
-    eligible: list[dict[str, Any]] = []
-    for item in candidates:
-        if id(item) in existing_ids or not is_mind_ideas_voices_candidate(item):
-            continue
+def choose_additive_candidates(candidates: Iterable[dict[str, Any]], *, existing_ids: set[int], max_items: int = SPECIAL_MAX_PER_PERIOD) -> list[dict[str, Any]]:
+    eligible = [
+        item for item in candidates
+        if id(item) not in existing_ids and is_mind_ideas_voices_candidate(item)
+    ]
+    eligible.sort(key=mind_ideas_voices_score, reverse=True)
+    selected = eligible[: max(0, int(max_items))]
+    for rank, item in enumerate(selected, start=1):
         item["mind_editorial_score"] = mind_ideas_voices_score(item)
-        eligible.append(item)
-    eligible.sort(key=lambda item: (-float(item.get("mind_editorial_score", 0.0) or 0.0), str(item.get("published") or "")),)
-    selected = (
-        eligible[:max(0, max_rank)]
-        if max_items is None
-        else eligible[:max(0, max_items)]
-    )
-    for index, item in enumerate(selected, start=1):
-        item["mind_period_rank"] = index
-        item["period_rank"] = 1000 + index
+        item["mind_period_rank"] = rank
         item["normal_period_rank"] = None
-        item["protected_editorial_lane"] = "mind_ideas_voices"
         item["mind_lane_selected"] = True
+        item["protected_editorial_lane"] = "mind_ideas_voices"
         item["protected_content"] = True
-        item["protected_lane_reason"] = "independent_mind_ideas_voices_score"
+        item["normal_score_floor_exempt"] = True
+        item["mind_lane_independent"] = True
     return selected
-
-
-def choose_additive_candidate(
-    candidates: Iterable[dict[str, Any]],
-    *,
-    existing_ids: set[int],
-    max_rank: int = SPECIAL_RANK_WINDOW,
-) -> dict[str, Any] | None:
-    return next(iter(choose_additive_candidates(candidates, existing_ids=existing_ids, max_rank=max_rank, max_items=1)), None)

@@ -1,4 +1,10 @@
-"""Bounded additive Mind/Ideas/Voices lane for production selection."""
+"""Bounded additive Mind/Ideas/Voices lane for production selection.
+
+The lane is deliberately additive to the normal three-item portfolio. It can
+surface up to two extra, already-ranked candidates per production iteration
+when they match influential people/ideas, specialist conversations, or
+AI-relevant mind/science/future interdisciplinary themes.
+"""
 from __future__ import annotations
 
 import re
@@ -24,7 +30,7 @@ _SPECIAL_SIGNAL_PATTERNS = (
     r"\bneuroscience\b", r"\bneurotechnology\b", r"\bbrain-computer interface\b", r"\bbrain-computer\b",
     r"\bgenomics\b", r"\bgenetic\b", r"\bgene editing\b", r"\bsynthetic biology\b",
     r"\bfuturology\b", r"\bfutures? research\b", r"\bforesight\b", r"\bfuture studies\b",
-    r"\bsociology\b", r"\bsociety and technology\b", r"\btechnology and society\b",
+    r"\bsociology\b", r"\bsocial science\b", r"\banthropology\b", r"\bsociety and technology\b", r"\btechnology and society\b",
 )
 PERSON_KEYS = (
     "watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name",
@@ -66,7 +72,7 @@ def _named_registry_person(item: dict[str, Any]) -> bool:
         return False
     values = [str(item.get(key) or "").strip().casefold() for key in PERSON_KEYS]
     text = _text(item)
-    return any(name in text or any(name == value for value in values) for name in names)
+    return any(name in text or name == value for name in names for value in values)
 
 
 def _explicit_person_signal(item: dict[str, Any]) -> bool:

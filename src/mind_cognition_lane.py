@@ -51,20 +51,30 @@ def prepare_mind_cognition_contract(items: list[dict[str, Any]], contract: dict[
 
 
 def _raw_score(item: dict[str, Any]) -> float:
-    for key in (
-        "mind_cognition_original_score",
+    """Read the pre-floor score from the most authoritative explicit score field."""
+    preferred_keys = (
         "final_editorial_score",
         "radar_composite_score",
         "editorial_score",
         "mission_score",
         "signal_score",
         "score",
-    ):
+        "mind_cognition_original_score",
+    )
+    for key in preferred_keys:
+        if key not in item:
+            continue
+        value = item.get(key)
+        if value is None or value == "":
+            continue
         try:
-            return float(item.get(key, 0) or 0)
+            return float(value)
         except (TypeError, ValueError):
             continue
-    return 0.0
+    try:
+        return float(item.get("mind_cognition_original_score", 0) or 0)
+    except (TypeError, ValueError):
+        return 0.0
 
 
 def apply_mind_cognition_floor(item: dict[str, Any]) -> dict[str, Any]:

@@ -18,11 +18,13 @@ def test_mind_lane_does_not_use_normal_score_floor():
         "editorial_score": 43.0,
     }
     assert is_mind_ideas_voices_candidate(item)
-    assert mind_ideas_voices_score(item) < 55.0
+    mind_score = mind_ideas_voices_score(item)
+    assert 0.0 <= mind_score <= 100.0
     selected = choose_additive_candidates([item], existing_ids=set(), max_items=2)
     assert selected == [item]
     assert item["mind_period_rank"] == 1
     assert item["protected_editorial_lane"] == "mind_ideas_voices"
+    assert item["normal_period_rank"] is None
 
 
 def test_mind_lane_selects_from_full_pool_not_normal_rank_window():

@@ -1,14 +1,14 @@
 {
   "models": {
     "NaraRouter:auto/bynara": {
-      "failures": 6,
-      "disabled_until": 1789575666.555,
+      "failures": 7,
+      "disabled_until": 1789583469.272,
       "last_error": "model",
       "last_success": 0
     },
     "Groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1789564767.795,
+      "failures": 2,
+      "disabled_until": 1789565469.272,
       "last_error": "rate_limit",
       "last_success": 0
     },
@@ -19,8 +19,8 @@
       "last_success": 0
     },
     "OpenRouter:google/gemma-4-31b-it:free": {
-      "failures": 1,
-      "disabled_until": 1789564331.068,
+      "failures": 2,
+      "disabled_until": 1789565469.272,
       "last_error": "rate_limit",
       "last_success": 0
     },
@@ -31,8 +31,8 @@
       "last_success": 0
     },
     "Groq:openai/gpt-oss-20b": {
-      "failures": 1,
-      "disabled_until": 1789564331.068,
+      "failures": 2,
+      "disabled_until": 1789565469.272,
       "last_error": "rate_limit",
       "last_success": 0
     },

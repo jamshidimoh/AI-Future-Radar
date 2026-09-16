@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789554066,
+  "updated_at": 1789561167,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -10431,6 +10431,80 @@
       "why_it_matters": "پیشنهادهای نورومورفیک برای AGI می‌توانند محدودیت‌های انرژی و مقیاس‌پذیری سامانه‌های سنتی را برطرف کنند و به ساخت سیستم‌های هوشمند نزدیک‌تر به عملکرد مغز انسان منجر شوند. ترکیب نظریه‌های پیش‌بینی فعال کارل فریستون با سخت‌افزارهای اسپایک‑محور، امکان پیاده‌سازی مدل‌های شناختی پیچیده را با کارایی بالاتر فراهم می‌سازد. این رویکرد نه تنها به پیشرفت علمی در زمینه هوش مصنوعی کمک می‌کند، بلکه می‌تواند کاربردهای عملی در رباتیک، پردازش سیگنال‌های زیستی و سامانه‌های خودران را گسترش دهد.",
       "link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNYXZzS29wNFVVZmVpbFJEbzJDcG9wSmlLVmhMaExXeEZlUVdhTElHYmZ4ZGFldlpLeVhyT1JKNzF2UDZQSVZlVGtxcnNSWFhSX3dla1FTM0xhV2VicGpzNHBXSUphZ3k4OE5sZGxjWHptRFBfZGh6TmktRkFqQ2tmSzJnTHVfU0RuLV9Z?oc=5",
       "posted_at": 1789554066
+    },
+    "-1004482051328:1664": {
+      "chat_id": -1004482051328,
+      "message_id": 1664,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "انتشار Causalo توسط Nums AI؛ Foundation Model جدولی که در TabArena پیشتاز است",
+      "summary": "Nums AI مدل Pre-training‌دیده Causilo را برای طبقه‌بندی و رگرسیون جدولی با رابط scikit-learn منتشر کرد. این مدل بالاترین امتیاز Elo در TabArena را میان مدل‌های تک‌نقشه‌ای کسب کرده و پیش از Google TabFM و LG EXAONE Tabular قرار می‌گیرد. کد منبع تحت مجوز Apache‑2.0 است و وزن‌های مدل برای پژوهش‌های غیرتجاری در دسترس هستند.",
+      "why_it_matters": "رابط آشنای scikit-learn Causilo را برای متخصصان داده‌محور قابل استفاده می‌سازد و موانع ورود به مدل‌های پایه جدولی را کاهش می‌دهد. عملکرد برتر در TabArena نشان‌دهنده دقت پیش‌بینی بالاتر است که می‌تواند زمان و هزینه محاسباتی پروژه‌های طبقه‌بندی و رگرسیون را کاهش دهد. انتشار کد با مجوز Apache‑2.0 و وزن‌های محدود به پژوهش‌های غیرتجاری، امکان آزمایش سریع و توسعهٔ بیشتر توسط جامعه پژوهشی را فراهم می‌کند.",
+      "link": "https://www.marktechpost.com/2026/09/15/nums-ai-releases-causilo-a-tabular-foundation-model-that-tops-tabarena-among-single-models/",
+      "posted_at": 1789561156
+    },
+    "-1004482051328:1665": {
+      "chat_id": -1004482051328,
+      "message_id": 1665,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Prior Labs معرفی TabPFN-3.5: Foundation Modelٔ جدولی برندهٔ مسابقهٔ Otto با تنظیمات پیش‌فرض",
+      "summary": "Prior Labs نسخهٔ جدید TabPFN-3.5 را منتشر کرد؛ این Foundation Modelٔ جدولی تنها بر داده‌های مصنوعی Pre-training دیده و با تنظیمات پیش‌فرض، عملکرد برتری نسبت به راه‌حل برندهٔ مسابقهٔ Otto در Kaggle نشان داد. مدل بر پایهٔ معماری پیش‌بینی احتمالاتی (Probabilistic Forecasting Network) ساخته شده و در مقایسه با روش‌های سنتی، دقت بالاتری ارائه می‌دهد. این دستاورد نشان می‌دهد که Pre-training بر داده‌های مصنوعی می‌تواند جایگزین مؤثری برای داده‌های واقعی باشد و به‌خصوص در حوزهٔ داده‌های جدولی کاربردی باشد.",
+      "why_it_matters": "این پیشرفت نشان می‌دهد که مدل‌های پایهٔ جدولی می‌توانند بدون نیاز به داده‌های واقعی، عملکردی رقابتی ارائه دهند؛ این امر می‌تواند به کاهش هزینهٔ جمع‌آوری و نظارت بر داده‌های حساس کمک کند. همچنین، موفقیت TabPFN-3.5 در مسابقهٔ Otto با تنظیمات پیش‌فرض، نشان می‌دهد که این مدل در محیط‌های واقعی و بدون تنظیمات پیچیده قابل استفاده است، که برای شرکت‌های کوچک و متوسط که منابع محدود دارند، مزیت محسوب می‌شود. این دستاورد می‌تواند مسیر توسعهٔ مدل‌های پایهٔ جدولی را به سمت استفاده گسترده‌تر در صنایع مختلف سوق دهد.",
+      "link": "https://www.marktechpost.com/2026/09/15/prior-labs-releases-tabpfn-3-5-a-tabular-foundation-model-that-beats-the-winning-otto-kaggle-solution-with-default-settings/",
+      "posted_at": 1789561158
+    },
+    "-1004482051328:1666": {
+      "chat_id": -1004482051328,
+      "message_id": 1666,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Tech Times)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "Andy Clark",
+      "watch_person": "Andy Clark",
+      "title": "Ba Xian Fantasy به 112 میلیون خانوار آسیایی می‌پردازد",
+      "summary": "شرکت Ba Xian Fantasy در گزارش Tech Times اعلام کرد که در حین فیلمبرداری در پکن، برنامه‌ای را آغاز کرده است که هدف آن دسترسی به 112 میلیون خانوار در آسیا است. این پروژه در چارچوب تحقیقاتی است و به‌طور خاص بر روی فناوری‌های نوین و مدل‌های هوش مصنوعی تمرکز دارد. اطلاعات دقیق‌تری در مورد روش‌های مورد استفاده و محدودیت‌های اجرایی در متن گزارش ذکر نشده است.",
+      "why_it_matters": "این اقدام نشان می‌دهد که شرکت Ba Xian Fantasy قصد دارد با بهره‌گیری از هوش مصنوعی، بازار وسیعی در آسیا را هدف قرار دهد، که می‌تواند به گسترش دسترسی به فناوری‌های پیشرفته کمک کند. با هدف 112 میلیون خانوار، این پروژه می‌تواند تأثیر قابل Attentionی بر اقتصاد دیجیتال و تبادل داده‌ها در منطقه داشته باشد. محدودیت‌های اجرایی و چالش‌های فنی که در گزارش اشاره نشده‌اند، احتمالاً به‌عنوان عوامل مهمی در موفقیت این طرح مطرح خواهند شد.",
+      "link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxNWWtBTkJjQXpFdi1qTnFxTGE0dXEwYmpXbElmdE9mSXcyLVBGQ01QSDZQVUk3QVM5cWtaLXd1U2ZqZ19IdHRmYXc4M3BzZE1nR0Q5ckpqV2k3OTQ1RHFYdkpkdVh3dFFMa1NxVkxBTHhCdjY1T0JSYXRiekJ1TE9rSndHWDU5eEVLTllSM1hZZUNmSnFMOEFLV2trX3VkRkNPbUlXaU1MTkpvWmRHcVhBaFpYUlJKd2NYWUQ1OHpKRjJNdm1veENDWWRIXzAtcmxP?oc=5",
+      "posted_at": 1789561164
+    },
+    "-1004482051328:1667": {
+      "chat_id": -1004482051328,
+      "message_id": 1667,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "چرا گرانش در حال بازنگری در فیزیک بنیادی است – گفت‌وگو با Claudia de Rham",
+      "summary": "در این گفت‌وگو، فیزیک‌دان نظری Claudia de Rham از Imperial College London به بررسی عمیق مسأله ثابت کیهانی می‌پردازد؛ او توضیح می‌دهد که نوسانات خلأ کوانتومی پیش‌بینی می‌کنند نیروی گرانشی عظیمی باید وجود داشته باشد، در حالی که گسترش جهان به‌طرز ملایمی رخ می‌دهد. دِ رام به امکان شکست نسبیت عام در مقیاس‌های کیهانی، نقش انرژی تاریک و نظریهٔ گرانش با جرم گراویتون (massive gravity) اشاره می‌کند و نشان می‌دهد چگونه مدل‌های چندبعدی و امواج گرانشی می‌توانند به درک بهتر این پدیده کمک کنند. او همچنین به دستاوردهای خود، از جمله دریافت جایزه Blavatnik 2020 برای احیای نظریهٔ گرانش با جرم، اشاره دارد.",
+      "description": "Physicist Claudia de Rham discusses her life-long passion for gravity and the radical place it has led her.\n\nDoes gravity prove Einstein wrong?\n\nWith a free trial, you can watch more of Claudia de Rham NOW at https://iai.tv/home/speakers-and-authors/claudia-de-rham?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=studio\n\nWhat does it mean to tinker with gravity itself, to tweak the force that we all feel? Claudia de Rham, an award-winning theoretical physicist and trained pilot, deep-sea diver and astronaut, takes us there. In this exclusive interview, she explores the enduring mystery of the cosmological constant, Einstein’s ‘greatest blunder’, and the proclaimed ‘worst prediction in physics’: quantum vacuum fluctuations should exert colossal gravitational effects, yet the universe expands so gently we barely notice. Where does dark energy fit into the story and what truth might we uncover? De Rham probes whether general relativity could break on cosmic scales, and what happens when we give the graviton a mass. From higher-dimensional escapes to gravitational waves that nearly travel at light speed, she invites us into the playful, profound frontier of gravity’s nature, and our evolving understanding of the cosmos.\n\n#gravity  #physics  #einstein \n\nClaudia de Rham is a theoretical physicist based at Imperial College London, who works on cutting-edge research at the interface of gravity, cosmology and particle physics. In 2020 she won the Blavatnik Award for Young Scientists for revitalizing the theory of massive gravity.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=einsteins-biggest-blunder-with-claudia-de-rham\n\n00:00 Introduction\n00:40 Why gravity\n04:20 Cosmological constant problem\n16:00 Massive gravity\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "درک دقیق‌تر گرانش می‌تواند محدودیت‌های نسبیت عام را آشکار سازد و به تبیین معمای ثابت کیهانی و انرژی تاریک کمک کند؛ این مسأله نه تنها به پیشرفت نظریه‌های کیهان‌شناسی منجر می‌شود، بلکه ممکن است راه را برای فناوری‌های نوین مبتنی بر کنترل گرانشی هموار سازد. نظریهٔ گرانش با جرم، که توسط دِ رام توسعه یافته، امکان پیش‌بینی پدیده‌های جدید در مقیاس‌های بزرگ‌دست را فراهم می‌کند، اما هنوز با چالش‌های تجربی و محدودیت‌های اندازه‌گیری دقیق مواجه است. بنابراین، این بحث علمی می‌تواند جهت‌گیری‌های آیندهٔ پژوهش‌های بنیادی و کاربردهای احتمالی را شکل دهد.",
+      "link": "https://www.youtube.com/watch?v=1cFeen3qmQo",
+      "posted_at": 1789561167
     }
   }
 }

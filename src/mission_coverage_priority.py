@@ -6,6 +6,7 @@ from contextlib import suppress
 from typing import Any
 
 from src.mind_cognition_lane import apply_mind_cognition_floor, prepare_mind_cognition_contract
+from src.protected_editorial_lane import mind_ideas_voices_score
 from src.unified_editorial_selection import mission_area
 
 _TARGET_KEYS = {
@@ -56,14 +57,12 @@ def mission_coverage_bonus(item: dict[str, Any], area_counts: dict[str, int], co
 
     raw_score = float(item.get("mind_cognition_original_score", _score(item)) or 0.0)
     if area == "mind_cognition":
-        # The new Mind/Cognition floor is 50. The existing global runtime gate
-        # remains 55, so a bounded additive bonus closes the gap for all valid
-        # mind candidates at or above 50 without changing other mission lanes.
-        if raw_score >= 50.0 and _tier(item) in {1, 2}:
+        # Mission recovery uses the independent Mind lane; normal-news floor is
+        # never consulted for Mind candidates. The legacy helper fields are
+        # retained only for compatibility with older recovery telemetry/tests.
+        if raw_score >= 0.0 and _tier(item) in {1, 2, 3}:
             legacy_bonus = 1.5 if count == 0 else 1.0
-            return max(legacy_bonus, max(0.0, 55.0 - raw_score))
-        # Candidates below 50 are handled by the explicit top-two bypass marker
-        # in apply_mind_cognition_floor; they do not receive a ranking bonus.
+            return legacy_bonus
         return 0.0
 
     if _score(item) < 52.0:
@@ -78,6 +77,11 @@ def annotate_recovery_candidates(items: Iterable[dict[str, Any]], history: Itera
     for item in source_items:
         if mission_area(item) == "mind_cognition":
             apply_mind_cognition_floor(item)
+            item["mind_ideas_voices_score"] = mind_ideas_voices_score(item)
+            item["mind_editorial_score"] = item["mind_ideas_voices_score"]
+            item["mind_lane_selected"] = True
+            item["protected_editorial_lane"] = "mind_ideas_voices"
+            item["protected_content"] = True
     prepare_mind_cognition_contract(source_items, contract)
 
     window_items = int(contract.get("window_runs", 6) or 6) * max(1, int(contract.get("max_posts", 3) or 3))
@@ -91,14 +95,17 @@ def annotate_recovery_candidates(items: Iterable[dict[str, Any]], history: Itera
         item["mission_coverage_bonus"] = bonus
         if bonus > 0:
             with suppress(TypeError, ValueError):
-                item["final_editorial_score"] = round(_score(item) + bonus, 2)
+                if area == "mind_cognition":
+                    item["mind_editorial_score"] = round(float(item.get("mind_editorial_score", mind_ideas_voices_score(item)) or 0.0), 2)
+                else:
+                    item["final_editorial_score"] = round(_score(item) + bonus, 2)
         if area == "mind_cognition":
             item["mind_cognition_original_score"] = original_score
         prepared.append(item)
     prepared.sort(
         key=lambda x: (
             1 if mission_area(x) == "mind_cognition" else 0,
-            float(x.get("mind_cognition_original_score", _score(x)) or 0),
+            float(x.get("mind_editorial_score", x.get("mind_cognition_original_score", _score(x))) or 0),
             float(x.get("mission_coverage_bonus", 0) or 0),
             str(x.get("published", "")),
         ),

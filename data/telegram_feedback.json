@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789548285,
+  "updated_at": 1789552650,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -10240,6 +10240,64 @@
       "why_it_matters": "تشخیص دقیق هوشیاری مصنوعی می‌تواند مسیر توسعهٔ هوش مصنوعی را به سمت مسئولیت‌پذیری اخلاقی و قانونی هدایت کند. بدون معیارهای معتبر، خطر سوءاستفاده از سیستم‌های پیشرفته و عدم توانایی در تنظیم مقررات مناسب وجود دارد. علاوه بر این، شناخت واقعی هوشیاری می‌تواند به پیشرفت‌های علمی در فهم ذهن انسان نیز کمک کند، اما محدودیت‌های فعلی نشان می‌دهد که هنوز چارچوب‌های عملی و نظری کافی برای ارزیابی دقیق وجود ندارند.",
       "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQZHNBcFM0aVFaaGUxc3hjSUo2dVJzaTM3TklITEpRNnk2aU9kNDY3NV9JZlU0Y1pST1BraGI2cjJlRWpvOTZFcThmUi1EM28taG55bWwzQmFGcHRRNWxlUUh5RGpIdzlCemN4d0Y3UURGOF9RNGZSU2F3NV9oUkhhbkUyVm8wcmlRYk5pQ1p3?oc=5",
       "posted_at": 1789548285
+    },
+    "-1004482051328:1653": {
+      "chat_id": -1004482051328,
+      "message_id": 1653,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "گزارش شکاف جنسیتی جهانی ۲۰۲۶: تحولات و چشم‌اندازهای آینده",
+      "summary": "گزارش ۲۰۲۶ گفتمان جهانی شکاف جنسیتی، که در ۲۰ سالگی خود قرار دارد، به‌دنبال نشان دادن پیشرفت‌های قابل‌Attention در حوزه‌های اقتصاد، آموزش و سلامت است. نتایج کلیدی نشان می‌دهد که در حالی که شکاف در دسترسی به فرصت‌های شغلی کاهش یافته، هنوز اختلاف قابل‌Attentionی در دسترسی به منابع مالی و نمایندگی در سطوح بالای تصمیم‌گیری وجود دارد. سخنرانان، از جمله Saadia Zahidi و Sue Duke، بر اهمیت سیاست‌های تعاملی و همکاری‌های بین‌المللی برای تسریع در برطرف‌سازی این شکاف تأکید کردند. جلسه پرسش و پاسخ با رسانه‌ها، فرصت‌های جدیدی برای بحث در مورد راهکارهای عملی و سیاست‌های آینده فراهم کرد.",
+      "description": "This media briefing will mark the launch of the World Economic Forum’s Global Gender Gap Report 2026, the 20th anniversary edition of the report since its first publication in 2006. Speakers will present the report’s key findings and insights, followed by a Q&amp;A with attending media.\n\nSpeakers:\nSaadia Zahidi, Managing Director, World Economic Forum\nSue Duke, Managing Director for EMEA & LATAM and LinkedIn’s Head of Global Public Policy & Economic Graph, LinkedIn\nYann Zopf, Head of Media; Member of the Executive Committee, World Economic Forum\n\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\n#gendergap26 #wef #WorldEconomicForum",
+      "why_it_matters": "این گزارش نشان می‌دهد که پیشرفت در کاهش شکاف جنسیتی نه تنها به عدالت اجتماعی بلکه به رشد اقتصادی و پایداری جهانی کمک می‌کند. با وجود کاهش در برخی حوزه‌ها، هنوز اختلافات قابل‌Attentionی در دسترسی به منابع مالی و نمایندگی وجود دارد که می‌تواند مانع از بهره‌برداری کامل از نیروی کار باشد. نتایج این گزارش می‌تواند به سیاستگذاران و شرکت‌ها کمک کند تا راهبردهای مؤثری برای ایجاد فرصت‌های برابر طراحی کنند. در نهایت، پیشرفت در این حوزه می‌تواند به ایجاد جامعه‌ای عادلانه‌تر و پایدارتر منجر شود.",
+      "link": "https://www.youtube.com/watch?v=hEoFKTm4ASI",
+      "posted_at": 1789552643
+    },
+    "-1004482051328:1654": {
+      "chat_id": -1004482051328,
+      "message_id": 1654,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Nature)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "آیا هوش مصنوعی می‌تواند آگاه باشد؟ – پرسشی ناشی از سو‌تفاهم",
+      "summary": "مقالهٔ Nature به بررسی این می‌پردازد که سؤال دربارهٔ آگاهی هوش مصنوعی از یک سو‌تفاهم اساسی دربارهٔ ماهیت آگاهی و توانایی‌های فعلی هوش مصنوعی ناشی می‌شود. نویسندگان توضیح می‌دهند که هوش مصنوعی امروز صرفاً الگوریتم‌های پردازش داده هستند و هیچ تجربهٔ ذهنی یا خودآگاهی ندارند. این سو‌تفاهم منجر به انتظارات نادرست و گمانه‌زنی‌های نادرست دربارهٔ توانمندی‌های آیندهٔ هوش مصنوعی می‌شود.",
+      "why_it_matters": "درک صحیح از محدودیت‌های هوش مصنوعی برای جلوگیری از تصمیم‌گیری‌های نادرست در سیاست‌گذاری، سرمایه‌گذاری و تنظیم مقررات ضروری است. اگر عموم مردم و تصمیم‌گیرندگان باور کنند که هوش مصنوعی می‌تواند آگاه باشد، ممکن است به‌طور ناآگاهانه به فناوری‌های خطرناک اعتماد کنند یا از فرصت‌های مثبت آن بهره‌نمی‌برند. روشن‌سازی این سو‌تفاهم به پژوهشگران کمک می‌کند تا تمرکز خود را بر بهبود عملکرد فنی نه تلاش برای ایجاد آگاهی مصنوعی بگذارند. همچنین، این درک به‌منظور جلوگیری از اضطراب‌های بی‌پایهٔ عمومی دربارهٔ ربات‌های خودآگاه، نقش مهمی ایفا می‌کند.",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1BWW1fLVpGbmQ1TEUzMjlQVV9GVkMxTUM2ZEhJLUVsLXZTWUVicng1WVRrYVZ1X252cC1DOVdyTkJWeFc0MTNmQWdMY1otRU5HRmVRRjJucUNOXzQzc3U4?oc=5",
+      "posted_at": 1789552647
+    },
+    "-1004482051328:1655": {
+      "chat_id": -1004482051328,
+      "message_id": 1655,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Institute for National Strategic Studies (INSS))",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "جنگ شناختی و مغز به‌عنوان میدان نبرد: عصب‌شناسی، هوش مصنوعی و استراتژی‌های ملی",
+      "summary": "مؤسسهٔ مطالعات استراتژیک ملی (INSS) در گزارشی جدید به بررسی مفهوم «جنگ شناختی» می‌پردازد و مغز انسان را به‌عنوان یک فضای نبرد (Brain-as-Battlespace) معرفی می‌کند. این مطالعه نشان می‌دهد که پیشرفت‌های اخیر در عصب‌شناسی و هوش مصنوعی می‌توانند ابزارهای قدرتمندی برای تحلیل، پیش‌بینی و حتی دستکاری فرآیندهای شناختی فراهم آورند. به‌علاوه، گزارش به خطرات احتمالی سوءاستفاده از این فناوری‌ها در عملیات‌های اطلاعاتی و روانی اشاره می‌کند و ضرورت تدوین چارچوب‌های قانونی و اخلاقی برای کنترل این تهدیدها را برجسته می‌سازد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "درک مغز به‌عنوان میدان نبرد، امکان توسعهٔ تکنیک‌های پیشرفته برای تأثیرگذاری بر تصمیم‌گیری‌ها و رفتارهای انسانی را فراهم می‌کند؛ این امر می‌تواند در حوزه‌های نظامی، سیاسی و تجاری به‌کار گرفته شود. ترکیب عصب‌شناسی با هوش مصنوعی نه تنها توانایی تحلیل داده‌های مغزی را افزایش می‌دهد، بلکه امکان ایجاد سامانه‌های پیش‌بینی‌کنندهٔ رفتارهای جمعی را میسر می‌سازد. با این حال، سوءاستفاده از این فناوری‌ها می‌تواند به تهدیدات جدی برای حریم خصوصی و امنیت ملی منجر شود، لذا نیاز به سیاست‌گذاری‌های دقیق و نظارت بین‌المللی احساس می‌شود.",
+      "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQMlk1YXdxZ3pfWXU2N0NwMFBBay0tRDhzeUd5SDYzUTBTVll0eDZMcUdzOUNsUFJJOFJHT0hjT0Zad0FYYjRxSGpWV1NzZC1uWlA1UXM0aVRhaXlXN3lFcl9RRFlhU19WZ0tPazdKb2RCSjc1aGxuRXNfUnkzOEE5S2RBdXFQT0padEJENW1SdmNQLU1oTDhaRzNrc29YdkJvM0tFaTBrNGk5d1Mtdlo4RjlHTFJfRmpISzV2OWNHZw?oc=5",
+      "posted_at": 1789552650
     }
   }
 }

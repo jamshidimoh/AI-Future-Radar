@@ -104,7 +104,10 @@ CURRENT_RUNTIME_CONTRACT = """
 [Selection Timing] original_select candidates=9 candidate_window=6 elapsed=94.090s
 [Mind/Ideas/Voices Selection] rank=1 score=50.0 normal_score=68.51 normal_rank=None title=Posts
 [Dual Lane Selection] normal=7 mind_ideas_voices=2 mind_cap=2 mind_score_floor=not_applied
-[Publication Summary Budget] input=8 protected=0 mind_ideas_voices=0 normal_window=6 output=5 normal_limit=6 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Publication Summary Budget] input=8 protected=0 mind_ideas_voices=1 normal_window=6 output=5 normal_limit=6 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Editorial Gate] skipped candidate: GPT-6 Astra: The next generation in intelligence for work - openai.com
+[Editorial Gate] skipped candidate: Could there ever be a viable test for artificial consciousness? - aeon.co
+[Publication Policy] normal candidate one: normal_score_policy_blocked:51.05<=55.0
 [Publication Policy] PUBLISH normal_rank=5 score=56.33 previous_normal=57.25
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=50.0 normal_floor=not_applied normal_rank=None independent_lane=true
 [Production Contract] normal_news=1 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 strategic_analytical=0 strategic_max=1 mind_score_floor=not_applied normal_score_floor=55.0 education=not_due
@@ -115,7 +118,8 @@ Posts sent: 2/6
 CURRENT_RUNTIME_CONTRACT_WITHOUT_TIER0_EXEMPT = """
 [Selection Timing] candidates=3
 [Dual Lane Selection] normal=2 mind_ideas_voices=1 mind_cap=2 mind_score_floor=not_applied
-[Publication Summary Budget] input=3 protected=0 mind_ideas_voices=0 normal_window=3 output=3 normal_limit=3 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Publication Summary Budget] input=3 protected=0 mind_ideas_voices=1 normal_window=3 output=3 normal_limit=3 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Publication Policy] normal candidate one: normal_score_policy_blocked:51.05<=55.0
 [Publication Policy] PUBLISH normal_rank=1 score=60.0 previous_normal=57.25
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=47.0 normal_floor=not_applied normal_rank=None independent_lane=true
 [Production Contract] normal_news=1 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 strategic_analytical=0 strategic_max=1 mind_score_floor=not_applied normal_score_floor=55.0 education=not_due

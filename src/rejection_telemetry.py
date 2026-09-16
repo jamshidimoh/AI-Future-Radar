@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = "rejection-event.v1"
+SUMMARY_SCHEMA_VERSION = "rejection-summary.v1"
 
 
 @dataclass(frozen=True)
@@ -70,14 +71,63 @@ def build_event(*, run_id: str, trace_id: str, item_id: str, stage: str,
 
 
 def emit(event: RejectionEvent, path: str | Path) -> None:
-    """Append one event; telemetry failures are swallowed deliberately."""
+    """Append one event and refresh the run summary; telemetry failures are swallowed."""
     try:
         target = Path(path)
         target.parent.mkdir(parents=True, exist_ok=True)
         with target.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(event.to_dict(), ensure_ascii=False, sort_keys=True) + "\n")
+        update_summary(event, target)
     except Exception:
         return
+
+
+def update_summary(event: RejectionEvent, trace_path: str | Path) -> None:
+    """Maintain a small incremental summary beside the JSONL trace."""
+    try:
+        target = Path(trace_path)
+        summary_path = target.with_name("rejection_summary.json")
+        data = _load_summary(summary_path, event)
+        stage = str(event.stage or "unknown")
+        reason = str(event.reason_code or "unknown")
+        decision = str(event.decision or "unknown")
+        data["events"] = int(data.get("events", 0) or 0) + 1
+        data.setdefault("by_stage", {}).setdefault(stage, 0)
+        data["by_stage"][stage] += 1
+        data.setdefault("by_reason", {}).setdefault(reason, 0)
+        data["by_reason"][reason] += 1
+        data.setdefault("by_decision", {}).setdefault(decision, 0)
+        data["by_decision"][decision] += 1
+        data["last_event_utc"] = event.timestamp_utc
+        data["schema_version"] = SUMMARY_SCHEMA_VERSION
+        _write_json(summary_path, data)
+    except Exception:
+        return
+
+
+def _load_summary(path: Path, event: RejectionEvent) -> dict[str, Any]:
+    if path.exists():
+        try:
+            loaded = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(loaded, dict) and loaded.get("run_id") == event.run_id:
+                return loaded
+        except (OSError, json.JSONDecodeError):
+            pass
+    return {
+        "schema_version": SUMMARY_SCHEMA_VERSION,
+        "run_id": event.run_id,
+        "run_number": event.run_number,
+        "events": 0,
+        "by_stage": {},
+        "by_reason": {},
+        "by_decision": {},
+    }
+
+
+def _write_json(path: Path, value: Mapping[str, Any]) -> None:
+    temp = path.with_suffix(path.suffix + ".tmp")
+    temp.write_text(json.dumps(dict(value), ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+    temp.replace(path)
 
 
 def _safe_int(value: Any) -> int | None:

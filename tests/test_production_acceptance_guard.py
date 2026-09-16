@@ -84,11 +84,34 @@ Posts sent: 2/6
 """
 
 
-SATISFIED_MISSION_COVERAGE = """
+COMPACT_UNMET_MISSION_COVERAGE = """
 [Production Selection] total=3
-[Mission Coverage Recovery] target=1 prepared=0 attempts=1 recovered=1 status=ok
-[Production Contract] normal_news=3 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
-Posts sent: 3/3
+[Mission Coverage Recovery] missing_lanes=3 attempts=3 recovered=0 status=unmet
+[Production Contract] normal_news=1 normal_max=3 tier0_news=0 education=not_due
+Posts sent: 1/3
+"""
+
+
+CURRENT_RUNTIME_CONTRACT = """
+[Selection Timing] original_select candidates=9 candidate_window=6 elapsed=94.090s
+[Mind/Ideas/Voices Selection] rank=1 score=50.0 normal_score=68.51 normal_rank=None title=Posts
+[Dual Lane Selection] normal=7 mind_ideas_voices=2 mind_cap=2 mind_score_floor=not_applied
+[Publication Summary Budget] input=8 protected=0 mind_ideas_voices=0 normal_window=6 output=5 normal_limit=6 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Publication Policy] PUBLISH normal_rank=5 score=56.33 previous_normal=57.25
+[Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=50.0 normal_floor=not_applied normal_rank=None independent_lane=true
+[Publication Contract] normal_news=1 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 strategic_analytical=0 strategic_max=1 mind_score_floor=not_applied normal_score_floor=55.0 education=not_due
+Posts sent: 2/6
+"""
+
+
+CURRENT_RUNTIME_CONTRACT_WITHOUT_TIER0_EXEMPT = """
+[Selection Timing] candidates=3
+[Dual Lane Selection] normal=2 mind_ideas_voices=1 mind_cap=2 mind_score_floor=not_applied
+[Publication Summary Budget] input=3 protected=0 mind_ideas_voices=0 normal_window=3 output=3 normal_limit=3 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Publication Policy] PUBLISH normal_rank=1 score=60.0 previous_normal=57.25
+[Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=47.0 normal_floor=not_applied normal_rank=None independent_lane=true
+[Production Contract] normal_news=1 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 strategic_analytical=0 strategic_max=1 mind_score_floor=not_applied normal_score_floor=55.0 education=not_due
+Posts sent: 2/3
 """
 
 
@@ -146,7 +169,25 @@ def test_unmet_mission_coverage_is_fail_closed():
     assert "mission portfolio coverage remained unmet" in message
 
 
+def test_compact_unmet_mission_coverage_is_fail_closed():
+    ok, message = validate(COMPACT_UNMET_MISSION_COVERAGE)
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in message
+
+
 def test_satisfied_mission_coverage_remains_acceptable():
     ok, message = validate(SATISFIED_MISSION_COVERAGE)
     assert ok is True
     assert "published_news=3" in message
+
+
+def test_current_runtime_contract_with_mind_lane_is_accepted():
+    ok, message = validate(CURRENT_RUNTIME_CONTRACT)
+    assert ok is True
+    assert "mind_ideas_voices=1" in message
+
+
+def test_current_runtime_contract_without_optional_tier0_flag_is_accepted():
+    ok, message = validate(CURRENT_RUNTIME_CONTRACT_WITHOUT_TIER0_EXEMPT)
+    assert ok is True
+    assert "mind_ideas_voices=1" in message

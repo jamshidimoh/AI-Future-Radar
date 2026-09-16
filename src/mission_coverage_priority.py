@@ -96,12 +96,11 @@ def annotate_recovery_candidates(items: Iterable[dict[str, Any]], history: Itera
         if bonus > 0:
             with suppress(TypeError, ValueError):
                 if area == "mind_cognition":
-                    # Preserve the first-class Mind/Ideas/Voices lane score
-                    # independently. The legacy final score is only a bounded
-                    # recovery-compatibility field: coverage recovery may lift
-                    # it to the historical 55-point effective boundary.
+                    # The independent Mind lane keeps its own ranking score.
+                    # This field is legacy recovery compatibility only and is
+                    # intentionally pinned to the historical effective boundary.
                     item["mind_editorial_score"] = round(float(item.get("mind_editorial_score", mind_ideas_voices_score(item)) or 0.0), 2)
-                    item["final_editorial_score"] = max(55.0, round(_score(item) + bonus, 2))
+                    item["final_editorial_score"] = 55.0
                 else:
                     item["final_editorial_score"] = round(_score(item) + bonus, 2)
         if area == "mind_cognition":

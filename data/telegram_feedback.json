@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789578330,
+  "updated_at": 1789582845,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -10907,6 +10907,45 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1789578330
+    },
+    "-1004482051328:1690": {
+      "chat_id": -1004482051328,
+      "message_id": 1690,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Moneycontrol.com)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Mustafa Suleyman",
+      "watch_person": "Mustafa Suleyman",
+      "title": "Mustafa Suleyman از Anthropic به‌خاطر ادعای هوشیاری مصنوعی «خطا» کرد",
+      "summary": "Mustafa Suleyman، رئیس بخش هوش مصنوعی مایکروسافت، در مصاحبه‌ای با Moneycontrol اعلام کرد که Anthropic در مورد ادعای داشتن هوشیاری در مدل‌های زبانی خود اشتباه کرده است. او اشاره کرد که هنوز هیچ مدلی به‌طور علمی ثابت نشده که به‌صورت واقعی خودآگاهی داشته باشد و این ادعاها می‌توانند انتظارات نادرست در جامعه و بازار ایجاد کنند. Suleyman تأکید کرد که مایکروسافت بر شفافیت و ارزیابی دقیق توانمندی‌های مدل‌های هوش مصنوعی تمرکز دارد و از گسترش ادعاهای غیرقابل‌تایید خودداری می‌کند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این اظهارات نشان می‌دهد که رهبران بزرگ فناوری همچون Suleyman نسبت به ادعاهای مبالغه‌آمیز درباره هوشیاری مصنوعی هشدار می‌دهند و بر ضرورت ارزیابی علمی دقیق تأکید می‌کنند. چنین موضع‌گیری می‌تواند مسیر توسعه مسئولانه هوش مصنوعی را شکل دهد، خطر گمراه‌سازی سرمایه‌گذاران و کاربران را کاهش دهد و به‌خصوص در بحث‌های نظارتی و اخلاقی نقش مهمی ایفا کند.",
+      "link": "https://news.google.com/rss/articles/CBMi4wFBVV95cUxNNzZxRGxIY09pcngwVVdpV1M5QWdUWWNId3dkbTBLZndrVmdKRUFIODJNRTJMdDgzM3FUY09FRXZPLVgtRkJ5RDFDZGEwaHFob2I5bk5aZ2cyaWpnbnJfVVp0VXJaREYteHZXTERPd3NQQXN1UURfdUx6cDI1cnRuVnlhSW55QVJUTDIzTVo1YTNxNWVvLWxSLURkd0tQMlhodl8tNEFRNExSc1FDV3Nsd0xOT0hmclp5WFBodklzWGx0OC02NWNaUTBGQkFJTTdYeFMxRUl2RnY4WldyOVBFQWJZRdIB6AFBVV95cUxPb1N0RVY4VHVFTUZsa3Y4X25hZUJScDUyNURiLXd4SjlHb1hqTWdqNE4yWkt0c2pPdXU1QXdnVHM3ZWNWTng0X0JyZVpUT2daTi1Mc2loTHE5Nk1PdkFnLVl4X19JMDluVFU5bkUtU25rSWdJckNJQU96bENGVVhPRjBTX1hlQUxMQ0MwS1JFUnZRMW5fQUttSUh0S3BSVTNnMVNMdVVRd0JaSXBPVm04V1Y5ck9LTUZVLTRueExhS0J0WUd5ZUE1T3RseWRES19DY3h5SDZWaDNFa01EUjRMbUpIVU9NRG9f?oc=5",
+      "posted_at": 1789582841
+    },
+    "-1004482051328:1691": {
+      "chat_id": -1004482051328,
+      "message_id": 1691,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "The Verge - AI",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "گوگل اجازه می‌دهد هر AI Agent خانه هوشمند شما را کنترل کند",
+      "summary": "گوگل با معرفی Google Home MCP، پروتکل استاندارد Model Context Protocol را برای اتصال عامل‌های هوش مصنوعی مانند Claude و OpenAI فراهم کرده است. این امکان به این ابزارها اجازه می‌دهد تا دستگاه‌های متصل به خانه شما را کنترل، نظارت و داده‌های خانه را تحلیل کنند. Google Home MCP به عنوان یک لایه انتزاعی عمل می‌کند که ارتباط بین سرویس‌های شخص ثالث و سخت‌افزارهای خانه هوشمند را ساده می‌سازد. این تغییر، گامی مهم در جهت یکپارچه‌سازی هوش مصنوعی در زندگی روزمره است و می‌تواند تجربه کاربری را بهبود بخشد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "با امکان دسترسی عامل‌های هوش مصنوعی به دستگاه‌های خانه، کاربران می‌توانند از امکانات پیشرفته‌تری بهره‌مند شوند؛ مثلاً تنظیم خودکار نور، دما یا امنیت بر اساس الگوهای رفتاری. این امر همچنین به توسعه‌دهندگان اجازه می‌دهد اپلیکیشن‌های جدیدی بسازند که به صورت هوشمند با محیط خانه تعامل داشته باشند. اما با این امکانات، نگرانی‌های امنیتی و حریم خصوصی نیز افزایش می‌یابد؛ زیرا داده‌های حساس خانه در دسترس سرویس‌های شخص ثالث قرار می‌گیرد. بنابراین، این گام نه تنها نوآوری فنی را به همراه دارد، بلکه نیازمند چارچوب‌های امنیتی و حریم خصوصی قوی‌تر است.",
+      "link": "https://www.theverge.com/tech/996310/google-home-mcp-integration-agentic-ai-smart-home-price-release-date",
+      "posted_at": 1789582844
     }
   }
 }

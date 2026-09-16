@@ -1,5 +1,5 @@
-from pathlib import Path
 import re
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGET = ROOT / "production_entrypoint.py"
@@ -34,8 +34,8 @@ replace_once(
 )
 
 replace_once(
-    r'''            print\(f"\[Publication Policy\] PUBLISH mind_ideas_voices mind_rank=\{story\.get\('mind_period_rank'\)\} score=\{score\} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True\)\n            return delivered\(\{"message_id": None\}\)\n        if strategic_analytical''',
-    '''            print(f"[Publication Policy] PUBLISH mind_ideas_voices mind_rank={story.get('mind_period_rank')} score={score} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True)\n            return delivered({"message_id": None})\n        if is_technical:\n            if render_state["technical_trend_delivered_count"] >= MAX_TECHNICAL_TREND_PER_PERIOD:\n                return policy_blocked("technical_trend_quota_exhausted")\n            if not _news_language_ok(story):\n                return policy_blocked("news_language_gate")\n            score = _item_final_score(story)\n            print(f"[Publication Policy] PUBLISH technical_trend tech_rank={story.get('technical_trend_period_rank')} score={score} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True)\n            return delivered({"message_id": None})\n        if strategic_analytical''',
+    r'''\[Publication Policy\] PUBLISH mind_ideas_voices mind_rank=\{story\.get\('mind_period_rank'\)\} score=\{score\} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True\)\n            return delivered\(\{"message_id": None\}\)\n        if strategic_analytical''',
+    '''[Publication Policy] PUBLISH mind_ideas_voices mind_rank={story.get('mind_period_rank')} score={score} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True)\n            return delivered({"message_id": None})\n        if is_technical:\n            if render_state["technical_trend_delivered_count"] >= MAX_TECHNICAL_TREND_PER_PERIOD:\n                return policy_blocked("technical_trend_quota_exhausted")\n            if not _news_language_ok(story):\n                return policy_blocked("news_language_gate")\n            score = _item_final_score(story)\n            print(f"[Publication Policy] PUBLISH technical_trend tech_rank={story.get('technical_trend_period_rank')} score={score} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True)\n            return delivered({"message_id": None})\n        if strategic_analytical''',
 )
 
 replace_once(

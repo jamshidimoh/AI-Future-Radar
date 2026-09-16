@@ -1,9 +1,9 @@
-"""Explicit Mind/Cognition publication policy helpers.
+"""Compatibility helpers for the legacy mind_cognition mission contract.
 
-This module is intentionally narrow: it adds a domain-specific publication
-floor and minimum coverage guarantee for the mind_cognition mission lane.
-It does not relax source, deduplication, grounding, language, or Telegram
-safety gates.
+The production Mind/Ideas/Voices lane is independent from the normal-news
+score floor. These helpers remain only for older mission-recovery contracts and
+tests; they preserve the original score and explicit bypass metadata without
+changing the first-class Mind lane semantics.
 """
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from typing import Any
 
 MIND_COGNITION_SCORE_FLOOR = 50.0
 MIND_COGNITION_MIN_PUBLISH = 2
-MIND_COGNITION_MAX_PUBLISH = 3
+MIND_COGNITION_MAX_PUBLISH = 2
 
 
 def mission_candidate_score(item: dict[str, Any]) -> float:
@@ -33,26 +33,18 @@ def mission_candidate_score(item: dict[str, Any]) -> float:
     return 0.0
 
 
-def prepare_mind_cognition_contract(items: list[dict[str, Any]], contract: dict[str, Any]) -> None:
-    """Set a dynamic mind-lane target: at least two, up to the normal 3-post capacity.
+def _is_mind_cognition(item: dict[str, Any]) -> bool:
+    area = str(item.get("mission_area") or "").strip().casefold()
+    category = str(item.get("category") or "").strip().casefold()
+    return area == "mind_cognition" or category == "mind"
 
-    If three or more mind candidates already clear the 50-point floor, all three
-    can be recovered in the mission lane; otherwise two are requested so the top
-    two available mind candidates remain publishable even when both are below 50.
-    """
-    mind = [
-        x for x in items
-        if str(x.get("mission_area") or "").strip().casefold() == "mind_cognition"
-        and not x.get("_publication_blocked")
-    ]
+
+def prepare_mind_cognition_contract(items: list[dict[str, Any]], contract: dict[str, Any]) -> None:
+    """Keep the legacy target bounded at the independent Mind cap."""
+    mind = [x for x in items if _is_mind_cognition(x) and not x.get("_publication_blocked")]
     if not mind:
         return
-    above_floor = sum(1 for x in mind if _raw_score(x) >= MIND_COGNITION_SCORE_FLOOR)
-    desired = min(
-        MIND_COGNITION_MAX_PUBLISH,
-        max(MIND_COGNITION_MIN_PUBLISH, above_floor),
-    )
-    contract["mind_cognition_target"] = desired
+    contract["mind_cognition_target"] = min(MIND_COGNITION_MAX_PUBLISH, max(MIND_COGNITION_MIN_PUBLISH, 0))
     contract["mind_cognition_score_floor"] = MIND_COGNITION_SCORE_FLOOR
     contract["mind_cognition_min_publish"] = MIND_COGNITION_MIN_PUBLISH
     contract["mind_cognition_max_publish"] = MIND_COGNITION_MAX_PUBLISH
@@ -76,26 +68,18 @@ def _raw_score(item: dict[str, Any]) -> float:
 
 
 def apply_mind_cognition_floor(item: dict[str, Any]) -> dict[str, Any]:
-    """Preserve the real score while making the mind lane pass the legacy 55 gate.
+    """Preserve the raw Mind score while exposing legacy bypass metadata.
 
-    Scores at or above 50 are accepted as-is. Scores below 50 are only promoted
-    for the bounded mind-lane guarantee; the original score is retained in
-    ``mind_cognition_original_score`` and the bypass is explicitly marked.
+    The historical tests expect a bounded effective score for old callers. The
+    first-class Mind publication lane does not rely on this effective score.
     """
-    area = str(item.get("mission_area") or "").strip().casefold()
-    if area != "mind_cognition":
+    if not _is_mind_cognition(item):
         return item
 
     raw = _raw_score(item)
     item["mind_cognition_original_score"] = raw
+    item["mind_cognition_floor"] = MIND_COGNITION_SCORE_FLOOR
+    item["mind_cognition_floor_bypass"] = raw < MIND_COGNITION_SCORE_FLOOR
     if raw < MIND_COGNITION_SCORE_FLOOR:
-        item["mind_cognition_floor_bypass"] = True
-        item["mind_cognition_floor"] = MIND_COGNITION_SCORE_FLOOR
-        # main.py still carries the historical global 55 gate. Give the special
-        # lane an effective score only for that gate while preserving rank order
-        # and the actual score for auditability.
         item["final_editorial_score"] = round(55.0 + max(0.0, raw) / 1000.0, 3)
-    else:
-        item["mind_cognition_floor_bypass"] = False
-        item["mind_cognition_floor"] = MIND_COGNITION_SCORE_FLOOR
     return item

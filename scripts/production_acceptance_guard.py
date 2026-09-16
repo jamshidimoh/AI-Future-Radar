@@ -20,7 +20,9 @@ CANDIDATE_PATTERNS = (
 )
 SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output=(\d+)")
 CONTRACT_PATTERN = re.compile(
-    r"\[Production Contract\].*?normal_news=(\d+).*?normal_max=(\d+).*?(?:mind_ideas_voices=(\d+)\s+mind_max=(\d+)\s+)?tier0_news=(\d+).*?tier0_quota_exempt=(\w+).*?education=(\w+)"
+    r"\[Production Contract\].*?normal_news=(\d+).*?normal_max=(\d+)"
+    r".*?(?:mind_ideas_voices=(\d+)\s+mind_max=(\d+)\s+)?"
+    r"tier0_news=(\d+)(?:\s+tier0_quota_exempt=(\w+))?.*?education=(\w+)"
 )
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
@@ -34,7 +36,14 @@ MIND_SELECTION_PATTERN = re.compile(r"\[Dual Lane Selection\].*?mind_ideas_voice
 MIND_SUMMARY_PATTERN = re.compile(r"\[Publication Summary Budget\].*?mind_ideas_voices=(\d+).*?mind_limit=(\d+).*?mind_score_floor=not_applied")
 MIND_CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*?mind_ideas_voices=(\d+).*?mind_max=(\d+).*?mind_score_floor=not_applied")
 EDUCATION_CONFIRMED_PATTERN = re.compile(r"\[Education Published\].*?CONFIRMED\b.*?telegram_delivery=successful")
-MISSION_COVERAGE_PATTERN = re.compile(r"\[Mission Coverage Recovery\].*?target=(\d+).*?prepared=(\d+).*?attempts=(\d+).*?recovered=(\d+).*?status=(\w+)")
+MISSION_COVERAGE_PATTERN = re.compile(
+    r"\[Mission Coverage Recovery\].*?target=(\d+).*?prepared=(\d+).*?"
+    r"attempts=(\d+).*?recovered=(\d+).*?status=(\w+)"
+)
+MISSION_COVERAGE_COMPACT_PATTERN = re.compile(
+    r"\[Mission Coverage Recovery\].*?missing_lanes=(\d+).*?"
+    r"attempts=(\d+).*?recovered=(\d+).*?status=(\w+)"
+)
 
 
 def _last_match(lines, patterns):
@@ -72,10 +81,26 @@ def _observed_tier0_floor(lines):
 
 
 def _mission_coverage_status(lines):
-    match = _last_match(lines, (MISSION_COVERAGE_PATTERN,))
+    match = _last_match(lines, (MISSION_COVERAGE_PATTERN, MISSION_COVERAGE_COMPACT_PATTERN))
     if match is None:
         return None
-    return {"target": int(match.group(1)), "prepared": int(match.group(2)), "attempts": int(match.group(3)), "recovered": int(match.group(4)), "status": match.group(5).casefold()}
+    groups = match.groups()
+    if len(groups) == 5:
+        return {
+            "target": int(groups[0]),
+            "prepared": int(groups[1]),
+            "attempts": int(groups[2]),
+            "recovered": int(groups[3]),
+            "status": groups[4].casefold(),
+        }
+    missing_lanes, attempts, recovered, status = groups
+    return {
+        "target": int(missing_lanes),
+        "prepared": 0,
+        "attempts": int(attempts),
+        "recovered": int(recovered),
+        "status": status.casefold(),
+    }
 
 
 def validate(log_text: str) -> tuple[bool, str]:
@@ -107,7 +132,7 @@ def validate(log_text: str) -> tuple[bool, str]:
     mind_news = int(contract_match.group(3) or 0)
     mind_max = int(contract_match.group(4) or 0)
     tier0_news = int(contract_match.group(5))
-    tier0_quota_exempt = contract_match.group(6).lower() == "true"
+    tier0_quota_exempt = (contract_match.group(6) or "false").lower() == "true"
     education = contract_match.group(7)
     if _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
         education = "confirmed"

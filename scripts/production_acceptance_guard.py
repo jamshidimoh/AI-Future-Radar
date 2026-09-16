@@ -5,7 +5,8 @@ explicit editorial/policy/publication rejection, or an upstream structural
 rejection such as canonical-story deduplication. Mission portfolio coverage is
 also a production invariant: when the runtime explicitly reports an unmet
 mission-coverage target, acceptance must fail closed rather than passing on
-publication accounting alone.
+publication accounting alone. Normal and Mind/Ideas/Voices lanes are validated
+as distinct contracts; the normal score floor never applies to Mind.
 """
 from __future__ import annotations
 
@@ -19,23 +20,21 @@ CANDIDATE_PATTERNS = (
 )
 SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output=(\d+)")
 CONTRACT_PATTERN = re.compile(
-    r"\[Production Contract\].*?normal_news=(\d+).*?normal_max=(\d+).*?tier0_news=(\d+).*?tier0_quota_exempt=(\w+).*?education=(\w+)"
+    r"\[Production Contract\].*?normal_news=(\d+).*?normal_max=(\d+).*?(?:mind_ideas_voices=(\d+)\s+mind_max=(\d+)\s+)?tier0_news=(\d+).*?education=(\w+)"
 )
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
 POLICY_REJECTION_PATTERN = re.compile(r"(?:normal_score_policy_blocked|tier0_score_policy_blocked):\s*[^\s]+<=?\s*[^\s]+")
 PUBLICATION_REJECTION_PATTERN = re.compile(r"\[Publication Contract\]\s+candidate rejected reason=([^;]+);")
 TIER0_PRIORITY_PATTERN = re.compile(r"\[Tier0 Interview Priority\]\s+retained=(\d+).*?quota_exempt=true")
-TIER0_PUBLICATION_PATTERN = re.compile(
-    r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)"
-)
+TIER0_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)")
 TIER0_FLOOR_PATTERN = re.compile(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", re.I)
-EDUCATION_CONFIRMED_PATTERN = re.compile(
-    r"\[Education Published\].*?CONFIRMED\b.*?telegram_delivery=successful"
-)
-MISSION_COVERAGE_PATTERN = re.compile(
-    r"\[Mission Coverage Recovery\].*?target=(\d+).*?prepared=(\d+).*?attempts=(\d+).*?recovered=(\d+).*?status=(\w+)"
-)
+MIND_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH mind_ideas_voices\b.*?score=([-+]?\d+(?:\.\d+)?)")
+MIND_SELECTION_PATTERN = re.compile(r"\[Dual Lane Selection\].*?mind_ideas_voices=(\d+).*?mind_cap=(\d+).*?mind_score_floor=not_applied")
+MIND_SUMMARY_PATTERN = re.compile(r"\[Publication Summary Budget\].*?mind_ideas_voices=(\d+).*?mind_limit=(\d+).*?mind_score_floor=not_applied")
+MIND_CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*?mind_ideas_voices=(\d+).*?mind_max=(\d+).*?mind_score_floor=not_applied")
+EDUCATION_CONFIRMED_PATTERN = re.compile(r"\[Education Published\].*?CONFIRMED\b.*?telegram_delivery=successful")
+MISSION_COVERAGE_PATTERN = re.compile(r"\[Mission Coverage Recovery\].*?target=(\d+).*?prepared=(\d+).*?attempts=(\d+).*?recovered=(\d+).*?status=(\w+)")
 
 
 def _last_match(lines, patterns):
@@ -60,12 +59,7 @@ def _last_group_int(lines, pattern):
 
 
 def _published_tier0_scores(lines):
-    scores = []
-    for line in lines:
-        match = TIER0_PUBLICATION_PATTERN.search(line)
-        if match:
-            scores.append(float(match.group(1)))
-    return scores
+    return [float(m.group(1)) for line in lines if (m := TIER0_PUBLICATION_PATTERN.search(line))]
 
 
 def _observed_tier0_floor(lines):
@@ -78,17 +72,10 @@ def _observed_tier0_floor(lines):
 
 
 def _mission_coverage_status(lines):
-    """Return the last explicit runtime mission-coverage result, if present."""
     match = _last_match(lines, (MISSION_COVERAGE_PATTERN,))
     if match is None:
         return None
-    return {
-        "target": int(match.group(1)),
-        "prepared": int(match.group(2)),
-        "attempts": int(match.group(3)),
-        "recovered": int(match.group(4)),
-        "status": match.group(5).casefold(),
-    }
+    return {"target": int(match.group(1)), "prepared": int(match.group(2)), "attempts": int(match.group(3)), "recovered": int(match.group(4)), "status": match.group(5).casefold()}
 
 
 def validate(log_text: str) -> tuple[bool, str]:
@@ -105,26 +92,46 @@ def validate(log_text: str) -> tuple[bool, str]:
     if mission_coverage and mission_coverage["status"] == "unmet":
         return False, (
             "production contract violation: mission portfolio coverage remained unmet; "
-            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, "
-            f"attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}"
+            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}"
         )
     if mission_coverage and mission_coverage["recovered"] + mission_coverage["prepared"] < mission_coverage["target"]:
         return False, (
             "production contract violation: mission portfolio coverage evidence is inconsistent; "
-            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, "
-            f"recovered={mission_coverage['recovered']}"
+            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}"
         )
 
     summary_budget_match = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))
     selected = int(summary_budget_match.group(1)) if summary_budget_match is not None else int(candidate_match.group(1))
     normal_news = int(contract_match.group(1))
     normal_max = int(contract_match.group(2))
-    tier0_news = int(contract_match.group(3))
-    tier0_quota_exempt = contract_match.group(4).lower() == "true"
-    education = contract_match.group(5)
+    mind_news = int(contract_match.group(3) or 0)
+    mind_max = int(contract_match.group(4) or 0)
+    tier0_news = int(contract_match.group(5))
+    education = contract_match.group(6)
     if _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
         education = "confirmed"
-    published_news = normal_news + tier0_news
+
+    mind_contract = _last_match(lines, (MIND_CONTRACT_PATTERN,))
+    if mind_news < 0 or (mind_max and mind_news > mind_max):
+        return False, f"production contract violation: Mind/Ideas/Voices quota exceeded; mind_news={mind_news}, mind_max={mind_max}"
+    if mind_news > 0 and mind_contract is None:
+        return False, "production contract violation: Mind publication reported without independent lane evidence"
+    if mind_contract:
+        observed_mind_news = int(mind_contract.group(1))
+        observed_mind_max = int(mind_contract.group(2))
+        if observed_mind_news != mind_news or observed_mind_max != mind_max:
+            return False, "production contract violation: Mind lane contract counters are inconsistent"
+    if mind_news > 0:
+        selection = _last_match(lines, (MIND_SELECTION_PATTERN,))
+        summary = _last_match(lines, (MIND_SUMMARY_PATTERN,))
+        if selection is None:
+            return False, "production contract violation: Mind publication lacks independent selection evidence"
+        if summary is None:
+            return False, "production contract violation: Mind publication lacks independent summary-budget evidence"
+        if mind_news > mind_max > 0:
+            return False, f"production contract violation: Mind lane exceeds configured cap: {mind_news}>{mind_max}"
+
+    published_news = normal_news + mind_news + tier0_news
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
     policy_rejections = sum(1 for line in lines if POLICY_REJECTION_PATTERN.search(line))
     publication_rejections = sum(1 for line in lines if PUBLICATION_REJECTION_PATTERN.search(line))
@@ -133,12 +140,10 @@ def validate(log_text: str) -> tuple[bool, str]:
     canonical_story_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?story_rejected=(\d+)")) or 0
     canonical_semantic_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?semantic_rejected=(\d+)")) or 0
     canonical_url_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?url_rejected=(\d+)")) or 0
-    upstream_rejections = max(
-        protected_blocked,
-        canonical_story_rejected + canonical_semantic_rejected + canonical_url_rejected,
-    )
+    upstream_rejections = max(protected_blocked, canonical_story_rejected + canonical_semantic_rejected + canonical_url_rejected)
     accounted = published_news + editorial_rejections + policy_rejections + publication_rejections + upstream_rejections
     posts_sent = int(posts_match.group(1)) if posts_match else None
+
     tier0_retained = _last_group_int(lines, TIER0_PRIORITY_PATTERN) or 0
     tier0_publish_matches = _published_tier0_scores(lines)
     tier0_publish_policy = bool(tier0_publish_matches)
@@ -147,57 +152,38 @@ def validate(log_text: str) -> tuple[bool, str]:
         effective_floor = tier0_floor if tier0_floor is not None else 60.0
         violating_scores = [score for score in tier0_publish_matches if score < effective_floor]
         if violating_scores:
-            return False, (
-                "production contract violation: low-quality Tier-0 publication observed; "
-                f"scores={violating_scores}, floor={effective_floor}"
-            )
+            return False, f"production contract violation: low-quality Tier-0 publication observed; scores={violating_scores}, floor={effective_floor}"
 
+    # Mind score is intentionally not checked against NORMAL_SCORE_FLOOR or
+    # PROTECTED_SCORE_FLOOR. Its contract requires explicit independent-lane evidence.
     if selected > 0 and published_news == 0 and education != "confirmed":
         if accounted >= selected and (posts_sent is None or posts_sent == 0):
             return True, (
                 "production acceptance PASS: fail-closed editorial/policy/publication rejection/accounting verified; "
-                f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, "
-                f"policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, "
-                f"upstream_rejections={upstream_rejections}, education={education}"
+                f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, education={education}"
             )
         return False, (
-            "production contract violation: zero news items were published and the selected set "
-            "did not provide evidence of publication or explicit rejection; "
-            f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, "
-            f"policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, "
-            f"upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
+            "production contract violation: zero news items were published and the selected set did not provide evidence of publication or explicit rejection; "
+            f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
         )
 
-    if published_news > 0 and normal_news == 0 and tier0_news > 0:
+    if published_news > 0 and normal_news == 0 and tier0_news > 0 and mind_news == 0:
         unaccounted_selected = max(0, selected - published_news)
         rejection_accounting = editorial_rejections + policy_rejections + publication_rejections + upstream_rejections
-        if (
-            not tier0_quota_exempt
-            or tier0_retained <= 0
-            or not tier0_publish_policy
-            or rejection_accounting < unaccounted_selected
-        ):
+        if not tier0_quota_exempt or tier0_retained <= 0 or not tier0_publish_policy or rejection_accounting < unaccounted_selected:
             return False, (
                 "production contract violation: Tier-0-only publication lacked complete fallback accounting; "
-                f"selected={selected}, unaccounted_selected={unaccounted_selected}, "
-                f"rejection_accounting={rejection_accounting}, tier0_news={tier0_news}, tier0_retained={tier0_retained}, "
-                f"tier0_quota_exempt={tier0_quota_exempt}, tier0_publish_policy={tier0_publish_policy}"
+                f"selected={selected}, unaccounted_selected={unaccounted_selected}, rejection_accounting={rejection_accounting}, tier0_news={tier0_news}, tier0_retained={tier0_retained}, tier0_quota_exempt={tier0_quota_exempt}, tier0_publish_policy={tier0_publish_policy}"
             )
-        return True, (
-            "production acceptance PASS: protected Tier-0 fallback with complete selected-set accounting; "
-            f"selected={selected}, normal_news={normal_news}, tier0_news={tier0_news}, "
-            f"normal_max={normal_max}, rejection_accounting={rejection_accounting}, education={education}"
-        )
+        return True, f"production acceptance PASS: protected Tier-0 fallback with complete selected-set accounting; selected={selected}, normal_news={normal_news}, tier0_news={tier0_news}, normal_max={normal_max}, rejection_accounting={rejection_accounting}, education={education}"
 
     if published_news > 0 and education != "confirmed" and accounted < selected:
         return False, (
             "production contract violation: published production run left selected candidates unaccounted; "
-            f"selected={selected}, published={published_news}, accounted={accounted}, "
-            f"editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, "
-            f"publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, education={education}"
+            f"selected={selected}, published={published_news}, accounted={accounted}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, education={education}"
         )
 
-    return True, f"production acceptance PASS: selected={selected}, published_news={published_news}, education={education}"
+    return True, f"production acceptance PASS: selected={selected}, published_news={published_news}, mind_ideas_voices={mind_news}, education={education}"
 
 
 def main() -> int:

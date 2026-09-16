@@ -16,6 +16,17 @@ def test_registry_person_candidate_detects_influential_thinker():
     assert is_mind_ideas_voices_candidate(item)
 
 
+def test_neuroscience_genetics_and_future_signals_are_eligible():
+    for title in (
+        "AI, predictive processing and neuroscience",
+        "Genomics and AI-driven biology",
+        "Scientific foresight on AI and civilization",
+        "Technology and society in the age of AI",
+    ):
+        item = {"title": title, "mission_area": "convergence", "content_type": "article"}
+        assert is_mind_ideas_voices_candidate(item)
+
+
 def test_community_source_is_excluded():
     item = {"title": "Consciousness discussion", "mission_area": "mind_cognition", "content_type": "podcast", "source": "Reddit"}
     assert not is_mind_ideas_voices_candidate(item)

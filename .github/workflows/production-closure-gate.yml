@@ -98,12 +98,14 @@ jobs:
               fail_closed_acceptance = has(text, r"\[Production Acceptance\] PASS:\s+production acceptance PASS:\s+fail-closed")
               if published:
                   return True
-              # A zero-publish run is valid only when the executable acceptance guard
-              # itself proves complete selected-set accounting and no posts were sent.
               return zero_publish and acceptance and fail_closed_acceptance and publication_attempted
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
-          runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=30")
+          # Keep a sufficiently deep evidence window. The production workflow can
+          # legitimately create many cancelled/failed runs while recovering from
+          # provider quotas. A 30-run API page was too shallow and could hide the
+          # last successful production evidence, causing a false closure block.
+          runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=100")
           runs = [r for r in runs_data.get("workflow_runs", []) if r.get("name") == "Run AI Future Radar Bot"]
           executable = []
           excluded = []
@@ -131,7 +133,7 @@ jobs:
 
           if len(executable) < 3:
               print(f"CLOSURE: BLOCKED — only {len(executable)} executable production runs observed; 3 required.")
-              print("Excluded runs:", excluded)
+              print("Excluded runs:", excluded[:100])
               sys.exit(1)
 
           window = executable[:3]

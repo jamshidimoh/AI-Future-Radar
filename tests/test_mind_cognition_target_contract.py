@@ -1,3 +1,4 @@
+from src.mind_cognition_lane import apply_mind_cognition_floor, prepare_mind_cognition_contract
 from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
 
 
@@ -16,9 +17,22 @@ def _item(title, source, score, area, content_type="research"):
     }
 
 
-def test_independent_mind_cognition_target_is_live_in_contract():
+def test_independent_mind_cognition_target_is_minimum_two():
     contract = load_editorial_contract()
-    assert contract["mind_cognition_target"] == 1
+    items = [_item("Mind one", "Nature", 49, "mind"), _item("Mind two", "Aeon", 45, "mind")]
+    prepare_mind_cognition_contract(items, contract)
+    assert contract["mind_cognition_target"] == 2
+    assert contract["mind_cognition_score_floor"] == 50.0
+    assert contract["mind_cognition_min_publish"] == 2
+
+
+def test_mind_candidates_below_fifty_keep_original_score_and_get_bounded_bypass():
+    item = _item("Consciousness research", "Nature", 47.25, "mind")
+    apply_mind_cognition_floor(item)
+    assert item["mind_cognition_original_score"] == 47.25
+    assert item["mind_cognition_floor"] == 50.0
+    assert item["mind_cognition_floor_bypass"] is True
+    assert item["final_editorial_score"] >= 55.0
 
 
 def test_three_slot_portfolio_prefers_ai_convergence_and_mind_cognition():

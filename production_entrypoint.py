@@ -380,7 +380,6 @@ def main(*, skip_education: bool = False) -> int:
             existing_ids=voices_ids | normal_ids | mind_ids,
             max_items=MAX_TECHNICAL_TREND_PER_PERIOD,
         )
-        technical_ids = {id(item) for item in technical_candidates}
         for item in technical_candidates:
             print(f"[Technical Trend Selection] rank={item.get('technical_trend_period_rank')} score={item.get('technical_trend_score')} source={item.get('source')} title={str(item.get('title', ''))[:120]}", flush=True)
 

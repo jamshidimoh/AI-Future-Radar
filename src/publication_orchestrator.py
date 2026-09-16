@@ -7,10 +7,13 @@ and ledger functions; lower layers must not make publication decisions.
 from __future__ import annotations
 
 import logging
+import os
 from collections.abc import Callable, Mapping
+from pathlib import Path
 from typing import Any
 
 from src.delivery_contract import DeliveryOutcome, DeliveryStatus, duplicate, transport_failed
+from src.rejection_telemetry import build_event, emit
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +22,53 @@ Deliver = Callable[[Mapping[str, Any]], DeliveryOutcome]
 Ledger = Callable[[Mapping[str, Any], DeliveryOutcome], None]
 
 _CURRENT_RUN_PUBLICATIONS: list[dict[str, Any]] = []
+
+
+def _telemetry_event(story: Mapping[str, Any], *, decision: str, reason_code: str, details=None) -> None:
+    try:
+        identity = str(story.get("canonical_url") or story.get("link") or story.get("url") or story.get("title") or id(story))
+        import hashlib
+        trace_id = hashlib.sha1(identity.encode("utf-8", errors="ignore")).hexdigest()[:16]
+        raw_run_number = os.getenv("GITHUB_RUN_NUMBER") or os.getenv("RADAR_RUN_NUMBER")
+        try:
+            run_number = int(raw_run_number) if raw_run_number is not None else None
+        except (TypeError, ValueError):
+            run_number = None
+        emit(
+            build_event(
+                run_id=str(os.getenv("GITHUB_RUN_ID") or os.getenv("RADAR_RUN_ID") or "local"),
+                run_number=run_number,
+                trace_id=trace_id,
+                item_id=identity,
+                stage="publication_contract",
+                decision=decision,
+                reason_code=reason_code,
+                item=story,
+                details=details,
+            ),
+            Path(os.getenv("RADAR_REJECTION_TRACE_PATH", "artifacts/rejection_trace/rejection_trace.jsonl")),
+        )
+    except Exception:
+        return
+
+
+def _publication_reason_code(reason: str | None) -> str:
+    value = str(reason or "").strip()
+    if value.startswith("normal_score_policy_blocked:"):
+        return "normal_score_floor"
+    if value.startswith("tier0_score_policy_blocked:"):
+        return "protected_score_floor"
+    if value == "normal_quota_exhausted":
+        return "publication_quota_exhausted"
+    if value == "normal_rank_outside_window" or value.startswith("normal_rank_outside_window:"):
+        return "normal_rank_outside_window"
+    if value == "strategic_analytical_lane_exhausted":
+        return "strategic_analytical_lane_exhausted"
+    if value == "news_language_gate":
+        return "language_gate_failure"
+    if value == "publication_guard_unavailable":
+        return "publication_guard_unavailable"
+    return "publication_policy_rejection"
 
 
 def _final_story_guard(story: Mapping[str, Any]) -> tuple[bool, str]:
@@ -75,13 +125,32 @@ def publish_story(
         DeliveryStatus.DUPLICATE,
         DeliveryStatus.POLICY_BLOCKED,
     }:
+        reason = str(decision.reason or "")
+        _telemetry_event(
+            story,
+            decision="reject",
+            reason_code=_publication_reason_code(reason),
+            details={"status": decision.status.value, "policy_reason": reason},
+        )
         return decision
 
     if decision.status is not DeliveryStatus.DELIVERED and decision.message_id is not None:
+        _telemetry_event(
+            story,
+            decision="reject",
+            reason_code="invalid_policy_outcome",
+            details={"status": decision.status.value},
+        )
         return transport_failed("invalid_policy_outcome", retryable=False)
 
     allowed, reason = _final_story_guard(story)
     if not allowed:
+        _telemetry_event(
+            story,
+            decision="reject",
+            reason_code=_publication_reason_code(reason),
+            details={"guard_reason": reason},
+        )
         return duplicate(reason)
 
     outcome = deliver(story)
@@ -89,6 +158,12 @@ def publish_story(
         return outcome
 
     if outcome.message_id is None:
+        _telemetry_event(
+            story,
+            decision="reject",
+            reason_code="delivery_missing_message_id",
+            details={"status": outcome.status.value},
+        )
         return transport_failed("delivery_missing_message_id", retryable=False)
 
     ledger(story, outcome)

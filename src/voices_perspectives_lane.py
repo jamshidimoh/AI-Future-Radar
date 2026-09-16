@@ -1,8 +1,8 @@
 """Independent Voices / Perspectives editorial lane.
 
-Purpose: surface substantive interviews, talks, expert views, debates and
-high-value quotations from credible people connected to the radar mission.
-This lane is independent from Normal News, Technical Trend and Mind/Science/Future.
+Purpose: surface substantive interviews, talks, expert views, debates, high-value
+quotes, and material news explicitly attributed to watched experts. This lane is
+independent from Normal News, Technical Trend and Mind/Science/Future.
 """
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ import re
 from collections.abc import Iterable
 from datetime import datetime, timezone
 from typing import Any
+
+from src.priority_people import matched_priority_people
 
 MAX_VOICES_PER_PERIOD = 1
 VOICES_RANK_WINDOW = 12
@@ -40,7 +42,7 @@ AI_ANCHORS = (
 
 def _text(item: dict[str, Any]) -> str:
     fields = ("title", "summary", "description", "mission_area", "category", "content_type",
-              "tags", "keywords", *PERSON_KEYS)
+              "tags", "keywords", "source", "source_name", "publisher", *PERSON_KEYS)
     return " ".join(str(item.get(k) or "") for k in fields).casefold()
 
 
@@ -56,6 +58,13 @@ def _has_voice_signal(item: dict[str, Any]) -> bool:
     return content_type in VOICE_TYPES or source_type in VOICE_TYPES or any(re.search(p, text) for p in VOICE_SIGNALS)
 
 
+def _matched_people(item: dict[str, Any]) -> list[str]:
+    try:
+        return list(matched_priority_people(item, text=_text(item)))
+    except Exception:
+        return []
+
+
 def _has_person_signal(item: dict[str, Any]) -> bool:
     classification = item.get("leader_signal_classification") or {}
     if isinstance(classification, dict) and classification.get("accepted"):
@@ -68,7 +77,13 @@ def _has_person_signal(item: dict[str, Any]) -> bool:
             return True
     except (TypeError, ValueError):
         pass
-    return any(str(item.get(k) or "").strip() for k in PERSON_KEYS)
+    return bool(_matched_people(item) or any(str(item.get(k) or "").strip() for k in PERSON_KEYS))
+
+
+def _priority_person_signal(item: dict[str, Any]) -> bool:
+    return bool(_matched_people(item)) or bool(
+        item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("priority_person_signal")
+    )
 
 
 def _ai_relevant(item: dict[str, Any]) -> bool:
@@ -79,8 +94,11 @@ def _ai_relevant(item: dict[str, Any]) -> bool:
 def is_voices_candidate(item: dict[str, Any]) -> bool:
     if item.get("duplicate") or item.get("publication_blocked") or item.get("_publication_blocked"):
         return False
-    if item.get("protected_slot") or item.get("_rank_is_tier0"):
+    if item.get("protected_slot") and not item.get("_rank_is_tier0"):
         return False
+    # Substantive priority-person interviews may already be marked tier-0 by the
+    # legacy leader lane. They must remain eligible here so the Voices lane can
+    # actually surface the content the watchlist was created to discover.
     if item.get("technical_trend_lane_selected") or item.get("mind_lane_selected"):
         return False
     if str(item.get("content_type") or "").strip().casefold() == "education":
@@ -90,7 +108,13 @@ def is_voices_candidate(item: dict[str, Any]) -> bool:
     mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
     if mission not in MISSION_AREAS:
         return False
-    return _has_voice_signal(item) and _has_person_signal(item) and _ai_relevant(item)
+    voice_signal = _has_voice_signal(item)
+    person_signal = _has_person_signal(item)
+    priority_person = _priority_person_signal(item)
+    # Two valid forms enter the lane:
+    # 1) substantive voice material (interview/talk/opinion/etc.) from a relevant person;
+    # 2) material AI news explicitly attributed to a watched expert/person.
+    return _ai_relevant(item) and person_signal and (voice_signal or priority_person)
 
 
 def _recency_bonus(item: dict[str, Any]) -> float:
@@ -109,10 +133,17 @@ def _recency_bonus(item: dict[str, Any]) -> float:
 
 def voices_perspectives_score(item: dict[str, Any]) -> float:
     score = 0.0
-    if _has_voice_signal(item):
+    voice_signal = _has_voice_signal(item)
+    priority_person = _priority_person_signal(item)
+    if voice_signal:
         score += 24.0
     if _has_person_signal(item):
         score += 18.0
+    # Explicit watchlist attribution is valuable even when the item is a news
+    # report rather than an interview. It does not, by itself, turn celebrity
+    # news into a Voices item because AI relevance and person matching are required.
+    if priority_person:
+        score += 12.0
     try:
         priority = int(item.get("leader_priority", 0) or 0)
     except (TypeError, ValueError):

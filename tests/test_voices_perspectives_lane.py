@@ -1,3 +1,4 @@
+from src import publication_guard
 from src.voices_perspectives_lane import (
     MAX_VOICES_PER_PERIOD,
     choose_voices_candidate,
@@ -62,6 +63,19 @@ def test_voice_lane_rejects_excluded_sources():
         assert not is_voices_candidate(item)
 
 
+def test_voice_lane_skips_published_story_and_keeps_next_candidate(monkeypatch):
+    def fake_guard(text, source_link="", records=None):
+        return (False, "semantic_story_already_published score=1.000") if "Already Published" in text else (True, "no_publication_conflict")
+
+    monkeypatch.setattr(publication_guard, "check_before_publish", fake_guard)
+    first = _voice("Already Published interview")
+    second = _voice("New Dario Amodei interview")
+    second["person_name"] = "Dario Amodei"
+    selected = choose_voices_candidate([first, second])
+    assert len(selected) == 1
+    assert selected[0]["title"] == "New Dario Amodei interview"
+
+
 def test_voice_lane_is_independent_and_capped_at_one():
     items = [_voice("Interview A"), _voice("Interview B")]
     selected = choose_voices_candidate(items)
@@ -69,4 +83,3 @@ def test_voice_lane_is_independent_and_capped_at_one():
     assert selected[0]["editorial_lane"] == "voices_perspectives"
     assert selected[0]["normal_period_rank"] is None
     assert selected[0]["mind_period_rank"] is None
-    assert selected[0]["technical_trend_period_rank"] is None

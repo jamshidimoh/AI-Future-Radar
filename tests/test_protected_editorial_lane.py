@@ -1,4 +1,4 @@
-from src.protected_editorial_lane import choose_additive_candidate, is_mind_ideas_voices_candidate
+from src.protected_editorial_lane import choose_additive_candidates, is_mind_ideas_voices_candidate
 
 
 def test_mind_candidate_detects_consciousness_content():
@@ -6,8 +6,13 @@ def test_mind_candidate_detects_consciousness_content():
     assert is_mind_ideas_voices_candidate(item)
 
 
-def test_podcast_candidate_detects_format():
+def test_podcast_candidate_detects_specialist_format():
     item = {"title": "AI and the mind", "mission_area": "ai_core", "content_type": "podcast"}
+    assert is_mind_ideas_voices_candidate(item)
+
+
+def test_registry_person_candidate_detects_influential_thinker():
+    item = {"title": "Yuval Noah Harari on AI and civilization", "mission_area": "future_governance", "content_type": "interview"}
     assert is_mind_ideas_voices_candidate(item)
 
 
@@ -16,11 +21,11 @@ def test_community_source_is_excluded():
     assert not is_mind_ideas_voices_candidate(item)
 
 
-def test_additive_candidate_keeps_rank_and_floor_constraints():
+def test_additive_candidates_max_two_and_keep_floor():
     candidates = [
         {"title": "A", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 4, "final_editorial_score": 55.1},
         {"title": "B", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 5, "final_editorial_score": 56.0},
         {"title": "C", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 6, "final_editorial_score": 54.9},
     ]
-    selected = choose_additive_candidate(candidates, existing_ids=set(), max_rank=6)
-    assert selected is candidates[0]
+    selected = choose_additive_candidates(candidates, existing_ids=set(), max_rank=6, max_items=2)
+    assert selected == [candidates[0], candidates[1]]

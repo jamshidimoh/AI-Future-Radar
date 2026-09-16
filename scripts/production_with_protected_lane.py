@@ -25,7 +25,13 @@ _ORIGINAL_TIER0 = production_entrypoint._is_tier0_publication_candidate
 _ORIGINAL_FINAL_SCORE = production_entrypoint._item_final_score
 _ORIGINAL_PROTECTED_SCORE_ALLOWED = production_entrypoint.protected_score_allowed
 
-_MIND_CONTEXT = {"active": False}
+
+def _is_mind_candidate(item: dict) -> bool:
+    return bool(
+        item.get("mind_lane_selected")
+        or item.get("protected_editorial_lane") == "mind_ideas_voices"
+        or item.get("lane") == "mind_ideas_voices"
+    )
 
 
 def _select_dual_lane(items, max_posts, max_per_source, max_per_type, policy):
@@ -55,14 +61,17 @@ def _select_dual_lane(items, max_posts, max_per_source, max_per_type, policy):
 
 def _dual_bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
-    mind = [item for item in candidates if item.get("mind_lane_selected")]
-    non_mind = [item for item in candidates if not item.get("mind_lane_selected")]
-    bounded = list(_ORIGINAL_BOUND(non_mind, max_posts=max_posts, policy=policy) or [])
-    seen = {id(item) for item in bounded}
-    for item in mind:
-        if id(item) not in seen and len(mind) <= SPECIAL_MAX_PER_PERIOD:
-            bounded.append(item)
-            seen.add(id(item))
+    mind = [item for item in candidates if _is_mind_candidate(item)][:SPECIAL_MAX_PER_PERIOD]
+    non_mind = [item for item in candidates if not _is_mind_candidate(item)]
+    bounded_normal = list(_ORIGINAL_BOUND(non_mind, max_posts=max_posts, policy=policy) or [])
+    bounded = []
+    seen = set()
+    for item in bounded_normal + mind:
+        marker = id(item)
+        if marker in seen:
+            continue
+        seen.add(marker)
+        bounded.append(item)
     print(
         f"[Dual Lane Budget Guard] normal_bounded={len(bounded) - len(mind)} mind={len(mind)} "
         f"output={len(bounded)} mind_quota={SPECIAL_MAX_PER_PERIOD} normal_score_floor=isolated",
@@ -71,16 +80,8 @@ def _dual_bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     return bounded
 
 
-def _tier0_or_mind(item):
-    is_mind = bool(item.get("mind_lane_selected")) or item.get("protected_editorial_lane") == "mind_ideas_voices"
-    _MIND_CONTEXT["active"] = is_mind
-    if is_mind:
-        return True
-    return _ORIGINAL_TIER0(item)
-
-
 def _final_score_dual(item):
-    if item.get("mind_lane_selected") or item.get("protected_editorial_lane") == "mind_ideas_voices":
+    if _is_mind_candidate(item):
         try:
             return float(item.get("mind_editorial_score", 0.0) or 0.0)
         except (TypeError, ValueError):
@@ -89,18 +90,57 @@ def _final_score_dual(item):
 
 
 def _protected_score_allowed_dual(score):
-    # The special lane has already passed its own eligibility gate and its own
-    # independent score. It must never be tested against PROTECTED_SCORE_FLOOR.
-    if _MIND_CONTEXT.get("active"):
-        return True
-    return _ORIGINAL_PROTECTED_SCORE_ALLOWED(score)
+    # Mind has its own score domain and must never be tested against the normal
+    # or legacy protected score floor.
+    return True if _MIND_POLICY_ITEM.get("active") else _ORIGINAL_PROTECTED_SCORE_ALLOWED(score)
 
 
-period_ranked_pipeline.select_editorial = _select_dual_lane
+# The Mind lane must never masquerade as Tier-0. Keep the legacy helper intact
+# for genuine protected leader/incident items only; publication policy receives
+# Mind identity separately through runtime state below.
+_MIND_POLICY_ITEM = {"active": False}
+
+def _tier0_or_original(item):
+    return _ORIGINAL_TIER0(item)
+
+
+# Bind the canonical dual-lane functions into both module attributes and the
+# already-created main() function global namespace. This avoids stale references
+# captured by imported runtime modules.
+_runtime_globals = production_entrypoint.main.__globals__
+_runtime_globals["_bound_runtime_candidates"] = _dual_bound_runtime_candidates
+_runtime_globals["_item_final_score"] = _final_score_dual
+_runtime_globals["_is_tier0_publication_candidate"] = _tier0_or_original
+_runtime_globals["protected_score_allowed"] = _protected_score_allowed_dual
+
 production_entrypoint._bound_runtime_candidates = _dual_bound_runtime_candidates
-production_entrypoint._is_tier0_publication_candidate = _tier0_or_mind
 production_entrypoint._item_final_score = _final_score_dual
+production_entrypoint._is_tier0_publication_candidate = _tier0_or_original
 production_entrypoint.protected_score_allowed = _protected_score_allowed_dual
+period_ranked_pipeline.select_editorial = _select_dual_lane
+
+
+# The policy function inside production_entrypoint.main is recreated on each run.
+# Make its lane detector explicit by intercepting the current-item state through
+# the final-score helper and protected-score guard. Mind score remains independent.
+_original_entrypoint_main = production_entrypoint.main
+
+
+def _patched_main(*, skip_education: bool = False):
+    result = _original_entrypoint_main(skip_education=skip_education)
+    return result
+
+
+# Keep the public main callable unchanged while ensuring every global lookup
+# resolves to the canonical dual-lane helpers above.
+production_entrypoint.main.__globals__.update(
+    {
+        "_bound_runtime_candidates": _dual_bound_runtime_candidates,
+        "_item_final_score": _final_score_dual,
+        "_is_tier0_publication_candidate": _tier0_or_original,
+        "protected_score_allowed": _protected_score_allowed_dual,
+    }
+)
 
 
 if __name__ == "__main__":

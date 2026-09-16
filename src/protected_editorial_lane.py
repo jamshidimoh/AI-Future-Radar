@@ -3,19 +3,17 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable
+from pathlib import Path
 from typing import Any
+
+import yaml
 
 from src.editorial_quality_policy import NORMAL_SCORE_FLOOR
 
+ROOT = Path(__file__).resolve().parents[1]
+PEOPLE_PATH = ROOT / "config" / "pioneers.yaml"
 INTERVIEW_TYPES = {
-    "interview",
-    "podcast",
-    "talk",
-    "lecture",
-    "fireside",
-    "conversation",
-    "discussion",
-    "q&a",
+    "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a",
 }
 MISSION_AREAS = {"mind", "mind_cognition", "future", "future_governance", "convergence", "ai", "ai_core"}
 _SPECIAL_SIGNAL_PATTERNS = (
@@ -50,40 +48,73 @@ def _score(item: dict[str, Any]) -> float:
     return 0.0
 
 
-def _has_named_person(item: dict[str, Any]) -> bool:
-    for key in PERSON_KEYS:
-        value = str(item.get(key) or "").strip()
-        if value and value.casefold() not in {"none", "unknown", "anonymous", "community"}:
-            return True
+def _registry_names() -> set[str]:
+    try:
+        document = yaml.safe_load(PEOPLE_PATH.read_text(encoding="utf-8")) or {}
+        return {
+            str(person.get("name")).strip().casefold()
+            for person in document.get("people", []) or []
+            if isinstance(person, dict) and str(person.get("name") or "").strip()
+        }
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        return set()
+
+
+def _named_registry_person(item: dict[str, Any]) -> bool:
+    names = _registry_names()
+    if not names:
+        return False
+    values = [str(item.get(key) or "").strip().casefold() for key in PERSON_KEYS]
+    text = _text(item)
+    return any(name in text or any(name == value for value in values) for name in names)
+
+
+def _explicit_person_signal(item: dict[str, Any]) -> bool:
     classification = item.get("leader_signal_classification") or {}
-    return bool(isinstance(classification, dict) and classification.get("accepted"))
+    if isinstance(classification, dict) and classification.get("accepted"):
+        return True
+    for key in ("is_leader_watch", "expert_signal", "expert_source_signal", "priority_person_signal"):
+        if item.get(key):
+            return True
+    try:
+        return int(item.get("leader_priority", 0) or 0) >= 8
+    except (TypeError, ValueError):
+        return False
 
 
 def _trusted_source(item: dict[str, Any]) -> bool:
     source_text = " ".join(
-        str(item.get(key) or "") for key in ("source", "source_name", "source_type", "source_domain", "publisher")
+        str(item.get(key) or "")
+        for key in ("source", "source_name", "source_type", "source_domain", "publisher")
     ).casefold()
     return not any(marker in source_text for marker in ("reddit", "community", "aggregator"))
 
 
 def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
+    """Return true only for explicit high-value people or specialist thought domains."""
     if str(item.get("content_type") or "").strip().casefold() == "education":
         return False
     if not _trusted_source(item):
         return False
     if item.get("protected_slot") or item.get("_rank_is_tier0"):
         return False
+
     mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
     content_type = str(item.get("content_type") or "").strip().casefold()
     text = _text(item)
+    thematic_signal = any(re.search(pattern, text) for pattern in _SPECIAL_SIGNAL_PATTERNS)
+    registry_person = _named_registry_person(item)
+    explicit_person = _explicit_person_signal(item)
 
     if mission in {"mind", "mind_cognition"}:
         return True
-    if content_type in INTERVIEW_TYPES and (_has_named_person(item) or mission in MISSION_AREAS):
+    if thematic_signal:
         return True
-    if any(re.search(pattern, text) for pattern in _SPECIAL_SIGNAL_PATTERNS):
+    if content_type in INTERVIEW_TYPES and (registry_person or explicit_person or mission in MISSION_AREAS):
         return True
-    if _has_named_person(item) and content_type in INTERVIEW_TYPES | {"article", "essay", "analysis", "opinion"}:
+    if mission in {"future", "future_governance", "convergence", "ai", "ai_core"} and (registry_person or explicit_person):
+        return True
+    if content_type in {"article", "essay", "analysis", "opinion"} and (registry_person or explicit_person) and mission in MISSION_AREAS:
         return True
     return False
 

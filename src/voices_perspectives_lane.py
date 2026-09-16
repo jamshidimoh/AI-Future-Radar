@@ -16,39 +16,21 @@ from src.priority_people import matched_priority_people
 MAX_VOICES_PER_PERIOD = 1
 VOICES_RANK_WINDOW = 12
 
-VOICE_TYPES = {
-    "interview", "podcast", "talk", "lecture", "fireside", "conversation",
-    "discussion", "q&a", "debate", "opinion", "essay", "commentary",
-}
-VOICE_SIGNALS = (
-    r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfireside\b",
-    r"\bq&a\b", r"\bdiscussion\b", r"\bdebate\b", r"\btalk\b",
-    r"\blecture\b", r"\bkeynote\b", r"\bexpert view\b", r"\bopinion\b",
-    r"\bcommentary\b", r"\bquote\b", r"\bsays\b", r"\bargues\b",
-    r"مصاحبه", r"گفتگو", r"گفت‌وگو", r"سخنرانی", r"دیدگاه", r"نظر", r"نقل قول",
-)
-PERSON_KEYS = (
-    "watch_person", "person", "person_name", "leader", "leader_name", "expert",
-    "expert_name", "author", "speaker", "guest", "interviewee", "researcher",
-)
+VOICE_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a", "debate", "opinion", "essay", "commentary"}
+VOICE_SIGNALS = (r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfireside\b", r"\bq&a\b", r"\bdiscussion\b", r"\bdebate\b", r"\btalk\b", r"\blecture\b", r"\bkeynote\b", r"\bexpert view\b", r"\bopinion\b", r"\bcommentary\b", r"\bquote\b", r"\bsays\b", r"\bargues\b", r"مصاحبه", r"گفتگو", r"گفت‌وگو", r"سخنرانی", r"دیدگاه", r"نظر", r"نقل قول")
+PERSON_KEYS = ("watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name", "author", "speaker", "guest", "interviewee", "researcher")
 MISSION_AREAS = {"ai", "ai_core", "convergence", "mind", "mind_cognition", "future", "future_governance"}
 EXCLUDED_SOURCE_MARKERS = ("reddit", "community", "aggregator", "arxiv.org", "arxiv")
-AI_ANCHORS = (
-    "artificial intelligence", "machine learning", "llm", "foundation model", "agent",
-    "agentic", "reasoning", "robotics", "neuroscience", "consciousness", "bci",
-    "quantum", "genomics", "synthetic biology", "هوش مصنوعی", "یادگیری ماشین",
-)
+AI_ANCHORS = ("artificial intelligence", "machine learning", "llm", "foundation model", "agent", "agentic", "reasoning", "robotics", "neuroscience", "consciousness", "bci", "quantum", "genomics", "synthetic biology", "هوش مصنوعی", "یادگیری ماشین")
 
 
 def _text(item: dict[str, Any]) -> str:
-    fields = ("title", "summary", "description", "mission_area", "category", "content_type",
-              "tags", "keywords", "source", "source_name", "publisher", *PERSON_KEYS)
+    fields = ("title", "summary", "description", "mission_area", "category", "content_type", "tags", "keywords", "source", "source_name", "publisher", *PERSON_KEYS)
     return " ".join(str(item.get(k) or "") for k in fields).casefold()
 
 
 def _source_text(item: dict[str, Any]) -> str:
-    return " ".join(str(item.get(k) or "") for k in
-                     ("source", "source_name", "source_type", "source_domain", "publisher")).casefold()
+    return " ".join(str(item.get(k) or "") for k in ("source", "source_name", "source_type", "source_domain", "publisher")).casefold()
 
 
 def _has_voice_signal(item: dict[str, Any]) -> bool:
@@ -59,31 +41,23 @@ def _has_voice_signal(item: dict[str, Any]) -> bool:
 
 
 def _matched_people(item: dict[str, Any]) -> list[str]:
-    try:
-        return list(matched_priority_people(item, text=_text(item)))
-    except Exception:
-        return []
+    try: return list(matched_priority_people(item, text=_text(item)))
+    except Exception: return []
 
 
 def _has_person_signal(item: dict[str, Any]) -> bool:
     classification = item.get("leader_signal_classification") or {}
-    if isinstance(classification, dict) and classification.get("accepted"):
-        return True
+    if isinstance(classification, dict) and classification.get("accepted"): return True
     for key in ("is_leader_watch", "expert_signal", "expert_source_signal", "priority_person_signal"):
-        if item.get(key):
-            return True
+        if item.get(key): return True
     try:
-        if int(item.get("leader_priority", 0) or 0) >= 8:
-            return True
-    except (TypeError, ValueError):
-        pass
+        if int(item.get("leader_priority", 0) or 0) >= 8: return True
+    except (TypeError, ValueError): pass
     return bool(_matched_people(item) or any(str(item.get(k) or "").strip() for k in PERSON_KEYS))
 
 
 def _priority_person_signal(item: dict[str, Any]) -> bool:
-    return bool(_matched_people(item)) or bool(
-        item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("priority_person_signal")
-    )
+    return bool(_matched_people(item)) or bool(item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("priority_person_signal"))
 
 
 def _ai_relevant(item: dict[str, Any]) -> bool:
@@ -92,125 +66,90 @@ def _ai_relevant(item: dict[str, Any]) -> bool:
 
 
 def is_voices_candidate(item: dict[str, Any]) -> bool:
-    if item.get("duplicate") or item.get("publication_blocked") or item.get("_publication_blocked"):
-        return False
-    if item.get("protected_slot") and not item.get("_rank_is_tier0"):
-        return False
-    # Substantive priority-person interviews may already be marked tier-0 by the
-    # legacy leader lane. They must remain eligible here so the Voices lane can
-    # actually surface the content the watchlist was created to discover.
-    if item.get("technical_trend_lane_selected") or item.get("mind_lane_selected"):
-        return False
-    if str(item.get("content_type") or "").strip().casefold() == "education":
-        return False
-    if any(marker in _source_text(item) for marker in EXCLUDED_SOURCE_MARKERS):
-        return False
+    if item.get("duplicate") or item.get("publication_blocked") or item.get("_publication_blocked"): return False
+    if item.get("protected_slot") and not item.get("_rank_is_tier0"): return False
+    if item.get("technical_trend_lane_selected") or item.get("mind_lane_selected"): return False
+    if str(item.get("content_type") or "").strip().casefold() == "education": return False
+    if any(marker in _source_text(item) for marker in EXCLUDED_SOURCE_MARKERS): return False
     mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
-    if mission not in MISSION_AREAS:
-        return False
-    voice_signal = _has_voice_signal(item)
-    person_signal = _has_person_signal(item)
-    priority_person = _priority_person_signal(item)
-    # Two valid forms enter the lane:
-    # 1) substantive voice material (interview/talk/opinion/etc.) from a relevant person;
-    # 2) material AI news explicitly attributed to a watched expert/person.
+    if mission not in MISSION_AREAS: return False
+    voice_signal = _has_voice_signal(item); person_signal = _has_person_signal(item); priority_person = _priority_person_signal(item)
     return _ai_relevant(item) and person_signal and (voice_signal or priority_person)
 
 
 def _recency_bonus(item: dict[str, Any]) -> float:
     raw = str(item.get("published") or item.get("published_at") or item.get("date") or "").strip()
-    if not raw:
-        return 0.0
+    if not raw: return 0.0
     try:
-        dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        age = max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 86400.0)
-    except ValueError:
-        return 0.0
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00")); dt = dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc); age = max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 86400.0)
+    except ValueError: return 0.0
     return 10.0 if age <= 3 else 7.0 if age <= 7 else 4.0 if age <= 14 else 2.0 if age <= 30 else 0.0
 
 
 def voices_perspectives_score(item: dict[str, Any]) -> float:
-    score = 0.0
-    voice_signal = _has_voice_signal(item)
-    priority_person = _priority_person_signal(item)
-    if voice_signal:
-        score += 24.0
-    if _has_person_signal(item):
-        score += 18.0
-    if priority_person:
-        score += 12.0
-    try:
-        priority = int(item.get("leader_priority", 0) or 0)
-    except (TypeError, ValueError):
-        priority = 0
+    score = 0.0; voice_signal = _has_voice_signal(item); priority_person = _priority_person_signal(item)
+    if voice_signal: score += 24.0
+    if _has_person_signal(item): score += 18.0
+    if priority_person: score += 12.0
+    try: priority = int(item.get("leader_priority", 0) or 0)
+    except (TypeError, ValueError): priority = 0
     score += min(18.0, priority * 1.5)
-    try:
-        tier = int(item.get("source_tier", 3) or 3)
-    except (TypeError, ValueError):
-        tier = 3
+    try: tier = int(item.get("source_tier", 3) or 3)
+    except (TypeError, ValueError): tier = 3
     score += {1: 16.0, 2: 10.0, 3: 3.0}.get(tier, 0.0)
-    if str(item.get("source_type") or "").casefold() in {"official", "university", "scientific", "specialist"}:
-        score += 8.0
+    if str(item.get("source_type") or "").casefold() in {"official", "university", "scientific", "specialist"}: score += 8.0
     text = _text(item)
-    if any(re.search(p, text) for p in (r"why it matters", r"implication", r"future", r"reasoning", r"consciousness", r"آینده", r"پیامد")):
-        score += 8.0
+    if any(re.search(p, text) for p in (r"why it matters", r"implication", r"future", r"reasoning", r"consciousness", r"آینده", r"پیامد")): score += 8.0
     score += _recency_bonus(item)
     return round(min(100.0, score), 2)
 
 
-def _already_published_conflict(item: dict[str, Any]) -> bool:
-    """Avoid spending the single Voices slot on a story the final guard will reject.
+def _publication_guard_conflict(item: dict[str, Any], *, title_only: bool = False) -> tuple[bool, str]:
+    """Use the final publication guard as a conservative pre-selection gate.
 
-    The publication guard is deliberately reused rather than duplicating its
-    semantic-deduplication rules. A lazy import keeps this editorial lane usable
-    in isolated unit tests and avoids import cycles during module initialization.
+    The second title-only pass closes the gap where an item has little or no
+    source summary at selection time but the later LLM-rendered summary makes it
+    collide with an already published story. This only rejects candidates; it
+    never weakens the final semantic duplicate guard.
     """
     try:
         from src.publication_guard import check_before_publish
-
         title = str(item.get("title") or "").strip()
-        summary = str(item.get("summary") or item.get("description") or "").strip()
-        why = str(item.get("why_it_matters") or "").strip()
-        if not title:
-            return False
+        if not title: return False, ""
+        summary = "" if title_only else str(item.get("summary") or item.get("description") or "").strip()
+        why = "" if title_only else str(item.get("why_it_matters") or "").strip()
         text = "\n".join([title, f"خلاصه: {summary}", f"چرا مهم است: {why}"])
-        allowed, reason = check_before_publish(text, str(item.get("link") or item.get("url") or ""))
+        return check_before_publish(text, str(item.get("link") or item.get("url") or ""))
+    except Exception:
+        return True, "preselection_guard_unavailable"
+
+
+def _already_published_conflict(item: dict[str, Any]) -> bool:
+    allowed, reason = _publication_guard_conflict(item, title_only=False)
+    if not allowed:
+        item["voices_publication_conflict"] = reason
+        return True
+    # If the source summary is missing, or the first pass had no substantive
+    # context, run a stricter title-only history comparison before consuming the
+    # single Voices slot. A false negative here is preferable to selecting a
+    # candidate whose later generated summary becomes a duplicate.
+    summary = str(item.get("summary") or item.get("description") or "").strip()
+    if not summary:
+        allowed, reason = _publication_guard_conflict(item, title_only=True)
         if not allowed:
             item["voices_publication_conflict"] = reason
             return True
-    except Exception:
-        # Publication must remain fail-closed downstream; inability to inspect
-        # the ledger here must never make a candidate ineligible by accident.
-        return False
     return False
 
 
-def choose_voices_candidate(
-    candidates: Iterable[dict[str, Any]],
-    *,
-    existing_ids: set[int] | None = None,
-    max_items: int = MAX_VOICES_PER_PERIOD,
-) -> list[dict[str, Any]]:
-    existing_ids = existing_ids or set()
-    eligible = []
+def choose_voices_candidate(candidates: Iterable[dict[str, Any]], *, existing_ids: set[int] | None = None, max_items: int = MAX_VOICES_PER_PERIOD) -> list[dict[str, Any]]:
+    existing_ids = existing_ids or set(); eligible = []
     for item in candidates or []:
-        if id(item) in existing_ids or not is_voices_candidate(item):
-            continue
-        if _already_published_conflict(item):
-            continue
-        item["voices_perspectives_score"] = voices_perspectives_score(item)
-        eligible.append(item)
+        if id(item) in existing_ids or not is_voices_candidate(item): continue
+        if _already_published_conflict(item): continue
+        item["voices_perspectives_score"] = voices_perspectives_score(item); eligible.append(item)
     eligible.sort(key=lambda x: (-float(x.get("voices_perspectives_score", 0) or 0), str(x.get("published") or "")))
     selected = eligible[:max(0, int(max_items))]
     for rank, item in enumerate(selected, 1):
-        item["voices_perspectives_lane_selected"] = True
-        item["editorial_lane"] = "voices_perspectives"
-        item["voices_period_rank"] = rank
-        item["normal_period_rank"] = None
-        item["mind_period_rank"] = None
-        item["technical_trend_period_rank"] = None
-        item["voices_lane_independent"] = True
-        item["voices_lane_reason"] = "top_independent_voices_perspectives_score"
+        item["voices_perspectives_lane_selected"] = True; item["editorial_lane"] = "voices_perspectives"; item["voices_period_rank"] = rank; item["normal_period_rank"] = None; item["mind_period_rank"] = None; item["technical_trend_period_rank"] = None; item["voices_lane_independent"] = True; item["voices_lane_reason"] = "top_independent_voices_perspectives_score"
     return selected

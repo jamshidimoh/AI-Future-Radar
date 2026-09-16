@@ -8,15 +8,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.protected_editorial_lane import choose_additive_candidates
-
-# Reuse the existing audited production launcher and all existing contracts.
-import scripts.production_with_ranking_audit  # noqa: E402,F401
 import production_entrypoint  # noqa: E402
 import production_resilient_runner  # noqa: E402
+import scripts.production_with_ranking_audit  # noqa: E402,F401
+from src.protected_editorial_lane import choose_additive_candidates  # noqa: E402
 
+# Reuse the existing audited production launcher and all existing contracts.
 _ORIGINAL_BOUND = production_entrypoint._bound_runtime_candidates
 _ORIGINAL_TIER0 = production_entrypoint._is_tier0_publication_candidate
+SPECIAL_MAX_PER_PERIOD = 2
 
 
 def _protected_bound_runtime_candidates(candidates, max_posts: int, policy: dict):
@@ -24,17 +24,14 @@ def _protected_bound_runtime_candidates(candidates, max_posts: int, policy: dict
     if len(bounded) < 3:
         return bounded
 
-    # Keep the canonical first three normal candidates untouched. Every remaining
-    # qualifying candidate in this already-bounded ranked replacement pool can
-    # enter the special lane; there is deliberately no special-item count cap.
-    # The existing rank window, normal score floor, source/deduplication, editorial
-    # QA and publication safety gates remain the effective limits.
+    # Keep the canonical first three normal candidates untouched. Add at most two
+    # qualifying candidates from the already-bounded ranked replacement pool.
     main_three = bounded[:3]
     specials = choose_additive_candidates(
         bounded[3:],
         existing_ids={id(item) for item in main_three},
         max_rank=production_entrypoint.RANK_WINDOW,
-        max_items=None,
+        max_items=SPECIAL_MAX_PER_PERIOD,
     )
     for item in specials:
         item["protected_editorial_lane"] = "mind_ideas_voices"
@@ -47,7 +44,7 @@ def _protected_bound_runtime_candidates(candidates, max_posts: int, policy: dict
         return main_three
 
     print(
-        f"[Mind/Ideas/Voices Lane] score_driven_additive={len(specials)} count_cap=none",
+        f"[Mind/Ideas/Voices Lane] score_driven_additive={len(specials)} count_cap={SPECIAL_MAX_PER_PERIOD}",
         flush=True,
     )
     for item in specials:

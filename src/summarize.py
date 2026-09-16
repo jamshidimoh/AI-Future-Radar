@@ -1,11 +1,15 @@
 """Evidence-safe Persian summary with bounded editorial QA."""
+import hashlib
 import json
 import os
 import re
+from pathlib import Path
 
+from src.claim_verification import deterministic_precheck, semantic_verify
 from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_ratio
 from src.education_editor import news_terminology_review_prompt, normalize_editorial_text
 from src.llm_router_light import call_llm_with_fallback, get_quality_chain
+from src.rejection_telemetry import build_event, emit
 
 _DEPTH = {
     "ai": "محتوای محوری کانال است؛ مدل، روش، عدد، قابلیت، محدودیت و پیامد فنی را دقیق حفظ کن.",
@@ -260,6 +264,75 @@ def _editorial_review(data):
         return original, None
 
 
+def _telemetry_event(item, *, stage, decision, reason_code, details=None, attempt=None):
+    try:
+        identity = str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item))
+        trace_id = hashlib.sha1(identity.encode("utf-8", errors="ignore")).hexdigest()[:16]
+        run_id = str(os.getenv("GITHUB_RUN_ID") or os.getenv("RADAR_RUN_ID") or "local")
+        run_number = os.getenv("GITHUB_RUN_NUMBER") or os.getenv("RADAR_RUN_NUMBER")
+        try:
+            run_number = int(run_number) if run_number is not None else None
+        except (TypeError, ValueError):
+            run_number = None
+        path = Path(os.getenv("RADAR_REJECTION_TRACE_PATH", "artifacts/rejection_trace/rejection_trace.jsonl"))
+        emit(
+            build_event(
+                run_id=run_id,
+                run_number=run_number,
+                trace_id=trace_id,
+                item_id=identity,
+                stage=stage,
+                decision=decision,
+                reason_code=reason_code,
+                item=item,
+                details=details,
+                attempt=attempt,
+                replacement_eligible=item.get("replacement_eligible"),
+            ),
+            path,
+        )
+    except Exception:
+        return
+
+
+def _run_shadow_claim_verification(final, item, source_text):
+    precheck = deterministic_precheck(
+        str(final.get("title", "")),
+        str(final.get("summary", "")),
+        str(final.get("why_it_matters", "")),
+        source_text,
+    )
+    result = semantic_verify(
+        source_text=source_text,
+        title=str(final.get("title", "")),
+        summary=str(final.get("summary", "")),
+        why_it_matters=str(final.get("why_it_matters", "")),
+        precheck=precheck,
+    )
+    final["_claim_precheck"] = precheck
+    final["_claim_verification"] = result.as_dict()
+    reason = (result.flags or precheck.get("flags") or ["claim_verification_observed"])[0]
+    _telemetry_event(
+        item,
+        stage="claim_alignment",
+        decision="shadow",
+        reason_code=reason,
+        details={
+            "status": result.status,
+            "overall_confidence": result.overall_confidence,
+            "claim_count": len(result.claims),
+            "risk_flags": precheck.get("risk_flags", {}),
+            "provider": result.provider,
+        },
+    )
+    print(
+        f"[Claim Alignment Shadow] status={result.status} claims={len(result.claims)} "
+        f"flags={','.join(result.flags) if result.flags else '-'} provider={result.provider or '-'}",
+        flush=True,
+    )
+    return final
+
+
 def summarize_item(item):
     category = item.get("category", "ai")
     prompt = _PROMPT.format(depth=_DEPTH.get(category, _DEPTH["ai"]))
@@ -301,6 +374,7 @@ def summarize_item(item):
             f"why={persian_ratio(final.get('why_it_matters','')):.2f}",
             flush=True,
         )
+        _telemetry_event(item, stage="language", decision="reject", reason_code="language_gate_failure")
         return None
     if not _length_ok(final, raw_text):
         print(
@@ -308,6 +382,7 @@ def summarize_item(item):
             f"why={len(final.get('why_it_matters',''))} source={len(raw_text)}",
             flush=True,
         )
+        _telemetry_event(item, stage="editorial_quality", decision="reject", reason_code="length_gate_failure")
         return None
 
     if not _value_ok(final, raw_text):
@@ -319,8 +394,17 @@ def summarize_item(item):
             print("[Editorial Value Gate] repaired candidate accepted", flush=True)
         else:
             print("[Editorial Value Gate] repaired candidate rejected; item will not be published", flush=True)
+            _telemetry_event(
+                item,
+                stage="editorial_quality",
+                decision="reject",
+                reason_code="editorial_value_failure",
+                details={"repair_provider": repair_provider},
+                attempt=1,
+            )
             return None
 
+    final = _run_shadow_claim_verification(final, item, raw_text)
     final["_provider"] = provider
     final["_provider_draft"] = provider
     final["_provider_editorial"] = editorial_provider

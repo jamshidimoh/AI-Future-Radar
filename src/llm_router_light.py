@@ -48,12 +48,12 @@ def _provider_credential_available(name: str) -> bool:
 
 def _extract_message(payload: dict):
     choices = payload.get("choices") or []
-    if not choices: raise ValueError("LLM response has no choices")
+    if not choices: raise QuotaExceeded("LLM response has no choices")
     choice = choices[0] if isinstance(choices[0], dict) else {}
     message = choice.get("message") or {}
     if isinstance(message, dict) and message.get("content") is not None: return message["content"]
     if choice.get("text") is not None: return choice["text"]
-    raise ValueError("LLM response content not found")
+    raise QuotaExceeded("LLM response content not found")
 
 def _groq(system_prompt, user_content, model, *, output_mode="native"):
     key = os.getenv("GROQ_API_KEY")

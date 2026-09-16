@@ -92,6 +92,14 @@ Posts sent: 1/3
 """
 
 
+SATISFIED_MISSION_COVERAGE = """
+[Production Selection] total=3
+[Mission Coverage Recovery] missing_lanes=0 attempts=1 recovered=1 status=ok
+[Production Contract] normal_news=3 normal_max=3 tier0_news=0 education=not_due
+Posts sent: 3/3
+"""
+
+
 CURRENT_RUNTIME_CONTRACT = """
 [Selection Timing] original_select candidates=9 candidate_window=6 elapsed=94.090s
 [Mind/Ideas/Voices Selection] rank=1 score=50.0 normal_score=68.51 normal_rank=None title=Posts
@@ -99,7 +107,7 @@ CURRENT_RUNTIME_CONTRACT = """
 [Publication Summary Budget] input=8 protected=0 mind_ideas_voices=0 normal_window=6 output=5 normal_limit=6 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
 [Publication Policy] PUBLISH normal_rank=5 score=56.33 previous_normal=57.25
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=50.0 normal_floor=not_applied normal_rank=None independent_lane=true
-[Publication Contract] normal_news=1 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 strategic_analytical=0 strategic_max=1 mind_score_floor=not_applied normal_score_floor=55.0 education=not_due
+[Production Contract] normal_news=1 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 strategic_analytical=0 strategic_max=1 mind_score_floor=not_applied normal_score_floor=55.0 education=not_due
 Posts sent: 2/6
 """
 

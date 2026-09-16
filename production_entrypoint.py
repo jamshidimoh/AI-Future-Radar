@@ -343,7 +343,7 @@ def main(*, skip_education: bool = False) -> int:
         return ([education_item] if education_item else []) + _bound_runtime_candidates(candidates, max_posts=max_posts, policy=policy)
 
     original_summarize = pipeline.summarize_item
-    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "mind_ideas_voices_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "delivery_transport_failed": False}
+    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "mind_ideas_voices_delivered_count": 0, "technical_trend_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "delivery_transport_failed": False}
 
     def summarize_with_education(item):
         if item.get("content_type") == "education":
@@ -352,7 +352,10 @@ def main(*, skip_education: bool = False) -> int:
         result = original_summarize(item)
         if result:
             item.update(result)
-            if _is_mind_ideas_voices(item):
+            if _is_technical_trend(item):
+                item["final_editorial_score"] = float(item.get("technical_trend_score", 0) or 0)
+                lane = "technical_trend"
+            elif _is_mind_ideas_voices(item):
                 item["final_editorial_score"] = float(item.get("mind_editorial_score", 0) or 0)
                 lane = "mind_ideas_voices"
             else:
@@ -390,19 +393,22 @@ def main(*, skip_education: bool = False) -> int:
                 render_state["published_news_scores"].append(score)
                 cadence["last_published_news_score"] = score
                 is_mind = _is_mind_ideas_voices(item)
+                is_technical = _is_technical_trend(item)
                 is_tier0 = _is_tier0_publication_candidate(item)
                 is_strategic = _is_strategic_analytical_signal(item)
-                if not is_mind and not is_tier0:
+                if not is_mind and not is_technical and not is_tier0:
                     cadence["last_published_normal_news_score"] = score
                 if is_mind:
                     render_state["mind_ideas_voices_delivered_count"] += 1
+                elif is_technical:
+                    render_state["technical_trend_delivered_count"] += 1
                 elif is_tier0:
                     render_state["tier0_news_delivered_count"] += 1
                 else:
                     render_state["normal_news_delivered_count"] += 1
                 if is_strategic:
                     render_state["strategic_analytical_news_delivered_count"] += 1
-                lane = "mind_ideas_voices" if is_mind else ("tier0" if is_tier0 else "normal")
+                lane = "mind_ideas_voices" if is_mind else ("technical_trend" if is_technical else ("tier0" if is_tier0 else "normal"))
                 print(f"[Publication Ledger] message_id={meta.get('message_id')} lane={lane} published_news_score={score} normal_baseline={cadence.get('last_published_normal_news_score')} global_rank={item.get('period_rank')} normal_rank={item.get('normal_period_rank')} mind_rank={item.get('mind_period_rank')}", flush=True)
             else:
                 render_state["education_delivered"] = True
@@ -426,6 +432,7 @@ def main(*, skip_education: bool = False) -> int:
         if current_type == "education":
             return delivered({"message_id": None})
         is_mind = _is_mind_ideas_voices(story)
+        is_technical = _is_technical_trend(story)
         priority_person = _is_tier0_publication_candidate(story)
         strategic_analytical = _is_strategic_analytical_signal(story)
         if is_mind:
@@ -435,6 +442,14 @@ def main(*, skip_education: bool = False) -> int:
                 return policy_blocked("news_language_gate")
             score = _item_final_score(story)
             print(f"[Publication Policy] PUBLISH mind_ideas_voices mind_rank={story.get('mind_period_rank')} score={score} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True)
+            return delivered({"message_id": None})
+        if is_technical:
+            if render_state["technical_trend_delivered_count"] >= MAX_TECHNICAL_TREND_PER_PERIOD:
+                return policy_blocked("technical_trend_quota_exhausted")
+            if not _news_language_ok(story):
+                return policy_blocked("news_language_gate")
+            score = _item_final_score(story)
+            print(f"[Publication Policy] PUBLISH technical_trend tech_rank={story.get('technical_trend_period_rank')} score={score} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True)
             return delivered({"message_id": None})
         if strategic_analytical and render_state["strategic_analytical_news_delivered_count"] >= STRATEGIC_ANALYTICAL_MAX_PER_PERIOD:
             return policy_blocked("strategic_analytical_lane_exhausted")
@@ -496,7 +511,7 @@ def main(*, skip_education: bool = False) -> int:
     _save_cadence(cadence)
     if education_due and not render_state["education_delivered"]:
         print(f"[Education Contract] deferred: educational Telegram post was not confirmed; slot={education_slot} remains due for retry", flush=True)
-    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} mind_ideas_voices={render_state['mind_ideas_voices_delivered_count']} mind_max={MAX_MIND_IDEAS_VOICES_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} strategic_analytical={render_state['strategic_analytical_news_delivered_count']} strategic_max={STRATEGIC_ANALYTICAL_MAX_PER_PERIOD} mind_score_floor=not_applied normal_score_floor={NORMAL_SCORE_FLOOR} education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
+    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} technical_trend={render_state['technical_trend_delivered_count']} technical_max={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices={render_state['mind_ideas_voices_delivered_count']} mind_max={MAX_MIND_IDEAS_VOICES_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} strategic_analytical={render_state['strategic_analytical_news_delivered_count']} strategic_max={STRATEGIC_ANALYTICAL_MAX_PER_PERIOD} mind_score_floor=not_applied normal_score_floor={NORMAL_SCORE_FLOOR} education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
     print(f"[Telegram Feedback] stored_messages={len(store.get('messages', {}))}", flush=True)
     return 0
 

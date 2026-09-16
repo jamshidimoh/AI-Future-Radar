@@ -17,6 +17,9 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+env:
+  ACTIONS_STEP_DEBUG: false
+
 jobs:
   deploy:
     environment:
@@ -29,6 +32,8 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3

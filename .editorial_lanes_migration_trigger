@@ -1,1 +1,1 @@
-apply production-safe editorial lane migration
+run migration after stale workflow cleanup

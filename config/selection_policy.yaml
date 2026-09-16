@@ -36,37 +36,29 @@ editorial:
 # - Mission coverage is explicit: AI-core, mind/cognition and convergence remain
 #   normal portfolio targets. The remaining capacity is optimized by quality,
 #   information gain and diversity.
-# - The additive Mind/Ideas/Voices lane is separate from normal capacity: up to
-#   two additional qualifying items may be published per production iteration.
-#   Qualifying scope includes influential technology/AI leaders and CEOs,
-#   scientists, theorists, public intellectuals, sociologists and scientifically
-#   grounded futurists; their substantive interviews, podcasts, talks and
-#   conversations; and AI-relevant work on consciousness, philosophy of mind,
-#   philosophy of science/technology, cognitive science, neuroscience/brain,
-#   genetics/genomics/synthetic biology, and related interdisciplinary domains.
-# - The additive lane never grants a discovery, authority, deduplication,
-#   language, editorial-quality, or publication-safety bypass. Candidates must
-#   already exist in the ranked replacement pool and satisfy the existing rank
-#   and score floor.
-# - ai_core_target_min/max, mind_cognition_target and convergence_target are
-#   explicit mission coverage controls. They do not bypass relevance, authority,
-#   deduplication or final publication safety checks.
-# - mind_future_target remains a bounded opportunity for future-governance content
-#   after the dedicated mind/convergence floors are satisfied.
-# - diversity_quality_floor_ratio=0.80 remains unchanged; lane coverage never
-#   admits a candidate below the quality floor when a qualifying alternative exists.
+# - Additive Mind/Ideas/Voices lane: up to 2 additional qualifying items per
+#   production iteration, outside the 3-item normal-news capacity. It covers
+#   influential technology/AI leaders and CEOs, scientists, theorists, public
+#   intellectuals, sociologists, and scientifically grounded futurists; substantive
+#   interviews, podcasts, talks and conversations with them; and AI-relevant work
+#   on consciousness, philosophy of mind/science/technology, cognitive science,
+#   neuroscience/brain, genetics/genomics/synthetic biology, and related
+#   interdisciplinary AI/future domains.
+# - The additive lane is bounded and additive: it never changes the canonical
+#   ranking score or the first three normal candidates. It only draws from the
+#   existing ranked replacement pool and retains the existing rank and score floor.
+# - The additive lane never grants discovery, authority, deduplication, language,
+#   editorial-quality, Telegram safety, or publication-contract bypasses.
+# - Community/aggregator sources are excluded from both normal and additive lanes.
+# - ai_core_target_min/max, mind_cognition_target and convergence_target remain
+#   explicit mission coverage controls and do not bypass safety gates.
+# - diversity_quality_floor_ratio=0.80 remains unchanged.
 # - max_same_mission_area=2 prevents an AI-only or single-domain publication run.
-# - Information gain is a bounded soft reranker. Quality remains the dominant
-#   signal inside a mission lane; novelty is used to break close-score ties rather
-#   than displacing materially stronger candidates.
-# - Community/aggregator sources are not eligible for the normal portfolio or
-#   additive Mind/Ideas/Voices lane.
+# - Information gain is a bounded soft reranker; quality remains dominant.
 # - candidate_window and replacement_buffer preserve additional candidates for
 #   post-summary or publication rejection without lowering quality floors.
 # - strict_relevance=true enables hard mission-relevance filtering in production.
 # - Education remains an independent scheduled product stream and is recovered
 #   fail-closed when due.
-# - Strategic Analytical Lane: at most one mission-critical analytical signal per
-#   run may use the normal quota without the ranking score floor, but only after
-#   trusted source validation, deduplication, source grounding, editorial QA and
-#   normal Telegram quota checks. It is not a Tier-0 bypass.
+# - Strategic Analytical Lane remains separate and limited to one mission-critical
+#   analytical signal per run under its existing safeguards.

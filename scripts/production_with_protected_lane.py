@@ -18,7 +18,17 @@ def _run_one_shot_migration() -> bool:
         return False
     subprocess.run([sys.executable, str(migration)], check=True, cwd=ROOT)
     subprocess.run(
-        [sys.executable, "-m", "compileall", "-q", "production_entrypoint.py", "main.py", "src", "tests/test_technical_trend_lane.py", "tests/test_mind_interview_recall.py"],
+        [
+            sys.executable,
+            "-m",
+            "compileall",
+            "-q",
+            "production_entrypoint.py",
+            "main.py",
+            "src",
+            "tests/test_technical_trend_lane.py",
+            "tests/test_mind_interview_recall.py",
+        ],
         check=True,
         cwd=ROOT,
     )
@@ -50,7 +60,11 @@ def _run_one_shot_migration() -> bool:
     if existing_cleanup:
         subprocess.run(["git", "rm", "-f", *existing_cleanup], check=True, cwd=ROOT)
     subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=True, cwd=ROOT)
-    subprocess.run(["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"], check=True, cwd=ROOT)
+    subprocess.run(
+        ["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"],
+        check=True,
+        cwd=ROOT,
+    )
     subprocess.run(
         [
             "git",
@@ -71,15 +85,20 @@ def _run_one_shot_migration() -> bool:
     for _ in range(3):
         push = subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT)
         if push.returncode == 0:
+            print("[Editorial Lane Migration] pushed successfully; continuing with production run", flush=True)
             return True
         subprocess.run(["git", "fetch", "origin", "main", "--depth=50"], check=True, cwd=ROOT)
         subprocess.run(["git", "rebase", "origin/main"], check=True, cwd=ROOT)
     subprocess.run(["git", "push", "origin", "HEAD:main"], check=True, cwd=ROOT)
+    print("[Editorial Lane Migration] pushed successfully; continuing with production run", flush=True)
     return True
 
 
 if __name__ == "__main__":
-    if os.getenv("RADAR_DISABLE_ONE_SHOT_MIGRATION") != "1" and _run_one_shot_migration():
-        raise SystemExit(0)
+    migrated = False
+    if os.getenv("RADAR_DISABLE_ONE_SHOT_MIGRATION") != "1":
+        migrated = _run_one_shot_migration()
+    if migrated:
+        print("[Editorial Lane Migration] one-shot migration complete; falling through to production_resilient_runner", flush=True)
     import production_resilient_runner  # noqa: E402
     raise SystemExit(production_resilient_runner.main())

@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   schedule:
-    # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 Tehran (UTC+3:30). GitHub Actions cron is UTC; corresponding UTC windows are 01:47, 07:17, 10:17, 14:17, 17:17, 19:17.
+    # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 Tehran (UTC+3:30). GitHub Actions cron is UTC.
     - cron: "47 1 * * *"
     - cron: "17 7,10,14,17,19 * * *"
   workflow_dispatch:
@@ -37,7 +37,7 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Run production regression checks
-        run: python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_google_news_canonical_resolution.py tests/test_production_closure_gate_integrity.py
+        run: python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_google_news_canonical_resolution.py tests/test_production_closure_gate_integrity.py tests/test_protected_editorial_lane.py
 
       - name: Emit fail-closed closure evidence
         run: echo "[Provider Failure Isolation Evidence] PASS"
@@ -89,7 +89,7 @@ jobs:
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-        run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_ranking_audit.py 2>&1 | tee run.log'
+        run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_protected_lane.py 2>&1 | tee run.log'
 
       - name: Recover required Education publication
         if: always()

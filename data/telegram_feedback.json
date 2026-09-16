@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789568124,
+  "updated_at": 1789568921,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -10692,6 +10692,45 @@
       "why_it_matters": "این دیدگاه اهمیت دارد چون بر این باور است که تصور ناپایدار پیشرفت می‌تواند باعث بی‌Attentionی به مشکلات اخلاقی و سیاسی شود و باعث شود ما در مواجهه با بحران‌های آینده، آماده نباشیم. اگر ما به‌طور مداوم به پیشرفت اعتقاد داشته باشیم، ممکن است به‌جای اصلاح، فقط به‌تجمیع فناوری و قدرت بپردازیم. این تحلیل به ما یادآوری می‌کند که باید به‌طور انتقادی به دستاوردهای انسانی نگاه کنیم و درک کنیم که پیشرفت واقعی نیازمند ثبات اخلاقی و سیاسی است. در نهایت، این دیدگاه می‌تواند راهنمایی برای سیاستگذاران و فلاسفه باشد تا در طراحی راهکارهای پایدار، از تکرار اشتباهات گذشته جلوگیری کنند.",
       "link": "https://www.youtube.com/watch?v=murPOSalbfQ",
       "posted_at": 1789568124
+    },
+    "-1004482051328:1678": {
+      "chat_id": -1004482051328,
+      "message_id": 1678,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (BBC)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "title": "پرسش‌گری داریو آمودی درباره ترس واقعی کارکنان هوش مصنوعی از آینده بشر",
+      "summary": "در مصاحبه‌ای با BBC، داریو آمودی، پژوهشگر پیشین Anthropic، بیان کرد که کارکنان حوزه هوش مصنوعی به‌طور جدی از پیامدهای آینده این فناوری برای بشریت نگران هستند. او اشاره کرد که این ترس نه تنها به دلیل سرعت پیشرفت مدل‌های زبانی بزرگ است، بلکه به دلیل عدم وجود چارچوب‌های نظارتی کافی و خطرات احتمالی سوءاستفاده از این فناوری‌ها می‌باشد. آمودی همچنین به ضرورت شفافیت بیشتر در توسعه مدل‌ها و مشارکت گسترده‌تر جامعه علمی و عمومی برای مدیریت ریسک‌ها تأکید کرد. این نگرانی‌ها نشان می‌دهد که حتی در میان متخصصان، احساس اضطراب نسبت به مسیر پیشرفت هوش مصنوعی وجود دارد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این اظهارات نشان می‌دهد که نگرانی‌های اخلاقی و ایمنی هوش مصنوعی در میان خود متخصصان نیز به‌طور جدی احساس می‌شود؛ بنابراین، تصمیم‌گیرندگان باید به‌سرعت چارچوب‌های نظارتی و استانداردهای ایمنی را تقویت کنند تا از بروز خطرات احتمالی جلوگیری شود. عدم اقدام می‌تواند منجر به سوءاستفاده‌های گسترده و اثرات مخرب بر جامعه شود، در حالی که شفافیت و مشارکت عمومی می‌تواند مسیر توسعه مسئولانه را هموار سازد.",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5FWmxIX1V4alpjRDJKRkhoaGZNZzNJTzNucVhDQ0ZZWjM0X3JyZkVpVlJtSUJHeldDTWFvM2lRQU5ES2k5QlZfRHFQaWYxSThMczY5NlV4d2tYeklL?oc=5",
+      "posted_at": 1789568894
+    },
+    "-1004482051328:1679": {
+      "chat_id": -1004482051328,
+      "message_id": 1679,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "مفهوم پیشرفت انسانی: افسانه یا واقعیت؟",
+      "summary": "در گفتگویی با جان گری و جانی تومسون، این دو فیلسوف بر این باورند که تصور پیشرفت اخلاقی و سیاسی انسان، یک افسانه است. گری، منتقد برجسته لیبرالیسم و روشنفکری، پیش‌بینی‌های او از بحران مالی ۲۰۰۸ و ظهور پاپولیزم، نشان‌دهنده ضعف پیشرفت مداوم است. او بر این نکته تأکید می‌کند که علم و فناوری در حال تجمع هستند، اما دستاوردهای اخلاقی و سیاسی به‌سرعت ناپایدار می‌شوند و در چندین نسل باز می‌گردند. تومسون، نویسنده و بنیان‌گذار Mini Philosophy، این دیدگاه را در قالب گفتگوی کوتاه و قابل فهم برای عموم ارائه می‌دهد.",
+      "description": "John Gray and Jonny Thomson discuss how the idea of human progress in ethics and politics is a myth.\n\nDo you agree with John Gray, or is this an overly pessimistic view of humanity?\n\nWith a free trial, you can watch John talk about his life and philosophy NOW at https://iai.tv/video/the-life-and-philosophy-of-john-gray?utm_source=YouTube&amp;utm_medium=description\n\nWhy does every generation assume the future will be more civilized than the past? John Gray argues this belief in progress is both false and dangerous—a secular myth that blinds us to the recurring conflicts of history. In this interview with Jonny Thomson, he explains why science and technology accumulate but gains in ethics and politics are fragile, unwinding every few generations. The future, he warns, is not destined to be better than the past.\n \nIn partnership with Big Think.\n\n#philosophy  #politics  #humanity \n\nJohn Gray, hailed as \"Britain's best philosopher,\" is a leading critic of liberalism and the Enlightenment. He has long challenged the belief in inevitable progress, predicting both the 2008 financial crisis and the rise of populism.\n\nJonny Thomson is a columnist at Big Think, bestselling author and founder of Mini Philosophy. He is the bestselling author of three books — Mini Philosophy, Mini Big Ideas, and Mini Psychology — which have been translated into 22 languages, with a fourth, The Art of Enough, forthcoming. He sits on the Executive Board of the British Philosophy Association.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=https://iai.tv/video/the-idea-of-progress-is-a-dangerous-lie-with-john-gray\n\n0:00 Intro\n0:31 Why are you considered 'modernity's greatest pessimist'?\n7:42 What role does human agency play in the human story?\n11:58 If history is inevitable, what are the mechanisms behind that inevitability?\n20:15 What for you is 'the good' within the context of human progress?\n26:29 Is there a utilitarian need for myths or stories?\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "این دیدگاه به ما یادآور می‌شود که پیشرفت نه‌تنها در حوزه‌های علمی بلکه در حوزه‌های اخلاقی و سیاسی نیز ممکن است ناپایدار باشد. اگر به این فرض نپردازیم، ممکن است به‌سرعت به اشتباه بر این باور برسیم که آینده همیشه بهتر از گذشته است، که می‌تواند باعث نادیده گرفتن چالش‌های تاریخی و ایجاد سیاست‌های ناپایدار شود. درک این محدودیت‌ها می‌تواند به تصمیم‌گیری‌های آگاهانه‌تر در حوزه‌های حکومتی، اقتصادی و اجتماعی کمک کند.",
+      "link": "https://www.youtube.com/watch?v=murPOSalbfQ",
+      "posted_at": 1789568901
     }
   }
 }

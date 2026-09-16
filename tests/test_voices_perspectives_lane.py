@@ -26,6 +26,35 @@ def test_voice_candidate_requires_substantive_person_and_ai_signal():
     assert not is_voices_candidate(no_person)
 
 
+def test_voice_lane_accepts_watched_person_news_without_interview_keyword():
+    item = {
+        "title": "Sam Altman says frontier AI development needs stronger safety measures",
+        "summary": "OpenAI CEO Sam Altman discussed artificial intelligence safety and the pace of frontier model development.",
+        "mission_area": "ai",
+        "category": "ai",
+        "content_type": "news",
+        "source": "Specialist publication",
+        "source_type": "specialist",
+        "source_tier": 1,
+        "published": "2026-09-16T10:00:00+00:00",
+        "watch_person": "Sam Altman",
+        "is_leader_watch": True,
+        "leader_priority": 10,
+    }
+    assert is_voices_candidate(item)
+
+
+def test_voice_lane_allows_substantive_priority_interview_marked_tier0():
+    item = _voice("David Chalmers interview on AI consciousness")
+    item.update({
+        "watch_person": "David Chalmers",
+        "is_leader_watch": True,
+        "leader_priority": 9,
+        "_rank_is_tier0": True,
+    })
+    assert is_voices_candidate(item)
+
+
 def test_voice_lane_rejects_excluded_sources():
     for source in ("Reddit", "community forum", "aggregator", "arXiv"):
         item = _voice()

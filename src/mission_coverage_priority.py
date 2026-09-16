@@ -53,6 +53,19 @@ def mission_coverage_bonus(item: dict[str, Any], area_counts: dict[str, int], co
     count = int(area_counts.get(area, 0) or 0)
     if count >= 2:
         return 0.0
+
+    raw_score = float(item.get("mind_cognition_original_score", _score(item)) or 0.0)
+    if area == "mind_cognition":
+        # The new Mind/Cognition floor is 50. The existing global runtime gate
+        # remains 55, so a bounded additive bonus closes the gap for all valid
+        # mind candidates at or above 50 without changing other mission lanes.
+        if raw_score >= 50.0 and _tier(item) in {1, 2}:
+            legacy_bonus = 1.5 if count == 0 else 1.0
+            return max(legacy_bonus, max(0.0, 55.0 - raw_score))
+        # Candidates below 50 are handled by the explicit top-two bypass marker
+        # in apply_mind_cognition_floor; they do not receive a ranking bonus.
+        return 0.0
+
     if _score(item) < 52.0:
         return 0.0
     if _tier(item) not in {1, 2}:

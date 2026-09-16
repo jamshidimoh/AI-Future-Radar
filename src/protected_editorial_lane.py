@@ -1,8 +1,8 @@
 """Score-driven additive Mind/Ideas/Voices lane for production selection.
 
-The lane is additive to the normal three-item portfolio. It surfaces every
-eligible already-ranked candidate that satisfies the existing normal score
-floor and rank window; there is no arbitrary per-run special-item cap.
+The lane is additive to the normal three-item portfolio. It surfaces eligible
+already-ranked candidates that satisfy the existing normal score floor and rank
+window; the production launcher applies the explicit two-item per-run quota.
 """
 from __future__ import annotations
 
@@ -119,9 +119,7 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
         return True
     if mission in {"future", "future_governance", "convergence", "ai", "ai_core"} and (registry_person or explicit_person):
         return True
-    if content_type in {"article", "essay", "analysis", "opinion"} and (registry_person or explicit_person) and mission in MISSION_AREAS:
-        return True
-    return False
+    return content_type in {"article", "essay", "analysis", "opinion"} and (registry_person or explicit_person) and mission in MISSION_AREAS
 
 
 def choose_additive_candidates(

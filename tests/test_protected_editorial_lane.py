@@ -32,12 +32,13 @@ def test_community_source_is_excluded():
     assert not is_mind_ideas_voices_candidate(item)
 
 
-def test_additive_candidates_max_two_and_keep_floor():
+def test_additive_candidates_are_score_and_rank_driven_without_count_cap():
     candidates = [
-        {"title": "A", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 4, "final_editorial_score": 55.1},
+        {"title": "A", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 4, "final_editorial_score": 60.1},
         {"title": "B", "mission_area": "future_governance", "content_type": "interview", "normal_period_rank": 5, "final_editorial_score": 56.0},
-        {"title": "C", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 6, "final_editorial_score": 54.9},
+        {"title": "C", "mission_area": "convergence", "content_type": "article", "normal_period_rank": 6, "final_editorial_score": 55.9},
+        {"title": "D", "mission_area": "mind_cognition", "content_type": "podcast", "normal_period_rank": 7, "final_editorial_score": 55.8},
     ]
-    selected = choose_additive_candidates(candidates, existing_ids=set(), max_rank=6, max_items=2)
-    assert selected == [candidates[0], candidates[1]]
-    assert len(selected) <= 2
+    selected = choose_additive_candidates(candidates, existing_ids=set(), max_rank=7, max_items=None)
+    assert selected == candidates
+    assert len(selected) == 4

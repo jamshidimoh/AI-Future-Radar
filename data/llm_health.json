@@ -1,14 +1,14 @@
 {
   "models": {
     "NaraRouter:auto/bynara": {
-      "failures": 3,
-      "disabled_until": 1789571229.544,
+      "failures": 4,
+      "disabled_until": 1789572385.906,
       "last_error": "model",
       "last_success": 0
     },
     "Groq:openai/gpt-oss-120b": {
-      "failures": 10,
-      "disabled_until": 1789553229.544,
+      "failures": 11,
+      "disabled_until": 1789554385.906,
       "last_error": "rate_limit",
       "last_success": 0
     },
@@ -19,20 +19,20 @@
       "last_success": 0
     },
     "OpenRouter:google/gemma-4-31b-it:free": {
-      "failures": 3,
-      "disabled_until": 1789553229.544,
+      "failures": 4,
+      "disabled_until": 1789554385.906,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "OpenRouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 3,
-      "disabled_until": 1789553229.544,
+      "failures": 4,
+      "disabled_until": 1789554385.906,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "Groq:openai/gpt-oss-20b": {
-      "failures": 2,
-      "disabled_until": 1789553229.544,
+      "failures": 3,
+      "disabled_until": 1789554385.906,
       "last_error": "rate_limit",
       "last_success": 0
     },
@@ -40,6 +40,12 @@
       "failures": 1,
       "disabled_until": 1789550209.329,
       "last_error": "quota",
+      "last_success": 0
+    },
+    "OpenRouter:nvidia/nemotron-3-ultra-550b-a55b:free": {
+      "failures": 1,
+      "disabled_until": 1789572385.906,
+      "last_error": "model",
       "last_success": 0
     }
   },

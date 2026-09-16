@@ -1,14 +1,14 @@
 {
   "models": {
     "NaraRouter:auto/bynara": {
-      "failures": 2,
-      "disabled_until": 1789567111.579,
+      "failures": 1,
+      "disabled_until": 1789557918.994,
       "last_error": "model",
       "last_success": 0
     },
     "Groq:openai/gpt-oss-120b": {
       "failures": 8,
-      "disabled_until": 1789549111.579,
+      "disabled_until": 1789549568.961,
       "last_error": "rate_limit",
       "last_success": 0
     },

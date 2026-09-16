@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from src.rejection_telemetry import RejectionEvent, build_event, emit
@@ -47,6 +48,34 @@ def test_emit_appends_jsonl(tmp_path: Path):
     emit(event, path)
     line = path.read_text(encoding="utf-8").strip()
     assert '"reason_code": "provider_quota_exceeded"' in line
+
+    summary = json.loads((path.parent / "rejection_summary.json").read_text(encoding="utf-8"))
+    assert summary["schema_version"] == "rejection-summary.v1"
+    assert summary["events"] == 1
+    assert summary["by_stage"]["summarization"] == 1
+    assert summary["by_reason"]["provider_quota_exceeded"] == 1
+
+
+def test_emit_updates_summary_incrementally(tmp_path: Path):
+    path = tmp_path / "trace.jsonl"
+    for decision, reason in (("reject", "normal_score_floor"), ("shadow", "unsupported_comparison")):
+        emit(
+            build_event(
+                run_id="1",
+                trace_id=decision,
+                item_id=decision,
+                stage="publication_contract" if decision == "reject" else "claim_alignment",
+                decision=decision,
+                reason_code=reason,
+            ),
+            path,
+        )
+
+    summary = json.loads((tmp_path / "rejection_summary.json").read_text(encoding="utf-8"))
+    assert summary["events"] == 2
+    assert summary["by_decision"] == {"reject": 1, "shadow": 1}
+    assert summary["by_reason"]["normal_score_floor"] == 1
+    assert summary["by_reason"]["unsupported_comparison"] == 1
 
 
 def test_emit_is_fail_safe(tmp_path: Path):

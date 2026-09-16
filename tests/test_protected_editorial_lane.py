@@ -32,12 +32,25 @@ def test_community_source_is_excluded():
     assert not is_mind_ideas_voices_candidate(item)
 
 
-def test_additive_candidates_are_rank_and_score_driven_with_two_item_cap():
+def test_mind_lane_has_no_normal_score_floor():
+    candidates = [
+        {"title": "Low score but strong mind relevance", "mission_area": "mind_cognition", "content_type": "article", "final_editorial_score": 41.0},
+        {"title": "Higher score but weaker lane relevance", "mission_area": "ai_core", "content_type": "article", "final_editorial_score": 80.0},
+    ]
+    selected = choose_additive_candidates(candidates, existing_ids=set(), max_items=1)
+    assert selected[0]["title"] == "Low score but strong mind relevance"
+    assert selected[0]["mind_editorial_score"] > 0
+    assert selected[0]["normal_period_rank"] is None
+    assert selected[0]["mind_lane_selected"] is True
+
+
+def test_additive_candidates_use_independent_lane_score_and_two_item_cap():
     candidates = [
         {"title": "A", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 4, "final_editorial_score": 60.1},
         {"title": "B", "mission_area": "future_governance", "content_type": "interview", "normal_period_rank": 5, "final_editorial_score": 56.0},
         {"title": "D", "mission_area": "mind_cognition", "content_type": "podcast", "normal_period_rank": 7, "final_editorial_score": 55.8},
     ]
     selected = choose_additive_candidates(candidates, existing_ids=set(), max_rank=7, max_items=2)
-    assert selected == candidates[:2]
     assert len(selected) == 2
+    assert selected[0].get("mind_editorial_score", 0) >= selected[1].get("mind_editorial_score", 0)
+    assert all(item.get("mind_lane_selected") for item in selected)

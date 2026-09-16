@@ -35,8 +35,9 @@ def test_community_source_is_excluded():
 def test_additive_candidates_max_two_and_keep_floor():
     candidates = [
         {"title": "A", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 4, "final_editorial_score": 55.1},
-        {"title": "B", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 5, "final_editorial_score": 56.0},
+        {"title": "B", "mission_area": "future_governance", "content_type": "interview", "normal_period_rank": 5, "final_editorial_score": 56.0},
         {"title": "C", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 6, "final_editorial_score": 54.9},
     ]
     selected = choose_additive_candidates(candidates, existing_ids=set(), max_rank=6, max_items=2)
     assert selected == [candidates[0], candidates[1]]
+    assert len(selected) <= 2

@@ -24,6 +24,7 @@ def test_independent_mind_cognition_target_is_minimum_two():
     assert contract["mind_cognition_target"] == 2
     assert contract["mind_cognition_score_floor"] == 50.0
     assert contract["mind_cognition_min_publish"] == 2
+    assert contract["mind_cognition_max_publish"] == 2
 
 
 def test_mind_candidates_below_fifty_keep_original_score_and_get_bounded_bypass():

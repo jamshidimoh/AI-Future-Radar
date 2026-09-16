@@ -24,41 +24,26 @@ editorial:
 
 # Unified production selection contract:
 # - max_posts=3 is the normal publication capacity.
-# - candidate_window=8 keeps a larger bounded replacement pool so the additive
-#   Mind/Ideas/Voices lane can obtain up to two qualifying candidates without
-#   forcing a rewrite of canonical ranking.
-# - max_items_per_source=2 is the adaptive ceiling and hard ceiling. One item
-#   per source is preferred first; a second item is allowed only during adaptive
-#   backfill when capacity remains.
-# - max_items_per_content_type=2 is a soft portfolio ceiling; mission-lane
-#   coverage must not be starved merely because several strong lanes are research.
-#   Interview-specific protection remains controlled by interview_target_max.
-# - Mission coverage is explicit: AI-core, mind/cognition and convergence remain
-#   normal portfolio targets. The remaining capacity is optimized by quality,
-#   information gain and diversity.
-# - Additive Mind/Ideas/Voices lane: up to 2 additional qualifying items per
-#   production iteration, outside the 3-item normal-news capacity. It covers
-#   influential technology/AI leaders and CEOs, scientists, theorists, public
-#   intellectuals, sociologists, and scientifically grounded futurists; substantive
-#   interviews, podcasts, talks and conversations with them; and AI-relevant work
+# - candidate_window=8 keeps a bounded replacement pool for additional QA/rejection.
+# - The additive Mind/Ideas/Voices lane is score-driven rather than quota-driven.
+#   There is no per-run special-item count cap. Every qualifying candidate in the
+#   already-ranked bounded replacement pool may enter this lane when it satisfies
+#   the existing normal score floor and rank window.
+# - Qualifying scope includes influential technology/AI leaders and CEOs, scientists,
+#   theorists, public intellectuals, sociologists, scientifically grounded futurists,
+#   their substantive interviews/podcasts/talks/conversations, and AI-relevant work
 #   on consciousness, philosophy of mind/science/technology, cognitive science,
-#   neuroscience/brain, genetics/genomics/synthetic biology, and related
-#   interdisciplinary AI/future domains.
-# - The additive lane is bounded and additive: it never changes the canonical
-#   ranking score or the first three normal candidates. It only draws from the
-#   existing ranked replacement pool and retains the existing rank and score floor.
-# - The additive lane never grants discovery, authority, deduplication, language,
-#   editorial-quality, Telegram safety, or publication-contract bypasses.
-# - Community/aggregator sources are excluded from both normal and additive lanes.
-# - ai_core_target_min/max, mind_cognition_target and convergence_target remain
-#   explicit mission coverage controls and do not bypass safety gates.
+#   neuroscience/brain, genetics/genomics/synthetic biology, foresight/futures,
+#   society and technology, and related interdisciplinary AI/future domains.
+# - The additive lane never changes the canonical ranking formula or the first three
+#   normal candidates. The effective limits are the existing ranked pool, rank window,
+#   score floor, source/deduplication rules, language, editorial quality, grounding,
+#   Telegram safety and final publication contract.
+# - Community/aggregator sources remain excluded.
+# - ai_core_target_min/max, mind_cognition_target and convergence_target remain explicit
+#   normal-portfolio controls and do not bypass safety gates.
 # - diversity_quality_floor_ratio=0.80 remains unchanged.
-# - max_same_mission_area=2 prevents an AI-only or single-domain publication run.
+# - max_same_mission_area=2 prevents an AI-only or single-domain normal run.
 # - Information gain is a bounded soft reranker; quality remains dominant.
-# - candidate_window and replacement_buffer preserve additional candidates for
-#   post-summary or publication rejection without lowering quality floors.
-# - strict_relevance=true enables hard mission-relevance filtering in production.
-# - Education remains an independent scheduled product stream and is recovered
-#   fail-closed when due.
-# - Strategic Analytical Lane remains separate and limited to one mission-critical
-#   analytical signal per run under its existing safeguards.
+# - Education remains an independent scheduled product stream and is recovered fail-closed.
+# - Strategic Analytical Lane remains separate and limited to one mission-critical signal.

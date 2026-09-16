@@ -16,9 +16,6 @@ def _run_one_shot_migration() -> bool:
     migration = ROOT / "scripts" / "apply_editorial_lanes.py"
     if not trigger.exists() or not migration.exists():
         return False
-    # The production workflow already grants contents:write. Run the migration,
-    # validate it locally, commit only source/test changes, remove the trigger,
-    # and let the resulting push start the normal production workflow again.
     subprocess.run([sys.executable, str(migration)], check=True, cwd=ROOT)
     subprocess.run([sys.executable, "-m", "compileall", "-q", "production_entrypoint.py", "main.py", "src", "tests/test_technical_trend_lane.py", "tests/test_mind_interview_recall.py"], check=True, cwd=ROOT)
     subprocess.run([sys.executable, "-m", "pytest", "-q", "tests/test_technical_trend_lane.py", "tests/test_mind_interview_recall.py", "tests/test_mission_coverage_priority.py", "tests/test_protected_editorial_lane.py", "tests/test_production_acceptance_guard.py", "tests/test_production_acceptance_contract.py", "tests/test_unified_editorial_selection.py"], check=True, cwd=ROOT)
@@ -27,6 +24,15 @@ def _run_one_shot_migration() -> bool:
     subprocess.run(["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"], check=True, cwd=ROOT)
     subprocess.run(["git", "add", "production_entrypoint.py", "main.py", "src/protected_editorial_lane.py", "tests/test_technical_trend_lane.py", "tests/test_mind_interview_recall.py", "tests/test_mission_coverage_priority.py", "scripts/production_with_protected_lane.py"], check=True, cwd=ROOT)
     subprocess.run(["git", "commit", "-m", "feat: refine editorial lanes and add technical trend"], check=True, cwd=ROOT)
+
+    # A production state-persistence job may advance main between checkout and push.
+    # Rebase the migration commit onto the current remote head before pushing.
+    for _ in range(3):
+        push = subprocess.run(["git", "push", "origin", "HEAD:main"], cwd=ROOT)
+        if push.returncode == 0:
+            return True
+        subprocess.run(["git", "fetch", "origin", "main", "--depth=50"], check=True, cwd=ROOT)
+        subprocess.run(["git", "rebase", "origin/main"], check=True, cwd=ROOT)
     subprocess.run(["git", "push", "origin", "HEAD:main"], check=True, cwd=ROOT)
     return True
 

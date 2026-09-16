@@ -18,35 +18,18 @@ from src.llm_router_light import call_llm_with_fallback, get_quality_chain
 SCHEMA_VERSION = "claim-verification.v1"
 
 REASON_CODES = {
-    "numeric_mismatch",
-    "numeric_unit_mismatch",
-    "date_mismatch",
-    "unsupported_named_entity",
-    "unsupported_model_version",
-    "unsupported_benchmark",
-    "unsupported_comparison",
-    "unsupported_superlative",
-    "causal_overreach",
-    "unsupported_attribution",
-    "unsupported_quote",
-    "temporal_mismatch",
-    "insufficient_source_evidence",
-    "semantic_entailment_failure",
-    "verifier_provider_failure",
-    "verifier_timeout",
+    "numeric_mismatch", "numeric_unit_mismatch", "date_mismatch",
+    "unsupported_named_entity", "unsupported_model_version",
+    "unsupported_benchmark", "unsupported_comparison", "unsupported_superlative",
+    "causal_overreach", "unsupported_attribution", "unsupported_quote",
+    "temporal_mismatch", "insufficient_source_evidence",
+    "semantic_entailment_failure", "verifier_provider_failure", "verifier_timeout",
 }
 
 RISK_TYPES = (
-    "numeric_claim",
-    "named_entity_claim",
-    "benchmark_claim",
-    "model_version_claim",
-    "comparison_claim",
-    "superlative_claim",
-    "causal_claim",
-    "attribution_claim",
-    "quote_claim",
-    "date_claim",
+    "numeric_claim", "named_entity_claim", "benchmark_claim", "model_version_claim",
+    "comparison_claim", "superlative_claim", "causal_claim", "attribution_claim",
+    "quote_claim", "date_claim",
 )
 
 _COMPARISON_RE = re.compile(
@@ -73,12 +56,20 @@ _ATTRIBUTION_RE = re.compile(
     re.IGNORECASE,
 )
 _QUOTE_RE = re.compile(r'["“”«»]([^"“”«»\n]{2,240})["“”«»]')
-_NUMBER_RE = re.compile(r"(?<![\w])(?:\d{1,3}(?:[,_]\d{3})+|\d+(?:[.,]\d+)?)\s*(?:%|٪|percent|درصد|x|×|[KMB](?:B)?|هزار|میلیون|میلیارد)?", re.IGNORECASE)
+_NUMBER_RE = re.compile(
+    r"(?<![\w])(?:\d{1,3}(?:[,_]\d{3})+|\d+(?:[.,]\d+)?)\s*(?:%|٪|percent|درصد|x|×|[KMB](?:B)?|هزار|میلیون|میلیارد)?",
+    re.IGNORECASE,
+)
 _DATE_RE = re.compile(r"(?<!\d)(?:\d{4}|\d{1,2}[/-]\d{1,2}[/-]\d{2,4})(?!\d)")
-_BENCHMARK_RE = re.compile(r"\b(?:SWE-bench|MMLU(?:-Pro)?|GPQA(?:-Diamond)?|HumanEval|AIME(?:\s*\d{4})?|GSM8K|BIG-bench|ARC[- ]?AGI|MMMU|LiveBench|HELM|TruthfulQA|IFEval)\b", re.IGNORECASE)
-_MODEL_RE = re.compile(r"\b(?:GPT[- ]?\d+(?:\.\d+)*|Claude(?:[- ]?(?:2|3|4)(?:\.\d+)*)?|Gemini(?:[- ]?\d+(?:\.\d+)*)?|Llama(?:[- ]?\d+(?:\.\d+)*)?|Qwen(?:[- ]?\d+(?:\.\d+)*)?|Grok(?:[- ]?\d+(?:\.\d+)*)?)\b", re.IGNORECASE)
+_BENCHMARK_RE = re.compile(
+    r"\b(?:SWE-bench|MMLU(?:-Pro)?|GPQA(?:-Diamond)?|HumanEval|AIME(?:\s*\d{4})?|GSM8K|BIG-bench|ARC[- ]?AGI|MMMU|LiveBench|HELM|TruthfulQA|IFEval)\b",
+    re.IGNORECASE,
+)
+_MODEL_RE = re.compile(
+    r"\b(?:GPT[- ]?\d+(?:\.\d+)*|Claude(?:[- ]?(?:2|3|4)(?:\.\d+)*)?|Gemini(?:[- ]?\d+(?:\.\d+)*)?|Llama(?:[- ]?\d+(?:\.\d+)*)?|Qwen(?:[- ]?\d+(?:\.\d+)*)?|Grok(?:[- ]?\d+(?:\.\d+)*)?)\b",
+    re.IGNORECASE,
+)
 _ENTITY_RE = re.compile(r"\b[A-Z][A-Za-z0-9]+(?:[ ._-][A-Z][A-Za-z0-9]+){0,3}\b")
-
 _PERSIAN_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
 
 
@@ -185,11 +176,11 @@ def _make_flags(title: str, summary: str, why: str, source: str) -> tuple[RiskFl
             if not _contains(source_norm, benchmark):
                 unsupported.append("unsupported_benchmark")
 
-    entities = []
-    seen = set()
+    entities: list[str] = []
+    seen: set[str] = set()
     for value in _ENTITY_RE.findall(output):
         key = normalize_text(value)
-        if key in seen or key in {"Ai", "The", "This", "OpenAI"}:
+        if key in seen or key in {"ai", "the", "this", "openai"}:
             continue
         seen.add(key)
         if len(value) >= 4:
@@ -201,28 +192,34 @@ def _make_flags(title: str, summary: str, why: str, source: str) -> tuple[RiskFl
             if not _contains(source_norm, entity):
                 unsupported.append("unsupported_named_entity")
 
-    if _COMPARISON_RE.search(output):
+    comparison_match = _COMPARISON_RE.search(output)
+    if comparison_match:
         flags["comparison_claim"] = True
-        claims.append(Claim("c1", "comparison", _COMPARISON_RE.search(output).group(0), "high"))
-    if _SUPERLATIVE_RE.search(output):
+        claims.append(Claim("c1", "comparison", comparison_match.group(0), "high"))
+
+    superlative_match = _SUPERLATIVE_RE.search(output)
+    if superlative_match:
         flags["superlative_claim"] = True
-        claims.append(Claim("s1", "superlative", _SUPERLATIVE_RE.search(output).group(0), "high"))
-    if _CAUSAL_RE.search(output):
+        claims.append(Claim("s1", "superlative", superlative_match.group(0), "high"))
+
+    causal_match = _CAUSAL_RE.search(output)
+    if causal_match:
         flags["causal_claim"] = True
-        claims.append(Claim("ca1", "causal", _CAUSAL_RE.search(output).group(0), "high"))
-    if _ATTRIBUTION_RE.search(output):
+        claims.append(Claim("ca1", "causal", causal_match.group(0), "high"))
+
+    attribution_match = _ATTRIBUTION_RE.search(output)
+    if attribution_match:
         flags["attribution_claim"] = True
-        claims.append(Claim("a1", "attribution", _ATTRIBUTION_RE.search(output).group(0), "high"))
-    if _QUOTE_RE.search(output):
+        claims.append(Claim("a1", "attribution", attribution_match.group(0), "high"))
+
+    quote_match = _QUOTE_RE.search(output)
+    if quote_match:
         flags["quote_claim"] = True
-        claims.append(Claim("q1", "quote", _QUOTE_RE.search(output).group(1), "high"))
-        if _QUOTE_RE.search(output).group(1) not in source:
+        claims.append(Claim("q1", "quote", quote_match.group(1), "high"))
+        if quote_match.group(1) not in source:
             unsupported.append("unsupported_quote")
 
-    if flags["comparison_claim"] and not _contains(
-        source_norm,
-        _COMPARISON_RE.search(normalize_text(source)).group(0) if _COMPARISON_RE.search(normalize_text(source)) else "__missing__",
-    ):
+    if flags["comparison_claim"] and not _COMPARISON_RE.search(source):
         unsupported.append("unsupported_comparison")
     if flags["superlative_claim"] and not _SUPERLATIVE_RE.search(source):
         unsupported.append("unsupported_superlative")
@@ -231,7 +228,7 @@ def _make_flags(title: str, summary: str, why: str, source: str) -> tuple[RiskFl
     if flags["attribution_claim"] and not _ATTRIBUTION_RE.search(source):
         unsupported.append("unsupported_attribution")
 
-    unique = []
+    unique: list[str] = []
     for code in unsupported:
         if code not in unique:
             unique.append(code)
@@ -295,10 +292,13 @@ def semantic_verify(
         "source": source_text,
     }
     try:
+        kwargs: dict[str, Any] = {}
+        if call_fn is None:
+            kwargs["providers"] = get_quality_chain()
         raw, provider = caller(
             _DEFAULT_VERIFIER_PROMPT,
             json.dumps(user_payload, ensure_ascii=False),
-            providers=get_quality_chain(),
+            **kwargs,
         )
     except TimeoutError:
         return VerificationResult("UNAVAILABLE", None, [], ["verifier_timeout"], None)
@@ -311,7 +311,7 @@ def semantic_verify(
     except (json.JSONDecodeError, TypeError, ValueError):
         return VerificationResult("UNAVAILABLE", None, [], ["verifier_provider_failure"], provider)
 
-    result_claims = []
+    result_claims: list[dict[str, Any]] = []
     flags = list(precheck.get("flags") or [])
     for claim in data.get("claims") or []:
         if not isinstance(claim, dict):

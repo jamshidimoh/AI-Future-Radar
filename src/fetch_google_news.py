@@ -23,6 +23,7 @@ _RETRY_STATUS_CODES = {429, 500, 502, 503, 504}
 _CIRCUIT_BREAK_AFTER = 3
 _ROOT = Path(__file__).resolve().parents[1]
 _SUPPLEMENTAL_QUERY_PATH = _ROOT / "config" / "radar_google_news_queries.yaml"
+_LEADER_WATCHLIST_PATH = _ROOT / "config" / "leader_watchlist.yaml"
 # Generic companion-discovery vocabulary. It deliberately avoids source-, person-,
 # geography-, or platform-specific terms so the same mechanism works for every watch person.
 _LEADER_SIGNAL_TERMS = (
@@ -96,10 +97,45 @@ def _load_supplemental_queries():
         return []
 
 
+def _load_watchlist_people_queries():
+    """Generate one bounded discovery query for every configured watchlist person.
+
+    The static query list can evolve independently; this prevents adding a person to
+    the watchlist from silently making that person undiscoverable.
+    """
+    try:
+        payload = yaml.safe_load(_LEADER_WATCHLIST_PATH.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeDecodeError, yaml.YAMLError, TypeError, ValueError) as exc:
+        logger.warning("Leader watchlist unavailable for generic discovery: %s", exc, exc_info=True)
+        return []
+    people = payload.get("people", {}) if isinstance(payload, dict) else {}
+    rows = []
+    if isinstance(people, dict):
+        for group, cfg in people.items():
+            if not isinstance(cfg, dict):
+                continue
+            priority = int(cfg.get("priority", 0) or 0)
+            category = "mind" if str(group).strip() == "consciousness_and_mind_ai" else ("future" if "futur" in str(group).lower() else "ai")
+            for raw_name in cfg.get("names", []) or []:
+                name = str(raw_name).strip()
+                if name:
+                    rows.append({
+                        "query": f'"{name}" ({" OR ".join(_LEADER_SIGNAL_TERMS)})',
+                        "watch_person": name,
+                        "category": category,
+                        "tier": 1,
+                        "content_type": "leader_signal",
+                        "leader_discovery": True,
+                        "curated_discovery": True,
+                        "leader_priority": priority,
+                    })
+    return rows
+
+
 def _merge_queries(queries):
     merged = list(queries or [])
     seen = {str(q.get("query") or "").strip().lower() for q in merged if isinstance(q, dict)}
-    for query in _load_supplemental_queries():
+    for query in _load_supplemental_queries() + _load_watchlist_people_queries():
         key = str(query.get("query") or "").strip().lower()
         if key and key not in seen and not is_excluded_source_text(query.get("query")):
             merged.append(query)

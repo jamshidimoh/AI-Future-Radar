@@ -1,9 +1,8 @@
-"""Bounded additive Mind/Ideas/Voices lane for production selection.
+"""Score-driven additive Mind/Ideas/Voices lane for production selection.
 
-The lane is deliberately additive to the normal three-item portfolio. It can
-surface up to two extra, already-ranked candidates per production iteration
-when they match influential people/ideas, specialist conversations, or
-AI-relevant mind/science/future interdisciplinary themes.
+The lane is additive to the normal three-item portfolio. It surfaces every
+eligible already-ranked candidate that satisfies the existing normal score
+floor and rank window; there is no arbitrary per-run special-item cap.
 """
 from __future__ import annotations
 
@@ -130,7 +129,7 @@ def choose_additive_candidates(
     *,
     existing_ids: set[int],
     max_rank: int,
-    max_items: int = 2,
+    max_items: int | None = None,
     minimum_score: float = NORMAL_SCORE_FLOOR,
 ) -> list[dict[str, Any]]:
     eligible: list[dict[str, Any]] = []
@@ -145,6 +144,8 @@ def choose_additive_candidates(
             continue
         eligible.append(item)
     eligible.sort(key=lambda item: (int(item.get("normal_period_rank", 999) or 999), -_score(item)))
+    if max_items is None:
+        return eligible
     return eligible[:max(0, max_items)]
 
 

@@ -9,8 +9,9 @@ from __future__ import annotations
 import json
 import re
 import unicodedata
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
-from typing import Any, Callable, Mapping
+from typing import Any
 
 from src.llm_router_light import call_llm_with_fallback, get_quality_chain
 
@@ -147,9 +148,7 @@ def _numbers(text: str) -> list[str]:
 def _make_flags(title: str, summary: str, why: str, source: str) -> tuple[RiskFlags, list[Claim], list[str]]:
     output = " ".join((title or "", summary or "", why or "")).strip()
     source_norm = normalize_text(source)
-    flags = {
-        name: False for name in RISK_TYPES
-    }
+    flags = {name: False for name in RISK_TYPES}
     claims: list[Claim] = []
     unsupported: list[str] = []
 
@@ -220,7 +219,10 @@ def _make_flags(title: str, summary: str, why: str, source: str) -> tuple[RiskFl
         if _QUOTE_RE.search(output).group(1) not in source:
             unsupported.append("unsupported_quote")
 
-    if flags["comparison_claim"] and not _contains(source_norm, _COMPARISON_RE.search(normalize_text(source)).group(0) if _COMPARISON_RE.search(normalize_text(source)) else "__missing__"):
+    if flags["comparison_claim"] and not _contains(
+        source_norm,
+        _COMPARISON_RE.search(normalize_text(source)).group(0) if _COMPARISON_RE.search(normalize_text(source)) else "__missing__",
+    ):
         unsupported.append("unsupported_comparison")
     if flags["superlative_claim"] and not _SUPERLATIVE_RE.search(source):
         unsupported.append("unsupported_superlative")

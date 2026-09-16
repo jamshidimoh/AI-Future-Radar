@@ -1,7 +1,7 @@
 # Production runtime verification trigger: diversity policy is intentional.
 selection:
   max_posts: 3
-  candidate_window: 6
+  candidate_window: 8
   max_items_per_source: 2
   max_items_per_content_type: 2
   story_similarity_threshold: 0.45
@@ -23,17 +23,31 @@ editorial:
   strict_relevance: true
 
 # Unified production selection contract:
-# - max_posts=3 is the normal publication capacity; candidate_window=6 is the
-#   pre-QA candidate pool used for replacement-aware publication.
+# - max_posts=3 is the normal publication capacity.
+# - candidate_window=8 keeps a larger bounded replacement pool so the additive
+#   Mind/Ideas/Voices lane can obtain up to two qualifying candidates without
+#   forcing a rewrite of canonical ranking.
 # - max_items_per_source=2 is the adaptive ceiling and hard ceiling. One item
 #   per source is preferred first; a second item is allowed only during adaptive
 #   backfill when capacity remains.
 # - max_items_per_content_type=2 is a soft portfolio ceiling; mission-lane
 #   coverage must not be starved merely because several strong lanes are research.
 #   Interview-specific protection remains controlled by interview_target_max.
-# - Mission coverage is now explicit: one AI-core lane, one mind/cognition lane,
-#   and one convergence lane are preferred when qualifying candidates exist.
-#   The remaining capacity is optimized by quality, information gain and diversity.
+# - Mission coverage is explicit: AI-core, mind/cognition and convergence remain
+#   normal portfolio targets. The remaining capacity is optimized by quality,
+#   information gain and diversity.
+# - The additive Mind/Ideas/Voices lane is separate from normal capacity: up to
+#   two additional qualifying items may be published per production iteration.
+#   Qualifying scope includes influential technology/AI leaders and CEOs,
+#   scientists, theorists, public intellectuals, sociologists and scientifically
+#   grounded futurists; their substantive interviews, podcasts, talks and
+#   conversations; and AI-relevant work on consciousness, philosophy of mind,
+#   philosophy of science/technology, cognitive science, neuroscience/brain,
+#   genetics/genomics/synthetic biology, and related interdisciplinary domains.
+# - The additive lane never grants a discovery, authority, deduplication,
+#   language, editorial-quality, or publication-safety bypass. Candidates must
+#   already exist in the ranked replacement pool and satisfy the existing rank
+#   and score floor.
 # - ai_core_target_min/max, mind_cognition_target and convergence_target are
 #   explicit mission coverage controls. They do not bypass relevance, authority,
 #   deduplication or final publication safety checks.
@@ -44,8 +58,9 @@ editorial:
 # - max_same_mission_area=2 prevents an AI-only or single-domain publication run.
 # - Information gain is a bounded soft reranker. Quality remains the dominant
 #   signal inside a mission lane; novelty is used to break close-score ties rather
-#   than displacing materially stronger mind/cognition or research candidates.
-# - Community/aggregator sources are not eligible for the normal portfolio.
+#   than displacing materially stronger candidates.
+# - Community/aggregator sources are not eligible for the normal portfolio or
+#   additive Mind/Ideas/Voices lane.
 # - candidate_window and replacement_buffer preserve additional candidates for
 #   post-summary or publication rejection without lowering quality floors.
 # - strict_relevance=true enables hard mission-relevance filtering in production.

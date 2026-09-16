@@ -1,0 +1,13 @@
+name: Apply editorial lanes once
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify trigger
+        run: echo "editorial lane migration trigger received"

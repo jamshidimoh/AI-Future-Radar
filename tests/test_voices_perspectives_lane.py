@@ -1,9 +1,5 @@
 from src import publication_guard
-from src.voices_perspectives_lane import (
-    MAX_VOICES_PER_PERIOD,
-    choose_voices_candidate,
-    is_voices_candidate,
-)
+from src.voices_perspectives_lane import MAX_VOICES_PER_PERIOD, choose_voices_candidate, is_voices_candidate
 
 
 def _voice(title="AI researcher interview"):
@@ -22,8 +18,7 @@ def _voice(title="AI researcher interview"):
 
 def test_voice_candidate_requires_substantive_person_and_ai_signal():
     assert is_voices_candidate(_voice())
-    no_person = _voice()
-    no_person.pop("person_name")
+    no_person = _voice(); no_person.pop("person_name")
     assert not is_voices_candidate(no_person)
 
 
@@ -31,49 +26,49 @@ def test_voice_lane_accepts_watched_person_news_without_interview_keyword():
     item = {
         "title": "Sam Altman says frontier AI development needs stronger safety measures",
         "summary": "OpenAI CEO Sam Altman discussed artificial intelligence safety and the pace of frontier model development.",
-        "mission_area": "ai",
-        "category": "ai",
-        "content_type": "news",
-        "source": "Specialist publication",
-        "source_type": "specialist",
-        "source_tier": 1,
-        "published": "2026-09-16T10:00:00+00:00",
-        "watch_person": "Sam Altman",
-        "is_leader_watch": True,
-        "leader_priority": 10,
+        "mission_area": "ai", "category": "ai", "content_type": "news",
+        "source": "Specialist publication", "source_type": "specialist", "source_tier": 1,
+        "published": "2026-09-16T10:00:00+00:00", "watch_person": "Sam Altman",
+        "is_leader_watch": True, "leader_priority": 10,
     }
     assert is_voices_candidate(item)
 
 
 def test_voice_lane_allows_substantive_priority_interview_marked_tier0():
     item = _voice("David Chalmers interview on AI consciousness")
-    item.update({
-        "watch_person": "David Chalmers",
-        "is_leader_watch": True,
-        "leader_priority": 9,
-        "_rank_is_tier0": True,
-    })
+    item.update({"watch_person": "David Chalmers", "is_leader_watch": True, "leader_priority": 9, "_rank_is_tier0": True})
     assert is_voices_candidate(item)
 
 
 def test_voice_lane_rejects_excluded_sources():
     for source in ("Reddit", "community forum", "aggregator", "arXiv"):
-        item = _voice()
-        item["source"] = source
+        item = _voice(); item["source"] = source
         assert not is_voices_candidate(item)
 
 
 def test_voice_lane_skips_published_story_and_keeps_next_candidate(monkeypatch):
     def fake_guard(text, source_link="", records=None):
         return (False, "semantic_story_already_published score=1.000") if "Already Published" in text else (True, "no_publication_conflict")
-
     monkeypatch.setattr(publication_guard, "check_before_publish", fake_guard)
     first = _voice("Already Published interview")
-    second = _voice("New Dario Amodei interview")
-    second["person_name"] = "Dario Amodei"
+    second = _voice("New Dario Amodei interview"); second["person_name"] = "Dario Amodei"
     selected = choose_voices_candidate([first, second])
-    assert len(selected) == 1
-    assert selected[0]["title"] == "New Dario Amodei interview"
+    assert len(selected) == 1 and selected[0]["title"] == "New Dario Amodei interview"
+
+
+def test_voice_lane_title_only_prefilter_blocks_missing_summary_duplicate(monkeypatch):
+    calls = []
+    def fake_guard(text, source_link="", records=None):
+        calls.append(text)
+        if "Already Published Voice" in text:
+            return False, "semantic_story_already_published score=0.900"
+        return True, "no_publication_conflict"
+    monkeypatch.setattr(publication_guard, "check_before_publish", fake_guard)
+    duplicate = _voice("Already Published Voice"); duplicate.pop("summary")
+    replacement = _voice("Fresh David Chalmers interview"); replacement["person_name"] = "David Chalmers"
+    selected = choose_voices_candidate([duplicate, replacement])
+    assert selected and selected[0]["title"] == "Fresh David Chalmers interview"
+    assert any("Already Published Voice" in text and "خلاصه:" in text for text in calls)
 
 
 def test_voice_lane_is_independent_and_capped_at_one():

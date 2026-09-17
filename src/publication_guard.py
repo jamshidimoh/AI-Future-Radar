@@ -74,7 +74,13 @@ def _load_records() -> list[dict]:
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
-    """Return semantic conflict only with strong, corroborated same-story evidence."""
+    """Return semantic conflict only for a corroborated same story/event.
+
+    Publication history is stricter than discovery dedup: a different publisher
+    URL must not allow the same underlying event to be published again. At the
+    same time, repeated coverage of the same person/entity must remain allowed
+    when the event is materially different.
+    """
     stored_title = str(record.get("title") or "")
     stored_summary = str(record.get("summary") or record.get("description") or "")
     candidate = {"title": candidate_title, "summary": candidate_summary}
@@ -91,20 +97,23 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     shared_events |= events(f"{candidate_title} {candidate_summary}") & events(f"{stored_title} {stored_summary}")
     title_similarity = float(evidence.get("title_similarity", 0.0) or 0.0)
     context_jaccard = float(evidence.get("context_jaccard", 0.0) or 0.0)
+    shared_entities = set(evidence.get("shared_entities") or [])
 
     if kind == "UPDATE":
-        if anchors >= 3 and shared_events and semantic_score >= 0.65:
+        if anchors >= 2 and shared_events and semantic_score >= 0.55:
             return 1.0
         if title_similarity >= 0.90 and context_jaccard >= 0.45:
             return 1.0
         return 0.0
+
     if kind == "DUPLICATE":
-        # A high raw semantic score alone is not sufficient: unrelated stories
-        # about the same entity/topic can score highly. Require corroboration
-        # from concrete anchors + the same event class, or very strong title and
-        # context identity. This preserves distinct events such as IPO vs model
-        # launch while still blocking cross-source rewrites.
-        if shared_events and anchors >= 3 and semantic_score >= 0.65:
+        # Cross-source rewrites are the primary failure mode: one source may
+        # mention only one concrete entity while the second source supplies the
+        # rest of the context. Do not require three anchors when the event
+        # matcher has already classified both stories as the same event.
+        if shared_events and (anchors >= 1 or shared_entities) and semantic_score >= 0.52:
+            return 1.0
+        if shared_events and title_similarity >= 0.72 and context_jaccard >= 0.18:
             return 1.0
         if title_similarity >= 0.90 and context_jaccard >= 0.45:
             return 1.0
@@ -113,13 +122,13 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     # Cross-language rewrites often have low lexical/semantic similarity. Shared
     # concrete anchors plus the same event class are sufficient; the previous
     # 0.45 event-score threshold incorrectly rejected this class of duplicate.
-    if anchors >= 3 and shared_events and (event_score >= 0.20 or semantic_score >= 0.65):
+    if anchors >= 2 and shared_events and (event_score >= 0.20 or semantic_score >= 0.60):
         return 1.0
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:
         return 0.85
 
     logger.debug(
-        "publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f title=%.3f context=%.3f shared_events=%s evidence=%s",
+        "publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f title=%.3f context=%.3f shared_events=%s shared_entities=%s evidence=%s",
         kind,
         anchors,
         semantic_score,
@@ -127,6 +136,7 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         title_similarity,
         context_jaccard,
         sorted(shared_events),
+        sorted(shared_entities),
         evidence,
     )
     return 0.0

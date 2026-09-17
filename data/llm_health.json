@@ -8,7 +8,7 @@
     },
     "Groq:openai/gpt-oss-120b": {
       "failures": 2,
-      "disabled_until": 1789634414.65,
+      "disabled_until": 1789634892.662,
       "last_error": "rate_limit",
       "last_success": 0
     },

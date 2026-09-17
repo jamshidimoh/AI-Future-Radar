@@ -39,3 +39,47 @@ def test_high_semantic_similarity_without_event_corroboration_is_not_enough():
     }
     score = publication_guard._semantic_conflict(different_event["title"], different_event["summary"], old)
     assert score < 0.82
+
+
+def test_cross_source_same_event_with_one_concrete_anchor_is_blocked():
+    old = {
+        "title": "Sam Altman warns that AI power needs stronger safeguards",
+        "summary": "Sam Altman warned at a public event that the growing power of AI requires stronger safeguards.",
+    }
+    rewritten = {
+        "title": "Sam Altman says the growing power of AI requires safeguards",
+        "summary": "At another report of the same remarks, Sam Altman said AI power requires stronger safeguards.",
+    }
+    score = publication_guard._semantic_conflict(rewritten["title"], rewritten["summary"], old)
+    assert score >= 0.82
+
+
+def test_same_person_different_event_remains_publishable():
+    old = {
+        "title": "Sam Altman warns that AI power needs stronger safeguards",
+        "summary": "Sam Altman warned at a public event that the growing power of AI requires stronger safeguards.",
+    }
+    different_event = {
+        "title": "Sam Altman discusses OpenAI's plans for new AI agents",
+        "summary": "Sam Altman discussed a separate product direction involving autonomous AI agents.",
+    }
+    score = publication_guard._semantic_conflict(different_event["title"], different_event["summary"], old)
+    assert score < 0.82
+
+
+def test_cross_source_rewrite_is_blocked_by_publication_guard(tmp_path):
+    _write_ledger(
+        tmp_path,
+        [{
+            "title": "Dario Amodei calls for pacing frontier AI development",
+            "summary": "Dario Amodei argues that frontier AI development should be paced to manage risks.",
+            "link": "https://example.com/original",
+        }],
+    )
+    allowed, reason = publication_guard.check_before_publish(
+        "<b>📡 Dario Amodei urges pacing frontier AI development</b>\n"
+        "<blockquote>📌 <b>خلاصه</b>\nDario Amodei argues that frontier AI development should be paced to manage risks.</blockquote>",
+        "https://another.example/rewrite",
+    )
+    assert not allowed
+    assert reason.startswith("semantic_story_already_published")

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789631292,
+  "updated_at": 1789649289,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -11118,6 +11118,25 @@
       "why_it_matters": "با تبدیل مقالات به عامل‌های هوش مصنوعی، پژوهشگران می‌توانند به سرعت به نتایج و روش‌های جدید دسترسی پیدا کنند، بدون نیاز به خواندن کامل متن. این امر زمان صرفه‌جویی کرده و امکان آزمایش سریع‌تر فرضیات را فراهم می‌آورد. همچنین، همکاری میان عامل‌ها امکان ترکیب دانش‌های مختلف را فراهم می‌کند، که می‌تواند به کشف‌های نوآورانه منجر شود. محدودیت‌های اولیه شامل نیاز به داده‌های دقیق و امکان خطا در ترجمه روش‌ها به کدهای اجرایی است.",
       "link": "https://www.nature.com/articles/d41586-026-02880-z",
       "posted_at": 1789631292
+    },
+    "-1004482051328:1701": {
+      "chat_id": -1004482051328,
+      "message_id": 1701,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Nunchux AI VC‑Attention: هستهٔ Attention کم‌بیتی بدون آموزش برای تسریع Video Diffusion Transformers",
+      "summary": "Nunchux AI VC‑Attention یک هستهٔ Attention کم‌بیتی (low‑bit) است که بدون نیاز به آموزش مجدد، خطای کمیت‌سازی مقادیر (value quantization error) و گرهٔ کندی مرحلهٔ softmax را در Video Diffusion Transformers (DiTs) برطرف می‌کند. این روش با فشرده‌سازی توکن‌های فضایی‑زمانی و اعمال خود‑Attention کامل در هر لایه، سرعت پردازش و مصرف حافظه را به‌طور قابل‌ملاحظه‌ای بهبود می‌بخشد. نتایج آزمایشی نشان می‌دهد که VC‑Attention می‌تواند زمان اجرا را تا ۲ تا ۳ برابر کاهش دهد در حالی که دقت تولید ویدیو را حفظ می‌کند. این نوآوری برای کاربردهای تولید محتوا ویدئویی مبتنی بر هوش مصنوعی، به‌ویژه در محیط‌های با منابع محدود، اهمیت دارد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "VC‑Attention با حذف نیاز به آموزش مجدد و کاهش هزینه‌های محاسباتی softmax، امکان استفادهٔ سریع‌تر و کارآمدتر از Video Diffusion Transformers را فراهم می‌کند. این پیشرفت به‌ویژه برای تولید ویدیوهای با کیفیت بالا در زمان واقعی یا در دستگاه‌های لبه (edge) که حافظه و توان پردازشی محدود است، ارزشمند است. علاوه بر تسریع، حفظ دقت مدل نشان می‌دهد که فشرده‌سازی بیت‌ها می‌تواند بدون افت عملکرد به‌کار رود، که برای مقیاس‌پذیری سرویس‌های مبتنی بر AI حیاتی است.",
+      "link": "https://www.marktechpost.com/2026/09/16/nunchux-ai-introduces-vc-attention-a-training-free-low-bit-attention-kernel-that-speeds-up-video-diffusion-transformers/",
+      "posted_at": 1789649283
     }
   }
 }

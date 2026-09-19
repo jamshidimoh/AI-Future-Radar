@@ -104,5 +104,6 @@ def test_shared_generic_ai_concept_without_story_identity_remains_publishable():
         candidate, "https://example.com/benchmark", records=[published]
     )
     assert allowed, reason
-
+def test_numeric_identifier_parser_preserves_decimal_values_without_year_conversion():
+    assert publication_guard._title_numeric_identifiers("model score 0.65, 100 million, 2026") == {"0.65", "100"}
 

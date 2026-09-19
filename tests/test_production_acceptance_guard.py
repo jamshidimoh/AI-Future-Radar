@@ -91,6 +91,15 @@ COMPACT_UNMET_MISSION_COVERAGE = """
 Posts sent: 1/3
 """
 
+NO_CANDIDATE_MISSION_COVERAGE = """
+[Production Selection] total=5
+[Mission Coverage Recovery] area=convergence status=no_candidate
+[Mission Coverage Recovery] attempt=1 area=mind_cognition title=valid mind story status=recovered
+[Mission Coverage Recovery] missing_lanes=2 attempts=1 recovered=1 status=unmet
+[Production Contract] normal_news=1 normal_max=3 tier0_news=0 education=not_due
+Posts sent: 2/5
+"""
+
 
 SATISFIED_MISSION_COVERAGE = """
 [Production Selection] total=3
@@ -232,3 +241,9 @@ def test_normal_competitive_gate_preserves_mission_target_candidate_below_relati
         "competitive story",
         "convergence mission target",
     ]
+
+
+def test_no_candidate_mission_gap_is_acceptable_when_no_hard_recovery_failure_exists():
+    ok, message = validate(NO_CANDIDATE_MISSION_COVERAGE)
+    assert ok is True
+    assert "no eligible candidate" in message

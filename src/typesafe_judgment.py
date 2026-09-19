@@ -160,11 +160,13 @@ def rerank_candidates(
         logger.info("[TypeSafe] mode=%s but %s is missing; fail-open", mode, API_KEY_ENV)
         return original
 
+    created_client = False
     try:
         if client is None:
             from typesafe_sdk import TypeSafeClient
 
             client = TypeSafeClient()
+            created_client = True
         eligible_indices = [
             index
             for index, item in enumerate(original)
@@ -205,11 +207,13 @@ def rerank_candidates(
 
         if mode == "audit":
             changed = proposed != original_eligible
+            proposed_titles = [str(original[index].get("title") or "")[:80] for index in reordered_indices]
             logger.info(
-                "[TypeSafe] audit candidates=%d changed=%s weight=%.3f",
+                "[TypeSafe] audit candidates=%d changed=%s weight=%.3f proposed_titles=%s",
                 count,
                 changed,
                 weight,
+                proposed_titles,
             )
             return original
 
@@ -231,3 +235,8 @@ def rerank_candidates(
     except Exception as exc:
         logger.warning("[TypeSafe] rerank failed; preserving existing order: %s", exc, exc_info=True)
         return original
+    finally:
+        if created_client and client is not None:
+            close = getattr(client, "close", None)
+            if callable(close):
+                close()

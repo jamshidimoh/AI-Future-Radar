@@ -2,13 +2,13 @@
   "models": {
     "NaraRouter:auto/bynara": {
       "failures": 1,
-      "disabled_until": 1789670890.015,
+      "disabled_until": 1789817812.212,
       "last_error": "model",
       "last_success": 0
     },
     "Groq:openai/gpt-oss-120b": {
-      "failures": 2,
-      "disabled_until": 1789634892.662,
+      "failures": 1,
+      "disabled_until": 1789799812.212,
       "last_error": "rate_limit",
       "last_success": 0
     },
@@ -20,13 +20,13 @@
     },
     "OpenRouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1789652890.015,
+      "disabled_until": 1789799812.212,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "OpenRouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1789652890.015,
+      "disabled_until": 1789799812.212,
       "last_error": "rate_limit",
       "last_success": 0
     },
@@ -38,7 +38,7 @@
     },
     "KiraAI:qwen3.8-flash": {
       "failures": 1,
-      "disabled_until": 1789550209.329,
+      "disabled_until": 1789799812.212,
       "last_error": "quota",
       "last_success": 0
     },
@@ -52,7 +52,7 @@
   "providers": {
     "kiraai": {
       "failures": 1,
-      "disabled_until": 1789633009.329,
+      "disabled_until": 1789882612.212,
       "last_error": "wallet"
     },
     "openrouter": {

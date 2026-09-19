@@ -101,6 +101,7 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     semantic_signature_candidate = get_story_signature(candidate)
     semantic_signature_stored = get_story_signature(stored)
     semantic_shared_anchors = set(semantic_signature_candidate.get("anchors") or []) & set(semantic_signature_stored.get("anchors") or [])
+    semantic_shared_events = set(semantic_signature_candidate.get("events") or []) & set(semantic_signature_stored.get("events") or [])
     semantic_title_tokens = set(semantic_signature_candidate.get("title") or []) & set(semantic_signature_stored.get("title") or [])
     semantic_title_jaccard = (
         len(semantic_title_tokens)
@@ -119,7 +120,7 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     # no usable cross-language anchors.
     if (
         semantic_shared_anchors
-        and shared_events
+        and semantic_shared_events
         and len(semantic_title_tokens) >= 4
         and semantic_title_jaccard >= 0.30
         and semantic_title_sequence >= 0.60

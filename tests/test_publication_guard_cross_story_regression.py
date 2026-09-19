@@ -66,8 +66,15 @@ def test_same_persian_story_rewrite_from_different_sources_is_blocked(tmp_path):
         "چرا آگاهی هوش مصنوعی می‌تواند تقسیم‌ساز بزرگ جامعه شود",
         "مقالهٔ The Conversation به بررسی این می‌پردازد که اگر هوش مصنوعی به‌گونه‌ای به‌نظر برسد که دارای آگاهی باشد، چگونه می‌تواند مرزهای جدیدی بین گروه‌های مختلف جامعه ایجاد کند. نویسندگان استدلال می‌کنند که این مسأله نه تنها به‌مسئلهٔ اخلاقی و حقوقی می‌انجامد، بلکه می‌تواند باعث بروز اختلافات عمیق در سیاست، اقتصاد و فرهنگ شود.",
     )
+    score = publication_guard._semantic_conflict(
+        "چرا آگاهی هوش مصنوعی می‌تواند تقسیم‌ساز بزرگ جامعه شود",
+        "مقالهٔ The Conversation به بررسی این می‌پردازد که اگر هوش مصنوعی به‌گونه‌ای به‌نظر برسد که دارای آگاهی باشد، چگونه می‌تواند مرزهای جدیدی بین گروه‌های مختلف جامعه ایجاد کند. نویسندگان استدلال می‌کنند که این مسأله نه تنها به‌مسئلهٔ اخلاقی و حقوقی می‌انجامد، بلکه می‌تواند باعث بروز اختلافات عمیق در سیاست، اقتصاد و فرهنگ شود.",
+        published,
+    )
+    print(f"[DEBUG Persian Duplicate] score={score:.3f}", flush=True)
     allowed, reason = publication_guard.check_before_publish(
         candidate, "https://example.com/the-conversation", records=[published]
     )
+    assert score >= 0.70
     assert not allowed
     assert reason.startswith("semantic_story_already_published")

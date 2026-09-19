@@ -241,8 +241,19 @@ def _competitive_normal_candidates(candidates):
     scores = [float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0.0) for x in regular]
     best = max(scores)
     cutoff = max(float(NORMAL_SCORE_FLOOR), best - NORMAL_RELATIVE_SCORE_GAP)
-    kept = [x for x in regular if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0.0) >= cutoff]
-    print(f"[Normal Competitive Gate] candidates={len(regular)} best={best:.2f} cutoff={cutoff:.2f} gap={NORMAL_RELATIVE_SCORE_GAP:.1f} kept={len(kept)} dropped={len(regular)-len(kept)}", flush=True)
+    score_kept = [x for x in regular if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0.0) >= cutoff]
+    mission_targeted = [
+        x for x in regular
+        if str(x.get("mission_selection_reason") or "").startswith("mission_target:")
+    ]
+    score_kept_ids = {id(x) for x in score_kept}
+    kept = score_kept + [x for x in mission_targeted if id(x) not in score_kept_ids]
+    print(
+        f"[Normal Competitive Gate] candidates={len(regular)} best={best:.2f} cutoff={cutoff:.2f} "
+        f"gap={NORMAL_RELATIVE_SCORE_GAP:.1f} kept={len(kept)} dropped={len(regular)-len(kept)} "
+        f"mission_targets_preserved={len(kept)-len(score_kept)}",
+        flush=True,
+    )
     return protected + kept
 
 

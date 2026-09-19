@@ -101,6 +101,30 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     semantic_signature_candidate = get_story_signature(candidate)
     semantic_signature_stored = get_story_signature(stored)
     semantic_shared_anchors = set(semantic_signature_candidate.get("anchors") or []) & set(semantic_signature_stored.get("anchors") or [])
+    semantic_title_tokens = set(semantic_signature_candidate.get("title") or []) & set(semantic_signature_stored.get("title") or [])
+    semantic_title_jaccard = (
+        len(semantic_title_tokens)
+        / len(set(semantic_signature_candidate.get("title") or []) | set(semantic_signature_stored.get("title") or []))
+        if semantic_signature_candidate.get("title") and semantic_signature_stored.get("title")
+        else 0.0
+    )
+    semantic_title_sequence = difflib.SequenceMatcher(
+        None,
+        str(semantic_signature_candidate.get("title_text") or ""),
+        str(semantic_signature_stored.get("title_text") or ""),
+    ).ratio()
+
+    # Language-aware title identity is evaluated before event-kind short circuits.
+    # This catches fully Persian rewrites where the Latin/digit anchor guard has
+    # no usable cross-language anchors.
+    if (
+        semantic_shared_anchors
+        and shared_events
+        and len(semantic_title_tokens) >= 4
+        and semantic_title_jaccard >= 0.30
+        and semantic_title_sequence >= 0.60
+    ):
+        return 1.0
 
     if kind == "UPDATE":
         if anchors >= 2 and shared_events and semantic_score >= 0.55:
@@ -129,17 +153,6 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         return 1.0
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:
         return 0.85
-
-    # Persian/English source rewrites can lose Latin anchors after translation.
-    # Reuse language-aware semantic anchors from story signatures at the final
-    # send boundary so a translated rewrite of the same event is blocked.
-    if (
-        semantic_shared_anchors
-        and shared_events
-        and semantic_score >= 0.68
-        and (title_similarity >= 0.60 or context_jaccard >= 0.20)
-    ):
-        return 1.0
 
     logger.debug(
         "publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f title=%.3f context=%.3f shared_events=%s shared_entities=%s evidence=%s",

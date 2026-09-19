@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789796211,
+  "updated_at": 1789797018,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -11194,6 +11194,25 @@
       "why_it_matters": "سخنرانی‌های Brian Greene به دلیل ترکیب دقیق نظریه ریسمان با شواهد کیهان‌شناسی، برای پژوهشگران و علاقه‌مندان به فیزیک بنیادی ارزشمند است. این محتوا می‌تواند درک بهتری از ساختار جهان و چالش‌های نظری موجود فراهم کند و مسیرهای جدیدی برای تحقیقات آینده باز کند. همچنین، ارائه ساده‌سازی‌شده این مفاهیم به عموم، آگاهی علمی جامعه را ارتقا می‌دهد.",
       "link": "https://www.youtube.com/watch?v=FMI74gXa84Y",
       "posted_at": 1789796211
+    },
+    "-1004482051328:1705": {
+      "chat_id": -1004482051328,
+      "message_id": 1705,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (UA.NEWS)",
+      "content_type": "leader_signal",
+      "category": "mind",
+      "leader": "Bernardo Kastrup",
+      "watch_person": "Bernardo Kastrup",
+      "title": "سامسونگ در راند سرمایه‌گذاری مشترک برای استارتاپ هوش مصنوعی هلندی Euclyd پیشتاز شد",
+      "summary": "شرکت سامسونگ در راند سرمایه‌گذاری مشترک برای استارتاپ هوش مصنوعی هلندی Euclyd نقش کلیدی ایفا کرد. این اقدام نشان‌دهنده تمایل سامسونگ به گسترش حضور خود در حوزه هوش مصنوعی و فناوری‌های نوین است. Euclyd با تمرکز بر توسعه مدل‌های Deep Learning و پردازش زبان طبیعی، در حال حاضر در میان شرکت‌های نوپا برجسته در حوزه AI قرار دارد. سرمایه‌گذاری سامسونگ می‌تواند منابع مالی و زیرساخت‌های فنی لازم برای تسریع رشد این استارتاپ را فراهم کند.",
+      "why_it_matters": "این سرمایه‌گذاری به سامسونگ امکان می‌دهد تا در رقابت جهانی با شرکت‌های بزرگ AI مانند Google و OpenAI حضور قوی‌تری داشته باشد. همچنین، همکاری با Euclyd می‌تواند به سامسونگ دسترسی به فناوری‌های پیشرفته Machine Learning و پردازش زبان طبیعی را بدهد، که در توسعه محصولات آینده‌ساز آن نقش مهمی خواهد داشت. برای Euclyd، دریافت سرمایه از یک شرکت بزرگ فناوری، اعتبار و اعتبار بازار را افزایش می‌دهد و مسیر توسعه سریع‌تر را فراهم می‌کند. این حرکت نشان می‌دهد که شرکت‌های سنتی در حال تغییر استراتژی خود برای ورود به حوزه هوش مصنوعی هستند.",
+      "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxONzZDaFF6bHVaSEJabVoxb0ZWamphU094MnFOcDA4Slcwenh3S2padDVwM2ZpcjNWNmRPTE5UdllyclRteVdRYkFEajBRZVM2Wko0eWE1b1BWWm9QZ3FEOEpocHVLV0hra0RzaTl4TmRETklLSDZiWmpSVTN1WGEyT1hwZlJsR0U4dkV0ZVZrTmg0Qm9oSm5ETGNCVU9FdjJkelpSMTRPYXg3UWc?oc=5",
+      "posted_at": 1789797018
     }
   }
 }

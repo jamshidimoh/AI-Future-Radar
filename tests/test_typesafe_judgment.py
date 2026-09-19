@@ -59,7 +59,7 @@ def test_typesafe_audit_calls_model_but_does_not_reorder(monkeypatch):
     })
     items = [{"title": title} for title in ["A", "B", "C", "D", "E", "F"]]
     result = tj.rerank_candidates(items, client=client)
-    assert [x["title"] for x in result] == ["A", "B"]
+    assert [x["title"] for x in result] == ["A", "B", "C", "D", "E", "F"]
     assert len(client.calls) == 6
     assert result[0]["typesafe_judgment_score"] < result[1]["typesafe_judgment_score"]
 

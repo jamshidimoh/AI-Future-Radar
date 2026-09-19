@@ -1,0 +1,95 @@
+name: TypeSafe Audit Smoke Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  typesafe-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install TypeSafe SDK
+        run: python -m pip install "typesafe-sdk>=0.7.0,<0.8"
+
+      - name: Run live TypeSafe audit (no Telegram)
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+          AI_RADAR_TYPESAFE_RERANK_MODE: audit
+          AI_RADAR_TYPESAFE_RERANK_WEIGHT: "0.20"
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from src.typesafe_judgment import rerank_candidates
+
+          candidates = [
+              {
+                  "title": "Frontier AI agents gain a new tool-use capability",
+                  "summary": "A specialist report documents a consequential improvement in autonomous tool use by frontier AI agents.",
+                  "mission_area": "ai_core",
+                  "content_type": "news",
+                  "source": "Specialist publication",
+              },
+              {
+                  "title": "Researchers publish a generic AI productivity roundup",
+                  "summary": "A broad overview repeats several familiar productivity trends without a new result.",
+                  "mission_area": "ai_core",
+                  "content_type": "news",
+                  "source": "Specialist publication",
+              },
+              {
+                  "title": "New BCI experiment links neural signals to language decoding",
+                  "summary": "Researchers report a substantive experiment connecting brain-computer interfaces with language decoding.",
+                  "mission_area": "mind_cognition",
+                  "content_type": "research",
+                  "source": "University research group",
+              },
+              {
+                  "title": "Quantum computing roadmap receives a technical update",
+                  "summary": "A technical source reports a new milestone in quantum hardware development.",
+                  "mission_area": "future",
+                  "content_type": "news",
+                  "source": "Specialist publication",
+              },
+              {
+                  "title": "Robotics system demonstrates improved physical-world reasoning",
+                  "summary": "A documented robotics result shows a meaningful advance in reasoning over physical environments.",
+                  "mission_area": "convergence",
+                  "content_type": "research",
+                  "source": "University research group",
+              },
+              {
+                  "title": "AI news recap collects familiar model announcements",
+                  "summary": "A generic roundup lists several already familiar model announcements.",
+                  "mission_area": "ai_core",
+                  "content_type": "news",
+                  "source": "Specialist publication",
+              },
+          ]
+
+          result = rerank_candidates(candidates)
+
+          for i, item in enumerate(result, 1):
+              score = item.get("typesafe_judgment_score")
+              confidence = item.get("typesafe_judgment_confidence")
+              if score is None or confidence is None:
+                  raise SystemExit("TypeSafe audit did not return a score for every candidate")
+              print(
+                  f"[TypeSafe Audit] #{i} score={score:.4f} confidence={confidence:.4f} "
+                  f"title={item.get('title', '')}"
+              )
+
+          print("[TypeSafe Audit] PASS: live semantic judgments received; production order was not changed.")
+          PY

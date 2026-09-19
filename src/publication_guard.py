@@ -127,6 +127,19 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:
         return 0.85
 
+    # High-confidence same-topic rewrites can be fully Persian (or otherwise
+    # lack English URL/name anchors). When both title and body context closely
+    # overlap around the same recognized entity/concept, block the publication
+    # even if the event classifier labels the pair only as RELATED.
+    same_topic_rewrite = (
+        bool(shared_entities)
+        and title_similarity >= 0.62
+        and context_jaccard >= 0.24
+        and semantic_score >= 0.25
+    )
+    if same_topic_rewrite:
+        return 1.0
+
     logger.debug(
         "publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f title=%.3f context=%.3f shared_events=%s shared_entities=%s evidence=%s",
         kind,

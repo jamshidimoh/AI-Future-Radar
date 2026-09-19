@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789838833,
+  "updated_at": 1789853732,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -11728,6 +11728,44 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1789838833
+    },
+    "-1004482051328:1734": {
+      "chat_id": -1004482051328,
+      "message_id": 1734,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "ChatGPT برای Word در دسترس شد",
+      "summary": "OpenAI اعلام کرد که قابلیت ChatGPT به Microsoft Word اضافه شد. این افزونه می‌تواند یادداشت‌های خام را به پیش‌نویس‌های اولیه تبدیل کند، مشکلات قالب‌بندی را اصلاح کند، متن را بازبینی و ویرایش‌های پیشنهادی ارائه دهد، همه بدون ترک سند. قابلیت مشابه برای PowerPoint و Excel نیز در تمام طرح‌ها، از جمله طرح رایگان، با محدودیت‌های استفاده موجود است. کاربران Business و Enterprise می‌توانند پیش‌نمایش دو هفته‌ای GPT‑5.6 Sol را در Word از ۱۷ تا ۳۰ سپتامبر بدون تأثیر بر محدودیت‌های استفاده تجربه کنند.",
+      "description": "Procrastination has met its match. ChatGPT is now in Word.\n\nYou can add ChatGPT to Microsoft Word to turn rough notes into first drafts, fix formatting issues, proofread, and get suggested edits—all without leaving your document.\n\nChatGPT for Word (and Powerpoint + Excel) are available across all plans, including Free, with usage limits. \n\nFor Business and Enterprise plans, we’re also offering a two-week free preview of GPT-5.6 Sol in Word, September 17–30, with no impact on usage limits.\n\nhttps://chatgpt.com/apps/word/ artificial intelligence",
+      "why_it_matters": "ادغام مستقیم ChatGPT در Word باعث می‌شود کاربران بدون جابجایی بین برنامه‌ها، فرآیند نوشتن و ویرایش را تسریع کنند و بهره‌وری محتوا را افزایش دهند. این قابلیت برای تمام سطوح کاربران، حتی رایگان، در دسترس است که دسترسی گسترده به هوش مصنوعی تولیدی را تضمین می‌کند. پیش‌نمایش GPT‑5.6 Sol برای مشتریان سازمانی فرصتی برای Model Evaluation‌های پیشرفته‌تر بدون هزینه اضافی فراهم می‌آورد، هرچند همچنان تحت محدودیت‌های مصرفی است.",
+      "link": "https://www.youtube.com/watch?v=lxVMdEpe0RQ",
+      "posted_at": 1789853729
+    },
+    "-1004482051328:1735": {
+      "chat_id": -1004482051328,
+      "message_id": 1735,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "کشف سلول مغزی ناشناخته: گام پیش از سلول‌های مکان",
+      "summary": "تیم Edvard Moser به دنبال سلول‌های مکان رفت و در بخشی از مغز که تقریباً هیچ‌کس مطالعه نکرده بود، الگوی بسیار منظم پیدا کرد. این الگو ابتدا به‌عنوان خطا در نظر گرفته شد، اما سپس نشان داد که سلول‌های جدیدی وجود دارند که پیش از این شناخته نشده بودند. این سلول‌ها در مسیرهای مغزی مرتبط با مکان قرار می‌گیرند و ساختارهای جدیدی برای پردازش مکانی را نشان می‌دهند.",
+      "description": "Edvard Moser's team went looking one step upstream of the place cells, into a part of the brain almost nobody had studied. \n\nThe pattern they found was so regular they assumed it was a mistake.",
+      "why_it_matters": "کشف این سلول‌های جدید نشان می‌دهد که مغز انسان از ساختارهای پیچیده‌تری برای درک موقعیت استفاده می‌کند که در مدل‌های فعلی گنجانده نشده است. این یافته می‌تواند به بهبود الگوریتم‌های مسیر‌یابی در روباتیک و توسعه مدل‌های هوش مصنوعی کمک کند. همچنین، درک بهتر از این سلول‌ها می‌تواند در تشخیص و درمان اختلالات مکانی مغزی مؤثر باشد.",
+      "link": "https://www.youtube.com/shorts/ytrUD_rin6g",
+      "posted_at": 1789853732
     }
   }
 }

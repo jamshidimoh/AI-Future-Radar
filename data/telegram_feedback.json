@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789797018,
+  "updated_at": 1789797927,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -11213,6 +11213,60 @@
       "why_it_matters": "این سرمایه‌گذاری به سامسونگ امکان می‌دهد تا در رقابت جهانی با شرکت‌های بزرگ AI مانند Google و OpenAI حضور قوی‌تری داشته باشد. همچنین، همکاری با Euclyd می‌تواند به سامسونگ دسترسی به فناوری‌های پیشرفته Machine Learning و پردازش زبان طبیعی را بدهد، که در توسعه محصولات آینده‌ساز آن نقش مهمی خواهد داشت. برای Euclyd، دریافت سرمایه از یک شرکت بزرگ فناوری، اعتبار و اعتبار بازار را افزایش می‌دهد و مسیر توسعه سریع‌تر را فراهم می‌کند. این حرکت نشان می‌دهد که شرکت‌های سنتی در حال تغییر استراتژی خود برای ورود به حوزه هوش مصنوعی هستند.",
       "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxONzZDaFF6bHVaSEJabVoxb0ZWamphU094MnFOcDA4Slcwenh3S2padDVwM2ZpcjNWNmRPTE5UdllyclRteVdRYkFEajBRZVM2Wko0eWE1b1BWWm9QZ3FEOEpocHVLV0hra0RzaTl4TmRETklLSDZiWmpSVTN1WGEyT1hwZlJsR0U4dkV0ZVZrTmg0Qm9oSm5ETGNCVU9FdjJkelpSMTRPYXg3UWc?oc=5",
       "posted_at": 1789797018
+    },
+    "-1004482051328:1706": {
+      "chat_id": -1004482051328,
+      "message_id": 1706,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Salesforce Agentforce: پر کردن فاصله هوش مصنوعی سازمانی از کدنویسی آزمایشی تا ارکستراسیون آزمون‌پذیر",
+      "summary": "Salesforce Agentforce ابزاری تولیدی برای مدیریت مقیاس‌پذیر عامل‌های هوش مصنوعی ارائه می‌کند. این پلتفرم ترکیبی از تست فشار مصنوعی، بهینه‌سازی لحظه‌ای، رابط‌های کاربری پویا برای عامل‌ها و محدودیت‌های تعیین‌پذیر است. بر پایه تجربه Southwest Airlines، این سامانه توانسته ROI هفت‌برابری (7x ROI) را به‌دست آورد. Agentforce هدف دارد تا از مرحله «vibe coding» که صرفاً آزمایشی است، به مرحلهٔ عملیاتی و قابل اعتماد در محیط‌های سازمانی برسد.",
+      "why_it_matters": "در عصر هوش مصنوعی سازمانی، توانایی استقرار خودکار عامل‌ها در مقیاس بزرگ بدون ابزارهای تولیدی مناسب، یک مانع اساسی است. Agentforce با ارائه تست فشار مصنوعی و بهینه‌سازی زمان واقعی، ریسک خطاهای عملیاتی را کاهش می‌دهد و امکان نظارت دقیق بر رفتار عامل‌ها را فراهم می‌کند. نتایج Southwest Airlines که ROI هفت‌برابر گزارش شده نشان می‌دهد این رویکرد می‌تواند به صرفه‌جویی قابل Attention هزینه و افزایش بهره‌وری منجر شود، در حالی که محدودیت‌های تعیین‌پذیر امنیتی خطرات ناشی از رفتار غیرقابل پیش‌بینی را مهار می‌کند. بنابراین، این فناوری برای شرکت‌هایی که به دنبال پیاده‌سازی هوش مصنوعی پایدار و مقیاس‌پذیر هستند، ارزش استراتژیک دارد.",
+      "link": "https://www.marktechpost.com/2026/09/18/salesforce-agentforce-bridging-the-enterprise-ai-gap-from-vibe-coding-to-battle-tested-orchestration/",
+      "posted_at": 1789797913
+    },
+    "-1004482051328:1707": {
+      "chat_id": -1004482051328,
+      "message_id": 1707,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google AI Blog",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "پیوستن کارشناسان جدید به تیم AI & Economy گوگل",
+      "summary": "گوگل در وبلاگ رسمی خود اعلام کرد که متخصصان جدیدی به برنامه تحقیقاتی AI & Economy پیوسته‌اند. این برنامه بر روی بررسی تأثیرات هوش مصنوعی بر اقتصاد و سیاست‌گذاری‌های مرتبط متمرکز است و با حضور این کارشناسان، توانمندی‌های تحلیلی و پژوهشی خود را گسترش می‌دهد. حضور تیم در پس‌زمینه‌ای سبز با لوگوی Google G نشان‌دهنده ادامه تعهد شرکت به ترکیب فناوری پیشرفته با تحلیل‌های اقتصادی است.",
+      "why_it_matters": "تقویت تیم AI & Economy گوگل می‌تواند به تولید داده‌ها و مدل‌های دقیق‌تری برای ارزیابی اثرات هوش مصنوعی بر بازار کار، رشد اقتصادی و توزیع ثروت منجر شود. این اطلاعات برای سیاست‌گذاران، شرکت‌ها و پژوهشگران ضروری است تا تصمیم‌گیری‌های مبتنی بر شواهد را اتخاذ کنند. افزون بر این، حضور کارشناسان جدید نشان از گسترش دامنه تحقیقاتی و توانمندی‌های تحلیلی این برنامه دارد که می‌تواند به پیش‌بینی بهتر روندهای اقتصادی در عصر هوش مصنوعی کمک کند.",
+      "link": "https://blog.google/innovation-and-ai/technology/ai/expanding-ai-economy-research-bench/",
+      "posted_at": 1789797917
+    },
+    "-1004482051328:1708": {
+      "chat_id": -1004482051328,
+      "message_id": 1708,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Microsoft Open‑Sources TauGrid: پشته‌ای بومی Kubernetes برای بارهای AI بر روی GPU",
+      "summary": "تیم مهندسی AKS مایکروسافت در 28 اوت 2026، TauGrid را به صورت متن‌باز منتشر کرد؛ این پشته شامل tau CLI، صف‌گذاری Kueue، هماهنگی KubeRay، مانیتورینگ سلامت گره‌های GPU و قابلیت مشاهده‌پذیری است و در یک نصب Helm واحد قابل استفاده است. TauGrid تحت مجوز MIT قرار دارد و می‌تواند بر روی هر کلاستر Kubernetes 1.30+ با گره‌های GPU، همراه با kubectl و Helm 3.0 یا بالاتر، مستقر شود.",
+      "why_it_matters": "با انتشار TauGrid، مایکروسافت ابزار جامعی را برای اجرای بارهای AI بر روی GPU در محیط‌های Kubernetes فراهم کرده است؛ این ترکیب از ابزارهای مدیریت صف، هماهنگی و مانیتورینگ، امکان بهره‌برداری بهینه و مقیاس‌پذیر از منابع GPU را برای توسعه‌دهندگان و سازمان‌ها فراهم می‌کند. استفاده از Helm برای نصب ساده، و مجوز MIT، پذیرش گسترده‌تر و توسعه جامعه را تسهیل می‌کند. این اقدام می‌تواند به کاهش زمان راه‌اندازی و بهبود کارایی در پروژه‌های Machine Learning کمک شایانی نماید.",
+      "link": "https://www.marktechpost.com/2026/09/17/microsoft-open-sources-taugrid-a-kubernetes-native-stack-for-gpu-ai-workloads/",
+      "posted_at": 1789797920
     }
   }
 }

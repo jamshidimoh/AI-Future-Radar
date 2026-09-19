@@ -83,3 +83,42 @@ def test_cross_source_rewrite_is_blocked_by_publication_guard(tmp_path):
     )
     assert not allowed
     assert reason.startswith("semantic_story_already_published")
+
+def test_observed_cross_source_ai_consciousness_rewrite_is_blocked():
+    old = {
+        "title": "آگاهی هوش مصنوعی ممکن است باعث ایجاد بزرگ‌ترین تقسیم اجتماعی بعدی شود",
+        "summary": (
+            "مصاحبه‌ای در مورد اینکه چگونه ظهور آگاهی در سیستم‌های هوش مصنوعی می‌تواند "
+            "به عنوان یک عامل تقسیم‌کننده در جامعه عمل کند، مطرح شد. در این گفتگو، "
+            "متخصصان به تأثیرات احتمالی بر عدالت، حریم خصوصی، و فرصت‌های شغلی اشاره کردند "
+            "و هشدار دادند که بدون چارچوب‌های اخلاقی و قانونی مناسب، این فناوری می‌تواند "
+            "نابرابری‌های موجود را تشدید کند."
+        ),
+    }
+    rewritten = {
+        "title": "چرا آگاهی هوش مصنوعی می‌تواند تقسیم‌ساز بزرگ جامعه شود",
+        "summary": (
+            "مقاله‌ای به بررسی این می‌پردازد که اگر هوش مصنوعی به‌گونه‌ای به‌نظر برسد "
+            "که دارای آگاهی باشد، چگونه می‌تواند مرزهای جدیدی بین گروه‌های مختلف جامعه "
+            "ایجاد کند و به اختلافات عمیق اجتماعی، حقوقی و فرهنگی منجر شود."
+        ),
+    }
+    score = publication_guard._semantic_conflict(
+        rewritten["title"], rewritten["summary"], old
+    )
+    assert score >= 0.82
+
+
+def test_same_concept_but_materially_different_ai_consciousness_event_remains_publishable():
+    old = {
+        "title": "آگاهی هوش مصنوعی ممکن است باعث ایجاد بزرگ‌ترین تقسیم اجتماعی بعدی شود",
+        "summary": "این گزارش درباره پیامدهای اجتماعی احتمالی آگاهی AI و اختلافات پیرامون حقوق آن است.",
+    }
+    different_event = {
+        "title": "پژوهشگران آزمایش جدیدی برای سنجش نشانه‌های آگاهی در مدل‌های زبانی معرفی کردند",
+        "summary": "یک مطالعه تجربی روش تازه‌ای برای آزمودن نشانه‌های آگاهی در مدل‌های زبانی پیشنهاد می‌کند.",
+    }
+    score = publication_guard._semantic_conflict(
+        different_event["title"], different_event["summary"], old
+    )
+    assert score < 0.82

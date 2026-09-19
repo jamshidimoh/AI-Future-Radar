@@ -1,6 +1,7 @@
 """Final, fail-closed publication gate shared with ranking and delivery."""
 from __future__ import annotations
 
+import difflib
 import html
 import logging
 import re
@@ -98,6 +99,34 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     title_similarity = float(evidence.get("title_similarity", 0.0) or 0.0)
     context_jaccard = float(evidence.get("context_jaccard", 0.0) or 0.0)
     shared_entities = set(evidence.get("shared_entities") or [])
+    semantic_signature_candidate = get_story_signature(candidate)
+    semantic_signature_stored = get_story_signature(stored)
+    semantic_shared_anchors = set(semantic_signature_candidate.get("anchors") or []) & set(semantic_signature_stored.get("anchors") or [])
+    semantic_shared_events = set(semantic_signature_candidate.get("events") or []) & set(semantic_signature_stored.get("events") or [])
+    semantic_title_tokens = set(semantic_signature_candidate.get("title") or []) & set(semantic_signature_stored.get("title") or [])
+    semantic_title_jaccard = (
+        len(semantic_title_tokens)
+        / len(set(semantic_signature_candidate.get("title") or []) | set(semantic_signature_stored.get("title") or []))
+        if semantic_signature_candidate.get("title") and semantic_signature_stored.get("title")
+        else 0.0
+    )
+    semantic_title_sequence = difflib.SequenceMatcher(
+        None,
+        str(semantic_signature_candidate.get("title_text") or ""),
+        str(semantic_signature_stored.get("title_text") or ""),
+    ).ratio()
+
+    # Language-aware title identity is evaluated before event-kind short circuits.
+    # This catches fully Persian rewrites where the Latin/digit anchor guard has
+    # no usable cross-language anchors.
+    if (
+        semantic_shared_anchors
+        and semantic_shared_events
+        and len(semantic_title_tokens) >= 4
+        and semantic_title_jaccard >= 0.30
+        and semantic_title_sequence >= 0.60
+    ):
+        return 1.0
 
     if kind == "UPDATE":
         if anchors >= 2 and shared_events and semantic_score >= 0.55:

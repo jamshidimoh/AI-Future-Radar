@@ -232,3 +232,12 @@ def test_normal_competitive_gate_preserves_mission_target_candidate_below_relati
         "competitive story",
         "convergence mission target",
     ]
+
+
+def test_mission_recovery_uses_canonical_topic_family_mapping():
+    from main import _mission_recovery_area
+
+    assert _mission_recovery_area({"topic_family": "ai_core"}) == "ai_core"
+    assert _mission_recovery_area({"topic_family": "quantum_ai"}) == "convergence"
+    assert _mission_recovery_area({"topic_family": "bio_ai"}) == "convergence"
+    assert _mission_recovery_area({"topic_family": "consciousness_cognition"}) == "mind_cognition"

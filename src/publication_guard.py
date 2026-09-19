@@ -125,7 +125,6 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         str(semantic_signature_candidate.get("title_text") or ""),
         str(semantic_signature_stored.get("title_text") or ""),
     ).ratio()
-    semantic_shared_numbers = set(semantic_signature_candidate.get("numbers") or []) & set(semantic_signature_stored.get("numbers") or [])
     shared_title_numeric_identifiers = _title_numeric_identifiers(candidate_title) & _title_numeric_identifiers(stored_title)
 
     # Language-aware title identity is evaluated before event-kind short circuits.

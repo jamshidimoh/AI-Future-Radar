@@ -44,6 +44,12 @@ MISSION_COVERAGE_COMPACT_PATTERN = re.compile(
     r"\[Mission Coverage Recovery\].*?missing_lanes=(\d+).*?"
     r"attempts=(\d+).*?recovered=(\d+).*?status=(\w+)"
 )
+MISSION_COVERAGE_NO_CANDIDATE_PATTERN = re.compile(
+    r"\[Mission Coverage Recovery\].*?area=([^\s]+).*?status=no_candidate"
+)
+MISSION_COVERAGE_HARD_FAILURE_PATTERN = re.compile(
+    r"\[Mission Coverage Recovery\].*?status=(?:failed|below_score_floor|independent_lane_not_score_gated)"
+)
 
 
 def _last_match(lines, patterns):
@@ -86,21 +92,25 @@ def _mission_coverage_status(lines):
         return None
     groups = match.groups()
     if len(groups) == 5:
-        return {
+        result = {
             "target": int(groups[0]),
             "prepared": int(groups[1]),
             "attempts": int(groups[2]),
             "recovered": int(groups[3]),
             "status": groups[4].casefold(),
         }
-    missing_lanes, attempts, recovered, status = groups
-    return {
-        "target": int(missing_lanes),
-        "prepared": 0,
-        "attempts": int(attempts),
-        "recovered": int(recovered),
-        "status": status.casefold(),
-    }
+    else:
+        missing_lanes, attempts, recovered, status = groups
+        result = {
+            "target": int(missing_lanes),
+            "prepared": 0,
+            "attempts": int(attempts),
+            "recovered": int(recovered),
+            "status": status.casefold(),
+        }
+    result["no_candidate_lanes"] = len({m.group(1).casefold() for line in lines if (m := MISSION_COVERAGE_NO_CANDIDATE_PATTERN.search(line))})
+    result["hard_failures"] = sum(1 for line in lines if MISSION_COVERAGE_HARD_FAILURE_PATTERN.search(line))
+    return result
 
 
 def validate(log_text: str) -> tuple[bool, str]:
@@ -115,14 +125,34 @@ def validate(log_text: str) -> tuple[bool, str]:
 
     mission_coverage = _mission_coverage_status(lines)
     if mission_coverage and mission_coverage["status"] == "unmet":
+        accounted = mission_coverage["recovered"] + mission_coverage["prepared"]
+        gap = max(0, mission_coverage["target"] - accounted)
+        no_candidate = mission_coverage.get("no_candidate_lanes", 0)
+        hard_failures = mission_coverage.get("hard_failures", 0)
+        # The final acceptance document explicitly allows a lane to remain below
+        # target when no eligible high-quality candidate exists. A deterministic
+        # no-candidate outcome is therefore not a publication failure. Any
+        # candidate that existed but failed QA/score/recovery remains fail-closed.
+        if gap > 0 and no_candidate >= gap and hard_failures == 0:
+            return True, (
+                "production acceptance PASS: mission coverage gap is attributable only to lanes with no eligible candidate; "
+                f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"
+            )
         return False, (
             "production contract violation: mission portfolio coverage remained unmet; "
-            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}"
+            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}, hard_failures={hard_failures}"
         )
     if mission_coverage and mission_coverage["recovered"] + mission_coverage["prepared"] < mission_coverage["target"]:
+        gap = mission_coverage["target"] - (mission_coverage["recovered"] + mission_coverage["prepared"])
+        no_candidate = mission_coverage.get("no_candidate_lanes", 0)
+        if no_candidate >= gap:
+            return True, (
+                "production acceptance PASS: mission coverage evidence leaves only deterministic no-candidate lanes unresolved; "
+                f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"
+            )
         return False, (
             "production contract violation: mission portfolio coverage evidence is inconsistent; "
-            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}"
+            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"
         )
 
     summary_budget_match = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))

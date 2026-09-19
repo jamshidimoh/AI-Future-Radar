@@ -20,6 +20,16 @@ LEDGER_PATH = ROOT / "data" / "telegram_feedback.json"
 
 _TRACKING = {"utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "gclid", "fbclid", "mc_cid", "mc_eid", "ref", "ref_src"}
 
+_PERSIAN_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
+
+
+def _title_numeric_identifiers(value: str) -> set[str]:
+    """Return non-year numeric identifiers from a title, normalized across digit sets."""
+    text = str(value or "").translate(_PERSIAN_DIGITS)
+    numbers = set(re.findall(r"\b\d+(?:\.\d+)?\b", text))
+    return {n for n in numbers if not (len(n) == 4 and 1900 <= int(n) <= 2100)}
+
+
 
 def _canonical_url(value: str) -> str:
     raw = str(value or "").strip()
@@ -115,6 +125,7 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         str(semantic_signature_candidate.get("title_text") or ""),
         str(semantic_signature_stored.get("title_text") or ""),
     ).ratio()
+    shared_title_numeric_identifiers = _title_numeric_identifiers(candidate_title) & _title_numeric_identifiers(stored_title)
 
     # Language-aware title identity is evaluated before event-kind short circuits.
     # This catches fully Persian rewrites where the Latin/digit anchor guard has
@@ -140,18 +151,31 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         # mention only one concrete entity while the second source supplies the
         # rest of the context. Do not require three anchors when the event
         # matcher has already classified both stories as the same event.
-        if shared_events and (anchors >= 1 or shared_entities) and semantic_score >= 0.52:
-            return 1.0
+        # Event classification alone is not enough: different research or
+        # product stories from the same entity can share a broad event class.
+        # Require corroborating title/context overlap before blocking.
         if shared_events and title_similarity >= 0.72 and context_jaccard >= 0.18:
             return 1.0
         if title_similarity >= 0.90 and context_jaccard >= 0.45:
             return 1.0
         return 0.0
 
-    # Cross-language rewrites often have low lexical/semantic similarity. Shared
-    # concrete anchors plus the same event class are sufficient; the previous
-    # 0.45 event-score threshold incorrectly rejected this class of duplicate.
-    if anchors >= 2 and shared_events and (event_score >= 0.20 or semantic_score >= 0.60):
+    # Cross-language rewrites can have lower lexical overlap, but concrete
+    # anchors alone are still insufficient: unrelated stories from the same
+    # organization can share the same broad event class. Require an additional
+    # title/context corroboration before blocking this fallback class.
+    if (
+        anchors >= 2
+        and shared_events
+        and shared_title_numeric_identifiers
+    ):
+        return 1.0
+    if (
+        anchors >= 2
+        and shared_events
+        and semantic_score >= 0.60
+        and (title_similarity >= 0.75 or context_jaccard >= 0.20)
+    ):
         return 1.0
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:
         return 0.85

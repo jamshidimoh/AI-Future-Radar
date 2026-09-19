@@ -104,3 +104,34 @@ def test_shared_generic_ai_concept_without_story_identity_remains_publishable():
         candidate, "https://example.com/benchmark", records=[published]
     )
     assert allowed, reason
+
+
+def test_diagnostic_same_company_distinct_research_subject():
+    from src.event_identity import compare_events
+    from src.semantic_dedup import _similarity, get_story_signature
+    from src.semantic_publication_guard import shared_anchor_count
+
+    old = {
+        "title": "NVIDIA researchers develop a more efficient AI inference accelerator",
+        "summary": "NVIDIA presents research on reducing inference energy for large AI models.",
+    }
+    new = {
+        "title": "NVIDIA researchers publish a new method for robot perception",
+        "summary": "The new research studies perception methods for autonomous robots.",
+    }
+    kind, event_score, evidence = compare_events(new, old)
+    semantic_score = _similarity(get_story_signature(new), get_story_signature(old))
+    anchors = shared_anchor_count(
+        f"{new['title']} {new['summary']}",
+        f"{old['title']} {old['summary']}",
+    )
+    print(
+        "DIAGNOSTIC_NVIDIA",
+        {"kind": kind, "event_score": event_score, "semantic_score": semantic_score,
+         "anchors": anchors, "evidence": evidence,
+         "allowed": __import__("src.publication_guard", fromlist=["check_before_publish"]).check_before_publish(
+             _candidate(new["title"], new["summary"]),
+             "https://example.com/nvidia-robot-perception",
+             records=[old],
+         )}
+    )

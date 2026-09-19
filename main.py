@@ -21,7 +21,7 @@ from src.signal_engine import enrich_signal_items
 from src.state_io import StateCorruptionError
 from src.story_gate import gate_story_candidates
 from src.summarize import summarize_item
-from src.unified_editorial_selection import select_regular_portfolio
+from src.unified_editorial_selection import mission_area, select_regular_portfolio
 
 logger = logging.getLogger(__name__)
 
@@ -333,8 +333,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
     editorial_pool = annotate_recovery_candidates(editorial_pool, source_history, contract)
 
     def _area(item):
-        raw = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
-        return {"ai": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "mind": "mind_cognition", "future": "future_governance"}.get(raw, raw)
+        return mission_area(item)
 
     selected_ids = {_publication_identity(x) for x in selected}
 
@@ -368,50 +367,145 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
 
     pool = [x for x in editorial_pool if _publication_identity(x) not in selected_ids and not x.get("_publication_blocked")]
     recovered, attempts = [], 0
-    attempt_limit = max(1, int(policy.get("replacement_buffer", 3) or 3))
+    lane_attempt_limit = max(1, int(policy.get("replacement_buffer", 3) or 3))
 
     for allowed_areas in missing:
-        if attempts >= attempt_limit:
-            break
-        area_pool = [x for x in pool if _area(x) in allowed_areas]
-        while area_pool and attempts < attempt_limit:
-            attempts += 1
-            chosen = select_editorial_fn(area_pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
-            if not chosen:
+        lane_recovered = False
+        lane_attempts = 0
+        while lane_attempts < lane_attempt_limit:
+            area_pool = [
+                x for x in pool
+                if _area(x) in allowed_areas
+                and _publication_identity(x) not in selected_ids
+            ]
+            if not area_pool:
+                print(
+                    f"[Mission Coverage Recovery] area={','.join(sorted(allowed_areas))} "
+                    f"status=no_candidate",
+                    flush=True,
+                )
                 break
+
+            # Select only from the exact mission-area pool. This prevents the
+            # generic four-lane selector from redirecting a recovery attempt to
+            # another mission area.
+            chosen = select_regular_portfolio(
+                area_pool,
+                max_posts=1,
+                max_per_source=max_per_source,
+                max_per_type=max_per_type,
+                recent_source_counts={},
+                contract=contract,
+                mission_aware=True,
+                strict_relevance=True,
+            )
+            if not chosen:
+                # Last-resort deterministic choice from the exact area, still
+                # bounded to this lane and without relaxing score/QA gates.
+                chosen = sorted(
+                    area_pool,
+                    key=lambda x: (
+                        float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0),
+                        float(x.get("signal_score", 0) or 0),
+                        float(x.get("evidence_strength", 0) or 0),
+                        str(x.get("published", "")),
+                    ),
+                    reverse=True,
+                )[:1]
+
             candidate = chosen[0]
             identity = _publication_identity(candidate)
             pool = [x for x in pool if _publication_identity(x) != identity]
-            area_pool = [x for x in area_pool if _publication_identity(x) != identity]
+            lane_attempts += 1
+            attempts += 1
+
             if not _score_ok(candidate):
                 try:
                     score = float(candidate.get("final_editorial_score", candidate.get("editorial_score", 0)) or 0)
                 except Exception:
                     score = 0.0
                 if _is_mind_ideas_voices(candidate):
-                    print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=independent_lane_not_score_gated", flush=True)
+                    print(
+                        f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
+                        f"title={str(candidate.get('title',''))[:120]} "
+                        f"status=independent_lane_not_score_gated",
+                        flush=True,
+                    )
                 else:
                     reason_code = "protected_score_floor" if candidate.get("protected_content") else "normal_score_floor"
-                    _runtime_telemetry_event(candidate, stage="selection", decision="reject", reason_code=reason_code, details={"score": score, "floor": PROTECTED_SUMMARY_SCORE_FLOOR if candidate.get("protected_content") else NORMAL_SCORE_FLOOR, "mission_area": _area(candidate)}, attempt=attempts)
-                    print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=below_score_floor", flush=True)
+                    _runtime_telemetry_event(
+                        candidate,
+                        stage="selection",
+                        decision="reject",
+                        reason_code=reason_code,
+                        details={
+                            "score": score,
+                            "floor": PROTECTED_SUMMARY_SCORE_FLOOR if candidate.get("protected_content") else NORMAL_SCORE_FLOOR,
+                            "mission_area": _area(candidate),
+                        },
+                        attempt=attempts,
+                    )
+                    print(
+                        f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
+                        f"title={str(candidate.get('title',''))[:120]} status=below_score_floor",
+                        flush=True,
+                    )
                 continue
+
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
-                _runtime_telemetry_event(candidate, stage="mission_recovery", decision="reject", reason_code="mission_recovery_candidate_failure", details={"mission_area": _area(candidate), "attempt": attempts}, attempt=attempts)
-                print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=failed", flush=True)
+                _runtime_telemetry_event(
+                    candidate,
+                    stage="mission_recovery",
+                    decision="reject",
+                    reason_code="mission_recovery_candidate_failure",
+                    details={"mission_area": _area(candidate), "attempt": attempts},
+                    attempt=attempts,
+                )
+                print(
+                    f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
+                    f"title={str(candidate.get('title',''))[:120]} status=failed",
+                    flush=True,
+                )
                 continue
+
             candidate.update(summary)
             candidate["_mission_recovery"] = True
             recovered.append((candidate, summary))
-            print(f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} title={str(candidate.get('title',''))[:120]} status=recovered", flush=True)
+            lane_recovered = True
+            print(
+                f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
+                f"title={str(candidate.get('title',''))[:120]} status=recovered",
+                flush=True,
+            )
             break
+
+        if not lane_recovered:
+            print(
+                f"[Mission Coverage Recovery] lane={','.join(sorted(allowed_areas))} "
+                f"status=unmet",
+                flush=True,
+            )
 
     recovery_status = "ok" if len(recovered) >= len(missing) else "unmet"
     if recovery_status == "unmet":
-        _runtime_telemetry_event({"title": "mission-coverage-recovery", "mission_area": "recovery", "source": "runtime"}, stage="mission_recovery", decision="unmet", reason_code="mission_coverage_unmet", details={"missing_lanes": len(missing), "attempts": attempts, "recovered": len(recovered)})
-    print(f"[Mission Coverage Recovery] missing_lanes={len(missing)} attempts={attempts} recovered={len(recovered)} status={recovery_status}", flush=True)
+        _runtime_telemetry_event(
+            {"title": "mission-coverage-recovery", "mission_area": "recovery", "source": "runtime"},
+            stage="mission_recovery",
+            decision="unmet",
+            reason_code="mission_coverage_unmet",
+            details={
+                "missing_lanes": len(missing),
+                "attempts": attempts,
+                "recovered": len(recovered),
+            },
+        )
+    print(
+        f"[Mission Coverage Recovery] missing_lanes={len(missing)} attempts={attempts} "
+        f"recovered={len(recovered)} status={recovery_status}",
+        flush=True,
+    )
     return recovered
-
 
 def main(hooks=None):
     configure_logging()

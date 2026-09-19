@@ -87,8 +87,12 @@ jobs:
               confidence = item.get("typesafe_judgment_confidence")
               if score is None or confidence is None:
                   raise SystemExit("TypeSafe audit did not return a score for every candidate")
+              dims = item.get("typesafe_judgment_dimensions", {})
               print(
                   f"[TypeSafe Audit] #{i} score={score:.4f} confidence={confidence:.4f} "
+                  f"mission_fit={float(dims.get('mission_fit', 0.0)):.4f} "
+                  f"novelty={float(dims.get('novelty', 0.0)):.4f} "
+                  f"editorial_value={float(dims.get('editorial_value', 0.0)):.4f} "
                   f"title={item.get('title', '')}"
               )
 

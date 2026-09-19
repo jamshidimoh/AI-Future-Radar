@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Any
 
 MIND_COGNITION_SCORE_FLOOR = 50.0
-MIND_COGNITION_MIN_PUBLISH = 2
+MIND_COGNITION_MIN_PUBLISH = 1
 MIND_COGNITION_MAX_PUBLISH = 2
 
 
@@ -40,13 +40,24 @@ def _is_mind_cognition(item: dict[str, Any]) -> bool:
 
 
 def prepare_mind_cognition_contract(items: list[dict[str, Any]], contract: dict[str, Any]) -> None:
-    """Keep the legacy target bounded at the independent Mind cap."""
+    """Preserve the explicit mission target; expose only legacy compatibility metadata."""
     mind = [x for x in items if _is_mind_cognition(x) and not x.get("_publication_blocked")]
     if not mind:
         return
-    contract["mind_cognition_target"] = min(MIND_COGNITION_MAX_PUBLISH, max(MIND_COGNITION_MIN_PUBLISH, 0))
+
+    # The authoritative mission target comes from mission_policy.yaml via
+    # load_editorial_contract(). This compatibility helper must never silently
+    # raise that target just because Mind candidates are present. The additive
+    # Mind/Ideas/Voices publication lane has its own cap and is not a reason to
+    # mutate the normal mission-coverage target.
+    configured_target = contract.get("mind_cognition_target", MIND_COGNITION_MIN_PUBLISH)
+    try:
+        target = max(0, int(configured_target))
+    except (TypeError, ValueError):
+        target = MIND_COGNITION_MIN_PUBLISH
+    contract["mind_cognition_target"] = target
     contract["mind_cognition_score_floor"] = MIND_COGNITION_SCORE_FLOOR
-    contract["mind_cognition_min_publish"] = MIND_COGNITION_MIN_PUBLISH
+    contract["mind_cognition_min_publish"] = min(MIND_COGNITION_MIN_PUBLISH, target) if target else 0
     contract["mind_cognition_max_publish"] = MIND_COGNITION_MAX_PUBLISH
 
 

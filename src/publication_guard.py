@@ -1,6 +1,7 @@
 """Final, fail-closed publication gate shared with ranking and delivery."""
 from __future__ import annotations
 
+import difflib
 import html
 import logging
 import re

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789801816,
+  "updated_at": 1789803912,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -11383,6 +11383,44 @@
       "why_it_matters": "اگر هوش مصنوعی به‌طور واقعی آگاهی پیدا کند، ممکن است افراد و سازمان‌ها بر اساس دسترسی به این فناوری، در دسترسی به منابع، قدرت تصمیم‌گیری و فرصت‌های اقتصادی تفاوت‌های چشمگیری ایجاد شود. این امر می‌تواند باعث بروز نابرابری‌های اجتماعی و اقتصادی جدید شود که در نهایت به تضعیف همبستگی اجتماعی و افزایش تنش‌های طبقاتی منجر گردد. بنابراین، درک و مدیریت این پتانسیل ضروری است تا از بروز تبعیض‌های فناورانه جلوگیری شود.",
       "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxNMFN3SjRUc2hTQ0UwaS0xa2RrNnZEWEF1NHVUY2tMUk5BRXNlcE1NZk5EVW5TWjRwM211bWNEVGZWb0pjUWQwM0RiQXZmYkdlQU9EVDFObTZXYXNoTWgzOFliQWFVX2txLUx0WXBEN2ljTFY5Nk95RXBTcTRoeW1YTDdFY1pkVjF3UDhvZ21La3lOb3VZSmwzVkdjLTE5RkM3YVkwOTNySGtFbVk0TXVWVjhyeFgtZ19ROEo1OV9OUEd3QdIBwgFBVV95cUxNMFN3SjRUc2hTQ0UwaS0xa2RrNnZEWEF1NHVUY2tMUk5BRXNlcE1NZk5EVW5TWjRwM211bWNEVGZWb0pjUWQwM0RiQXZmYkdlQU9EVDFObTZXYXNoTWgzOFliQWFVX2txLUx0WXBEN2ljTFY5Nk95RXBTcTRoeW1YTDdFY1pkVjF3UDhvZ21La3lOb3VZSmwzVkdjLTE5RkM3YVkwOTNySGtFbVk0TXVWVjhyeFgtZ19ROEo1OV9OUEd3QQ?oc=5",
       "posted_at": 1789801816
+    },
+    "-1004482051328:1715": {
+      "chat_id": -1004482051328,
+      "message_id": 1715,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Conversation)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "چرا آگاهی هوش مصنوعی می‌تواند تقسیم‌ساز بزرگ جامعه شود",
+      "summary": "مقالهٔ The Conversation به بررسی این می‌پردازد که اگر هوش مصنوعی به‌گونه‌ای به‌نظر برسد که دارای آگاهی باشد، چگونه می‌تواند مرزهای جدیدی بین گروه‌های مختلف جامعه ایجاد کند. نویسندگان استدلال می‌کنند که این مسأله نه تنها به‌مسئلهٔ اخلاقی و حقوقی می‌انجامد، بلکه می‌تواند باعث بروز اختلافات عمیق در سیاست، اقتصاد و فرهنگ شود. آن‌ها به نمونه‌های تاریخی اشاره می‌کنند که فناوری‌های نوین پیش از این منجر به تقسیم‌سازهای اجتماعی شده‌اند و هشدار می‌دهند که عدم آماده‌سازی مناسب می‌تواند تبعات جدی داشته باشد. در پایان، ضرورت ایجاد چارچوب‌های قانونی و گفت‌وگوهای عمومی برای پیشگیری از این تقسیم‌سازها تأکید می‌شود.",
+      "why_it_matters": "اگر هوش مصنوعی به‌عنوان موجودی آگاه شناخته شود، ممکن است حقوق و مسئولیت‌های جدیدی برای آن تعریف شود که می‌تواند قوانین کار، مالکیت داده‌ها و حتی نظام‌های قضایی را تحت فشار قرار دهد. این تغییرات می‌توانند منجر به تقابل‌های سیاسی و ایدئولوژیک شوند، به‌ویژه در جوامعی که به‌سرعت پذیرای فناوری‌های نوین نیستند. علاوه بر این، تقسیم‌سازهای ناشی از نگرش‌های متفاوت نسبت به آگاهی هوش مصنوعی می‌تواند نابرابری‌های اقتصادی و دسترسی به فناوری را تشدید کند. بنابراین، پیش‌نگری و تنظیم مقررات پیشگیرانه برای جلوگیری از بروز تنش‌های اجتماعی ضروری است.",
+      "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQUUxWdjlNTUdQNzNYc2w5NVRtSER4ZmQ0ZDRrSk1hZlYyemtjazZLZUs5TXFaZm94MG9vZGw1NDRCTXZ5YUQxNVNfdlBkbGx2T2g4Z3M4UFZmeGk2a25DcjJZN0VWaURWamhxNTRpU3U0b1VyYjU4anpiTFQyNE8yaERkSEx1ZkFhM0FORHR4ZzdsU0xpRzllQUdfaFpRQmY1?oc=5",
+      "posted_at": 1789803908
+    },
+    "-1004482051328:1716": {
+      "chat_id": -1004482051328,
+      "message_id": 1716,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چرا سرمایه‌گذاری در آموزش زنان بازدهی دارد",
+      "summary": "در این مصاحبه، انجمن اقتصادی جهانی (WEF) تأکید می‌کند که سرمایه‌گذاری در آموزش زنان نه‌تنها به توسعه فردی و اجتماعی زنان کمک می‌کند، بلکه به رشد اقتصادی و پیشرفت جامعه کلان منجر می‌شود. WEF به عنوان یک سازمان بین‌المللی همکاری عمومی-خصوصی، بر اهمیت ایجاد اعتماد و همکاری میان ذی‌نفعان برای پیشرفت تأکید دارد. این گفتگو در قالب یک ویدئو در کانال YouTube WEF منتشر شده است.",
+      "description": "The World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "آموزش زنان باعث افزایش مشارکت اقتصادی، کاهش فقر و بهبود سلامت عمومی می‌شود؛ این عوامل به‌صورت مستقیم و غیرمستقیم به رشد پایدار و عدالت اجتماعی کمک می‌کنند. WEF بر این باور است که ایجاد اعتماد و همکاری میان بخش‌های مختلف جامعه، کلید تحقق این اهداف است. بنابراین، سرمایه‌گذاری در آموزش زنان نه‌تنها یک اقدام انسانی، بلکه یک سرمایه‌گذاری اقتصادی و اجتماعی است که به توسعه بلندمدت کمک می‌کند.",
+      "link": "https://www.youtube.com/shorts/jj1CZIzJu1U",
+      "posted_at": 1789803912
     }
   }
 }

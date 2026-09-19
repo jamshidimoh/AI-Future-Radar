@@ -25,3 +25,23 @@ def test_publication_summary_budget_keeps_rank_breadth_without_summarizing_all_r
         "normal-5",
         "normal-6",
     ]
+
+
+def test_publication_summary_budget_keeps_independent_mind_items_outside_protected_score_gate():
+    selected = [
+        {"title": "normal-1", "normal_period_rank": 1, "final_editorial_score": 60.0},
+        {
+            "title": "mind-low-score",
+            "normal_period_rank": None,
+            "final_editorial_score": 50.0,
+            "protected_content": True,
+            "protected_editorial_lane": "mind_ideas_voices",
+            "mind_lane_selected": True,
+            "mind_editorial_score": 77.0,
+        },
+    ]
+
+    bounded = _publication_summary_budget(selected, max_posts=1, policy={})
+    titles = [item["title"] for item in bounded]
+
+    assert titles == ["normal-1", "mind-low-score"]

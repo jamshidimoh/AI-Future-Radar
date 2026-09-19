@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789811691,
+  "updated_at": 1789812642,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -11477,6 +11477,63 @@
       "why_it_matters": "درک دقیق ریاضیات برای پیشبرد هوش مصنوعی ضروری است؛ زیرا بدون پایه‌های نظری قوی، مدل‌های AI نمی‌توانند به‌صورت قابل اعتماد و ایمن مقیاس‌پذیر شوند. این ارتباط به‌ویژه برای توسعهٔ الگوریتم‌های بهینه‌سازی پایدار، تفسیرپذیری مدل‌ها و جلوگیری از رفتارهای ناخواسته اهمیت دارد. بنابراین، تقویت همکاری میان ریاضیدانان و متخصصان AI می‌تواند مسیر پیشرفت‌های آینده را هموار سازد و خطرات احتمالی را کاهش دهد.",
       "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQZVFjdGp4UUFnNE5hNGk1Y0J5YTNoSFY4SlZ0QWZISWhjYzdSaXNNaUYtbzF2dlBZSVlUcDdWTEdmR0JUT0xreWU4MC1uSDZxTGtNWThKX1BDb3YyaWxNa20zNzVFSHZNU0VKcGVUQnZTbjd3UVhkdWpkNURXRkwzUVhrd0gyaHpMdVJtZDNCc2c2Z0xFYl9oMQ?oc=5",
       "posted_at": 1789809750
+    },
+    "-1004482051328:1720": {
+      "chat_id": -1004482051328,
+      "message_id": 1720,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "نگاهی به گروه‌های ایمنی هوش مصنوعی METR، Redwood Research و Apollo Research در پس‌زمینهٔ حوادث عدم‌سازگاری در OpenAI و Anthropic",
+      "summary": "در یک نشست در برکلی، کالیفرنیا، پژوهشگران برجستهٔ ایمنی هوش مصنوعی شامل METR، Redwood Research و Apollo Research گرد هم آمدند. این گروه‌ها پس از حوادث عدم‌سازگاری اخیر در OpenAI و Anthropic به‌سرعت در مرکز Attention قرار گرفتند. مقالهٔ The Verge به نقش این نهادها در پیشگیری از خطرات ناشی از مدل‌های بزرگ و روش‌های تحقیقاتی‌شان می‌پردازد. همچنین به چالش‌های مالی و نیاز به شفافیت بیشتر در ارزیابی ریسک‌های ایمنی اشاره می‌کند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "حوادث عدم‌سازگاری در OpenAI و Anthropic نشان می‌دهد که خطرات عملیاتی هوش مصنوعی پیش‌بینی‌نشده می‌توانند به سرعت به بحران‌های عمومی تبدیل شوند. حضور گروه‌های تخصصی مانند METR، Redwood Research و Apollo Research می‌تواند با ارائهٔ چارچوب‌های ارزیابی ریسک و پیشنهاد راهکارهای فنی، خطرات جدی را پیش‌گیری یا کاهش دهد. با این حال، محدودیت‌های مالی و کمبود داده‌های عمومی برای ارزیابی دقیق ریسک‌ها، مانع از اثرگذاری کامل این نهادها می‌شود و نیاز به حمایت گسترده‌تر از سوی صنعت و سیاست‌گذاران را برجسته می‌کند.",
+      "link": "https://www.techmeme.com/260919/p5#a260919p5",
+      "posted_at": 1789812633
+    },
+    "-1004482051328:1721": {
+      "chat_id": -1004482051328,
+      "message_id": 1721,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "چالش‌های دموکراسی غربی در مواجهه با دموکراسی‌های غیرآزادی",
+      "summary": "در این بحث، Kishore Mahbubani، Michael Ignatieff و Marlène Laruelle به بررسی آینده دموکراسی لیبرال و اقتصاد استبداد می‌پردازند. آن‌ها بر این باورند که در حالی که دموکراسی به عنوان اراده اکثریت تعریف می‌شود، لیبرالیسم به حفاظت از حقوق اقلیت و آزادی بیان می‌پردازد، این دو در تضاد هستند. دموکراسی‌های غیرآزادی، که در آن‌ها کنترل بر قدرت اجرایی و نهادهای لیبرال محدود است، اکنون رایج‌ترین شکل حکومت‌ها به حساب می‌آیند و در گزارش Economist، رشد ۳٪ بالاتر از دموکراسی‌های غربی در ۳۰ سال گذشته را نشان می‌دهند. این بحث به پرسش‌های اساسی درباره تهدیدات احتمالی این مدل برای ظهور رژیم‌های استبدادی و فاشیستی و نقش نهادهای غیرمنتخب در محدود کردن اراده مردم می‌پردازد.",
+      "description": "Kishore Mahbubani, Michael Ignatieff, and Marlène Laruelle debate the future of liberal democracy and the economics of authoritarianism.\n\nIs the West wrong to hold the ideals of liberalism and democracy in such high regard?\n\nWith a free trial, you can watch the full debate NOW at https://iai.tv/video/the-age-of-the-illiberal-democracy?utm_source=YouTube&amp;utm_medium=description\n\nThe West is often defined as the home of liberal democracy, with liberalism and democracy seen as inseparable. But from the start, there has been tension between democracy as the will of the majority, and liberalism as the protection of minority rights and free speech. Now we are seeing the rise of so-called 'illiberal democracies', sceptical of checks on executive power and liberal institutions. Illiberal democracies are now the most common form of government, according to The Economist. Victor Orbán, the former President of Hungary, listed his own country along with Singapore, Russia, Turkey and China among them, with 3% higher growth on average over the last 30 years than the liberal democracies of the West.\n\nDoes illiberal democracy threaten the rise of autocratic or even fascist regimes? Is democracy meaningless if government constrains freedom of speech or seeks to influence the media and the judiciary? Or are unelected bodies such as the civil service, federal agencies, academia and the law themselves potential threats to the democratic will of the people?\n\n#politics  #america  #democracy #geopolitics #china #india \n\nKishore Mahbubani is a Singaporean diplomat and scholar, former President of the UN Security Council, whose work examines the geopolitics of Asia's return to the global centre stage. \n\nMichael Ignatieff is a writer, historian, and former Leader of Canada's Liberal Party whose books on nationalism and human rights established him as a central voice in post–Cold War political thought.\n\nMarlene Laruelle is a historian, sociologist and political scientist at George Washington University, where she directs the Illiberalism Studies Programme.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=the-age-of-the-illiberal-democracy\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "این تحلیل نشان می‌دهد که مدل‌های دموکراسی غیرآزادی می‌توانند به عنوان یک جایگزین برای دموکراسی‌های لیبرال در نظر گرفته شوند، اما با خطراتی چون محدودیت آزادی بیان و نفوذ در رسانه‌ها و قضاییه همراه هستند. رشد اقتصادی بالاتر در این کشورها ممکن است به عنوان یک جاذبه برای کشورهای در حال توسعه دیده شود، اما این موفقیت ممکن است به هزینه حقوق بشر و آزادی‌های اساسی باشد. در نتیجه، این بحث به ما یادآور می‌شود که ارزیابی دقیق‌تر و جامع‌تری از مدل‌های حکومتی لازم است تا تعادل بین رشد اقتصادی و حفظ حقوق فردی برقرار شود.",
+      "link": "https://www.youtube.com/watch?v=PLs1IBKjayc",
+      "posted_at": 1789812638
+    },
+    "-1004482051328:1722": {
+      "chat_id": -1004482051328,
+      "message_id": 1722,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The World Economic Forum)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "دروغ‌پراکنی در عصر هوش مصنوعی: تهدیدی برای شناخت انسانی و ماشینی",
+      "summary": "در گزارش جدید World Economic Forum، به بررسی نحوهٔ استفاده از فناوری‌های هوش مصنوعی برای تولید و انتشار محتوای نادرست پرداخته شده است. این محتوا نه تنها بر ادراک انسان‌ها تأثیر می‌گذارد، بلکه با هدف فریب سامانه‌های تشخیص خودکار مانند فیلترهای اسپم و الگوریتم‌های توصیه‌گر نیز طراحی می‌شود. پژوهش نشان می‌دهد که ترکیب تکنیک‌های تولید متن و تصویر مبتنی بر مدل‌های زبانی بزرگ، امکان ایجاد «دروغ‌های عمیق» را فراهم می‌کند که تشخیص آن‌ها برای کاربران و سیستم‌ها دشوار است. علاوه بر این، نویسندگان هشدار می‌دهند که این تهدید می‌تواند به کاهش اعتماد عمومی به سرویس‌های دیجیتال و افزایش هزینه‌های امنیتی منجر شود.",
+      "why_it_matters": "دروغ‌پراکنی مبتنی بر هوش مصنوعی نه تنها خطر گمراه‌سازی عمومی را افزایش می‌دهد، بلکه توانایی فریب سامانه‌های خودکار را دارد که می‌تواند به انتشار خودکار محتوای نادرست منجر شود. این مسأله برای شرکت‌ها و نهادهای نظارتی اهمیت دارد، زیرا نیاز به توسعه ابزارهای تشخیص پیشرفته و چارچوب‌های قانونی جدید را برجسته می‌کند. در غیر این صورت، کاهش اعتماد به فناوری‌های دیجیتال می‌تواند اثرات منفی بر اقتصاد دیجیتال و فرآیندهای تصمیم‌گیری مبتنی بر داده داشته باشد.",
+      "link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxONDEtcXkyWmNfWG1QRXB0Q19hTmJMekx6YTFjdmZCX0tpc0g4VVpBMkdIRzBKNEl1am5PLWllc3FYXzZxaUxkVXpBYlotX2pha0xTVGc2aFBlOUtRcGVweWNKdWhBWmZ3R0FjTEVFLWtrclFVemozOS15NHVwMVZkSXBIdXFxdlZPcVhLbjRjdmhIdUhCOHc?oc=5",
+      "posted_at": 1789812642
     }
   }
 }

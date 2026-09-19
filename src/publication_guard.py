@@ -115,6 +115,7 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         str(semantic_signature_candidate.get("title_text") or ""),
         str(semantic_signature_stored.get("title_text") or ""),
     ).ratio()
+    semantic_shared_numbers = set(semantic_signature_candidate.get("numbers") or []) & set(semantic_signature_stored.get("numbers") or [])
 
     # Language-aware title identity is evaluated before event-kind short circuits.
     # This catches fully Persian rewrites where the Latin/digit anchor guard has
@@ -157,7 +158,11 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         anchors >= 2
         and shared_events
         and semantic_score >= 0.60
-        and (title_similarity >= 0.75 or context_jaccard >= 0.20)
+        and (
+            title_similarity >= 0.75
+            or context_jaccard >= 0.20
+            or semantic_shared_numbers
+        )
     ):
         return 1.0
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:

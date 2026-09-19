@@ -35,6 +35,25 @@ PROTECTED_SUMMARY_SCORE_FLOOR = 60.0
 NORMAL_SCORE_FLOOR = 60.0
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 2
 
+_MISSION_TOPIC_FAMILY_TO_AREA = {
+    "ai_core": "ai_core",
+    "quantum_ai": "convergence",
+    "bio_ai": "convergence",
+    "bci_neuro_ai": "convergence",
+    "robotics_embodied": "convergence",
+    "computing_infrastructure": "convergence",
+    "consciousness_cognition": "mind_cognition",
+    "future_technology": "future_governance",
+}
+
+
+def _mission_recovery_area(item):
+    area = canonical_mission_area(item)
+    if area not in {"unclassified", "unknown", ""}:
+        return area
+    family = str(item.get("topic_family") or "").strip().casefold()
+    return _MISSION_TOPIC_FAMILY_TO_AREA.get(family, area)
+
 
 def _is_mind_ideas_voices(item: dict) -> bool:
     return bool(
@@ -333,23 +352,8 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
         source_history = []
     editorial_pool = annotate_recovery_candidates(editorial_pool, source_history, contract)
 
-    topic_family_to_area = {
-        "ai_core": "ai_core",
-        "quantum_ai": "convergence",
-        "bio_ai": "convergence",
-        "bci_neuro_ai": "convergence",
-        "robotics_embodied": "convergence",
-        "computing_infrastructure": "convergence",
-        "consciousness_cognition": "mind_cognition",
-        "future_technology": "future_governance",
-    }
-
     def _area(item):
-        area = canonical_mission_area(item)
-        if area not in {"unclassified", "unknown", ""}:
-            return area
-        family = str(item.get("topic_family") or "").strip().casefold()
-        return topic_family_to_area.get(family, area)
+        return _mission_recovery_area(item)
 
     selected_ids = {_publication_identity(x) for x in selected}
 

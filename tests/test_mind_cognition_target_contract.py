@@ -17,14 +17,23 @@ def _item(title, source, score, area, content_type="research"):
     }
 
 
-def test_independent_mind_cognition_target_is_minimum_two():
+def test_mind_cognition_target_preserves_authoritative_mission_target():
     contract = load_editorial_contract()
     items = [_item("Mind one", "Nature", 49, "mind"), _item("Mind two", "Aeon", 45, "mind")]
+    assert contract["mind_cognition_target"] == 1
+    prepare_mind_cognition_contract(items, contract)
+    assert contract["mind_cognition_target"] == 1
+    assert contract["mind_cognition_score_floor"] == 50.0
+    assert contract["mind_cognition_min_publish"] == 1
+    assert contract["mind_cognition_max_publish"] == 2
+
+
+def test_mind_cognition_target_two_is_also_preserved_when_explicitly_configured():
+    contract = load_editorial_contract()
+    contract["mind_cognition_target"] = 2
+    items = [_item("Mind one", "Nature", 49, "mind")]
     prepare_mind_cognition_contract(items, contract)
     assert contract["mind_cognition_target"] == 2
-    assert contract["mind_cognition_score_floor"] == 50.0
-    assert contract["mind_cognition_min_publish"] == 2
-    assert contract["mind_cognition_max_publish"] == 2
 
 
 def test_mind_candidates_below_fifty_keep_original_score_and_get_bounded_bypass():

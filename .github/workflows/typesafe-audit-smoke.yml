@@ -2,9 +2,6 @@ name: TypeSafe Audit Smoke Test
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/typesafe-judgment-reranking
 
 permissions:
   contents: read

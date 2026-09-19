@@ -241,3 +241,4 @@ def test_mission_recovery_uses_canonical_topic_family_mapping():
     assert _mission_recovery_area({"topic_family": "quantum_ai"}) == "convergence"
     assert _mission_recovery_area({"topic_family": "bio_ai"}) == "convergence"
     assert _mission_recovery_area({"topic_family": "consciousness_cognition"}) == "mind_cognition"
+    assert _mission_recovery_area({"mission_area": "ai_core", "topic_family": "quantum_ai"}) == "ai_core"

@@ -20,6 +20,16 @@ LEDGER_PATH = ROOT / "data" / "telegram_feedback.json"
 
 _TRACKING = {"utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "gclid", "fbclid", "mc_cid", "mc_eid", "ref", "ref_src"}
 
+_PERSIAN_DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹", "0123456789")
+
+
+def _title_numeric_identifiers(value: str) -> set[str]:
+    """Return non-year numeric identifiers from a title, normalized across digit sets."""
+    text = str(value or "").translate(_PERSIAN_DIGITS)
+    numbers = set(re.findall(r"\\b\\d+(?:\\.\\d+)?\\b", text))
+    return {n for n in numbers if not (len(n) == 4 and 1900 <= int(n) <= 2100)}
+
+
 
 def _canonical_url(value: str) -> str:
     raw = str(value or "").strip()
@@ -116,6 +126,7 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         str(semantic_signature_stored.get("title_text") or ""),
     ).ratio()
     semantic_shared_numbers = set(semantic_signature_candidate.get("numbers") or []) & set(semantic_signature_stored.get("numbers") or [])
+    shared_title_numeric_identifiers = _title_numeric_identifiers(candidate_title) & _title_numeric_identifiers(stored_title)
 
     # Language-aware title identity is evaluated before event-kind short circuits.
     # This catches fully Persian rewrites where the Latin/digit anchor guard has
@@ -157,7 +168,7 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     if (
         anchors >= 2
         and shared_events
-        and semantic_shared_numbers
+        and shared_title_numeric_identifiers
     ):
         return 1.0
     if (

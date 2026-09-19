@@ -125,13 +125,9 @@ def test_diagnostic_same_company_distinct_research_subject():
         f"{new['title']} {new['summary']}",
         f"{old['title']} {old['summary']}",
     )
-    print(
-        "DIAGNOSTIC_NVIDIA",
-        {"kind": kind, "event_score": event_score, "semantic_score": semantic_score,
-         "anchors": anchors, "evidence": evidence,
-         "allowed": __import__("src.publication_guard", fromlist=["check_before_publish"]).check_before_publish(
-             _candidate(new["title"], new["summary"]),
-             "https://example.com/nvidia-robot-perception",
-             records=[old],
-         )}
+    result = __import__("src.publication_guard", fromlist=["check_before_publish"]).check_before_publish(
+        _candidate(new["title"], new["summary"]),
+        "https://example.com/nvidia-robot-perception",
+        records=[old],
     )
+    assert False, f"DIAGNOSTIC_NVIDIA kind={kind} event_score={event_score} semantic_score={semantic_score} anchors={anchors} evidence={evidence} result={result}"

@@ -157,12 +157,14 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     if (
         anchors >= 2
         and shared_events
+        and semantic_shared_numbers
+    ):
+        return 1.0
+    if (
+        anchors >= 2
+        and shared_events
         and semantic_score >= 0.60
-        and (
-            title_similarity >= 0.75
-            or context_jaccard >= 0.20
-            or semantic_shared_numbers
-        )
+        and (title_similarity >= 0.75 or context_jaccard >= 0.20)
     ):
         return 1.0
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:

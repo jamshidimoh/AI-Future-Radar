@@ -164,3 +164,32 @@ def test_window_area_cap_prefers_an_underrepresented_area():
     titles = [x["title"] for x in selected]
     assert "Convergence pick" in titles
     assert len(titles) <= 2
+
+
+def test_authority_repair_preserves_mission_target_over_generic_candidate():
+    candidates = [
+        item("Authoritative AI story", "OpenAI", 100, area="ai", tier=1),
+        item("Mission convergence target", "Scientific outlet", 82, area="robotics", tier=3, content_type="research", research_signal=True),
+        item("Generic low-authority story", "Generic outlet", 75, area="ai", tier=3),
+        item("Authoritative replacement", "Nature", 72, area="ai", tier=1),
+    ]
+    contract = load_editorial_contract()
+    contract["ai_core_target_min"] = 1
+    contract["convergence_target"] = 1
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["research_target"] = 0
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=3,
+        max_per_source=2,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    titles = [x["title"] for x in selected]
+    assert "Mission convergence target" in titles
+    assert "Authoritative replacement" in titles
+    assert "Generic low-authority story" not in titles

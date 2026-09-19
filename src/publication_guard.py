@@ -27,7 +27,7 @@ def _title_numeric_identifiers(value: str) -> set[str]:
     """Return non-year numeric identifiers from a title, normalized across digit sets."""
     text = str(value or "").translate(_PERSIAN_DIGITS)
     numbers = set(re.findall(r"\b\d+(?:\.\d+)?\b", text))
-    return {n for n in numbers if not (len(n) == 4 and 1900 <= int(n) <= 2100)}
+    return {n for n in numbers if not (n.isdigit() and len(n) == 4 and 1900 <= int(n) <= 2100)}
 
 
 

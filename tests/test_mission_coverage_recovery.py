@@ -107,3 +107,42 @@ def test_mission_coverage_recovery_replaces_failed_legacy_future_candidate(monke
     assert len(recovered) == 1
     assert recovered[0][0]["title"] == "Good future policy"
     assert calls["n"] == 2
+
+
+def test_mission_coverage_recovery_gives_each_missing_lane_its_own_attempt_budget(monkeypatch):
+    _disable_history_dedup(monkeypatch)
+    from src import unified_editorial_selection
+
+    contract = unified_editorial_selection.load_editorial_contract()
+    contract["ai_core_target_min"] = 1
+    contract["convergence_target"] = 1
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 0
+    monkeypatch.setattr(unified_editorial_selection, "load_editorial_contract", lambda: dict(contract))
+
+    selected = []
+    editorial_pool = [
+        {"title": "AI core", "mission_area": "ai_core", "link": "https://example.invalid/ai", "source": "OpenAI", "source_tier": 1, "editorial_score": 90},
+        {"title": "Convergence", "mission_area": "convergence", "link": "https://example.invalid/conv", "source": "Nature", "source_tier": 1, "editorial_score": 90},
+        {"title": "Mind", "mission_area": "mind_cognition", "link": "https://example.invalid/mind", "source": "Nature", "source_tier": 1, "editorial_score": 90},
+    ]
+
+    def select_fn(items, **_kwargs):
+        return [items[0]]
+
+    recovered = _mission_coverage_recovery(
+        selected,
+        editorial_pool,
+        select_fn,
+        lambda item: {"summary": f"Valid summary for {item['title']}"},
+        2,
+        2,
+        {"replacement_buffer": 1},
+        set(),
+    )
+
+    assert {item["mission_area"] for item, _ in recovered} == {
+        "ai_core",
+        "convergence",
+        "mind_cognition",
+    }

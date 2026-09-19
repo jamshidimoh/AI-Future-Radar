@@ -21,7 +21,7 @@ EVENTS = {
     "launch": ("launch", "launched", "launches", "introduce", "introduced", "introduces", "unveil", "unveiled", "معرفی", "رونمایی", "عرضه"),
     "announcement": ("announce", "announced", "announcement", "اعلام", "اعلام کرد", "اعلامیه"),
     "warning": ("warning", "warn", "warns", "هشدار", "نگرانی"),
-    "statement": ("say", "says", "said", "statement", "remarks", "remarked", "گفت", "اظهار"),
+    "statement": ("say", "says", "said", "statement", "remarks", "remarked", "warn", "warns", "warned", "warning", "گفت", "اظهار", "هشدار"),
     "research": ("research", "study", "paper", "findings", "پژوهش", "مطالعه", "یافته", "تحقیق"),
     "legal_review": ("legal", "law", "laws", "legal review", "rights", "قانونی", "قوانین", "بررسی حقوقی"),
     "funding": ("funding", "grant", "investment", "سرمایه", "کمک مالی", "گرنت"),

@@ -140,18 +140,9 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         # mention only one concrete entity while the second source supplies the
         # rest of the context. Do not require three anchors when the event
         # matcher has already classified both stories as the same event.
-        # A single shared organization/person anchor plus a modest semantic
-        # score is not sufficient: distinct research/product stories from the
-        # same entity can otherwise be classified as DUPLICATE.
-        if shared_events and anchors >= 2 and semantic_score >= 0.50:
-            return 1.0
-        if (
-            shared_events
-            and shared_entities
-            and semantic_score >= 0.65
-            and (title_similarity >= 0.60 or context_jaccard >= 0.18)
-        ):
-            return 1.0
+        # Event classification alone is not enough: different research or
+        # product stories from the same entity can share a broad event class.
+        # Require corroborating title/context overlap before blocking.
         if shared_events and title_similarity >= 0.72 and context_jaccard >= 0.18:
             return 1.0
         if title_similarity >= 0.90 and context_jaccard >= 0.45:

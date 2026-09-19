@@ -15,8 +15,8 @@ def test_translation_of_same_story_from_different_sources_is_blocked():
         "link": "https://example.com/source-a",
     }
     candidate = _candidate(
-        "سرمایه‌گذاری ۱۰۰ میلیون دلاری کورسرا در شرکت آموزشی هوش مصنوعی جدید اندرو نگ",
-        "کورسرا ۱۰۰ میلیون دلار در شرکت آموزشی جدید اندرو نگ سرمایه‌گذاری می‌کند.",
+        "سرمایه‌گذاری ۱۰۰ میلیون دلاری Coursera در شرکت آموزشی هوش مصنوعی جدید Andrew Ng",
+        "Coursera ۱۰۰ میلیون دلار در شرکت آموزشی جدید Andrew Ng سرمایه‌گذاری می‌کند.",
     )
     allowed, reason = publication_guard.check_before_publish(
         candidate, "https://example.com/source-b", records=[published]

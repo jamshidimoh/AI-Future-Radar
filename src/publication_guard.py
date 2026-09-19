@@ -149,10 +149,16 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
             return 1.0
         return 0.0
 
-    # Cross-language rewrites often have low lexical/semantic similarity. Shared
-    # concrete anchors plus the same event class are sufficient; the previous
-    # 0.45 event-score threshold incorrectly rejected this class of duplicate.
-    if anchors >= 2 and shared_events and (event_score >= 0.20 or semantic_score >= 0.60):
+    # Cross-language rewrites can have lower lexical overlap, but concrete
+    # anchors alone are still insufficient: unrelated stories from the same
+    # organization can share the same broad event class. Require an additional
+    # title/context corroboration before blocking this fallback class.
+    if (
+        anchors >= 2
+        and shared_events
+        and semantic_score >= 0.60
+        and (title_similarity >= 0.75 or context_jaccard >= 0.20)
+    ):
         return 1.0
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:
         return 0.85

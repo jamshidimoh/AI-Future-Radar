@@ -61,6 +61,9 @@ def _priority_person_signal(item: dict[str, Any]) -> bool:
 
 
 def _ai_relevant(item: dict[str, Any]) -> bool:
+    mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
+    if mission in {"ai", "ai_core"}:
+        return True
     text = _text(item)
     return any(re.search(rf"(?<![a-z]){re.escape(a)}(?![a-z])", text) for a in AI_ANCHORS)
 

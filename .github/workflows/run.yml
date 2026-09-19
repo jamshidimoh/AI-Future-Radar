@@ -89,6 +89,9 @@ jobs:
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+          AI_RADAR_TYPESAFE_RERANK_MODE: active
+          AI_RADAR_TYPESAFE_RERANK_WEIGHT: 0.20
         run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_protected_lane.py 2>&1 | tee run.log'
 
       - name: Recover required Education publication

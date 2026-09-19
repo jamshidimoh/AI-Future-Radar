@@ -19,6 +19,7 @@ from src.protected_story_identity import probable_same_story
 from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
 from src.semantic_dedup import get_story_signature
 from src.story_gate import _technology_relevant
+from src.typesafe_judgment import rerank_candidates
 from src.unified_editorial_selection import load_editorial_contract, mission_area, select_regular_portfolio
 
 logger = logging.getLogger(__name__)
@@ -265,6 +266,11 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     contract = load_editorial_contract()
     candidate_window = max(4, min(len(normal), int(contract["candidate_window"] or 6) + int(contract.get("replacement_buffer", 0) or 0)))
     normal_window = _diversify_normal_candidates(normal, candidate_window, max_per_source, max_per_type, policy)
+    # TypeSafe only reranks the canonical candidate window; replacement-buffer
+    # candidates remain untouched so the existing fallback contract is preserved.
+    typesafe_window_size = min(len(normal_window), int(contract["candidate_window"] or 6))
+    typesafe_head = rerank_candidates(normal_window[:typesafe_window_size])
+    normal_window = typesafe_head + normal_window[typesafe_window_size:]
     ranked = priority + normal_window
     normal_rank = tier0_rank = 0
     for global_rank, item in enumerate(ranked, 1):

@@ -110,7 +110,7 @@ def test_shared_generic_ai_concept_without_story_identity_remains_publishable():
 def test_diagnostic_cross_language_duplicate_metrics():
     from src.event_identity import compare_events
     from src.semantic_dedup import _similarity, get_story_signature
-    from src.semantic_publication_guard import check_before_publish
+    from src.publication_guard import check_before_publish
     from src.semantic_publication_guard import shared_anchor_count
 
     cases = [

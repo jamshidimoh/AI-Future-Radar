@@ -1,0 +1,33 @@
+name: Apply Mission-Aware Summary Depth
+on:
+  push:
+    branches:
+      - fix/mission-aware-summary-depth
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Apply patch
+        run: python tools/patch_mission_summary_depth.py
+      - name: Validate
+        run: |
+          python -m pytest -q tests/test_summarize.py tests/test_editorial_quality_policy.py tests/test_production_acceptance_contract.py
+          python -m compileall -q src/summarize.py
+      - name: Commit patch and remove temporary tooling
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f tools/patch_mission_summary_depth.py .github/workflows/apply_mission_summary_depth.yml
+          git add -A
+          git commit -m "fix: make summary generation mission-aware [skip ci]"
+          git push origin HEAD:fix/mission-aware-summary-depth

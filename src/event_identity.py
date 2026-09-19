@@ -12,7 +12,7 @@ ALIASES = {
     "muse": ("muse", "میوز"), "personal_superintelligence": ("personal superintelligence", "personal super intelligence", "سوپر هوش شخصی"),
     "terence_tao": ("terence tao", "tao", "ترنس تائو"),
     "stanford_hai": ("stanford hai", "stanford institute for human-centered artificial intelligence", "استنفورد hai", "stanford"),
-    "openai": ("openai", "اوپن ای آی", "اوپنای"), "anthropic": ("anthropic", "انتروپیک"),
+    "openai": ("openai", "اوپن ای آی", "اوپنای"), "sam_altman": ("sam altman", "سم آلتمن"), "anthropic": ("anthropic", "انتروپیک"),
     "google": ("google", "گوگل"), "nvidia": ("nvidia", "انویدیا"),
     "chatgpt_images": ("chatgpt images", "chatgpt images 2.5"),
 }
@@ -77,7 +77,7 @@ def compare_event_features(fa:dict[str,Any],fb:dict[str,Any])->tuple[str,float,d
     # Generic shared event + high lexical overlap is not enough to declare two
     # stories identical. Independent announcements about different products,
     # models or companies often share words such as "launch"/"announcement".
-    same=((strong_product and bool(shared_events)) or (strong_product and context>=0.55 and title>=0.65) or (strong_person and bool(shared_events) and context>=0.18) or (strong_source and context>=0.35) or (source_anchor and context>=0.55) or (bool(shared) and bool(shared_events) and context>=0.45) or (len(shared)>=2 and bool(shared_events) and context>=0.20) or (title>=0.90 and context>=0.45))
+    same=((strong_product and bool(shared_events)) or (strong_product and context>=0.55 and title>=0.65) or (strong_person and bool(shared_events) and context>=0.18) or (strong_source and context>=0.35) or (source_anchor and context>=0.55) or (bool(shared) and bool(shared_events) and context>=0.45) or (len(shared)>=2 and bool(shared_events) and context>=0.20) or (title>=0.82 and context>=0.45 and bool(shared)) or (title>=0.90 and context>=0.45))
     material_update=_has_material_update_features(fa,fb)
     score=min(1.0,0.30*min(1.0,len(shared)/2.0)+0.20*bool(shared_events)+0.30*context+0.20*title+(0.18 if strong_product else 0))
     evidence={"shared_entities":sorted(shared),"shared_events":sorted(shared_events),"context_jaccard":round(context,4),"title_similarity":round(title,4),"material_update":material_update}

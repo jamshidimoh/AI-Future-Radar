@@ -74,7 +74,12 @@ def is_voices_candidate(item: dict[str, Any]) -> bool:
     mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
     if mission not in MISSION_AREAS: return False
     voice_signal = _has_voice_signal(item); person_signal = _has_person_signal(item); priority_person = _priority_person_signal(item)
-    return _ai_relevant(item) and person_signal and (voice_signal or priority_person)
+    summary = str(item.get("summary") or item.get("description") or "").strip()
+    # At pre-selection time some voice candidates have no source summary yet.
+    # Preserve them when structural voice/person signals are strong; the final
+    # publication gate still runs before delivery.
+    ai_relevant = _ai_relevant(item) or (not summary and voice_signal and person_signal)
+    return ai_relevant and person_signal and (voice_signal or priority_person)
 
 
 def _recency_bonus(item: dict[str, Any]) -> float:

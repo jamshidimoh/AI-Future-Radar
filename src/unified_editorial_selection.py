@@ -17,7 +17,7 @@ SELECTION_PATH = ROOT / "config" / "selection_policy.yaml"
 _AREA_MAP = {"ai": "ai_core", "ai_core": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "future": "future_governance", "future_governance": "future_governance", "mind": "mind_cognition", "mind_cognition": "mind_cognition", "convergence": "convergence"}
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
 _INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
-_COMMUNITY_MARKERS = ("reddit", "community")
+_COMMUNITY_MARKERS = ("reddit", "community", "aggregator", "techmeme")
 _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
 
 
@@ -104,16 +104,27 @@ def _keyword_match_area(item: dict[str, Any]) -> str | None:
 
 
 def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
+    """Apply mission evidence before trusting the legacy category label."""
     explicit = str(item.get("mission_area") or "").strip().casefold()
     if explicit in _AREA_MAP.values():
-        return True
-    category = str(item.get("category") or "").strip().casefold()
-    if category in _AREA_MAP:
-        item["mission_area"] = _AREA_MAP[category]
+        if explicit == "ai_core":
+            text = _mission_text(item)
+            low_signal = _load_yaml(MISSION_PATH).get("low_signal_terms", []) or []
+            if any(str(term).strip().casefold() in text for term in low_signal):
+                return False
         return True
     matched_area = _keyword_match_area(item)
     if matched_area:
         item["mission_area"] = matched_area
+        return True
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _AREA_MAP:
+        item["mission_area"] = _AREA_MAP[category]
+        if category == "ai" and strict:
+            text = _mission_text(item)
+            low_signal = _load_yaml(MISSION_PATH).get("low_signal_terms", []) or []
+            if any(str(term).strip().casefold() in text for term in low_signal):
+                return False
         return True
     if not strict:
         return True

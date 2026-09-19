@@ -70,16 +70,34 @@ def _topic(t,extra=None):
 
 def filter_ai_relevance(items,ai_keywords=None):
     out=[];drop=0;reason={"ai_core":"ai_evidence","quantum_ai":"quantum_ai_bridge","consciousness_cognition":"mind_technology_bridge","future_technology":"future_technology_bridge","bio_ai":"bio_ai_bridge","bci_neuro_ai":"bci_ai_bridge","robotics_embodied":"robotics_ai_bridge","computing_infrastructure":"computing_ai_bridge"}
+    _category_to_family={"quantum":"quantum_ai","genetics":"bio_ai","future":"future_technology","mind":"consciousness_cognition"}
     for raw in items:
         x=dict(raw);t=_text(x)
         if _has(t,LOW):continue
         fam,ev=_topic(t,ai_keywords)
-        curated=bool(x.get("curated_discovery")); preferred=str(x.get("preferred_source") or "").strip()
+        category=str(x.get("category") or "").strip().lower()
+        preferred=str(x.get("preferred_source") or "").strip()
         try:tier=int(x.get("source_tier"))
         except (TypeError,ValueError):tier=3
-        curated_bridge=curated and bool(preferred) and tier in {1,2} and str(x.get("category") or "").strip().lower() in {"ai","quantum","genetics","mind","future"}
+        discovery=str(x.get("discovery_query") or x.get("watch_query") or x.get("query") or "").strip().lower()
+        curated_query_bridge=(
+            category in _category_to_family
+            and tier in {1,2}
+            and _has(discovery,AI|AI_BRIDGE)
+            and bool(discovery)
+        )
+        curated=bool(x.get("curated_discovery"))
+        curated_bridge=(
+            tier in {1,2}
+            and str(category) in {"ai","quantum","genetics","mind","future"}
+            and (
+                (curated and bool(preferred))
+                or curated_query_bridge
+            )
+        )
         if fam=="out_of_scope" and curated_bridge:
-            fam="ai_core";ev=["curated_discovery"]
+            fam=_category_to_family.get(category, "ai_core")
+            ev=["curated_discovery_query"] if curated_query_bridge else ["curated_discovery"]
         if fam=="out_of_scope":drop+=1;continue
         confidence=0.55 if curated_bridge and not _has(t,AI|AI_BRIDGE) else 0.95 if str(x.get("evidence_text") or "").strip() else 0.85
         x.update(_ai_link=True,relevance_reason=reason[fam],relevance_evidence=ev,topic_family=fam,evidence_level="A",ai_relevance_confidence=confidence,evidence_strength=max(float(x.get("evidence_strength",0) or 0),confidence*10.0))

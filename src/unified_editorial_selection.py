@@ -410,11 +410,11 @@ def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> 
             break
         def _repair_priority(x: dict[str, Any]) -> tuple:
             reason = str(x.get("mission_selection_reason") or "")
-            if reason == "mission_target:convergence": lane_priority = 0
-            elif reason == "mission_target:future_governance": lane_priority = 1
-            elif reason == "portfolio_value": lane_priority = 2
-            elif reason == "adaptive_source_backfill": lane_priority = 3
-            else: lane_priority = 4
+            if reason == "portfolio_value": lane_priority = 0
+            elif reason == "adaptive_source_backfill": lane_priority = 1
+            elif reason == "policy_repair:min_authoritative_items": lane_priority = 2
+            elif reason.startswith("mission_target:"): lane_priority = 10
+            else: lane_priority = 3
             return (lane_priority, candidate_score(x), _safe_float(x, "evidence_strength"), _rank_key(x, p.recent))
         victim = min(removable, key=_repair_priority)
         p.remove(victim)

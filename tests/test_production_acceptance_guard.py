@@ -203,3 +203,32 @@ def test_current_runtime_contract_without_optional_tier0_flag_is_accepted():
     ok, message = validate(CURRENT_RUNTIME_CONTRACT_WITHOUT_TIER0_EXEMPT)
     assert ok is True
     assert "mind_ideas_voices=1" in message
+
+
+def test_normal_competitive_gate_preserves_mission_target_candidate_below_relative_cutoff():
+    from production_entrypoint import _competitive_normal_candidates
+
+    candidates = [
+        {
+            "title": "strong ai-core story",
+            "final_editorial_score": 80.0,
+            "mission_area": "ai_core",
+        },
+        {
+            "title": "competitive story",
+            "final_editorial_score": 78.0,
+            "mission_area": "ai_core",
+        },
+        {
+            "title": "convergence mission target",
+            "final_editorial_score": 52.0,
+            "mission_area": "convergence",
+            "mission_selection_reason": "mission_target:convergence",
+        },
+    ]
+    selected = _competitive_normal_candidates(candidates)
+    assert [x["title"] for x in selected] == [
+        "strong ai-core story",
+        "competitive story",
+        "convergence mission target",
+    ]

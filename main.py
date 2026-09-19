@@ -21,6 +21,7 @@ from src.signal_engine import enrich_signal_items
 from src.state_io import StateCorruptionError
 from src.story_gate import gate_story_candidates
 from src.summarize import summarize_item
+from src.unified_editorial_selection import mission_area as canonical_mission_area
 from src.unified_editorial_selection import select_regular_portfolio
 
 logger = logging.getLogger(__name__)
@@ -332,9 +333,23 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
         source_history = []
     editorial_pool = annotate_recovery_candidates(editorial_pool, source_history, contract)
 
+    topic_family_to_area = {
+        "ai_core": "ai_core",
+        "quantum_ai": "convergence",
+        "bio_ai": "convergence",
+        "bci_neuro_ai": "convergence",
+        "robotics_embodied": "convergence",
+        "computing_infrastructure": "convergence",
+        "consciousness_cognition": "mind_cognition",
+        "future_technology": "future_governance",
+    }
+
     def _area(item):
-        raw = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
-        return {"ai": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "mind": "mind_cognition", "future": "future_governance"}.get(raw, raw)
+        area = canonical_mission_area(item)
+        if area not in {"unclassified", "unknown", ""}:
+            return area
+        family = str(item.get("topic_family") or "").strip().casefold()
+        return topic_family_to_area.get(family, area)
 
     selected_ids = {_publication_identity(x) for x in selected}
 

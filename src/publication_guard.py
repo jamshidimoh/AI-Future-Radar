@@ -98,6 +98,9 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     title_similarity = float(evidence.get("title_similarity", 0.0) or 0.0)
     context_jaccard = float(evidence.get("context_jaccard", 0.0) or 0.0)
     shared_entities = set(evidence.get("shared_entities") or [])
+    semantic_signature_candidate = get_story_signature(candidate)
+    semantic_signature_stored = get_story_signature(stored)
+    semantic_shared_anchors = set(semantic_signature_candidate.get("anchors") or []) & set(semantic_signature_stored.get("anchors") or [])
 
     if kind == "UPDATE":
         if anchors >= 2 and shared_events and semantic_score >= 0.55:
@@ -126,6 +129,17 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         return 1.0
     if anchors >= 2 and title_similarity >= 0.82 and context_jaccard >= 0.35:
         return 0.85
+
+    # Persian/English source rewrites can lose Latin anchors after translation.
+    # Reuse language-aware semantic anchors from story signatures at the final
+    # send boundary so a translated rewrite of the same event is blocked.
+    if (
+        semantic_shared_anchors
+        and shared_events
+        and semantic_score >= 0.66
+        and (title_similarity >= 0.70 or context_jaccard >= 0.22)
+    ):
+        return 1.0
 
     logger.debug(
         "publication semantic comparison kind=%s anchors=%d semantic=%.3f event=%.3f title=%.3f context=%.3f shared_events=%s shared_entities=%s evidence=%s",

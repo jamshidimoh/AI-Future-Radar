@@ -49,11 +49,18 @@ def test_typesafe_audit_calls_model_but_does_not_reorder(monkeypatch):
 
     monkeypatch.setenv("AI_RADAR_TYPESAFE_RERANK_MODE", "audit")
     monkeypatch.setenv("TYPESAFE_API_KEY", "test")
-    client = FakeClient({"A": answer_set(0), "B": answer_set(4)})
-    items = [{"title": "A"}, {"title": "B"}]
+    client = FakeClient({
+        "A": answer_set(0),
+        "B": answer_set(4),
+        "C": answer_set(0),
+        "D": answer_set(0),
+        "E": answer_set(0),
+        "F": answer_set(0),
+    })
+    items = [{"title": title} for title in ["A", "B", "C", "D", "E", "F"]]
     result = tj.rerank_candidates(items, client=client)
     assert [x["title"] for x in result] == ["A", "B"]
-    assert len(client.calls) == 2
+    assert len(client.calls) == 6
     assert result[0]["typesafe_judgment_score"] < result[1]["typesafe_judgment_score"]
 
 
@@ -62,10 +69,17 @@ def test_typesafe_active_reranks_the_bounded_window(monkeypatch):
 
     monkeypatch.setenv("AI_RADAR_TYPESAFE_RERANK_MODE", "active")
     monkeypatch.setenv("TYPESAFE_API_KEY", "test")
-    client = FakeClient({"A": answer_set(0), "B": answer_set(4)})
-    items = [{"title": "A"}, {"title": "B"}]
+    client = FakeClient({
+        "A": answer_set(0),
+        "B": answer_set(4),
+        "C": answer_set(0),
+        "D": answer_set(0),
+        "E": answer_set(0),
+        "F": answer_set(0),
+    })
+    items = [{"title": title} for title in ["A", "B", "C", "D", "E", "F"]]
     result = tj.rerank_candidates(items, client=client)
-    assert [x["title"] for x in result] == ["B", "A"]
+    assert [x["title"] for x in result[:2]] == ["B", "A"]
     assert all(x["typesafe_rerank_applied"] for x in result)
 
 
@@ -74,10 +88,17 @@ def test_typesafe_low_confidence_attenuates_semantic_signal(monkeypatch):
 
     monkeypatch.setenv("AI_RADAR_TYPESAFE_RERANK_MODE", "active")
     monkeypatch.setenv("TYPESAFE_API_KEY", "test")
-    client = FakeClient({"A": answer_set(4, 0.0), "B": answer_set(0, 1.0)})
-    items = [{"title": "A"}, {"title": "B"}]
+    client = FakeClient({
+        "A": answer_set(4, 0.0),
+        "B": answer_set(0, 1.0),
+        "C": answer_set(0, 1.0),
+        "D": answer_set(0, 1.0),
+        "E": answer_set(0, 1.0),
+        "F": answer_set(0, 1.0),
+    })
+    items = [{"title": title} for title in ["A", "B", "C", "D", "E", "F"]]
     result = tj.rerank_candidates(items, client=client)
-    assert [x["title"] for x in result] == ["A", "B"]
+    assert result[0]["title"] == "A"
 
 
 def test_typesafe_failure_is_fail_open(monkeypatch):

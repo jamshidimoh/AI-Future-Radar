@@ -65,10 +65,20 @@ def test_typesafe_active_can_rerank_without_using_raw_editorial_score(monkeypatc
             "editorial_value": make_answer(4),
         }
     )
+    client_low = FakeClient(
+        {
+            "mission_fit": make_answer(0),
+            "novelty": make_answer(0),
+            "editorial_value": make_answer(0),
+        }
+    )
     items = [
-        {"title": "A", "final_editorial_score": 90},
-        {"title": "B", "final_editorial_score": 50},
+        {"title": "A"},
+        {"title": "B"},
     ]
+    # Put a semantically poor candidate first and a strong candidate second.
+    result = tj.rerank_candidates(items, client=client_low)
+    assert [x["title"] for x in result] == ["A", "B"]
     result = tj.rerank_candidates(items, client=client)
     assert [x["title"] for x in result] == ["A", "B"]
 

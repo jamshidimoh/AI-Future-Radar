@@ -105,3 +105,48 @@ def test_shared_generic_ai_concept_without_story_identity_remains_publishable():
     )
     assert allowed, reason
 
+
+
+def test_diagnostic_cross_language_duplicate_metrics():
+    from src.event_identity import compare_events
+    from src.semantic_dedup import _similarity, get_story_signature
+    from src.semantic_publication_guard import check_before_publish
+    from src.semantic_publication_guard import shared_anchor_count
+
+    cases = [
+        (
+            "openai",
+            {
+                "title": "OpenAI launches GPT-6 Astra for work",
+                "summary": "OpenAI launches GPT-6 Astra, a new model for workplace tasks.",
+            },
+            {
+                "title": "OpenAI رونمایی از GPT-6 Astra برای کار را اعلام کرد",
+                "summary": "OpenAI مدل GPT-6 Astra را برای استفاده در کار معرفی کرده است.",
+            },
+        ),
+        (
+            "andrew_ng",
+            {
+                "title": "Coursera backs co-founder Andrew Ng’s new AI education firm with $100 million investment",
+                "summary": "Coursera is investing $100 million in Andrew Ng's new AI education firm.",
+            },
+            {
+                "title": "سرمایه‌گذاری ۱۰۰ میلیون دلاری Coursera در شرکت آموزشی جدید Andrew Ng",
+                "summary": "Coursera ۱۰۰ میلیون دلار در شرکت آموزشی جدید Andrew Ng سرمایه‌گذاری می‌کند.",
+            },
+        ),
+    ]
+    rows = []
+    for name, old, new in cases:
+        kind, event_score, evidence = compare_events(new, old)
+        semantic_score = _similarity(get_story_signature(new), get_story_signature(old))
+        anchors = shared_anchor_count(
+            f"{new['title']} {new['summary']}",
+            f"{old['title']} {old['summary']}",
+        )
+        rows.append(
+            f"{name}: kind={kind} event_score={event_score} semantic_score={semantic_score} "
+            f"anchors={anchors} evidence={evidence} result={check_before_publish(_candidate(new['title'], new['summary']), 'https://example.com/new', records=[old])}"
+        )
+    raise AssertionError(" | ".join(rows))

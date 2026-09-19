@@ -11,7 +11,23 @@ logger = logging.getLogger(__name__)
 AI={"artificial intelligence","ai","machine learning","deep learning","large language model","llm","foundation model","generative ai","agentic ai","ai agent","agents","agi","superintelligence","reasoning model","multimodal","vision-language model","vlm","computer vision","copilot","ai coding","llm inference","llm training","world model","synthetic data","ai safety","ai alignment","ai governance","ai policy","ai for science","ai research","ai benchmark","physical ai","embodied ai","computer use","robotics"}
 AI_BRIDGE={"gpt","chatgpt","claude","gemini","qwen","llama","deepseek","mistral","openai","anthropic","deepmind","transformer","neural network","neural networks","frontier model","ai model","autoresearch","reasoning model","هوش مصنوعی","هوشِ مصنوعی","یادگیری ماشین","یادگیری عمیق","مدل زبانی بزرگ","مدل بنیادی","هوش مصنوعی مولد","هوش مولد","عامل هوشمند","عامل‌های هوشمند","ایجنت هوشمند","مدل استدلالی","بینایی ماشین","ربات‌های هوشمند","استفاده از رایانه","ایمنی هوش مصنوعی","حکمرانی هوش مصنوعی","سیاست‌گذاری هوش مصنوعی","آینده هوش مصنوعی","داده مصنوعی","شبکه عصبی","شبکه‌های عصبی","خودکارسازی پژوهش","اتوماسیون پژوهش","مدل مولد"}
 Q={"quantum computing","quantum computer","quantum processor","quantum chip","quantum algorithm","quantum machine learning","quantum ai","quantum neural network","quantum optimization","quantum simulation","quantum error correction","qpu","qubit","محاسبات کوانتومی","رایانش کوانتومی","یادگیری ماشین کوانتومی","هوش مصنوعی کوانتومی"}
-QAI=(Q-{"quantum optimization","qubit"})|{"ai","artificial intelligence","machine learning","llm","agi","hybrid quantum-classical","quantum inference","هوش مصنوعی","یادگیری ماشین","یادگیری ماشین کوانتومی"}
+QAI={
+    "quantum machine learning",
+    "quantum ai",
+    "quantum neural network",
+    "quantum optimization for ai",
+    "quantum inference for ai",
+    "quantum computing ai",
+    "hybrid quantum-classical",
+    "ai",
+    "artificial intelligence",
+    "machine learning",
+    "llm",
+    "agi",
+    "هوش مصنوعی",
+    "یادگیری ماشین",
+    "یادگیری ماشین کوانتومی",
+}
 M={"consciousness","machine consciousness","ai consciousness","sentience","qualia","self-awareness","awareness","cognitive science","cognition","cognitive","neuroscience","computational neuroscience","predictive processing","active inference","global workspace","integrated information","philosophy of mind","brain modeling","neural computation","memory","attention"}
 MB={"ai","artificial intelligence","machine learning","computational","neural computation","brain-computer interface","bci","neurotechnology","brain decoding","neural recording","brain stimulation","artificial neural network","llm","agi","robotics","simulation","cognitive computing"}
 F={"future","forecast","outlook","futurism","futurist","foresight","longtermism","singularity","future studies","technology forecasting","civilization futures","future of technology","future of intelligence","human enhancement","transhumanism","existential risk"}
@@ -70,18 +86,26 @@ def _topic(t,extra=None):
 
 def filter_ai_relevance(items,ai_keywords=None):
     out=[];drop=0;reason={"ai_core":"ai_evidence","quantum_ai":"quantum_ai_bridge","consciousness_cognition":"mind_technology_bridge","future_technology":"future_technology_bridge","bio_ai":"bio_ai_bridge","bci_neuro_ai":"bci_ai_bridge","robotics_embodied":"robotics_ai_bridge","computing_infrastructure":"computing_ai_bridge"}
+    category_to_family={"ai":"ai_core","quantum":"quantum_ai","genetics":"bio_ai","mind":"consciousness_cognition","future":"future_technology"}
     for raw in items:
         x=dict(raw);t=_text(x)
         if _has(t,LOW):continue
         fam,ev=_topic(t,ai_keywords)
-        curated=bool(x.get("curated_discovery")); preferred=str(x.get("preferred_source") or "").strip()
+        category=str(x.get("category") or "").strip().lower()
         try:tier=int(x.get("source_tier"))
         except (TypeError,ValueError):tier=3
-        curated_bridge=curated and bool(preferred) and tier in {1,2} and str(x.get("category") or "").strip().lower() in {"ai","quantum","genetics","mind","future"}
-        if fam=="out_of_scope" and curated_bridge:
-            fam="ai_core";ev=["curated_discovery"]
+        discovery=str(x.get("discovery_query") or x.get("watch_query") or x.get("query") or "").strip().lower()
+        query_ai_bridge=(
+            category in category_to_family
+            and tier in {1,2}
+            and bool(discovery)
+            and _has(discovery,AI|AI_BRIDGE)
+        )
+        if fam=="out_of_scope" and query_ai_bridge:
+            fam=category_to_family[category]
+            ev=["curated_discovery_query"]
         if fam=="out_of_scope":drop+=1;continue
-        confidence=0.55 if curated_bridge and not _has(t,AI|AI_BRIDGE) else 0.95 if str(x.get("evidence_text") or "").strip() else 0.85
+        confidence=0.55 if query_ai_bridge and not _has(t,AI|AI_BRIDGE) else 0.95 if str(x.get("evidence_text") or "").strip() else 0.85
         x.update(_ai_link=True,relevance_reason=reason[fam],relevance_evidence=ev,topic_family=fam,evidence_level="A",ai_relevance_confidence=confidence,evidence_strength=max(float(x.get("evidence_strength",0) or 0),confidence*10.0))
         out.append(x)
     print(f"[AI Gate] rejected={drop} | kept={len(out)}")

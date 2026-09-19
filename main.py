@@ -259,9 +259,14 @@ def _split_protected(items, max_protected=2):
 
 def _publication_summary_budget(items, max_posts, policy):
     buffer = max(0, int(policy.get("replacement_buffer", 3) or 3))
-    protected = [x for x in items if x.get("protected_slot") or x.get("protected_content")]
-    mind = [x for x in items if _is_mind_ideas_voices(x) and x not in protected][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
-    normal = [x for x in items if x not in protected and not _is_mind_ideas_voices(x)]
+    mind = [x for x in items if _is_mind_ideas_voices(x)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
+    mind_ids = {id(x) for x in mind}
+    protected = [
+        x for x in items
+        if (x.get("protected_slot") or x.get("protected_content"))
+        and id(x) not in mind_ids
+    ]
+    normal = [x for x in items if id(x) not in mind_ids and x not in protected]
     eligible_protected = [x for x in protected if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= PROTECTED_SUMMARY_SCORE_FLOOR]
     normal_window = max_posts + buffer
     bounded = eligible_protected[:max_posts] + normal[:normal_window] + mind

@@ -100,7 +100,10 @@ def _mission_recovery_hard_failures(lines):
         status = match.group(2).casefold()
         if status == "recovered":
             lane_outcomes[area] = "recovered"
-        elif lane_outcomes.get(area) != "recovered":
+        elif status == "failed" and lane_outcomes.get(area) != "recovered":
+            # Candidate-level quality/eligibility outcomes such as
+            # below_score_floor are not infrastructure/terminal failures.
+            # They may legitimately leave a lane with no eligible candidate.
             lane_outcomes[area] = "failed"
     return sum(1 for outcome in lane_outcomes.values() if outcome == "failed")
 

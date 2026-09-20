@@ -42,7 +42,7 @@ def _load_health() -> dict:
     return value if isinstance(value, dict) else {}
 
 
-def _persistently_unavailable(deployment_id: str) -> bool:
+def _persistently_unavailable(deployment_id: str, *, recovery_probe: bool = False) -> bool:
     """Skip providers/models whose persisted health cooldown is still active in production."""
     if os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() not in {"1", "true", "yes"}:
         return False

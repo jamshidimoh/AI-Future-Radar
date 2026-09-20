@@ -86,7 +86,7 @@ def test_provider_warning_failure_after_success_is_persisted(tmp_path, monkeypat
     monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
     assert persistence.main() == 0
     payload = json.loads(state.read_text(encoding="utf-8"))
-    assert "Groq:qwen/qwen3.6-27b" in payload["models"]
+    assert "groq:qwen/qwen3.6-27b" in payload["models"]
     assert payload["telemetry"]["observed_failures"] == 1
 
 
@@ -103,7 +103,7 @@ def test_success_after_failure_clears_latest_model_state(tmp_path, monkeypatch):
     monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
     assert persistence.main() == 0
     payload = json.loads(state.read_text(encoding="utf-8"))
-    assert "Groq:qwen/qwen3.6-27b" not in payload["models"]
+    assert "groq:qwen/qwen3.6-27b" not in payload["models"]
     assert payload["telemetry"]["observed_failures"] == 1
 
 

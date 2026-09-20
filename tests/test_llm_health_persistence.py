@@ -175,3 +175,22 @@ def test_legacy_mixed_case_model_state_is_migrated_and_cleared_by_success(tmp_pa
     assert persistence.main() == 0
     payload = json.loads(state.read_text(encoding="utf-8"))
     assert "groq:qwen/qwen3.6-27b" not in payload["models"]
+
+
+
+def test_intelligence_blocks_runtime_model_from_legacy_mixed_case_health(tmp_path):
+    state = tmp_path / "llm_health.json"
+    state.write_text(json.dumps({
+        "models": {
+            "Groq:openai/gpt-oss-120b": {
+                "failures": 1,
+                "disabled_until": 4102444800,
+                "last_error": "rate_limit",
+                "last_success": 0,
+            }
+        },
+        "providers": {},
+    }), encoding="utf-8")
+    intelligence = FreeModelIntelligence(state, persist=True)
+    ranked = intelligence.rank([_entry("openai/gpt-oss-120b", family="groq", quality=90)])
+    assert ranked == []

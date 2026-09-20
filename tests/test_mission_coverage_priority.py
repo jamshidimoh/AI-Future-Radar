@@ -36,3 +36,8 @@ def test_underrepresented_authoritative_mind_candidate_gets_bounded_bonus():
 def test_coverage_bonus_is_bounded_and_additive():
     item = {"radar_composite_score": 54.15, "signal_score": 0, "mission_coverage_bonus": 0.75}
     assert canonical_rank_score(item) == 41.36
+
+
+def test_canonical_normal_floor_is_55():
+    from src.editorial_quality_policy import NORMAL_SCORE_FLOOR
+    assert NORMAL_SCORE_FLOOR == 55.0

@@ -7,6 +7,7 @@ import requests
 
 from src.dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
 from src.editorial import enrich_items, filter_ai_relevance
+from src.editorial_quality_policy import NORMAL_SCORE_FLOOR as CANONICAL_NORMAL_SCORE_FLOOR
 from src.fetch_google_news import fetch_google_news_items
 from src.fetch_rss import fetch_rss_items
 from src.fetch_youtube import fetch_youtube_items
@@ -31,7 +32,7 @@ LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
 SELECTION_POLICY_PATH = ROOT / "config" / "selection_policy.yaml"
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 PROTECTED_SUMMARY_SCORE_FLOOR = 60.0
-NORMAL_SCORE_FLOOR = 60.0
+NORMAL_SCORE_FLOOR = CANONICAL_NORMAL_SCORE_FLOOR
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 2
 
 

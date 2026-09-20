@@ -178,3 +178,20 @@ def test_runtime_candidates_honor_replacement_buffer():
     assert len(bounded) == 7
     assert sum(1 for item in bounded if item.get("protected_slot")) == 2
     assert [item.get("normal_period_rank") for item in bounded if item.get("normal_period_rank") is not None] == [1, 2, 3, 4, 5]
+
+
+def test_mission_recovery_exhausted_below_floor_is_no_candidate_not_hard_failure():
+    from scripts.production_acceptance_guard import validate
+    log = """[Selection Timing] candidates=5
+[Publication Summary Budget] input=5 output=5
+[Mission Coverage Recovery] attempt=1 area=ai_core title=A status=below_score_floor
+[Mission Coverage Recovery] attempt=2 area=ai_core title=B status=below_score_floor
+[Mission Coverage Recovery] attempt=3 area=ai_core title=C status=below_score_floor
+[Mission Coverage Recovery] lane=ai_core status=unmet
+[Mission Coverage Recovery] missing_lanes=1 attempts=3 recovered=0 status=unmet
+[Production Contract] normal_news=1 normal_max=3 tier0_news=0 education=not_due
+[Production Acceptance] placeholder
+"""
+    ok, message = validate(log)
+    assert ok
+    assert "no eligible candidate" in message

@@ -61,12 +61,33 @@ def family(deployment: str) -> str:
 
 
 def canonical_deployment(provider: str, model: str) -> str:
-    prefix = _PROVIDER_CANONICAL.get(str(provider).strip().casefold(), str(provider).strip())
+    prefix = str(provider).strip().casefold()
     model_text = str(model).strip()
-    prefix_colon = f"{prefix}:"
-    if model_text.casefold().startswith(prefix_colon.casefold()):
-        return model_text
+    if model_text.casefold().startswith(f"{prefix}:"):
+        model_text = model_text.split(":", 1)[1]
     return f"{prefix}:{model_text}"
+
+
+def normalize_state_keys(section: dict) -> dict:
+    """Migrate legacy case-sensitive deployment keys to the runtime canonical form."""
+    result = {}
+    for key, row in (section or {}).items():
+        if not isinstance(row, dict):
+            continue
+        normalized = str(key).strip().casefold()
+        existing = result.get(normalized)
+        if not isinstance(existing, dict):
+            result[normalized] = dict(row)
+            continue
+        try:
+            existing["failures"] = max(int(existing.get("failures", 0) or 0), int(row.get("failures", 0) or 0))
+            existing["disabled_until"] = max(float(existing.get("disabled_until", 0) or 0), float(row.get("disabled_until", 0) or 0))
+            existing["last_success"] = max(float(existing.get("last_success", 0) or 0), float(row.get("last_success", 0) or 0))
+        except (TypeError, ValueError):
+            pass
+        if not existing.get("last_error") and row.get("last_error"):
+            existing["last_error"] = row.get("last_error")
+    return result
 
 
 def is_kira_wallet_only(deployment: str, message: str) -> bool:
@@ -137,8 +158,8 @@ def main() -> int:
 
     state = load()
     now = time.time()
-    models = prune(state.get("models", {}) if isinstance(state.get("models"), dict) else {}, now)
-    providers = prune(state.get("providers", {}) if isinstance(state.get("providers"), dict) else {}, now)
+    models = normalize_state_keys(prune(state.get("models", {}) if isinstance(state.get("models"), dict) else {}, now))
+    providers = normalize_state_keys(prune(state.get("providers", {}) if isinstance(state.get("providers"), dict) else {}, now))
     lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
     events = list(_iter_events(lines))
     observed_failures = [event for event in events if event[1] == "failure"]

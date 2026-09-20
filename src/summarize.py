@@ -41,8 +41,8 @@ summary باید 3 تا 5 جمله کامل و اطلاعات مهم منبع ر
 
 _VALUE_REPAIR_PROMPT = """تو ویراستار ارشد محتوای یک رسانه تخصصی فناوری هستی. پیش‌نویس زیر از نظر زبان معتبر است اما از نظر ارزش اطلاعاتی ضعیف است.
 فقط با استفاده از متن منبع آن را اصلاح کن.
-summary باید 3 تا 5 جمله کامل باشد و مشخصاً بگوید چه اتفاقی افتاده، مهم‌ترین روش/یافته/قابلیت/عدد یا محدودیت چیست. کلی‌گویی و تکرار عنوان ممنوع.
-why_it_matters باید 3 تا 4 جمله کامل باشد و یک پیامد مشخص برای پژوهش، محصول، زیرساخت، بازار، ایمنی، حکمرانی یا مسیر آینده فناوری توضیح دهد. از کلیشه‌هایی مانند «این موضوع آینده AI را تغییر می‌دهد» بدون سازوکار مشخص استفاده نکن.
+summary باید 3 تا 5 جمله کامل باشد و مشخصاً بگوید چه اتفاقی افتاده، مهم‌ترین روش/یافته/قابلیت/عدد یا محدودیت چیست. حداقل دو نشانه عینی از منبع مانند نام فرد، نظریه، آزمون، سیستم، روش، عدد یا نمونه را در صورت وجود حفظ کن. کلی‌گویی و تکرار عنوان ممنوع.
+why_it_matters باید 3 تا 4 جمله کامل باشد و بر پایه همان شواهد، یک پیامد مشخص برای پژوهش، محصول، زیرساخت، بازار، ایمنی، حکمرانی یا مسیر آینده فناوری توضیح دهد. دست‌کم یک سازوکار مشخصِ «چرا/چگونه» را از منبع یا از رابطه مستقیم میان یافته و پیامد بیان کن و از جمله‌های صرفاً کلی پرهیز کن. از کلیشه‌هایی مانند «این موضوع آینده AI را تغییر می‌دهد» بدون سازوکار مشخص استفاده نکن.
 summary و why_it_matters نباید یکدیگر را تکرار کنند. هیچ ادعایی خارج از منبع اضافه نکن. جزئیات فنی، اعداد، نام مدل/سیستم و محدودیت‌های صریح منبع را در صورت وجود حفظ کن. نام رسمی افراد، شرکت‌ها، مدل‌ها و پروژه‌ها Latin بماند.
 خروجی فقط JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 
@@ -222,7 +222,7 @@ def _repair_persian_draft(data, item):
     return data, provider
 
 
-def _repair_editorial_value(data, item):
+def _repair_editorial_value(data, item, providers=None):
     prompt = _VALUE_REPAIR_PROMPT.format(
         draft=json.dumps(data, ensure_ascii=False),
         source=_source_text(item),
@@ -230,7 +230,7 @@ def _repair_editorial_value(data, item):
     raw, provider = call_llm_with_fallback(
         prompt,
         json.dumps({"draft": data, "source": _source_text(item)}, ensure_ascii=False),
-        providers=get_quality_chain(),
+        providers=providers or get_quality_chain(),
     )
     try:
         candidate = _normalize(_extract_json(raw or ""), item)
@@ -387,22 +387,31 @@ def summarize_item(item):
 
     if not _value_ok(final, raw_text):
         print("[Editorial Value Gate] weak summary; attempting one bounded repair", flush=True)
-        repaired, repair_provider = _repair_editorial_value(final, item)
+        repair_chain = get_quality_chain()
+        repaired, repair_provider = _repair_editorial_value(final, item, repair_chain)
         if _language_ok(repaired) and _length_ok(repaired, raw_text) and _value_ok(repaired, raw_text):
             final = repaired
             editorial_provider = repair_provider
             print("[Editorial Value Gate] repaired candidate accepted", flush=True)
         else:
-            print("[Editorial Value Gate] repaired candidate rejected; item will not be published", flush=True)
-            _telemetry_event(
-                item,
-                stage="editorial_quality",
-                decision="reject",
-                reason_code="editorial_value_failure",
-                details={"repair_provider": repair_provider},
-                attempt=1,
-            )
-            return None
+            print("[Editorial Value Gate] first repair rejected; attempting bounded cross-provider repair", flush=True)
+            alternate_chain = list(reversed(repair_chain))
+            repaired2, repair_provider2 = _repair_editorial_value(final, item, alternate_chain)
+            if _language_ok(repaired2) and _length_ok(repaired2, raw_text) and _value_ok(repaired2, raw_text):
+                final = repaired2
+                editorial_provider = repair_provider2
+                print("[Editorial Value Gate] cross-provider repair accepted", flush=True)
+            else:
+                print("[Editorial Value Gate] repairs rejected; item will not be published", flush=True)
+                _telemetry_event(
+                    item,
+                    stage="editorial_quality",
+                    decision="reject",
+                    reason_code="editorial_value_failure",
+                    details={"repair_provider": repair_provider, "alternate_repair_provider": repair_provider2},
+                    attempt=2,
+                )
+                return None
 
     final = _run_shadow_claim_verification(final, item, raw_text)
     final["_provider"] = provider

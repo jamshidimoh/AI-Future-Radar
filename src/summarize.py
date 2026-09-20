@@ -39,6 +39,19 @@ summary باید 3 تا 5 جمله کامل و اطلاعات مهم منبع ر
 
 متن منبع: {source}"""
 
+_PERSIAN_FIELDS_REPAIR_PROMPT = """پیش‌نویس زیر از نظر زبان فارسی نامعتبر است و بازنویسی کامل آن در مرحله قبل نتیجه معتبر نداده است.
+فقط دو فیلد summary و why_it_matters را با تکیه صرف بر متن منبع بازنویسی کن.
+summary باید 3 تا 5 جمله کامل فارسی باشد و دست‌کم دو شاهد عینی از منبع (نام فرد، نظریه، آزمون، سیستم، روش، عدد یا نمونه) را در صورت وجود حفظ کند.
+why_it_matters باید 3 تا 4 جمله کامل فارسی باشد و یک پیامد یا اهمیت مشخص را با سازوکار «چرا/چگونه» و فقط بر اساس شواهد منبع توضیح دهد.
+نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها را Latin نگه دار. ترجمه یا آوانویسی فارسی نام خاص انجام نده. از ادعای جدید، کلی‌گویی و تکرار عنوان خودداری کن.
+خروجی دقیقاً JSON معتبر با کلیدهای summary, why_it_matters باشد.
+
+پیش‌نویس:
+{draft}
+
+متن منبع:
+{source}"""
+
 _VALUE_REPAIR_PROMPT = """تو ویراستار ارشد محتوای یک رسانه تخصصی فناوری هستی. پیش‌نویس زیر از نظر زبان معتبر است اما از نظر ارزش اطلاعاتی ضعیف است.
 فقط با استفاده از متن منبع آن را اصلاح کن.
 summary باید 3 تا 5 جمله کامل باشد و مشخصاً بگوید چه اتفاقی افتاده، مهم‌ترین روش/یافته/قابلیت/عدد یا محدودیت چیست. حداقل دو نشانه عینی از منبع مانند نام فرد، نظریه، آزمون، سیستم، روش، عدد یا نمونه را در صورت وجود حفظ کن. کلی‌گویی و تکرار عنوان ممنوع.
@@ -222,6 +235,64 @@ def _repair_persian_draft(data, item):
     return data, provider
 
 
+def _repair_persian_fields(data, item, providers=None):
+    """Recover only the failed body fields with a smaller, field-focused prompt."""
+    prompt = _PERSIAN_FIELDS_REPAIR_PROMPT.format(
+        draft=json.dumps(
+            {
+                "title": data.get("title", ""),
+                "summary": data.get("summary", ""),
+                "why_it_matters": data.get("why_it_matters", ""),
+            },
+            ensure_ascii=False,
+        ),
+        source=_source_text(item),
+    )
+    raw, provider = call_llm_with_fallback(
+        prompt,
+        json.dumps(
+            {
+                "title": data.get("title", ""),
+                "summary": data.get("summary", ""),
+                "why_it_matters": data.get("why_it_matters", ""),
+                "source": _source_text(item),
+            },
+            ensure_ascii=False,
+        ),
+        providers=providers or get_quality_chain(),
+    )
+    try:
+        repaired = _extract_json(raw or "")
+        candidate = dict(data)
+        candidate["summary"] = normalize_editorial_text(str(repaired.get("summary", "")).strip())
+        candidate["why_it_matters"] = normalize_editorial_text(str(repaired.get("why_it_matters", "")).strip())
+    except (json.JSONDecodeError, TypeError, ValueError):
+        print("[Field Language Recovery] invalid JSON; preserving original draft", flush=True)
+        return data, provider
+
+    summary_ratio = persian_ratio(candidate.get("summary", ""))
+    why_ratio = persian_ratio(candidate.get("why_it_matters", ""))
+    if (
+        candidate.get("summary", "").strip()
+        and candidate.get("why_it_matters", "").strip()
+        and summary_ratio >= 0.35
+        and why_ratio >= 0.35
+    ):
+        print(
+            "[Field Language Recovery] recovered Persian body "
+            f"summary={summary_ratio:.2f} why={why_ratio:.2f}",
+            flush=True,
+        )
+        return candidate, provider
+
+    print(
+        "[Field Language Recovery] rejected recovered body "
+        f"summary={summary_ratio:.2f} why={why_ratio:.2f}",
+        flush=True,
+    )
+    return data, provider
+
+
 def _repair_editorial_value(data, item, providers=None):
     prompt = _VALUE_REPAIR_PROMPT.format(
         draft=json.dumps(data, ensure_ascii=False),
@@ -360,6 +431,9 @@ def summarize_item(item):
     else:
         if not _language_ok(final):
             final, recovery_provider = _repair_persian_draft(final, item)
+            provider = provider or recovery_provider
+        if not _language_ok(final):
+            final, recovery_provider = _repair_persian_fields(final, item)
             provider = provider or recovery_provider
         if not _language_ok(final) or not _length_ok(final, raw_text):
             final, recovery_provider = _repair_title(final)

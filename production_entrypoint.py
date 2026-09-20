@@ -542,6 +542,19 @@ def main(*, skip_education: bool = False) -> int:
             print(f"[Publication Policy] PUBLISH TIER0 interview/quote global_rank={global_rank} tier0_rank={story.get('tier0_rank')} score={score} quality_floor={PROTECTED_SCORE_FLOOR} quota_exempt=true", flush=True)
             return delivered({"message_id": None})
         if normal_rank is None or normal_rank > RANK_WINDOW:
+            # Mission recovery has already passed exact-lane selection, summary,
+            # language, evidence, and the normal quality floor. It is intentionally
+            # outside the ordinary rank window, so the rank guard must not discard
+            # the recovered candidate after all stronger gates have passed.
+            if story.get("_mission_recovery"):
+                if not normal_score_allowed(score, previous_normal_score):
+                    return policy_blocked(f"normal_score_policy_blocked:{score}<floor:{NORMAL_SCORE_FLOOR}")
+                print(
+                    f"[Publication Policy] PUBLISH mission_recovery normal_rank={normal_rank} "
+                    f"score={score} previous_normal={previous_normal_score}",
+                    flush=True,
+                )
+                return delivered({"message_id": None})
             return policy_blocked(f"normal_rank_outside_window:{normal_rank}")
         if strategic_analytical:
             print(f"[Publication Policy] PUBLISH STRATEGIC_ANALYTICAL normal_rank={normal_rank} score={score} ranking_floor=not_applied lane_cap={STRATEGIC_ANALYTICAL_MAX_PER_PERIOD} quota_counted=true", flush=True)

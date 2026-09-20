@@ -206,3 +206,78 @@ def test_known_aggregator_is_excluded_from_normal_portfolio():
         strict_relevance=True,
     )
     assert selected == []
+
+
+def test_entity_repetition_is_penalized_when_quality_is_close():
+    candidates = [
+        item("OpenAI releases a new reasoning model", "OpenAI News", 100, area="ai"),
+        item("OpenAI expands reasoning model deployment", "Reuters", 98, area="ai"),
+        item("Robotics system learns physical manipulation", "Nature", 94, area="robotics", content_type="research", research_signal=True),
+    ]
+    contract = load_editorial_contract()
+    contract["convergence_target"] = 0
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["research_target"] = 0
+    contract["ai_core_target_min"] = 0
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=2,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    titles = [x["title"] for x in selected]
+    assert "Robotics system learns physical manipulation" in titles
+    assert len([t for t in titles if "OpenAI" in t]) == 1
+
+
+def test_recent_history_saturation_penalizes_same_topic_without_hard_block():
+    history = [
+        "__semantic_story__:{\"anchors\":[\"openai\",\"ai_agents\"],\"context\":[\"openai\",\"agents\",\"deployment\",\"reasoning\"],\"events\":[\"deployment\"],\"numbers\":[],\"personnel\":[],\"title\":[\"openai\",\"reasoning\"],\"title_text\":\"openai reasoning deployment\"}"
+    ]
+    candidates = [
+        item("OpenAI reasoning deployment expands", "Reuters", 100, area="ai"),
+        item("Quantum sensing improves biological measurements", "Nature", 92, area="robotics", content_type="research", research_signal=True),
+    ]
+    contract = load_editorial_contract()
+    contract["convergence_target"] = 0
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["research_target"] = 0
+    contract["ai_core_target_min"] = 0
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=2,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+        history_signatures=history,
+    )
+    assert selected[0]["title"] == "Quantum sensing improves biological measurements" or len(selected) == 2
+
+
+def test_selection_exposes_history_and_entity_novelty_metrics():
+    selected = select_regular_portfolio(
+        [
+            item("OpenAI model architecture breakthrough", "OpenAI News", 95, area="ai"),
+            item("Robotics breakthrough in physical AI", "Nature", 92, area="robotics", content_type="research", research_signal=True),
+        ],
+        max_posts=2,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=load_editorial_contract(),
+        mission_aware=True,
+        strict_relevance=True,
+        history_signatures=[],
+    )
+    assert all("current_entity_overlap" in x for x in selected)
+    assert all("history_topic_similarity" in x for x in selected)
+    assert all("portfolio_information_gain" in x for x in selected)

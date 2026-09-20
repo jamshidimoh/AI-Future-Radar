@@ -8,6 +8,10 @@ selection:
   diversity_mode: adaptive
   diversity_weight: 8.0
   similarity_penalty: 12.0
+  entity_repeat_penalty: 7.0
+  leader_repeat_penalty: 10.0
+  history_topic_penalty: 5.0
+  history_entity_penalty: 4.0
   preferred_max_same_source: 1
   distinct_sources_first: true
   replacement_buffer: 3
@@ -46,5 +50,11 @@ editorial:
 # - diversity_quality_floor_ratio=0.80 remains unchanged.
 # - max_same_mission_area=2 prevents an AI-only or single-domain normal run.
 # - Information gain is a bounded soft reranker; quality remains dominant.
+# - Current-portfolio entity/leader repetition receives explicit soft penalties.
+# - Recent publication history contributes topic/entity saturation penalties so
+#   different URLs about the same saturated subject do not crowd out genuinely
+#   new developments.
+# - Same-story duplication remains a hard rejection at the canonical/publication
+#   gates; novelty penalties do not replace semantic duplicate detection.
 # - Education remains an independent scheduled product stream and is recovered fail-closed.
 # - Strategic Analytical Lane remains separate and limited to one mission-critical signal.

@@ -12,6 +12,7 @@ import logging
 import time
 
 import main as _pipeline
+from src.dedup import load_seen
 from src.logging_setup import configure_logging
 from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
@@ -146,6 +147,16 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
         logger.warning("Source history unavailable: %s", exc, exc_info=True)
         source_history = []
     recent_source_counts = _rotation_source_counts(source_history, rotation_days)
+    try:
+        _, seen_signatures = load_seen()
+        seen_signatures = [
+            value
+            for value in seen_signatures
+            if isinstance(value, str) and value.startswith("__semantic_story__:")
+        ]
+    except Exception as exc:
+        logger.warning("Semantic history unavailable: %s", exc, exc_info=True)
+        seen_signatures = []
     contract = load_editorial_contract()
     requested = max(0, int(max_posts or 0))
     buffer = max(0, int(contract.get("replacement_buffer", 0) or 0))
@@ -153,11 +164,35 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     strict_relevance = bool(policy.get("strict_relevance", False))
     window_items = int(contract.get("window_runs", 6) or 6) * max(1, requested)
     window_source_counts, window_area_counts = _window_counts(source_history, window_items)
-    selected = select_regular_portfolio(normal, max_posts=limit, max_per_source=max_per_source, max_per_type=max_per_type, recent_source_counts=recent_source_counts, contract=contract, mission_aware=bool(policy.get("mission_aware", False)), strict_relevance=strict_relevance, window_source_counts=window_source_counts, window_area_counts=window_area_counts)
+    selected = select_regular_portfolio(
+        normal,
+        max_posts=limit,
+        max_per_source=max_per_source,
+        max_per_type=max_per_type,
+        recent_source_counts=recent_source_counts,
+        contract=contract,
+        mission_aware=bool(policy.get("mission_aware", False)),
+        strict_relevance=strict_relevance,
+        window_source_counts=window_source_counts,
+        window_area_counts=window_area_counts,
+        history_signatures=seen_signatures[-120:],
+    )
     source_counts = {}
     for item in selected:
         key = _source_key(item)
         source_counts[key] = source_counts.get(key, 0) + 1
+    diversity_values = [float(x.get("portfolio_information_gain", 0.0) or 0.0) for x in selected]
+    max_topic_repeat = max((float(x.get("topic_similarity_to_selected", 0.0) or 0.0) for x in selected), default=0.0)
+    max_history_topic_repeat = max((float(x.get("history_topic_similarity", 0.0) or 0.0) for x in selected), default=0.0)
+    max_entity_repeat = max((float(x.get("current_entity_overlap", 0.0) or 0.0) for x in selected), default=0.0)
+    print(
+        f"[Editorial Diversity Audit] selected={len(selected)} unique_sources={len(source_counts)} "
+        f"areas={sorted({mission_area(x) for x in selected})} content_types={sorted({str(x.get('content_type') or 'unknown').lower() for x in selected})} "
+        f"min_information_gain={min(diversity_values, default=0.0):.1f} max_current_topic_similarity={max_topic_repeat:.3f} "
+        f"max_history_topic_similarity={max_history_topic_repeat:.3f} max_entity_overlap={max_entity_repeat:.3f} "
+        f"history_signatures={len(seen_signatures[-120:])}",
+        flush=True,
+    )
     print(f"[Source Diversity Gate] rotation_days={rotation_days} candidates={len(normal)} selected={len(selected)} source_counts={source_counts} recent_source_counts={recent_source_counts} window_items={window_items} window_source_counts={window_source_counts} window_area_counts={window_area_counts} adaptive=true preferred_source_cap={contract['preferred_max_same_source']} hard_source_cap={contract['hard_max_same_source']} candidate_window={limit} replacement_buffer={buffer} mission_aware={bool(policy.get('mission_aware', False))} strict_relevance={strict_relevance}", flush=True)
     return selected
 

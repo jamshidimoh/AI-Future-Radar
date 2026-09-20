@@ -105,6 +105,38 @@ Posts sent: 3/5
     assert "selected=5" in reason
 
 
+
+
+def test_mission_recovery_candidate_failure_is_ignored_when_same_lane_recovers():
+    log = """
+[Selection Timing] original_select candidates=8 candidate_window=6 elapsed=1.0s
+[Publication Summary Budget] input=3 protected=2 normal_window=1 output=3 normal_limit=3 replacement_buffer=2 score_floor=55.0
+[Mission Coverage Recovery] attempt=1 area=mind_cognition title=first candidate status=failed
+[Mission Coverage Recovery] attempt=2 area=mind_cognition title=second candidate status=recovered
+[Mission Coverage Recovery] area=convergence status=no_candidate
+[Mission Coverage Recovery] missing_lanes=2 attempts=2 recovered=1 status=unmet
+[Production Contract] normal_news=1 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 1/3
+"""
+    ok, reason = validate(log)
+    assert ok, reason
+    assert "hard_failures" not in reason
+
+
+def test_mission_recovery_unresolved_candidate_failure_stays_fail_closed():
+    log = """
+[Selection Timing] original_select candidates=8 candidate_window=6 elapsed=1.0s
+[Publication Summary Budget] input=3 protected=2 normal_window=1 output=3 normal_limit=3 replacement_buffer=2 score_floor=55.0
+[Mission Coverage Recovery] attempt=1 area=mind_cognition title=only candidate status=failed
+[Mission Coverage Recovery] missing_lanes=1 attempts=1 recovered=0 status=unmet
+[Production Contract] normal_news=1 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 1/3
+"""
+    ok, reason = validate(log)
+    assert not ok
+    assert "hard_failures=1" in reason
+
+
 def test_runtime_selection_keeps_only_publishable_protected_and_normal_candidates():
     candidates = [
         {"period_rank": 1, "normal_period_rank": None, "protected_slot": True, "final_editorial_score": 70.0},

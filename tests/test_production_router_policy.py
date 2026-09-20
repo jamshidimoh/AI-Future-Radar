@@ -18,6 +18,7 @@ def _reset(monkeypatch):
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_MAX_LLM_ATTEMPTS", raising=False)
     monkeypatch.delenv("RADAR_ROUTER_BUDGET_SECONDS", raising=False)
+    monkeypatch.delenv("RADAR_PRODUCTION_MODE", raising=False)
 
 
 def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
@@ -289,6 +290,26 @@ def test_production_attempt_budget_is_hard_capped(monkeypatch):
     assert result is None
     assert provider is None
     assert len(calls) == 2
+
+
+def test_production_mode_routes_canonical_chain_through_guarded_circuit(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = True
+    calls = []
+
+    def guarded(system_prompt, user_content):
+        calls.append((system_prompt, user_content))
+        return '{"title":"production-circuit"}', "groq:model-a"
+
+    monkeypatch.setattr(router, "_call_litellm", guarded)
+    providers = router.ProductionQualityChain([
+        ("Groq:model-a", lambda *_args, **_kwargs: '{"title":"should-not-run"}')
+    ])
+    result, provider = router.call_llm_with_fallback("system", "user", providers=providers)
+    assert result == '{"title":"production-circuit"}'
+    assert provider == "groq:model-a"
+    assert calls == [("system", "user")]
 
 
 def test_production_launcher_does_not_activate_router_on_import(monkeypatch):

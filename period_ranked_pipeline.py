@@ -149,6 +149,11 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     recent_source_counts = _rotation_source_counts(source_history, rotation_days)
     try:
         _, seen_signatures = load_seen()
+        seen_signatures = [
+            value
+            for value in seen_signatures
+            if isinstance(value, str) and value.startswith("__semantic_story__:")
+        ]
     except Exception as exc:
         logger.warning("Semantic history unavailable: %s", exc, exc_info=True)
         seen_signatures = []

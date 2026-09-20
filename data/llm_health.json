@@ -1,14 +1,14 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 8,
-      "disabled_until": 1789918111.181,
+      "failures": 9,
+      "disabled_until": 1789919449.879,
       "last_error": "model",
       "last_success": 0.0
     },
     "groq:openai/gpt-oss-120b": {
-      "failures": 6,
-      "disabled_until": 1789900111.181,
+      "failures": 7,
+      "disabled_until": 1789901449.879,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -31,8 +31,8 @@
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
-      "failures": 3,
-      "disabled_until": 1789900111.181,
+      "failures": 4,
+      "disabled_until": 1789901449.879,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -55,8 +55,8 @@
       "last_success": 0
     },
     "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
-      "failures": 1,
-      "disabled_until": 1789900111.181,
+      "failures": 2,
+      "disabled_until": 1789901449.879,
       "last_error": "quota",
       "last_success": 0.0
     }
@@ -69,8 +69,8 @@
       "last_success": 0.0
     },
     "openrouter": {
-      "failures": 2,
-      "disabled_until": 1789918111.181,
+      "failures": 3,
+      "disabled_until": 1789919449.879,
       "last_error": "quota",
       "last_success": 0.0
     }

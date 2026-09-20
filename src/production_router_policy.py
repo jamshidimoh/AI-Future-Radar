@@ -37,7 +37,7 @@ def _is_kira_wallet_only(message: str, family: str) -> bool:
     return family == "kiraai" and bool(_KIRAAI_WALLET_PATTERN.search(str(message or "")))
 
 
-def _rate_limit_retry_delay(message: str, *, max_seconds: float = 3.0) -> float:
+def _rate_limit_retry_delay(message: str, *, max_seconds: float = 8.0) -> float:
     """Extract a provider-supplied short retry delay, capped for production budget."""
     text = str(message or "")
     match = re.search(r"try again in\s+([0-9]+(?:\.[0-9]+)?)\s*(ms|s)", text, re.IGNORECASE)

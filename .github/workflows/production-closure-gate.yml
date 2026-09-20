@@ -101,6 +101,13 @@ jobs:
               return zero_publish and acceptance and fail_closed_acceptance and publication_attempted
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
+          if trigger_conclusion != "success":
+              print(
+                  "CLOSURE: BLOCKED — current production run did not complete successfully; "
+                  "historical successes cannot override the current runtime failure."
+              )
+              print("CLOSURE: ACCEPTANCE IN PROGRESS")
+              sys.exit(1)
           # Keep a sufficiently deep evidence window. The production workflow can
           # legitimately create many cancelled/failed runs while recovering from
           # provider quotas. A 30-run API page was too shallow and could hide the

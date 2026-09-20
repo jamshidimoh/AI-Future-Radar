@@ -21,6 +21,7 @@ class QuotaExceeded(Exception):
 _DISABLED: set[str] = set()
 _DISABLED_FAMILIES: set[str] = set()
 _MODEL_DISABLED_UNTIL: dict[str, float] = {}
+_MODEL_DISABLED_REASON: dict[str, str] = {}
 _STATE_LOCK = threading.RLock()
 _CHAIN_CACHE = None
 _CHAIN_CACHE_KEY = None
@@ -203,7 +204,31 @@ def _model_is_disabled(name:str)->bool:
 
 def _disable(name:str,reason:str):
     with _STATE_LOCK:
-        _DISABLED.add(name); _MODEL_DISABLED_UNTIL[name]=time.monotonic()+_MODEL_COOLDOWN_SECONDS.get(reason,_MODEL_COOLDOWN_SECONDS["other"])
+        _DISABLED.add(name)
+        _MODEL_DISABLED_UNTIL[name] = time.monotonic() + _MODEL_COOLDOWN_SECONDS.get(reason, _MODEL_COOLDOWN_SECONDS["other"])
+        _MODEL_DISABLED_REASON[name] = reason
+
+
+
+def reset_recoverable_cooldowns() -> int:
+    """Clear only transient/quota model cooldowns before mission recovery retries.
+    
+    Persistent provider health, authentication failures, and model-not-found
+    failures remain protected. This only reopens models whose last failure is
+    reasonably retryable within the current production run.
+    """
+    cleared = 0
+    with _STATE_LOCK:
+        for name, reason in list(_MODEL_DISABLED_REASON.items()):
+            if reason not in {"quota", "transient"}:
+                continue
+            _DISABLED.discard(name)
+            _MODEL_DISABLED_UNTIL.pop(name, None)
+            _MODEL_DISABLED_REASON.pop(name, None)
+            cleared += 1
+    if cleared:
+        print(f"[Recovery Router] reset_recoverable_cooldowns={cleared}", flush=True)
+    return cleared
 
 def _should_disable_provider(message:str)->bool:
     return re.search(r"\b401\b|unauthorized|authentication failed|invalid api|\b403\b|\b404\b|\b503\b",str(message or "").lower()) is not None

@@ -164,3 +164,45 @@ def test_window_area_cap_prefers_an_underrepresented_area():
     titles = [x["title"] for x in selected]
     assert "Convergence pick" in titles
     assert len(titles) <= 2
+
+
+def test_low_signal_chatgpt_tutorial_is_rejected_even_with_ai_category():
+    candidate = item(
+        "How to use ChatGPT to identify scam messages",
+        "YouTube - OpenAI",
+        90,
+        area="ai",
+    )
+    from src.unified_editorial_selection import is_mission_relevant
+    assert is_mission_relevant(candidate, strict=True) is False
+
+
+def test_low_signal_chatgpt_tutorial_is_rejected_with_explicit_ai_core_area():
+    candidate = item(
+        "How to use ChatGPT for productivity",
+        "Specialist publication",
+        90,
+        area="ai",
+    )
+    candidate["mission_area"] = "ai_core"
+    from src.unified_editorial_selection import is_mission_relevant
+    assert is_mission_relevant(candidate, strict=True) is False
+
+
+def test_known_aggregator_is_excluded_from_normal_portfolio():
+    candidate = item(
+        "AI startup raises major funding",
+        "Techmeme",
+        95,
+        area="ai",
+    )
+    selected = select_regular_portfolio(
+        [candidate],
+        max_posts=1,
+        max_per_source=1,
+        max_per_type=1,
+        recent_source_counts={},
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    assert selected == []

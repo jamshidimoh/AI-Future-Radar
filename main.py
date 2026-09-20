@@ -328,6 +328,13 @@ def _summarize_selected(items, summarize_fn):
 def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
     from src.unified_editorial_selection import load_editorial_contract
     contract = load_editorial_contract()
+    import src.llm_router_light as llm_router
+    recovery_cooldowns_reset = llm_router.reset_recoverable_cooldowns()
+    if recovery_cooldowns_reset:
+        print(
+            f"[Mission Coverage Recovery] retryable_provider_cooldowns_reset={recovery_cooldowns_reset}",
+            flush=True,
+        )
     from src.dedup import load_source_history
     from src.mission_coverage_priority import annotate_recovery_candidates
     try:

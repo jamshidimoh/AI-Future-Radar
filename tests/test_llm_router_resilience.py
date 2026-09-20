@@ -9,6 +9,7 @@ def _reset():
     router._DISABLED.clear()
     router._DISABLED_FAMILIES.clear()
     router._MODEL_DISABLED_UNTIL.clear()
+    router._MODEL_DISABLED_REASON.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
 
@@ -102,3 +103,18 @@ def test_model_permission_failure_is_not_family_scoped(monkeypatch):
     assert provider == "Groq:qwen/qwen3.6-27b"
     assert calls == ["blocked", "sibling"]
     assert "groq" not in router._DISABLED_FAMILIES
+
+
+def test_recovery_reset_clears_only_retryable_model_cooldowns(monkeypatch):
+    _reset()
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    router._disable("Groq:model-quota", "quota")
+    router._disable("Groq:model-transient", "transient")
+    router._disable("Groq:model-model", "model")
+    router._DISABLED_FAMILIES.add("openrouter")
+    cleared = router.reset_recoverable_cooldowns()
+    assert cleared == 2
+    assert "Groq:model-quota" not in router._DISABLED
+    assert "Groq:model-transient" not in router._DISABLED
+    assert "Groq:model-model" in router._DISABLED
+    assert "openrouter" in router._DISABLED_FAMILIES

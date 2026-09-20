@@ -61,9 +61,27 @@
       "last_success": 0
     },
     "nararouter:auto/bynara": {
-      "failures": 1,
+      "failures": 7,
       "disabled_until": 1789916202.83,
       "last_error": "model",
+      "last_success": 0.0
+    },
+    "groq:openai/gpt-oss-120b": {
+      "failures": 5,
+      "disabled_until": 1789896893.996,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "groq:openai/gpt-oss-20b": {
+      "failures": 2,
+      "disabled_until": 1789896893.996,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
+      "failures": 1,
+      "disabled_until": 1789896122.594,
+      "last_error": "quota",
       "last_success": 0
     }
   },

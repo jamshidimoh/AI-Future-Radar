@@ -12,6 +12,24 @@ def test_mission_area_does_not_default_unclassified_to_ai_core():
     item = {"title": "Observations on an unrelated historical dataset", "category": "", "content_type": "news"}
     assert mission_area(item) == "unclassified"
 
+def test_mission_area_prefers_specific_convergence_keyword_over_ai_category():
+    item = {
+        "title": "A new humanoid robotics system for AI agents",
+        "category": "ai",
+        "content_type": "research",
+    }
+    assert mission_area(item) == "convergence"
+
+
+def test_mission_area_prefers_specific_mind_signal_over_ai_category():
+    item = {
+        "title": "Tests for consciousness in AI systems",
+        "category": "ai",
+        "content_type": "video",
+    }
+    assert mission_area(item) == "mind_cognition"
+
+
 
 def test_historical_area_counts_ignore_education_and_use_recent_window():
     history = [

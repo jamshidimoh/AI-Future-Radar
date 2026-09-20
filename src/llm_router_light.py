@@ -204,7 +204,9 @@ def _model_is_disabled(name:str)->bool:
 
 def _disable(name:str,reason:str):
     with _STATE_LOCK:
-        _DISABLED.add(name); _MODEL_DISABLED_UNTIL[name]=time.monotonic()+_MODEL_COOLDOWN_SECONDS.get(reason,_MODEL_COOLDOWN_SECONDS["other"])
+        _DISABLED.add(name)
+        _MODEL_DISABLED_UNTIL[name] = time.monotonic() + _MODEL_COOLDOWN_SECONDS.get(reason, _MODEL_COOLDOWN_SECONDS["other"])
+        _MODEL_DISABLED_REASON[name] = reason
 
 
 

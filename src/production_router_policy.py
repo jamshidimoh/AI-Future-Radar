@@ -119,7 +119,13 @@ def _install_production_circuit_breaker() -> None:
             if deployment_id in tried:
                 return None
             tried.add(deployment_id)
+            # A deployment may become the only remaining option after earlier
+            # providers fail during this same request. In that case, allow a bounded
+            # half-open probe for persisted recoverable health even if the registry
+            # was built while another deployment was still healthy.
             recovery_probe = bool(deployment.get("model_info", {}).get("health_recovery_probe"))
+            if not recovery_probe and attempts > 0:
+                recovery_probe = True
             if _persistently_unavailable(deployment_id, recovery_probe=recovery_probe):
                 print(f"[Production Circuit] skipped={deployment_id} reason=persisted_health", flush=True)
                 return None

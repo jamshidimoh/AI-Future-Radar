@@ -48,3 +48,56 @@ def test_non_free_and_non_json_models_are_never_selected():
     no_json["json_capable"] = False
     good = _entry("good", 90)
     assert [x["id"] for x in intelligence.rank([paid, no_json, good])] == ["good"]
+
+
+def test_production_half_open_probe_reopens_recoverable_health(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    state.write_text(
+        """{
+          "models": {
+            "groq:model-a": {
+              "failures": 2,
+              "disabled_until": 4102444800,
+              "last_error": "rate_limit",
+              "last_success": 0
+            }
+          },
+          "providers": {}
+        }""",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    intelligence = FreeModelIntelligence(state, persist=True)
+    ranked = intelligence.rank([{
+        **_entry("groq:model-a", 90),
+        "family": "groq",
+        "deployment_id": "groq:model-a",
+    }])
+    assert len(ranked) == 1
+    assert ranked[0]["availability"] == "recovery_probe"
+    assert ranked[0]["_health_recovery_probe"] is True
+
+
+def test_production_half_open_probe_preserves_blocked_health(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    state.write_text(
+        """{
+          "models": {
+            "groq:model-a": {
+              "failures": 1,
+              "disabled_until": 4102444800,
+              "last_error": "auth",
+              "last_success": 0
+            }
+          },
+          "providers": {}
+        }""",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    intelligence = FreeModelIntelligence(state, persist=True)
+    assert intelligence.rank([{
+        **_entry("groq:model-a", 90),
+        "family": "groq",
+        "deployment_id": "groq:model-a",
+    }]) == []

@@ -42,24 +42,47 @@ def _load_health() -> dict:
     return value if isinstance(value, dict) else {}
 
 
-def _persistently_unavailable(deployment_id: str) -> bool:
-    """Skip providers/models whose persisted health cooldown is still active in production."""
+def _persistently_unavailable(deployment_id: str, *, recovery_probe: bool = False) -> bool:
+    """Skip persisted health cooldowns, except for bounded half-open recovery probes."""
     if os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() not in {"1", "true", "yes"}:
         return False
     health = _load_health()
     now = time.time()
     models = health.get("models") or {}
     providers = health.get("providers") or {}
-    model = None
-    if isinstance(models, dict):
-        target = str(deployment_id or "").strip().casefold()
-        model = next((row for key, row in models.items() if str(key).strip().casefold() == target and isinstance(row, dict)), None)
-    if isinstance(model, dict) and float(model.get("disabled_until", 0) or 0) > now:
-        return True
-    family = router._provider_family(deployment_id)
-    provider = providers.get(family) if isinstance(providers, dict) else None
-    return isinstance(provider, dict) and float(provider.get("disabled_until", 0) or 0) > now
 
+    def _find(section, target):
+        if not isinstance(section, dict):
+            return None
+        target = str(target or "").strip().casefold()
+        return next(
+            (row for key, row in section.items() if str(key).strip().casefold() == target and isinstance(row, dict)),
+            None,
+        )
+
+    model = _find(models, deployment_id)
+    family = router._provider_family(deployment_id)
+    provider = _find(providers, family)
+    model_disabled = isinstance(model, dict) and float(model.get("disabled_until", 0) or 0) > now
+    provider_disabled = isinstance(provider, dict) and float(provider.get("disabled_until", 0) or 0) > now
+    if not (model_disabled or provider_disabled):
+        return False
+    if not recovery_probe:
+        return True
+
+    recoverable = {"quota", "rate_limit", "transient"}
+    blocked = {"auth", "model", "wallet"}
+    model_reason = str((model or {}).get("last_error") or "").strip().casefold()
+    provider_reason = str((provider or {}).get("last_error") or "").strip().casefold()
+    has_recoverable = model_reason in recoverable or provider_reason in recoverable
+    has_blocked = model_reason in blocked or provider_reason in blocked
+    if has_recoverable and not has_blocked:
+        print(
+            f"[Production Circuit] half_open_probe={deployment_id} reason=persisted_recoverable_health",
+            flush=True,
+        )
+        return False
+    return True
 
 def _install_production_circuit_breaker() -> None:
     if getattr(router, "_PRODUCTION_CIRCUIT_BREAKER_INSTALLED", False):
@@ -85,7 +108,8 @@ def _install_production_circuit_breaker() -> None:
             if deployment_id in tried:
                 return None
             tried.add(deployment_id)
-            if _persistently_unavailable(deployment_id):
+            recovery_probe = bool(deployment.get("model_info", {}).get("health_recovery_probe"))
+            if _persistently_unavailable(deployment_id, recovery_probe=recovery_probe):
                 print(f"[Production Circuit] skipped={deployment_id} reason=persisted_health", flush=True)
                 return None
             if family in skipped_families or family in router._DISABLED_FAMILIES:

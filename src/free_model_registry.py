@@ -212,7 +212,18 @@ def build_litellm_model_list() -> list[dict]:
         params = {"model": _litellm_model_name(entry), "api_key": api_key, "timeout": 8, "order": 1}
         if entry.get("family") == "kiraai":
             params["api_base"] = "https://kiraai.vn/api/v1"
-        rows.append({"model_name": "", "litellm_params": params, "model_info": {"id": entry["deployment_id"], "quality_score": entry["quality_score"], "provider_family": entry["family"], "rank": 0, "response_format": bool(entry.get("response_format"))}})
+        rows.append({
+            "model_name": "",
+            "litellm_params": params,
+            "model_info": {
+                "id": entry["deployment_id"],
+                "quality_score": entry["quality_score"],
+                "provider_family": entry["family"],
+                "rank": 0,
+                "response_format": bool(entry.get("response_format")),
+                "health_recovery_probe": bool(entry.get("_health_recovery_probe")),
+            },
+        })
 
     if os.getenv("NARAROUTER_API_KEY", "").strip():
         first_nara_index = next((i for i, row in enumerate(rows) if row["model_info"]["provider_family"] != "groq"), len(rows))

@@ -127,7 +127,20 @@ def _mission_coverage_status(lines):
             "recovered": int(recovered),
             "status": status.casefold(),
         }
-    result["no_candidate_lanes"] = len({m.group(1).casefold() for line in lines if (m := MISSION_COVERAGE_NO_CANDIDATE_PATTERN.search(line))})
+    explicit_no_candidate = {m.group(1).casefold() for line in lines if (m := MISSION_COVERAGE_NO_CANDIDATE_PATTERN.search(line))}
+    attempts_by_lane = {}
+    for line in lines:
+        attempt = MISSION_COVERAGE_ATTEMPT_PATTERN.search(line)
+        if not attempt:
+            continue
+        area, status = attempt.group(1).casefold(), attempt.group(2).casefold()
+        attempts_by_lane.setdefault(area, []).append(status)
+    exhausted_quality_only = {
+        area for area, statuses in attempts_by_lane.items()
+        if statuses and area not in explicit_no_candidate
+        and all(status == "below_score_floor" for status in statuses)
+    }
+    result["no_candidate_lanes"] = len(explicit_no_candidate | exhausted_quality_only)
     result["hard_failures"] = _mission_recovery_hard_failures(lines)
     return result
 

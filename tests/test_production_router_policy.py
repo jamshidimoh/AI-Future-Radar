@@ -371,7 +371,7 @@ def test_rate_limit_retry_respects_provider_delay(monkeypatch):
         def completion(self, **_kwargs):
             calls.append(1)
             if len(calls) == 1:
-                raise RuntimeError("GroqException: rate limit; Please try again in 10ms")
+                raise RuntimeError("GroqException: rate limit; Please try again in 4.2s")
             return type(
                 "Response",
                 (),
@@ -387,7 +387,7 @@ def test_rate_limit_retry_respects_provider_delay(monkeypatch):
     assert result == '{"title":"ok"}'
     assert provider == "groq:model-a"
     assert calls == [1, 1]
-    assert sleeps == [0.01]
+    assert sleeps == [4.2]
 
 
 def test_gemini_is_available_as_explicit_production_emergency_fallback(monkeypatch):

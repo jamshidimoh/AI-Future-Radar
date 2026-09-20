@@ -18,6 +18,7 @@ def _reset(monkeypatch):
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_MAX_LLM_ATTEMPTS", raising=False)
     monkeypatch.delenv("RADAR_ROUTER_BUDGET_SECONDS", raising=False)
+    monkeypatch.delenv("RADAR_PRODUCTION_MODE", raising=False)
 
 
 def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):

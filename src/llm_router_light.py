@@ -183,8 +183,20 @@ def _call_direct_deployment(litellm_router,deployment,system_prompt,user_content
     deployment_id=str(deployment.get("model_info",{}).get("id") or "")
     if _provider_family(deployment_id)=="nararouter": return _nara_response_adapter(system_prompt,user_content,deployment_id,max_tokens=max_tokens,timeout=timeout)
     kwargs={"model":deployment["model_name"],"messages":[{"role":"system","content":system_prompt},{"role":"user","content":user_content}],"timeout":timeout,"max_tokens":max_tokens,"temperature":0.15}
-    if deployment.get("model_info",{}).get("response_format"): kwargs["response_format"]={"type":"json_object"}
-    return litellm_router.completion(**kwargs)
+    use_json_mode = bool(deployment.get("model_info",{}).get("response_format"))
+    if use_json_mode:
+        kwargs["response_format"]={"type":"json_object"}
+    try:
+        return litellm_router.completion(**kwargs)
+    except Exception as exc:
+        # Groq GPT-OSS currently rejects otherwise-valid JSON-mode requests with
+        # json_validate_failed on some editorial prompts. The summarizer already
+        # has a strict JSON extractor, so retry once without provider-side JSON mode.
+        if use_json_mode and _provider_family(deployment_id) == "groq" and "json_validate_failed" in str(exc).lower() and "/gpt-oss-" in deployment_id.lower():
+            kwargs.pop("response_format", None)
+            print(f"[Groq JSON Recovery] response_format_disabled deployment={deployment_id}", flush=True)
+            return litellm_router.completion(**kwargs)
+        raise
 
 def _failure_class(message:str)->str:
     text=str(message or "").lower()

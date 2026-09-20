@@ -118,3 +118,35 @@ def test_recovery_reset_clears_only_retryable_model_cooldowns(monkeypatch):
     assert "Groq:model-transient" not in router._DISABLED
     assert "Groq:model-model" in router._DISABLED
     assert "openrouter" in router._DISABLED_FAMILIES
+
+
+
+def test_groq_gpt_oss_retries_without_json_mode_on_validation_failure(monkeypatch):
+    calls = []
+
+    class FakeLiteLLMRouter:
+        def completion(self, **kwargs):
+            calls.append(dict(kwargs))
+            if "response_format" in kwargs:
+                raise RuntimeError("GroqException: json_validate_failed")
+            return type("Response", (), {
+                "choices": [type("Choice", (), {
+                    "message": type("Message", (), {"content": "{\\\"title\\\":\\\"ok\\\"}"})()
+                })()],
+                "model": "groq/openai/gpt-oss-120b",
+            })()
+
+    deployment = {
+        "model_name": "radar-production-1",
+        "model_info": {
+            "id": "groq:openai/gpt-oss-120b",
+            "response_format": True,
+        },
+    }
+    response = router._call_direct_deployment(
+        FakeLiteLLMRouter(), deployment, "system", "user", max_tokens=1100, timeout=4
+    )
+    assert response.choices[0].message.content == "{\\\"title\\\":\\\"ok\\\"}"
+    assert len(calls) == 2
+    assert calls[0]["response_format"] == {"type": "json_object"}
+    assert "response_format" not in calls[1]

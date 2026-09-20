@@ -78,12 +78,23 @@ class FreeModelIntelligence:
             # Expired entries are harmless but need not remain in the file.
             if until <= now and not row.get("last_error"):
                 continue
-            result[str(key)] = DeploymentHealth(
+            normalized_key = str(key).strip().casefold()
+            incoming = DeploymentHealth(
                 failures=failures,
                 disabled_until=until,
                 last_error=str(row.get("last_error", ""))[:500],
                 last_success=last_success,
             )
+            current = result.get(normalized_key)
+            if current is None:
+                result[normalized_key] = incoming
+            else:
+                result[normalized_key] = DeploymentHealth(
+                    failures=max(current.failures, incoming.failures),
+                    disabled_until=max(current.disabled_until, incoming.disabled_until),
+                    last_error=current.last_error or incoming.last_error,
+                    last_success=max(current.last_success, incoming.last_success),
+                )
         return result
 
     def _save_state(self) -> None:
@@ -118,7 +129,7 @@ class FreeModelIntelligence:
 
     def health(self, deployment_id: str) -> DeploymentHealth:
         with self._lock:
-            return self._health.get(deployment_id, DeploymentHealth())
+            return self._health.get(str(deployment_id or "").strip().casefold(), DeploymentHealth())
 
     def provider_health(self, provider_family: str) -> DeploymentHealth:
         with self._lock:
@@ -126,7 +137,8 @@ class FreeModelIntelligence:
 
     def mark_success(self, deployment_id: str) -> None:
         with self._lock:
-            self._health[deployment_id] = DeploymentHealth(
+            deployment_key = str(deployment_id or "").strip().casefold()
+            self._health[deployment_key] = DeploymentHealth(
                 failures=0,
                 disabled_until=0.0,
                 last_error="",
@@ -145,8 +157,9 @@ class FreeModelIntelligence:
     ) -> None:
         with self._lock:
             now = time.time()
-            old = self._health.get(deployment_id, DeploymentHealth())
-            self._health[deployment_id] = DeploymentHealth(
+            deployment_key = str(deployment_id or "").strip().casefold()
+            old = self._health.get(deployment_key, DeploymentHealth())
+            self._health[deployment_key] = DeploymentHealth(
                 failures=old.failures + 1,
                 disabled_until=max(old.disabled_until, now + max(0.0, float(cooldown_seconds))),
                 last_error=str(reason)[:500],

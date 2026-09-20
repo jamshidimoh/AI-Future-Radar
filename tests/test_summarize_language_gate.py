@@ -1,4 +1,4 @@
-from src.summarize import _language_ok, _repair_persian_draft
+from src.summarize import _language_ok, _repair_persian_draft, _repair_persian_fields
 
 
 def test_language_gate_allows_persian_title_with_official_latin_name():
@@ -41,3 +41,35 @@ def test_full_draft_recovery_rejects_another_english_draft(monkeypatch):
     assert provider == "test-provider"
     assert candidate["title"].startswith("مدل جدید Gemini")
     assert _language_ok(candidate)
+
+
+def test_field_level_recovery_can_repair_persian_body_after_full_draft_failure(monkeypatch):
+    import src.summarize as summarize
+
+    repaired = {
+        "summary": "David Chalmers در این ویدئو درباره آزمون‌های مرتبط با آگاهی در سامانه‌های هوش مصنوعی صحبت می‌کند. بحث بر تمایز میان رفتار هوشمند و تجربه آگاهانه تمرکز دارد و به مسئله سنجش آگاهی در ماشین‌ها می‌پردازد.",
+        "why_it_matters": "اهمیت این بحث در آن است که معیارهای عملکردی به‌تنهایی ممکن است برای تمایز هوش از آگاهی کافی نباشند. چنین تمایزی می‌تواند بر نحوه طراحی آزمون‌های آینده برای سامانه‌های هوشمند و تفسیر ادعاهای مربوط به آگاهی ماشین اثر بگذارد.",
+    }
+    monkeypatch.setattr(
+        summarize,
+        "call_llm_with_fallback",
+        lambda *args, **kwargs: (__import__("json").dumps(repaired, ensure_ascii=False), "test-provider"),
+    )
+    original = {
+        "title": "David Chalmers: Tests for Consciousness in AI Systems",
+        "summary": "An English summary.",
+        "why_it_matters": "An English explanation.",
+        "category": "mind",
+    }
+    candidate, provider = _repair_persian_fields(
+        original,
+        {
+            "title": original["title"],
+            "summary": "David Chalmers discusses tests for consciousness in AI systems and the problem of distinguishing intelligent behavior from conscious experience.",
+            "category": "mind",
+        },
+        providers=[("test-provider", lambda *args, **kwargs: __import__("json").dumps(repaired, ensure_ascii=False))],
+    )
+    assert provider == "test-provider"
+    assert "در این ویدئو" in candidate["summary"]
+    assert "اهمیت این بحث" in candidate["why_it_matters"]

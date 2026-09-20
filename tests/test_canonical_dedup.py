@@ -3,10 +3,19 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 import src.dedup as dedup
 from src.publication_contract import TELEGRAM_SAFE_TEXT_LIMIT, unique_candidates, validate_publication_payload
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(autouse=True)
+def isolate_publication_feedback(monkeypatch, tmp_path):
+    feedback = tmp_path / "telegram_feedback.json"
+    feedback.write_text('{"messages": {}}', encoding="utf-8")
+    monkeypatch.setattr(dedup, "FEEDBACK_FILE", str(feedback))
 
 
 def test_tracking_url_and_canonical_url_are_same_story():

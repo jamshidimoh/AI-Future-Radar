@@ -7,11 +7,11 @@ import requests
 
 from src.dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
 from src.editorial import enrich_items, filter_ai_relevance
+from src.editorial_quality_policy import NORMAL_SCORE_FLOOR as CANONICAL_NORMAL_SCORE_FLOOR
 from src.fetch_google_news import fetch_google_news_items
 from src.fetch_rss import fetch_rss_items
 from src.fetch_youtube import fetch_youtube_items
 from src.interview_evidence import has_interview_evidence
-from src.editorial_quality_policy import NORMAL_SCORE_FLOOR as CANONICAL_NORMAL_SCORE_FLOOR
 from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier

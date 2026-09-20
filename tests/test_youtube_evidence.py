@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import patch
 
 from src.fetch_youtube import _normalize_video_result, _walk_video_renderers
 
@@ -36,3 +37,40 @@ def test_normalize_prefers_real_description_before_network_transcript():
     assert result["summary"] == item["summary"]
     assert result["evidence_source"] == "channel_page_description"
     assert result["evidence_text"] == item["summary"]
+
+
+def test_mind_focused_video_fetches_transcript_evidence_even_on_non_priority_channel():
+    channel = {"name": "Test Ideas Forum", "category": "ai", "tier": 1, "type": "talk", "official": True}
+    item = {
+        "video_id": "abcdefghijk",
+        "title": "David Chalmers: Tests for Consciousness in AI Systems",
+        "link": "https://www.youtube.com/watch?v=abcdefghijk",
+        "summary": "",
+        "published": "2026-09-20 00:00",
+    }
+    with patch(
+        "src.fetch_youtube._get_transcript_snippet",
+        return_value="Chalmers discusses consciousness tests for artificial intelligence systems.",
+    ) as mocked:
+        result = _normalize_video_result(channel, item)
+    mocked.assert_called_once_with("abcdefghijk")
+    assert "Chalmers discusses consciousness tests" in result["evidence_text"]
+    assert result["evidence_source"] == "transcript"
+
+
+def test_generic_ai_video_does_not_trigger_thematic_mind_transcript():
+    channel = {"name": "Test AI", "category": "ai", "tier": 1, "type": "talk", "official": True}
+    item = {
+        "video_id": "abcdefghijk",
+        "title": "New AI model launch",
+        "link": "https://www.youtube.com/watch?v=abcdefghijk",
+        "summary": "A new model launch and benchmark update.",
+        "published": "2026-09-20 00:00",
+    }
+    with patch(
+        "src.fetch_youtube._get_transcript_snippet",
+        return_value="should not be used",
+    ) as mocked:
+        result = _normalize_video_result(channel, item)
+    mocked.assert_not_called()
+    assert result["evidence_source"] == "channel_page_description"

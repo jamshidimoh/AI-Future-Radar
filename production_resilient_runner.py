@@ -20,6 +20,7 @@ import src.educational_content as educational_content
 import src.normal_publication_fallback as _normal_fallback
 import src.production_publication_adapter as _publication_adapter
 from src.logging_setup import configure_logging
+from src.production_router_policy import apply as apply_production_router_policy
 from src.state_io import StateCorruptionError
 from src.unified_editorial_selection import load_editorial_contract
 
@@ -172,6 +173,8 @@ def _publish_education_after_news(run_number: int) -> bool:
 
 def main() -> int:
     configure_logging()
+    if os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}:
+        apply_production_router_policy()
     _normal_fallback._NORMAL_DELIVERED = 0
     contract = load_editorial_contract()
     production_entrypoint.RANK_WINDOW = int(contract["candidate_window"])

@@ -28,3 +28,21 @@ def test_watchdog_minutes_invalid_and_non_positive_values_fall_back(monkeypatch)
 
     monkeypatch.setenv("RADAR_WATCHDOG_MINUTES", "-5")
     assert module._watchdog_minutes() == 1
+
+
+
+def test_main_applies_production_router_policy_before_entrypoint(monkeypatch):
+    module = importlib.import_module("production_resilient_runner")
+    calls = []
+
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    monkeypatch.setattr(module, "configure_logging", lambda: None)
+    monkeypatch.setattr(module, "apply_production_router_policy", lambda: calls.append("policy"))
+    monkeypatch.setattr(module, "load_editorial_contract", lambda: {"candidate_window": 6, "max_posts": 3})
+    monkeypatch.setattr(module, "_watchdog_minutes", lambda: 1)
+    monkeypatch.setattr(module.faulthandler, "dump_traceback_later", lambda *args, **kwargs: None)
+    monkeypatch.setattr(module.faulthandler, "cancel_dump_traceback_later", lambda: None)
+    monkeypatch.setattr(module.production_entrypoint, "main", lambda: calls.append("entrypoint") or 0)
+
+    assert module.main() == 0
+    assert calls == ["policy", "entrypoint"]

@@ -185,7 +185,11 @@ def _call_direct_deployment(litellm_router,deployment,system_prompt,user_content
     kwargs={"model":deployment["model_name"],"messages":[{"role":"system","content":system_prompt},{"role":"user","content":user_content}],"timeout":timeout,"max_tokens":max_tokens,"temperature":0.15}
     use_json_mode = bool(deployment.get("model_info",{}).get("response_format"))
     if use_json_mode:
-        kwargs["response_format"]={"type":"json_object"}
+        kwargs["response_format"]={"type": "json_object"}
+    # Groq GPT-OSS exposes reasoning separately. Explicitly suppress it so
+    # LiteLLM reliably receives the final assistant content for editorial JSON.
+    if _provider_family(deployment_id) == "groq" and "/gpt-oss-" in deployment_id.lower():
+        kwargs["include_reasoning"] = False
     try:
         return litellm_router.completion(**kwargs)
     except Exception as exc:

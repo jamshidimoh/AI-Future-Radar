@@ -59,6 +59,12 @@
       "disabled_until": 1789896122.594,
       "last_error": "quota",
       "last_success": 0
+    },
+    "nararouter:auto/bynara": {
+      "failures": 1,
+      "disabled_until": 1789916202.83,
+      "last_error": "model",
+      "last_success": 0
     }
   },
   "providers": {

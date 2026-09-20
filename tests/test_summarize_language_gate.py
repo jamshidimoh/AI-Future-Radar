@@ -68,6 +68,7 @@ def test_field_level_recovery_can_repair_persian_body_after_full_draft_failure(m
             "summary": "David Chalmers discusses tests for consciousness in AI systems and the problem of distinguishing intelligent behavior from conscious experience.",
             "category": "mind",
         },
+        providers=[("test-provider", lambda *args, **kwargs: __import__("json").dumps(repaired, ensure_ascii=False))],
     )
     assert provider == "test-provider"
     assert "در این ویدئو" in candidate["summary"]

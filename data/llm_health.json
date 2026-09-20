@@ -7,8 +7,8 @@
       "last_success": 0
     },
     "Groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1789888988.596,
+      "failures": 2,
+      "disabled_until": 1789890501.984,
       "last_error": "rate_limit",
       "last_success": 0
     },
@@ -38,7 +38,7 @@
     },
     "KiraAI:qwen3.8-flash": {
       "failures": 1,
-      "disabled_until": 1789799812.212,
+      "disabled_until": 1789890501.984,
       "last_error": "quota",
       "last_success": 0
     },
@@ -47,12 +47,18 @@
       "disabled_until": 1789572385.906,
       "last_error": "model",
       "last_success": 0
+    },
+    "KiraAI:dots-3-note-preview": {
+      "failures": 1,
+      "disabled_until": 1789890501.984,
+      "last_error": "quota",
+      "last_success": 0
     }
   },
   "providers": {
     "kiraai": {
-      "failures": 1,
-      "disabled_until": 1789882612.212,
+      "failures": 2,
+      "disabled_until": 1789973301.984,
       "last_error": "wallet"
     },
     "openrouter": {

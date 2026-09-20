@@ -312,6 +312,39 @@ def test_production_mode_routes_canonical_chain_through_guarded_circuit(monkeypa
     assert calls == [("system", "user")]
 
 
+def test_persisted_recoverable_health_allows_half_open_probe(monkeypatch):
+    import src.production_router_policy as policy
+
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    monkeypatch.setattr(policy, "_load_health", lambda: {
+        "models": {
+            "groq:model-a": {
+                "disabled_until": 4102444800,
+                "last_error": "rate_limit",
+            }
+        },
+        "providers": {},
+    })
+    assert policy._persistently_unavailable("groq:model-a") is True
+    assert policy._persistently_unavailable("groq:model-a", recovery_probe=True) is False
+
+
+def test_persisted_blocked_health_rejects_half_open_probe(monkeypatch):
+    import src.production_router_policy as policy
+
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    monkeypatch.setattr(policy, "_load_health", lambda: {
+        "models": {
+            "groq:model-a": {
+                "disabled_until": 4102444800,
+                "last_error": "auth",
+            }
+        },
+        "providers": {},
+    })
+    assert policy._persistently_unavailable("groq:model-a", recovery_probe=True) is True
+
+
 def test_production_launcher_does_not_activate_router_on_import(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.delenv("RADAR_PRODUCTION_MODE", raising=False)

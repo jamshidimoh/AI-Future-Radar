@@ -102,6 +102,42 @@ def _education_identity(item):
 def _stored_story_ids(signatures): return {s[len(STORY_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(STORY_MARKER)}
 def _stored_protected_hashes(signatures): return {s[len(PROTECTED_MARKER):] for s in signatures if isinstance(s, str) and s.startswith(PROTECTED_MARKER)}
 
+def _stored_title_signature_match(item, signatures):
+    candidate = tuple(get_signature(item.get("title", "")))
+    if not candidate:
+        return False
+    return any(
+        tuple(value) == candidate
+        for value in signatures or []
+        if isinstance(value, list) and all(isinstance(token, str) for token in value)
+    )
+
+
+def _protected_leader_rewrite_match(item, signatures):
+    if not _is_leader_exception(item):
+        return False
+    candidate = get_story_signature(item)
+    leader = str(candidate.get("leader") or "").strip()
+    title = set(candidate.get("title") or [])
+    context = set(candidate.get("context") or [])
+    if not leader or not title:
+        return False
+    for stored in signatures or []:
+        if not isinstance(stored, str) or not stored.startswith(SEMANTIC_MARKER):
+            continue
+        prior = _decode_signature(stored)
+        if not isinstance(prior, dict) or str(prior.get("leader") or "").strip() != leader:
+            continue
+        prior_title = set(prior.get("title") or [])
+        prior_context = set(prior.get("context") or [])
+        shared_title = len(title & prior_title)
+        context_overlap = _similarity(candidate, prior)
+        if shared_title >= 2 and context_overlap >= 0.66:
+            return True
+        if shared_title >= 3 and len(context & prior_context) >= 4:
+            return True
+    return False
+
 
 def _event_history(signatures):
     out=[]
@@ -181,6 +217,15 @@ def filter_new_items(items, seen_hashes):
         link_hash,identity=_hash_link(item.get("link", "")),_story_id(item)
         if link_hash in seen_hashes or (_is_protected_leader(item) and link_hash in protected_hashes): rejected_url+=1; continue
         if identity and identity in stored_story_ids: rejected_story+=1; continue
+        if _stored_title_signature_match(item, seen_signatures):
+            rejected_story += 1
+            if _is_protected_leader(item):
+                protected_event_blocked += 1
+            continue
+        if _protected_leader_rewrite_match(item, seen_signatures):
+            rejected_semantic += 1
+            protected_event_blocked += 1
+            continue
         matched,_score=_event_match(item,seen_signatures)
         if matched:
             rejected_semantic+=1

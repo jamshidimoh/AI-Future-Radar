@@ -359,3 +359,45 @@ def test_production_launcher_activates_router_when_production_mode_is_enabled(mo
     sys.modules.pop("scripts.production_with_ranking_audit", None)
     import scripts.production_with_ranking_audit  # noqa: F401
     assert router._PRODUCTION_POLICY_APPLIED is True
+
+
+def test_rate_limit_retry_respects_provider_delay(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    apply()
+    calls = []
+    class FakeRouter:
+        def completion(self, **_kwargs):
+            calls.append(1)
+            if len(calls) == 1:
+                raise RuntimeError("GroqException: rate limit; Please try again in 10ms")
+            return type(
+                "Response",
+                (),
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{"title":"ok"}'})()})()]},
+            )()
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}
+    ])
+    sleeps = []
+    monkeypatch.setattr(time, "sleep", lambda value: sleeps.append(value))
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"ok"}'
+    assert provider == "groq:model-a"
+    assert calls == [1, 1]
+    assert sleeps == [0.01]
+
+
+def test_gemini_is_available_as_explicit_production_emergency_fallback(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
+    monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
+    apply()
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: None)
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [])
+    monkeypatch.setattr(router, "_gemini", lambda *_args, **_kwargs: '{"title":"gemini"}')
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"gemini"}'
+    assert provider == "Gemini"

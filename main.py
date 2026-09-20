@@ -11,6 +11,7 @@ from src.fetch_google_news import fetch_google_news_items
 from src.fetch_rss import fetch_rss_items
 from src.fetch_youtube import fetch_youtube_items
 from src.interview_evidence import has_interview_evidence
+from src.editorial_quality_policy import NORMAL_SCORE_FLOOR as CANONICAL_NORMAL_SCORE_FLOOR
 from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
@@ -31,7 +32,7 @@ LEADER_CONFIG_PATH = ROOT / "config" / "leader_watchlist.yaml"
 SELECTION_POLICY_PATH = ROOT / "config" / "selection_policy.yaml"
 TELEGRAM_SAFE_TEXT_LIMIT = 3900
 PROTECTED_SUMMARY_SCORE_FLOOR = 60.0
-NORMAL_SCORE_FLOOR = 60.0
+NORMAL_SCORE_FLOOR = CANONICAL_NORMAL_SCORE_FLOOR
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 2
 
 

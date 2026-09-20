@@ -33,6 +33,24 @@ _handle_to_id_cache: dict[str, str | None] = {}
 _GENERIC_LOW_SIGNAL_KEYWORDS = {
     "unboxing", "unboxing video", "product review", "product showcase", "giveaway", "merch", "sponsor",
 }
+_MIND_TRANSCRIPT_TERMS = (
+    "consciousness",
+    "machine consciousness",
+    "ai consciousness",
+    "artificial consciousness",
+    "sentience",
+    "qualia",
+    "self-awareness",
+    "cognitive science",
+    "cognition",
+    "predictive processing",
+    "active inference",
+    "global workspace",
+    "integrated information",
+    "philosophy of mind",
+    "philosophy of ai",
+    "philosophy of artificial intelligence",
+)
 _KNOWN_CHANNEL_IDS = {
     "@80000hours": "UCafjal1QYJ3rb0Y9xZk1Ezg",
     "80000hours": "UCafjal1QYJ3rb0Y9xZk1Ezg",
@@ -352,12 +370,14 @@ def _normalize_video_result(channel: dict, item: dict) -> dict | None:
     video_id = str(item.get("video_id") or "").strip()
     raw_summary = str(item.get("summary") or "").strip()
     channel_name = str(channel.get("name") or "").strip()
+    topical_text = f"{title} {raw_summary}".lower()
+    topical_mind_signal = any(term in topical_text for term in _MIND_TRANSCRIPT_TERMS)
     priority_transcript = channel_name in {
         "Lex Fridman Podcast",
         "Dwarkesh Patel",
         "No Priors Podcast",
         "Sean Carroll's Mindscape",
-    }
+    } or topical_mind_signal
     transcript = _get_transcript_snippet(video_id) if priority_transcript and video_id else ""
     if transcript and raw_summary:
         evidence_text = f"{raw_summary}\n\n[Transcript evidence]\n{transcript}"

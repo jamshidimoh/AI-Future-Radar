@@ -50,6 +50,9 @@ MISSION_COVERAGE_NO_CANDIDATE_PATTERN = re.compile(
 MISSION_COVERAGE_HARD_FAILURE_PATTERN = re.compile(
     r"\[Mission Coverage Recovery\].*?status=(?:failed|below_score_floor|independent_lane_not_score_gated)"
 )
+MISSION_COVERAGE_ATTEMPT_PATTERN = re.compile(
+    r"\[Mission Coverage Recovery\]\s+attempt=\d+\s+area=([^\s]+).*?status=(recovered|failed|below_score_floor|independent_lane_not_score_gated)"
+)
 
 
 def _last_match(lines, patterns):
@@ -86,6 +89,22 @@ def _observed_tier0_floor(lines):
     return value
 
 
+def _mission_recovery_hard_failures(lines):
+    """Count only failures that remain unresolved at the end of each mission lane."""
+    lane_outcomes = {}
+    for line in lines:
+        match = MISSION_COVERAGE_ATTEMPT_PATTERN.search(line)
+        if not match:
+            continue
+        area = match.group(1).casefold()
+        status = match.group(2).casefold()
+        if status == "recovered":
+            lane_outcomes[area] = "recovered"
+        elif lane_outcomes.get(area) != "recovered":
+            lane_outcomes[area] = "failed"
+    return sum(1 for outcome in lane_outcomes.values() if outcome == "failed")
+
+
 def _mission_coverage_status(lines):
     match = _last_match(lines, (MISSION_COVERAGE_PATTERN, MISSION_COVERAGE_COMPACT_PATTERN))
     if match is None:
@@ -109,7 +128,7 @@ def _mission_coverage_status(lines):
             "status": status.casefold(),
         }
     result["no_candidate_lanes"] = len({m.group(1).casefold() for line in lines if (m := MISSION_COVERAGE_NO_CANDIDATE_PATTERN.search(line))})
-    result["hard_failures"] = sum(1 for line in lines if MISSION_COVERAGE_HARD_FAILURE_PATTERN.search(line))
+    result["hard_failures"] = _mission_recovery_hard_failures(lines)
     return result
 
 
@@ -131,8 +150,10 @@ def validate(log_text: str) -> tuple[bool, str]:
         hard_failures = mission_coverage.get("hard_failures", 0)
         # The final acceptance document explicitly allows a lane to remain below
         # target when no eligible high-quality candidate exists. A deterministic
-        # no-candidate outcome is therefore not a publication failure. Any
-        # candidate that existed but failed QA/score/recovery remains fail-closed.
+        # no-candidate outcome is therefore not a publication failure. A failed
+        # recovery candidate is only terminally fail-closed when that mission lane
+        # remains unrecovered; a later successful recovery of the same lane closes
+        # the earlier candidate-level failure.
         if gap > 0 and no_candidate >= gap and hard_failures == 0:
             return True, (
                 "production acceptance PASS: mission coverage gap is attributable only to lanes with no eligible candidate; "

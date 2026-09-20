@@ -50,7 +50,10 @@ def _persistently_unavailable(deployment_id: str) -> bool:
     now = time.time()
     models = health.get("models") or {}
     providers = health.get("providers") or {}
-    model = models.get(deployment_id) if isinstance(models, dict) else None
+    model = None
+    if isinstance(models, dict):
+        target = str(deployment_id or "").strip().casefold()
+        model = next((row for key, row in models.items() if str(key).strip().casefold() == target and isinstance(row, dict)), None)
     if isinstance(model, dict) and float(model.get("disabled_until", 0) or 0) > now:
         return True
     family = router._provider_family(deployment_id)

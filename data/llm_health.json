@@ -64,12 +64,18 @@
       "failures": 1,
       "disabled_until": 1789985009.031,
       "last_error": "auth",
-      "last_success": 0
+      "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
       "disabled_until": 1789985009.031,
       "last_error": "auth",
+      "last_success": 0.0
+    },
+    "openrouter:z-ai/glm-5.2:free": {
+      "failures": 1,
+      "disabled_until": 1789902884.857,
+      "last_error": "quota",
       "last_success": 0
     }
   },
@@ -81,15 +87,16 @@
       "last_success": 0.0
     },
     "openrouter": {
-      "failures": 4,
-      "disabled_until": 1789920209.031,
+      "failures": 5,
+      "disabled_until": 1789920884.857,
       "last_error": "quota",
       "last_success": 0.0
     },
     "gemini": {
       "failures": 2,
       "disabled_until": 1789985009.031,
-      "last_error": "auth"
+      "last_error": "auth",
+      "last_success": 0.0
     }
   },
   "updated_at": 1789352663.9123816,

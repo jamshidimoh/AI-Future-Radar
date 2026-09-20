@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789912946,
+  "updated_at": 1789925873,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12200,6 +12200,18 @@
       "why_it_matters": "این بحث اهمیت بالایی دارد، زیرا نشان می‌دهد که هوش مصنوعی می‌تواند به‌صورت مستقیم به داده‌های حساس مالی دسترسی پیدا کند، که خطرات حریم خصوصی و امنیتی قابل Attentionی ایجاد می‌کند. درک این مسائل برای توسعهٔ سیاست‌های محافظتی و طراحی سیستم‌های امن ضروری است. همچنین، این موضوع به‌عنوان نمونه‌ای از چالش‌های اخلاقی و قانونی ادغام هوش مصنوعی در زندگی روزمره مطرح می‌شود.",
       "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBRRG1pTnMzbkc5NUlaRG1CeW5QZnRsa0tnWmk0Tm5ldmgyVnZTQm9hWTVwYUVfc2Q5TzJxRmZ4a1RkV3VtTmxqT25iYXM3RnZKM3NIOEZ3?oc=5",
       "posted_at": 1789912480
+    },
+    "-1004482051328:1759": {
+      "chat_id": -1004482051328,
+      "message_id": 1759,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1789925873
     }
   }
 }

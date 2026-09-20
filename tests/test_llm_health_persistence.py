@@ -69,7 +69,7 @@ def test_provider_warning_failure_is_persisted(tmp_path, monkeypatch):
     monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
     assert persistence.main() == 0
     payload = json.loads(state.read_text(encoding="utf-8"))
-    assert "Groq:qwen/qwen3.6-27b" in payload["models"]
+    assert "groq:qwen/qwen3.6-27b" in payload["models"]
     assert payload["telemetry"]["observed_failures"] == 1
 
 
@@ -152,3 +152,26 @@ def test_success_removes_persisted_model_failure(tmp_path, monkeypatch):
     assert persistence.main() == 0
     payload = json.loads(state.read_text(encoding="utf-8"))
     assert "groq:model-a" not in payload["models"]
+
+
+
+def test_legacy_mixed_case_model_state_is_migrated_and_cleared_by_success(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    state.write_text(json.dumps({
+        "models": {
+            "Groq:qwen/qwen3.6-27b": {
+                "failures": 2,
+                "disabled_until": 0,
+                "last_error": "rate_limit",
+                "last_success": 0,
+            }
+        },
+        "providers": {},
+    }), encoding="utf-8")
+    log = tmp_path / "run.log"
+    log.write_text("[Light Router] success=groq:qwen/qwen3.6-27b model=groq/qwen3.6-27b\n", encoding="utf-8")
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+    assert "groq:qwen/qwen3.6-27b" not in payload["models"]

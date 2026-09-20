@@ -6,7 +6,16 @@ import time
 
 from src.canonical_story import canonical_url, normalize_title, story_id, url_id
 from src.event_identity import compare_events
-from src.semantic_dedup import SEMANTIC_MARKER, _decode_signature, _overlap, _rewrite_floors, _similarity, encode_story_signature, get_signature, get_story_signature
+from src.semantic_dedup import (
+    SEMANTIC_MARKER,
+    _decode_signature,
+    _overlap,
+    _rewrite_floors,
+    _similarity,
+    encode_story_signature,
+    get_signature,
+    get_story_signature,
+)
 from src.semantic_threshold import semantic_threshold
 from src.state_io import load_json_state
 

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789887637,
+  "updated_at": 1789888341,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -11954,6 +11954,63 @@
       "why_it_matters": "این دیدگاه دالیو اهمیت مدیریت مسئولانه هوش مصنوعی را برجسته می‌کند؛ زیرا نحوه توزیع فواید و معایب آن می‌تواند تأثیرات گسترده‌ای بر بازارهای مالی و ساختارهای اجتماعی داشته باشد. او بر این نکته تأکید می‌کند که بدون چارچوب‌های مناسب، فناوری می‌تواند به‌جای پیشرفت، نابرابری و نوسانات اقتصادی را تشدید کند. در نتیجه، سیاستگذاران و شرکت‌ها باید به‌جای تفکر دوگانه، راهکارهای تعادلی برای بهره‌برداری از این فناوری اتخاذ کنند.",
       "link": "https://www.youtube.com/shorts/LOl5mtxhhoM",
       "posted_at": 1789883353
+    },
+    "-1004482051328:1746": {
+      "chat_id": -1004482051328,
+      "message_id": 1746,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "ساخت داشبوردهای تحلیلی با ChatGPT Work برای پیگیری پذیرش محصول",
+      "summary": "در این وبینار رسمی OpenAI، نحوه استفاده از ChatGPT Work برای ایجاد داشبوردی مبتنی بر پرسش \"چگونه پذیرش محصول در حال تغییر است؟\" نشان داده می‌شود. با استفاده از داده‌های مصنوعی، یک فیلتر قابل تعامل، نماهای بخش‌بندی مشتری و کنترل‌های بروزرسانی دوره‌ای داده‌ها تولید می‌شود. این نمونه‌کار به‌صورت گام‌به‌گام و بدون نمایش زمان واقعی تولید، روند کار را توضیح می‌دهد.",
+      "description": "Start with the question your team needs to answer: how is product adoption changing?\n\nThis ChatGPT Work demo shows a prompt for an adoption dashboard and the prepared result: an interactive funnel, customer segment views, and controls for recurring data refreshes. It uses synthetic data and is edited to show the workflow, not elapsed generation time.\n\nWatch the full webinar: https://goldcast.registration.public-pr50.goldcast.io/on-demand/b6b0dd09-425d-42a0-ae02-a9ea4f6ebbcd\n\nLearn more: https://openai.com/business/solutions/data/ artificial intelligence",
+      "why_it_matters": "این روش امکان تحلیل سریع و بصری تغییرات پذیرش محصول را برای تیم‌های تجاری فراهم می‌کند، به‌طوری‌که می‌توانند تصمیمات مبتنی بر داده اتخاذ کنند. کنترل‌های خودکار بروزرسانی داده‌ها باعث می‌شود داشبورد همیشه به‌روز باشد و نیاز به مداخله دستی کاهش یابد. استفاده از داده‌های مصنوعی در نمایش روند، به تیم‌ها اجازه می‌دهد بدون دسترسی به داده‌های واقعی، فرآیند طراحی داشبورد را تمرین کنند.",
+      "link": "https://www.youtube.com/watch?v=GzCsKuDgr6Q",
+      "posted_at": 1789888332
+    },
+    "-1004482051328:1747": {
+      "chat_id": -1004482051328,
+      "message_id": 1747,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی زنی که پیشرفت باتری‌اش می‌تواند برق را به میلیون‌ها نفر برساند",
+      "summary": "Emilie Bodoin، بنیان‌گذار و مدیرعامل Pure Lithium، فناوری باتری لیتیوم‑متال را احیا کرده است؛ این فناوری جایگزینی برای باتری‌های لیتیوم‑یون موجود در وسایل نقلیه الکتریکی است و می‌تواند وزن، ایمنی و کارایی باتری‌ها را بهبود بخشد و وابستگی به زنجیره‌های تأمین مواد بحرانی را کاهش دهد. موفقیت این تکنولوژی امکان تولید باتری‌های پیشرفته در کشورهای مختلف را فراهم می‌کند، امنیت انرژی را تقویت کرده و به انتقال به انرژی پاک کمک می‌کند. Pure Lithium به عنوان یکی از فناوری‌های پیشرو در برنامه Technology Pioneer سازمان World Economic Forum شناخته شده است.",
+      "description": "It was the forgotten idea of a Nobel-winning scientist. Now, Emilie Bodoin is turning it into reality.\n\nThe Founder and CEO of Pure Lithium has revived the ‘lithium metal battery’ – an alternative to the lithium-ion batteries we know from electric vehicles, and a breakthrough that could make batteries lighter, safer and more efficient – all while reducing dependence on critical mineral supply chains.\n\nIf successful, the technology could also help more countries manufacture batteries closer to home, strengthening energy security and supporting the transition to cleaner energy.\n\nPure Lithium is a World Economic Forum Technology Pioneer, part of a community of start-ups which are developing cutting-edge technologies with the potential to improve the world. \n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "باتری لیتیوم‑متال می‌تواند وزن و حجم باتری‌ها را کاهش داده و خطرهای ایمنی مرتبط با لیتیوم‑یون را کم کند، که برای وسایل نقلیه الکتریکی و ذخیره‌سازی انرژی مقیاس بزرگ حیاتی است. علاوه بر این، با استفاده از مواد کمتر بحرانی، وابستگی به منابع معدنی محدود کاهش می‌یابد و کشورهای تولیدکننده می‌توانند به‌صورت محلی باتری‌های پیشرفته تولید کنند، که امنیت انرژی ملی را ارتقا می‌دهد. این پیشرفت، گامی مهم در تسریع انتقال به انرژی‌های تجدیدپذیر و کاهش انتشار گازهای گلخانه‌ای محسوب می‌شود.",
+      "link": "https://www.youtube.com/watch?v=NJQxA8OGPic",
+      "posted_at": 1789888336
+    },
+    "-1004482051328:1748": {
+      "chat_id": -1004482051328,
+      "message_id": 1748,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "نقشه داخلی مغز؛ پایه‌ای برای ریاضیات، زبان و تفکر انتزاعی؟",
+      "summary": "در این سخنرانی، Brian Greene و Edvard Moser بررسی می‌کنند که آیا نقشه داخلی مغز، که برای جهت‌یابی استفاده می‌شود، می‌تواند پایه‌ای برای توانایی‌های بالاتر مانند ریاضیات، زبان و تفکر انتزاعی باشد. آن‌ها به ارتباطات میان سامانه‌های مکانیکال مغز و پردازش‌های مفهومی می‌پردازند و نشان می‌دهند که ساختارهای نورونی مشابه ممکن است در حوزه‌های مختلف شناختی فعال باشند. این بحث بر پایه شواهد نوروفیزیولوژیکی و نظریه‌های شناختی استوار است و به پرسش‌های عمیق دربارهٔ چگونگی شکل‌گیری مفاهیم انتزاعی توسط مغز می‌پردازد.",
+      "description": "What if the brain's internal map is the foundation for far more than navigation? \n\nBrian Greene and Edvard Moser explore how the same machinery might underlie mathematics, language, and abstract thought.",
+      "why_it_matters": "اگر نقشه داخلی مغز نه تنها برای ناوبری بلکه برای پردازش‌های ریاضی، زبانی و انتزاعی نیز به کار رود، می‌تواند درک ما از پایه‌های شناختی انسان را بازتعریف کند. این ارتباط می‌تواند به توسعه مدل‌های هوش مصنوعی با ساختارهای مشابه مغزی کمک کند و روش‌های آموزشی جدیدی برای تقویت مهارت‌های انتزاعی ارائه دهد. همچنین، شناخت محدودیت‌های این سامانه می‌تواند به تشخیص و درمان اختلالات شناختی مرتبط با مکان‌پذیری و تفکر انتزاعی منجر شود.",
+      "link": "https://www.youtube.com/shorts/j04Zjm-PYTo",
+      "posted_at": 1789888341
     }
   }
 }

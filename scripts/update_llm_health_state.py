@@ -131,13 +131,15 @@ def _iter_events(lines: list[str]):
     for line in lines:
         success = SUCCESS_RE.search(line)
         if success:
-            deployment = success.group("deployment")
+            raw_deployment = success.group("deployment")
+            deployment = canonical_deployment(family(raw_deployment), raw_deployment)
             yield deployment, "success", "", False
             continue
 
         failure = FAIL_RE.search(line)
         if failure:
-            deployment = failure.group("deployment")
+            raw_deployment = failure.group("deployment")
+            deployment = canonical_deployment(family(raw_deployment), raw_deployment)
             yield deployment, "failure", classify(line), is_kira_wallet_only(deployment, line)
             continue
 

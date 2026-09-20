@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789889706,
+  "updated_at": 1789890359,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12049,6 +12049,62 @@
       "why_it_matters": "توانایی تشخیص دقیق نقاط ضعف در قیف پذیرش محصول با ترکیب داده‌های استفاده و بازخورد مشتریان، به سازمان‌ها امکان می‌دهد تا به‌سرعت علل ریزش کاربران را شناسایی و رفع کنند. ChatGPT Work با خودکارسازی تولید توصیه‌ها و پیش‌نویس پیام‌های داخلی، زمان تصمیم‌گیری و اجرای اقدامات اصلاحی را به‌طور قابل‌Attentionی کاهش می‌دهد. این رویکرد نه تنها کارایی تیم‌های محصول را ارتقا می‌دهد، بلکه با استفاده از داده‌های ترکیبی، تصمیم‌گیری مبتنی بر شواهد واقعی را تضمین می‌کند. در نهایت، امکان دسترسی به وبینار کامل و منابع آموزشی، به کاربران اجازه می‌دهد تا این روش را در محیط‌های خود پیاده‌سازی کنند.",
       "link": "https://www.youtube.com/watch?v=wK0zWeVyLM4",
       "posted_at": 1789889706
+    },
+    "-1004482051328:1751": {
+      "chat_id": -1004482051328,
+      "message_id": 1751,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "ChatGPT Work: تبدیل بینش‌های محصول به برنامه عملی تیمی",
+      "summary": "در این وبینار OpenAI نشان می‌دهد که چگونه داده‌های استفاده و بازخورد مشتریان از Slack و Google Drive می‌توانند نقاط ضعف در مسیر پذیرش محصول را شناسایی کنند و با استفاده از ChatGPT Work پیشنهادهای عملی برای تیم‌ها تولید شود. نمونه‌ای از داده‌های مصنوعی به کار رفته است تا مسیر سؤال رهبری تا اقدامات پیشنهادی تیمی را نمایش دهد. در پایان، ChatGPT Work پیش‌نویس یک پیام Slack را برای بازبینی قبل از انتشار آماده می‌کند. برای مشاهده کامل وبینار و اطلاعات بیشتر به لینک‌های ارائه شده مراجعه کنید.",
+      "description": "A drop-off in your adoption funnel tells you where to look. Customer feedback helps you investigate why.\n\nSee how usage data and feedback from Slack and Google Drive inform recommendations, then watch ChatGPT Work draft a Slack update for review before posting. This demo uses synthetic data to show the path from a leadership question to proposed team actions.\n\nWatch the full webinar: https://goldcast.registration.public-pr50.goldcast.io/on-demand/b6b0dd09-425d-42a0-ae02-a9ea4f6ebbcd\n\nLearn more: https://openai.com/business/solutions/data/ artificial intelligence",
+      "why_it_matters": "این رویکرد به سازمان‌ها امکان می‌دهد تا با ترکیب تحلیل داده‌های استفاده و بازخوردهای مستقیم، مشکلات پذیرش محصول را به‌سرعت شناسایی و اقدامات اصلاحی هدفمند ارائه دهند. استفاده از ChatGPT Work برای تولید خودکار پیام‌های داخلی، زمان تیم‌ها را برای تصمیم‌گیری و اجرا صرفه‌جویی می‌کند و خطر خطاهای انسانی در ارتباطات را کاهش می‌دهد. این قابلیت به‌ویژه برای شرکت‌هایی که از ابزارهای همکاری مانند Slack و Google Drive بهره می‌برند، ارزش افزوده قابل‌Attentionی ایجاد می‌کند.",
+      "link": "https://www.youtube.com/watch?v=wK0zWeVyLM4",
+      "posted_at": 1789890349
+    },
+    "-1004482051328:1752": {
+      "chat_id": -1004482051328,
+      "message_id": 1752,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "The Verge - AI",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "آیا هوش مصنوعی به معافیت ضد انحصاری نیاز دارد تا از خطرات فاجعه‌بار جلوگیری شود؟",
+      "summary": "در برنامه Decoder، اولین قسمت از سری دو بخشی درباره آینده کسب‌وکار منتشر شد که در آن Jonathan Kanter، پیشین رئیس بخش ضد انحصار وزارت دادگستری آمریکا تحت دولت Biden، به مصاحبه پرداخته است. کانتر که هم‌اکنون استاد حقوق در WashU و استاد سیاست فناوری در Carnegie Mellon است، به ضرورت بررسی قوانین ضد انحصار برای شرکت‌های هوش مصنوعی پرداخته و سؤال می‌کند آیا این حوزه باید از معافیت‌های قانونی خاص بهره‌مند شود تا خطرات احتمالی برای جامعه، از جمله تهدیدات جدی برای امنیت بشر، کاهش یابد. او به این نکته اشاره می‌کند که چارچوب‌های فعلی ممکن است برای کنترل قدرت تجمعی شرکت‌های بزرگ AI کافی نباشند و نیاز به بازنگری قانونی وجود دارد. این گفتگو نشان می‌دهد که نگرانی‌های قانونی و اخلاقی پیرامون توسعه سریع هوش مصنوعی در حال شکل‌گیری است و ممکن است به تدوین مقررات جدید منجر شود.",
+      "why_it_matters": "بحث درباره معافیت‌های ضد انحصار برای شرکت‌های هوش مصنوعی اهمیت حیاتی دارد؛ زیرا تمرکز قدرت در دست عده‌ای محدود می‌تواند به تسریع توسعه فناوری‌های خطرناک منجر شود. اگر قوانین فعلی نتوانند این تمرکز را محدود کنند، خطرات ناشی از سوءاستفاده یا اشتباهات سیستمی می‌تواند به پیامدهای جدی برای امنیت عمومی منجر شود. بازنگری در چارچوب‌های قانونی می‌تواند تعادل بین نوآوری و حفاظت از جامعه را برقرار کند و از بروز سناریوهای فاجعه‌بار جلوگیری نماید.",
+      "link": "https://www.theverge.com/podcast/997382/openai-microsoft-anthropic-elon-musk-cartel-ai-competition",
+      "posted_at": 1789890354
+    },
+    "-1004482051328:1753": {
+      "chat_id": -1004482051328,
+      "message_id": 1753,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "نقش سلول‌های مغزی در گم‌شدن زودرس بیماران آلزایمر",
+      "summary": "سلول‌های اولیه مغزی که در اثر آلزایمر می‌میرند، در ناحیه‌ای قرار دارند که نقشه داخلی جهان را می‌سازد. این ناحیه مسئول ایجاد و نگهداری نقشه‌های داخلی است. در اثر تخریب این سلول‌ها، بیماران به سرعت گم می‌شوند و حافظه‌هایشان نیز کاهش می‌یابد. این ارتباط بین گم‌شدن و حافظه توسط برنده جایزه نوبل، Edvard Moser، توضیح داده شد.",
+      "description": "The first brain cells to die from Alzheimer's sit in the exact region that builds your internal map of the world. \n\nNobel laureate Edvard Moser explains why getting lost and losing memories turn out to be connected.",
+      "why_it_matters": "کشف ارتباط بین تخریب سلول‌های نقشه‌سازی مغزی و گم‌شدن زودرس، درک عمیق‌تری از مکانیزم‌های آلزایمر ارائه می‌دهد. این دانش می‌تواند به طراحی روش‌های تشخیص زودهنگام و مداخلات درمانی هدفمند کمک کند. همچنین، نشان می‌دهد که حافظه و جهت‌یابی در مغز به‌صورت یکپارچه عمل می‌کنند، که برای پژوهش‌های آینده در حوزه‌های شناختی و نوروفیزیولوژی اهمیت دارد.",
+      "link": "https://www.youtube.com/shorts/hSZDDOZMsWA",
+      "posted_at": 1789890359
     }
   }
 }

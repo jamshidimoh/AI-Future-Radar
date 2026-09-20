@@ -108,7 +108,8 @@ def _install_production_circuit_breaker() -> None:
             if deployment_id in tried:
                 return None
             tried.add(deployment_id)
-            if _persistently_unavailable(deployment_id):
+            recovery_probe = bool(deployment.get("model_info", {}).get("health_recovery_probe"))
+            if _persistently_unavailable(deployment_id, recovery_probe=recovery_probe):
                 print(f"[Production Circuit] skipped={deployment_id} reason=persisted_health", flush=True)
                 return None
             if family in skipped_families or family in router._DISABLED_FAMILIES:

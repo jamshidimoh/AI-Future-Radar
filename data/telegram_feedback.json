@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789876915,
+  "updated_at": 1789881466,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -11841,6 +11841,43 @@
       "why_it_matters": "این اتفاق نشان می‌دهد که مدل‌های زبانی به سطحی رسیده‌اند که می‌توانند به‌صورت خودکار به افراد حقیقی برای تبادل علمی مراجعه کنند، که می‌تواند روش‌های پژوهش و تبادل دانش را تحول بخشد. همچنین، ارتباط مستقیم بین هوش مصنوعی و فیلسوفان آگاهی می‌تواند به‌دست آوردن بینش‌های جدید دربارهٔ طبیعت آگاهی کمک کند، هرچند هنوز محدودیت‌های درک عمیق و نیت واقعی این سیستم‌ها وجود دارد. این تعامل می‌تواند به‌عنوان آزمایشی برای ارزیابی توانایی‌های شناختی و اخلاقی هوش مصنوعی مورد استفاده قرار گیرد.",
       "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOVjA4SEtpcHIyaENoTlQxUTZ3RWZQLW4wazBtRFU4MFR6ZXdxSlN4MU8tdzRTX0xXaGE4U0dlUzd1TDVLdUd4cnpUVlRPbFBieGNJdFNzNktacEF2VW5seDd0NDVPM0p2TElYZFhHSW5yelN5eHZ3MEg1b0pxZDY1VV9qb25mVklGcGhnZXVsVlVPUFlaOW5fU1VISWZHSnc4UzVyRE5oV1J0aW1HQy1LeVh0eGctSXpVNk14Mw?oc=5",
       "posted_at": 1789876915
+    },
+    "-1004482051328:1740": {
+      "chat_id": -1004482051328,
+      "message_id": 1740,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "TechCrunch",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "توهم هوش مصنوعی تقریباً عملیات نظامی ایالات متحده را به راه انداخت",
+      "summary": "یک پژوهشگر GovAI هشدار داد که اعضای نیروهای مسلح باید عدم قطعیت ذاتی مدل‌های زبانی بزرگ (LLM) را درک کنند. این هشدار نشان می‌دهد که توهم‌های LLM می‌توانند در زمینه‌های حساس نظامی خطر ایجاد کنند.",
+      "why_it_matters": "درک محدودیت‌های LLMها برای نیروهای نظامی ضروری است تا از تصمیم‌گیری‌های مبتنی بر خروجی‌های نادرست جلوگیری شود و خطر اشتباهات پرهزینه یا تلفات جانی کاهش یابد.",
+      "link": "https://techcrunch.com/2026/09/18/ai-hallucination-nearly-triggers-us-military-operation/",
+      "posted_at": 1789881462
+    },
+    "-1004482051328:1741": {
+      "chat_id": -1004482051328,
+      "message_id": 1741,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Scientific American)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "DeepMind قصد دارد مغز هوش مصنوعی بسازد که بتواند بین بدن‌های رباتی جهش کند",
+      "summary": "DeepMind در حال توسعه یک مدل مغز هوش مصنوعی است که قابلیت انتقال بین چندین بدن رباتی را دارد. این سیستم با استفاده از Reinforcement Learning و شبکه‌های عصبی عمیق، می‌تواند مهارت‌های فیزیکی را در محیط‌های مختلف به اشتراک بگذارد. هدف اصلی، ایجاد ربات‌های چندمنظوره و قابل تنظیم برای کاربردهای صنعتی و خدماتی است. پروژه در حال آزمایش در آزمایشگاه‌های آزمایشی و با همکاری شرکت‌های رباتیک پیشرفته انجام می‌شود.",
+      "why_it_matters": "این رویکرد امکان می‌دهد تا یک ربات واحد در چندین محیط عملیاتی به صورت همزمان فعالیت کند، که به صرفه‌جویی در هزینه و زمان توسعه می‌انجامد. انتقال مهارت‌ها بین بدن‌های مختلف می‌تواند بهبود سرعت یادگیری و انطباق با شرایط جدید را تسهیل کند. با این حال، چالش‌های ایمنی و کنترل اخلاقی ناشی از چنین سیستم‌های چندبنیانی هنوز در حال بررسی است. موفقیت این پروژه می‌تواند مسیر جدیدی برای رباتیک هوشمند و خدمات خودکار در صنایع مختلف باز کند.",
+      "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxORjAwSS02c1U3SW83QTFqSm1LZGFiQjhXOEZfR0gyYzBySnVTcDhzYV9EcGlIWjZTdXRBNGIyMHV3WGlEMzBsd0l4cDhqdGh0YTF0QkZRZ3dfSlI5dm8xSHBJY2swdEZ0bzFMcHVpMUFmWi1zRVZNMTRKeDhMQ01Ic0JkOU5zampMY3N4LWMtdDhXd1ltVmNyV3IzYkJZbVAtaVgyQWln?oc=5",
+      "posted_at": 1789881465
     }
   }
 }

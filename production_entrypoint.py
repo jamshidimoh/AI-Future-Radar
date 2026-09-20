@@ -189,9 +189,17 @@ def _item_final_score(item: dict) -> float:
     return 0.0
 
 
-def normal_news_policy_allowed(score: float, previous_normal_score: float | None, normal_rank: int | None) -> bool:
+def normal_news_policy_allowed(
+    score: float,
+    previous_normal_score: float | None,
+    normal_rank: int | None,
+    *,
+    mission_recovery: bool = False,
+) -> bool:
     if normal_rank is None or normal_rank > RANK_WINDOW:
-        return False
+        if not mission_recovery:
+            return False
+        return normal_score_allowed(float(score), previous_normal_score)
     return normal_score_allowed(float(score), previous_normal_score)
 
 
@@ -542,12 +550,16 @@ def main(*, skip_education: bool = False) -> int:
             print(f"[Publication Policy] PUBLISH TIER0 interview/quote global_rank={global_rank} tier0_rank={story.get('tier0_rank')} score={score} quality_floor={PROTECTED_SCORE_FLOOR} quota_exempt=true", flush=True)
             return delivered({"message_id": None})
         if normal_rank is None or normal_rank > RANK_WINDOW:
-            # Mission recovery has already passed exact-lane selection, summary,
-            # language, evidence, and the normal quality floor. It is intentionally
-            # outside the ordinary rank window, so the rank guard must not discard
-            # the recovered candidate after all stronger gates have passed.
+            # Mission recovery has already passed exact-lane selection and all
+            # editorial gates. It is deliberately outside the ordinary rank
+            # window, so evaluate it only against the canonical normal floor.
             if story.get("_mission_recovery"):
-                if not normal_score_allowed(score, previous_normal_score):
+                if not normal_news_policy_allowed(
+                    score,
+                    previous_normal_score,
+                    normal_rank,
+                    mission_recovery=True,
+                ):
                     return policy_blocked(f"normal_score_policy_blocked:{score}<floor:{NORMAL_SCORE_FLOOR}")
                 print(
                     f"[Publication Policy] PUBLISH mission_recovery normal_rank={normal_rank} "

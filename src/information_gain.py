@@ -1,8 +1,8 @@
 """Deterministic topic novelty and information-gain helpers for Radar portfolio selection."""
 from __future__ import annotations
 
-import re
 import json
+import re
 from collections.abc import Iterable
 from difflib import SequenceMatcher
 from typing import Any

@@ -80,6 +80,31 @@ def test_rewritten_protected_leader_story_is_blocked_cross_run():
             }
             assert dedup.filter_new_items([rewritten], hashes) == []
 
+def test_same_leader_but_materially_different_protected_story_is_kept():
+    with tempfile.TemporaryDirectory() as td:
+        state = Path(td) / "seen.json"
+        with patch.object(dedup, "STATE_FILE", str(state)):
+            item = {
+                "title": "Dario Amodei discusses AI safety",
+                "description": "A detailed interview covers frontier model safety and safeguards.",
+                "link": "https://leader.example/interview?id=1",
+                "protected_content": True,
+                "_named_leader_interview": True,
+                "leader": "Dario Amodei",
+            }
+            hashes, signatures, history = dedup.mark_as_seen(item, set(), [], [])
+            dedup.save_seen(hashes, signatures, history)
+            different = {
+                "title": "Dario Amodei discusses AI hiring plans",
+                "description": "A separate discussion focuses on recruiting and organizational growth.",
+                "link": "https://mirror.example/interview?id=2",
+                "protected_content": True,
+                "_named_leader_interview": True,
+                "leader": "Dario Amodei",
+            }
+            assert len(dedup.filter_new_items([different], hashes)) == 1
+
+
 
 def test_leader_identity_is_persisted_in_source_history():
     with tempfile.TemporaryDirectory() as td:

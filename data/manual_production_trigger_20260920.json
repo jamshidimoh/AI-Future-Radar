@@ -1,6 +1,6 @@
 {
   "purpose": "manual production evidence trigger",
-  "created_at": "2026-09-20T08:34:00+03:30",
-  "code_baseline": "143bbd4081f36208fd8ef54d7816b94b8beb33ed",
-  "trigger_revision": 2
+  "created_at": "2026-09-20T08:41:00+03:30",
+  "code_baseline": "f88902e95f88688cb3fd2505769496f9381419e9",
+  "trigger_revision": 3
 }

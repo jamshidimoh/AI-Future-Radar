@@ -275,7 +275,16 @@ def _call_litellm(system_prompt,user_content):
     return None,None
 
 def call_llm_with_fallback(system_prompt,user_content,providers=None):
-    if providers is None or isinstance(providers,ProductionQualityChain): providers=get_quality_chain()
+    canonical_chain = providers is None or isinstance(providers,ProductionQualityChain)
+    production_mode = os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}
+    if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED:
+        result, provider = _call_litellm(system_prompt, user_content)
+        if result:
+            print(f"[Production Router Bridge] success={provider}", flush=True)
+            return result, provider
+        raise QuotaExceeded("Production LLM circuit exhausted without usable provider response")
+    if canonical_chain:
+        providers=get_quality_chain()
     deadline=time.monotonic()+_ROUTER_BUDGET_SECONDS; local_models:set[str]=set(); local_families:set[str]=set(); last_error=None
     for name,fn in providers:
         family=_provider_family(name)

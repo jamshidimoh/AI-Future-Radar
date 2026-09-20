@@ -75,12 +75,14 @@ def mission_area(item: dict[str, Any]) -> str:
     explicit = str(item.get("mission_area") or "").strip().casefold()
     if explicit in _AREA_MAP.values() or explicit in {"unclassified", "unknown"}:
         return explicit
-    category = str(item.get("category") or "").strip().casefold()
-    if category in _AREA_MAP:
-        return _AREA_MAP[category]
+    # Specific mission evidence must outrank the legacy broad category label.
+    # Otherwise category=ai can incorrectly swallow convergence/mind items.
     matched_area = _keyword_match_area(item)
     if matched_area:
         return matched_area
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _AREA_MAP:
+        return _AREA_MAP[category]
     if item.get("_ai_link") is True or item.get("ai_relevance") is True:
         return "ai_core"
     return "unclassified"

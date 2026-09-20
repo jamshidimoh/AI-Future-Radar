@@ -272,6 +272,38 @@ def _extract_yt_initial_data(text: str) -> dict | None:
         return None
 
 
+def _fetch_video_page_evidence(video_id: str) -> str:
+    """Recover public video-page description when channel feeds expose title only."""
+    if not video_id:
+        return ""
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    try:
+        response = requests.get(url, timeout=12, headers=headers, allow_redirects=True)
+        if response.status_code >= 400:
+            return ""
+        text = response.text[:8_000_000]
+        # Prefer the player response description; fall back to the HTML meta description.
+        for pattern in (
+            r'"shortDescription":"((?:[^"\\]|\\.)*)"',
+            r'<meta[^>]+name="description"[^>]+content="([^"]*)"',
+        ):
+            match = re.search(pattern, text, re.S | re.I)
+            if not match:
+                continue
+            value = html.unescape(match.group(1))
+            value = bytes(value, "utf-8").decode("unicode_escape", errors="replace") if "\\" in value else value
+            value = re.sub(r"\\n+", "\n", value).strip()
+            if value:
+                return value[:5000]
+    except requests.RequestException as exc:
+        logger.warning("YouTube video-page evidence unavailable for %s: %s", video_id, exc, exc_info=True)
+    return ""
+
+
 def _fetch_channel_page_items(channel_id: str, channel_name: str, cutoff: float) -> list[dict]:
     urls = [
         f"https://www.youtube.com/channel/{channel_id}/videos",
@@ -379,12 +411,24 @@ def _normalize_video_result(channel: dict, item: dict) -> dict | None:
         "Sean Carroll's Mindscape",
     } or topical_mind_signal
     transcript = _get_transcript_snippet(video_id) if priority_transcript and video_id else ""
+    page_evidence = ""
+    if not transcript and video_id and (priority_transcript or topical_mind_signal):
+        page_evidence = _fetch_video_page_evidence(video_id)
     if transcript and raw_summary:
         evidence_text = f"{raw_summary}\n\n[Transcript evidence]\n{transcript}"
         evidence_source = "channel_page_description+transcript"
+    elif transcript:
+        evidence_text = transcript
+        evidence_source = "transcript"
+    elif raw_summary and page_evidence:
+        evidence_text = f"{raw_summary}\n\n[Video page evidence]\n{page_evidence}"
+        evidence_source = "channel_page_description+video_page"
+    elif page_evidence:
+        evidence_text = page_evidence
+        evidence_source = "video_page"
     else:
-        evidence_text = transcript or raw_summary
-        evidence_source = "transcript" if transcript else ("channel_page_description" if raw_summary else "none")
+        evidence_text = raw_summary
+        evidence_source = "channel_page_description" if raw_summary else "none"
     return {
         "title": title,
         "link": item.get("link", ""),

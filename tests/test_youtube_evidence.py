@@ -74,3 +74,25 @@ def test_generic_ai_video_does_not_trigger_thematic_mind_transcript():
         result = _normalize_video_result(channel, item)
     mocked.assert_not_called()
     assert result["evidence_source"] == "channel_page_description"
+
+
+def test_mind_video_uses_video_page_evidence_when_transcript_unavailable():
+    channel = {"name": "Test Ideas Forum", "category": "ai", "tier": 1, "type": "talk", "official": True}
+    item = {
+        "video_id": "abcdefghijk",
+        "title": "David Chalmers: Tests for Consciousness in AI Systems",
+        "link": "https://www.youtube.com/watch?v=abcdefghijk",
+        "summary": "",
+        "published": "2026-09-20 00:00",
+    }
+    with patch(
+        "src.fetch_youtube._get_transcript_snippet",
+        return_value="",
+    ), patch(
+        "src.fetch_youtube._fetch_video_page_evidence",
+        return_value="This talk examines tests for consciousness in AI systems and phenomenal concepts.",
+    ) as mocked:
+        result = _normalize_video_result(channel, item)
+    mocked.assert_called_once_with("abcdefghijk")
+    assert "phenomenal concepts" in result["evidence_text"]
+    assert result["evidence_source"] == "video_page"

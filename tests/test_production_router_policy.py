@@ -295,6 +295,7 @@ def test_production_attempt_budget_is_hard_capped(monkeypatch):
 def test_production_mode_routes_canonical_chain_through_guarded_circuit(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = True
     calls = []
 
     def guarded(system_prompt, user_content):

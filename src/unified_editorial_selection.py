@@ -480,7 +480,7 @@ def _annotate_final_information_gain(selected: list[dict[str, Any]]) -> None:
         item["portfolio_information_gain"] = information_gain_score(item, [x for x in selected if x is not item])
 
 
-def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False, window_source_counts: dict[str, int] | None = None, window_area_counts: dict[str, int] | None = None) -> list[dict[str, Any]]:
+def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts: int, max_per_source: int, max_per_type: int, recent_source_counts: dict[str, int] | None = None, contract: dict[str, Any] | None = None, mission_aware: bool = True, strict_relevance: bool = False, window_source_counts: dict[str, int] | None = None, window_area_counts: dict[str, int] | None = None, history_signatures: Iterable[dict[str, Any] | str] = ()) -> list[dict[str, Any]]:
     contract = contract or load_editorial_contract()
     limit = max(0, int(max_posts or 0))
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))

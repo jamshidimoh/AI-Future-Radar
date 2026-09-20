@@ -8,7 +8,14 @@ from typing import Any
 
 import yaml
 
-from src.information_gain import information_gain_score, max_topic_similarity, portfolio_value, topic_fingerprint
+from src.information_gain import (
+    editorial_novelty_score,
+    information_gain_score,
+    max_topic_similarity,
+    portfolio_value,
+    portfolio_value_with_history,
+    topic_fingerprint,
+)
 
 logger = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,6 +63,10 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "diversity_quality_floor_ratio": float(selection_cfg.get("diversity_quality_floor_ratio", 0.80) or 0.80),
         "diversity_weight": float(selection_cfg.get("diversity_weight", 8.0) or 8.0),
         "similarity_penalty": float(selection_cfg.get("similarity_penalty", 12.0) or 12.0),
+        "entity_repeat_penalty": float(selection_cfg.get("entity_repeat_penalty", 7.0) or 7.0),
+        "leader_repeat_penalty": float(selection_cfg.get("leader_repeat_penalty", 10.0) or 10.0),
+        "history_topic_penalty": float(selection_cfg.get("history_topic_penalty", 5.0) or 5.0),
+        "history_entity_penalty": float(selection_cfg.get("history_entity_penalty", 4.0) or 4.0),
         "required_areas": ("ai_core", "convergence", "mind_cognition", "future_governance"),
         "window_runs": int(rotation_cfg.get("window_runs", 6) or 6),
         "max_same_source_in_window": int(rotation_cfg.get("max_same_source_in_window", 2) or 2),
@@ -194,16 +205,32 @@ def _authority_ok(item: dict[str, Any]) -> bool:
     return _source_tier(item) in {1, 2}
 
 
-def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, Any]], contract: dict[str, Any]) -> dict[str, Any]:
+def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, Any]], contract: dict[str, Any], history_signatures: Iterable[dict[str, Any] | str] = ()) -> dict[str, Any]:
     item["topic_fingerprint"] = topic_fingerprint(item)
     item["information_gain_score"] = information_gain_score(item, selected)
     item["topic_similarity_to_selected"] = round(max_topic_similarity(item, selected), 3)
-    item["portfolio_value_score"] = round(portfolio_value(item, selected, diversity_weight=contract["diversity_weight"], similarity_penalty=contract["similarity_penalty"]), 3)
+    novelty = editorial_novelty_score(item, selected, history_signatures)
+    item["current_entity_overlap"] = novelty["current_entity_overlap"]
+    item["history_topic_similarity"] = novelty["history_topic_similarity"]
+    item["history_entity_overlap"] = novelty["history_entity_overlap"]
+    item["portfolio_value_score"] = round(
+        portfolio_value_with_history(
+            item, selected, history_signatures,
+            diversity_weight=contract["diversity_weight"],
+            similarity_penalty=contract["similarity_penalty"],
+            entity_repeat_penalty=contract["entity_repeat_penalty"],
+            leader_repeat_penalty=contract["leader_repeat_penalty"],
+            history_topic_penalty=contract["history_topic_penalty"],
+            history_entity_penalty=contract["history_entity_penalty"],
+        ),
+        3,
+    )
     return item
 
 
 class _Portfolio:
-    def __init__(self, *, contract: dict[str, Any], limit: int, source_cap: int, type_cap: int, recent: dict[str, int], mission_aware: bool, window_source_counts: dict[str, int] | None = None, window_area_counts: dict[str, int] | None = None):
+    def __init__(self, *, contract: dict[str, Any], limit: int, source_cap: int, type_cap: int, recent: dict[str, int], mission_aware: bool, window_source_counts: dict[str, int] | None = None, window_area_counts: dict[str, int] | None = None, history_signatures: Iterable[dict[str, Any] | str] = ()):
+        self.history_signatures = list(history_signatures or ())
         self.selected: list[dict[str, Any]] = []
         self.selected_ids: set[int] = set()
         self.source_counts: dict[str, int] = {}
@@ -241,7 +268,7 @@ class _Portfolio:
         return current_source < self.source_cap if repeat_source else current_source == 0
 
     def add(self, item: dict[str, Any], reason: str) -> None:
-        _annotate_information_gain(item, self.selected, self.contract)
+        _annotate_information_gain(item, self.selected, self.contract, self.history_signatures)
         source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
         self.selected.append(item)
         self.selected_ids.add(id(item))
@@ -274,7 +301,21 @@ class _Portfolio:
         return max(candidates, key=self.value_key)
 
     def value_key(self, item: dict[str, Any]) -> tuple:
-        return (portfolio_value(item, self.selected, diversity_weight=self.contract["diversity_weight"], similarity_penalty=self.contract["similarity_penalty"]), -_rank_key(item, self.recent)[0], candidate_score(item))
+        return (
+            portfolio_value_with_history(
+                item,
+                self.selected,
+                self.history_signatures,
+                diversity_weight=self.contract["diversity_weight"],
+                similarity_penalty=self.contract["similarity_penalty"],
+                entity_repeat_penalty=self.contract["entity_repeat_penalty"],
+                leader_repeat_penalty=self.contract["leader_repeat_penalty"],
+                history_topic_penalty=self.contract["history_topic_penalty"],
+                history_entity_penalty=self.contract["history_entity_penalty"],
+            ),
+            -_rank_key(item, self.recent)[0],
+            candidate_score(item),
+        )
 
 
 def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[str, Any], strict_relevance: bool) -> list[dict[str, Any]]:
@@ -445,9 +486,10 @@ def select_regular_portfolio(candidates: Iterable[dict[str, Any]], *, max_posts:
     source_cap = max(1, int(max_per_source or contract["hard_max_same_source"]))
     type_cap = max(1, int(max_per_type or 1))
     recent = recent_source_counts or {}
+    history = list(history_signatures or ())
     eligible = _eligible_candidates(candidates, contract, strict_relevance)
     ordered = sorted(eligible, key=lambda x: _rank_key(x, recent))
-    portfolio = _Portfolio(contract=contract, limit=limit, source_cap=source_cap, type_cap=type_cap, recent=recent, mission_aware=mission_aware, window_source_counts=window_source_counts, window_area_counts=window_area_counts)
+    portfolio = _Portfolio(contract=contract, limit=limit, source_cap=source_cap, type_cap=type_cap, recent=recent, mission_aware=mission_aware, window_source_counts=window_source_counts, window_area_counts=window_area_counts, history_signatures=history)
     _fill_mission_targets(portfolio, ordered)
     _fill_by_portfolio_value(portfolio, eligible)
     _backfill_repeat_sources(portfolio, eligible)

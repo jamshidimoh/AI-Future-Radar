@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789892522,
+  "updated_at": 1789893293,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12143,6 +12143,25 @@
       "why_it_matters": "ادغام GPT‑6 Astra در وظایف پیچیده و کم‌تعریف‌شده در Jump Trading نشان می‌دهد که مدل‌های بزرگ زبانی می‌توانند به‌عنوان همکار فعال در محیط‌های مالی پیشرفته عمل کنند. این امر سرعت توسعه محصولات مالی را افزایش می‌دهد و امکان تحلیل همزمان داده‌های چندمنبع و چندروزه را فراهم می‌آورد. با این حال، نیاز به نظارت دقیق و چارچوب‌های کنترل کیفیت برای جلوگیری از خطاهای خودکار و تضمین صحت نتایج، همچنان محدودیت اساسی باقی می‌ماند.",
       "link": "https://www.youtube.com/watch?v=s495saGYWFg",
       "posted_at": 1789892522
+    },
+    "-1004482051328:1756": {
+      "chat_id": -1004482051328,
+      "message_id": 1756,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "ChatGPT Work برای سفارشی‌سازی داشبوردها بر حسب نیاز ذینفعان",
+      "summary": "در این نمایش‌نامهٔ ویدئویی، OpenAI قابلیت ChatGPT Work را نشان می‌دهد که می‌تواند برچسب‌ها و نوع نمودارهای داشبورد را به‌صورت خودکار تنظیم کند، KPIها را بررسی کرده و به جزئیات تقاضای محاسباتی نفوذ کند. با استفاده از داده‌های مصنوعی، این ابزار روش‌های مختلفی برای شخصی‌سازی داشبوردها و کاوش عمیق‌تر در عملکرد کسب‌وکار ارائه می‌دهد. لینک‌های وبینار کامل و صفحهٔ راهنمایی تجاری OpenAI برای اطلاعات بیشتر در دسترس هستند.",
+      "description": "Give stakeholders a view of the business that fits the decisions they need to make.\n\nWatch this ChatGPT Work demo adapt dashboard labels and chart types, explore KPIs, and drill into compute demand. Using synthetic data, it shows ways to tailor dashboards and explore the details behind business performance.\n\nWatch the full webinar: https://goldcast.registration.public-pr50.goldcast.io/on-demand/b6b0dd09-425d-42a0-ae02-a9ea4f6ebbcd\n\nLearn more: https://openai.com/business/solutions/data/ artificial intelligence",
+      "why_it_matters": "توانایی تنظیم خودکار داشبوردها بر پایهٔ تصمیمات ذینفعان، زمان تحلیل داده‌ها را به‌طور قابل‌Attentionی کاهش می‌دهد و امکان تمرکز بر معیارهای کلیدی کسب‌وکار را فراهم می‌کند. این ویژگی برای سازمان‌هایی که با حجم بالای داده و نیاز به گزارش‌گیری پویا مواجه‌اند، ارزش افزودهٔ مهمی ایجاد می‌کند، هرچند که در حال حاضر تنها با داده‌های مصنوعی نشان داده شده و ممکن است برای داده‌های واقعی نیاز به تنظیمات بیشتری داشته باشد.",
+      "link": "https://www.youtube.com/watch?v=Wb8MhkpQpX8",
+      "posted_at": 1789893293
     }
   }
 }

@@ -183,7 +183,11 @@ def _published_age_hours(item: dict[str, Any]) -> float | None:
         dt = datetime.fromisoformat(value)
         if dt.tzinfo is None:
             dt = dt.replace(tzinfo=timezone.utc)
-        return max(0.0, (datetime.now(timezone.utc) - dt.astimezone(timezone.utc)).total_seconds() / 3600.0)
+        age_hours = (datetime.now(timezone.utc) - dt.astimezone(timezone.utc)).total_seconds() / 3600.0
+        # Future-dated fixture/feed timestamps must not receive a freshness bonus.
+        if age_hours < -1.0:
+            return None
+        return max(0.0, age_hours)
     except (TypeError, ValueError):
         return None
 
@@ -453,7 +457,7 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             if baseline_score > 0 and candidate_score(candidate) < baseline_score * target_floor:
                 break
             candidate_area = mission_area(candidate)
-            if target_key == "mind_cognition_target" or candidate_area == "mind_cognition":
+            if candidate_area == "mind_cognition":
                 reason = "mission_target:mind_cognition"
             elif candidate_area == "future_governance":
                 reason = "mission_target:future_governance"

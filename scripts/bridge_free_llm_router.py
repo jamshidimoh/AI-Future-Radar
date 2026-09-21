@@ -152,7 +152,7 @@ def bridge() -> dict:
             "family": "openrouter",
             "free": True,
             "chat_capable": True,
-            "json_capable": True,
+            "json_capable": "response_format" in {str(x).strip() for x in (live.get("supported_parameters") or [])},
             "response_format": "response_format" in {str(x).strip() for x in (live.get("supported_parameters") or [])},
             "context_length": int(live.get("context_length") or 0),
             "priority": 1200,

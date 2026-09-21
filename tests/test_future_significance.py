@@ -118,3 +118,32 @@ class FutureSignificanceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_substantive_importance_requires_more_than_topical_relevance():
+    from src.future_significance import substantive_importance_ok
+
+    generic = {
+        "title": "AI industry discussion and future trends",
+        "summary": "A general discussion of artificial intelligence and future technology.",
+        "content_type": "news",
+        "source": "General Technology Magazine",
+        "source_tier": 2,
+        "category": "ai",
+    }
+    assert not substantive_importance_ok(generic)
+
+
+def test_substantive_importance_accepts_consequential_capability_change():
+    from src.future_significance import substantive_importance_ok
+
+    item = {
+        "title": "New reasoning model enables autonomous scientific discovery",
+        "summary": "The new capability combines reasoning and autonomous research, with benchmark evidence showing a material improvement.",
+        "content_type": "news",
+        "source": "Specialist AI publication",
+        "source_tier": 1,
+        "category": "ai",
+        "editorial_class": "ai_signal",
+    }
+    assert substantive_importance_ok(item)

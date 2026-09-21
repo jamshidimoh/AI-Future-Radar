@@ -76,7 +76,7 @@ _MAX_LEADER_SIGNAL_QUERIES = 64
 def _contains_any_phrase(text: str, terms: tuple[str, ...]) -> bool:
     normalized = str(text or "").casefold()
     return any(
-        re.search(rf"(?<!\\w){re.escape(term.casefold())}(?!\\w)", normalized)
+        re.search(rf"(?<!\w){re.escape(term.casefold())}(?!\w)", normalized)
         for term in terms
     )
 

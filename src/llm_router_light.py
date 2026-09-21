@@ -98,6 +98,9 @@ def _openrouter_free_model(system_prompt, user_content, model, *, label):
     key = os.getenv("OPENROUTER_API_KEY")
     if not key:
         return None
+    normalized_model = str(model or "").strip()
+    if normalized_model != OPENROUTER_FREE_ROUTER_MODEL and not normalized_model.endswith(":free"):
+        raise QuotaExceeded(f"{label} rejected non-free model={normalized_model}")
     payload = {
         "model": model,
         "messages": [

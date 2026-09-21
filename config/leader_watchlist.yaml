@@ -189,6 +189,7 @@ youtube_channels:
   - {name: "Institute of Art and Ideas", handle: "@instituteofartandideas", category: ai, tier: 1, type: "ideas_forum", content_type: talk, official: true}
   - {name: "MIT CSAIL - Building 32", channel_id: "UCfplsUBZ2IZitni1qzsjnRQ", category: ai, tier: 1, type: "building32_podcast", content_type: podcast, official: true}
   - {name: "World Science Festival", channel_id: "UCShHFwKyhcDo3g7hr4f1R8A", category: ai, tier: 1, type: "science_media", content_type: talk, official: true}
+  - {name: "Dwarkesh Patel", channel_id: "UCXl4i9dYBrFOabk0xGmbkRA", category: ai, tier: 1, type: "expert_interviews", content_type: podcast, official: true}
 
 rotation_window_days: 7
 leader_selection_bonus: 5

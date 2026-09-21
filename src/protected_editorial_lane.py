@@ -14,6 +14,8 @@ from typing import Any
 
 import yaml
 
+from src.future_significance import build_future_features
+
 ROOT = Path(__file__).resolve().parents[1]
 PEOPLE_PATH = ROOT / "config" / "pioneers.yaml"
 SPECIAL_MAX_PER_PERIOD = 2
@@ -96,6 +98,56 @@ def _thematic_signal(item: dict[str, Any]) -> bool:
     return any(re.search(pattern, _text(item)) for pattern in SPECIAL_SIGNAL_PATTERNS)
 
 
+def _ai_relevant(item: dict[str, Any]) -> bool:
+    text = _text(item)
+    mission = _mission(item)
+    if mission in {"mind", "mind_cognition"}:
+        return True
+    ai_terms = (
+        "artificial intelligence", "machine learning", "llm", "foundation model",
+        "agentic", "reasoning", "frontier model", "ai safety", "ai governance",
+        "robotics", "physical ai", "computer use", "neurotechnology", "bci",
+        "genomics", "synthetic biology", "quantum computing", "هوش مصنوعی",
+        "یادگیری ماشین", "مدل بنیادی", "عامل هوشمند", "ربات",
+    )
+    return any(term in text for term in ai_terms)
+
+
+def _importance_evidence(item: dict[str, Any]) -> bool:
+    """Require substantive importance, not merely topical or interview metadata."""
+    classification = str(item.get("editorial_class") or "").strip().casefold()
+    if classification in {"research_breakthrough", "leader_interview", "convergence_signal", "major_industry_news"}:
+        return True
+
+    source_tier = 3
+    try:
+        source_tier = int(item.get("source_tier", 3) or 3)
+    except (TypeError, ValueError):
+        pass
+
+    ctype = str(item.get("content_type") or "").strip().casefold()
+    expert_deep = bool(item.get("expert_deep_lane"))
+    research_signal = bool(item.get("research_signal"))
+    interview_signal = bool(item.get("interview_signal")) or _interview_signal(item)
+
+    # A verified expert interview/research item from a high-authority source is
+    # intrinsically meaningful enough for this lane; generic interviews are not.
+    if source_tier <= 2 and (
+        (expert_deep and interview_signal)
+        or (research_signal and ctype in {"research", "paper", "study", "experiment"})
+    ):
+        return True
+
+    features = build_future_features(item)
+    strong_dimensions = (
+        "capability_shift", "breakthrough", "cross_domain_impact",
+        "strategic_implication", "research_depth", "human_societal_impact",
+        "future_horizon", "insight_density",
+    )
+    qualifying = sum(1 for key in strong_dimensions if float(features.get(key, 0.0) or 0.0) >= 0.34)
+    return qualifying >= 2
+
+
 def _interview_signal(item: dict[str, Any]) -> bool:
     content_type = str(item.get("content_type") or "").strip().casefold()
     source_type = str(item.get("source_type") or item.get("type") or item.get("format") or "").strip().casefold()
@@ -116,9 +168,16 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     registry_person = _named_registry_person(item)
     explicit_person = _explicit_person_signal(item)
     interview = _interview_signal(item)
+    if not _ai_relevant(item):
+        return False
+    # The special lane is not a generic interview/interesting-person feed.
+    # Every selected item needs either a strong mission-specific signal or a
+    # verified high-value person/research signal backed by substantive evidence.
+    if not _importance_evidence(item):
+        return False
     if mission == "mind_cognition" or thematic:
         return True
-    if interview and (registry_person or explicit_person or mission in MISSION_AREAS or thematic):
+    if interview and (registry_person or explicit_person):
         return True
     return mission in {"future", "future_governance", "convergence", "ai", "ai_core", "mind"} and (registry_person or explicit_person)
 

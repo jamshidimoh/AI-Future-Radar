@@ -19,11 +19,11 @@ CANDIDATE_PATTERNS = (
     re.compile(r"\[Selection Timing\].*?candidates=(\d+)"),
 )
 SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output=(\d+)")
-CONTRACT_PATTERN = re.compile(
-    r"\[Production Contract\].*?normal_news=(\d+).*?normal_max=(\d+)"
-    r".*?(?:mind_ideas_voices=(\d+)\s+mind_max=(\d+)\s+)?"
-    r"tier0_news=(\d+)(?:\s+tier0_quota_exempt=(\w+))?.*?education=(\w+)"
-)
+CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*")
+NORMAL_CONTRACT_PATTERN = re.compile(r"normal_news=(\d+)\s+normal_max=(\d+)")
+MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
+TIER0_CONTRACT_PATTERN = re.compile(r"tier0_news=(\d+)(?:\s+tier0_quota_exempt=(\w+))?")
+EDUCATION_CONTRACT_PATTERN = re.compile(r"education=(\w+)")
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
 EDITORIAL_SKIP_PATTERN = re.compile(r"\[Editorial Gate\]\s+skipped candidate:")
 POLICY_REJECTION_PATTERN = re.compile(r"(?:normal_score_policy_blocked|tier0_score_policy_blocked):\s*[^\s]+<=?\s*[^\s]+")
@@ -194,13 +194,20 @@ def validate(log_text: str) -> tuple[bool, str]:
 
     summary_budget_match = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))
     selected = int(summary_budget_match.group(1)) if summary_budget_match is not None else int(candidate_match.group(1))
-    normal_news = int(contract_match.group(1))
-    normal_max = int(contract_match.group(2))
-    mind_news = int(contract_match.group(3) or 0)
-    mind_max = int(contract_match.group(4) or 0)
-    tier0_news = int(contract_match.group(5))
-    tier0_quota_exempt = (contract_match.group(6) or "false").lower() == "true"
-    education = contract_match.group(7)
+    contract_line = contract_match.group(0)
+    normal_match = NORMAL_CONTRACT_PATTERN.search(contract_line)
+    mind_match = MIND_CONTRACT_PATTERN.search(contract_line)
+    tier0_match = TIER0_CONTRACT_PATTERN.search(contract_line)
+    education_match = EDUCATION_CONTRACT_PATTERN.search(contract_line)
+    if normal_match is None or tier0_match is None or education_match is None:
+        return False, "incomplete production contract summary"
+    normal_news = int(normal_match.group(1))
+    normal_max = int(normal_match.group(2))
+    mind_news = int(mind_match.group(1)) if mind_match else 0
+    mind_max = int(mind_match.group(2)) if mind_match else 0
+    tier0_news = int(tier0_match.group(1))
+    tier0_quota_exempt = (tier0_match.group(2) or "false").lower() == "true"
+    education = education_match.group(1)
     if _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
         education = "confirmed"
 

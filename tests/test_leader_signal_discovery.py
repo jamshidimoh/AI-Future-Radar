@@ -105,6 +105,15 @@ def test_named_watch_query_recovers_sparse_google_news_snippet():
     assert result["query_person_signal"] is True
 
 
+def test_strong_context_uses_word_boundaries():
+    result = classify_leader_signal(
+        "The full conversation is now available",
+        "A long-form discussion covers unrelated business topics.",
+    )
+    assert result["technology_context"] is False
+    assert result["accepted"] is False
+
+
 def test_named_watch_query_does_not_rescue_non_ai_query():
     result = classify_leader_signal(
         "The full conversation is now available",

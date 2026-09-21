@@ -165,3 +165,30 @@ def test_real_runtime_bureo_fishing_nets_candidate_is_not_substantively_importan
         "editorial_class": "mind_ideas_voices",
     }
     assert not substantive_importance_ok(item)
+
+
+
+def test_substantive_importance_accepts_strong_people_lane_candidate():
+    from src.future_significance import substantive_importance_ok
+    item = {
+        "title": "A substantive interview with a leading AI researcher",
+        "summary": "The interview covers a concrete change in model reasoning and deployment.",
+        "content_type": "interview",
+        "source_tier": 1,
+        "editorial_lane": "voices_perspectives",
+        "voices_perspectives_score": 100,
+    }
+    assert substantive_importance_ok(item)
+
+
+def test_substantive_importance_accepts_strong_frontier_lane_candidate():
+    from src.future_significance import substantive_importance_ok
+    item = {
+        "title": "A new frontier model capability changes autonomous AI research",
+        "summary": "Authoritative reporting documents a new model capability and deployment shift.",
+        "content_type": "news",
+        "source_tier": 1,
+        "editorial_lane": "technical_trend",
+        "technical_trend_score": 80,
+    }
+    assert substantive_importance_ok(item)

@@ -32,6 +32,7 @@ TIER0_PRIORITY_PATTERN = re.compile(r"\[Tier0 Interview Priority\]\s+retained=(\
 TIER0_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)")
 TIER0_FLOOR_PATTERN = re.compile(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", re.I)
 MIND_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH mind_ideas_voices\b.*?score=([-+]?\d+(?:\.\d+)?)")
+MIND_IDEAS_VOICES_SCORE_FLOOR = 50.0
 MIND_SELECTION_PATTERN = re.compile(r"\[(?:Dual Lane Selection|Four Lane Selection)\].*?mind_ideas_voices=(\d+).*?(?:mind_cap|mind_cap=)(?:=)?(\d+).*?(?:mind_score_floor=not_applied|normal_score_floor=normal_only)")
 MIND_SUMMARY_PATTERN = re.compile(r"\[Publication Summary Budget\].*?mind_ideas_voices=(\d+).*?mind_limit=(\d+).*?mind_score_floor=not_applied")
 MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
@@ -254,8 +255,15 @@ def validate(log_text: str) -> tuple[bool, str]:
         if violating_scores:
             return False, f"production contract violation: low-quality Tier-0 publication observed; scores={violating_scores}, floor={effective_floor}"
 
-    # Mind score is intentionally not checked against NORMAL_SCORE_FLOOR or
-    # PROTECTED_SCORE_FLOOR. Its contract requires explicit independent-lane evidence.
+    # Mind score is independent from the normal-news floor, but still has
+    # an explicit minimum quality threshold for special-lane publication.
+    mind_publish_scores = [float(m.group(1)) for line in lines if (m := MIND_PUBLICATION_PATTERN.search(line))]
+    violating_mind_scores = [score for score in mind_publish_scores if score < MIND_IDEAS_VOICES_SCORE_FLOOR]
+    if violating_mind_scores:
+        return False, (
+            "production contract violation: low-quality Mind/Ideas/Voices publication observed; "
+            f"scores={violating_mind_scores}, floor={MIND_IDEAS_VOICES_SCORE_FLOOR}"
+        )
     if selected > 0 and published_news == 0 and education != "confirmed":
         if accounted >= selected and (posts_sent is None or posts_sent == 0):
             return True, (

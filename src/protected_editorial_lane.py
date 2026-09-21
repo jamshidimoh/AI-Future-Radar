@@ -178,15 +178,15 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     interview = _interview_signal(item)
     if not _ai_relevant(item):
         return False
-    # The special lane is not a generic interview/interesting-person feed.
-    # Every selected item needs either a strong mission-specific signal or a
-    # verified high-value person/research signal backed by substantive evidence.
-    if not _importance_evidence(item):
-        return False
+    # Eligibility identifies valid candidates for this lane. Final publication
+    # importance is enforced later by the production publication gate, so valid
+    # AI interviews/podcasts and strong thematic signals must remain discoverable.
     if mission == "mind_cognition" or thematic:
         return True
-    if interview and (registry_person or explicit_person):
+    if interview and (registry_person or explicit_person or _ai_relevant(item)):
         return True
+    if not _importance_evidence(item):
+        return False
     if item.get("research_signal") and str(item.get("content_type") or "").strip().casefold() in {
         "research", "paper", "study", "experiment"
     }:

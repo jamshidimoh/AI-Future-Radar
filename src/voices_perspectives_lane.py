@@ -52,7 +52,14 @@ def _expert_identity(item: dict[str, Any]) -> tuple[list[str], bool, float]:
     except Exception:
         return [], False, 0.0
     people = [str(x).strip() for x in (item.get("people") or []) if str(x).strip()]
-    return people, bool(item.get("expert_deep_lane")), float(item.get("expert_score", 0.0) or 0.0)
+    content_type = str(item.get("content_type") or "").strip().casefold()
+    source_tier = int(item.get("source_tier", 3) or 3)
+    registered_voice = bool(
+        people
+        and content_type in VOICE_TYPES
+        and source_tier <= 2
+    )
+    return people, bool(item.get("expert_deep_lane")) or registered_voice, float(item.get("expert_score", 0.0) or 0.0)
 
 
 def _has_person_signal(item: dict[str, Any]) -> bool:

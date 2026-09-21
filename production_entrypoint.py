@@ -502,13 +502,15 @@ def main(*, skip_education: bool = False) -> int:
         # candidates, but only consequential items should consume a Telegram slot.
         # The check runs after summarization so it evaluates the actual publication
         # text/evidence rather than discovery metadata alone.
-        if os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}:
-            if not substantive_importance_ok(story):
-                print(
-                    f"[Editorial Importance Gate] blocked candidate: {str(story.get('title', ''))[:120]}",
-                    flush=True,
-                )
-                return policy_blocked("editorial_importance_gate")
+        if (
+            os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}
+            and not substantive_importance_ok(story)
+        ):
+            print(
+                f"[Editorial Importance Gate] blocked candidate: {str(story.get('title', ''))[:120]}",
+                flush=True,
+            )
+            return policy_blocked("editorial_importance_gate")
         is_mind = _is_mind_ideas_voices(story)
         is_technical = _is_technical_trend(story)
         is_voices = _is_voices_perspectives(story)

@@ -10,6 +10,7 @@ from __future__ import annotations
 import difflib
 import logging
 import time
+from datetime import datetime, timezone
 
 import main as _pipeline
 from src.dedup import load_seen
@@ -21,7 +22,7 @@ from src.publication_guard import _canonical_url, _load_records, _normalized_tit
 from src.semantic_dedup import get_story_signature
 from src.story_gate import _technology_relevant
 from src.typesafe_judgment import rerank_candidates
-from src.unified_editorial_selection import load_editorial_contract, mission_area, select_regular_portfolio
+from src.unified_editorial_selection import freshness_score, load_editorial_contract, mission_area, select_regular_portfolio
 
 logger = logging.getLogger(__name__)
 
@@ -271,19 +272,41 @@ def _exclude_published_candidates(items):
 
 
 def _priority_story_diversified(items):
+    """Keep the newest substantive item for each watched person.
+
+    Priority-person coverage is not a score competition between people. Once an
+    item passes the substantive/technology relevance gates, recency is the primary
+    ordering signal; quality/evidence only break freshness ties.
+    """
     best_by_person = {}
     for item in items:
         people = list(item.get("priority_story_people") or [])
         if not people:
             leader = str(item.get("leader") or item.get("watch_person") or "").strip()
             people = [leader] if leader else [f"__item__{id(item)}"]
+        freshness = freshness_score(item, 36.0)
+        candidate_key = (
+            freshness,
+            str(item.get("published") or item.get("published_at") or ""),
+            _score(item),
+            float(item.get("signal_score", 0) or 0),
+            int(item.get("leader_source_authority", 0) or 0),
+        )
         for person in people:
-            candidate_key = (_score(item), float(item.get("signal_score", 0) or 0), int(item.get("leader_source_authority", 0) or 0), str(item.get("published", "")))
             current = best_by_person.get(person)
             if current is None or candidate_key > current[0]:
                 best_by_person[person] = (candidate_key, item)
     selected = {id(item): item for _, (_, item) in best_by_person.items()}
-    return sorted(selected.values(), key=lambda x: (_score(x), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
+    return sorted(
+        selected.values(),
+        key=lambda x: (
+            freshness_score(x, 36.0),
+            str(x.get("published") or x.get("published_at") or ""),
+            _score(x),
+            float(x.get("signal_score", 0) or 0),
+        ),
+        reverse=True,
+    )
 
 
 def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, policy):
@@ -362,7 +385,19 @@ def _eligibility_split(items, max_protected=2):
             candidates.append(item)
         else:
             regular.append(item)
-    candidates.sort(key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _pipeline._direct_interview_signal(x) else 0, 0 if str(x.get("content_type") or "").lower() == "product_news" else 1, float(x.get("editorial_score", 0) or 0), str(x.get("published", ""))), reverse=True)
+    # Across watched people, freshness is the first ordering dimension.
+    # Priority/authority are eligibility and tie-break signals, not reasons for
+    # publishing older material over a newer substantive item.
+    candidates.sort(
+        key=lambda x: (
+            freshness_score(x, 36.0),
+            str(x.get("published") or x.get("published_at") or ""),
+            1 if _pipeline._direct_interview_signal(x) else 0,
+            int(x.get("leader_source_authority", 0) or 0),
+            float(x.get("editorial_score", 0) or 0),
+        ),
+        reverse=True,
+    )
     limit = max(0, int(max_protected))
     selected = candidates[:limit]
     for item in selected:

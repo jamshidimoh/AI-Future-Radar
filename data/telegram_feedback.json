@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789974818,
+  "updated_at": 1789977089,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12639,6 +12639,25 @@
       "why_it_matters": "با پیشرفت سریع هوش مصنوعی، درک تأثیرات آن بر زندگی انسان‌ها ضروری است. مؤسسه DeepMind به‌منظور پیش‌بینی و مدیریت چالش‌های ناشی از AGI، چارچوب‌های اخلاقی و راهبردهای سیاستی را توسعه می‌دهد. این کار می‌تواند به جلوگیری از خطرات احتمالی و بهره‌برداری مسئولانه از فناوری کمک کند.",
       "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE51MjRBdXZCdHdwQldOMlJ5dUNwSHZpZG02QllpclY4WWdNMGZweTVpX0JaVU1GbWJ2Yl9HRjJaX2hrcC1oM0lmZ19MdnZUNVZwS3JNMGZabmZvRHI2X1luNkVKdk5HcGt3U3ozbDcxQ3lHNHp1RWc?oc=5",
       "posted_at": 1789974818
+    },
+    "-1004482051328:1783": {
+      "chat_id": -1004482051328,
+      "message_id": 1783,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "نقش سرمایه‌گذاری خصوصی در تبدیل آموزش به کالا",
+      "summary": "Guy Standing توضیح می‌دهد که فرآیند «decommoning» باعث تبدیل آموزش به کالایی شده است که توسط سرمایه‌گذاری خصوصی و منطق بازار هدایت می‌شود. او به اصلاحات مارجارت تچر اشاره می‌کند که کنجکاوی را با مدارک و فرصت را با بدهی جایگزین کرده‌اند. هوش مصنوعی این روند را تشدید کرده و دانشجویان بدون مهارت‌های نوشتاری پایه وارد دانشگاه می‌شوند. Standing استدلال می‌کند که دانش‌آموزان اکنون به‌عنوان مشتریان و نه یادگیرندگان در سیستم قرار گرفته‌اند و برای بازسازی آموزش بر پایه همبستگی اجتماعی، دموکراسی و آزادی فردی تأکید می‌کند.",
+      "description": "Guy Standing discusses how private equity has taken over education and commodified knowledge.\n\nDoes this match up with your own experience of modern education?\n\nWith a free trial, you can watch the full talk NOW at https://iai.tv/video/education-has-lost-its-way-guy-standing?utm_source=YouTube&amp;utm_medium=description\n\nEducation was supposed to empower us. Join economist and author of Human Capital: The Tragedy of the Education Commons, Guy Standing, as he argues the modern education system has been corrupted by market logic. Credentials have replaced curiosity, while debt has replaced opportunity. AI has made all this far worse, as students enter university without basic writing skills. Standing argues for an education system rooted in social cohesion, democracy, and the enhancement of individual freedom.\n\nIn partnership with AudioNote.\n\n#education #britishpolitics  #privateequity \n\nGuy Standing is a trailblazing economist and long-standing advocate for Universal Basic Income. He is a Professorial Research Associate at SOAS University of London and co-founder of the Basic Income Earth Network. \n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=https://iai.tv/video/education-has-lost-its-way-guy-standing\n\n0:00 Intro\n0:41 - How the process of 'decommoning' works\n1:27 - How Margaret Thatcher changed education forever\n4:08 - The loss of play in schools\n7:23 - How education was sold off to the private sector\n12:11 - How students have become customers\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "وقتی آموزش به‌عنوان کالای بازار درک می‌شود، تمرکز بر حداکثر سوددهی و نه توسعه تفکر انتقادی می‌شود که نابرابری‌های اقتصادی را تشدید می‌کند. ورود دانشجویان بدون مهارت‌های نوشتاری پایه توسط AI، توانایی‌های حل مسئله پیچیده را کاهش می‌دهد. این روند تهدیدی برای مقاومت بلندمدت نیروی کار و مشارکت دموکراتیک ایجاد می‌کند. بازنگری در مدل آموزشی و تأکید بر همبستگی اجتماعی می‌تواند این خطرات را کاهش داده و سرمایه انسانی را حفظ کند.",
+      "link": "https://www.youtube.com/watch?v=GE8TfN6YF9o",
+      "posted_at": 1789977089
     }
   }
 }

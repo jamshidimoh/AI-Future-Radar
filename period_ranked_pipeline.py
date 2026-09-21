@@ -10,7 +10,6 @@ from __future__ import annotations
 import difflib
 import logging
 import time
-from datetime import datetime, timezone
 
 import main as _pipeline
 from src.dedup import load_seen

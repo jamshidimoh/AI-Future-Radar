@@ -206,15 +206,6 @@ rss_sources:
     mission: "expert_voices"
     discovery_only: true
 
-  - name: "Dwarkesh Podcast"
-    url: "https://api.substack.com/feed/podcast/69345.rss"
-    tier: 2
-    type: "expert_interviews"
-    content_type: "interviews_podcasts"
-    official: true
-    mission: "frontier_experts"
-    discovery_only: true
-
   - name: "No Priors"
     url: "https://feeds.megaphone.fm/nopriors"
     tier: 2
@@ -225,7 +216,7 @@ rss_sources:
     discovery_only: true
 
   - name: "The Cognitive Revolution"
-    url: "https://cognitiverevolution.substack.com/feed"
+    url: "https://feeds.megaphone.fm/RINTP3108857801"
     tier: 2
     type: "expert_interviews"
     content_type: "interviews_podcasts"
@@ -276,15 +267,6 @@ rss_sources:
     content_type: "interviews_podcasts"
     official: true
     mission: "ai_practitioners_agents"
-    discovery_only: true
-
-  - name: "Y Combinator Startup Podcast"
-    url: "https://podcasts.ycombinator.com/feed.xml"
-    tier: 2
-    type: "expert_interviews"
-    content_type: "interviews_podcasts"
-    official: true
-    mission: "ai_founders_leaders"
     discovery_only: true
 
   - name: "The Economist Podcasts - Technology"

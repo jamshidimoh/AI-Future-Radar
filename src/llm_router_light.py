@@ -90,115 +90,10 @@ def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     if r.status_code == 402: raise QuotaExceeded(f"OpenRouter {model}: HTTP 402 account_limit {r.text[:800]}")
     r.raise_for_status(); return _extract_message(r.json())
 
-GROK_FREE_DEFAULT_MODEL = "grok"
-OPENROUTER_FREE_ROUTER_MODEL = "openrouter/free"
-POLLINATIONS_KEYLESS_MODELS = {
-    "grok", "grok-large", "deepseek", "mistral", "mistral-large",
-    "openai", "openai-fast", "openai-large", "qwen-large",
-    "qwen-coder", "qwen-coder-large", "kimi", "gemini-flash-lite-3.1",
-    "gemini-search", "nova", "nova-fast", "glm", "minimax",
-    "perplexity-fast", "perplexity-reasoning", "polly",
-}
-
-def _openrouter_free_model(system_prompt, user_content, model, *, label):
-    """Call a zero-price OpenRouter endpoint directly, outside the normal model registry."""
-    key = os.getenv("OPENROUTER_API_KEY")
-    if not key:
-        return None
-    normalized_model = str(model or "").strip()
-    if normalized_model != OPENROUTER_FREE_ROUTER_MODEL and not normalized_model.endswith(":free"):
-        raise QuotaExceeded(f"{label} rejected non-free model={normalized_model}")
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ],
-        "max_tokens": 850,
-        "temperature": 0.15,
-        "response_format": {"type": "json_object"},
-    }
-    headers = {
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
-        "X-Title": "AI Future Radar",
-    }
-    try:
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=8,
-        )
-        if response.status_code in (401, 403, 404, 429):
-            raise QuotaExceeded(
-                f"{label} {model}: HTTP {response.status_code} {response.text[:800]}"
-            )
-        if response.status_code == 402:
-            raise QuotaExceeded(
-                f"{label} {model}: HTTP 402 account_limit {response.text[:800]}"
-            )
-        if response.status_code == 400:
-            detail = response.text[:1200].lower()
-            if "response_format" in detail or "structured" in detail or "json" in detail:
-                fallback_payload = dict(payload)
-                fallback_payload.pop("response_format", None)
-                response = requests.post(
-                    "https://openrouter.ai/api/v1/chat/completions",
-                    headers=headers,
-                    json=fallback_payload,
-                    timeout=8,
-                )
-        response.raise_for_status()
-        return _extract_message(response.json())
-    except QuotaExceeded:
-        raise
-    except requests.RequestException as exc:
-        raise QuotaExceeded(f"{label} {model}: {type(exc).__name__}: {exc}") from exc
-
-def _pollinations_free(system_prompt, user_content, *, model=None):
-    """Free keyless Pollinations fallback restricted to audited keyless aliases."""
-    model = (model or os.getenv("RADAR_GROK_FREE_MODEL") or "grok").strip().casefold()
-    if model not in POLLINATIONS_KEYLESS_MODELS:
-        raise QuotaExceeded(f"PollinationsFree rejected non-keyless model={model}")
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ],
-        "max_tokens": 700,
-        "temperature": 0.10,
-        "stream": False,
-    }
-    headers = {
-        "Content-Type": "application/json",
-        "Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
-        "X-Title": "AI Future Radar",
-    }
-    try:
-        response = requests.post(
-            "https://text.pollinations.ai/openai",
-            headers=headers,
-            json=payload,
-            timeout=8,
-        )
-        if response.status_code in (401, 402, 403, 404, 429, 503):
-            raise QuotaExceeded(
-                f"PollinationsFree {model}: HTTP {response.status_code} {response.text[:800]}"
-            )
-        response.raise_for_status()
-        return _extract_message(response.json())
-    except QuotaExceeded:
-        raise
-    except (requests.RequestException, ValueError) as exc:
-        raise QuotaExceeded(f"PollinationsFree {model}: {type(exc).__name__}: {exc}") from exc
-
 OLLAMA_FREE_DEFAULT_MODEL = "qwen3:1.7b"
 
 def _ollama_local(system_prompt, user_content):
-    """Local, no-key, zero-cost emergency fallback powered by Ollama on the runner."""
+    """Zero-cost local emergency provider using Ollama; no API key or billing dependency."""
     model = (os.getenv("RADAR_OLLAMA_FREE_MODEL") or OLLAMA_FREE_DEFAULT_MODEL).strip()
     payload = {
         "model": model,
@@ -232,58 +127,6 @@ def _ollama_local(system_prompt, user_content):
         raise
     except (requests.RequestException, ValueError) as exc:
         raise QuotaExceeded(f"OllamaLocal {model}: {type(exc).__name__}: {exc}") from exc
-
-def _grok_free(system_prompt, user_content):
-    return _ollama_local(system_prompt, user_content)
-
-def _openrouter_free_router(system_prompt, user_content):
-    return _openrouter_free_model(
-        system_prompt,
-        user_content,
-        OPENROUTER_FREE_ROUTER_MODEL,
-        label="OpenRouterFreeRouter",
-    )
-
-POLLINATIONS_FREE_DEFAULT_MODEL = "grok"
-POLLINATIONS_LEGACY_URL = "https://text.pollinations.ai/openai"
-POLLINATIONS_V1_URL = "https://gen.pollinations.ai/v1/chat/completions"
-
-def _pollinations_free(system_prompt, user_content):
-    """Free-first Pollinations fallback; prefers authenticated API when available, otherwise legacy anonymous endpoint."""
-    api_key = os.getenv("POLLINATIONS_API_KEY", "").strip()
-    model = (os.getenv("RADAR_POLLINATIONS_FREE_MODEL") or POLLINATIONS_FREE_DEFAULT_MODEL).strip()
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_content},
-    ]
-    headers = {
-        "Content-Type": "application/json",
-        "X-Title": "AI Future Radar",
-        "HTTP-Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
-    }
-    headers["Referer"] = "https://github.com/jamshidimoh/AI-Future-Radar"
-    if api_key:
-        headers["Authorization"] = f"Bearer {api_key}"
-        url = POLLINATIONS_V1_URL
-        payload = {"model": model, "messages": messages, "max_tokens": 850, "temperature": 0.15}
-    else:
-        # Current keyless catalog includes Grok and other free models. Use the
-        # legacy OpenAI-compatible route only for those keyless model aliases.
-        url = POLLINATIONS_LEGACY_URL
-        payload = {"model": model, "messages": messages, "max_tokens": 700, "temperature": 0.10}
-    try:
-        response = requests.post(url, headers=headers, json=payload, timeout=8)
-        if response.status_code in (401, 402, 403, 404, 429, 503):
-            raise QuotaExceeded(
-                f"PollinationsFree {model}: HTTP {response.status_code} {response.text[:800]}"
-            )
-        response.raise_for_status()
-        data = response.json()
-        return _extract_message(data)
-    except QuotaExceeded:
-        raise
-    except (requests.RequestException, ValueError) as exc:
-        raise QuotaExceeded(f"PollinationsFree {model}: {type(exc).__name__}: {exc}") from exc
 
 def _gemini(system_prompt, user_content):
     key = os.getenv("GEMINI_API_KEY")
@@ -333,7 +176,7 @@ def _huggingface(system_prompt,user_content):
     return response.choices[0].message.content
 
 def _chain_key():
-    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN","POLLINATIONS_API_KEY")) + (os.getenv("RADAR_ENABLE_GROK_FREE_FALLBACK","0"),os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_POLLINATIONS_FREE_FALLBACK","0"),os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_GROK_FREE_MODEL",GROK_FREE_DEFAULT_MODEL),os.getenv("RADAR_POLLINATIONS_FREE_MODEL",POLLINATIONS_FREE_DEFAULT_MODEL),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
+    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN","POLLINATIONS_API_KEY")) + (os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK","0"),os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_POLLINATIONS_FREE_FALLBACK","0"),os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_OLLAMA_FREE_MODEL",OLLAMA_FREE_DEFAULT_MODEL),os.getenv("RADAR_POLLINATIONS_FREE_MODEL",POLLINATIONS_FREE_DEFAULT_MODEL),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
 
 def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY

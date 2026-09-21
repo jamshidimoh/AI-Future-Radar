@@ -13,15 +13,26 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Call keyless Grok via Pollinations
+      - name: Install Ollama and model
+        run: |
+          set -euo pipefail
+          curl -fsSL https://ollama.com/install.sh | sh
+          nohup ollama serve > /tmp/ollama.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:11434/api/tags >/dev/null
+          ollama pull qwen3:1.7b
+      - name: Smoke test local Ollama free fallback
         run: |
           python - <<'PY'
           import json
           import requests
 
-          url = "https://keylessai.thryx.workers.dev/v1/chat/completions"
+          url = "http://127.0.0.1:11434/api/chat"
           payload = {
-              "model": "grok-4.1-mini:free",
+              "model": "qwen3:1.7b",
               "messages": [
                   {
                       "role": "system",
@@ -29,21 +40,20 @@ jobs:
                   },
                   {"role": "user", "content": "Provider smoke test."},
               ],
-              "max_tokens": 64,
-              "temperature": 0,
               "stream": False,
+              "think": False,
+              "format": "json",
           }
           headers = {
               "Content-Type": "application/json",
-              "Authorization": "Bearer not-needed",
-              "Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
+                  "Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
               "X-Title": "AI Future Radar",
           }
           response = requests.post(url, headers=headers, json=payload, timeout=20)
           print("HTTP_STATUS", response.status_code)
           response.raise_for_status()
           body = response.json()
-          content = body["choices"][0]["message"]["content"]
+          content = body["message"]["content"]
           parsed = json.loads(content)
           assert parsed.get("ok") is True, parsed
           print("GROK_FREE_SMOKE_PASS", json.dumps(parsed, ensure_ascii=False))

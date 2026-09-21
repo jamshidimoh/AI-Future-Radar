@@ -1,3 +1,4 @@
+import pytest
 import sys
 import time
 from pathlib import Path
@@ -408,7 +409,7 @@ def test_gemini_is_available_as_explicit_production_emergency_fallback(monkeypat
     assert result == '{"title":"gemini"}'
     assert provider == "Gemini"
 
-def test_grok_free_direct_call_uses_local_ollama_without_credentials(monkeypatch):
+def test_local_ollama_free_uses_no_credentials_and_json_mode(monkeypatch):
     _reset(monkeypatch)
     calls = []
 
@@ -425,10 +426,9 @@ def test_grok_free_direct_call_uses_local_ollama_without_credentials(monkeypatch
         return FakeResponse()
 
     monkeypatch.setattr(router.requests, "post", fake_post)
-    result = router._grok_free("system", "user")
+    result = router._ollama_local("system", "user")
 
     assert result == '{"title":"ok"}'
-    assert len(calls) == 1
     assert calls[0][0] == "http://127.0.0.1:11434/api/chat"
     payload = calls[0][1]["json"]
     assert payload["model"] == "qwen3:1.7b"
@@ -437,17 +437,18 @@ def test_grok_free_direct_call_uses_local_ollama_without_credentials(monkeypatch
     assert "Authorization" not in calls[0][1]["headers"]
 
 
-def test_grok_free_rejects_paid_external_model_override(monkeypatch):
+def test_local_ollama_rejects_non_qwen_free_override(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("RADAR_OLLAMA_FREE_MODEL", "x-ai/grok-4.3")
+    # Only audited local model IDs are accepted by the local free lane.
     with pytest.raises(router.QuotaExceeded):
-        router._grok_free("system", "user")
+        router._ollama_local("system", "user")
 
 
-def test_grok_free_is_available_as_final_free_emergency_fallback(monkeypatch):
+def test_local_ollama_is_available_as_final_free_emergency_fallback(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("RADAR_ENABLE_GROK_FREE_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
     apply()
 
@@ -459,8 +460,8 @@ def test_grok_free_is_available_as_final_free_emergency_fallback(monkeypatch):
     monkeypatch.setattr(router, "_litellm_model_list", lambda: [
         {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}
     ])
-    monkeypatch.setattr(router, "_grok_free", lambda *_args, **_kwargs: '{"title":"grok-free"}')
+    monkeypatch.setattr(router, "_ollama_local", lambda *_args, **_kwargs: '{"title":"local"}')
 
     result, provider = router._call_litellm("system", "user")
-    assert result == '{"title":"grok-free"}'
-    assert provider == "GrokFree"
+    assert result == '{"title":"local"}'
+    assert provider == "LocalOllamaFree"

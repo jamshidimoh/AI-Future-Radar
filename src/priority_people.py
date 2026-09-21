@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from src.expert_registry import apply_expert_features
+from src.expert_registry import apply_expert_features, load_expert_registry
 
 TOP_AI_VOICES={"elon musk","sam altman","demis hassabis","dario amodei","jensen huang","yann lecun","yoshua bengio","geoffrey hinton","andrew ng","eric schmidt","ilya sutskever","noam shazeer","fei-fei li","stuart russell","nick bostrom","yuval noah harari","mustafa suleyman","mark zuckerberg","satya nadella","lisa su","bill gates"}
 PERSON_ALIASES={"elon musk":("elon musk","musk"),"sam altman":("sam altman","altman","سم آلتمن","سم التمن"),"demis hassabis":("demis hassabis","hassabis"),"dario amodei":("dario amodei","amodei"),"jensen huang":("jensen huang","huang"),"yann lecun":("yann lecun","yann le cun","lecun"),"yoshua bengio":("yoshua bengio","bengio"),"geoffrey hinton":("geoffrey hinton","hinton"),"andrew ng":("andrew ng",),"eric schmidt":("eric schmidt","schmidt"),"ilya sutskever":("ilya sutskever","sutskever"),"noam shazeer":("noam shazeer","shazeer"),"fei-fei li":("fei-fei li","fei fei li","fei-fei","fei fei"),"stuart russell":("stuart russell","russell"),"nick bostrom":("nick bostrom","bostrom"),"yuval noah harari":("yuval noah harari","yuval harari","harari"),"mustafa suleyman":("mustafa suleyman","suleyman"),"mark zuckerberg":("mark zuckerberg","zuckerberg"),"satya nadella":("satya nadella","nadella"),"lisa su":("lisa su",),"bill gates":("bill gates","gates",)}
@@ -75,6 +75,24 @@ def matched_priority_people(item, *, text: str | None = None):
             continue
         if interview_context and any(pattern.search(text) for pattern in _SINGLE_NAME_PATTERNS.get(canonical, ())):
             matches.append(canonical)
+    # Keep the legacy TOP_AI_VOICES set for compatibility, but use the canonical
+    # pioneer registry as the recall source so newly watched experts cannot become
+    # invisible to priority-person detection merely because a static alias table
+    # was not updated.
+    try:
+        for record in load_expert_registry():
+            canonical = str(record.get("name") or "").strip()
+            if not canonical:
+                continue
+            normalized_name = _normalize(canonical.lower())
+            aliases = [normalized_name]
+            parts = normalized_name.split()
+            if len(parts) >= 2:
+                aliases.append(f"{parts[0]} {parts[-1]}")
+            if any(alias in explicit for alias in aliases) or any(_normalize(alias) in text for alias in aliases):
+                matches.append(normalized_name)
+    except Exception:
+        pass
     return sorted(set(matches))
 
 def _load_ideas() -> list[dict[str, object]]:

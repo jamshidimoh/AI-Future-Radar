@@ -101,8 +101,6 @@ def _thematic_signal(item: dict[str, Any]) -> bool:
 def _ai_relevant(item: dict[str, Any]) -> bool:
     text = _text(item)
     mission = _mission(item)
-    if mission in {"mind", "mind_cognition"}:
-        return True
     ai_terms = (
         "artificial intelligence", "machine learning", "llm", "foundation model",
         "agentic", "reasoning", "frontier model", "ai safety", "ai governance",
@@ -110,7 +108,9 @@ def _ai_relevant(item: dict[str, Any]) -> bool:
         "genomics", "synthetic biology", "quantum computing", "هوش مصنوعی",
         "یادگیری ماشین", "مدل بنیادی", "عامل هوشمند", "ربات",
     )
-    return any(term in text for term in ai_terms)
+    if any(term in text for term in ai_terms):
+        return True
+    return bool(re.search(r"\\bai\\b", text))
 
 
 def _importance_evidence(item: dict[str, Any]) -> bool:
@@ -129,6 +129,12 @@ def _importance_evidence(item: dict[str, Any]) -> bool:
     expert_deep = bool(item.get("expert_deep_lane"))
     research_signal = bool(item.get("research_signal"))
     interview_signal = bool(item.get("interview_signal")) or _interview_signal(item)
+
+    # A strong domain-specific signal is sufficient for this protected lane;
+    # final publication importance remains enforced downstream. Generic
+    # interviews without a domain signal still fail the earlier AI-relevance gate.
+    if _thematic_signal(item):
+        return True
 
     # A verified expert interview/research item from a high-authority source is
     # intrinsically meaningful enough for this lane; generic interviews are not.

@@ -213,7 +213,7 @@ def test_low_quality_mind_publication_is_rejected():
 [Production Selection] total=1
 [Dual Lane Selection] normal=0 mind_ideas_voices=1 mind_cap=2 mind_score_floor=not_applied
 [Publication Summary Budget] input=1 protected=0 mind_ideas_voices=1 normal_window=0 output=1 normal_limit=0 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
-[Production Policy] PUBLISH mind_ideas_voices mind_rank=1 score=37.0 normal_floor=not_applied normal_rank=None independent_lane=true
+[Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=37.0 normal_floor=not_applied normal_rank=None independent_lane=true
 [Production Contract] normal_news=0 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 education=not_due
 Posts sent: 1/1
 """

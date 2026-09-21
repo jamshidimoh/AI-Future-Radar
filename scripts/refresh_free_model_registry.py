@@ -323,7 +323,7 @@ def refresh() -> dict:
                 "family": "openrouter",
                 "free": True,
                 "chat_capable": "text" in (live.get("architecture", {}).get("input_modalities") or ["text"]),
-                "json_capable": True,
+                "json_capable": _supports_response_format(live),
                 "response_format": _supports_response_format(live),
                 "context_length": int(live.get("context_length") or 0),
                 "priority": 1000,

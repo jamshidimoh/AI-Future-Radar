@@ -1,0 +1,49 @@
+name: Provider Grok Free Smoke Test
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  grok-free-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Call keyless Grok via Pollinations
+        run: |
+          python - <<'PY'
+          import json
+          import requests
+
+          url = "https://text.pollinations.ai/openai"
+          payload = {
+              "model": "grok",
+              "messages": [
+                  {
+                      "role": "system",
+                      "content": 'Return exactly one JSON object with the key "ok" set to true.',
+                  },
+                  {"role": "user", "content": "Provider smoke test."},
+              ],
+              "max_tokens": 64,
+              "temperature": 0,
+              "stream": False,
+          }
+          headers = {
+              "Content-Type": "application/json",
+              "Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
+              "X-Title": "AI Future Radar",
+          }
+          response = requests.post(url, headers=headers, json=payload, timeout=20)
+          print("HTTP_STATUS", response.status_code)
+          response.raise_for_status()
+          body = response.json()
+          content = body["choices"][0]["message"]["content"]
+          parsed = json.loads(content)
+          assert parsed.get("ok") is True, parsed
+          print("GROK_FREE_SMOKE_PASS", json.dumps(parsed, ensure_ascii=False))
+          PY

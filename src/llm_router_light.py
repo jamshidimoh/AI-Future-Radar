@@ -157,9 +157,9 @@ def _openrouter_free_model(system_prompt, user_content, model, *, label):
     except requests.RequestException as exc:
         raise QuotaExceeded(f"{label} {model}: {type(exc).__name__}: {exc}") from exc
 
-def _pollinations_free(system_prompt, user_content):
+def _pollinations_free(system_prompt, user_content, *, model=None):
     """Free keyless Pollinations fallback restricted to audited keyless aliases."""
-    model = (os.getenv("RADAR_GROK_FREE_MODEL") or "grok").strip().casefold()
+    model = (model or os.getenv("RADAR_GROK_FREE_MODEL") or "grok").strip().casefold()
     if model not in POLLINATIONS_KEYLESS_MODELS:
         raise QuotaExceeded(f"PollinationsFree rejected non-keyless model={model}")
     payload = {

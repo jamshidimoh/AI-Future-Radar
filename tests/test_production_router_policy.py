@@ -487,3 +487,59 @@ def test_grok_free_is_available_as_final_free_emergency_fallback(monkeypatch):
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"grok-free"}'
     assert provider == "GrokFree"
+
+def test_grok_free_direct_call_uses_keyless_pollinations_endpoint(monkeypatch):
+    _reset(monkeypatch)
+    calls = []
+
+    class FakeResponse:
+        status_code = 200
+        text = ""
+        def raise_for_status(self):
+            return None
+        def json(self):
+            return {"choices": [{"message": {"content": '{"title":"ok"}'}}]}
+
+    def fake_post(url, **kwargs):
+        calls.append((url, kwargs))
+        return FakeResponse()
+
+    monkeypatch.setattr(router.requests, "post", fake_post)
+    result = router._grok_free("system", "user")
+
+    assert result == '{"title":"ok"}'
+    assert len(calls) == 1
+    assert calls[0][0] == "https://text.pollinations.ai/openai"
+    assert calls[0][1]["json"]["model"] == "grok"
+    assert "Authorization" not in calls[0][1]["headers"]
+
+
+def test_grok_free_rejects_non_keyless_model(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("RADAR_GROK_FREE_MODEL", "x-ai/grok-4.3")
+    try:
+        router._grok_free("system", "user")
+    except router.QuotaExceeded:
+        return
+    assert False, "non-keyless Grok model must be rejected"
+
+
+def test_grok_free_is_available_as_final_free_emergency_fallback(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("RADAR_ENABLE_GROK_FREE_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
+    apply()
+
+    class FakeRouter:
+        def completion(self, **_kwargs):
+            raise RuntimeError("HTTP 503 temporary")
+
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}
+    ])
+    monkeypatch.setattr(router, "_grok_free", lambda *_args, **_kwargs: '{"title":"grok-free"}')
+
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"grok-free"}'
+    assert provider == "GrokFree"

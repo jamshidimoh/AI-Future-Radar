@@ -94,7 +94,7 @@ def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priori
         "published": "2026-09-21T10:00:00+00:00",
     })
     selected = choose_voices_candidate([older, newer])
-    assert selected and selected[0]["watch_person"] == "Andrew Ng"
+    assert selected and selected[0]["watch_person"] == "Expert B"
 
 
 def test_voice_lane_is_independent_and_capped_at_one():

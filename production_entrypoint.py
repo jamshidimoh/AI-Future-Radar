@@ -309,6 +309,7 @@ def main(*, skip_education: bool = False) -> int:
     from src.delivery_contract import DeliveryStatus, delivered, policy_blocked, transport_failed
     from src.educational_content import build_educational_item, commit_education_lesson
     from src.educational_telegram_style import format_educational_post
+    from src.future_significance import substantive_importance_ok
     from src.llm_router_light import call_llm_with_fallback, get_quality_chain
     from src.production_publication_adapter import publish_production_story
     from src.publication_contract import unique_candidates
@@ -497,6 +498,17 @@ def main(*, skip_education: bool = False) -> int:
             return transport_failed("telegram_transport_unavailable", retryable=False)
         if current_type == "education":
             return delivered({"message_id": None})
+        # Production-only final importance gate. Ranking can identify relevant
+        # candidates, but only consequential items should consume a Telegram slot.
+        # The check runs after summarization so it evaluates the actual publication
+        # text/evidence rather than discovery metadata alone.
+        if os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}:
+            if not substantive_importance_ok(story):
+                print(
+                    f"[Editorial Importance Gate] blocked candidate: {str(story.get('title', ''))[:120]}",
+                    flush=True,
+                )
+                return policy_blocked("editorial_importance_gate")
         is_mind = _is_mind_ideas_voices(story)
         is_technical = _is_technical_trend(story)
         is_voices = _is_voices_perspectives(story)

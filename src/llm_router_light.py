@@ -339,6 +339,19 @@ def call_llm_with_fallback(system_prompt,user_content,providers=None):
         if result:
             print(f"[Production Router Bridge] success={provider}", flush=True)
             return result, provider
+        # The local Ollama runner is installed and smoke-tested by the production
+        # workflow, but historically it was only available to the non-LiteLLM
+        # path. That left the production circuit without a zero-cost emergency
+        # provider exactly when the remote providers were exhausted.
+        if os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}:
+            try:
+                local_result = _ollama_local(system_prompt, user_content)
+                if local_result:
+                    print("[Production Router Bridge] success=OllamaLocal:qwen3:1.7b emergency_fallback=true", flush=True)
+                    return local_result, "OllamaLocal:qwen3:1.7b"
+            except Exception as exc:
+                logger.warning("Local Ollama emergency fallback failed: %s", exc, exc_info=True)
+                print(f"[Production Router Bridge] OllamaLocal failed={type(exc).__name__}: {exc}", flush=True)
         raise QuotaExceeded("Production LLM circuit exhausted without usable provider response")
     if canonical_chain:
         providers=get_quality_chain()

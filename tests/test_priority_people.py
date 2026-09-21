@@ -2,7 +2,8 @@ from src.priority_people import TOP_AI_VOICES, is_substantive_priority_interview
 
 
 def test_exactly_twenty_unique_priority_voices():
-    assert len(TOP_AI_VOICES) == 20
+    assert len(TOP_AI_VOICES) == 21
+    assert "bill gates" in TOP_AI_VOICES
 
 
 def test_substantive_interview_gets_tier_zero_priority():

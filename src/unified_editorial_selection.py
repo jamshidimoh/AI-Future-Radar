@@ -239,8 +239,10 @@ def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, An
     item["current_entity_overlap"] = novelty["current_entity_overlap"]
     item["history_topic_similarity"] = novelty["history_topic_similarity"]
     item["history_entity_overlap"] = novelty["history_entity_overlap"]
-    item["freshness_score"] = round(freshness_score(item, contract["freshness_half_life_hours"]), 4)
-    item["freshness_weighted_score"] = round(item["freshness_score"] * contract["freshness_weight"], 3)
+    freshness_half_life = float(contract.get("freshness_half_life_hours", 24.0) or 24.0)
+    freshness_weight = float(contract.get("freshness_weight", 10.0) or 10.0)
+    item["freshness_score"] = round(freshness_score(item, freshness_half_life), 4)
+    item["freshness_weighted_score"] = round(item["freshness_score"] * freshness_weight, 3)
     item["portfolio_value_score"] = round(
         portfolio_value_with_history(
             item, selected, history_signatures,
@@ -343,7 +345,7 @@ class _Portfolio:
             ),
             -_rank_key(item, self.recent)[0],
             candidate_score(item),
-            freshness_score(item, self.contract["freshness_half_life_hours"]) * self.contract["freshness_weight"],
+            freshness_score(item, float(self.contract.get("freshness_half_life_hours", 24.0) or 24.0)) * float(self.contract.get("freshness_weight", 10.0) or 10.0),
             str(item.get("published") or item.get("published_at") or ""),
         )
 

@@ -129,12 +129,23 @@ def is_voices_candidate(item: dict[str, Any]):
     )
 
 
-def _recency_bonus(item: dict[str, Any]) -> float:
+def _published_timestamp(item: dict[str, Any]) -> float:
     raw = str(item.get("published") or item.get("published_at") or item.get("date") or "").strip()
-    if not raw: return 0.0
+    if not raw:
+        return float("-inf")
     try:
-        dt = datetime.fromisoformat(raw.replace("Z", "+00:00")); dt = dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc); age = max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 86400.0)
-    except ValueError: return 0.0
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        dt = dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+        return dt.timestamp()
+    except ValueError:
+        return float("-inf")
+
+
+def _recency_bonus(item: dict[str, Any]) -> float:
+    timestamp = _published_timestamp(item)
+    if timestamp == float("-inf"):
+        return 0.0
+    age = max(0.0, (datetime.now(timezone.utc).timestamp() - timestamp) / 86400.0)
     return 10.0 if age <= 3 else 7.0 if age <= 7 else 4.0 if age <= 14 else 2.0 if age <= 30 else 0.0
 
 
@@ -210,8 +221,13 @@ def choose_voices_candidate(candidates: Iterable[dict[str, Any]], *, existing_id
         item["voice_expert_deep_lane"] = expert_deep_lane
         item["voice_expert_score"] = expert_score
         eligible.append(item)
-    eligible.sort(key=lambda x: (-float(x.get("voices_perspectives_score", 0) or 0), str(x.get("published") or "")))
+    # This lane is explicitly freshness-first across watched experts: person
+    # priority, registry priority, source tier and editorial score decide
+    # eligibility/quality, not which equally-valid expert gets the slot.
+    # Most recent publication wins; missing/invalid dates sort last with a
+    # deterministic title tie-break.
+    eligible.sort(key=lambda x: (-_published_timestamp(x), str(x.get("title") or "").casefold()))
     selected = eligible[:max(0, int(max_items))]
     for rank, item in enumerate(selected, 1):
-        item["voices_perspectives_lane_selected"] = True; item["editorial_lane"] = "voices_perspectives"; item["voices_period_rank"] = rank; item["normal_period_rank"] = None; item["mind_period_rank"] = None; item["technical_trend_period_rank"] = None; item["voices_lane_independent"] = True; item["voices_lane_reason"] = "top_independent_voices_perspectives_score"
+        item["voices_perspectives_lane_selected"] = True; item["editorial_lane"] = "voices_perspectives"; item["voices_period_rank"] = rank; item["normal_period_rank"] = None; item["mind_period_rank"] = None; item["technical_trend_period_rank"] = None; item["voices_lane_independent"] = True; item["voices_lane_reason"] = "freshest_eligible_voices_content"
     return selected

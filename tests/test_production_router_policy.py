@@ -408,6 +408,42 @@ def test_gemini_is_available_as_explicit_production_emergency_fallback(monkeypat
     assert result == '{"title":"gemini"}'
     assert provider == "Gemini"
 
+def test_grok_free_direct_call_uses_local_ollama_without_credentials(monkeypatch):
+    _reset(monkeypatch)
+    calls = []
+
+    class FakeResponse:
+        status_code = 200
+        text = ""
+        def raise_for_status(self):
+            return None
+        def json(self):
+            return {"message": {"content": '{"title":"ok"}'}}
+
+    def fake_post(url, **kwargs):
+        calls.append((url, kwargs))
+        return FakeResponse()
+
+    monkeypatch.setattr(router.requests, "post", fake_post)
+    result = router._grok_free("system", "user")
+
+    assert result == '{"title":"ok"}'
+    assert len(calls) == 1
+    assert calls[0][0] == "http://127.0.0.1:11434/api/chat"
+    payload = calls[0][1]["json"]
+    assert payload["model"] == "qwen3:1.7b"
+    assert payload["think"] is False
+    assert payload["format"] == "json"
+    assert "Authorization" not in calls[0][1]["headers"]
+
+
+def test_grok_free_rejects_paid_external_model_override(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("RADAR_OLLAMA_FREE_MODEL", "x-ai/grok-4.3")
+    with pytest.raises(router.QuotaExceeded):
+        router._grok_free("system", "user")
+
+
 def test_grok_free_is_available_as_final_free_emergency_fallback(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
@@ -428,39 +464,3 @@ def test_grok_free_is_available_as_final_free_emergency_fallback(monkeypatch):
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"grok-free"}'
     assert provider == "GrokFree"
-
-
-def test_grok_free_direct_call_uses_keyless_pollinations_endpoint(monkeypatch):
-    _reset(monkeypatch)
-    calls = []
-
-    class FakeResponse:
-        status_code = 200
-        text = ""
-        def raise_for_status(self):
-            return None
-        def json(self):
-            return {"choices": [{"message": {"content": '{"title":"ok"}'}}]}
-
-    def fake_post(url, **kwargs):
-        calls.append((url, kwargs))
-        return FakeResponse()
-
-    monkeypatch.setattr(router.requests, "post", fake_post)
-    result = router._grok_free("system", "user")
-
-    assert result == '{"title":"ok"}'
-    assert len(calls) == 1
-    assert calls[0][0] == "https://text.pollinations.ai/openai"
-    assert calls[0][1]["json"]["model"] == "grok"
-    assert "Authorization" not in calls[0][1]["headers"]
-
-
-def test_grok_free_rejects_non_keyless_model(monkeypatch):
-    _reset(monkeypatch)
-    monkeypatch.setenv("RADAR_GROK_FREE_MODEL", "x-ai/grok-4.3")
-    try:
-        router._grok_free("system", "user")
-    except router.QuotaExceeded:
-        return
-    raise AssertionError("non-keyless Grok model must be rejected")

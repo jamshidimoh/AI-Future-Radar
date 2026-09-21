@@ -62,6 +62,20 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python -u scripts/bridge_free_llm_router.py
 
+      - name: Install local Ollama fallback
+        run: |
+          set -euo pipefail
+          curl -fsSL https://ollama.com/install.sh | sh
+          nohup ollama serve > /tmp/ollama.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:11434/api/tags >/dev/null
+          ollama pull qwen3:1.7b
+
       - name: Telegram production preflight
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -76,6 +90,8 @@ jobs:
           RADAR_SUMMARY_WORKERS: 1
           AI_RADAR_EDITORIAL_REVIEW: 0
           RADAR_ENABLE_GROK_FREE_FALLBACK: 1
+          RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b
+          RADAR_OLLAMA_TIMEOUT_SECONDS: 20
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
           RADAR_ENABLE_GEMINI_FALLBACK: 1
           RADAR_ENABLE_HF_FALLBACK: 1

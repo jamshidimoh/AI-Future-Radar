@@ -195,8 +195,46 @@ def _pollinations_free(system_prompt, user_content, *, model=None):
     except (requests.RequestException, ValueError) as exc:
         raise QuotaExceeded(f"PollinationsFree {model}: {type(exc).__name__}: {exc}") from exc
 
+OLLAMA_FREE_DEFAULT_MODEL = "qwen3:1.7b"
+
+def _ollama_local(system_prompt, user_content):
+    """Local, no-key, zero-cost emergency fallback powered by Ollama on the runner."""
+    model = (os.getenv("RADAR_OLLAMA_FREE_MODEL") or OLLAMA_FREE_DEFAULT_MODEL).strip()
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "stream": False,
+        "think": False,
+        "format": "json",
+        "options": {"temperature": 0.10},
+    }
+    try:
+        response = requests.post(
+            "http://127.0.0.1:11434/api/chat",
+            headers={"Content-Type": "application/json"},
+            json=payload,
+            timeout=float(os.getenv("RADAR_OLLAMA_TIMEOUT_SECONDS", "20")),
+        )
+        if response.status_code in (404, 429, 500, 503):
+            raise QuotaExceeded(
+                f"OllamaLocal {model}: HTTP {response.status_code} {response.text[:800]}"
+            )
+        response.raise_for_status()
+        data = response.json()
+        content = (data.get("message") or {}).get("content")
+        if not content:
+            raise QuotaExceeded(f"OllamaLocal {model}: response has no content")
+        return content
+    except QuotaExceeded:
+        raise
+    except (requests.RequestException, ValueError) as exc:
+        raise QuotaExceeded(f"OllamaLocal {model}: {type(exc).__name__}: {exc}") from exc
+
 def _grok_free(system_prompt, user_content):
-    return _pollinations_free(system_prompt, user_content)
+    return _ollama_local(system_prompt, user_content)
 
 def _openrouter_free_router(system_prompt, user_content):
     return _openrouter_free_model(

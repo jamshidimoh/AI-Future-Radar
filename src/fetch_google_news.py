@@ -24,6 +24,7 @@ _CIRCUIT_BREAK_AFTER = 3
 _ROOT = Path(__file__).resolve().parents[1]
 _SUPPLEMENTAL_QUERY_PATH = _ROOT / "config" / "radar_google_news_queries.yaml"
 _LEADER_WATCHLIST_PATH = _ROOT / "config" / "leader_watchlist.yaml"
+_PIONEERS_PATH = _ROOT / "config" / "pioneers.yaml"
 # Generic companion-discovery vocabulary. It deliberately avoids source-, person-,
 # geography-, or platform-specific terms so the same mechanism works for every watch person.
 _LEADER_SIGNAL_TERMS = (
@@ -97,11 +98,47 @@ def _load_supplemental_queries():
         return []
 
 
-def _load_watchlist_people_queries():
-    """Generate one bounded discovery query for every configured watchlist person.
+def _load_pioneer_priorities() -> dict[str, int]:
+    """Load numeric expert priorities used only to order discovery queries."""
+    try:
+        payload = yaml.safe_load(_PIONEERS_PATH.read_text(encoding="utf-8")) or {}
+    except (OSError, UnicodeDecodeError, yaml.YAMLError, TypeError, ValueError):
+        return {}
+    rows = payload.get("people", []) if isinstance(payload, dict) else []
+    priorities: dict[str, int] = {}
+    for row in rows or []:
+        if not isinstance(row, dict):
+            continue
+        name = str(row.get("name") or "").strip().casefold()
+        if not name:
+            continue
+        try:
+            priority = int(float(row.get("priority", 0) or 0))
+        except (TypeError, ValueError):
+            priority = 0
+        priorities[name] = max(priority, priorities.get(name, 0))
+    return priorities
 
-    The static query list can evolve independently; this prevents adding a person to
-    the watchlist from silently making that person undiscoverable.
+
+def _query_content_type_priority(q: dict) -> int:
+    ctype = str(q.get("content_type") or "").strip().casefold()
+    return {
+        "interview": 5,
+        "podcast": 5,
+        "talk": 4,
+        "conversation": 4,
+        "leader_signal": 3,
+        "product_news": 3,
+        "research": 2,
+    }.get(ctype, 1)
+
+
+def _load_watchlist_people_queries():
+    """Generate high-recall discovery queries ordered by actual pioneer priority.
+
+    Query ordering matters because the production runner uses a bounded discovery
+    window. Every watched person therefore gets a first-pass opportunity before
+    lower-priority duplicate query variants consume the budget.
     """
     try:
         payload = yaml.safe_load(_LEADER_WATCHLIST_PATH.read_text(encoding="utf-8")) or {}
@@ -109,28 +146,32 @@ def _load_watchlist_people_queries():
         logger.warning("Leader watchlist unavailable for generic discovery: %s", exc, exc_info=True)
         return []
     people = payload.get("people", {}) if isinstance(payload, dict) else {}
+    pioneer_priorities = _load_pioneer_priorities()
     rows = []
     if isinstance(people, dict):
         for group, cfg in people.items():
             if not isinstance(cfg, dict):
                 continue
-            priority = int(cfg.get("priority", 0) or 0)
+            group_priority = int(cfg.get("priority", 0) or 0)
             category = "mind" if str(group).strip() == "consciousness_and_mind_ai" else ("future" if "futur" in str(group).lower() else "ai")
             for raw_name in cfg.get("names", []) or []:
                 name = str(raw_name).strip()
-                if name:
-                    rows.append({
-                        "query": f'"{name}" ({" OR ".join(_LEADER_SIGNAL_TERMS)})',
-                        "watch_person": name,
-                        "category": category,
-                        "tier": 1,
-                        "content_type": "leader_signal",
-                        "leader_discovery": True,
-                        "curated_discovery": True,
-                        "leader_priority": priority,
-                    })
+                if not name:
+                    continue
+                actual_priority = pioneer_priorities.get(name.casefold(), group_priority)
+                rows.append({
+                    "query": f'"{name}" ({" OR ".join(_LEADER_SIGNAL_TERMS)})',
+                    "watch_person": name,
+                    "category": category,
+                    "tier": 1,
+                    "content_type": "leader_signal",
+                    "leader_discovery": True,
+                    "curated_discovery": True,
+                    "leader_priority": group_priority,
+                    "leader_query_priority": actual_priority,
+                })
+    rows.sort(key=lambda q: (-int(q.get("leader_query_priority", 0) or 0), -_query_content_type_priority(q), str(q.get("watch_person") or "").casefold()))
     return rows
-
 
 def _merge_queries(queries):
     merged = list(queries or [])
@@ -140,36 +181,97 @@ def _merge_queries(queries):
         if key and key not in seen and not is_excluded_source_text(query.get("query")):
             merged.append(query)
             seen.add(key)
-    return merged
-
-
-def _is_strong_curated_query(q: dict) -> bool:
-    preferred_source = str(q.get("preferred_source") or "").strip(); query_text = str(q.get("query") or "").strip().lower()
-    return bool(preferred_source or query_text.startswith("site:"))
+    # In leader mode, discovery breadth is more valuable than letting several
+    # query variants for the same person crowd out other watched experts.
+    leader_queries = [q for q in merged if str(q.get("watch_person") or "").strip()]
+    generic_queries = [q for q in merged if not str(q.get("watch_person") or "").strip()]
+    if not leader_queries:
+        return merged
+    buckets: dict[str, list[dict]] = {}
+    for q in leader_queries:
+        person = str(q.get("watch_person") or "").strip().casefold()
+        buckets.setdefault(person, []).append(q)
+    for bucket in buckets.values():
+        bucket.sort(key=lambda q: (-int(q.get("leader_query_priority", 0) or 0), -_query_content_type_priority(q), str(q.get("query") or "").casefold()))
+    ordered: list[dict] = []
+    # First pass: one strongest query per person, maximizing person coverage.
+    people = sorted(
+        buckets,
+        key=lambda p: (-max(int(q.get("leader_query_priority", 0) or 0) for q in buckets[p]), p),
+    )
+    for person in people:
+        if buckets[person]:
+            ordered.append(buckets[person].pop(0))
+    # Second pass: additional variants for the highest-priority people.
+    remaining = [q for bucket in buckets.values() for q in bucket]
+    remaining.sort(key=lambda q: (-int(q.get("leader_query_priority", 0) or 0), -_query_content_type_priority(q), str(q.get("watch_person") or "").casefold(), str(q.get("query") or "").casefold()))
+    ordered.extend(remaining)
+    return ordered + generic_queries
 
 
 def _expand_leader_signal_queries(queries):
-    expanded = list(queries or []); existing = {str(q.get("query") or "").strip().lower() for q in expanded}; seen_people = set(); signal_terms = " OR ".join(_LEADER_SIGNAL_TERMS)
-    for q in queries or []:
-        person = str(q.get("watch_person") or "").strip(); person_key = person.lower()
-        if not person or person_key in seen_people or len(seen_people) >= _MAX_LEADER_SIGNAL_QUERIES: continue
-        seen_people.add(person_key); companion_query = f'"{person}" ({signal_terms})'; companion_key = companion_query.lower()
-        if companion_key in existing: continue
-        companion = dict(q); companion["query"] = companion_query; companion["content_type"] = "leader_signal"; companion["leader_discovery"] = True; companion["curated_discovery"] = True
-        expanded.append(companion); existing.add(companion_key)
-    return expanded
+    """Bound leader discovery while guaranteeing a companion query for priority people."""
+    raw = list(queries or [])
+    existing = {str(q.get("query") or "").strip().lower() for q in raw}
+    people: dict[str, list[dict]] = {}
+    non_people: list[dict] = []
+    for q in raw:
+        person = str(q.get("watch_person") or "").strip()
+        if person:
+            people.setdefault(person.casefold(), []).append(q)
+        else:
+            non_people.append(q)
+    signal_terms = " OR ".join(_LEADER_SIGNAL_TERMS)
+    ordered_people = sorted(
+        people.values(),
+        key=lambda bucket: (-max(int(q.get("leader_query_priority", 0) or 0) for q in bucket), str(bucket[0].get("watch_person") or "").casefold()),
+    )
+    expanded: list[dict] = []
+    for bucket in ordered_people:
+        bucket.sort(key=lambda q: (-_query_content_type_priority(q), -int(q.get("leader_query_priority", 0) or 0), str(q.get("query") or "").casefold()))
+        primary = bucket[0]
+        expanded.append(primary)
+        person = str(primary.get("watch_person") or "").strip()
+        companion_query = f'"{person}" ({signal_terms})'
+        companion_key = companion_query.casefold()
+        if companion_key not in existing:
+            companion = dict(primary)
+            companion["query"] = companion_query
+            companion["content_type"] = "leader_signal"
+            companion["leader_discovery"] = True
+            companion["curated_discovery"] = True
+            expanded.append(companion)
+            existing.add(companion_key)
+    # Add secondary variants only after every watched person has primary+companion coverage.
+    secondary = []
+    for bucket in ordered_people:
+        secondary.extend(bucket[1:])
+    secondary.sort(key=lambda q: (-int(q.get("leader_query_priority", 0) or 0), -_query_content_type_priority(q), str(q.get("watch_person") or "").casefold(), str(q.get("query") or "").casefold()))
+    expanded.extend(secondary)
+    expanded.extend(non_people)
+    return expanded[:_MAX_LEADER_SIGNAL_QUERIES]
 
 
-def classify_leader_signal(title, summary, watch_person=""):
-    """Classify broad Leader results by event type, substantive analysis and technology context."""
+def classify_leader_signal(title, summary, watch_person="", *, query_context="", content_type=""):
+    """Classify leader results while preserving recall from an explicit watchlist query."""
     text = f"{title} {summary}".lower()
+    query_text = str(query_context or "").lower()
+    ctype = str(content_type or "").strip().casefold()
     interview = any(term in text for term in _LEADER_INTERVIEW_EVIDENCE_TERMS)
     activity = any(term in text for term in _LEADER_ACTIVITY_EVIDENCE_TERMS)
     analytical = any(term in text for term in _LEADER_ANALYTICAL_SIGNAL_TERMS)
     context = any(term in text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
     person_signal = bool(watch_person and str(watch_person).lower() in text)
+    query_person_signal = bool(watch_person and str(watch_person).lower() in query_text)
+    query_context_signal = any(term in query_text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
+    explicit_format = ctype in _LEADER_INTERVIEW_EVIDENCE_TERMS
     substantive_analysis = bool(analytical and context)
-    accepted = bool((interview or activity or substantive_analysis) and context)
+    # Google News snippets frequently omit the interviewed person's name. When
+    # the source came from an explicit named watchlist query, preserve the item
+    # for the downstream identity/evidence/quality gates instead of deleting it
+    # prematurely at discovery.
+    accepted_by_watch_query = bool(query_person_signal and (interview or explicit_format) and query_context_signal)
+    accepted = bool(((interview or activity or substantive_analysis) and context) or accepted_by_watch_query)
     return {"accepted": accepted, "interview": interview, "activity": activity, "analytical": analytical, "context": context, "person_signal": person_signal}
 
 
@@ -200,7 +302,7 @@ def _collect_query(q, cutoff):
         if is_excluded_source_url(link) or is_excluded_source_text(source_title) or is_excluded_source_text(title): continue
         effective_tier = resolve_google_news_tier(source_title, source_href or link)
         watch_person = str(q.get("watch_person", "") or "").strip(); is_leader_watch = bool(watch_person)
-        classification = classify_leader_signal(title, summary, watch_person) if q.get("leader_discovery") else None
+        classification = classify_leader_signal(title, summary, watch_person, query_context=query_text, content_type=q.get("content_type", "news")) if q.get("leader_discovery") else None
         if q.get("leader_discovery") and not classification["accepted"]:
             print(f"[Leader Discovery Filter] dropped weak signal title={str(title)[:100]}", flush=True); continue
         results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "source_name": source_title, "source_domain": source_href, "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": effective_tier, "discovery_query_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "leader_activity_signal": bool(classification and classification.get("accepted") and (classification.get("activity") or classification.get("interview") or classification.get("analytical"))), "_ai_link": True if is_leader_watch else None})

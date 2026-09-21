@@ -32,7 +32,7 @@ TIER0_PRIORITY_PATTERN = re.compile(r"\[Tier0 Interview Priority\]\s+retained=(\
 TIER0_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)")
 TIER0_FLOOR_PATTERN = re.compile(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", re.I)
 MIND_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH mind_ideas_voices\b.*?score=([-+]?\d+(?:\.\d+)?)")
-MIND_SELECTION_PATTERN = re.compile(r"\[Dual Lane Selection\].*?mind_ideas_voices=(\d+).*?mind_cap=(\d+).*?mind_score_floor=not_applied")
+MIND_SELECTION_PATTERN = re.compile(r"\[(?:Dual Lane Selection|Four Lane Selection)\].*?mind_ideas_voices=(\d+).*?(?:mind_cap|mind_cap=)(?:=)?(\d+).*?(?:mind_score_floor=not_applied|normal_score_floor=normal_only)")
 MIND_SUMMARY_PATTERN = re.compile(r"\[Publication Summary Budget\].*?mind_ideas_voices=(\d+).*?mind_limit=(\d+).*?mind_score_floor=not_applied")
 MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
 EDUCATION_CONFIRMED_PATTERN = re.compile(r"\[Education Published\].*?CONFIRMED\b.*?telegram_delivery=successful")

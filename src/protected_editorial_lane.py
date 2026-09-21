@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PEOPLE_PATH = ROOT / "config" / "pioneers.yaml"
 SPECIAL_MAX_PER_PERIOD = 2
 SPECIAL_RANK_WINDOW = 12
+MIND_IDEAS_VOICES_SCORE_FLOOR = 50.0
 
 INTERVIEW_TYPES = {
     "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a",
@@ -173,6 +174,8 @@ def choose_additive_candidates(
         if id(item) in existing_ids or not is_mind_ideas_voices_candidate(item):
             continue
         item["mind_editorial_score"] = mind_ideas_voices_score(item)
+        if float(item["mind_editorial_score"]) < MIND_IDEAS_VOICES_SCORE_FLOOR:
+            continue
         eligible.append(item)
     eligible.sort(key=lambda item: (-float(item.get("mind_editorial_score", 0.0) or 0.0), str(item.get("published") or "")),)
     selected = (

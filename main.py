@@ -607,7 +607,7 @@ def main(hooks=None):
     print(f"YouTube items: {len(youtube_items)} | leader-channel items: {len(leader_youtube)}")
     print("[3/7] Discovery: Google News + Leader Watchlist")
     base_news = fetch_google_news_items(base_queries, max_age_hours=36, max_workers=4)
-    leader_news = _mark_leader_items(fetch_google_news_items(leader_queries, max_age_hours=720, max_workers=1, inter_query_delay=0.35))
+    leader_news = _mark_leader_items(fetch_google_news_items(leader_queries, max_age_hours=720, max_workers=3, inter_query_delay=0.0))
     news_items = base_news + leader_news
     print(f"Google News items: {len(news_items)} | leader candidates: {len(leader_news)}")
     all_items = rss_items + youtube_items + news_items

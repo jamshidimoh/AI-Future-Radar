@@ -213,5 +213,15 @@ def choose_voices_candidate(candidates: Iterable[dict[str, Any]], *, existing_id
     eligible.sort(key=lambda x: (-float(x.get("voices_perspectives_score", 0) or 0), str(x.get("published") or "")))
     selected = eligible[:max(0, int(max_items))]
     for rank, item in enumerate(selected, 1):
-        item["voices_perspectives_lane_selected"] = True; item["editorial_lane"] = "voices_perspectives"; item["voices_period_rank"] = rank; item["normal_period_rank"] = None; item["mind_period_rank"] = None; item["technical_trend_period_rank"] = None; item["voices_lane_independent"] = True; item["voices_lane_reason"] = "top_independent_voices_perspectives_score"
+        item["voices_perspectives_lane_selected"] = True
+        item["editorial_lane"] = "voices_perspectives"
+        item["voices_period_rank"] = rank
+        item["normal_period_rank"] = None
+        item["mind_period_rank"] = None
+        item["technical_trend_period_rank"] = None
+        item["voices_lane_independent"] = True
+        item["voices_lane_reason"] = "top_independent_voices_perspectives_score"
+        # Mark a screened expert interview/talk explicitly so the final
+        # substantive-importance gate can distinguish it from generic opinion.
+        item.setdefault("editorial_class", "leader_interview")
     return selected

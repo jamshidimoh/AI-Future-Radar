@@ -1,9 +1,9 @@
-"""Independent technical-trend editorial lane for AI architecture and infrastructure.
+"""Independent Frontier / Technical editorial lane.
 
-The lane is intentionally independent from both Normal News and Mind/Ideas/Voices.
-It selects at most one technically substantive, current, high-value item from the
-full discovery set. It never uses NORMAL_SCORE_FLOOR and does not consume the
-Normal or Mind publication quotas.
+The lane is intentionally independent from Normal News and Mind/Ideas/Voices.
+It selects at most one technically substantive or frontier-capability item from
+the full discovery set. It never uses NORMAL_SCORE_FLOOR and does not consume
+the Normal or Mind publication quotas.
 """
 from __future__ import annotations
 
@@ -14,6 +14,14 @@ from typing import Any
 
 MAX_TECHNICAL_TREND_PER_PERIOD = 1
 TECHNICAL_TREND_RANK_WINDOW = 20
+
+FRONTIER_SIGNALS = (
+    r"\bfrontier model\b", r"\bnew capability\b", r"\bstate[- ]of[- ]the[- ]art\b",
+    r"\bnew model\b", r"\bmodel release\b", r"\breasoning model\b",
+    r"\bworld model\b", r"\bscientific discovery\b", r"\bautonomous\b",
+    r"\brobotics\b", r"\bhumanoid\b", r"\bmultimodal\b",
+    r"مدل جدید", r"قابلیت جدید", r"مرز توانمندی", r"رباتیک", r"انسان‌نما",
+)
 
 TECHNICAL_SIGNALS = (
     r"\bagent harness\b", r"\bagent framework\b", r"\bmcp\b", r"\bmodel context protocol\b",
@@ -55,6 +63,10 @@ def _source_text(item: dict[str, Any]) -> str:
 
 def _technical_signal_count(text: str) -> int:
     return sum(1 for pattern in TECHNICAL_SIGNALS if re.search(pattern, text))
+
+
+def _frontier_signal_count(text: str) -> int:
+    return sum(1 for pattern in FRONTIER_SIGNALS if re.search(pattern, text))
 
 
 def _ai_related(text: str) -> bool:
@@ -110,19 +122,30 @@ def is_technical_trend_candidate(item: dict[str, Any]) -> bool:
     if any(marker in source for marker in EXCLUDED_SOURCE_MARKERS):
         return False
     text = _text(item)
-    signal_count = _technical_signal_count(text)
-    if signal_count < 2 or not _ai_related(text):
+    technical_signals = _technical_signal_count(text)
+    frontier_signals = _frontier_signal_count(text)
+    if not _ai_related(text):
+        return False
+    if technical_signals < 2 and frontier_signals < 1:
+        return False
+    source_type = str(item.get("source_type") or "").strip().casefold()
+    try:
+        source_tier = int(item.get("source_tier", item.get("tier", 3)) or 3)
+    except (TypeError, ValueError):
+        source_tier = 3
+    authoritative = source_tier <= 2 or source_type in TECHNICAL_SOURCE_TYPES or bool(item.get("official"))
+    if technical_signals < 2 and not authoritative:
         return False
     mission = str(item.get("mission_area") or item.get("category") or "").casefold()
     technical_mission = any(token in mission for token in ("ai", "technology", "technical", "convergence", "quantum", "genetics", "future"))
-    source_type = str(item.get("source_type") or "").strip().casefold()
     return technical_mission or source_type in TECHNICAL_SOURCE_TYPES or bool(item.get("official"))
 
 
 def technical_trend_score(item: dict[str, Any]) -> float:
     text = _text(item)
     signals = _technical_signal_count(text)
-    score = min(32.0, signals * 6.0)
+    frontier_signals = _frontier_signal_count(text)
+    score = min(32.0, signals * 6.0) + min(24.0, frontier_signals * 8.0)
     technical_depth = sum(bool(re.search(pattern, text)) for pattern in (
         r"architecture", r"protocol", r"runtime", r"infrastructure", r"serving", r"inference", r"kernel", r"memory", r"compiler",
         r"معماری", r"پروتکل", r"زیرساخت", r"استنتاج",
@@ -160,5 +183,5 @@ def choose_technical_trend_candidate(
         item["normal_period_rank"] = None
         item["mind_period_rank"] = None
         item["technical_lane_independent"] = True
-        item["technical_lane_reason"] = "top_independent_technical_trend_score"
+        item["technical_lane_reason"] = "top_independent_frontier_or_technical_score"
     return selected

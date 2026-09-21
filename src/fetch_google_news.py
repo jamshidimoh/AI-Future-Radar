@@ -55,13 +55,17 @@ _LEADER_ANALYTICAL_SIGNAL_TERMS = (
     "labor", "work", "society", "governance", "rules", "regulation", "risk", "safety", "business", "industry",
     "adoption", "deployment", "transformation", "impact", "implications", "reasoning", "intelligence",
 )
-_LEADER_SIGNAL_CONTEXT_TERMS = (
+_LEADER_STRONG_CONTEXT_TERMS = (
     "ai", "artificial intelligence", "agi", "machine learning", "robot", "robotics", "chip", "chips", "semiconductor",
     "compute", "computing", "data center", "datacenter", "space", "spacex", "tesla", "xai", "openai", "anthropic",
     "deepmind", "nvidia", "meta", "google", "microsoft", "apple", "amazon", "technology", "tech", "europe", "eu",
     "european", "regulation", "regulatory", "policy", "government", "law", "legislation", "governance", "safety", "risk",
     "future", "innovation", "economy", "education", "jobs", "labor", "workforce", "health", "science", "research",
     "infrastructure", "energy", "autonomy", "cybersecurity", "security", "consciousness", "singularity", "intimacy",
+)
+_LEADER_SIGNAL_CONTEXT_TERMS = (
+    *_LEADER_STRONG_CONTEXT_TERMS,
+    "economy", "education", "jobs", "labor", "workforce", "health",
 )
 # Keep a bounded safety cap, but large enough to cover the current watchlist without
 # silently dropping later people from generic companion discovery.
@@ -266,6 +270,8 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
     person_signal = bool(watch_person and str(watch_person).lower() in text)
     query_person_signal = bool(watch_person and str(watch_person).lower() in query_text)
     query_context_signal = any(term in query_text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
+    technology_context = any(term in text for term in _LEADER_STRONG_CONTEXT_TERMS)
+    query_technology_context = any(term in query_text for term in _LEADER_STRONG_CONTEXT_TERMS)
     substantive_analysis = bool(analytical and context)
     # Google News snippets frequently omit the interviewed person's name. When
     # the source came from an explicit named watchlist query, preserve the item
@@ -274,10 +280,10 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
     query_format_signal = ctype in {"interview", "podcast", "talk", "conversation", "leader_signal", "product_news", "research"}
     accepted_by_watch_query = bool(
         query_person_signal
-        and query_context_signal
+        and query_technology_context
         and (interview or activity or substantive_analysis or query_format_signal)
     )
-    accepted = bool(((interview or activity or substantive_analysis) and context) or accepted_by_watch_query)
+    accepted = bool(((interview or activity or substantive_analysis) and technology_context) or accepted_by_watch_query)
     return {
         "accepted": accepted,
         "interview": interview,
@@ -287,6 +293,8 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
         "person_signal": person_signal,
         "query_person_signal": query_person_signal,
         "query_context_signal": query_context_signal,
+        "technology_context": technology_context,
+        "query_technology_context": query_technology_context,
     }
 
 

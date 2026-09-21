@@ -86,11 +86,11 @@ def matched_priority_people(item, *, text: str | None = None):
                 if not canonical:
                     continue
                 normalized_name = _normalize(canonical.lower())
-                aliases = [normalized_name]
+                registry_aliases: list[str] = [normalized_name]
                 parts = normalized_name.split()
                 if len(parts) >= 2:
-                    aliases.append(f"{parts[0]} {parts[-1]}")
-                if any(alias in explicit for alias in aliases) or any(_normalize(alias) in text for alias in aliases):
+                    registry_aliases.append(f"{parts[0]} {parts[-1]}")
+                if any(alias in explicit for alias in registry_aliases) or any(_normalize(alias) in text for alias in registry_aliases):
                     matches.append(normalized_name)
         except Exception:
             pass

@@ -196,3 +196,57 @@ rss_sources:
     content_type: "research"
     official: true
     mission: "robotics_embodied_ai"
+
+  - name: "Lex Fridman Podcast"
+    url: "https://lexfridman.com/feed/podcast/"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "expert_voices"
+    discovery_only: true
+
+  - name: "Dwarkesh Podcast"
+    url: "https://api.substack.com/feed/podcast/69345.rss"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "frontier_experts"
+    discovery_only: true
+
+  - name: "No Priors"
+    url: "https://feeds.megaphone.fm/nopriors"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "ai_leaders_founders"
+    discovery_only: true
+
+  - name: "The Cognitive Revolution"
+    url: "https://cognitiverevolution.substack.com/feed"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "ai_innovators_experts"
+    discovery_only: true
+
+  - name: "Big Technology Podcast"
+    url: "https://feeds.megaphone.fm/LI3617121267"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "tech_leaders"
+    discovery_only: true
+
+  - name: "The Knowledge Project"
+    url: "https://theknowledgeproject.libsyn.com/rss"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "leaders_thinkers"
+    discovery_only: true

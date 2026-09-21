@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789968683,
+  "updated_at": 1789969341,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12413,6 +12413,25 @@
       "why_it_matters": "وجود یک ابزار مخفی داخل Claude نشان می‌دهد که پلتفرم‌های هوش مصنوعی می‌توانند قابلیت‌های تعاملی فراتر از متن را در خود داشته باشند، که می‌تواند مسیرهای جدیدی برای تعامل کاربر‑مدل و کاربردهای خلاقانه باز کند. اگر این ویژگی به‌صورت عمومی عرضه شود، می‌تواند تجربهٔ کاربری را بهبود بخشد و فرصت‌های نوآوری در زمینهٔ تولید محتوا و همکاری تیمی را فراهم آورد. در عین حال، عدم شفافیت دربارهٔ هدف و دسترس‌پذیری آن می‌تواند نگرانی‌های مربوط به حریم خصوصی و استفادهٔ ناخواسته از قابلیت‌های داخلی را برانگیزد.",
       "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOa29VenRGT1V5N0lZYzJzVWtzam5WWVA4dmxaS216Y1FNMEEyaXROZy1qdjJvNGwzaWNQb3BjaEZnX1ZYQ0hubGVmNXdJdGxaNGhkMWk3LURzWFNGbDdQU1pJVkEza1hSd0llSmE0eFlHYlRMMW8yaHpPR3hWelUtRzVnR3JMRC0zRl84MXl3anpkaGRleHFhaVNNb3Jqa05ZWGc?oc=5",
       "posted_at": 1789968683
+    },
+    "-1004482051328:1771": {
+      "chat_id": -1004482051328,
+      "message_id": 1771,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (TechCrunch)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "Google DeepMind مؤسسه‌ای برای گسترش بحث AGI راه‌اندازی می‌کند",
+      "summary": "DeepMind، شرکت زیرمجموعهٔ Google، مؤسسه‌ای جدید برای گسترش گفت‌وگوی عمومی و علمی پیرامون هوش مصنوعی عمومی (AGI) اعلام کرد. هدف این نهاد، فراهم آوردن بستری برای پژوهش، هم‌اندیشی و تبادل نظر میان متخصصان، سیاست‌گذاران و جامعهٔ عام است. این اقدام توسط مدیرعامل DeepMind، Demis Hassabis، معرفی شد و نشان‌دهندهٔ تمایل شرکت به مشارکت فعال در شکل‌گیری چارچوب‌های اخلاقی و فنی AGI است. مؤسسه قصد دارد برنامه‌های آموزشی، کارگاه‌ها و پروژه‌های تحقیقاتی مشترک را برای بررسی پیامدهای بلندمدت AGI برگزار کند.",
+      "why_it_matters": "ایجاد یک مؤسسهٔ متمرکز بر بحث AGI می‌تواند به شکل‌گیری استانداردهای ایمنی، سیاست‌گذاری‌های نظارتی و مسیرهای پژوهشی مسئولانه کمک کند. با مشارکت DeepMind، که یکی از پیشروان حوزهٔ هوش مصنوعی است، این نهاد می‌تواند دسترسی به منابع و تخصص‌های پیشرفته را برای جامعهٔ علمی و عمومی فراهم سازد. در نتیجه، بحث‌های گسترده‌تر دربارهٔ ریسک‌ها و فرصت‌های AGI می‌تواند به تصمیم‌گیری‌های آگاهانه‌تر در سطح بین‌المللی منجر شود.",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPWUlsdFN3V3lpNmQ1b0VyLWJsUHQ1VXdOQkVoTmp6dHFzc29fWmJOREs5bjFWMXB5bDUtbEpQc0RtWnc2dXNTbDdLUjRZWlk3LVp1RmFjbWl3TG5yQmEydGloUmFrOXZlY3pvX2xjMU9zYWdRdW9UU1Z2eG0wLWREcVFDbmZPRWxQR2dVU0dmTmdhR0ZOUDRBTA?oc=5",
+      "posted_at": 1789969341
     }
   }
 }

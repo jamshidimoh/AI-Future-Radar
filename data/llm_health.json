@@ -16,7 +16,7 @@
       "failures": 1,
       "disabled_until": 1789448706.304,
       "last_error": "rate_limit",
-      "last_success": 0
+      "last_success": 0.0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 3,
@@ -40,19 +40,19 @@
       "failures": 1,
       "disabled_until": 1789890501.984,
       "last_error": "quota",
-      "last_success": 0
+      "last_success": 0.0
     },
     "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free": {
       "failures": 1,
       "disabled_until": 1789572385.906,
       "last_error": "model",
-      "last_success": 0
+      "last_success": 0.0
     },
     "kiraai:dots-3-note-preview": {
       "failures": 1,
       "disabled_until": 1789890501.984,
       "last_error": "quota",
-      "last_success": 0
+      "last_success": 0.0
     },
     "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
       "failures": 3,
@@ -88,13 +88,13 @@
       "failures": 1,
       "disabled_until": 1789986298.099,
       "last_error": "model",
-      "last_success": 0
+      "last_success": 0.0
     },
     "openrouterfreerouter:openrouterfreerouter": {
       "failures": 1,
       "disabled_until": 1789968298.099,
       "last_error": "quota",
-      "last_success": 0
+      "last_success": 0.0
     }
   },
   "providers": {
@@ -119,7 +119,8 @@
     "openrouterfreerouter": {
       "failures": 1,
       "disabled_until": 1789986298.099,
-      "last_error": "quota"
+      "last_error": "quota",
+      "last_success": 0.0
     }
   },
   "updated_at": 1789352663.9123816,

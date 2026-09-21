@@ -2,13 +2,13 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 12,
-      "disabled_until": 1789985839.548,
+      "disabled_until": 1789986298.099,
       "last_error": "model",
       "last_success": 0.0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 8,
-      "disabled_until": 1789967839.548,
+      "disabled_until": 1789968298.099,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -56,19 +56,19 @@
     },
     "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
       "failures": 3,
-      "disabled_until": 1789967839.548,
+      "disabled_until": 1789968298.099,
       "last_error": "quota",
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
       "failures": 2,
-      "disabled_until": 1790050639.548,
+      "disabled_until": 1790051098.099,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790050639.548,
+      "disabled_until": 1790051098.099,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -83,6 +83,18 @@
       "disabled_until": 1789980776.521,
       "last_error": "model",
       "last_success": 0.0
+    },
+    "grokfree:grokfree": {
+      "failures": 1,
+      "disabled_until": 1789986298.099,
+      "last_error": "model",
+      "last_success": 0
+    },
+    "openrouterfreerouter:openrouterfreerouter": {
+      "failures": 1,
+      "disabled_until": 1789968298.099,
+      "last_error": "quota",
+      "last_success": 0
     }
   },
   "providers": {
@@ -94,15 +106,20 @@
     },
     "openrouter": {
       "failures": 5,
-      "disabled_until": 1789985839.548,
+      "disabled_until": 1789986298.099,
       "last_error": "quota",
       "last_success": 0.0
     },
     "gemini": {
       "failures": 4,
-      "disabled_until": 1790050639.548,
+      "disabled_until": 1790051098.099,
       "last_error": "auth",
       "last_success": 0.0
+    },
+    "openrouterfreerouter": {
+      "failures": 1,
+      "disabled_until": 1789986298.099,
+      "last_error": "quota"
     }
   },
   "updated_at": 1789352663.9123816,

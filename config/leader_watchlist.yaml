@@ -7,6 +7,7 @@ people:
     priority: 11
     names:
       - Andrew Ng
+      - Bill Gates
   ai_builders:
     priority: 10
     names:
@@ -177,6 +178,7 @@ google_news_queries:
   - {query: "Max Tegmark AI future intelligence interview", watch_person: "Max Tegmark", category: future, tier: 1, content_type: interview}
   - {query: "Stuart Russell AI safety AGI interview", watch_person: "Stuart Russell", category: future, tier: 1, content_type: interview}
   - {query: "Eric Schmidt AI future interview national security", watch_person: "Eric Schmidt", category: future, tier: 1, content_type: interview}
+  - {query: "Bill Gates AI future interview latest", watch_person: "Bill Gates", category: future, tier: 1, content_type: interview}
 
   - {query: "site:cap.csail.mit.edu/podcast AI artificial intelligence machine learning robotics Building 32", category: ai, tier: 1, content_type: podcast, preferred_source: "MIT CSAIL - Building 32"}
 

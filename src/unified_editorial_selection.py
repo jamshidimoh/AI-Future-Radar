@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
 from collections.abc import Iterable
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -425,7 +425,6 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
             if candidate is None:
                 break
-            floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
             target_floor = max(0.0, min(1.0, float(p.contract.get("target_quality_floor_ratio", 0.88))))
             if baseline_score > 0 and candidate_score(candidate) < baseline_score * target_floor:
                 break

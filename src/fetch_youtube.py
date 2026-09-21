@@ -31,7 +31,7 @@ except ImportError:
 
 _handle_to_id_cache: dict[str, str | None] = {}
 _GENERIC_LOW_SIGNAL_KEYWORDS = {
-    "unboxing", "unboxing video", "product review", "product showcase", "giveaway", "merch", "sponsor",
+    "unboxing", "unboxing video", "product review", "product showcase", "giveaway", "merch", "sponsor", "self-help", "personal development", "limiting beliefs", "motivational", "life coach", "coaching",
 }
 _MIND_TRANSCRIPT_TERMS = (
     "consciousness",

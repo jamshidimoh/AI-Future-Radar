@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
@@ -67,6 +68,9 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "leader_repeat_penalty": float(selection_cfg.get("leader_repeat_penalty", 10.0) or 10.0),
         "history_topic_penalty": float(selection_cfg.get("history_topic_penalty", 5.0) or 5.0),
         "history_entity_penalty": float(selection_cfg.get("history_entity_penalty", 4.0) or 4.0),
+        "freshness_weight": float(selection_cfg.get("freshness_weight", 10.0) or 10.0),
+        "freshness_half_life_hours": float(selection_cfg.get("freshness_half_life_hours", 36.0) or 36.0),
+        "target_quality_floor_ratio": float(selection_cfg.get("target_quality_floor_ratio", 0.88) or 0.88),
         "required_areas": ("ai_core", "convergence", "mind_cognition", "future_governance"),
         "window_runs": int(rotation_cfg.get("window_runs", 6) or 6),
         "max_same_source_in_window": int(rotation_cfg.get("max_same_source_in_window", 2) or 2),
@@ -170,6 +174,28 @@ def candidate_score(item: dict[str, Any]) -> float:
     return 0.0
 
 
+def _published_age_hours(item: dict[str, Any]) -> float | None:
+    raw = str(item.get("published") or item.get("published_at") or item.get("date") or "").strip()
+    if not raw:
+        return None
+    try:
+        value = raw.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(value)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return max(0.0, (datetime.now(timezone.utc) - dt.astimezone(timezone.utc)).total_seconds() / 3600.0)
+    except (TypeError, ValueError):
+        return None
+
+
+def freshness_score(item: dict[str, Any], half_life_hours: float = 36.0) -> float:
+    age = _published_age_hours(item)
+    if age is None:
+        return 0.0
+    half_life = max(1.0, float(half_life_hours or 36.0))
+    return max(0.0, min(1.0, 2.0 ** (-age / half_life)))
+
+
 def _safe_float(item: dict[str, Any], key: str) -> float:
     try:
         return float(item.get(key, 0) or 0)
@@ -213,6 +239,8 @@ def _annotate_information_gain(item: dict[str, Any], selected: list[dict[str, An
     item["current_entity_overlap"] = novelty["current_entity_overlap"]
     item["history_topic_similarity"] = novelty["history_topic_similarity"]
     item["history_entity_overlap"] = novelty["history_entity_overlap"]
+    item["freshness_score"] = round(freshness_score(item, contract["freshness_half_life_hours"]), 4)
+    item["freshness_weighted_score"] = round(item["freshness_score"] * contract["freshness_weight"], 3)
     item["portfolio_value_score"] = round(
         portfolio_value_with_history(
             item, selected, history_signatures,
@@ -315,6 +343,8 @@ class _Portfolio:
             ),
             -_rank_key(item, self.recent)[0],
             candidate_score(item),
+            freshness_score(item, self.contract["freshness_half_life_hours"]) * self.contract["freshness_weight"],
+            str(item.get("published") or item.get("published_at") or ""),
         )
 
 
@@ -396,7 +426,8 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             if candidate is None:
                 break
             floor = max(0.0, min(1.0, float(p.contract.get("diversity_quality_floor_ratio", 0.80))))
-            if target_key in {"mind_future_target", "research_target"} and baseline_score > 0 and candidate_score(candidate) < baseline_score * floor:
+            target_floor = max(0.0, min(1.0, float(p.contract.get("target_quality_floor_ratio", 0.88))))
+            if baseline_score > 0 and candidate_score(candidate) < baseline_score * target_floor:
                 break
             candidate_area = mission_area(candidate)
             if target_key == "mind_cognition_target" or candidate_area == "mind_cognition":

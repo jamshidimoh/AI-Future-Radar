@@ -281,3 +281,53 @@ def test_selection_exposes_history_and_entity_novelty_metrics():
     assert all("current_entity_overlap" in x for x in selected)
     assert all("history_topic_similarity" in x for x in selected)
     assert all("portfolio_information_gain" in x for x in selected)
+
+
+
+def test_freshness_is_exposed_and_recent_story_can_outweigh_small_quality_gap():
+    from src.unified_editorial_selection import freshness_score
+
+    recent = item("Recent capability update", "Nature", 91, area="convergence", content_type="research", research_signal=True)
+    old = item("Older AI capability update", "OpenAI", 96, area="ai")
+    recent["published"] = "2026-09-21T18:00:00Z"
+    old["published"] = "2026-09-17T18:00:00Z"
+    assert freshness_score(recent) > freshness_score(old)
+    contract = load_editorial_contract()
+    contract.update(convergence_target=0, mind_cognition_target=0, mind_future_target=0, research_target=0, ai_core_target_min=0)
+    selected = select_regular_portfolio(
+        [old, recent],
+        max_posts=1,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    assert selected[0]["title"] == "Recent capability update"
+    assert "freshness_score" in selected[0]
+
+
+def test_weak_mission_target_does_not_displace_stronger_mainstream_candidate():
+    candidates = [
+        item("Strong frontier AI result", "OpenAI", 100, area="ai"),
+        item("Weak consciousness commentary", "Blog", 70, area="mind"),
+        item("Second strong AI result", "Anthropic", 95, area="ai"),
+    ]
+    contract = load_editorial_contract()
+    contract["ai_core_target_min"] = 0
+    contract["convergence_target"] = 0
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 0
+    contract["target_quality_floor_ratio"] = 0.88
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=2,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    assert [x["title"] for x in selected] == ["Strong frontier AI result", "Second strong AI result"]

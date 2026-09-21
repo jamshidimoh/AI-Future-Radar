@@ -75,24 +75,25 @@ def matched_priority_people(item, *, text: str | None = None):
             continue
         if interview_context and any(pattern.search(text) for pattern in _SINGLE_NAME_PATTERNS.get(canonical, ())):
             matches.append(canonical)
-    # Keep the legacy TOP_AI_VOICES set for compatibility, but use the canonical
-    # pioneer registry as the recall source so newly watched experts cannot become
-    # invisible to priority-person detection merely because a static alias table
-    # was not updated.
-    try:
-        for record in load_expert_registry():
-            canonical = str(record.get("name") or "").strip()
-            if not canonical:
-                continue
-            normalized_name = _normalize(canonical.lower())
-            aliases = [normalized_name]
-            parts = normalized_name.split()
-            if len(parts) >= 2:
-                aliases.append(f"{parts[0]} {parts[-1]}")
-            if any(alias in explicit for alias in aliases) or any(_normalize(alias) in text for alias in aliases):
-                matches.append(normalized_name)
-    except Exception:
-        pass
+    # Use the canonical registry for recall only when the item explicitly carries
+    # person identity or is clearly a voice/interview item. A passing mention in a
+    # normal news report must not become a priority-person signal.
+    registry_context = bool(explicit or watch_person or interview_context)
+    if registry_context:
+        try:
+            for record in load_expert_registry():
+                canonical = str(record.get("name") or "").strip()
+                if not canonical:
+                    continue
+                normalized_name = _normalize(canonical.lower())
+                aliases = [normalized_name]
+                parts = normalized_name.split()
+                if len(parts) >= 2:
+                    aliases.append(f"{parts[0]} {parts[-1]}")
+                if any(alias in explicit for alias in aliases) or any(_normalize(alias) in text for alias in aliases):
+                    matches.append(normalized_name)
+        except Exception:
+            pass
     return sorted(set(matches))
 
 def _load_ideas() -> list[dict[str, object]]:

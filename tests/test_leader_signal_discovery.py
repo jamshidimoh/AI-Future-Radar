@@ -19,6 +19,15 @@ def test_leader_signal_expansion_is_person_agnostic():
     assert all("forecast" in q["query"] for q in companions)
 
 
+def test_leader_query_order_does_not_use_numeric_person_priority():
+    queries = [
+        {"query": "Sam Altman AI future interview", "watch_person": "Sam Altman", "category": "ai", "tier": 1, "content_type": "interview", "leader_query_priority": 100},
+        {"query": "Elon Musk AI future interview", "watch_person": "Elon Musk", "category": "ai", "tier": 1, "content_type": "interview", "leader_query_priority": 1},
+    ]
+    expanded = _expand_leader_signal_queries(queries)
+    assert [q["watch_person"] for q in expanded[:2]] == ["Elon Musk", "Sam Altman"]
+
+
 def test_base_queries_without_leaders_are_unchanged():
     queries = [{"query": "AI drug discovery breakthrough", "category": "genetics", "tier": 1, "content_type": "research"}]
     assert _expand_leader_signal_queries(queries) == queries

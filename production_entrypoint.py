@@ -32,7 +32,8 @@ FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
 CADENCE_PATH = ROOT / "data" / "publication_state.json"
 EDITORIAL_CONTRACT = load_editorial_contract()
 MAX_NORMAL_NEWS_PER_PERIOD = 3
-MAX_MIND_IDEAS_VOICES_PER_PERIOD = SPECIAL_MAX_PER_PERIOD
+# Mind/Ideas/Voices is additive, not dominant. Keep one final publication slot.
+MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
 MAX_TECHNICAL_TREND_PER_PERIOD = 1
 MAX_VOICES_PERSPECTIVES_PER_PERIOD = MAX_VOICES_PER_PERIOD
 NORMAL_RELATIVE_SCORE_GAP = 8.0
@@ -259,9 +260,10 @@ def _competitive_normal_candidates(candidates):
 
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
-    voices = [item for item in candidates if _is_voices_perspectives(item)][:MAX_VOICES_PERSPECTIVES_PER_PERIOD]
-    technical = [item for item in candidates if _is_technical_trend(item)][:MAX_TECHNICAL_TREND_PER_PERIOD]
-    mind = [item for item in candidates if _is_mind_ideas_voices(item)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
+    replacement_buffer = max(0, int(EDITORIAL_CONTRACT.get("replacement_buffer", 0) or 0))
+    voices = [item for item in candidates if _is_voices_perspectives(item)][:MAX_VOICES_PERSPECTIVES_PER_PERIOD + replacement_buffer]
+    technical = [item for item in candidates if _is_technical_trend(item)][:MAX_TECHNICAL_TREND_PER_PERIOD + replacement_buffer]
+    mind = [item for item in candidates if _is_mind_ideas_voices(item)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD + replacement_buffer]
     non_special = [
         item for item in candidates
         if not _is_mind_ideas_voices(item) and not _is_technical_trend(item) and not _is_voices_perspectives(item)
@@ -361,17 +363,29 @@ def main(*, skip_education: bool = False) -> int:
         print(f"[Selection Timing] feedback items={len(items)} elapsed={time.monotonic() - started:.3f}s", flush=True)
         rank_started = time.monotonic()
         candidate_window = int(EDITORIAL_CONTRACT["candidate_window"])
+        replacement_buffer = max(0, int(EDITORIAL_CONTRACT.get("replacement_buffer", 0) or 0))
+        special_window = lambda cap: cap + replacement_buffer
 
+        # Reserve People/Voices and Frontier candidates before Normal ranking.
         voices_candidates = choose_voices_candidate(
             items,
             existing_ids=set(),
-            max_items=MAX_VOICES_PERSPECTIVES_PER_PERIOD,
+            max_items=special_window(MAX_VOICES_PERSPECTIVES_PER_PERIOD),
         )
         voices_ids = {id(item) for item in voices_candidates}
         for item in voices_candidates:
             print(f"[Voices/Perspectives Selection] rank={item.get('voices_period_rank')} score={item.get('voices_perspectives_score')} source={item.get('source')} person={item.get('person_name') or item.get('watch_person') or item.get('leader')} title={str(item.get('title', ''))[:120]}", flush=True)
 
-        normal_pool = [item for item in items if id(item) not in voices_ids and not is_voices_candidate(item)]
+        technical_candidates = choose_technical_trend_candidate(
+            items,
+            existing_ids=voices_ids,
+            max_items=special_window(MAX_TECHNICAL_TREND_PER_PERIOD),
+        )
+        technical_ids = {id(item) for item in technical_candidates}
+        for item in technical_candidates:
+            print(f"[Frontier/Technical Selection] rank={item.get('technical_trend_period_rank')} score={item.get('technical_trend_score')} source={item.get('source')} title={str(item.get('title', ''))[:120]}", flush=True)
+
+        normal_pool = [item for item in items if id(item) not in voices_ids and id(item) not in technical_ids and not is_voices_candidate(item)]
         normal_select_count = max(candidate_window, min(len(normal_pool), max_posts))
         normal_candidates = _competitive_normal_candidates(
             unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
@@ -380,20 +394,12 @@ def main(*, skip_education: bool = False) -> int:
 
         mind_candidates = choose_additive_candidates(
             items,
-            existing_ids=voices_ids | normal_ids,
-            max_items=MAX_MIND_IDEAS_VOICES_PER_PERIOD,
+            existing_ids=voices_ids | technical_ids | normal_ids,
+            max_items=special_window(MAX_MIND_IDEAS_VOICES_PER_PERIOD),
         )
         mind_ids = {id(item) for item in mind_candidates}
         for item in mind_candidates:
             print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
-
-        technical_candidates = choose_technical_trend_candidate(
-            items,
-            existing_ids=voices_ids | normal_ids | mind_ids,
-            max_items=MAX_TECHNICAL_TREND_PER_PERIOD,
-        )
-        for item in technical_candidates:
-            print(f"[Technical Trend Selection] rank={item.get('technical_trend_period_rank')} score={item.get('technical_trend_score')} source={item.get('source')} title={str(item.get('title', ''))[:120]}", flush=True)
 
         candidates = unique_candidates(normal_candidates + technical_candidates + mind_candidates + voices_candidates)
         print(

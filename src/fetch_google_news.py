@@ -133,8 +133,14 @@ def _query_content_type_priority(q: dict) -> int:
     }.get(ctype, 1)
 
 
+def _is_strong_curated_query(q: dict) -> bool:
+    preferred_source = str(q.get("preferred_source") or "").strip()
+    query_text = str(q.get("query") or "").strip().lower()
+    return bool(preferred_source or query_text.startswith("site:"))
+
+
 def _load_watchlist_people_queries():
-    """Generate high-recall discovery queries ordered by actual pioneer priority.
+    """Generate high-recall discovery queries with equal person coverage.
 
     Query ordering matters because the production runner uses a bounded discovery
     window. Every watched person therefore gets a first-pass opportunity before
@@ -146,7 +152,6 @@ def _load_watchlist_people_queries():
         logger.warning("Leader watchlist unavailable for generic discovery: %s", exc, exc_info=True)
         return []
     people = payload.get("people", {}) if isinstance(payload, dict) else {}
-    pioneer_priorities = _load_pioneer_priorities()
     rows = []
     if isinstance(people, dict):
         for group, cfg in people.items():
@@ -158,7 +163,7 @@ def _load_watchlist_people_queries():
                 name = str(raw_name).strip()
                 if not name:
                     continue
-                actual_priority = pioneer_priorities.get(name.casefold(), group_priority)
+                actual_priority = 0  # person identity is not a ranking signal; freshness/quality decide later
                 rows.append({
                     "query": f'"{name}" ({" OR ".join(_LEADER_SIGNAL_TERMS)})',
                     "watch_person": name,
@@ -170,7 +175,7 @@ def _load_watchlist_people_queries():
                     "leader_priority": group_priority,
                     "leader_query_priority": actual_priority,
                 })
-    rows.sort(key=lambda q: (-int(q.get("leader_query_priority", 0) or 0), -_query_content_type_priority(q), str(q.get("watch_person") or "").casefold()))
+    rows.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("watch_person") or "").casefold()))
     return rows
 
 def _merge_queries(queries):
@@ -192,19 +197,16 @@ def _merge_queries(queries):
         person = str(q.get("watch_person") or "").strip().casefold()
         buckets.setdefault(person, []).append(q)
     for bucket in buckets.values():
-        bucket.sort(key=lambda q: (-int(q.get("leader_query_priority", 0) or 0), -_query_content_type_priority(q), str(q.get("query") or "").casefold()))
+        bucket.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("query") or "").casefold()))
     ordered: list[dict] = []
     # First pass: one strongest query per person, maximizing person coverage.
-    people = sorted(
-        buckets,
-        key=lambda p: (-max(int(q.get("leader_query_priority", 0) or 0) for q in buckets[p]), p),
-    )
+    people = sorted(buckets)
     for person in people:
         if buckets[person]:
             ordered.append(buckets[person].pop(0))
     # Second pass: additional variants for the highest-priority people.
     remaining = [q for bucket in buckets.values() for q in bucket]
-    remaining.sort(key=lambda q: (-int(q.get("leader_query_priority", 0) or 0), -_query_content_type_priority(q), str(q.get("watch_person") or "").casefold(), str(q.get("query") or "").casefold()))
+    remaining.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("watch_person") or "").casefold(), str(q.get("query") or "").casefold()))
     ordered.extend(remaining)
     return ordered + generic_queries
 
@@ -224,11 +226,11 @@ def _expand_leader_signal_queries(queries):
     signal_terms = " OR ".join(_LEADER_SIGNAL_TERMS)
     ordered_people = sorted(
         people.values(),
-        key=lambda bucket: (-max(int(q.get("leader_query_priority", 0) or 0) for q in bucket), str(bucket[0].get("watch_person") or "").casefold()),
+        key=lambda bucket: str(bucket[0].get("watch_person") or "").casefold(),
     )
     expanded: list[dict] = []
     for bucket in ordered_people:
-        bucket.sort(key=lambda q: (-_query_content_type_priority(q), -int(q.get("leader_query_priority", 0) or 0), str(q.get("query") or "").casefold()))
+        bucket.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("query") or "").casefold()))
         primary = bucket[0]
         expanded.append(primary)
         person = str(primary.get("watch_person") or "").strip()
@@ -246,7 +248,7 @@ def _expand_leader_signal_queries(queries):
     secondary = []
     for bucket in ordered_people:
         secondary.extend(bucket[1:])
-    secondary.sort(key=lambda q: (-int(q.get("leader_query_priority", 0) or 0), -_query_content_type_priority(q), str(q.get("watch_person") or "").casefold(), str(q.get("query") or "").casefold()))
+    secondary.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("watch_person") or "").casefold(), str(q.get("query") or "").casefold()))
     expanded.extend(secondary)
     expanded.extend(non_people)
     return expanded[:_MAX_LEADER_SIGNAL_QUERIES]
@@ -277,7 +279,16 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
         and (interview or activity or substantive_analysis or query_format_signal)
     )
     accepted = bool(((interview or activity or substantive_analysis) and context) or accepted_by_watch_query)
-    return {"accepted": accepted, "interview": interview, "activity": activity, "analytical": analytical, "context": context, "person_signal": person_signal}
+    return {
+        "accepted": accepted,
+        "interview": interview,
+        "activity": activity,
+        "analytical": analytical,
+        "context": context,
+        "person_signal": person_signal,
+        "query_person_signal": query_person_signal,
+        "query_context_signal": query_context_signal,
+    }
 
 
 def _has_leader_signal_evidence(title, summary):

@@ -92,12 +92,28 @@ def _ai_relevant(item: dict[str, Any]) -> bool:
     return any(re.search(rf"(?<![a-z]){re.escape(a)}(?![a-z])", text) for a in AI_ANCHORS)
 
 
-def is_voices_candidate(item: dict[str, Any]) -> bool:
+def _voice_source_excluded(item: dict[str, Any]) -> bool:
+    # Google News is a discovery transport, not the editorial source itself.
+    # For leader-watch items, inspect the actual publisher fields and ignore
+    # "news_aggregator" transport metadata unless the publisher is itself excluded.
+    actual_source_text = " ".join(
+        str(item.get(k) or "") for k in ("source", "source_name", "source_domain", "publisher")
+    ).casefold()
+    if any(marker in actual_source_text for marker in EXCLUDED_SOURCE_MARKERS):
+        return True
+    transport_text = " ".join(
+        str(item.get(k) or "") for k in ("source_type",)
+    ).casefold()
+    is_leader_watch = bool(item.get("is_leader_watch") or item.get("leader_watch_protected"))
+    return (not is_leader_watch) and any(marker in transport_text for marker in EXCLUDED_SOURCE_MARKERS)
+
+
+def is_voices_candidate(item: dict[str, Any]):
     if item.get("duplicate") or item.get("publication_blocked") or item.get("_publication_blocked"): return False
     if item.get("protected_slot") and not item.get("_rank_is_tier0"): return False
     if item.get("technical_trend_lane_selected") or item.get("mind_lane_selected"): return False
     if str(item.get("content_type") or "").strip().casefold() == "education": return False
-    if any(marker in _source_text(item) for marker in EXCLUDED_SOURCE_MARKERS): return False
+    if _voice_source_excluded(item): return False
     mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
     if mission not in MISSION_AREAS: return False
     expert_people, expert_deep_lane, _ = _expert_identity(item)
@@ -132,10 +148,9 @@ def voices_perspectives_score(item: dict[str, Any]) -> float:
     if priority_person: score += 12.0
     if expert_people: score += 8.0
     if expert_deep_lane: score += 12.0
-    score += min(8.0, expert_score * 0.08)
-    try: priority = int(item.get("leader_priority", 0) or 0)
-    except (TypeError, ValueError): priority = 0
-    score += min(18.0, priority * 1.5)
+    # Numeric person priority and registry priors must not make one watched expert
+    # outrank another. Identity/deep-lane signals remain eligibility/quality signals,
+    # while recency decides between otherwise comparable voices.
     try: tier = int(item.get("source_tier", 3) or 3)
     except (TypeError, ValueError): tier = 3
     score += {1: 16.0, 2: 10.0, 3: 3.0}.get(tier, 0.0)

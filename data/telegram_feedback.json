@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789977089,
+  "updated_at": 1789981799,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12658,6 +12658,63 @@
       "why_it_matters": "وقتی آموزش به‌عنوان کالای بازار درک می‌شود، تمرکز بر حداکثر سوددهی و نه توسعه تفکر انتقادی می‌شود که نابرابری‌های اقتصادی را تشدید می‌کند. ورود دانشجویان بدون مهارت‌های نوشتاری پایه توسط AI، توانایی‌های حل مسئله پیچیده را کاهش می‌دهد. این روند تهدیدی برای مقاومت بلندمدت نیروی کار و مشارکت دموکراتیک ایجاد می‌کند. بازنگری در مدل آموزشی و تأکید بر همبستگی اجتماعی می‌تواند این خطرات را کاهش داده و سرمایه انسانی را حفظ کند.",
       "link": "https://www.youtube.com/watch?v=GE8TfN6YF9o",
       "posted_at": 1789977089
+    },
+    "-1004482051328:1784": {
+      "chat_id": -1004482051328,
+      "message_id": 1784,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "روش تجربی ارزیابی ریسک حریم‌خصوصی برای مدل‌های Machine Learning مطابق الزامات GDPR «Data protection by design and by default»",
+      "summary": "این پژوهش روش تجربی برای ارزیابی ریسک‌های حریم‌خصوصی مدل‌های Machine Learning ارائه می‌دهد. هدف این روش، کمک به سازمان‌ها برای انطباق با الزامات GDPR، به‌ویژه اصل «Data protection by design and by default» است. روش پیشنهادی بر پایه تجزیه و تحلیل تجربی ریسک‌های ناشی از پردازش داده‌ها در مدل‌های هوش مصنوعی می‌باشد. این کار در حوزه هوش مصنوعی و حریم‌خصوصی داده‌ها جایگاه مهمی دارد و در نشریه Nature - Computational Biology and Bioinformatics منتشر شده است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "رعایت الزامات GDPR برای سازمان‌ها امری حیاتی است؛ عدم انطباق می‌تواند منجر به جریمه‌های سنگین و آسیب به اعتبار شرکت‌ها شود. ارائه یک روش تجربی برای ارزیابی ریسک حریم‌خصوصی، ابزار عملی برای ارزیابان و توسعه‌دهندگان مدل‌های Machine Learning فراهم می‌کند تا پیش از استقرار، خطرات احتمالی را شناسایی و کاهش دهند. این رویکرد به‌ویژه در محیط‌های حساس که داده‌های شخصی پردازش می‌شوند، می‌تواند به پیاده‌سازی اصول «Data protection by design and by default» کمک کند و بهبود مستمر امنیت داده‌ها را تضمین نماید.",
+      "link": "https://www.nature.com/articles/s41598-026-71546-7",
+      "posted_at": 1789981790
+    },
+    "-1004482051328:1785": {
+      "chat_id": -1004482051328,
+      "message_id": 1785,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "آیا ما هوش مصنوعی را برای رفتار یا تقلب بهتر آموزش می‌دهیم؟ - Noam Brown",
+      "summary": "متن ارائه‌شده شامل جزئیات کافی برای استخراج نظرات یا استدلال‌های تخصصی در مورد آموزش هوش مصنوعی برای رفتار یا تقلب نیست. تنها عنوان و لینک و نام مهمان (Dwarkesh Patel) موجود است و محتوای گفت‌وگو یا استدلال‌های مطرح‌شده در مصاحبه در دسترس نمی‌باشد. بنابراین نمی‌توان ادعاها، شواهد یا نتایج خاصی را از این منبع استخراج کرد.",
+      "description": "Full episode: https://www.youtube.com/watch?v=6AgOfiZOWiY\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "بدون دسترسی به محتوای گفت‌وگو، نمی‌توان به این سؤال پرداخته شد که تمرکز آموزش هوش مصنوعی بر رفتار اخلاقی یا توانایی تقلب چه پیامدهایی برای توسعه فناوری‌های آینده دارد. این عدم‌اطلاعات مانع از ارزیابی تأثیرات احتمالی بر سیاست‌گذاری، طراحی الگوریتم‌ها و مسئولیت‌پذیری می‌شود. در نتیجه، برای درک اهمیت این موضوع نیاز به منبعی با جزئیات کامل است.",
+      "link": "https://www.youtube.com/watch?v=deCyYLBfpHI",
+      "posted_at": 1789981794
+    },
+    "-1004482051328:1786": {
+      "chat_id": -1004482051328,
+      "message_id": 1786,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "Bureo: تبدیل شبکه‌های ماهیگیری دور ریخته به پارچه‌های نوین",
+      "summary": "شرکت Bureo شبکه‌های ماهیگیری دور ریخته را از سرتاسر جهان جمع‌آوری کرده و آن‌ها را به نخ نایلونی تبدیل می‌کند که در تولید ژاکت‌های ضدآب، کلاه و پوشاک ورزشی کاربرد دارد. از سال ۲۰۱۳، این استارتاپ ۷.۷ میلیون کیلوگرم شبکه را جمع‌آوری کرده و به مواد جدید تبدیل کرده است. Bureo توسط اعضاء ۱۰۰۰ Ocean Startups Coalition حمایت می‌شود که هدف آن مقیاس‌پذیری ۱۰۰۰ راه‌حل تحول‌آفرین تا سال ۲۰۳۰ است.",
+      "description": "Fishing nets can take decades to break down - and when they’re lost at sea, they can entangle marine life and damage ocean habitats.\n\nBureo collects discarded nets from around the world, then recycles them into nylon yarn for waterproof jackets, hats and sportswear.\n\nSince 2013, the start-up has collected 7.7 million kilos of fishing nets - helping turn a major ocean problem into a source of new materials.\n\nBureo is supported by members of the 1000 Ocean Startups Coalition, which is committed to scaling at least 1,000 transformative solutions by 2030. Find out more: https://www.1000oceanstartups.org/about \n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "این رویکرد به‌صورت عملی مشکل طولانی‌مدت تجزیه شبکه‌های ماهیگیری را که باعث تنگنا و آسیب به حیات دریایی می‌شود، حل می‌کند. تبدیل این ضایعات به مواد قابل استفاده، چرخهٔ اقتصادی بسته‌ای ایجاد کرده و نیاز به نایلون خام را کاهش می‌دهد. این مدل نه‌تنها به حفظ محیط‌زیست کمک می‌کند بلکه نمونه‌ای از نوآوری پایدار و مقیاس‌پذیر برای سایر صنایع است.",
+      "link": "https://www.youtube.com/shorts/a18l7eQdjrM",
+      "posted_at": 1789981799
     }
   }
 }

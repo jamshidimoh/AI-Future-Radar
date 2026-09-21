@@ -8,7 +8,7 @@
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 8,
-      "disabled_until": 1789977655.063,
+      "disabled_until": 1789985400.17,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -32,7 +32,7 @@
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 5,
-      "disabled_until": 1789980690.16,
+      "disabled_until": 1789985400.17,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 8,
-      "disabled_until": 1790063490.16,
+      "failures": 9,
+      "disabled_until": 1790068200.17,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790063490.16,
+      "disabled_until": 1790068200.17,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -111,8 +111,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 16,
-      "disabled_until": 1790063490.16,
+      "failures": 18,
+      "disabled_until": 1790068200.17,
       "last_error": "auth",
       "last_success": 0.0
     },

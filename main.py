@@ -12,7 +12,6 @@ from src.fetch_google_news import fetch_google_news_items
 from src.fetch_rss import fetch_rss_items
 from src.fetch_youtube import fetch_youtube_items
 from src.interview_evidence import has_interview_evidence
-from src.voices_perspectives_lane import choose_voices_candidate
 from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
@@ -24,6 +23,7 @@ from src.state_io import StateCorruptionError
 from src.story_gate import gate_story_candidates
 from src.summarize import summarize_item
 from src.unified_editorial_selection import mission_area, select_regular_portfolio
+from src.voices_perspectives_lane import choose_voices_candidate
 
 logger = logging.getLogger(__name__)
 

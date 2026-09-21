@@ -24,7 +24,7 @@ _DEPTH = {
 
 _VOICE_DEPTH = """این یک Expert Voice است (مصاحبه، پادکست، گفت‌وگو، سخنرانی یا دیدگاه یک متخصص)، نه صرفاً یک خبر بازنشرشده.
 مرکز ثقل خلاصه باید خودِ دیدگاه و استدلال فرد باشد: مهم‌ترین ادعا یا پرسش، استدلال/سازوکار ارائه‌شده، شواهد یا مثال‌های مشخص، عدم‌قطعیت یا اختلاف‌نظر در صورت وجود، و نتیجه‌ای که از گفته او مستقیماً برمی‌آید.
-نام فرد/مهمان و نقش او را در صورت وجود حفظ کن. برای podcast/interview در صورت وجود، دست‌کم دو نکته مشخص از متن/Transcript را بیاور و از جمله‌های عمومی مانند «او درباره آینده AI صحبت کرد» پرهیز کن.
+نام فرد/مهمان و نقش او را در صورت وجود حفظ کن. در Expert Voice، نام فرد شناسایی‌شده باید حتماً در speakers بیاید و ترجیحاً در جمله اول summary نیز ذکر شود. اگر voice_identity_people یا watch_person وجود دارد، آن‌ها را نادیده نگیر. برای podcast/interview در صورت وجود، دست‌کم دو نکته مشخص از متن/Transcript را بیاور و از جمله‌های عمومی مانند «او درباره آینده AI صحبت کرد» پرهیز کن.
 اگر متن برای استخراج جزئیات کافی نیست، چیزی نساز و همان محدودیت را صریح و دقیق حفظ کن."""
 
 _PROMPT = """تو تحلیلگر ارشد فارسی‌زبان یک رسانه تخصصی فناوری هستی.
@@ -136,6 +136,19 @@ def _normalize(data, item):
     data["summary"] = normalize_editorial_text(str(data.get("summary", "")).strip())
     data["why_it_matters"] = normalize_editorial_text(str(data.get("why_it_matters", "")).strip())
     data["speakers"] = normalize_editorial_text(str(data.get("speakers", "")).strip())
+    known_people = [
+        str(x).strip()
+        for x in (item.get("voice_identity_people") or item.get("people") or [])
+        if str(x).strip()
+    ]
+    fallback_person = str(item.get("leader") or item.get("watch_person") or item.get("speaker") or "").strip()
+    if fallback_person and fallback_person not in known_people:
+        known_people.append(fallback_person)
+    if known_people:
+        speaker_text = data["speakers"]
+        missing = [name for name in known_people if name.casefold() not in speaker_text.casefold()]
+        if missing:
+            data["speakers"] = ", ".join([speaker_text, *missing]).strip(", ") if speaker_text else ", ".join(known_people)
     data["key_quote"] = normalize_editorial_text(str(data.get("key_quote", "")).strip()[:240])
     source_text = _source_text(item)
     if data["key_quote"] and data["key_quote"] not in source_text:

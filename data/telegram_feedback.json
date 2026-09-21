@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789968031,
+  "updated_at": 1789968683,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12355,6 +12355,64 @@
       "why_it_matters": "درک پیوند آگاهی با محاسبه و زیست‌شناسی می‌تواند محدودیت‌های محاسباتی در توصیف پدیده‌های ذهنی را روشن کند. این شناخت به پژوهشگران امکان می‌دهد تا الگوریتم‌های مبتنی بر اصول زیستی طراحی کنند. نتیجه‌گیری مقاله نشان می‌دهد که چنین رویکردی می‌تواند به توسعه سیستم‌های هوشمند آینده کمک کند.",
       "link": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxNOWxkV2RrNzlJcmYyY011R0IyeWxtMVBON3I5QXhMdDdXalRac2ZabzE3Y0ZYZHNFMzlxZ3JlbUIyN3pjVXpRUHNYb05SWmtIUXdMWTlCSjN5MVJKSlFhb2ZscUE3aEZDcFdDZktNMzYzTEFid2FpbkdCbE9LVUhyRWgtbEtoajRuTzRtbFE5dnRlWEFuMlNNMW1WRExHU1NydW1CVko4Y0RDaElRb3BqUXp4Qnlzc2FZelV1R3BEZTNCUXZSUTFjdGFKSFJmWFcybWZhZHYxTjFPdE1wNHZKUmR5Xy1zWHZvZEZ6SGJwbGt4RUFS?oc=5",
       "posted_at": 1789959805
+    },
+    "-1004482051328:1768": {
+      "chat_id": -1004482051328,
+      "message_id": 1768,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "بهینه‌سازی دفاعی Quokka Swarm برای پیش‌بینی بیماری با Deep Learning ترکیبی بر پایه داده‌های نظارت از راه دور",
+      "summary": "این پژوهش چارچوب جدیدی به نام Quokka swarm defensive optimization‑based ensemble deep learning را برای پیش‌بینی بیماری‌ها از داده‌های نظارت از راه دور معرفی می‌کند. این روش ترکیبی از بهینه‌سازی ازدحامی و Deep Learning ensemble برای ارتقای دقت پیش‌بینی به کار گرفته شده است. نتایج آزمایشی نشان می‌دهد که مدل پیشنهادی نسبت به روش‌های مرسوم عملکرد بهتری دارد، هرچند نیاز به محاسبات سنگین و داده‌های برچسب‌دار فراوان دارد. این رویکرد می‌تواند بهبود قابل Attentionی در سیستم‌های مانیتورینگ سلامت از راه دور ایجاد کند.",
+      "why_it_matters": "پیش‌بینی دقیق بیماری‌ها با استفاده از داده‌های نظارت از راه دور، امکان تشخیص زودهنگام و مداخلات به موقع را فراهم می‌آورد؛ در نتیجه بار سیستم‌های بهداشتی کاهش می‌یابد. ترکیب بهینه‌سازی ازدحامی با Deep Learning ensemble می‌تواند محدودیت‌های دقت مدل‌های سنتی را پشت سر بگذارد، اگرچه هزینه محاسباتی بالاتر و نیاز به مجموعه داده‌های بزرگ، چالش‌های عملیاتی را به همراه دارد. این پیشرفت نشان می‌دهد که الگوریتم‌های هوش مصنوعی می‌توانند نقش کلیدی در تحول دیجیتال مراقبت‌های بهداشتی ایفا کنند.",
+      "link": "https://www.nature.com/articles/s41598-026-70049-9",
+      "posted_at": 1789968672
+    },
+    "-1004482051328:1769": {
+      "chat_id": -1004482051328,
+      "message_id": 1769,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "title": "جنسن هوانگ: رهبران هوش مصنوعی برای تنظیم قوانین، نه به دنبال قانون‌گذاری جدید، بلکه برای رهایی از قوانین موجود اقدام می‌کنند",
+      "summary": "Jensen Huang، مدیرعامل Nvidia، در مصاحبه‌ای با CBS News اظهار کرد که برخی از رهبران هوش مصنوعی ادعای نیاز به تنظیم جدید قوانین را دارند، اما هدف واقعی‌شان رهایی از قوانین فعلی است. او این ادعا را به دلایل پنهانی نسبت داد و اشاره کرد که این درخواست‌ها می‌تواند برای منافع خاصی به کار رود. در همین گفتگو نام‌های شناخته‌شده‌ای چون Dario Amodei از Anthropic و Sam Altman از OpenAI نیز مطرح شد. Huang با این بیان، نگرانی خود را نسبت به نحوهٔ شکل‌گیری سیاست‌های نظارتی در حوزه هوش مصنوعی ابراز کرد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این اظهارات نشان می‌دهد که درخواست‌های تنظیم قوانین در حوزه هوش مصنوعی ممکن است بیشتر به منافع تجاری یا سیاسی خاصی خدمت کند تا بهبود ایمنی فناوری. اگر سیاست‌گذاران این نکته را نادیده بگیرند، چارچوب‌های قانونی ممکن است به نفع شرکت‌های بزرگ باشد و مانع پیشرفت‌های نوآورانه یا حفاظت از حقوق کاربران شود. بنابراین، درک انگیزه‌های پشت درخواست‌های تنظیم، برای تدوین قوانین مؤثر و عادلانه ضروری است.",
+      "link": "https://www.techmeme.com/260920/p12#a260920p12",
+      "posted_at": 1789968679
+    },
+    "-1004482051328:1770": {
+      "chat_id": -1004482051328,
+      "message_id": 1770,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (StartupHub.ai)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "کشف تخته‌سفید مخفی در Claude توسط Anthropic",
+      "summary": "Anthropic، شرکت سازنده Large Language Model (LLM) Claude، اعلام کرد که یک ویژگی تخته‌سفید مستند نشده در داخل این مدل کشف شده است. این تخته‌سفید مخفی به‌نظر می‌رسد ابزار داخلی برای یادداشت‌برداری یا طوفان فکری باشد، هرچند هدف دقیق و دسترسی عمومی آن هنوز توسط شرکت توضیح داده نشده است. این خبر توسط StartupHub.ai در فید Google News گزارش شد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "وجود یک ابزار مخفی داخل Claude نشان می‌دهد که پلتفرم‌های هوش مصنوعی می‌توانند قابلیت‌های تعاملی فراتر از متن را در خود داشته باشند، که می‌تواند مسیرهای جدیدی برای تعامل کاربر‑مدل و کاربردهای خلاقانه باز کند. اگر این ویژگی به‌صورت عمومی عرضه شود، می‌تواند تجربهٔ کاربری را بهبود بخشد و فرصت‌های نوآوری در زمینهٔ تولید محتوا و همکاری تیمی را فراهم آورد. در عین حال، عدم شفافیت دربارهٔ هدف و دسترس‌پذیری آن می‌تواند نگرانی‌های مربوط به حریم خصوصی و استفادهٔ ناخواسته از قابلیت‌های داخلی را برانگیزد.",
+      "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOa29VenRGT1V5N0lZYzJzVWtzam5WWVA4dmxaS216Y1FNMEEyaXROZy1qdjJvNGwzaWNQb3BjaEZnX1ZYQ0hubGVmNXdJdGxaNGhkMWk3LURzWFNGbDdQU1pJVkEza1hSd0llSmE0eFlHYlRMMW8yaHpPR3hWelUtRzVnR3JMRC0zRl84MXl3anpkaGRleHFhaVNNb3Jqa05ZWGc?oc=5",
+      "posted_at": 1789968683
     }
   }
 }

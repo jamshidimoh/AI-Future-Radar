@@ -15,8 +15,8 @@ from src.interview_evidence import has_interview_evidence
 from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
-from src.publication_contract import unique_candidates
 from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, mind_ideas_voices_score
+from src.publication_contract import unique_candidates
 from src.rejection_telemetry import build_event, emit
 from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
 from src.signal_engine import enrich_signal_items

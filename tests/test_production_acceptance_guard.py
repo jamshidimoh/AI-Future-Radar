@@ -130,7 +130,7 @@ CURRENT_RUNTIME_CONTRACT_WITHOUT_TIER0_EXEMPT = """
 [Publication Summary Budget] input=3 protected=0 mind_ideas_voices=1 normal_window=3 output=3 normal_limit=3 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
 [Publication Policy] normal candidate one: normal_score_policy_blocked:51.05<=55.0
 [Publication Policy] PUBLISH normal_rank=1 score=60.0 previous_normal=57.25
-[Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=47.0 normal_floor=not_applied normal_rank=None independent_lane=true
+[Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=50.0 normal_floor=not_applied normal_rank=None independent_lane=true
 [Production Contract] normal_news=1 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 strategic_analytical=0 strategic_max=1 mind_score_floor=not_applied normal_score_floor=55.0 education=not_due
 Posts sent: 2/3
 """
@@ -208,6 +208,19 @@ def test_current_runtime_contract_with_mind_lane_is_accepted():
     assert "mind_ideas_voices=1" in message
 
 
+def test_low_quality_mind_publication_is_rejected():
+    log = """
+[Production Selection] total=1
+[Dual Lane Selection] normal=0 mind_ideas_voices=1 mind_cap=2 mind_score_floor=not_applied
+[Publication Summary Budget] input=1 protected=0 mind_ideas_voices=1 normal_window=0 output=1 normal_limit=0 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Production Policy] PUBLISH mind_ideas_voices mind_rank=1 score=37.0 normal_floor=not_applied normal_rank=None independent_lane=true
+[Production Contract] normal_news=0 normal_max=3 mind_ideas_voices=1 mind_max=2 tier0_news=0 education=not_due
+Posts sent: 1/1
+"""
+    ok, message = validate(log)
+    assert ok is False
+    assert "low-quality Mind/Ideas/Voices publication" in message
+
 def test_current_runtime_contract_without_optional_tier0_flag_is_accepted():
     ok, message = validate(CURRENT_RUNTIME_CONTRACT_WITHOUT_TIER0_EXEMPT)
     assert ok is True
@@ -257,7 +270,7 @@ CURRENT_LANE_COUNTER_CONTRACT = """
 [Publication Policy] PUBLISH normal_rank=1 score=62.78
 [Publication Policy] PUBLISH normal_rank=2 score=61.12
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=50.0 normal_floor=not_applied
-[Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=49.0 normal_floor=not_applied
+[Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=50.0 normal_floor=not_applied
 [Production Contract] normal_news=2 normal_max=3 technical_trend=0 technical_max=1 mind_ideas_voices=2 mind_max=2 voices_perspectives=1 voices_max=1 tier0_news=0 tier0_quota_exempt=false strategic_analytical=0 strategic_max=1 normal_score_floor=55.0 special_lanes_score_floor=not_applied education=not_due
 Posts sent: 4/4
 """

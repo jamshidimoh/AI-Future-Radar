@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789974053,
+  "updated_at": 1789974818,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12602,6 +12602,43 @@
       "why_it_matters": "در حالی که هوش مصنوعی به سرعت حوزه‌های مختلف را دگرگون می‌کند، شناخت اصولی که در این تحول پایدار می‌مانند، برای حفظ اعتبار و پیشرفت علمی ضروری است. این موضوع می‌تواند به پژوهشگران کمک کند تا چارچوب‌های نظری خود را به‌گونه‌ای تنظیم کنند که در برابر تغییرات فناوری مقاوم باشند. علاوه بر این، بررسی این پرسش‌های بنیادی می‌تواند به سیاست‌گذاران و جامعه علمی در تصمیم‌گیری‌های استراتژیک دربارهٔ سرمایه‌گذاری در پژوهش‌های بنیادی راهنمایی کند.",
       "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPZDdjcGg3d0QyZEN5LWZzSWRCLXpmZzNkZ1BIRHNYclZQTDYwZGtJd2lOVHhpWHA1eWJ2VHE3MWVkbkJuZzgzaDhUYURZWmp2SnhmV3ZLOVZNdEo3cEZKLUp2cUZFRGNzWVQzVUljMWhQM1RoSGtlYmZIWnpjTlJiLXA4dmNvY2I0LTFMOGw4clk?oc=5",
       "posted_at": 1789974053
+    },
+    "-1004482051328:1781": {
+      "chat_id": -1004482051328,
+      "message_id": 1781,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "StepFun معرفی نسخه پیش‌نمایش Step 5: مدل Mixture‑of‑Experts با 600B پارامتر کل و 27B فعال در هر توکن، با پنجره متن 1M برای کارهای بلندمدت عاملانه",
+      "summary": "StepFun نسخه پیش‌نمایش Step 5 را رونمایی کرد؛ این مدل sparse Mixture‑of‑Experts دارای 600 میلیارد پارامتر کل و 27 میلیارد پارامتر فعال در هر توکن است. پنجره متن 1 میلیون توکن را پشتیبانی می‌کند و ورودی‌های متنی، تصویری و ویدیویی را می‌پذیرد. هدف این مدل انجام کارهای بلندمدت عاملانه در مهندسی نرم‌افزار، کارهای حرفه‌ای و مالی است. دسترسی API در حال حاضر با هزینه 1 دلار برای هر 1M توکن ورودی و 2.70 دلار برای هر 1M توکن خروجی فعال است و وزن‌های باز در 15 اکتبر 2026 منتشر خواهد شد.",
+      "why_it_matters": "این پیشرفت نشان می‌دهد که مدل‌های Mixture‑of‑Experts می‌توانند با فعال‌سازی محدود، حجم پارامترهای عظیمی را مدیریت کنند، که برای کاربردهای طولانی‌مدت و پیچیده ضروری است. پنجره متن 1M امکان پردازش مستندات طولانی و تعاملات چندمرحله‌ای را فراهم می‌کند، که در مهندسی نرم‌افزار و تحلیل مالی ارزش افزوده می‌آورد. پشتیبانی از چندین مدیا، امکان ترکیب داده‌های متنی، تصویری و ویدیویی را برای تحلیل جامع‌تر فراهم می‌کند. قیمت‌گذاری مقرون به صرفه و برنامه‌ریزی انتشار وزن‌های باز، دسترسی گسترده‌تر به این فناوری را تضمین می‌کند.",
+      "link": "https://www.marktechpost.com/2026/09/20/stepfun-launches-step-5-preview/",
+      "posted_at": 1789974814
+    },
+    "-1004482051328:1782": {
+      "chat_id": -1004482051328,
+      "message_id": 1782,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (YourStory.com)",
+      "content_type": "product_news",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "DeepMind راه‌اندازی مؤسسه‌ای برای بررسی زندگی پس از AGI",
+      "summary": "DeepMind، شرکت پیشرو در حوزه هوش مصنوعی، مؤسسه‌ای را برای مطالعه زندگی پس از رسیدن به AGI راه‌اندازی کرده است. این اقدام نشان‌دهنده تعهد شرکت به بررسی پیامدهای بلندمدت هوش مصنوعی پیشرفته است. مؤسسه با همکاری پژوهشگران بین‌المللی، به تحلیل اثرات اجتماعی، اقتصادی و اخلاقی AGI می‌پردازد.",
+      "why_it_matters": "با پیشرفت سریع هوش مصنوعی، درک تأثیرات آن بر زندگی انسان‌ها ضروری است. مؤسسه DeepMind به‌منظور پیش‌بینی و مدیریت چالش‌های ناشی از AGI، چارچوب‌های اخلاقی و راهبردهای سیاستی را توسعه می‌دهد. این کار می‌تواند به جلوگیری از خطرات احتمالی و بهره‌برداری مسئولانه از فناوری کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE51MjRBdXZCdHdwQldOMlJ5dUNwSHZpZG02QllpclY4WWdNMGZweTVpX0JaVU1GbWJ2Yl9HRjJaX2hrcC1oM0lmZ19MdnZUNVZwS3JNMGZabmZvRHI2X1luNkVKdk5HcGt3U3ozbDcxQ3lHNHp1RWc?oc=5",
+      "posted_at": 1789974818
     }
   }
 }

@@ -465,3 +465,30 @@ def test_local_ollama_is_available_as_final_free_emergency_fallback(monkeypatch)
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"local"}'
     assert provider == "LocalOllamaFree"
+
+def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_ROUTER_BUDGET_SECONDS", "24")
+    apply()
+
+    class Future:
+        def result(self, timeout):
+            observed.append(timeout)
+            return '{"title":"local"}'
+
+    class FakeExecutor:
+        def submit(self, *_args, **_kwargs):
+            return Future()
+
+    observed = []
+    monkeypatch.setattr(router, "_CALL_EXECUTOR", FakeExecutor())
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: None)
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [])
+
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"local"}'
+    assert provider == "LocalOllamaFree"
+    assert observed and observed[0] <= 18.0
+    assert observed[0] >= 6.0

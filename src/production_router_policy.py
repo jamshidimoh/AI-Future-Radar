@@ -236,7 +236,8 @@ def _install_production_circuit_breaker() -> None:
             try:
                 print(f"[Production Circuit] {emergency_name.lower()}_emergency_attempt=1", flush=True)
                 future = router._CALL_EXECUTOR.submit(emergency_fn, system_prompt, user_content)
-                content = future.result(timeout=max(0.5, min(6.0, remaining)))
+                emergency_limit = 18.0 if emergency_name == "LocalOllamaFree" else 6.0
+                content = future.result(timeout=max(0.5, min(emergency_limit, remaining)))
                 if content:
                     print(f"[Production Circuit] success={emergency_name} emergency=1", flush=True)
                     return content, emergency_name

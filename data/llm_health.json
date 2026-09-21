@@ -8,7 +8,7 @@
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 8,
-      "disabled_until": 1789962776.521,
+      "disabled_until": 1789963406.824,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -20,13 +20,13 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 3,
-      "disabled_until": 1789962776.521,
+      "disabled_until": 1789963406.824,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 3,
-      "disabled_until": 1789962776.521,
+      "disabled_until": 1789963406.824,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -74,7 +74,7 @@
     },
     "openrouter:z-ai/glm-5.2:free": {
       "failures": 1,
-      "disabled_until": 1789962776.521,
+      "disabled_until": 1789963406.824,
       "last_error": "quota",
       "last_success": 0.0
     },
@@ -82,7 +82,7 @@
       "failures": 1,
       "disabled_until": 1789980776.521,
       "last_error": "model",
-      "last_success": 0
+      "last_success": 0.0
     }
   },
   "providers": {

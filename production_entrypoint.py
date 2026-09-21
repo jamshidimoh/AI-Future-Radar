@@ -19,7 +19,7 @@ from src.editorial_quality_policy import (
 )
 from src.logging_setup import configure_logging
 from src.priority_people import is_substantive_priority_interview
-from src.protected_editorial_lane import SPECIAL_MAX_PER_PERIOD, choose_additive_candidates
+from src.protected_editorial_lane import choose_additive_candidates
 from src.state_io import StateCorruptionError, load_json_state
 from src.technical_trend_lane import choose_technical_trend_candidate
 from src.unified_editorial_selection import load_editorial_contract
@@ -397,7 +397,6 @@ def main(*, skip_education: bool = False) -> int:
             existing_ids=voices_ids | technical_ids | normal_ids,
             max_items=special_window(MAX_MIND_IDEAS_VOICES_PER_PERIOD),
         )
-        mind_ids = {id(item) for item in mind_candidates}
         for item in mind_candidates:
             print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
 

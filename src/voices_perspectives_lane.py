@@ -148,9 +148,9 @@ def voices_perspectives_score(item: dict[str, Any]) -> float:
     if priority_person: score += 12.0
     if expert_people: score += 8.0
     if expert_deep_lane: score += 12.0
-    # Numeric person priority must not outrank a fresher item from another watched expert.
-    # Expert identity/deep-lane signals remain quality gates, but their registry prior is
-    # deliberately excluded from this lane's score.
+    # Numeric person priority and registry priors must not make one watched expert
+    # outrank another. Identity/deep-lane signals remain eligibility/quality signals,
+    # while recency decides between otherwise comparable voices.
     try: tier = int(item.get("source_tier", 3) or 3)
     except (TypeError, ValueError): tier = 3
     score += {1: 16.0, 2: 10.0, 3: 3.0}.get(tier, 0.0)

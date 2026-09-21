@@ -166,6 +166,46 @@ def _openrouter_free_router(system_prompt, user_content):
         label="OpenRouterFreeRouter",
     )
 
+POLLINATIONS_FREE_DEFAULT_MODEL = "openai/gpt-oss-20b"
+POLLINATIONS_LEGACY_URL = "https://text.pollinations.ai/openai"
+POLLINATIONS_V1_URL = "https://gen.pollinations.ai/v1/chat/completions"
+
+def _pollinations_free(system_prompt, user_content):
+    """Free-first Pollinations fallback; prefers authenticated API when available, otherwise legacy anonymous endpoint."""
+    api_key = os.getenv("POLLINATIONS_API_KEY", "").strip()
+    model = (os.getenv("RADAR_POLLINATIONS_FREE_MODEL") or POLLINATIONS_FREE_DEFAULT_MODEL).strip()
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_content},
+    ]
+    headers = {
+        "Content-Type": "application/json",
+        "X-Title": "AI Future Radar",
+        "HTTP-Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
+    }
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+        url = POLLINATIONS_V1_URL
+        payload = {"model": model, "messages": messages, "max_tokens": 850, "temperature": 0.15}
+    else:
+        # Legacy anonymous route is intentionally used only as a last-resort,
+        # because the new gateway is the supported production API.
+        url = POLLINATIONS_LEGACY_URL
+        payload = {"model": model, "messages": messages, "max_tokens": 850, "temperature": 0.15}
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=8)
+        if response.status_code in (401, 402, 403, 404, 429, 503):
+            raise QuotaExceeded(
+                f"PollinationsFree {model}: HTTP {response.status_code} {response.text[:800]}"
+            )
+        response.raise_for_status()
+        data = response.json()
+        return _extract_message(data)
+    except QuotaExceeded:
+        raise
+    except (requests.RequestException, ValueError) as exc:
+        raise QuotaExceeded(f"PollinationsFree {model}: {type(exc).__name__}: {exc}") from exc
+
 def _gemini(system_prompt, user_content):
     key = os.getenv("GEMINI_API_KEY")
     if not key: return None
@@ -214,7 +254,7 @@ def _huggingface(system_prompt,user_content):
     return response.choices[0].message.content
 
 def _chain_key():
-    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN")) + (os.getenv("RADAR_ENABLE_GROK_FREE_FALLBACK","0"),os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_GROK_FREE_MODEL",GROK_FREE_DEFAULT_MODEL),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
+    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN","POLLINATIONS_API_KEY")) + (os.getenv("RADAR_ENABLE_GROK_FREE_FALLBACK","0"),os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_POLLINATIONS_FREE_FALLBACK","0"),os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_GROK_FREE_MODEL",GROK_FREE_DEFAULT_MODEL),os.getenv("RADAR_POLLINATIONS_FREE_MODEL",POLLINATIONS_FREE_DEFAULT_MODEL),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
 
 def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY

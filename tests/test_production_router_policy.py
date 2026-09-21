@@ -15,6 +15,9 @@ def _reset(monkeypatch):
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
+    monkeypatch.delenv("RADAR_ENABLE_POLLINATIONS_FREE_FALLBACK", raising=False)
+    monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
+    monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER", raising=False)
     monkeypatch.delenv("RADAR_GROK_FREE_MODEL", raising=False)
@@ -456,4 +459,50 @@ def test_grok_free_direct_call_uses_native_json_and_same_openrouter_key(monkeypa
     payload = calls[0][1]["json"]
     assert payload["model"] == "x-ai/grok-4.1-fast:free"
     assert payload["response_format"] == {"type": "json_object"}
+
+
+def test_pollinations_free_is_available_as_final_free_emergency_fallback(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("RADAR_ENABLE_POLLINATIONS_FREE_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
+    apply()
+
+    class FakeRouter:
+        def completion(self, **_kwargs):
+            raise RuntimeError("HTTP 503 temporary")
+
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}
+    ])
+    monkeypatch.setattr(router, "_pollinations_free", lambda *_args, **_kwargs: '{"title":"pollinations-free"}')
+
+    result, provider = router._call_litellm("system", "user")
+    assert result == '{"title":"pollinations-free"}'
+    assert provider == "PollinationsFree"
+
+
+def test_pollinations_free_uses_anonymous_legacy_endpoint_without_key(monkeypatch):
+    _reset(monkeypatch)
+    calls = []
+
+    class FakeResponse:
+        status_code = 200
+        text = ""
+        def raise_for_status(self):
+            return None
+        def json(self):
+            return {"choices": [{"message": {"content": '{"title":"ok"}'}}]}
+
+    def fake_post(url, **kwargs):
+        calls.append((url, kwargs))
+        return FakeResponse()
+
+    monkeypatch.setattr(router.requests, "post", fake_post)
+    result = router._pollinations_free("system", "user")
+
+    assert result == '{"title":"ok"}'
+    assert len(calls) == 1
+    assert calls[0][0] == "https://text.pollinations.ai/openai"
+    assert calls[0][1]["json"]["model"] == "openai/gpt-oss-20b"
 

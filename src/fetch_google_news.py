@@ -266,7 +266,6 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
     person_signal = bool(watch_person and str(watch_person).lower() in text)
     query_person_signal = bool(watch_person and str(watch_person).lower() in query_text)
     query_context_signal = any(term in query_text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
-    explicit_format = ctype in _LEADER_INTERVIEW_EVIDENCE_TERMS
     substantive_analysis = bool(analytical and context)
     # Google News snippets frequently omit the interviewed person's name. When
     # the source came from an explicit named watchlist query, preserve the item

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1789986705,
+  "updated_at": 1790000324,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -12790,6 +12790,62 @@
       "why_it_matters": "مدل‌های توضیح‌پذیر اعتماد پژوهشگران را نسبت به پیش‌بینی‌های خودکار جنسیت افزایش می‌دهند، زیرا شواهد بصری قابل بررسی در اختیار دارند. مکانیزم پروتوتایپ امکان اعتبارسنجی توسط کارشناسان میدانی را می‌دهد و کیفیت داده‌های جمعیتی را بهبود می‌بخشد. این شفافیت به مدیریت منابع زیستی کمک می‌کند و به‌صورت اخلاقی در نظارت بر جمعیت گازل‌های کوهستانی کاربرد دارد.",
       "link": "https://www.nature.com/articles/s41598-026-71679-9",
       "posted_at": 1789986705
+    },
+    "-1004482051328:1791": {
+      "chat_id": -1004482051328,
+      "message_id": 1791,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "بررسی فنی تحلیل سرفه مبتنی بر هوش مصنوعی برای تشخیص و ارزیابی اولیه سل ریه",
+      "summary": "این مقاله، منتشر شده در Nature - Computational Biology and Bioinformatics، یک مرور فنی بر روش‌های هوش مصنوعی برای تحلیل صداهای سرفه به منظور تشخیص و ارزیابی اولیه سل ریه ارائه می‌دهد. به‌طور خاص، به الگوریتم‌های پردازش سیگنال صوتی، مدل‌های Deep Learning و معیارهای عملکردی مورد استفاده در تشخیص سل پرداخته می‌شود. مقاله به مزایا و محدودیت‌های فعلی این فناوری در زمینه غربالگری جمعی و تشخیص بالینی می‌پردازد و مسیرهای پژوهشی آینده را ترسیم می‌کند.",
+      "why_it_matters": "تشخیص زودهنگام سل ریه می‌تواند بار بیماری را به‌طور قابل‌Attentionی کاهش دهد؛ استفاده از هوش مصنوعی برای تحلیل سرفه، امکان غربالگری سریع، غیرتهاجمی و کم‌هزینه را در جوامع با منابع محدود فراهم می‌کند. با این حال، دقت مدل‌ها، تنوع جمعیتی صداها و نیاز به داده‌های بزرگ برچسب‌دار، چالش‌های اصلی برای پیاده‌سازی بالینی هستند. نتایج این مرور می‌تواند راهنمای توسعه سامانه‌های تشخیصی مبتنی بر صدا باشد و به تصمیم‌گیرندگان بهداشتی کمک کند تا استراتژی‌های بهبود دسترسی به تشخیص سل را ارزیابی کنند.",
+      "link": "https://www.nature.com/articles/s44385-026-00110-9",
+      "posted_at": 1790000274
+    },
+    "-1004482051328:1792": {
+      "chat_id": -1004482051328,
+      "message_id": 1792,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "فاصله رو به رو بین ChatGPT و هوش مصنوعی داخلی OpenAI",
+      "summary": "در این قسمت از برنامه، نوام براون به بررسی فاصله رو به رو بین ChatGPT و هوش مصنوعی داخلی OpenAI می‌پردازد. این گفتگو توسط Dwarkesh Patel در یوتیوب منتشر شده است. لینک کامل ویدیو در یوتیوب موجود است.",
+      "description": "Full episode: https://www.youtube.com/watch?v=6AgOfiZOWiY\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube. artificial intelligence",
+      "why_it_matters": "درک اختلاف بین ChatGPT و فناوری داخلی OpenAI برای کاربران و توسعه‌دهندگان هوش مصنوعی اهمیت دارد، زیرا می‌تواند نشان‌دهندهٔ مسیر پیشرفت مدل‌های زبانی و محدودیت‌های دسترسی عمومی باشد. این تفاوت‌ها می‌توانند بر تصمیم‌گیری‌های تجاری، انتخاب ابزارهای مناسب و انتظارات جامعهٔ فناوری تأثیرگذار باشند. بنابراین، بررسی این موضوع به روشن شدن چشم‌انداز آیندهٔ هوش مصنوعی کمک می‌کند.",
+      "link": "https://www.youtube.com/watch?v=eXFMtMovXXY",
+      "posted_at": 1790000319
+    },
+    "-1004482051328:1793": {
+      "chat_id": -1004482051328,
+      "message_id": 1793,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "۳ راه برای آمادگی جوانان در بازار کار هوش مصنوعی",
+      "summary": "آرون سونداراجان، استاد کارآفرینی در NYU Stern، در مصاحبه‌ای با رابین پومروی (World Economic Forum) و شین گوان (CGTN) به جوانان توصیه می‌کند تا با ساختن شبکه‌های انسانی قوی و تبدیل شدن به «تقویت‌کننده نیروی هوش مصنوعی» خود، در بازار کار در حال تحول متمایز شوند. او تأکید می‌کند که توانایی ترکیب مهارت‌های انسانی با ابزارهای AI می‌تواند افراد را به‌عنوان نیروی افزایشی ارزشمند معرفی کند. علاوه بر این، سونداراجان بر ضرورت یادگیری مداوم و انعطاف‌پذیری در مواجهه با تغییرات شغلی ناشی از هوش مصنوعی تأکید می‌کند. این نکات به دانشجویان کمک می‌کند تا در مواجهه با کاهش فرصت‌های شغلی ابتدایی، مسیر شغلی خود را به‌صورت استراتژیک تنظیم کنند.",
+      "description": "As AI’s capabilities expand, many entry-level #jobs are being impacted, leading to a wave of understandable concern about how young people will make their way in the world of #work.\n\nArun Sundararajan has some encouragement. As Professor of Entrepreneurship at NYU Stern School of Business, he advises students on how to stand out in a rapidly evolving labour market. From building human networks to becoming an AI ‘force multiplier’, here’s what he tells them.\n\nArun was speaking to the World Economic Forum's Robin Pomeroy and CGTN's Xin Guan for our Radio Davos video podcast. Watch the full episode: https://youtu.be/waYzMBSQuPo\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "با گسترش توانمندی‌های هوش مصنوعی، شغل‌های سطح ورودی تحت فشار قرار می‌گیرند و جوانان با عدم اطمینان نسبت به آینده شغلی مواجه می‌شوند. توصیه‌های سونداراجان—تقویت شبکه‌های انسانی و استفاده هوشمندانه از AI به‌عنوان نیروی افزایشی—به افراد امکان می‌دهد مهارت‌های تکمیلی و قابلیت‌های ترکیبی را توسعه دهند که در بازار کار رقابتی ارزش افزوده ایجاد می‌کند. این رویکرد نه تنها ریسک بیکاری را کاهش می‌دهد، بلکه فرصت‌های جدیدی برای نوآوری و پیشرفت شغلی فراهم می‌آورد.",
+      "link": "https://www.youtube.com/shorts/T8EgwuWFsDo",
+      "posted_at": 1790000324
     }
   }
 }

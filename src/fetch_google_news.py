@@ -270,7 +270,12 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
     # the source came from an explicit named watchlist query, preserve the item
     # for the downstream identity/evidence/quality gates instead of deleting it
     # prematurely at discovery.
-    accepted_by_watch_query = bool(query_person_signal and (interview or explicit_format) and query_context_signal)
+    query_format_signal = ctype in {"interview", "podcast", "talk", "conversation", "leader_signal", "product_news", "research"}
+    accepted_by_watch_query = bool(
+        query_person_signal
+        and query_context_signal
+        and (interview or activity or substantive_analysis or query_format_signal)
+    )
     accepted = bool(((interview or activity or substantive_analysis) and context) or accepted_by_watch_query)
     return {"accepted": accepted, "interview": interview, "activity": activity, "analytical": analytical, "context": context, "person_signal": person_signal}
 

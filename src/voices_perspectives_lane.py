@@ -142,7 +142,7 @@ def voices_perspectives_score(item: dict[str, Any]) -> float:
     score = 0.0
     voice_signal = _has_voice_signal(item)
     priority_person = _priority_person_signal(item)
-    expert_people, expert_deep_lane, expert_score = _expert_identity(item)
+    expert_people, expert_deep_lane, _ = _expert_identity(item)
     if voice_signal: score += 24.0
     if _has_person_signal(item): score += 18.0
     if priority_person: score += 12.0

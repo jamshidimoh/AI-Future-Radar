@@ -251,14 +251,15 @@ def test_no_candidate_mission_gap_is_acceptable_when_no_hard_recovery_failure_ex
 
 
 CURRENT_LANE_COUNTER_CONTRACT = """
-[Production Selection] total=8
-[Dual Lane Selection] normal=6 mind_ideas_voices=2 mind_cap=2 mind_score_floor=not_applied
-[Publication Summary Budget] input=8 protected=0 mind_ideas_voices=2 normal_window=6 output=6 normal_limit=6 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
-[Production Policy] PUBLISH normal_rank=1 score=62.78
-[Production Policy] PUBLISH mind_ideas_voices mind_rank=1 score=50.0 normal_floor=not_applied
-[Production Policy] PUBLISH voices_perspectives voices_rank=1 score=80.01 normal_floor=not_applied
+[Production Selection] total=4
+[Dual Lane Selection] normal=2 mind_ideas_voices=2 mind_cap=2 mind_score_floor=not_applied
+[Publication Summary Budget] input=4 protected=0 mind_ideas_voices=2 normal_window=2 output=4 normal_limit=6 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Publication Policy] PUBLISH normal_rank=1 score=62.78
+[Publication Policy] PUBLISH normal_rank=2 score=61.12
+[Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=50.0 normal_floor=not_applied
+[Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=49.0 normal_floor=not_applied
 [Production Contract] normal_news=2 normal_max=3 technical_trend=0 technical_max=1 mind_ideas_voices=2 mind_max=2 voices_perspectives=1 voices_max=1 tier0_news=0 tier0_quota_exempt=false strategic_analytical=0 strategic_max=1 normal_score_floor=55.0 special_lanes_score_floor=not_applied education=not_due
-Posts sent: 5/8
+Posts sent: 4/4
 """
 
 

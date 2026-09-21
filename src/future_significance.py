@@ -97,6 +97,28 @@ def substantive_importance_ok(item: dict[str, Any]) -> bool:
     except (TypeError, ValueError):
         source_tier = 3
 
+    # Dedicated lanes already perform stricter identity/technical screening.
+    # Permit a strong, authoritative People/Voices or Frontier candidate to pass
+    # the final importance gate even when the source metadata lacks a prefilled
+    # editorial_class.
+    lane = str(item.get("editorial_lane") or "").strip().casefold()
+    try:
+        source_tier = int(item.get("source_tier", item.get("tier", 3)) or 3)
+    except (TypeError, ValueError):
+        source_tier = 3
+    if lane == "voices_perspectives" and source_tier <= 2:
+        try:
+            if float(item.get("voices_perspectives_score", 0) or 0) >= 70.0:
+                return True
+        except (TypeError, ValueError):
+            pass
+    if lane == "technical_trend" and source_tier <= 2:
+        try:
+            if float(item.get("technical_trend_score", 0) or 0) >= 65.0:
+                return True
+        except (TypeError, ValueError):
+            pass
+
     features = build_future_features(item)
     dimensions = (
         "capability_shift", "breakthrough", "cross_domain_impact",

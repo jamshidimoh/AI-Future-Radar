@@ -16,6 +16,7 @@ from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
 from src.publication_contract import unique_candidates
+from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, mind_ideas_voices_score
 from src.rejection_telemetry import build_event, emit
 from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
 from src.signal_engine import enrich_signal_items
@@ -392,7 +393,13 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
 
     def _score_ok(item):
         if _is_mind_ideas_voices(item):
-            return not item.get("_publication_blocked")
+            if item.get("_publication_blocked"):
+                return False
+            try:
+                score = float(item.get("mind_editorial_score", mind_ideas_voices_score(item)) or 0)
+            except (TypeError, ValueError):
+                score = 0.0
+            return score >= MIND_IDEAS_VOICES_SCORE_FLOOR
         try:
             score = float(item.get("final_editorial_score", item.get("editorial_score", 0)) or 0)
         except (TypeError, ValueError):
@@ -681,6 +688,8 @@ def main(hooks=None):
                 continue
             mind = _is_mind_ideas_voices(candidate)
             score = float(candidate.get("mind_editorial_score", candidate.get("final_editorial_score", candidate.get("editorial_score", 0))) or 0)
+            if mind and score < MIND_IDEAS_VOICES_SCORE_FLOOR:
+                continue
             if not mind:
                 if candidate.get("protected_content"):
                     if score < PROTECTED_SUMMARY_SCORE_FLOOR:

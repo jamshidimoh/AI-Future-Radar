@@ -1,4 +1,4 @@
-from src.protected_editorial_lane import choose_additive_candidates, is_mind_ideas_voices_candidate
+from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, choose_additive_candidates, is_mind_ideas_voices_candidate, mind_ideas_voices_score
 
 
 def test_mind_candidate_detects_consciousness_content():
@@ -31,6 +31,14 @@ def test_community_source_is_excluded():
     item = {"title": "Consciousness discussion", "mission_area": "mind_cognition", "content_type": "podcast", "source": "Reddit"}
     assert not is_mind_ideas_voices_candidate(item)
 
+
+def test_mind_lane_has_independent_quality_floor_but_not_normal_floor():
+    strong = {"title": "Consciousness and cognition in AI", "mission_area": "mind_cognition", "content_type": "article", "final_editorial_score": 41.0}
+    weak = {"title": "Generic future discussion", "mission_area": "future_governance", "content_type": "article", "final_editorial_score": 80.0}
+    strong_score = mind_ideas_voices_score(strong)
+    assert strong_score >= MIND_IDEAS_VOICES_SCORE_FLOOR
+    assert strong["final_editorial_score"] < 55.0
+    assert weak not in choose_additive_candidates([strong, weak], existing_ids=set(), max_rank=12, max_items=2)
 
 def test_mind_lane_has_no_normal_score_floor():
     candidates = [

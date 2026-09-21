@@ -17,7 +17,15 @@ _DEPTH = {
     "genetics": "فقط کاربرد مستقیم AI در ژنوم، پروتئین، دارو یا زیست‌محاسبات را پوشش بده.",
     "mind": "فقط AI/AGI/ماشین‌آگاهی/علوم شناختی مرتبط با AI را پوشش بده.",
     "future": "فقط آینده AI، AGI، حکمرانی، اقتصاد یا ریسک‌های مستقیم AI را پوشش بده.",
+    "convergence": "پیوند واقعی AI با حوزه دیگر را با سازوکار و شواهد مشخص توضیح بده؛ از فهرست‌کردن دو حوزه بدون رابطه علّی پرهیز کن.",
+    "mind_cognition": "بحث را از منظر AI و علوم شناختی/آگاهی به‌صورت دقیق و شواهدمحور خلاصه کن.",
+    "future_governance": "اثر بر مسیر آینده، حکمرانی، اقتصاد، سازمان یا ریسک AI را فقط بر پایه شواهد منبع توضیح بده.",
 }
+
+_VOICE_DEPTH = """این یک Expert Voice است (مصاحبه، پادکست، گفت‌وگو، سخنرانی یا دیدگاه یک متخصص)، نه صرفاً یک خبر بازنشرشده.
+مرکز ثقل خلاصه باید خودِ دیدگاه و استدلال فرد باشد: مهم‌ترین ادعا یا پرسش، استدلال/سازوکار ارائه‌شده، شواهد یا مثال‌های مشخص، عدم‌قطعیت یا اختلاف‌نظر در صورت وجود، و نتیجه‌ای که از گفته او مستقیماً برمی‌آید.
+نام فرد/مهمان و نقش او را در صورت وجود حفظ کن. برای podcast/interview در صورت وجود، دست‌کم دو نکته مشخص از متن/Transcript را بیاور و از جمله‌های عمومی مانند «او درباره آینده AI صحبت کرد» پرهیز کن.
+اگر متن برای استخراج جزئیات کافی نیست، چیزی نساز و همان محدودیت را صریح و دقیق حفظ کن."""
 
 _PROMPT = """تو تحلیلگر ارشد فارسی‌زبان یک رسانه تخصصی فناوری هستی.
 {depth}
@@ -82,11 +90,36 @@ def _extract_json(raw):
     raise TypeError(f"Expected JSON object, got {type(data).__name__}")
 
 
+def _is_voice_item(item):
+    content_type = str(item.get("content_type") or "").strip().casefold()
+    lane = str(item.get("editorial_lane") or "").strip().casefold()
+    return bool(
+        lane == "voices_perspectives"
+        or item.get("voices_perspectives_lane_selected")
+        or content_type in {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
+        or item.get("expert_deep_lane")
+    )
+
+
+def _summary_depth(item):
+    if _is_voice_item(item):
+        return _VOICE_DEPTH
+    area = str(item.get("mission_area") or "").strip().casefold()
+    mapping = {
+        "ai_core": "ai",
+        "convergence": "convergence",
+        "mind_cognition": "mind_cognition",
+        "future_governance": "future_governance",
+    }
+    key = mapping.get(area, str(item.get("category") or "ai").strip().casefold())
+    return _DEPTH.get(key, _DEPTH["ai"])
+
+
 def _source_text(item, max_chars=3500):
     """Build the strongest available evidence context without duplicating identical fields."""
     parts = []
     seen = set()
-    for key in ("summary", "evidence_text", "description"):
+    for key in ("title", "source", "speakers", "speaker", "summary", "evidence_text", "description"):
         value = str(item.get(key, "") or "").strip()
         if not value or value in seen:
             continue
@@ -405,15 +438,16 @@ def _run_shadow_claim_verification(final, item, source_text):
 
 
 def summarize_item(item):
-    category = item.get("category", "ai")
-    prompt = _PROMPT.format(depth=_DEPTH.get(category, _DEPTH["ai"]))
+    prompt = _PROMPT.format(depth=_summary_depth(item))
     raw_text = _source_text(item)
     user = (
         f"عنوان: {item.get('title','')}\n"
         f"منبع: {item.get('source','')}\n"
         f"نوع: {item.get('content_type','news')}\n"
-        f"شخص کلیدی: {item.get('leader') or item.get('watch_person') or ''}\n"
-        f"متن: {raw_text[:3500]}"
+        f"حوزه مأموریت: {item.get('mission_area') or item.get('category','ai')}\n"
+        f"متخصص/مهمان: {', '.join(str(x) for x in (item.get('voice_identity_people') or item.get('people') or [])) or item.get('leader') or item.get('watch_person') or item.get('speaker') or ''}\n"
+        f"امتیاز Expert: {item.get('voice_expert_score') or item.get('expert_score') or ''}\n"
+        f"متن/شواهد: {raw_text[:3500]}"
     )
     raw, provider = call_llm_with_fallback(prompt, user, providers=get_quality_chain())
     if not raw:

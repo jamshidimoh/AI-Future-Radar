@@ -377,7 +377,23 @@ def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[
     unseen_area = [x for x in viable if mission_area(x) not in p.area_counts]
     if unseen_area:
         viable = unseen_area
-    freshness_weight = float(p.contract.get("freshness_weight", 10.0) or 10.0)\n    freshness_half_life = float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0)\n    return max(viable, key=lambda x: (portfolio_value(x, p.selected, diversity_weight=p.contract["diversity_weight"], similarity_penalty=p.contract["similarity_penalty"]) + freshness_score(x, freshness_half_life) * freshness_weight, candidate_score(x), _safe_float(x, "evidence_strength"), str(x.get("published", ""))))
+    freshness_weight = float(p.contract.get("freshness_weight", 10.0) or 10.0)
+    freshness_half_life = float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0)
+    return max(
+        viable,
+        key=lambda x: (
+            portfolio_value(
+                x,
+                p.selected,
+                diversity_weight=p.contract["diversity_weight"],
+                similarity_penalty=p.contract["similarity_penalty"],
+            )
+            + freshness_score(x, freshness_half_life) * freshness_weight,
+            candidate_score(x),
+            _safe_float(x, "evidence_strength"),
+            str(x.get("published", "")),
+        ),
+    )
 
 
 def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:

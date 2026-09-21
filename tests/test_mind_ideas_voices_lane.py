@@ -60,3 +60,31 @@ def test_untrusted_community_sources_are_not_admitted_to_mind_lane():
         "source": "Community aggregator",
     }
     assert not is_mind_ideas_voices_candidate(item)
+
+
+def test_special_lane_rejects_generic_ai_interview_without_ai_or_importance():
+    item = {
+        "title": "Startup founder interview about discarded fishing nets",
+        "summary": "A conversation about turning discarded fishing nets into textiles.",
+        "mission_area": "ai_core",
+        "content_type": "interview",
+        "source": "Specialist publication",
+        "source_type": "specialist",
+        "source_tier": 1,
+    }
+    assert not is_mind_ideas_voices_candidate(item)
+
+
+def test_special_lane_accepts_substantive_ai_research_with_two_value_dimensions():
+    item = {
+        "title": "New AI system improves scientific discovery",
+        "summary": "Researchers report a new reasoning capability and benchmark results from a university study with measurable gains.",
+        "mission_area": "ai_core",
+        "content_type": "research",
+        "source": "University research group",
+        "source_type": "scientific",
+        "source_tier": 1,
+        "research_signal": True,
+        "editorial_class": "research_breakthrough",
+    }
+    assert is_mind_ideas_voices_candidate(item)

@@ -250,3 +250,57 @@ rss_sources:
     official: true
     mission: "leaders_thinkers"
     discovery_only: true
+
+  - name: "Latent Space"
+    url: "https://www.latent.space/feed"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "frontier_builders_agents_ai_science"
+    discovery_only: true
+
+  - name: "TWIML AI Podcast"
+    url: "https://feeds.megaphone.fm/MLN2155636147"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "ai_research_experts"
+    discovery_only: true
+
+  - name: "Practical AI"
+    url: "https://feeds.transistor.fm/practical-ai-machine-learning-data-science-llm"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "ai_practitioners_agents"
+    discovery_only: true
+
+  - name: "Y Combinator Startup Podcast"
+    url: "https://feeds.simplecast.com/3gQn0n8B"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "ai_founders_leaders"
+    discovery_only: true
+
+  - name: "The Economist Podcasts - Technology"
+    url: "https://feeds.acast.com/public/shows/technology"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "technology_leaders"
+    discovery_only: true
+
+  - name: "Times Tech"
+    url: "https://feeds.acast.com/public/shows/6155a1c6b3f7f2001e9d5a3f"
+    tier: 2
+    type: "expert_interviews"
+    content_type: "interviews_podcasts"
+    official: true
+    mission: "technology_leaders"
+    discovery_only: true

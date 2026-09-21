@@ -79,6 +79,47 @@ def build_future_features(item: dict[str, Any]) -> dict[str, float]:
     return features
 
 
+def substantive_importance_ok(item: dict[str, Any]) -> bool:
+    """Require evidence that a story is consequential enough for production publication.
+    
+    This gate is intentionally independent from fluency, topical relevance and
+    ordinary ranking. Strong research/leader classes remain eligible; otherwise
+    the item needs at least one strong future-significance dimension or two
+    independent moderate dimensions.
+    """
+    editorial_class = str(item.get("editorial_class") or "").strip().casefold()
+    if editorial_class in {"research_breakthrough", "convergence_signal", "leader_interview"}:
+        return True
+    if item.get("research_signal"):
+        return True
+    try:
+        source_tier = int(item.get("source_tier", item.get("tier", 3)) or 3)
+    except (TypeError, ValueError):
+        source_tier = 3
+
+    features = build_future_features(item)
+    dimensions = (
+        "capability_shift", "breakthrough", "cross_domain_impact",
+        "strategic_implication", "research_depth", "human_societal_impact",
+        "future_horizon", "insight_density",
+    )
+    values = [float(features.get(key, 0.0) or 0.0) for key in dimensions]
+    strong = sum(value >= (2.0 / 3.0) for value in values)
+    moderate = sum(value >= (1.0 / 3.0) for value in values)
+
+    # High-authority consequential reporting may be represented sparsely in the
+    # source metadata, so one strong dimension is sufficient. Two independent
+    # moderate dimensions prevent a single generic keyword from being enough.
+    if strong >= 1 or moderate >= 2:
+        return True
+
+    # A Tier-1/Tier-2 source alone is never sufficient, but a clearly classified
+    # major industry event with an explicit strategic signal is.
+    if source_tier <= 2 and editorial_class == "major_industry_news":
+        return float(features.get("strategic_implication", 0.0) or 0.0) >= (1.0 / 3.0)
+    return False
+
+
 def is_low_future_value(item: dict[str, Any]) -> bool:
     """Reject only explicit utility/tutorial stories lacking a compensating signal.
 

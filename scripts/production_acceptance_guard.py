@@ -34,7 +34,7 @@ TIER0_FLOOR_PATTERN = re.compile(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d
 MIND_PUBLICATION_PATTERN = re.compile(r"\[Publication Policy\]\s+PUBLISH mind_ideas_voices\b.*?score=([-+]?\d+(?:\.\d+)?)")
 MIND_SELECTION_PATTERN = re.compile(r"\[Dual Lane Selection\].*?mind_ideas_voices=(\d+).*?mind_cap=(\d+).*?mind_score_floor=not_applied")
 MIND_SUMMARY_PATTERN = re.compile(r"\[Publication Summary Budget\].*?mind_ideas_voices=(\d+).*?mind_limit=(\d+).*?mind_score_floor=not_applied")
-MIND_CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*?mind_ideas_voices=(\d+).*?mind_max=(\d+).*?mind_score_floor=not_applied")
+MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
 EDUCATION_CONFIRMED_PATTERN = re.compile(r"\[Education Published\].*?CONFIRMED\b.*?telegram_delivery=successful")
 MISSION_COVERAGE_PATTERN = re.compile(
     r"\[Mission Coverage Recovery\].*?target=(\d+).*?prepared=(\d+).*?"

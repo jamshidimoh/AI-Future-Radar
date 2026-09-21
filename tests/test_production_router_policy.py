@@ -463,4 +463,4 @@ def test_grok_free_rejects_non_keyless_model(monkeypatch):
         router._grok_free("system", "user")
     except router.QuotaExceeded:
         return
-    assert False, "non-keyless Grok model must be rejected"
+    raise AssertionError("non-keyless Grok model must be rejected")

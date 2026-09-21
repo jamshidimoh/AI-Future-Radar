@@ -97,6 +97,34 @@ def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priori
     assert selected and selected[0]["watch_person"] == "Expert B"
 
 
+def test_voice_lane_freshness_overrides_source_tier_difference(monkeypatch):
+    monkeypatch.setattr(publication_guard, "check_before_publish", lambda *args, **kwargs: (True, "no_publication_conflict"))
+    older = _voice("UNIQUE-VOICE-TIER-FRESHNESS older frontier AI")
+    older.update({
+        "watch_person": "Expert A",
+        "leader": "Expert A",
+        "person_name": "Expert A",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "source_tier": 1,
+        "source_type": "official",
+        "published": "2026-09-19T10:00:00+00:00",
+    })
+    newer = _voice("UNIQUE-VOICE-TIER-FRESHNESS newer frontier AI")
+    newer.update({
+        "watch_person": "Expert B",
+        "leader": "Expert B",
+        "person_name": "Expert B",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "source_tier": 3,
+        "source_type": "specialist",
+        "published": "2026-09-21T10:00:00+00:00",
+    })
+    selected = choose_voices_candidate([older, newer])
+    assert selected and selected[0]["watch_person"] == "Expert B"
+
+
 def test_voice_lane_is_independent_and_capped_at_one():
     items = [_voice("Interview A"), _voice("Interview B")]
     selected = choose_voices_candidate(items)

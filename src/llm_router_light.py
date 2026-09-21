@@ -91,10 +91,13 @@ def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     r.raise_for_status(); return _extract_message(r.json())
 
 OLLAMA_FREE_DEFAULT_MODEL = "qwen3:1.7b"
+OLLAMA_FREE_MODELS = {"qwen3:1.7b"}
 
 def _ollama_local(system_prompt, user_content):
     """Zero-cost local emergency provider using Ollama; no API key or billing dependency."""
     model = (os.getenv("RADAR_OLLAMA_FREE_MODEL") or OLLAMA_FREE_DEFAULT_MODEL).strip()
+    if model not in OLLAMA_FREE_MODELS:
+        raise QuotaExceeded(f"OllamaLocal rejected non-audited model={model}")
     payload = {
         "model": model,
         "messages": [
@@ -176,7 +179,7 @@ def _huggingface(system_prompt,user_content):
     return response.choices[0].message.content
 
 def _chain_key():
-    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN","POLLINATIONS_API_KEY")) + (os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK","0"),os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_POLLINATIONS_FREE_FALLBACK","0"),os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_OLLAMA_FREE_MODEL",OLLAMA_FREE_DEFAULT_MODEL),os.getenv("RADAR_POLLINATIONS_FREE_MODEL",POLLINATIONS_FREE_DEFAULT_MODEL),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
+    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN")) + (os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK","0"),os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_OLLAMA_FREE_MODEL",OLLAMA_FREE_DEFAULT_MODEL),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
 
 def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY

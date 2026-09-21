@@ -1,4 +1,4 @@
-name: Provider Grok Free Smoke Test
+name: Provider Local Ollama Free Smoke Test
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  grok-free-smoke:
+  local-ollama-free-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
@@ -56,5 +56,5 @@ jobs:
           content = body["message"]["content"]
           parsed = json.loads(content)
           assert parsed.get("ok") is True, parsed
-          print("GROK_FREE_SMOKE_PASS", json.dumps(parsed, ensure_ascii=False))
+          print("LOCAL_OLLAMA_FREE_SMOKE_PASS", json.dumps(parsed, ensure_ascii=False))
           PY

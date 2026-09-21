@@ -220,8 +220,12 @@ def _install_production_circuit_breaker() -> None:
                 break
 
         emergency_fallbacks = []
+        if os.getenv("RADAR_ENABLE_GROK_FREE_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("OPENROUTER_API_KEY"):
+            emergency_fallbacks.append(("GrokFree", router._grok_free))
         if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("GEMINI_API_KEY"):
             emergency_fallbacks.append(("Gemini", router._gemini))
+        if os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("OPENROUTER_API_KEY"):
+            emergency_fallbacks.append(("OpenRouterFreeRouter", router._openrouter_free_router))
         if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("HF_TOKEN"):
             emergency_fallbacks.append(("HuggingFace", router._huggingface))
 

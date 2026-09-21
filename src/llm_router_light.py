@@ -90,6 +90,79 @@ def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     if r.status_code == 402: raise QuotaExceeded(f"OpenRouter {model}: HTTP 402 account_limit {r.text[:800]}")
     r.raise_for_status(); return _extract_message(r.json())
 
+GROK_FREE_DEFAULT_MODEL = "x-ai/grok-4.1-fast:free"
+OPENROUTER_FREE_ROUTER_MODEL = "openrouter/free"
+
+def _openrouter_free_model(system_prompt, user_content, model, *, label):
+    """Call a zero-price OpenRouter endpoint directly, outside the normal model registry."""
+    key = os.getenv("OPENROUTER_API_KEY")
+    if not key:
+        return None
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "max_tokens": 850,
+        "temperature": 0.15,
+        "response_format": {"type": "json_object"},
+    }
+    headers = {
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
+        "X-Title": "AI Future Radar",
+    }
+    try:
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=8,
+        )
+        if response.status_code in (401, 403, 404, 429):
+            raise QuotaExceeded(
+                f"{label} {model}: HTTP {response.status_code} {response.text[:800]}"
+            )
+        if response.status_code == 402:
+            raise QuotaExceeded(
+                f"{label} {model}: HTTP 402 account_limit {response.text[:800]}"
+            )
+        if response.status_code == 400:
+            detail = response.text[:1200].lower()
+            if "response_format" in detail or "structured" in detail or "json" in detail:
+                fallback_payload = dict(payload)
+                fallback_payload.pop("response_format", None)
+                response = requests.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers=headers,
+                    json=fallback_payload,
+                    timeout=8,
+                )
+        response.raise_for_status()
+        return _extract_message(response.json())
+    except QuotaExceeded:
+        raise
+    except requests.RequestException as exc:
+        raise QuotaExceeded(f"{label} {model}: {type(exc).__name__}: {exc}") from exc
+
+def _grok_free(system_prompt, user_content):
+    return _openrouter_free_model(
+        system_prompt,
+        user_content,
+        (os.getenv("RADAR_GROK_FREE_MODEL") or GROK_FREE_DEFAULT_MODEL).strip(),
+        label="GrokFree",
+    )
+
+def _openrouter_free_router(system_prompt, user_content):
+    return _openrouter_free_model(
+        system_prompt,
+        user_content,
+        OPENROUTER_FREE_ROUTER_MODEL,
+        label="OpenRouterFreeRouter",
+    )
+
 def _gemini(system_prompt, user_content):
     key = os.getenv("GEMINI_API_KEY")
     if not key: return None
@@ -138,7 +211,7 @@ def _huggingface(system_prompt,user_content):
     return response.choices[0].message.content
 
 def _chain_key():
-    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN")) + (os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
+    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN")) + (os.getenv("RADAR_ENABLE_GROK_FREE_FALLBACK","0"),os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_GROK_FREE_MODEL",GROK_FREE_DEFAULT_MODEL),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
 
 def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY

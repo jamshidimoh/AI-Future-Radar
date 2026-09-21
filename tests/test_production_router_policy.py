@@ -432,9 +432,8 @@ def test_grok_free_is_available_as_final_free_emergency_fallback(monkeypatch):
     assert provider == "GrokFree"
 
 
-def test_grok_free_direct_call_uses_native_json_and_same_openrouter_key(monkeypatch):
+def test_grok_free_direct_call_uses_keyless_pollinations_endpoint(monkeypatch):
     _reset(monkeypatch)
-    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
     calls = []
 
     class FakeResponse:
@@ -454,15 +453,24 @@ def test_grok_free_direct_call_uses_native_json_and_same_openrouter_key(monkeypa
 
     assert result == '{"title":"ok"}'
     assert len(calls) == 1
-    assert calls[0][0] == "https://openrouter.ai/api/v1/chat/completions"
-    payload = calls[0][1]["json"]
-    assert payload["model"] == "x-ai/grok-4.1-fast:free"
-    assert payload["response_format"] == {"type": "json_object"}
+    assert calls[0][0] == "https://text.pollinations.ai/openai"
+    assert calls[0][1]["json"]["model"] == "grok"
+    assert "Authorization" not in calls[0][1]["headers"]
 
 
-def test_pollinations_free_is_available_as_final_free_emergency_fallback(monkeypatch):
+def test_grok_free_rejects_non_keyless_model(monkeypatch):
     _reset(monkeypatch)
-    monkeypatch.setenv("RADAR_ENABLE_POLLINATIONS_FREE_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_GROK_FREE_MODEL", "x-ai/grok-4.3")
+    try:
+        router._grok_free("system", "user")
+    except router.QuotaExceeded:
+        return
+    assert False, "non-keyless Grok model must be rejected"
+
+
+def test_grok_free_is_available_as_final_free_emergency_fallback(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("RADAR_ENABLE_GROK_FREE_FALLBACK", "1")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
     apply()
 
@@ -474,34 +482,8 @@ def test_pollinations_free_is_available_as_final_free_emergency_fallback(monkeyp
     monkeypatch.setattr(router, "_litellm_model_list", lambda: [
         {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}
     ])
-    monkeypatch.setattr(router, "_pollinations_free", lambda *_args, **_kwargs: '{"title":"pollinations-free"}')
+    monkeypatch.setattr(router, "_grok_free", lambda *_args, **_kwargs: '{"title":"grok-free"}')
 
     result, provider = router._call_litellm("system", "user")
-    assert result == '{"title":"pollinations-free"}'
-    assert provider == "PollinationsFree"
-
-
-def test_pollinations_free_uses_anonymous_legacy_endpoint_without_key(monkeypatch):
-    _reset(monkeypatch)
-    calls = []
-
-    class FakeResponse:
-        status_code = 200
-        text = ""
-        def raise_for_status(self):
-            return None
-        def json(self):
-            return {"choices": [{"message": {"content": '{"title":"ok"}'}}]}
-
-    def fake_post(url, **kwargs):
-        calls.append((url, kwargs))
-        return FakeResponse()
-
-    monkeypatch.setattr(router.requests, "post", fake_post)
-    result = router._pollinations_free("system", "user")
-
-    assert result == '{"title":"ok"}'
-    assert len(calls) == 1
-    assert calls[0][0] == "https://text.pollinations.ai/openai"
-    assert calls[0][1]["json"]["model"] == "grok"
-
+    assert result == '{"title":"grok-free"}'
+    assert provider == "GrokFree"

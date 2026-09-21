@@ -90,8 +90,15 @@ def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     if r.status_code == 402: raise QuotaExceeded(f"OpenRouter {model}: HTTP 402 account_limit {r.text[:800]}")
     r.raise_for_status(); return _extract_message(r.json())
 
-GROK_FREE_DEFAULT_MODEL = "x-ai/grok-4.1-fast:free"
+GROK_FREE_DEFAULT_MODEL = "grok"
 OPENROUTER_FREE_ROUTER_MODEL = "openrouter/free"
+POLLINATIONS_KEYLESS_MODELS = {
+    "grok", "grok-large", "deepseek", "mistral", "mistral-large",
+    "openai", "openai-fast", "openai-large", "qwen-large",
+    "qwen-coder", "qwen-coder-large", "kimi", "gemini-flash-lite-3.1",
+    "gemini-search", "nova", "nova-fast", "glm", "minimax",
+    "perplexity-fast", "perplexity-reasoning", "polly",
+}
 
 def _openrouter_free_model(system_prompt, user_content, model, *, label):
     """Call a zero-price OpenRouter endpoint directly, outside the normal model registry."""
@@ -150,9 +157,46 @@ def _openrouter_free_model(system_prompt, user_content, model, *, label):
     except requests.RequestException as exc:
         raise QuotaExceeded(f"{label} {model}: {type(exc).__name__}: {exc}") from exc
 
+def _pollinations_free(system_prompt, user_content):
+    """Free keyless Pollinations fallback restricted to audited keyless aliases."""
+    model = (os.getenv("RADAR_GROK_FREE_MODEL") or "grok").strip().casefold()
+    if model not in POLLINATIONS_KEYLESS_MODELS:
+        raise QuotaExceeded(f"PollinationsFree rejected non-keyless model={model}")
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "max_tokens": 700,
+        "temperature": 0.10,
+        "stream": False,
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
+        "X-Title": "AI Future Radar",
+    }
+    try:
+        response = requests.post(
+            "https://text.pollinations.ai/openai",
+            headers=headers,
+            json=payload,
+            timeout=8,
+        )
+        if response.status_code in (401, 402, 403, 404, 429, 503):
+            raise QuotaExceeded(
+                f"PollinationsFree {model}: HTTP {response.status_code} {response.text[:800]}"
+            )
+        response.raise_for_status()
+        return _extract_message(response.json())
+    except QuotaExceeded:
+        raise
+    except (requests.RequestException, ValueError) as exc:
+        raise QuotaExceeded(f"PollinationsFree {model}: {type(exc).__name__}: {exc}") from exc
+
 def _grok_free(system_prompt, user_content):
-    model = (os.getenv("RADAR_GROK_FREE_MODEL") or POLLINATIONS_FREE_DEFAULT_MODEL).strip()
-    return _pollinations_free(system_prompt, user_content, model=model)
+    return _pollinations_free(system_prompt, user_content)
 
 def _openrouter_free_router(system_prompt, user_content):
     return _openrouter_free_model(

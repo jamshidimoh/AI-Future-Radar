@@ -106,3 +106,26 @@ def test_voice_lane_does_not_promote_unnamed_event_stream_to_expert_voice():
     item["source_name"] = "World Economic Forum"
     item["content_type"] = "talk"
     assert not is_voices_candidate(item)
+
+
+def test_voice_lane_preserves_registered_expert_identity_when_type_is_leader_signal():
+    item = {
+        "title": "Sam Altman discusses frontier AI",
+        "summary": "A substantive discussion of frontier AI, agents, and model development.",
+        "mission_area": "ai_core",
+        "content_type": "leader_signal",
+        "source": "Google News",
+        "source_type": "news_aggregator",
+        "source_tier": 1,
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "leader_priority": 10,
+        "leader_signal_classification": {"accepted": True, "interview": True, "context": True},
+    }
+    selected = choose_voices_candidate([item])
+    assert selected
+    assert "Sam Altman" in selected[0]["voice_identity_people"]
+
+

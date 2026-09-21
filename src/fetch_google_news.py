@@ -1,6 +1,7 @@
 """دریافت اخبار به‌روز از Google News RSS با متادیتای کیفیت و Leader Watchlist."""
 import logging
 import random
+import re
 import time
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -70,6 +71,14 @@ _LEADER_SIGNAL_CONTEXT_TERMS = (
 # Keep a bounded safety cap, but large enough to cover the current watchlist without
 # silently dropping later people from generic companion discovery.
 _MAX_LEADER_SIGNAL_QUERIES = 64
+
+
+def _contains_any_phrase(text: str, terms: tuple[str, ...]) -> bool:
+    normalized = str(text or "").casefold()
+    return any(
+        re.search(rf"(?<!\\w){re.escape(term.casefold())}(?!\\w)", normalized)
+        for term in terms
+    )
 
 
 def _parse_feed(url):
@@ -270,8 +279,8 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
     person_signal = bool(watch_person and str(watch_person).lower() in text)
     query_person_signal = bool(watch_person and str(watch_person).lower() in query_text)
     query_context_signal = any(term in query_text for term in _LEADER_SIGNAL_CONTEXT_TERMS)
-    technology_context = any(term in text for term in _LEADER_STRONG_CONTEXT_TERMS)
-    query_technology_context = any(term in query_text for term in _LEADER_STRONG_CONTEXT_TERMS)
+    technology_context = _contains_any_phrase(text, _LEADER_STRONG_CONTEXT_TERMS)
+    query_technology_context = _contains_any_phrase(query_text, _LEADER_STRONG_CONTEXT_TERMS)
     substantive_analysis = bool(analytical and context)
     # Google News snippets frequently omit the interviewed person's name. When
     # the source came from an explicit named watchlist query, preserve the item

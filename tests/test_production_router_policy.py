@@ -1,7 +1,8 @@
-import pytest
 import sys
 import time
 from pathlib import Path
+
+import pytest
 
 import src.llm_router_light as router
 from src.production_router_policy import apply

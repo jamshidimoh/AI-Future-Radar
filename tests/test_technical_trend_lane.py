@@ -45,3 +45,19 @@ def test_arxiv_reddit_excluded():
             "category": "ai",
         }
     )
+
+
+
+def test_frontier_capability_candidate_is_eligible():
+    item = {
+        "title": "Gemini Robotics 2 introduces a new capability for autonomous action",
+        "summary": "A frontier model improves robotics performance on new situations.",
+        "source": "Google DeepMind",
+        "source_type": "official",
+        "source_tier": 1,
+        "category": "ai",
+    }
+    assert is_technical_trend_candidate(item)
+    selected = choose_technical_trend_candidate([item])
+    assert len(selected) == 1
+    assert selected[0]["technical_trend_lane_selected"] is True

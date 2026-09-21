@@ -101,6 +101,8 @@ def _thematic_signal(item: dict[str, Any]) -> bool:
 def _ai_relevant(item: dict[str, Any]) -> bool:
     text = _text(item)
     mission = _mission(item)
+    if mission in {"mind", "mind_cognition"}:
+        return True
     ai_terms = (
         "artificial intelligence", "machine learning", "llm", "foundation model",
         "agentic", "reasoning", "frontier model", "ai safety", "ai governance",
@@ -123,7 +125,7 @@ def _importance_evidence(item: dict[str, Any]) -> bool:
     try:
         source_tier = int(item.get("source_tier", 3) or 3)
     except (TypeError, ValueError):
-        pass
+        source_tier = 3
 
     ctype = str(item.get("content_type") or "").strip().casefold()
     expert_deep = bool(item.get("expert_deep_lane"))
@@ -185,7 +187,17 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
         return True
     if interview and (registry_person or explicit_person):
         return True
-    return mission in {"future", "future_governance", "convergence", "ai", "ai_core", "mind"} and (registry_person or explicit_person)
+    if item.get("research_signal") and str(item.get("content_type") or "").strip().casefold() in {
+        "research", "paper", "study", "experiment"
+    }:
+        return True
+    if str(item.get("editorial_class") or "").strip().casefold() in {
+        "research_breakthrough", "convergence_signal", "leader_interview", "major_industry_news"
+    }:
+        return True
+    return mission in {"future", "future_governance", "convergence", "ai", "ai_core", "mind"} and (
+        registry_person or explicit_person
+    )
 
 
 def mind_ideas_voices_score(item: dict[str, Any]) -> float:

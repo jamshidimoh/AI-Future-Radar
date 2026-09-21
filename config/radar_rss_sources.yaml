@@ -279,7 +279,7 @@ rss_sources:
     discovery_only: true
 
   - name: "Y Combinator Startup Podcast"
-    url: "https://feeds.simplecast.com/3gQn0n8B"
+    url: "https://podcasts.ycombinator.com/feed.xml"
     tier: 2
     type: "expert_interviews"
     content_type: "interviews_podcasts"
@@ -288,7 +288,7 @@ rss_sources:
     discovery_only: true
 
   - name: "The Economist Podcasts - Technology"
-    url: "https://feeds.acast.com/public/shows/technology"
+    url: "https://access.acast.com/rss/ec380acc-fe13-46a0-991f-a1e508d126f8"
     tier: 2
     type: "expert_interviews"
     content_type: "interviews_podcasts"
@@ -297,7 +297,7 @@ rss_sources:
     discovery_only: true
 
   - name: "Times Tech"
-    url: "https://feeds.acast.com/public/shows/6155a1c6b3f7f2001e9d5a3f"
+    url: "https://feeds.acast.com/public/shows/8cf4cec7-5a0f-49c5-8ec9-36941b5c6b6e"
     tier: 2
     type: "expert_interviews"
     content_type: "interviews_podcasts"

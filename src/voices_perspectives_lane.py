@@ -11,8 +11,8 @@ from collections.abc import Iterable
 from datetime import datetime, timezone
 from typing import Any
 
-from src.priority_people import matched_priority_people
 from src.expert_registry import apply_expert_features
+from src.priority_people import matched_priority_people
 
 MAX_VOICES_PER_PERIOD = 1
 VOICES_RANK_WINDOW = 12

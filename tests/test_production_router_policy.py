@@ -15,7 +15,6 @@ def _reset(monkeypatch):
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
-    monkeypatch.delenv("RADAR_ENABLE_POLLINATIONS_FREE_FALLBACK", raising=False)
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -504,5 +503,5 @@ def test_pollinations_free_uses_anonymous_legacy_endpoint_without_key(monkeypatc
     assert result == '{"title":"ok"}'
     assert len(calls) == 1
     assert calls[0][0] == "https://text.pollinations.ai/openai"
-    assert calls[0][1]["json"]["model"] == "openai/gpt-oss-20b"
+    assert calls[0][1]["json"]["model"] == "grok"
 

@@ -151,12 +151,8 @@ def _openrouter_free_model(system_prompt, user_content, model, *, label):
         raise QuotaExceeded(f"{label} {model}: {type(exc).__name__}: {exc}") from exc
 
 def _grok_free(system_prompt, user_content):
-    return _openrouter_free_model(
-        system_prompt,
-        user_content,
-        (os.getenv("RADAR_GROK_FREE_MODEL") or GROK_FREE_DEFAULT_MODEL).strip(),
-        label="GrokFree",
-    )
+    model = (os.getenv("RADAR_GROK_FREE_MODEL") or POLLINATIONS_FREE_DEFAULT_MODEL).strip()
+    return _pollinations_free(system_prompt, user_content, model=model)
 
 def _openrouter_free_router(system_prompt, user_content):
     return _openrouter_free_model(
@@ -166,7 +162,7 @@ def _openrouter_free_router(system_prompt, user_content):
         label="OpenRouterFreeRouter",
     )
 
-POLLINATIONS_FREE_DEFAULT_MODEL = "openai/gpt-oss-20b"
+POLLINATIONS_FREE_DEFAULT_MODEL = "grok"
 POLLINATIONS_LEGACY_URL = "https://text.pollinations.ai/openai"
 POLLINATIONS_V1_URL = "https://gen.pollinations.ai/v1/chat/completions"
 
@@ -183,15 +179,16 @@ def _pollinations_free(system_prompt, user_content):
         "X-Title": "AI Future Radar",
         "HTTP-Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
     }
+    headers["Referer"] = "https://github.com/jamshidimoh/AI-Future-Radar"
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
         url = POLLINATIONS_V1_URL
         payload = {"model": model, "messages": messages, "max_tokens": 850, "temperature": 0.15}
     else:
-        # Legacy anonymous route is intentionally used only as a last-resort,
-        # because the new gateway is the supported production API.
+        # Current keyless catalog includes Grok and other free models. Use the
+        # legacy OpenAI-compatible route only for those keyless model aliases.
         url = POLLINATIONS_LEGACY_URL
-        payload = {"model": model, "messages": messages, "max_tokens": 850, "temperature": 0.15}
+        payload = {"model": model, "messages": messages, "max_tokens": 700, "temperature": 0.10}
     try:
         response = requests.post(url, headers=headers, json=payload, timeout=8)
         if response.status_code in (401, 402, 403, 404, 429, 503):

@@ -71,6 +71,29 @@ def test_voice_lane_title_only_prefilter_blocks_missing_summary_duplicate(monkey
     assert any("Already Published Voice" in text and "خلاصه:" in text for text in calls)
 
 
+def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priority_bias():
+    older = _voice("Sam Altman discusses frontier AI")
+    older.update({
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "leader_priority": 100,
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "published": "2026-08-20T10:00:00+00:00",
+    })
+    newer = _voice("Andrew Ng discusses frontier AI")
+    newer.update({
+        "watch_person": "Andrew Ng",
+        "leader": "Andrew Ng",
+        "leader_priority": 1,
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "published": "2026-09-21T10:00:00+00:00",
+    })
+    selected = choose_voices_candidate([older, newer])
+    assert selected and selected[0]["watch_person"] == "Andrew Ng"
+
+
 def test_voice_lane_is_independent_and_capped_at_one():
     items = [_voice("Interview A"), _voice("Interview B")]
     selected = choose_voices_candidate(items)

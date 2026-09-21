@@ -16,6 +16,9 @@ selection:
   distinct_sources_first: true
   replacement_buffer: 3
   diversity_quality_floor_ratio: 0.80
+  target_quality_floor_ratio: 0.88
+  freshness_weight: 10.0
+  freshness_half_life_hours: 36.0
 
 editorial:
   leader_priority_weight: 2

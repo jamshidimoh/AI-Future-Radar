@@ -80,3 +80,27 @@ def test_strategic_analysis_without_person_name_is_kept():
     assert result["accepted"] is True
     assert result["analytical"] is True
     assert result["context"] is True
+
+
+def test_named_watch_query_recovers_sparse_google_news_snippet():
+    result = classify_leader_signal(
+        "The full conversation is now available",
+        "A long-form discussion covers frontier AI systems and their future implications.",
+        "Sam Altman",
+        query_context='"Sam Altman" (interview OR podcast OR future OR artificial intelligence)',
+        content_type="interview",
+    )
+    assert result["accepted"] is True
+    assert result["person_signal"] is False
+    assert result["query_person_signal"] is True
+
+
+def test_named_watch_query_does_not_rescue_non_ai_query():
+    result = classify_leader_signal(
+        "The full conversation is now available",
+        "A long-form discussion covers unrelated business topics.",
+        "Sam Altman",
+        query_context='"Sam Altman" (interview OR podcast)',
+        content_type="interview",
+    )
+    assert result["accepted"] is False

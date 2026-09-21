@@ -53,6 +53,7 @@ quality:
   generic_why_blocked: true
   source_evidence_required: true
   adaptive_normal_score_policy: true
+  mind_ideas_voices_score_floor: 50.0
 
 source_boundary:
   excluded_domains: [arxiv.org, export.arxiv.org]

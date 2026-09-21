@@ -112,7 +112,7 @@ def _ai_relevant(item: dict[str, Any]) -> bool:
     )
     if any(term in text for term in ai_terms):
         return True
-    return bool(re.search(r"\\bai\\b", text))
+    return bool(re.search(r"\bai\b", text))
 
 
 def _importance_evidence(item: dict[str, Any]) -> bool:

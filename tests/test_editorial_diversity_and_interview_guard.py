@@ -75,3 +75,42 @@ def test_same_entity_distinct_event_stays_publishable(tmp_path):
     text = "<b>📡 Sam Altman says OpenAI going public in 2026 would be ill-advised</b>\n<blockquote>📌 <b>خلاصه</b>\nSam Altman said taking OpenAI public in 2026 would be ill-advised.</blockquote>"
     allowed, _ = check_before_publish(text, "https://example.com/new")
     assert allowed
+
+
+
+def test_priority_people_lane_prefers_newest_substantive_story_over_higher_score_old_story():
+    from period_ranked_pipeline import _priority_story_diversified
+
+    old = _item("Older Sam Altman interview", "Major Interview Publisher", 99, category="ai", content_type="interview", tier=1, interview_signal=True)
+    old.update({
+        "leader": "Sam Altman",
+        "watch_person": "Sam Altman",
+        "is_leader_watch": True,
+        "priority_story_people": ["sam altman"],
+        "published": "2026-09-15T10:00:00Z",
+        "signal_score": 90,
+        "leader_source_authority": 10,
+    })
+    new = _item("Newest Sam Altman interview", "Major Interview Publisher", 82, category="ai", content_type="interview", tier=1, interview_signal=True)
+    new.update({
+        "leader": "Sam Altman",
+        "watch_person": "Sam Altman",
+        "is_leader_watch": True,
+        "priority_story_people": ["sam altman"],
+        "published": "2026-09-21T18:00:00Z",
+        "signal_score": 70,
+        "leader_source_authority": 10,
+    })
+    selected = _priority_story_diversified([old, new])
+    assert [x["title"] for x in selected] == ["Newest Sam Altman interview"]
+
+
+def test_priority_people_lane_orders_different_people_by_freshness_not_person_priority():
+    from period_ranked_pipeline import _priority_story_diversified
+
+    old = _item("Old Demis Hassabis interview", "Publisher A", 99, category="ai", content_type="interview", tier=1, interview_signal=True)
+    old.update({"leader": "Demis Hassabis", "watch_person": "Demis Hassabis", "priority_story_people": ["demis hassabis"], "published": "2026-09-15T10:00:00Z", "leader_source_authority": 10})
+    new = _item("New Yann LeCun interview", "Publisher B", 80, category="ai", content_type="interview", tier=1, interview_signal=True)
+    new.update({"leader": "Yann LeCun", "watch_person": "Yann LeCun", "priority_story_people": ["yann lecun"], "published": "2026-09-21T18:00:00Z", "leader_source_authority": 9})
+    selected = _priority_story_diversified([old, new])
+    assert selected[0]["title"] == "New Yann LeCun interview"

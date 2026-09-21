@@ -125,3 +125,108 @@ rss_sources:
     content_type: "research"
     official: false
     mission: "ai"
+
+  - name: "Anthropic Newsroom"
+    url: "https://www.anthropic.com/news"
+    tier: 1
+    type: "ai_lab"
+    content_type: "official"
+    official: true
+    mission: "ai_safety_agents_future"
+
+  - name: "OpenAI Research"
+    url: "https://openai.com/research/index/"
+    tier: 1
+    type: "ai_lab"
+    content_type: "official"
+    official: true
+    mission: "frontier_ai_research_agents_science"
+
+  - name: "Google DeepMind"
+    url: "https://deepmind.google/discover/blog/"
+    tier: 1
+    type: "ai_lab"
+    content_type: "official"
+    official: true
+    mission: "frontier_ai_science_robotics_neuroscience"
+
+  - name: "Nature - Artificial Intelligence"
+    url: "https://www.nature.com/subjects/artificial-intelligence.rss"
+    tier: 1
+    type: "specialist_media"
+    content_type: "research"
+    official: true
+    mission: "ai_science"
+
+  - name: "Nature - Neuroscience"
+    url: "https://www.nature.com/subjects/neuroscience.rss"
+    tier: 1
+    type: "specialist_media"
+    content_type: "research"
+    official: true
+    mission: "neuroscience_neuroai_bci"
+
+  - name: "Nature - Biotechnology"
+    url: "https://www.nature.com/subjects/biotechnology.rss"
+    tier: 1
+    type: "specialist_media"
+    content_type: "research"
+    official: true
+    mission: "ai_biology_biotech"
+
+  - name: "Nature - Quantum Information"
+    url: "https://www.nature.com/subjects/quantum-information.rss"
+    tier: 1
+    type: "specialist_media"
+    content_type: "research"
+    official: true
+    mission: "ai_quantum"
+
+  - name: "IEEE Spectrum - Robotics"
+    url: "https://spectrum.ieee.org/feeds/topic/robotics.rss"
+    tier: 2
+    type: "specialist_media"
+    content_type: "technology"
+    official: true
+    mission: "robotics_embodied_ai"
+
+  - name: "MIT News - Artificial Intelligence"
+    url: "https://news.mit.edu/topic/artificial-intelligence2"
+    tier: 2
+    type: "research_media"
+    content_type: "research"
+    official: true
+    mission: "ai_science_neuroscience_future"
+
+  - name: "MIT News - Brain and Cognitive Sciences"
+    url: "https://news.mit.edu/topic/brain-and-cognitive-sciences"
+    tier: 2
+    type: "research_media"
+    content_type: "research"
+    official: true
+    mission: "mind_neuroscience_bci"
+
+  - name: "Stanford HAI"
+    url: "https://hai.stanford.edu/news"
+    tier: 1
+    type: "research_institute"
+    content_type: "research"
+    official: true
+    mission: "ai_society_policy_future"
+
+  - name: "Stanford Encyclopedia of Philosophy"
+    url: "https://plato.stanford.edu/"
+    tier: 1
+    type: "academic_reference"
+    content_type: "philosophy"
+    official: true
+    mission: "mind_consciousness_philosophy"
+    discovery_only: true
+
+  - name: "Center for AI Safety"
+    url: "https://www.safe.ai/"
+    tier: 2
+    type: "research_institute"
+    content_type: "safety"
+    official: true
+    mission: "ai_safety_risk"

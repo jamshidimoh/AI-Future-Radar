@@ -71,8 +71,9 @@ def test_voice_lane_title_only_prefilter_blocks_missing_summary_duplicate(monkey
     assert any("Already Published Voice" in text and "خلاصه:" in text for text in calls)
 
 
-def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priority_bias():
-    older = _voice("Sam Altman discusses frontier AI")
+def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priority_bias(monkeypatch):
+    monkeypatch.setattr(publication_guard, "check_before_publish", lambda *args, **kwargs: (True, "no_publication_conflict"))
+    older = _voice("UNIQUE-VOICE-FRESHNESS Sam Altman frontier AI")
     older.update({
         "watch_person": "Sam Altman",
         "leader": "Sam Altman",
@@ -81,7 +82,7 @@ def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priori
         "leader_watch_protected": True,
         "published": "2026-08-20T10:00:00+00:00",
     })
-    newer = _voice("Andrew Ng discusses frontier AI")
+    newer = _voice("UNIQUE-VOICE-FRESHNESS Andrew Ng frontier AI")
     newer.update({
         "watch_person": "Andrew Ng",
         "leader": "Andrew Ng",

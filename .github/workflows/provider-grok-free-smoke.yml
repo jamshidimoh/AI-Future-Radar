@@ -19,9 +19,9 @@ jobs:
           import json
           import requests
 
-          url = "https://text.pollinations.ai/openai"
+          url = "https://keylessai.thryx.workers.dev/v1/chat/completions"
           payload = {
-              "model": "grok",
+              "model": "grok-4.1-mini:free",
               "messages": [
                   {
                       "role": "system",
@@ -35,6 +35,7 @@ jobs:
           }
           headers = {
               "Content-Type": "application/json",
+              "Authorization": "Bearer not-needed",
               "Referer": "https://github.com/jamshidimoh/AI-Future-Radar",
               "X-Title": "AI Future Radar",
           }

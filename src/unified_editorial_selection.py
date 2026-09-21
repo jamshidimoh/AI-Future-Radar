@@ -423,7 +423,13 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             if not pool:
                 break
             baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and (target_key not in {"mind_future_target", "mind_cognition_target"} or mission_area(x) != "ai_core")]
+            # A diversity lane is opportunistic: compare it against the strongest
+            # admissible non-target candidate, not merely the remaining lane subset.
+            # This prevents a weak mind/future item from entering just because the
+            # target lane itself has a candidate.
             baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
+            global_quality = max((candidate_score(x) for x in ordered if id(x) not in p.selected_ids), default=0.0)
+            baseline_score = max(baseline_score, global_quality)
             candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
             if candidate is None:
                 break

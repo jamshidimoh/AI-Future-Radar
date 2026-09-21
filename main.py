@@ -12,6 +12,7 @@ from src.fetch_google_news import fetch_google_news_items
 from src.fetch_rss import fetch_rss_items
 from src.fetch_youtube import fetch_youtube_items
 from src.interview_evidence import has_interview_evidence
+from src.voices_perspectives_lane import choose_voices_candidate
 from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
@@ -41,6 +42,13 @@ def _is_mind_ideas_voices(item: dict) -> bool:
         item.get("mind_lane_selected")
         or item.get("protected_editorial_lane") == "mind_ideas_voices"
         or item.get("lane") == "mind_ideas_voices"
+    )
+
+
+def _is_voices_perspectives(item: dict) -> bool:
+    return bool(
+        item.get("voices_perspectives_lane_selected")
+        or item.get("editorial_lane") == "voices_perspectives"
     )
 
 
@@ -326,6 +334,38 @@ def _summarize_selected(items, summarize_fn):
         return list(executor.map(lambda item: _safe_summarize(item, summarize_fn), items))
 
 
+def _voice_lane_recovery(selected, editorial_pool, summarize_fn):
+    """Refill the independent Expert Voice slot only when its selected item fails QA."""
+    if any(_is_voices_perspectives(item) and not item.get("_publication_blocked") for item in selected):
+        return []
+    selected_ids = {_publication_identity(item) for item in selected}
+    pool = [
+        item for item in editorial_pool
+        if _publication_identity(item) not in selected_ids
+        and not item.get("_publication_blocked")
+    ]
+    candidate = (choose_voices_candidate(pool, existing_ids=set(), max_items=1) or [None])[0]
+    if candidate is None:
+        print("[Voice Lane Recovery] no independent expert candidate available", flush=True)
+        return []
+    summary = _safe_summarize(candidate, summarize_fn)
+    if not summary:
+        print(
+            f"[Voice Lane Recovery] replacement failed title={str(candidate.get('title',''))[:120]}",
+            flush=True,
+        )
+        return []
+    candidate.update(summary)
+    candidate["_voice_lane_recovery"] = True
+    print(
+        f"[Voice Lane Recovery] recovered rank={candidate.get('voices_period_rank')} "
+        f"score={candidate.get('voices_perspectives_score')} "
+        f"title={str(candidate.get('title',''))[:120]}",
+        flush=True,
+    )
+    return [(candidate, summary)]
+
+
 def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
     from src.unified_editorial_selection import load_editorial_contract
     contract = load_editorial_contract()
@@ -608,6 +648,11 @@ def main(hooks=None):
             item["_publication_blocked"] = True
             print(f"[Editorial Gate] skipped candidate: {str(item.get('title',''))[:120]}", flush=True)
         item["source_image"] = resolve_image_fn(item)
+    voice_recovery = _voice_lane_recovery(selected, editorial_pool, summarize_fn)
+    for candidate, _summary in voice_recovery:
+        candidate["source_image"] = resolve_source_image(candidate)
+        selected.append(candidate)
+
     mission_recovery = _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes)
     for candidate, _summary in mission_recovery:
         candidate["source_image"] = resolve_source_image(candidate)

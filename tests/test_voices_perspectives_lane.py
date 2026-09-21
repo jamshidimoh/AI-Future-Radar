@@ -78,3 +78,31 @@ def test_voice_lane_is_independent_and_capped_at_one():
     assert selected[0]["editorial_lane"] == "voices_perspectives"
     assert selected[0]["normal_period_rank"] is None
     assert selected[0]["mind_period_rank"] is None
+
+    
+
+def test_voice_lane_uses_expert_registry_for_registered_podcast():
+    item = {
+        "title": "Dwarkesh Podcast: frontier AI conversation",
+        "summary": "A substantive discussion of frontier AI research, scaling, and reasoning.",
+        "mission_area": "ai_core",
+        "content_type": "podcast",
+        "source": "YouTube - Dwarkesh Patel",
+        "source_name": "Dwarkesh Patel",
+        "source_type": "podcast",
+        "source_tier": 1,
+        "published": "2026-09-20T10:00:00+00:00",
+    }
+    assert is_voices_candidate(item)
+    selected = choose_voices_candidate([item])
+    assert selected and selected[0]["voice_identity_people"] == ["Dwarkesh Patel"]
+    assert selected[0]["voice_expert_deep_lane"] is True
+
+
+def test_voice_lane_does_not_promote_unnamed_event_stream_to_expert_voice():
+    item = _voice("Annual Meetings of the Global Future Councils and Cybersecurity")
+    item.pop("person_name")
+    item["source"] = "YouTube - World Economic Forum"
+    item["source_name"] = "World Economic Forum"
+    item["content_type"] = "talk"
+    assert not is_voices_candidate(item)

@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from src.priority_people import matched_priority_people
+from src.expert_registry import apply_expert_features
 
 MAX_VOICES_PER_PERIOD = 1
 VOICES_RANK_WINDOW = 12
@@ -45,19 +46,35 @@ def _matched_people(item: dict[str, Any]) -> list[str]:
     except Exception: return []
 
 
-def _has_person_signal(item: dict[str, Any]) -> bool:
-    classification = item.get("leader_signal_classification") or {}
-    if isinstance(classification, dict) and classification.get("accepted"): return True
-    for key in ("is_leader_watch", "expert_signal", "expert_source_signal", "priority_person_signal"):
-        if item.get(key): return True
+def _expert_identity(item: dict[str, Any]) -> tuple[list[str], bool, float]:
     try:
-        if int(item.get("leader_priority", 0) or 0) >= 8: return True
-    except (TypeError, ValueError): pass
-    return bool(_matched_people(item) or any(str(item.get(k) or "").strip() for k in PERSON_KEYS))
+        apply_expert_features(item)
+    except Exception:
+        return [], False, 0.0
+    people = [str(x).strip() for x in (item.get("people") or []) if str(x).strip()]
+    return people, bool(item.get("expert_deep_lane")), float(item.get("expert_score", 0.0) or 0.0)
+
+
+def _has_person_signal(item: dict[str, Any]) -> bool:
+    expert_people, expert_deep_lane, _ = _expert_identity(item)
+    if expert_people or expert_deep_lane:
+        return True
+    return bool(
+        _matched_people(item)
+        or any(str(item.get(k) or "").strip() for k in PERSON_KEYS)
+    )
 
 
 def _priority_person_signal(item: dict[str, Any]) -> bool:
-    return bool(_matched_people(item)) or bool(item.get("is_leader_watch") or item.get("leader_watch_protected") or item.get("priority_person_signal"))
+    expert_people, expert_deep_lane, _ = _expert_identity(item)
+    return bool(
+        expert_people
+        or expert_deep_lane
+        or _matched_people(item)
+        or item.get("is_leader_watch")
+        or item.get("leader_watch_protected")
+        or item.get("priority_person_signal")
+    )
 
 
 def _ai_relevant(item: dict[str, Any]) -> bool:
@@ -76,8 +93,17 @@ def is_voices_candidate(item: dict[str, Any]) -> bool:
     if any(marker in _source_text(item) for marker in EXCLUDED_SOURCE_MARKERS): return False
     mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
     if mission not in MISSION_AREAS: return False
-    voice_signal = _has_voice_signal(item); person_signal = _has_person_signal(item); priority_person = _priority_person_signal(item)
-    return _ai_relevant(item) and person_signal and (voice_signal or priority_person)
+    expert_people, expert_deep_lane, _ = _expert_identity(item)
+    voice_signal = _has_voice_signal(item)
+    person_signal = _has_person_signal(item)
+    priority_person = _priority_person_signal(item)
+    substantive_identity = bool(
+        expert_people or expert_deep_lane or _matched_people(item)
+        or any(str(item.get(k) or "").strip() for k in PERSON_KEYS)
+    )
+    return _ai_relevant(item) and person_signal and substantive_identity and (
+        voice_signal or priority_person or expert_deep_lane
+    )
 
 
 def _recency_bonus(item: dict[str, Any]) -> float:
@@ -90,10 +116,16 @@ def _recency_bonus(item: dict[str, Any]) -> float:
 
 
 def voices_perspectives_score(item: dict[str, Any]) -> float:
-    score = 0.0; voice_signal = _has_voice_signal(item); priority_person = _priority_person_signal(item)
+    score = 0.0
+    voice_signal = _has_voice_signal(item)
+    priority_person = _priority_person_signal(item)
+    expert_people, expert_deep_lane, expert_score = _expert_identity(item)
     if voice_signal: score += 24.0
     if _has_person_signal(item): score += 18.0
     if priority_person: score += 12.0
+    if expert_people: score += 8.0
+    if expert_deep_lane: score += 12.0
+    score += min(8.0, expert_score * 0.08)
     try: priority = int(item.get("leader_priority", 0) or 0)
     except (TypeError, ValueError): priority = 0
     score += min(18.0, priority * 1.5)
@@ -150,7 +182,12 @@ def choose_voices_candidate(candidates: Iterable[dict[str, Any]], *, existing_id
     for item in candidates or []:
         if id(item) in existing_ids or not is_voices_candidate(item): continue
         if _already_published_conflict(item): continue
-        item["voices_perspectives_score"] = voices_perspectives_score(item); eligible.append(item)
+        item["voices_perspectives_score"] = voices_perspectives_score(item)
+        expert_people, expert_deep_lane, expert_score = _expert_identity(item)
+        item["voice_identity_people"] = expert_people
+        item["voice_expert_deep_lane"] = expert_deep_lane
+        item["voice_expert_score"] = expert_score
+        eligible.append(item)
     eligible.sort(key=lambda x: (-float(x.get("voices_perspectives_score", 0) or 0), str(x.get("published") or "")))
     selected = eligible[:max(0, int(max_items))]
     for rank, item in enumerate(selected, 1):

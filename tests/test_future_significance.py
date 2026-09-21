@@ -147,3 +147,21 @@ def test_substantive_importance_accepts_consequential_capability_change():
         "editorial_class": "ai_signal",
     }
     assert substantive_importance_ok(item)
+
+def test_real_runtime_bureo_fishing_nets_candidate_is_not_substantively_important():
+    from src.future_significance import substantive_importance_ok
+
+    # Regression fixture from production Run #1138: this candidate passed
+    # topical mission relevance but was not consequential enough to consume a
+    # Telegram slot in the mind/ideas/voices lane.
+    item = {
+        "title": "Bureo: تبدیل شبکه‌های ماهیگیری دور ریخته به پارچه‌های نوین",
+        "summary": "فرآیندی برای تبدیل شبکه‌های ماهیگیری دورریخته‌شده به مواد و پارچه‌های جدید.",
+        "content_type": "news",
+        "source": "YouTube - a16z",
+        "source_tier": 2,
+        "category": "mind",
+        "mission_area": "mind_cognition",
+        "editorial_class": "mind_ideas_voices",
+    }
+    assert not substantive_importance_ok(item)

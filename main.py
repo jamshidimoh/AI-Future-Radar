@@ -280,7 +280,7 @@ def _publication_summary_budget(items, max_posts, policy):
     eligible_protected = [x for x in protected if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= PROTECTED_SUMMARY_SCORE_FLOOR]
     normal_window = max_posts + buffer
     bounded = eligible_protected[:max_posts] + normal[:normal_window] + mind
-    print(f"[Publication Summary Budget] input={len(items)} protected={len(eligible_protected)} mind_ideas_voices={len(mind)} normal_window={normal_window} output={len(bounded)} normal_limit={normal_window} mind_limit={MAX_MIND_IDEAS_VOICES_PER_PERIOD} replacement_buffer={buffer} normal_score_floor={NORMAL_SCORE_FLOOR} mind_score_floor=not_applied", flush=True)
+    print(f"[Publication Summary Budget] input={len(items)} protected={len(eligible_protected)} mind_ideas_voices={len(mind)} normal_window={normal_window} output={len(bounded)} normal_limit={normal_window} mind_limit={MAX_MIND_IDEAS_VOICES_PER_PERIOD} replacement_buffer={buffer} normal_score_floor={NORMAL_SCORE_FLOOR} mind_score_floor=not_applied mind_quality_floor={MIND_IDEAS_VOICES_SCORE_FLOOR}", flush=True)
     return bounded
 
 
@@ -687,7 +687,16 @@ def main(hooks=None):
             if identity in publication_attempted:
                 continue
             mind = _is_mind_ideas_voices(candidate)
-            score = float(candidate.get("mind_editorial_score", candidate.get("final_editorial_score", candidate.get("editorial_score", 0))) or 0)
+            raw_score = (
+                candidate.get("mind_editorial_score")
+                if mind
+                else candidate.get("final_editorial_score", candidate.get("editorial_score", 0))
+            )
+            score = float(
+                raw_score if raw_score is not None else mind_ideas_voices_score(candidate) if mind else 0
+            )
+            if mind and "mind_editorial_score" not in candidate:
+                score = mind_ideas_voices_score(candidate)
             if mind and score < MIND_IDEAS_VOICES_SCORE_FLOOR:
                 continue
             if not mind:

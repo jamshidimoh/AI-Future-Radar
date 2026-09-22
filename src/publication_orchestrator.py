@@ -102,6 +102,8 @@ def _remember_current_run_publication(story: Mapping[str, Any]) -> None:
             "summary": str(story.get("summary") or story.get("description") or "").strip(),
             "link": str(story.get("link") or story.get("url") or "").strip(),
             "leader": str(story.get("leader") or story.get("watch_person") or "").strip(),
+            "person_name": str(story.get("person_name") or story.get("watch_person") or story.get("leader") or "").strip(),
+            "people_lane": bool(story.get("people_lane")),
         }
     )
 

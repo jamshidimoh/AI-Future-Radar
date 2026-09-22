@@ -18,13 +18,13 @@ from src.editorial_quality_policy import (
     protected_score_allowed,
 )
 from src.logging_setup import configure_logging
+from src.people_watch import item_timestamp
 from src.priority_people import is_substantive_priority_interview
 from src.protected_editorial_lane import choose_additive_candidates
 from src.state_io import StateCorruptionError, load_json_state
 from src.technical_trend_lane import choose_technical_trend_candidate
 from src.unified_editorial_selection import load_editorial_contract
 from src.voices_perspectives_lane import MAX_VOICES_PER_PERIOD, choose_voices_candidate, is_voices_candidate
-from src.people_watch import item_timestamp
 
 logger = logging.getLogger(__name__)
 

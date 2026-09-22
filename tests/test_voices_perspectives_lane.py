@@ -155,3 +155,18 @@ def test_voice_lane_preserves_registered_expert_identity_when_type_is_leader_sig
     assert "Sam Altman" in selected[0]["voice_identity_people"]
 
 
+
+
+def test_voice_lane_prefers_newer_direct_interview_over_older_higher_tier():
+    older = _voice("Older expert interview")
+    older["published"] = "2026-09-18T10:00:00+00:00"
+    older["source_tier"] = 1
+    older["person_name"] = "David Chalmers"
+
+    newer = _voice("Newer expert interview")
+    newer["published"] = "2026-09-22T06:00:00+00:00"
+    newer["source_tier"] = 3
+    newer["person_name"] = "Anil Seth"
+
+    selected = choose_voices_candidate([older, newer], max_items=1)
+    assert selected and selected[0]["title"] == "Newer expert interview"

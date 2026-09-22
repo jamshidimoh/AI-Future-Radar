@@ -351,6 +351,7 @@ def _call_litellm(system_prompt,user_content):
     return None,None
 
 def call_llm_with_fallback(system_prompt,user_content,providers=None):
+    global _PRODUCTION_CIRCUIT_OPEN, _OLLAMA_CIRCUIT_OPEN
     canonical_chain = providers is None or isinstance(providers,ProductionQualityChain)
     production_mode = os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}
     if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED and _PRODUCTION_CIRCUIT_OPEN and _OLLAMA_CIRCUIT_OPEN:
@@ -371,7 +372,6 @@ def call_llm_with_fallback(system_prompt,user_content,providers=None):
                     print("[Production Router Bridge] success=OllamaLocal:qwen3:1.7b emergency_fallback=true", flush=True)
                     return local_result, "OllamaLocal:qwen3:1.7b"
             except Exception as exc:
-                global _OLLAMA_CIRCUIT_OPEN
                 _OLLAMA_CIRCUIT_OPEN = True
                 logger.warning("Local Ollama emergency fallback failed: %s", exc, exc_info=True)
                 print(f"[Production Router Bridge] OllamaLocal failed={type(exc).__name__}: {exc}; circuit_open=true", flush=True)

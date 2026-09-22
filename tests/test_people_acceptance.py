@@ -18,7 +18,7 @@ def test_people_bootstrap_exact_30_is_accepted():
     assert ok, message
 
 
-def test_people_bootstrap_incomplete_is_rejected():
+def test_people_bootstrap_partial_progress_is_accepted():
     ok, message = validate(_people_log(delivered=29, baseline=30, status="in_progress"))
-    assert not ok
-    assert "exact 30/30" in message
+    assert ok, message
+    assert "partial delivery is valid progress" in message

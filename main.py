@@ -19,6 +19,7 @@ from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, mind_ide
 from src.publication_contract import unique_candidates
 from src.rejection_telemetry import build_event, emit
 from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
+from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, load_people_watchlist, now_iso, post_bootstrap_candidates, identity as people_identity
 from src.signal_engine import enrich_signal_items
 from src.state_io import StateCorruptionError
 from src.story_gate import gate_story_candidates
@@ -36,6 +37,7 @@ TELEGRAM_SAFE_TEXT_LIMIT = 3900
 PROTECTED_SUMMARY_SCORE_FLOOR = 60.0
 NORMAL_SCORE_FLOOR = CANONICAL_NORMAL_SCORE_FLOOR
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 2
+PEOPLE_BOOTSTRAP_RESULT = None
 
 
 def _is_mind_ideas_voices(item: dict) -> bool:
@@ -269,7 +271,9 @@ def _split_protected(items, max_protected=2):
 
 def _publication_summary_budget(items, max_posts, policy):
     buffer = max(0, int(policy.get("replacement_buffer", 3) or 3))
-    mind = [x for x in items if _is_mind_ideas_voices(x)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
+    people = [x for x in items if x.get("people_lane")]
+    people_ids = {id(x) for x in people}
+    mind = [x for x in items if id(x) not in people_ids and _is_mind_ideas_voices(x)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
     mind_ids = {id(x) for x in mind}
     voices = [x for x in items if _is_voices_perspectives(x)]
     voices = voices[:1]
@@ -280,6 +284,7 @@ def _publication_summary_budget(items, max_posts, policy):
     protected = [
         x for x in items
         if (x.get("protected_slot") or x.get("protected_content"))
+        and id(x) not in people_ids
         and id(x) not in mind_ids
         and id(x) not in voices_ids
         and id(x) not in technical_ids
@@ -287,7 +292,7 @@ def _publication_summary_budget(items, max_posts, policy):
     special_ids = mind_ids | voices_ids | technical_ids
     normal = [
         x for x in items
-        if id(x) not in special_ids and x not in protected
+        if id(x) not in people_ids and id(x) not in special_ids and x not in protected
     ]
     eligible_protected = [
         x for x in protected
@@ -303,6 +308,7 @@ def _publication_summary_budget(items, max_posts, policy):
         + technical
         + mind
         + voices
+        + people
     )
     print(
         f"[Publication Summary Budget] input={len(items)} protected={len(eligible_protected)} "
@@ -611,6 +617,16 @@ def main(hooks=None):
     persist_fn = hooks.get("persist_item_success", _persist_item_success)
     config = load_yaml(CONFIG_PATH)
     leader_config = load_yaml(LEADER_CONFIG_PATH)
+    people_watchlist = load_people_watchlist(LEADER_CONFIG_PATH)
+    cadence_state_path = ROOT / "data" / "publication_state.json"
+    try:
+        import json
+        cadence_snapshot = json.loads(cadence_state_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        cadence_snapshot = {}
+    people_state = cadence_snapshot.get("people_bootstrap", {}) if isinstance(cadence_snapshot, dict) else {}
+    people_bootstrap_mode = str(people_state.get("status") or "").casefold() != "complete"
+    people_bootstrap_at = str(people_state.get("bootstrap_at") or "").strip() or now_iso()
     selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {})
     policy = load_yaml(SELECTION_POLICY_PATH).get("editorial", {})
     categories = config["categories"]
@@ -634,12 +650,12 @@ def main(hooks=None):
     print(f"RSS items: {len(rss_items)}")
     print("[2/7] Discovery: YouTube / interviews / podcasts / lectures")
     base_youtube = fetch_youtube_items(base_youtube_channels, max_age_hours=72, ai_bridge_keywords=bridge_keywords)
-    leader_youtube = _mark_leader_items(fetch_youtube_items(leader_youtube_channels, max_age_hours=720, ai_bridge_keywords=bridge_keywords))
+    leader_youtube = _mark_leader_items(fetch_youtube_items(leader_youtube_channels, max_age_hours=87600, ai_bridge_keywords=bridge_keywords))
     youtube_items = base_youtube + leader_youtube
     print(f"YouTube items: {len(youtube_items)} | leader-channel items: {len(leader_youtube)}")
     print("[3/7] Discovery: Google News + Leader Watchlist")
     base_news = fetch_google_news_items(base_queries, max_age_hours=36, max_workers=4)
-    leader_news = _mark_leader_items(fetch_google_news_items(leader_queries, max_age_hours=720, max_workers=3, inter_query_delay=0.0))
+    leader_news = _mark_leader_items(fetch_google_news_items(leader_queries, max_age_hours=87600, max_workers=3, inter_query_delay=0.0))
     news_items = base_news + leader_news
     print(f"Google News items: {len(news_items)} | leader candidates: {len(leader_news)}")
     all_items = rss_items + youtube_items + news_items
@@ -648,29 +664,56 @@ def main(hooks=None):
     seen_hashes, seen_signatures = load_seen()
     source_history = load_source_history()
     new_items = filter_new_items(all_items, seen_hashes)
-    print(f"After link dedup: {len(new_items)}")
-    protected_items, regular_items = split_protected_fn(new_items, max_protected=leader_protected_max)
-    print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}")
-    print("[4/7] AI-first relevance gate (regular pool only)")
-    regular_items = filter_ai_relevance(regular_items, bridge_keywords)
-    print("[5/7] Story clustering and canonical-source selection")
-    regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy)
-    regular_enriched = enrich_signal_items(regular_enriched)
-    _apply_signal_ranking(regular_enriched)
-    regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True)
-    leader_before = len([x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")])
-    regular_before = len([x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))])
-    editorial_pool = gate_story_candidates(protected_items, [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")], [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))], seen_signatures, threshold=story_threshold)
-    editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True)
-    leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal"))
-    regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal")))
-    protected_after = sum(1 for x in editorial_pool if x.get("protected_content"))
-    print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
+    if people_bootstrap_mode:
+        people_candidates = bootstrap_candidates(
+            all_items,
+            people_watchlist,
+            previous_state=people_state,
+            seen_hashes=seen_hashes,
+        )
+        people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=[])
+        print(f"[People Bootstrap] required=30 discovered={len(people_candidates)}")
+    else:
+        people_candidates = post_bootstrap_candidates(
+            new_items,
+            people_watchlist,
+            bootstrap_at=people_bootstrap_at,
+            seen_hashes=seen_hashes,
+        )
+        people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=seen_signatures)
+        print(f"[People Signal] bootstrap_at={people_bootstrap_at} candidates_after_dedup={len(people_candidates)}")
+    people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
+
+    if people_bootstrap_mode:
+        protected_items, regular_items = [], []
+        editorial_pool = list(people_candidates)
+        print(f"[People Bootstrap] publication_pool={len(editorial_pool)} normal_lanes=disabled")
+    else:
+        normal_input_items = [x for x in new_items if people_identity(x) not in people_ids]
+        protected_items, regular_items = split_protected_fn(normal_input_items, max_protected=leader_protected_max)
+        print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}")
+        print("[4/7] AI-first relevance gate (regular pool only)")
+        regular_items = filter_ai_relevance(regular_items, bridge_keywords)
+        print("[5/7] Story clustering and canonical-source selection")
+        regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy)
+        regular_enriched = enrich_signal_items(regular_enriched)
+        _apply_signal_ranking(regular_enriched)
+        regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True)
+        leader_before = len([x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")])
+        regular_before = len([x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))])
+        editorial_pool = gate_story_candidates(protected_items, [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")], [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))], seen_signatures, threshold=story_threshold)
+        editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True)
+        leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal"))
+        regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal")))
+        protected_after = sum(1 for x in editorial_pool if x.get("protected_content"))
+        print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
+    if not people_bootstrap_mode:
+        selected_regular = unique_candidates(selected_regular + people_candidates)
     protected_candidates = [x for x in editorial_pool if x.get("protected_content")]
     protected_selected = sorted(protected_candidates, key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _direct_interview_signal(x) else 0, x.get("published", "")), reverse=True)[:leader_protected_max]
     selected = unique_candidates(protected_selected + selected_regular)
-    print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={runtime_selection_cap} normal_capacity={max_posts} replacement_buffer={replacement_buffer} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD}", flush=True)
+    print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={runtime_selection_cap} normal_capacity={max_posts} replacement_buffer={replacement_buffer} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD} people={sum(1 for x in selected if x.get('people_lane'))} people_cap=none", flush=True)
     selected = _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap)
     selected = _publication_summary_budget(selected, max_posts, policy)
     if not selected:
@@ -698,6 +741,8 @@ def main(hooks=None):
         selected.append(candidate)
     print("[7/7] Telegram publication")
     sent = 0
+    people_sent = 0
+    delivered_people: list[str] = []
     initial_selected_count = len(selected)
     publication_attempted = {_publication_identity(item) for item in selected}
     lazy_replacements = 0
@@ -777,6 +822,9 @@ def main(hooks=None):
                 status_value = getattr(result.status, "value", str(result.status))
                 if status_value == "delivered":
                     sent += 1
+                    if item.get("people_lane"):
+                        people_sent += 1
+                        delivered_people.append(str(item.get("person_name") or item.get("watch_person") or "").strip())
                     persist_fn(item, seen_hashes, seen_signatures, source_history)
                     continue
                 if status_value in {"policy_blocked", "rejected", "duplicate"}:
@@ -789,11 +837,26 @@ def main(hooks=None):
             if not result:
                 raise RuntimeError("Telegram delivery returned false")
             sent += 1
+            if item.get("people_lane"):
+                people_sent += 1
+                delivered_people.append(str(item.get("person_name") or item.get("watch_person") or "").strip())
             persist_fn(item, seen_hashes, seen_signatures, source_history)
         except Exception as exc:
             logger.error("Telegram send failed for %s: %s", item.get("title", "")[:100], exc, exc_info=True)
             print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
     print(f"[Publication Lazy Refill] initial={initial_selected_count} lazy_replacements={lazy_replacements} final_attempt_queue={len(publication_queue)}", flush=True)
+    if people_bootstrap_mode:
+        global PEOPLE_BOOTSTRAP_RESULT
+        status = "complete" if people_sent == 30 and len(people_candidates) == 30 else "in_progress"
+        PEOPLE_BOOTSTRAP_RESULT = build_bootstrap_state(
+            bootstrap_at=people_bootstrap_at,
+            candidates=people_candidates,
+            delivered_people=delivered_people,
+            status=status,
+        )
+        print(f"[People Bootstrap] status={status} delivered={people_sent}/30 baseline={len(people_candidates)}/30 bootstrap_at={people_bootstrap_at}", flush=True)
+    else:
+        PEOPLE_BOOTSTRAP_RESULT = None
     save_seen(seen_hashes, seen_signatures, source_history)
     print(f"Posts sent: {sent}/{len(publication_queue)}")
 

@@ -89,6 +89,71 @@ def test_relevant_people_item_does_not_trust_mission_terms_in_discovery_query():
     assert relevant_people_item(item, "Sam Altman") is False
 
 
+def test_relevant_people_item_ignores_category_and_content_type_metadata_as_topic_evidence():
+    item = {
+        "watch_person": "Kate Crawford",
+        "leader": "Kate Crawford",
+        "title": "Celebrity wedding coverage dominates the headlines",
+        "summary": "A culture article about a public event and social-media reactions.",
+        "category": "ai",
+        "topic_family": "technology",
+        "content_type": "leader_signal",
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/unrelated-metadata-only",
+    }
+    assert relevant_people_item(item, "Kate Crawford") is False
+
+
+def test_relevant_people_item_rejects_unrelated_person_story():
+    item = {
+        "watch_person": "Scott Aaronson",
+        "leader": "Scott Aaronson",
+        "title": "Biotech company reports another anxiety-trial success",
+        "summary": "The report concerns a drug-development result and contains no AI, quantum, or computing topic.",
+        "category": "ai",
+        "content_type": "leader_signal",
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/unrelated-bio",
+    }
+    assert relevant_people_item(item, "Scott Aaronson") is False
+
+
+def test_relevant_people_item_rejects_unrelated_named_person_story():
+    item = {
+        "watch_person": "George Church",
+        "leader": "George Church",
+        "title": "Church replaces fireworks with a community fundraiser",
+        "summary": "A local community story with no genetics, genomics, synthetic biology, or AI content.",
+        "category": "ai",
+        "content_type": "leader_signal",
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/unrelated-church",
+    }
+    assert relevant_people_item(item, "George Church") is False
+
+
+def test_bootstrap_replaces_an_undelivered_weak_prior_baseline():
+    people = ["George Church"]
+    weak = {
+        "watch_person": "George Church",
+        "leader": "George Church",
+        "title": "Church replaces fireworks with a community fundraiser",
+        "summary": "A local community story with no genetics, genomics, synthetic biology, or AI content.",
+        "category": "ai",
+        "content_type": "leader_signal",
+        "published": "2026-09-22 09:00",
+        "link": "https://example.com/weak",
+    }
+    strong = _item("George Church", "2026-09-22 12:00", "strong", title_suffix="genomics research")
+    previous = {
+        "baseline": {"George Church": {"link": weak["link"], "title": weak["title"], "published": weak["published"]}},
+        "delivered_people": [],
+    }
+    selected = bootstrap_candidates([weak, strong], people, previous_state=previous)
+    assert len(selected) == 1
+    assert selected[0]["link"] == strong["link"]
+
+
 def test_relevant_people_item_accepts_interview_without_explicit_mission_term():
     item = {
         "watch_person": "Sam Altman",

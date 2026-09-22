@@ -3,63 +3,52 @@
 # This registry is discovery/priority metadata; publication still requires evidence + editorial gates.
 
 people:
-  featured_ai_leaders:
-    priority: 11
-    names:
-      - Andrew Ng
-      - Bill Gates
-  ai_builders:
+  ai_frontier_builders:
     priority: 10
     names:
       - Sam Altman
       - Dario Amodei
       - Demis Hassabis
-      - Jensen Huang
       - Elon Musk
-      - Mark Zuckerberg
-      - Sundar Pichai
-      - Satya Nadella
-      - Ilya Sutskever
-      - Andrej Karpathy
-      - Fei-Fei Li
-      - Yann LeCun
-      - Geoffrey Hinton
-      - Yoshua Bengio
-  technology_strategists_and_industry_thinkers:
-    priority: 11
-    names:
-      - Eric Schmidt
+      - Jensen Huang
       - Mustafa Suleyman
-      - Reid Hoffman
-  futurists_and_long_term_thinkers:
-    priority: 8
+      - Eric Schmidt
+      - Mark Zuckerberg
+  ai_research_and_foundations:
+    priority: 10
     names:
-      - Yuval Noah Harari
+      - Andrew Ng
+      - Geoffrey Hinton
+      - Yann LeCun
+      - Yoshua Bengio
+      - Ilya Sutskever
+      - Fei-Fei Li
+      - Andrej Karpathy
+      - Judea Pearl
+      - Stuart Russell
+  future_philosophy_society:
+    priority: 10
+    names:
       - Nick Bostrom
       - Max Tegmark
-      - Toby Ord
-      - Amy Webb
+      - Yuval Noah Harari
       - Ray Kurzweil
-      - Stuart Russell
-      - Eliezer Yudkowsky
-  consciousness_and_mind_ai:
-    priority: 9
+      - Kate Crawford
+  mind_cognition:
+    priority: 10
     names:
-      - David Chalmers
       - Anil Seth
-      - Joscha Bach
-      - Christof Koch
-      - Murray Shanahan
-      - Ryota Kanai
-      - David Dalrymple
-      - Susan Blackmore
-      - Bernardo Kastrup
-      - Giulio Tononi
+      - David Chalmers
       - Stanislas Dehaene
-      - Andy Clark
-      - Karl Friston
-      - Michael Graziano
-      - Lisa Feldman Barrett
+  bio_quantum_education:
+    priority: 10
+    names:
+      - George Church
+      - Jennifer Doudna
+      - John Preskill
+      - Scott Aaronson
+      - Ethan Mollick
+      - Sal Khan
 
 ideas_and_theories:
   consciousness:
@@ -138,15 +127,7 @@ google_news_queries:
   - {query: "David Chalmers philosophy of mind AI consciousness", watch_person: "David Chalmers", category: mind, tier: 1, content_type: research}
   - {query: "Anil Seth AI consciousness predictive processing interview", watch_person: "Anil Seth", category: mind, tier: 1, content_type: interview}
   - {query: "Anil Seth predictive processing consciousness AI", watch_person: "Anil Seth", category: mind, tier: 1, content_type: research}
-  - {query: "Karl Friston active inference predictive processing AI", watch_person: "Karl Friston", category: mind, tier: 1, content_type: research}
-  - {query: "Andy Clark predictive processing extended mind AI", watch_person: "Andy Clark", category: mind, tier: 1, content_type: research}
-  - {query: "Giulio Tononi integrated information theory AI consciousness", watch_person: "Giulio Tononi", category: mind, tier: 1, content_type: research}
   - {query: "Stanislas Dehaene global neuronal workspace consciousness AI", watch_person: "Stanislas Dehaene", category: mind, tier: 1, content_type: research}
-  - {query: "Christof Koch consciousness AI interview", watch_person: "Christof Koch", category: mind, tier: 1, content_type: interview}
-  - {query: "Joscha Bach AI consciousness AGI interview", watch_person: "Joscha Bach", category: mind, tier: 1, content_type: interview}
-  - {query: "Murray Shanahan AI consciousness cognition interview", watch_person: "Murray Shanahan", category: mind, tier: 1, content_type: interview}
-  - {query: "Michael Graziano attention schema AI consciousness", watch_person: "Michael Graziano", category: mind, tier: 1, content_type: research}
-  - {query: "Lisa Feldman Barrett consciousness predictive processing AI", watch_person: "Lisa Feldman Barrett", category: mind, tier: 1, content_type: research}
   - {query: "machine consciousness qualia sentience AI research", category: mind, tier: 1, content_type: research}
   - {query: "predictive processing active inference AI cognition research", category: mind, tier: 1, content_type: research}
   - {query: "global workspace theory AI consciousness research", category: mind, tier: 1, content_type: research}
@@ -166,8 +147,6 @@ google_news_queries:
   - {query: "Elon Musk AI xAI future interview", watch_person: "Elon Musk", category: ai, tier: 1, content_type: interview}
   - {query: "Elon Musk xAI Grok product launch AI announcement", watch_person: "Elon Musk", category: ai, tier: 1, content_type: product_news}
   - {query: "Mark Zuckerberg Meta AI Llama interview", watch_person: "Mark Zuckerberg", category: ai, tier: 1, content_type: interview}
-  - {query: "Sundar Pichai Google AI interview Gemini", watch_person: "Sundar Pichai", category: ai, tier: 1, content_type: interview}
-  - {query: "Satya Nadella Microsoft AI Copilot interview", watch_person: "Satya Nadella", category: ai, tier: 1, content_type: interview}
   - {query: "Ilya Sutskever Safe Superintelligence AI interview", watch_person: "Ilya Sutskever", category: ai, tier: 1, content_type: interview}
   - {query: "Fei-Fei Li AI future interview", watch_person: "Fei-Fei Li", category: ai, tier: 1, content_type: interview}
   - {query: "Andrew Ng AI interview latest", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
@@ -178,7 +157,6 @@ google_news_queries:
   - {query: "Max Tegmark AI future intelligence interview", watch_person: "Max Tegmark", category: future, tier: 1, content_type: interview}
   - {query: "Stuart Russell AI safety AGI interview", watch_person: "Stuart Russell", category: future, tier: 1, content_type: interview}
   - {query: "Eric Schmidt AI future interview national security", watch_person: "Eric Schmidt", category: future, tier: 1, content_type: interview}
-  - {query: "Bill Gates AI future interview latest", watch_person: "Bill Gates", category: future, tier: 1, content_type: interview}
 
   - {query: "site:cap.csail.mit.edu/podcast AI artificial intelligence machine learning robotics Building 32", category: ai, tier: 1, content_type: podcast, preferred_source: "MIT CSAIL - Building 32"}
 

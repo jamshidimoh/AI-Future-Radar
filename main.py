@@ -699,7 +699,7 @@ def main(hooks=None):
             bootstrap_at=people_bootstrap_at,
             seen_hashes=seen_hashes,
         )
-        people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=seen_signatures)
+        people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=[])
         print(f"[People Signal] bootstrap_at={people_bootstrap_at} candidates_after_dedup={len(people_candidates)}")
     # Global seen/event dedup remains for the normal Radar lanes only. People
     # must reach its own per-person event clustering first.

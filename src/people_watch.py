@@ -266,11 +266,12 @@ def build_bootstrap_state(
             "published": str(item.get("published") or "").strip(),
         }
     prior_delivered = previous_state.get("delivered_people", []) if isinstance(previous_state, dict) else []
+    cumulative_delivered = set(prior_delivered) | set(delivered_people)
     return {
         "status": status,
         "bootstrap_at": bootstrap_at,
         "baseline": baseline,
-        "delivered_people": sorted(set(prior_delivered) | set(delivered_people)),
+        "delivered_people": sorted(cumulative_delivered),
         "people_count": len(baseline),
-        "delivered_count": len(set(delivered_people)),
+        "delivered_count": len(cumulative_delivered),
     }

@@ -362,7 +362,15 @@ def main(*, skip_education: bool = False) -> int:
             bootstrap_count = sum(1 for item in people_items if item.get("people_bootstrap"))
             print(f"[People Selection] people_signals={len(people_items)} bootstrap={bootstrap_count} quota=none randomization=none")
             if bootstrap_count:
-                return list(people_items)
+                bootstrap_specials = [item for item in items if not item.get("people_lane")]
+                bootstrap_selected = unique_candidates(people_items + bootstrap_specials)
+                print(
+                    f"[Production Selection] total={len(bootstrap_selected)} people={len(people_items)} "
+                    f"mind={sum(1 for item in bootstrap_specials if _is_mind_ideas_voices(item))} "
+                    f"voices={sum(1 for item in bootstrap_specials if _is_voices_perspectives(item))}",
+                    flush=True,
+                )
+                return bootstrap_selected
         started = time.monotonic()
         for item in items:
             bonus = _feedback_bonus(store, item)

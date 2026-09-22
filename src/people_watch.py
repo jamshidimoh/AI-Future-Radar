@@ -76,8 +76,8 @@ def _item_text(item: dict[str, Any]) -> str:
         str(item.get(key) or "")
         for key in (
             "title", "summary", "description", "category", "topic_family",
-            "content_type", "discovery_query", "watch_query", "speaker",
-            "speakers", "author", "guest", "interviewee",
+            "content_type", "speaker", "speakers", "author", "guest",
+            "interviewee",
         )
     ).casefold()
 

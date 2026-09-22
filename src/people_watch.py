@@ -1,9 +1,9 @@
 """Simple People Signal lane: bootstrap once, then track every new independent signal."""
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from pathlib import Path
-import re
 from typing import Any
 
 import yaml
@@ -198,7 +198,7 @@ def post_bootstrap_candidates(
     checkpoint = parse_time(bootstrap_at)
     if checkpoint is None:
         return []
-    seen = _seen_identity_set(seen_hashes)
+    seen = _seen_hash_set(seen_hashes)
     out: list[dict[str, Any]] = []
     for item in items:
         person = person_for_item(item, people)

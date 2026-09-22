@@ -687,7 +687,6 @@ def main(hooks=None):
             previous_state=people_state,
             seen_hashes=seen_hashes,
         )
-        people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=[])
         baseline_people = set((people_state.get("baseline") or {}).keys()) if isinstance(people_state, dict) else set()
         discovered_people = {str(x.get("person_name") or x.get("watch_person") or "").strip() for x in people_candidates}
         discovered_people.discard("")
@@ -712,7 +711,7 @@ def main(hooks=None):
             bootstrap_at=people_bootstrap_at,
             seen_hashes=seen_hashes,
         )
-        people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=[])
+        people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=seen_signatures)
         print(f"[People Signal] bootstrap_at={people_bootstrap_at} candidates_after_dedup={len(people_candidates)}")
     # Global seen/event dedup remains for the normal Radar lanes only. People
     # must reach its own per-person event clustering first.

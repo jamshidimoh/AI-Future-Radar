@@ -409,7 +409,7 @@ def main(*, skip_education: bool = False) -> int:
         return ([education_item] if education_item else []) + _bound_runtime_candidates(candidates, max_posts=max_posts, policy=policy)
 
     original_summarize = pipeline.summarize_item
-    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "mind_ideas_voices_delivered_count": 0, "technical_trend_delivered_count": 0, "voices_perspectives_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "delivery_transport_failed": False}
+    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "mind_ideas_voices_delivered_count": 0, "technical_trend_delivered_count": 0, "voices_perspectives_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "people_news_delivered_count": 0, "delivery_transport_failed": False}
 
     def summarize_with_education(item):
         if item.get("content_type") == "education":
@@ -601,6 +601,9 @@ def main(*, skip_education: bool = False) -> int:
         globals()["_NEWS_PIPELINE_COMPLETED"] = True
 
     save_feedback(store, FEEDBACK_PATH)
+    pipeline_people_result = getattr(pipeline_module, "PEOPLE_BOOTSTRAP_RESULT", None)
+    if isinstance(pipeline_people_result, dict):
+        cadence["people_bootstrap"] = pipeline_people_result
     cadence["run_number"] = run_number
     _save_cadence(cadence)
     if education_due and not render_state["education_delivered"]:

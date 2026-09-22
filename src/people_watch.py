@@ -177,13 +177,15 @@ def bootstrap_candidates(
         ]
         if not pool:
             continue
-        if prior_link and not _is_seen_identity(prior_link, seen):
+        if prior_link:
             exact = [item for item in pool if identity(item) == prior_link]
             if exact:
                 chosen.append(mark_people_item(exact[0], person, bootstrap=True))
                 continue
-        unseen = [item for item in pool if not _is_seen_identity(identity(item), seen)]
-        ranked = unseen or pool
+        # Bootstrap deliberately ignores the global seen-state: it establishes
+        # the baseline content for each watched person, even when that content
+        # was previously encountered elsewhere in Radar.
+        ranked = list(pool)
         ranked.sort(key=lambda item: item_timestamp(item), reverse=True)
         chosen.append(mark_people_item(ranked[0], person, bootstrap=True))
     return chosen

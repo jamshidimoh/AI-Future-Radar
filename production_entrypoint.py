@@ -498,8 +498,12 @@ def main(*, skip_education: bool = False) -> int:
             if item.get("content_type") != "education":
                 score = _item_final_score(item)
                 render_state["published_news_scores"].append(score)
-                cadence["last_published_news_score"] = score
                 is_people = bool(item.get("people_lane"))
+                # People bootstrap deliberately has no global editorial score.
+                # Never let its synthetic 0.0 baseline overwrite the real news
+                # quality baseline used by the regular publication lane.
+                if not is_people:
+                    cadence["last_published_news_score"] = score
                 is_mind = _is_mind_ideas_voices(item)
                 is_technical = _is_technical_trend(item)
                 is_voices = _is_voices_perspectives(item)

@@ -25,7 +25,7 @@ from src.people_watch import (
     now_iso,
     post_bootstrap_candidates,
 )
-from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, mind_ideas_voices_score
+from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, choose_additive_candidates, mind_ideas_voices_score
 from src.publication_contract import unique_candidates
 from src.rejection_telemetry import build_event, emit
 from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
@@ -680,6 +680,10 @@ def main(hooks=None):
     all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities)
     seen_hashes, seen_signatures = load_seen()
     source_history = load_source_history()
+    # The global seen-state still gates all non-People lanes. People Bootstrap
+    # deliberately uses its own baseline/delivery state and must be able to
+    # replace an undelivered weak baseline with a stronger newly discovered item.
+    new_items = filter_new_items(all_items, seen_hashes)
     if people_bootstrap_mode:
         people_candidates = bootstrap_candidates(
             all_items,
@@ -713,15 +717,30 @@ def main(hooks=None):
         )
         people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=seen_signatures)
         print(f"[People Signal] bootstrap_at={people_bootstrap_at} candidates_after_dedup={len(people_candidates)}")
-    # Global seen/event dedup remains for the normal Radar lanes only. People
-    # must reach its own per-person event clustering first.
-    new_items = filter_new_items(all_items, seen_hashes)
     people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
 
     if people_bootstrap_mode:
         protected_items, regular_items = [], []
-        editorial_pool = list(people_candidates)
-        print(f"[People Bootstrap] publication_pool={len(editorial_pool)} normal_lanes=disabled")
+        people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
+        special_pool = [x for x in new_items if people_identity(x) not in people_ids]
+        voices_bootstrap = choose_voices_candidate(
+            special_pool,
+            existing_ids=set(),
+            max_items=1,
+        )
+        voices_ids = {id(item) for item in voices_bootstrap}
+        mind_bootstrap = choose_additive_candidates(
+            special_pool,
+            existing_ids=voices_ids,
+            max_items=1,
+        )
+        bootstrap_specials = unique_candidates(mind_bootstrap + voices_bootstrap)
+        editorial_pool = unique_candidates(people_candidates + bootstrap_specials)
+        print(
+            f"[People Bootstrap] publication_pool={len(editorial_pool)} people={len(people_candidates)} "
+            f"mind={len(mind_bootstrap)} voices={len(voices_bootstrap)} normal_lanes=disabled",
+            flush=True,
+        )
     else:
         normal_input_items = [x for x in new_items if people_identity(x) not in people_ids]
         protected_items, regular_items = split_protected_fn(normal_input_items, max_protected=leader_protected_max)

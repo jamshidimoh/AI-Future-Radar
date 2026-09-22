@@ -516,19 +516,47 @@ def _backfill_repeat_sources(p: _Portfolio, eligible: list[dict[str, Any]]) -> N
 def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> None:
     auth_required = min(p.contract["min_authoritative_items"], len(p.selected))
     while p.mission_aware and sum(_authority_ok(x) for x in p.selected) < auth_required:
-        replacement = next((x for x in eligible if id(x) not in p.selected_ids and _authority_ok(x) and p.admissible(x, repeat_source=False)), None)
         removable = [x for x in p.selected if not _authority_ok(x)]
-        if replacement is None or not removable:
+        if not removable:
             break
+
+        def _is_mission_target(x: dict[str, Any]) -> bool:
+            return str(x.get("mission_selection_reason") or "").startswith("mission_target:")
+
         def _repair_priority(x: dict[str, Any]) -> tuple:
-            reason = str(x.get("mission_selection_reason") or "")
-            if reason == "mission_target:convergence": lane_priority = 0
-            elif reason == "mission_target:future_governance": lane_priority = 1
-            elif reason == "portfolio_value": lane_priority = 2
-            elif reason == "adaptive_source_backfill": lane_priority = 3
-            else: lane_priority = 4
-            return (lane_priority, candidate_score(x), _safe_float(x, "evidence_strength"), _rank_key(x, p.recent))
+            # Preserve explicit mission-target coverage whenever possible.
+            # A source-authority repair must not silently erase convergence/mind/
+            # future coverage just because an authoritative AI-core candidate exists.
+            return (
+                1 if _is_mission_target(x) else 0,
+                candidate_score(x),
+                _safe_float(x, "evidence_strength"),
+                _rank_key(x, p.recent),
+            )
+
         victim = min(removable, key=_repair_priority)
+        authoritative = [
+            x for x in eligible
+            if id(x) not in p.selected_ids
+            and _authority_ok(x)
+            and p.admissible(x, repeat_source=False)
+        ]
+        if not authoritative:
+            break
+
+        # First repair within the same mission area. This preserves area coverage
+        # even when the replacement has higher source authority.
+        same_area = [x for x in authoritative if mission_area(x) == mission_area(victim)]
+        replacement_pool = same_area or authoritative
+        replacement = max(
+            replacement_pool,
+            key=lambda x: (
+                candidate_score(x),
+                _safe_float(x, "evidence_strength"),
+                freshness_score(x, float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0)),
+                _rank_key(x, p.recent),
+            ),
+        )
         p.remove(victim)
         p.add(replacement, "policy_repair:min_authoritative_items")
 

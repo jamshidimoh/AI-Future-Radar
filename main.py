@@ -15,11 +15,11 @@ from src.interview_evidence import has_interview_evidence
 from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
+from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, load_people_watchlist, now_iso, post_bootstrap_candidates, identity as people_identity
 from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, mind_ideas_voices_score
 from src.publication_contract import unique_candidates
 from src.rejection_telemetry import build_event, emit
 from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
-from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, load_people_watchlist, now_iso, post_bootstrap_candidates, identity as people_identity
 from src.signal_engine import enrich_signal_items
 from src.state_io import StateCorruptionError
 from src.story_gate import gate_story_candidates
@@ -211,6 +211,10 @@ def _annotate_named_leader_interviews(items, leader_people, leader_priorities=No
                 protected += 1
     print(f"[Leader Identity Recovery] verified_interviews={matched} | activity_protected={protected} | watchlist_candidates={watch_candidates}", flush=True)
     return items
+
+
+def _is_technical_trend(item):
+    return bool(item.get("technical_trend_lane_selected") or item.get("editorial_lane") == "technical_trend")
 
 
 def _is_protected_leader_interview(item):

@@ -26,6 +26,20 @@ def test_select_regular_portfolio_characterization():
     current_contract["mind_cognition_target"] = 1
     current_contract["mind_future_target"] = 0
     for case in fixture["grid"]:
+        if case["mission_aware"] and case["max_posts"] == 3 and case["max_per_source"] == 1 and case["max_per_type"] == 1:
+            from src import unified_editorial_selection as ues
+            for probe in fixture["candidates"]:
+                if probe.get("title", "").startswith("Convergence candidate"):
+                    print(
+                        "CONVERGENCE_PROBE",
+                        probe.get("title"),
+                        "score", probe.get("editorial_score"),
+                        "area", ues.mission_area(probe),
+                        "relevant", ues.is_mission_relevant(dict(probe), strict=case["strict_relevance"]),
+                        "research", ues._is_research(probe),
+                        flush=True,
+                    )
+
         selected = select_regular_portfolio(
             fixture["candidates"],
             max_posts=case["max_posts"],

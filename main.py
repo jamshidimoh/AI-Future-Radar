@@ -671,16 +671,21 @@ def main(hooks=None):
             seen_hashes=seen_hashes,
         )
         people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=[])
-        print(f"[People Bootstrap] required=30 discovered={len(people_candidates)}")
-        if len(people_candidates) != 30:
+        baseline_people = set((people_state.get("baseline") or {}).keys()) if isinstance(people_state, dict) else set()
+        discovered_people = {str(x.get("person_name") or x.get("watch_person") or "").strip() for x in people_candidates}
+        discovered_people.discard("")
+        planned_people = baseline_people | discovered_people
+        print(f"[People Bootstrap] required=30 discovered_now={len(discovered_people)} baseline={len(baseline_people)} planned={len(planned_people)}")
+        if len(planned_people) != 30:
             global PEOPLE_BOOTSTRAP_RESULT
             PEOPLE_BOOTSTRAP_RESULT = build_bootstrap_state(
                 bootstrap_at=people_bootstrap_at,
                 candidates=people_candidates,
                 delivered_people=[],
                 status="in_progress",
+                previous_state=people_state,
             )
-            print(f"[People Bootstrap] BLOCKED exact_30_required discovered={len(people_candidates)}", flush=True)
+            print(f"[People Bootstrap] BLOCKED exact_30_baseline_required planned={len(planned_people)}/30", flush=True)
             save_seen(seen_hashes, seen_signatures, source_history)
             print("Posts sent: 0/0")
             return
@@ -867,8 +872,12 @@ def main(hooks=None):
             candidates=people_candidates,
             delivered_people=delivered_people,
             status=status,
+            previous_state=people_state,
         )
-        print(f"[People Bootstrap] status={status} delivered={people_sent}/30 baseline={len(people_candidates)}/30 bootstrap_at={people_bootstrap_at}", flush=True)
+        if PEOPLE_BOOTSTRAP_RESULT["people_count"] == 30 and PEOPLE_BOOTSTRAP_RESULT["delivered_count"] == 30:
+            PEOPLE_BOOTSTRAP_RESULT["status"] = "complete"
+            status = "complete"
+        print(f"[People Bootstrap] status={status} delivered={PEOPLE_BOOTSTRAP_RESULT['delivered_count']}/30 baseline={PEOPLE_BOOTSTRAP_RESULT['people_count']}/30 bootstrap_at={people_bootstrap_at}", flush=True)
     else:
         PEOPLE_BOOTSTRAP_RESULT = None
     save_seen(seen_hashes, seen_signatures, source_history)

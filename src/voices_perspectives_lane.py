@@ -129,12 +129,38 @@ def is_voices_candidate(item: dict[str, Any]):
     )
 
 
-def _recency_bonus(item: dict[str, Any]) -> float:
+def _published_timestamp(item: dict[str, Any]) -> float:
     raw = str(item.get("published") or item.get("published_at") or item.get("date") or "").strip()
-    if not raw: return 0.0
+    if not raw:
+        return 0.0
     try:
-        dt = datetime.fromisoformat(raw.replace("Z", "+00:00")); dt = dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc); age = max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 86400.0)
-    except ValueError: return 0.0
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        dt = dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+        return dt.timestamp()
+    except ValueError:
+        return 0.0
+
+
+def _direct_interview_signal(item: dict[str, Any]) -> bool:
+    content_type = str(item.get("content_type") or "").strip().casefold()
+    source_type = str(item.get("source_type") or item.get("type") or item.get("format") or "").strip().casefold()
+    title = str(item.get("title") or "").casefold()
+    return (
+        content_type in VOICE_TYPES
+        or source_type in VOICE_TYPES
+        or any(re.search(pattern, title) for pattern in (
+            r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfireside\b",
+            r"\bq&a\b", r"\bdiscussion\b", r"\bdebate\b", r"\btalk\b", r"\blecture\b",
+            r"\bkeynote\b", r"مصاحبه", r"گفتگو", r"گفت‌وگو", r"سخنرانی", r"پرسش و پاسخ",
+        ))
+    )
+
+
+def _recency_bonus(item: dict[str, Any]) -> float:
+    timestamp = _published_timestamp(item)
+    if not timestamp:
+        return 0.0
+    age = max(0.0, (datetime.now(timezone.utc).timestamp() - timestamp) / 86400.0)
     return 10.0 if age <= 3 else 7.0 if age <= 7 else 4.0 if age <= 14 else 2.0 if age <= 30 else 0.0
 
 
@@ -210,8 +236,21 @@ def choose_voices_candidate(candidates: Iterable[dict[str, Any]], *, existing_id
         item["voice_expert_deep_lane"] = expert_deep_lane
         item["voice_expert_score"] = expert_score
         eligible.append(item)
-    eligible.sort(key=lambda x: (-float(x.get("voices_perspectives_score", 0) or 0), str(x.get("published") or "")))
-    selected = eligible[:max(0, int(max_items))]
+    # Interviews/podcasts are the first-class People/Voices signal. When at least
+    # one direct interview exists, select the newest one; numeric score and source
+    # authority only break freshness ties. Other voice material remains a fallback.
+    direct_interviews = [x for x in eligible if _direct_interview_signal(x)]
+    ranking_pool = direct_interviews or eligible
+    ranking_pool.sort(
+        key=lambda x: (
+            _published_timestamp(x),
+            float(x.get("voices_perspectives_score", 0) or 0),
+            int(x.get("source_tier", 3) or 3) * -1,
+            str(x.get("title") or ""),
+        ),
+        reverse=True,
+    )
+    selected = ranking_pool[:max(0, int(max_items))]
     for rank, item in enumerate(selected, 1):
         item["voices_perspectives_lane_selected"] = True
         item["editorial_lane"] = "voices_perspectives"

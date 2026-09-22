@@ -326,9 +326,12 @@ def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_
     if runtime_selection_cap is None:
         runtime_selection_cap = cap if cap is not None else max_posts + int(policy.get("leader_protected_max", 2) or 2) + MAX_MIND_IDEAS_VOICES_PER_PERIOD
     target = min(runtime_selection_cap, max_posts + int(policy.get("leader_protected_max", 2) or 2) + MAX_MIND_IDEAS_VOICES_PER_PERIOD)
-    selected = filter_new_items(selected, seen_hashes)
+    people_selected = [x for x in selected if x.get("people_lane")]
+    non_people_selected = [x for x in selected if not x.get("people_lane")]
+    non_people_selected = filter_new_items(non_people_selected, seen_hashes)
+    selected = people_selected + non_people_selected
     existing = {_publication_identity(x) for x in selected}
-    pool = [x for x in editorial_pool if not x.get("protected_content") and not x.get("protected_slot") and _publication_identity(x) not in existing]
+    pool = [x for x in editorial_pool if not x.get("people_lane") and not x.get("protected_content") and not x.get("protected_slot") and _publication_identity(x) not in existing]
     pool = filter_new_items(pool, seen_hashes)
     while len(selected) < target and pool:
         extra = select_editorial_fn(pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)

@@ -40,6 +40,7 @@ def test_select_regular_portfolio_characterization():
             item.get("title", ""): round(float(item.get("portfolio_information_gain", 0.0)), 6)
             for item in selected
         }
+        print("CHARACTERIZATION_ACTUAL", actual, flush=True)
         expected_titles = {row[0] for row in case["expected"]}
         expected_values = {row[0]: row[2] for row in case["expected"]}
         assert len(selected) <= case["max_posts"]

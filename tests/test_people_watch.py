@@ -64,9 +64,21 @@ def test_post_bootstrap_returns_all_new_independent_signals_without_person_quota
 
 def test_people_dedup_removes_exact_duplicate_identity_but_keeps_independent_signals():
     items = [
-        _item("Sam Altman", "2026-09-22 10:00", "same", title_suffix="A"),
-        _item("Sam Altman", "2026-09-22 10:00", "same", title_suffix="A"),
-        _item("Sam Altman", "2026-09-22 11:00", "independent", title_suffix="B"),
+        {
+            **_item("Sam Altman", "2026-09-22 10:00", "same", title_suffix="A"),
+            "title": "Sam Altman announces agent research direction",
+            "summary": "Sam Altman outlines a new agent research direction in a dedicated interview.",
+        },
+        {
+            **_item("Sam Altman", "2026-09-22 10:00", "same", title_suffix="A"),
+            "title": "Sam Altman announces agent research direction",
+            "summary": "Sam Altman outlines a new agent research direction in a dedicated interview.",
+        },
+        {
+            **_item("Sam Altman", "2026-09-22 11:00", "independent", title_suffix="B"),
+            "title": "Sam Altman discusses AI education strategy",
+            "summary": "Sam Altman discusses a separate strategy for AI education and learning.",
+        },
     ]
     selected = deduplicate_people_signals(items, seen_signatures=[])
     assert len(selected) == 2

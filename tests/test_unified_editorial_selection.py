@@ -331,3 +331,33 @@ def test_weak_mission_target_does_not_displace_stronger_mainstream_candidate():
         strict_relevance=True,
     )
     assert [x["title"] for x in selected] == ["Strong frontier AI result", "Second strong AI result"]
+
+def test_authority_repair_preserves_mission_area_with_same_area_replacement():
+    candidates = [
+        item("Strong frontier AI result", "OpenAI", 100, area="ai"),
+        item("Strong convergence result", "Quantum Lab", 99, area="convergence"),
+        item("Authoritative convergence result", "Nature", 90, area="convergence"),
+    ]
+    candidates[0]["source_tier"] = 3
+    candidates[1]["source_tier"] = 3
+    candidates[2]["source_tier"] = 1
+    contract = load_editorial_contract()
+    contract["ai_core_target_min"] = 1
+    contract["convergence_target"] = 1
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["research_target"] = 0
+    contract["min_authoritative_items"] = 1
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=2,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    assert [x["mission_area"] for x in selected] == ["ai_core", "convergence"]
+    assert any(x["title"] == "Authoritative convergence result" for x in selected)
+

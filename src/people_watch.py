@@ -117,12 +117,12 @@ def relevant_people_item(item: dict[str, Any], person: str) -> bool:
     text = _item_text(item)
     if person.casefold() not in text and str(item.get("watch_person") or "").casefold() != person.casefold():
         return False
-    query_context = str(item.get("discovery_query") or item.get("watch_query") or "").casefold()
     ctype = str(item.get("content_type") or "").casefold()
     if _contains_mission_term(text):
         return True
-    if _contains_mission_term(query_context):
-        return True
+    # Discovery queries describe search intent, not article evidence. A generated
+    # People query deliberately contains mission terms, so trusting them here
+    # can turn an unrelated result into a false-positive People signal.
     return ctype in {
         "interview", "podcast", "talk", "lecture", "conversation",
         "discussion", "q&a", "research", "essay", "commentary",

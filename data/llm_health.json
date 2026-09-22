@@ -1,14 +1,14 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 19,
-      "disabled_until": 1790095299.513,
+      "failures": 20,
+      "disabled_until": 1790103564.63,
       "last_error": "model",
       "last_success": 0.0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 9,
-      "disabled_until": 1790075101.984,
+      "disabled_until": 1790085564.63,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -20,19 +20,19 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 3,
-      "disabled_until": 1790075101.984,
+      "disabled_until": 1790085564.63,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 3,
-      "disabled_until": 1790075101.984,
+      "disabled_until": 1790085564.63,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 5,
-      "disabled_until": 1790075101.984,
+      "disabled_until": 1790085564.63,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 17,
-      "disabled_until": 1790160099.513,
+      "failures": 18,
+      "disabled_until": 1790168364.63,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790160099.513,
+      "disabled_until": 1790168364.63,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -98,7 +98,7 @@
     },
     "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
       "failures": 1,
-      "disabled_until": 1790071473.677,
+      "disabled_until": 1790085564.63,
       "last_error": "model",
       "last_success": 0.0
     }
@@ -112,13 +112,13 @@
     },
     "openrouter": {
       "failures": 6,
-      "disabled_until": 1790006719.917,
+      "disabled_until": 1790103564.63,
       "last_error": "quota",
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 34,
-      "disabled_until": 1790160099.513,
+      "failures": 36,
+      "disabled_until": 1790168364.63,
       "last_error": "auth",
       "last_success": 0.0
     },

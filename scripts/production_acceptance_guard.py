@@ -23,6 +23,7 @@ CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*")
 NORMAL_CONTRACT_PATTERN = re.compile(r"normal_news=(\d+)\s+normal_max=(\d+)")
 MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
 PEOPLE_CONTRACT_PATTERN = re.compile(r"people=(\d+)\s+people_max=([^\s]+)")
+PEOPLE_BOOTSTRAP_PATTERN = re.compile(r"\[People Bootstrap\]\s+status=(\w+)\s+delivered=(\d+)/(\d+)\s+baseline=(\d+)/(\d+)")
 TIER0_CONTRACT_PATTERN = re.compile(r"tier0_news=(\d+)(?:\s+tier0_quota_exempt=(\w+))?")
 EDUCATION_CONTRACT_PATTERN = re.compile(r"education=(\w+)")
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
@@ -152,6 +153,14 @@ def _mission_coverage_status(lines):
 
 def validate(log_text: str) -> tuple[bool, str]:
     lines = log_text.splitlines()
+    bootstrap_match = _last_match(lines, (PEOPLE_BOOTSTRAP_PATTERN,))
+    if bootstrap_match is not None:
+        status, delivered, required, baseline, baseline_required = bootstrap_match.groups()
+        if status.casefold() != "complete" or int(delivered) != 30 or int(required) != 30 or int(baseline) != 30 or int(baseline_required) != 30:
+            return False, (
+                "production contract violation: People Bootstrap did not complete exact 30/30 coverage; "
+                f"status={status}, delivered={delivered}/{required}, baseline={baseline}/{baseline_required}"
+            )
     candidate_match = _last_match(lines, CANDIDATE_PATTERNS)
     contract_match = _last_match(lines, (CONTRACT_PATTERN,))
     posts_match = _last_match(lines, (POSTS_SENT_PATTERN,))

@@ -286,7 +286,10 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
     # the source came from an explicit named watchlist query, preserve the item
     # for the downstream identity/evidence/quality gates instead of deleting it
     # prematurely at discovery.
-    query_format_signal = ctype in {"interview", "podcast", "talk", "conversation", "leader_signal", "product_news", "research"}
+    # Query metadata is discovery intent, not evidence. Only explicit
+    # interview/talk-style query types may contribute format evidence; the
+    # generic leader_signal query must never self-validate a result.
+    query_format_signal = ctype in {"interview", "podcast", "talk", "keynote", "conversation"}
     accepted_by_watch_query = bool(
         query_person_signal
         and query_technology_context

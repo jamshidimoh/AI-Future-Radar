@@ -445,7 +445,6 @@ def main(*, skip_education: bool = False) -> int:
         normal_candidates = _competitive_normal_candidates(
             unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
         )
-        normal_ids = {id(item) for item in normal_candidates}
 
         candidates = unique_candidates(
             (bootstrap_people if bootstrap_count else people_items)

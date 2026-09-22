@@ -169,11 +169,11 @@ def validate(log_text: str) -> tuple[bool, str]:
             and baseline_required_i == 30
         ):
             bootstrap_progress = {"complete": True, "delivered": delivered_i}
-        elif baseline_i == 30 and baseline_required_i == 30 and required_i == 30 and 0 < delivered_i < 30:
+        elif baseline_i == 30 and baseline_required_i == 30 and required_i == 30 and delivered_i < 30:
             # Bootstrap completion is intentionally progressive: one baseline is
             # established for every watched person, while Telegram delivery is
-            # batched across runs. Partial progress is a valid terminal state for
-            # the current run; only zero-progress runs fail closed.
+            # batched across runs. Partial progress is valid; zero progress is
+            # still recorded as incomplete and fails closed below.
             bootstrap_progress = {"complete": False, "delivered": delivered_i}
         else:
             return False, (

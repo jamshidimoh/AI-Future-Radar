@@ -200,13 +200,16 @@ def check_before_publish(text: str, source_link: str = "", records: list[dict] |
     stored_records = _load_records()
     runtime_records = [x for x in (records or []) if isinstance(x, dict)]
     all_records = runtime_records + stored_records
+    candidate_people_lane = bool((candidate or {}).get("people_lane"))
+    candidate_people_bootstrap = bool((candidate or {}).get("people_bootstrap"))
+    if candidate_people_bootstrap:
+        return True, "people_bootstrap_baseline"
     if not all_records:
         return True, "ledger_empty"
     candidate_title, candidate_summary = _extract_candidate(text)
     candidate_url = _canonical_url(source_link)
     title_key = _normalized_title(candidate_title)
     candidate_person = str((candidate or {}).get("person_name") or (candidate or {}).get("watch_person") or (candidate or {}).get("leader") or "").strip()
-    candidate_people_lane = bool((candidate or {}).get("people_lane"))
     # People signals from different watched people are independent perspectives.
     # Keep same-event commentary from different people from being treated as one
     # publication, while retaining normal same-person duplicate protection.

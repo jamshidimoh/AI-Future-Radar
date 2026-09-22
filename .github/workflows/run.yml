@@ -37,7 +37,7 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Run production regression checks
-        run: python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_google_news_canonical_resolution.py tests/test_production_closure_gate_integrity.py tests/test_protected_editorial_lane.py tests/test_publication_guard_corroboration.py tests/test_voices_perspectives_lane.py tests/test_summary_depth.py tests/test_expert_registry_contract.py
+        run: python -m pytest -q tests/test_editorial_quality_policy.py tests/test_education_recovery_fallback.py tests/test_production_acceptance_guard.py tests/test_production_acceptance_contract.py tests/test_telegram_format.py tests/test_production_router_policy.py tests/test_free_model_registry.py tests/test_free_model_intelligence.py tests/test_free_model_evidence.py tests/test_litellm_registry_integration.py tests/test_critical_ai_incident_priority.py tests/test_event_identity_regression.py tests/test_llm_router_resilience.py tests/test_llm_health_persistence.py tests/test_production_contract.py tests/test_publication_summary_budget.py tests/test_replacement_buffer_contract.py tests/test_schedule_contract.py tests/test_unified_editorial_selection.py tests/test_semantic_story_regression.py tests/test_protected_leader_semantic_dedup.py tests/test_strategic_analytical_lane.py tests/test_final_publication_guard.py tests/test_cross_language_publication_integration.py tests/test_source_authority.py tests/test_google_news_canonical_resolution.py tests/test_production_closure_gate_integrity.py tests/test_protected_editorial_lane.py tests/test_publication_guard_corroboration.py tests/test_voices_perspectives_lane.py tests/test_summary_depth.py tests/test_expert_registry_contract.py tests/test_people_watch.py
 
       - name: Emit fail-closed closure evidence
         run: echo "[Provider Failure Isolation Evidence] PASS"
@@ -234,6 +234,14 @@ jobs:
               for key in ("last_published_news_score", "last_published_normal_news_score"):
                   local_value = local_publication.get(key)
                   merged_publication[key] = local_value if isinstance(local_value, (int, float)) else remote_publication.get(key)
+              remote_people = remote_publication.get("people_bootstrap")
+              local_people = local_publication.get("people_bootstrap")
+              if isinstance(local_people, dict) and str(local_people.get("status") or "") == "complete":
+                  merged_publication["people_bootstrap"] = local_people
+              elif isinstance(remote_people, dict):
+                  merged_publication["people_bootstrap"] = remote_people
+              elif isinstance(local_people, dict):
+                  merged_publication["people_bootstrap"] = local_people
               dump(root / "data/publication_state.json", merged_publication)
 
           def normalize_health_section(section):

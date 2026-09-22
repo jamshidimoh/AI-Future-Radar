@@ -1,7 +1,7 @@
 # ruff: noqa: I001
 from pathlib import Path
 
-from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, load_people_watchlist, post_bootstrap_candidates
+from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, load_people_watchlist, post_bootstrap_candidates, relevant_people_item
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +61,19 @@ def test_post_bootstrap_returns_all_new_independent_signals_without_person_quota
     assert all(item["people_lane"] for item in selected)
     assert {item["person_name"] for item in selected} == {"Sam Altman"}
 
+
+
+def test_relevant_people_item_does_not_treat_ai_substring_as_mission_evidence():
+    item = {
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "title": "Sam Altman appears at a daily business briefing",
+        "summary": "The briefing covers company results and quarterly operations.",
+        "content_type": "news",
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/daily-briefing",
+    }
+    assert relevant_people_item(item, "Sam Altman") is False
 
 def test_people_dedup_removes_exact_duplicate_identity_but_keeps_independent_signals():
     items = [

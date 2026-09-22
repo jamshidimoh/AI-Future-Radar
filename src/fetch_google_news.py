@@ -252,7 +252,6 @@ def _expand_leader_signal_queries(queries):
             people.setdefault(person.casefold(), []).append(q)
         else:
             non_people.append(q)
-    signal_terms = " OR ".join(_LEADER_SIGNAL_TERMS)
     ordered_people = sorted(
         people.values(),
         key=lambda bucket: str(bucket[0].get("watch_person") or "").casefold(),

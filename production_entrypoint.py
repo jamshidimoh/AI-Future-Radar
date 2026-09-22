@@ -363,7 +363,6 @@ def main(*, skip_education: bool = False) -> int:
             print(f"[People Selection] people_signals={len(people_items)} bootstrap={bootstrap_count} quota=none randomization=none")
             if bootstrap_count:
                 return list(people_items)
-            return ([education_item] if education_item else []) + list(people_items)
         started = time.monotonic()
         for item in items:
             bonus = _feedback_bonus(store, item)

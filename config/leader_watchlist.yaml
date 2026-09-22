@@ -41,6 +41,7 @@
   - {query: "Yoshua Bengio AI safety AGI interview", watch_person: "Yoshua Bengio", category: ai, tier: 1, content_type: interview}
   - {query: "Nick Bostrom AI superintelligence future interview", watch_person: "Nick Bostrom", category: future, tier: 1, content_type: interview}
   - {query: "Max Tegmark AI future intelligence interview", watch_person: "Max Tegmark", category: future, tier: 1, content_type: interview}
+  - {query: "Yuval Noah Harari AI future humanity technology interview latest", watch_person: "Yuval Noah Harari", category: future, tier: 1, content_type: interview}
   - {query: "Stuart Russell AI safety AGI interview", watch_person: "Stuart Russell", category: future, tier: 1, content_type: interview}
   - {query: "Eric Schmidt AI future interview national security", watch_person: "Eric Schmidt", category: future, tier: 1, content_type: interview}
 

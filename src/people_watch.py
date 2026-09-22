@@ -221,25 +221,26 @@ def deduplicate_people_signals(
     *,
     seen_signatures: list[str] | None = None,
 ) -> list[dict[str, Any]]:
-    """Cluster same events and remove duplicates while keeping independent signals."""
-    unique = []
-    seen_local: set[str] = set()
-    for item in items:
-        key = identity(item)
-        if key and key in seen_local:
-            continue
-        if key:
-            seen_local.add(key)
-        unique.append(item)
-    # Deduplicate within each person. Two different watched people may comment on
-    # the same event; those are independent People signals and must both survive.
+    """Deduplicate within each person while preserving independent people signals."""
     grouped: dict[str, list[dict[str, Any]]] = {}
-    for item in unique:
+    for item in items:
         person = str(item.get("person_name") or item.get("watch_person") or "").strip()
         grouped.setdefault(person, []).append(item)
+
     survivors: list[dict[str, Any]] = []
+    history = list(seen_signatures or [])
     for person_items in grouped.values():
-        survivors.extend(deduplicate_stories(person_items, history=list(seen_signatures or [])))
+        unique: list[dict[str, Any]] = []
+        seen_local: set[str] = set()
+        for item in person_items:
+            key = identity(item)
+            if key and key in seen_local:
+                continue
+            if key:
+                seen_local.add(key)
+            unique.append(item)
+        survivors.extend(deduplicate_stories(unique, history=history))
+
     survivors.sort(key=lambda item: (item_timestamp(item), str(item.get("title") or "")), reverse=True)
     return survivors
 

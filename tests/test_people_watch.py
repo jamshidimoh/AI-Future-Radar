@@ -75,6 +75,33 @@ def test_relevant_people_item_does_not_treat_ai_substring_as_mission_evidence():
     }
     assert relevant_people_item(item, "Sam Altman") is False
 
+def test_relevant_people_item_does_not_trust_mission_terms_in_discovery_query():
+    item = {
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "title": "Sam Altman appears at a daily business briefing",
+        "summary": "The briefing covers company results and quarterly operations.",
+        "content_type": "news",
+        "discovery_query": '"Sam Altman" (interview OR podcast OR AI OR AGI OR future)',
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/daily-briefing-query-false-positive",
+    }
+    assert relevant_people_item(item, "Sam Altman") is False
+
+
+def test_relevant_people_item_accepts_interview_without_explicit_mission_term():
+    item = {
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "title": "Sam Altman in conversation on the future",
+        "summary": "A long-form interview with Sam Altman.",
+        "content_type": "interview",
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/interview",
+    }
+    assert relevant_people_item(item, "Sam Altman") is True
+
+
 def test_people_dedup_removes_exact_duplicate_identity_but_keeps_independent_signals():
     items = [
         {

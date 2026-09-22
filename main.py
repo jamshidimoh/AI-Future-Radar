@@ -663,7 +663,6 @@ def main(hooks=None):
     all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities)
     seen_hashes, seen_signatures = load_seen()
     source_history = load_source_history()
-    new_items = filter_new_items(all_items, seen_hashes)
     if people_bootstrap_mode:
         people_candidates = bootstrap_candidates(
             all_items,
@@ -694,6 +693,9 @@ def main(hooks=None):
         )
         people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=seen_signatures)
         print(f"[People Signal] bootstrap_at={people_bootstrap_at} candidates_after_dedup={len(people_candidates)}")
+    # Global seen/event dedup remains for the normal Radar lanes only. People
+    # must reach its own per-person event clustering first.
+    new_items = filter_new_items(all_items, seen_hashes)
     people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
 
     if people_bootstrap_mode:

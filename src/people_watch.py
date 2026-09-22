@@ -75,9 +75,8 @@ def _item_text(item: dict[str, Any]) -> str:
     return " ".join(
         str(item.get(key) or "")
         for key in (
-            "title", "summary", "description", "category", "topic_family",
-            "content_type", "speaker", "speakers", "author", "guest",
-            "interviewee",
+            "title", "summary", "description", "speaker", "speakers",
+            "author", "guest", "interviewee",
         )
     ).casefold()
 
@@ -114,8 +113,10 @@ def _contains_mission_term(text: str) -> bool:
 
 
 def relevant_people_item(item: dict[str, Any], person: str) -> bool:
+    """Require evidence in the content itself, not in discovery metadata."""
     text = _item_text(item)
-    if person.casefold() not in text and str(item.get("watch_person") or "").casefold() != person.casefold():
+    person_pattern = rf"(?<!\w){re.escape(person.casefold())}(?!\w)"
+    if not re.search(person_pattern, text):
         return False
     ctype = str(item.get("content_type") or "").casefold()
     if _contains_mission_term(text):

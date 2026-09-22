@@ -58,7 +58,7 @@ def test_mind_future_target_selects_an_eligible_mind_or_future_item():
     candidates = [
         item("Exceptional AI capability", "OpenAI", 100, area="ai"),
         item("Second exceptional AI capability", "Anthropic", 99, area="ai"),
-        item("Strong consciousness research linked to AI", "Nature", 72, area="mind", content_type="research", research_signal=True),
+        item("Strong consciousness research linked to AI", "Nature", 90, area="mind", content_type="research", research_signal=True),
         item("Weak future commentary", "NIST", 35, area="future"),
     ]
     contract = load_editorial_contract()

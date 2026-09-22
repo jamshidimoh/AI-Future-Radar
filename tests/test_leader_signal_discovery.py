@@ -1,4 +1,4 @@
-from src.fetch_google_news import _expand_leader_signal_queries, _has_leader_signal_evidence, classify_leader_signal
+from src.fetch_google_news import _expand_leader_signal_queries, _has_leader_signal_evidence, _load_watchlist_people_queries, classify_leader_signal
 
 
 def test_leader_signal_expansion_is_person_agnostic():
@@ -123,3 +123,14 @@ def test_named_watch_query_does_not_rescue_non_ai_query():
         content_type="interview",
     )
     assert result["accepted"] is False
+
+
+def test_watchlist_discovery_queries_are_group_aware():
+    rows = _load_watchlist_people_queries()
+    by_person = {row["watch_person"]: row for row in rows}
+    assert "consciousness" in by_person["David Chalmers"]["query"].lower()
+    assert "consciousness" in by_person["Anil Seth"]["query"].lower()
+    assert "genomics" in by_person["George Church"]["query"].lower()
+    assert "quantum" in by_person["John Preskill"]["query"].lower()
+    assert by_person["David Chalmers"]["category"] == "mind"
+    assert by_person["Yuval Noah Harari"]["category"] == "future"

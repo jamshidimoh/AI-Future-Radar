@@ -37,6 +37,9 @@ SPECIAL_SIGNAL_PATTERNS = (
     r"\bfuturology\b", r"\bfutures? research\b", r"\bforesight\b", r"\bfuture studies\b",
     r"\bsociology\b", r"\bsocial science\b", r"\banthropology\b", r"\bsociety and technology\b", r"\btechnology and society\b",
     r"\bai\s+and\s+(?:the\s+)?mind\b",
+    r"آگاهی", r"خودآگاهی", r"هوشیاری", r"شناخت", r"علوم شناختی",
+    r"فلسفه(?:ٔ|‌)? ذهن", r"فلسفه(?:ٔ|‌)? علم", r"فلسفه(?:ٔ|‌)? فناوری",
+    r"مغز", r"رابط مغز و رایانه", r"هوش مصنوعی و ذهن",
 )
 PERSON_KEYS = (
     "watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name",
@@ -193,7 +196,16 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
         for key in ("watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name", "author", "speaker", "guest", "interviewee", "researcher")
     )
     if mission in {"mind_cognition", "mind"}:
-        return thematic or person_identity
+        if thematic or person_identity:
+            return True
+        ctype = str(item.get("content_type") or "").strip().casefold()
+        if item.get("research_signal") and ctype in {"research", "paper", "study", "experiment"}:
+            try:
+                tier = int(item.get("source_tier", 3) or 3)
+            except (TypeError, ValueError):
+                tier = 3
+            return tier <= 2
+        return False
     if interview and (registry_person or person_identity or thematic):
         return True
     if not _importance_evidence(item):

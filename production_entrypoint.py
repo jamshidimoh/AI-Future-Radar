@@ -391,35 +391,53 @@ def main(*, skip_education: bool = False) -> int:
         replacement_buffer = max(0, int(EDITORIAL_CONTRACT.get("replacement_buffer", 0) or 0))
         special_window = lambda cap: cap + replacement_buffer
 
-        # Reserve People/Voices and Frontier candidates before Normal ranking.
+        # Reserve independent special lanes before Normal ranking.
+        # Mind is evaluated before Voices so a consciousness/awareness signal is
+        # not consumed by the broader Expert Voice classifier. Voices then receives
+        # the next independent expert signal; Normal ranking sees neither.
         special_pool = [item for item in items if not item.get("people_lane")]
-        voices_candidates = choose_voices_candidate(
-            special_pool,
-            existing_ids=set(),
-            max_items=special_window(MAX_VOICES_PERSPECTIVES_PER_PERIOD),
-        )
-        voices_ids = {id(item) for item in voices_candidates}
-        for item in voices_candidates:
-            print(f"[Voices/Perspectives Selection] rank={item.get('voices_period_rank')} score={item.get('voices_perspectives_score')} source={item.get('source')} person={item.get('person_name') or item.get('watch_person') or item.get('leader')} title={str(item.get('title', ''))[:120]}", flush=True)
 
         technical_candidates = choose_technical_trend_candidate(
             special_pool,
-            existing_ids=voices_ids,
+            existing_ids=set(),
             max_items=special_window(MAX_TECHNICAL_TREND_PER_PERIOD),
         )
         technical_ids = {id(item) for item in technical_candidates}
         for item in technical_candidates:
             print(f"[Frontier/Technical Selection] rank={item.get('technical_trend_period_rank')} score={item.get('technical_trend_score')} source={item.get('source')} title={str(item.get('title', ''))[:120]}", flush=True)
 
+        mind_candidates = choose_additive_candidates(
+            special_pool,
+            existing_ids=technical_ids,
+            max_items=special_window(MAX_MIND_IDEAS_VOICES_PER_PERIOD),
+        )
+        mind_ids = {id(item) for item in mind_candidates}
+        print(
+            f"[Mind/Ideas/Voices Pool] candidates={len(special_pool)} eligible_selected={len(mind_candidates)} "
+            f"technical_excluded={len(technical_ids)}",
+            flush=True,
+        )
+        for item in mind_candidates:
+            print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
+
+        voices_candidates = choose_voices_candidate(
+            special_pool,
+            existing_ids=technical_ids | mind_ids,
+            max_items=special_window(MAX_VOICES_PERSPECTIVES_PER_PERIOD),
+        )
+        voices_ids = {id(item) for item in voices_candidates}
+        for item in voices_candidates:
+            print(f"[Voices/Perspectives Selection] rank={item.get('voices_period_rank')} score={item.get('voices_perspectives_score')} source={item.get('source')} person={item.get('person_name') or item.get('watch_person') or item.get('leader')} title={str(item.get('title', ''))[:120]}", flush=True)
+
         people_ids = {id(item) for item in people_items}
+        special_ids = voices_ids | technical_ids | mind_ids
         normal_pool = (
             []
             if bootstrap_count
             else [
                 item for item in items
                 if id(item) not in people_ids
-                and id(item) not in voices_ids
-                and id(item) not in technical_ids
+                and id(item) not in special_ids
                 and not is_voices_candidate(item)
             ]
         )
@@ -427,15 +445,6 @@ def main(*, skip_education: bool = False) -> int:
         normal_candidates = _competitive_normal_candidates(
             unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
         )
-        normal_ids = {id(item) for item in normal_candidates}
-
-        mind_candidates = choose_additive_candidates(
-            special_pool,
-            existing_ids=voices_ids | technical_ids | normal_ids,
-            max_items=special_window(MAX_MIND_IDEAS_VOICES_PER_PERIOD),
-        )
-        for item in mind_candidates:
-            print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
 
         candidates = unique_candidates(
             (bootstrap_people if bootstrap_count else people_items)

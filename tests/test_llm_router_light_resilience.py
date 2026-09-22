@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.llm_router_light import _provider_timeout, _should_disable_provider
+from src.llm_router_light import _failure_class, _provider_timeout, _should_disable_provider
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -26,3 +26,7 @@ def test_provider_timeout_is_bounded_by_provider_class_and_remaining_budget():
 
 def test_unknown_provider_has_safe_default_timeout():
     assert _provider_timeout("Unknown", 20) == 4.0
+
+
+def test_no_deployments_is_treated_as_transient_exhaustion():
+    assert _failure_class("No deployments available for selected model") == "transient"

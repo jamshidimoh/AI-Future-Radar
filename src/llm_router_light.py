@@ -27,11 +27,13 @@ _CHAIN_CACHE = None
 _CHAIN_CACHE_KEY = None
 _PRODUCTION_POLICY_APPLIED = False
 _PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
+_PRODUCTION_CIRCUIT_OPEN = False
+_OLLAMA_CIRCUIT_OPEN = False
 _LITELLM_ROUTER = None
 _LITELLM_ROUTER_KEY = None
 _PROVIDER_TIMEOUTS = {"Groq:": 8.0, "NaraRouter:": 8.0, "OpenRouter:": 7.0, "KiraAI:": 8.0, "Gemini": 8.0, "HuggingFace": 5.0}
 _REQUEST_TIMEOUT = 10
-_ROUTER_BUDGET_SECONDS = 24
+_ROUTER_BUDGET_SECONDS = float(os.getenv("RADAR_ROUTER_BUDGET_SECONDS", "10") or 10)
 _MAX_TRANSIENT_RETRIES = 1
 _MODEL_COOLDOWN_SECONDS = {"quota": 12.0, "model": 45.0, "transient": 10.0, "other": 15.0}
 GEMINI_DEFAULT_MODEL = "gemini-3.8-flash"
@@ -95,6 +97,9 @@ OLLAMA_FREE_MODELS = {"qwen3:1.7b"}
 
 def _ollama_local(system_prompt, user_content):
     """Zero-cost local emergency provider using Ollama; no API key or billing dependency."""
+    global _OLLAMA_CIRCUIT_OPEN
+    if _OLLAMA_CIRCUIT_OPEN:
+        raise QuotaExceeded("OllamaLocal circuit open for current production run")
     model = (os.getenv("RADAR_OLLAMA_FREE_MODEL") or OLLAMA_FREE_DEFAULT_MODEL).strip()
     if model not in OLLAMA_FREE_MODELS:
         raise QuotaExceeded(f"OllamaLocal rejected non-audited model={model}")
@@ -246,6 +251,7 @@ def _call_direct_deployment(litellm_router,deployment,system_prompt,user_content
 def _failure_class(message:str)->str:
     text=str(message or "").lower()
     if "401" in text or "unauthorized" in text or "invalid api" in text or "authentication" in text: return "auth"
+    if "no deployments available" in text or "router exhausted" in text or "production llm circuit exhausted" in text: return "transient"
     if "429" in text or "rate limit" in text or "too many requests" in text: return "quota"
     if "timeout" in text or "timed out" in text: return "transient"
     if "403" in text or "404" in text or "not found" in text: return "model"
@@ -294,10 +300,14 @@ def _litellm_router_disabled()->bool:
     with _STATE_LOCK: return bool(_DISABLED_FAMILIES)
 
 def _call_litellm(system_prompt,user_content):
+    global _PRODUCTION_CIRCUIT_OPEN
+    if _PRODUCTION_CIRCUIT_OPEN:
+        print("[Production Circuit] open=true reason=prior_provider_exhaustion", flush=True)
+        return None,None
     router=_get_litellm_router()
     if router is None: return None,None
     model_list=_litellm_model_list(); deadline=time.monotonic()+_ROUTER_BUDGET_SECONDS
-    local_models:set[str]=set(); local_families:set[str]=set(); last_error=None
+    local_models:set[str]=set(); local_families:set[str]=set(); last_error=None; availability_failures=0
     for deployment in model_list:
         deployment_id=str(deployment.get("model_info",{}).get("id") or ""); family=_provider_family(deployment_id)
         if deployment_id in local_models or family in local_families: continue
@@ -325,15 +335,27 @@ def _call_litellm(system_prompt,user_content):
                 flush=True,
             )
             _disable(deployment_id,reason)
+            if reason in {"auth", "quota", "transient", "model"}:
+                availability_failures += 1
             if _provider_quota_is_family_scoped(family,reason,message):
                 local_families.add(family)
                 with _STATE_LOCK: _DISABLED_FAMILIES.add(family)
-    if last_error is not None: print(f"[LiteLLM Router] exhausted={type(last_error).__name__}: {last_error}",flush=True)
+    if last_error is not None:
+        print(f"[LiteLLM Router] exhausted={type(last_error).__name__}: {last_error}",flush=True)
+        if availability_failures > 0 or "no deployments available" in str(last_error).lower():
+            _PRODUCTION_CIRCUIT_OPEN = True
+            print(
+                f"[Production Circuit] open=true provider_exhaustion=1 availability_failures={availability_failures}",
+                flush=True,
+            )
     return None,None
 
 def call_llm_with_fallback(system_prompt,user_content,providers=None):
+    global _PRODUCTION_CIRCUIT_OPEN, _OLLAMA_CIRCUIT_OPEN
     canonical_chain = providers is None or isinstance(providers,ProductionQualityChain)
     production_mode = os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}
+    if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED and _PRODUCTION_CIRCUIT_OPEN and _OLLAMA_CIRCUIT_OPEN:
+        raise QuotaExceeded("Production LLM circuit open: remote providers and local fallback exhausted")
     if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED:
         result, provider = _call_litellm(system_prompt, user_content)
         if result:
@@ -343,15 +365,16 @@ def call_llm_with_fallback(system_prompt,user_content,providers=None):
         # workflow, but historically it was only available to the non-LiteLLM
         # path. That left the production circuit without a zero-cost emergency
         # provider exactly when the remote providers were exhausted.
-        if os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}:
+        if os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and not _OLLAMA_CIRCUIT_OPEN:
             try:
                 local_result = _ollama_local(system_prompt, user_content)
                 if local_result:
                     print("[Production Router Bridge] success=OllamaLocal:qwen3:1.7b emergency_fallback=true", flush=True)
                     return local_result, "OllamaLocal:qwen3:1.7b"
             except Exception as exc:
+                _OLLAMA_CIRCUIT_OPEN = True
                 logger.warning("Local Ollama emergency fallback failed: %s", exc, exc_info=True)
-                print(f"[Production Router Bridge] OllamaLocal failed={type(exc).__name__}: {exc}", flush=True)
+                print(f"[Production Router Bridge] OllamaLocal failed={type(exc).__name__}: {exc}; circuit_open=true", flush=True)
         raise QuotaExceeded("Production LLM circuit exhausted without usable provider response")
     if canonical_chain:
         providers=get_quality_chain()

@@ -91,7 +91,7 @@ def person_for_item(item: dict[str, Any], people: list[str]) -> str:
                 return person
     text = _item_text(item)
     for person in sorted(people, key=len, reverse=True):
-        if re.search(rf"(?<!\\w){re.escape(person.casefold())}(?!\\w)", text):
+        if re.search(rf"(?<!\w){re.escape(person.casefold())}(?!\w)", text):
             return person
     return ""
 

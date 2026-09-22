@@ -355,6 +355,12 @@ def main(*, skip_education: bool = False) -> int:
     original_select = pipeline.select_editorial
 
     def select_with_feedback(items, max_posts, max_per_source, max_per_type, policy):
+        people_items = [item for item in items if item.get("people_lane")]
+        if people_items:
+            bootstrap_count = sum(1 for item in people_items if item.get("people_bootstrap"))
+            print(f"[People Selection] people_signals={len(people_items)} bootstrap={bootstrap_count} quota=none randomization=none")
+            if bootstrap_count:
+                return list(people_items)
         started = time.monotonic()
         for item in items:
             bonus = _feedback_bonus(store, item)
@@ -461,12 +467,15 @@ def main(*, skip_education: bool = False) -> int:
                 score = _item_final_score(item)
                 render_state["published_news_scores"].append(score)
                 cadence["last_published_news_score"] = score
+                is_people = bool(item.get("people_lane"))
                 is_mind = _is_mind_ideas_voices(item)
                 is_technical = _is_technical_trend(item)
                 is_voices = _is_voices_perspectives(item)
                 is_tier0 = _is_tier0_publication_candidate(item)
                 is_strategic = _is_strategic_analytical_signal(item)
-                if not is_mind and not is_technical and not is_voices and not is_tier0:
+                if is_people:
+                    render_state["people_news_delivered_count"] += 1
+                elif not is_mind and not is_technical and not is_voices and not is_tier0:
                     cadence["last_published_normal_news_score"] = score
                 if is_mind:
                     render_state["mind_ideas_voices_delivered_count"] += 1
@@ -509,6 +518,7 @@ def main(*, skip_education: bool = False) -> int:
         # text/evidence rather than discovery metadata alone.
         if (
             os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}
+            and not story.get("people_lane")
             and not substantive_importance_ok(story)
         ):
             print(
@@ -516,11 +526,18 @@ def main(*, skip_education: bool = False) -> int:
                 flush=True,
             )
             return policy_blocked("editorial_importance_gate")
+        is_people = bool(story.get("people_lane"))
         is_mind = _is_mind_ideas_voices(story)
         is_technical = _is_technical_trend(story)
         is_voices = _is_voices_perspectives(story)
         priority_person = _is_tier0_publication_candidate(story)
         strategic_analytical = _is_strategic_analytical_signal(story)
+        if is_people:
+            if not _news_language_ok(story):
+                return policy_blocked("news_language_gate")
+            score = _item_final_score(story)
+            print(f"[Publication Policy] PUBLISH PEOPLE person={story.get('person_name') or story.get('watch_person') or story.get('leader')} score={score} quota_exempt=true cap=none")
+            return delivered({"message_id": None})
         if is_voices:
             if render_state["voices_perspectives_delivered_count"] >= MAX_VOICES_PERSPECTIVES_PER_PERIOD:
                 return policy_blocked("voices_perspectives_quota_exhausted")
@@ -608,7 +625,7 @@ def main(*, skip_education: bool = False) -> int:
     _save_cadence(cadence)
     if education_due and not render_state["education_delivered"]:
         print(f"[Education Contract] deferred: educational Telegram post was not confirmed; slot={education_slot} remains due for retry", flush=True)
-    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} technical_trend={render_state['technical_trend_delivered_count']} technical_max={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices={render_state['mind_ideas_voices_delivered_count']} mind_max={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_perspectives={render_state['voices_perspectives_delivered_count']} voices_max={MAX_VOICES_PERSPECTIVES_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} strategic_analytical={render_state['strategic_analytical_news_delivered_count']} strategic_max={STRATEGIC_ANALYTICAL_MAX_PER_PERIOD} normal_score_floor={NORMAL_SCORE_FLOOR} special_lanes_score_floor=not_applied education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
+    print(f"[Production Contract] normal_news={render_state['normal_news_delivered_count']} normal_max={MAX_NORMAL_NEWS_PER_PERIOD} people={render_state['people_news_delivered_count']} people_max=none technical_trend={render_state['technical_trend_delivered_count']} technical_max={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices={render_state['mind_ideas_voices_delivered_count']} mind_max={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_perspectives={render_state['voices_perspectives_delivered_count']} voices_max={MAX_VOICES_PERSPECTIVES_PER_PERIOD} tier0_news={render_state['tier0_news_delivered_count']} strategic_analytical={render_state['strategic_analytical_news_delivered_count']} strategic_max={STRATEGIC_ANALYTICAL_MAX_PER_PERIOD} normal_score_floor={NORMAL_SCORE_FLOOR} special_lanes_score_floor=not_applied education={'confirmed' if render_state['education_delivered'] else ('deferred' if education_due else 'not_due')}", flush=True)
     print(f"[Telegram Feedback] stored_messages={len(store.get('messages', {}))}", flush=True)
     return 0
 

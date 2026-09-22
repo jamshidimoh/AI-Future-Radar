@@ -195,7 +195,7 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     return 0.0
 
 
-def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None) -> tuple[bool, str]:
+def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None, candidate: dict | None = None) -> tuple[bool, str]:
     """Return (allowed, reason). Known same-story publications block delivery."""
     stored_records = _load_records()
     runtime_records = [x for x in (records or []) if isinstance(x, dict)]
@@ -205,16 +205,11 @@ def check_before_publish(text: str, source_link: str = "", records: list[dict] |
     candidate_title, candidate_summary = _extract_candidate(text)
     candidate_url = _canonical_url(source_link)
     title_key = _normalized_title(candidate_title)
-    candidate_person = ""
-    candidate_people_lane = False
+    candidate_person = str((candidate or {}).get("person_name") or (candidate or {}).get("watch_person") or (candidate or {}).get("leader") or "").strip()
+    candidate_people_lane = bool((candidate or {}).get("people_lane"))
     # People signals from different watched people are independent perspectives.
     # Keep same-event commentary from different people from being treated as one
     # publication, while retaining normal same-person duplicate protection.
-    for record in runtime_records:
-        if str(record.get("title") or "").strip() == candidate_title.strip():
-            candidate_person = str(record.get("person_name") or record.get("watch_person") or record.get("leader") or "").strip()
-            candidate_people_lane = bool(record.get("people_lane"))
-            break
     for record in all_records:
         record_url = _canonical_url(record.get("link", ""))
         if candidate_url and record_url and candidate_url == record_url:

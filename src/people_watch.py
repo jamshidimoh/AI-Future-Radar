@@ -176,7 +176,7 @@ def bootstrap_candidates(
         ]
         if not pool:
             continue
-        if prior_link:
+        if prior_link and not _is_seen_identity(prior_link, seen):
             exact = [item for item in pool if identity(item) == prior_link]
             if exact:
                 chosen.append(mark_people_item(exact[0], person, bootstrap=True))
@@ -207,7 +207,7 @@ def post_bootstrap_candidates(
         ts = item_timestamp(item)
         if ts <= checkpoint:
             continue
-        if identity(item) in seen:
+        if _is_seen_identity(identity(item), seen):
             continue
         out.append(mark_people_item(item, person))
     out.sort(key=lambda item: (item_timestamp(item), str(item.get("title") or "")), reverse=True)
@@ -248,8 +248,11 @@ def build_bootstrap_state(
     candidates: list[dict[str, Any]],
     delivered_people: list[str],
     status: str,
+    previous_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    baseline: dict[str, dict[str, Any]] = {}
+    previous_state = previous_state or {}
+    prior_baseline = previous_state.get("baseline", {}) if isinstance(previous_state, dict) else {}
+    baseline: dict[str, dict[str, Any]] = dict(prior_baseline) if isinstance(prior_baseline, dict) else {}
     for item in candidates:
         person = str(item.get("person_name") or item.get("watch_person") or "").strip()
         if not person:
@@ -259,11 +262,12 @@ def build_bootstrap_state(
             "link": identity(item),
             "published": str(item.get("published") or "").strip(),
         }
+    prior_delivered = previous_state.get("delivered_people", []) if isinstance(previous_state, dict) else []
     return {
         "status": status,
         "bootstrap_at": bootstrap_at,
         "baseline": baseline,
-        "delivered_people": sorted(set(delivered_people)),
+        "delivered_people": sorted(set(prior_delivered) | set(delivered_people)),
         "people_count": len(baseline),
         "delivered_count": len(set(delivered_people)),
     }

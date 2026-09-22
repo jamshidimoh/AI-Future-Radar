@@ -87,6 +87,7 @@ def _final_story_guard(story: Mapping[str, Any]) -> tuple[bool, str]:
             rendered,
             str(story.get("link") or story.get("url") or ""),
             records=_CURRENT_RUN_PUBLICATIONS,
+            candidate=dict(story),
         )
     except Exception as exc:
         print(f"[Final Publication Guard] unavailable: {exc}; publication BLOCKED", flush=True)

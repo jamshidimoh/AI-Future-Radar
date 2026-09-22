@@ -442,20 +442,44 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
                 pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)]
             if not pool:
                 break
-            baseline_pool = [x for x in ordered if id(x) not in p.selected_ids and p.admissible(x, repeat_source=False) and (target_key not in {"mind_future_target", "mind_cognition_target"} or mission_area(x) != "ai_core")]
-            # A diversity lane is opportunistic: compare it against the strongest
-            # admissible non-target candidate, not merely the remaining lane subset.
-            # This prevents a weak mind/future item from entering just because the
-            # target lane itself has a candidate.
-            baseline_score = max((candidate_score(x) for x in baseline_pool), default=0.0)
-            global_quality = max((candidate_score(x) for x in ordered if id(x) not in p.selected_ids), default=0.0)
-            baseline_score = max(baseline_score, global_quality)
+            # Explicit mission targets are coverage controls, not opportunistic
+            # diversity suggestions. Once a candidate passes the normal eligibility
+            # gates above (mission relevance, community policy, source/type caps,
+            # interview cap, and rotation-window constraints), fill the requested
+            # target even when a stronger non-target candidate exists. The previous
+            # implementation compared the target against the global highest score,
+            # including candidates that were not admissible under the current source
+            # or content-type constraints, so a valid convergence/mind/future target
+            # could be dropped systematically.
             candidate = max(pool, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
             if candidate is None:
                 break
-            target_floor = max(0.0, min(1.0, float(p.contract.get("target_quality_floor_ratio", 0.88))))
-            if baseline_score > 0 and candidate_score(candidate) < baseline_score * target_floor:
+
+            # Mission targets are coverage opportunities, not unconditional slots.
+            # Keep them only when they remain competitive with the strongest
+            # currently admissible alternative under the diversity quality floor.
+            # This prevents weak Mind/Future/Convergence stories from displacing
+            # materially stronger mainstream candidates while preserving genuine
+            # cross-domain coverage when a solid candidate exists.
+            top_global = max(
+                (
+                    candidate_score(x)
+                    for x in ordered
+                    if id(x) not in p.selected_ids
+                    and p.admissible(x, repeat_source=False)
+                ),
+                default=0.0,
+            )
+            floor = max(
+                0.0,
+                min(
+                    1.0,
+                    float(p.contract.get("diversity_quality_floor_ratio", 0.80) or 0.80),
+                ),
+            )
+            if top_global > 0.0 and candidate_score(candidate) < top_global * floor:
                 break
+
             candidate_area = mission_area(candidate)
             if candidate_area == "mind_cognition":
                 reason = "mission_target:mind_cognition"
@@ -523,18 +547,6 @@ def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> 
         def _is_mission_target(x: dict[str, Any]) -> bool:
             return str(x.get("mission_selection_reason") or "").startswith("mission_target:")
 
-        def _repair_priority(x: dict[str, Any]) -> tuple:
-            # Preserve explicit mission-target coverage whenever possible.
-            # A source-authority repair must not silently erase convergence/mind/
-            # future coverage just because an authoritative AI-core candidate exists.
-            return (
-                1 if _is_mission_target(x) else 0,
-                candidate_score(x),
-                _safe_float(x, "evidence_strength"),
-                _rank_key(x, p.recent),
-            )
-
-        victim = min(removable, key=_repair_priority)
         authoritative = [
             x for x in eligible
             if id(x) not in p.selected_ids
@@ -544,20 +556,84 @@ def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> 
         if not authoritative:
             break
 
-        # First repair within the same mission area. This preserves area coverage
-        # even when the replacement has higher source authority.
-        same_area = [x for x in authoritative if mission_area(x) == mission_area(victim)]
-        replacement_pool = same_area or authoritative
+        def _replacement_for(
+            victim: dict[str, Any],
+            authoritative_pool: list[dict[str, Any]],
+        ) -> tuple[dict[str, Any] | None, bool]:
+            same_area = [
+                x for x in authoritative_pool
+                if mission_area(x) == mission_area(victim)
+            ]
+            replacement_pool = same_area or authoritative_pool
+            if not replacement_pool:
+                return None, False
+            replacement = max(
+                replacement_pool,
+                key=lambda x: (
+                    candidate_score(x),
+                    _safe_float(x, "evidence_strength"),
+                    freshness_score(
+                        x,
+                        float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0),
+                    ),
+                    _rank_key(x, p.recent),
+                ),
+            )
+            return replacement, bool(same_area)
+
+        # Choose the repair pair that preserves mission area first and minimizes
+        # quality loss. This is important when several non-authoritative mission
+        # targets were deliberately selected: do not replace a stronger target
+        # with a much weaker authoritative item when another lane can be repaired
+        # with less information loss.
+        repair_options: list[tuple[tuple[Any, ...], dict[str, Any], dict[str, Any]]] = []
+        for victim in removable:
+            replacement, same_area = _replacement_for(victim, authoritative)
+            if replacement is None:
+                continue
+            quality_delta = candidate_score(replacement) - candidate_score(victim)
+            option_key = (
+                1 if same_area else 0,
+                quality_delta,
+                -candidate_score(victim),
+                _safe_float(replacement, "evidence_strength"),
+                str(replacement.get("published") or ""),
+            )
+            repair_options.append((option_key, victim, replacement))
+
+        if not repair_options:
+            break
+
+        _, victim, replacement = max(repair_options, key=lambda row: row[0])
+        # Recompute the authoritative candidate pool after removing the victim so
+        # a replacement from the victim's former source can become admissible.
+        p.remove(victim)
+        authoritative_after = [
+            x for x in eligible
+            if id(x) not in p.selected_ids
+            and _authority_ok(x)
+            and p.admissible(x, repeat_source=False)
+        ]
+        same_area_after = [
+            x for x in authoritative_after
+            if mission_area(x) == mission_area(victim)
+        ]
+        replacement_pool = same_area_after or authoritative_after
+        if not replacement_pool:
+            p.add(victim, str(victim.get("mission_selection_reason") or ""))
+            break
         replacement = max(
             replacement_pool,
             key=lambda x: (
                 candidate_score(x),
                 _safe_float(x, "evidence_strength"),
-                freshness_score(x, float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0)),
+                freshness_score(
+                    x,
+                    float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0),
+                ),
                 _rank_key(x, p.recent),
             ),
         )
-        p.remove(victim)
         p.add(replacement, "policy_repair:min_authoritative_items")
 
 

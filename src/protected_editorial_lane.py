@@ -36,6 +36,7 @@ SPECIAL_SIGNAL_PATTERNS = (
     r"\bgenomics\b", r"\bgenetic\b", r"\bgene editing\b", r"\bsynthetic biology\b",
     r"\bfuturology\b", r"\bfutures? research\b", r"\bforesight\b", r"\bfuture studies\b",
     r"\bsociology\b", r"\bsocial science\b", r"\banthropology\b", r"\bsociety and technology\b", r"\btechnology and society\b",
+    r"\bai\s+and\s+(?:the\s+)?mind\b",
 )
 PERSON_KEYS = (
     "watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name",
@@ -178,6 +179,8 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     interview = _interview_signal(item)
     if not _ai_relevant(item):
         return False
+    if thematic:
+        return True
     # Eligibility identifies valid candidates for this lane. Final publication
     # importance is enforced later by the production publication gate, so valid
     # AI interviews/podcasts and strong thematic signals must remain discoverable.

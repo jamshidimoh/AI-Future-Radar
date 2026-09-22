@@ -78,6 +78,7 @@ def register_post(store: dict[str, Any], delivery: dict[str, Any], item: dict[st
     record = _ensure_message(store, chat_id, int(message_id))
     for key in (
         "source", "content_type", "category", "leader", "watch_person",
+        "person_name", "people_lane",
         "title", "summary", "description", "why_it_matters", "link",
     ):
         if item.get(key) is not None:

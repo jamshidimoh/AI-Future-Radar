@@ -195,16 +195,24 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     return 0.0
 
 
-def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None) -> tuple[bool, str]:
+def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None, candidate: dict | None = None) -> tuple[bool, str]:
     """Return (allowed, reason). Known same-story publications block delivery."""
     stored_records = _load_records()
     runtime_records = [x for x in (records or []) if isinstance(x, dict)]
     all_records = runtime_records + stored_records
+    candidate_people_lane = bool((candidate or {}).get("people_lane"))
+    candidate_people_bootstrap = bool((candidate or {}).get("people_bootstrap"))
+    if candidate_people_bootstrap:
+        return True, "people_bootstrap_baseline"
     if not all_records:
         return True, "ledger_empty"
     candidate_title, candidate_summary = _extract_candidate(text)
     candidate_url = _canonical_url(source_link)
     title_key = _normalized_title(candidate_title)
+    candidate_person = str((candidate or {}).get("person_name") or (candidate or {}).get("watch_person") or (candidate or {}).get("leader") or "").strip()
+    # People signals from different watched people are independent perspectives.
+    # Keep same-event commentary from different people from being treated as one
+    # publication, while retaining normal same-person duplicate protection.
     for record in all_records:
         record_url = _canonical_url(record.get("link", ""))
         if candidate_url and record_url and candidate_url == record_url:
@@ -215,6 +223,10 @@ def check_before_publish(text: str, source_link: str = "", records: list[dict] |
     for record in all_records:
         if not str(record.get("title") or "").strip():
             continue
+        if candidate_people_lane and record.get("people_lane"):
+            stored_person = str(record.get("person_name") or record.get("watch_person") or record.get("leader") or "").strip()
+            if candidate_person and stored_person and candidate_person.casefold() != stored_person.casefold():
+                continue
         score = _semantic_conflict(candidate_title, candidate_summary, record)
         if score >= 0.82:
             return False, f"semantic_story_already_published score={score:.3f}"

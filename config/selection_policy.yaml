@@ -49,7 +49,8 @@ editorial:
 #   Telegram safety, final publication contract, and the explicit two-item lane cap.
 # - Community/aggregator sources remain excluded.
 # - ai_core_target_min/max, mind_cognition_target and convergence_target remain explicit
-#   normal-portfolio controls and do not bypass safety gates.
+#   normal-portfolio controls. They are filled after the normal eligibility/safety gates;
+#   the global target quality floor does not veto an explicit mission-coverage target.
 # - diversity_quality_floor_ratio=0.80 remains unchanged.
 # - max_same_mission_area=2 prevents an AI-only or single-domain normal run.
 # - Information gain is a bounded soft reranker; quality remains dominant.

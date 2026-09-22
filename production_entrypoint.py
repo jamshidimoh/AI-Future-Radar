@@ -263,6 +263,15 @@ def _competitive_normal_candidates(candidates):
     return protected + kept
 
 
+def _people_bootstrap_batch(candidates, limit: int = MAX_PEOPLE_BOOTSTRAP_PER_PERIOD):
+    people = [item for item in candidates if item.get("people_lane")]
+    return sorted(
+        people,
+        key=lambda item: (item_timestamp(item), str(item.get("title") or "")),
+        reverse=True,
+    )[:max(0, int(limit))]
+    
+    
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
     people = [item for item in candidates if item.get("people_lane")]
@@ -370,11 +379,7 @@ def main(*, skip_education: bool = False) -> int:
             )
         bootstrap_people = []
         if bootstrap_count:
-            bootstrap_people = sorted(
-                people_items,
-                key=lambda item: (item_timestamp(item), str(item.get("title") or "")),
-                reverse=True,
-            )[:MAX_PEOPLE_BOOTSTRAP_PER_PERIOD]
+            bootstrap_people = _people_bootstrap_batch(people_items)
         started = time.monotonic()
         for item in items:
             bonus = _feedback_bonus(store, item)

@@ -28,6 +28,14 @@ _LEADER_WATCHLIST_PATH = _ROOT / "config" / "leader_watchlist.yaml"
 _PIONEERS_PATH = _ROOT / "config" / "pioneers.yaml"
 # Generic companion-discovery vocabulary. It deliberately avoids source-, person-,
 # geography-, or platform-specific terms so the same mechanism works for every watch person.
+_PEOPLE_GROUP_DISCOVERY_TERMS = {
+    "ai_frontier_builders": ("AI", "AGI", "foundation model", "agents", "robotics"),
+    "ai_research_and_foundations": ("AI", "machine learning", "LLM", "reasoning", "AI safety", "alignment", "neural"),
+    "future_philosophy_society": ("AI", "AGI", "superintelligence", "existential risk", "future", "technology"),
+    "mind_cognition": ("consciousness", "cognition", "neuroscience", "mind", "AI consciousness", "brain"),
+    "bio_quantum_education": ("AI", "quantum", "quantum computing", "genetics", "genomics", "CRISPR", "synthetic biology", "education"),
+}
+
 _LEADER_SIGNAL_TERMS = (
     "statement", "says", "said", "argues", "argued", "warns", "warned", "predicts", "predicted",
     "calls for", "called for", "supports", "opposes", "criticizes", "criticised", "defends",
@@ -171,14 +179,21 @@ def _load_watchlist_people_queries():
             if not isinstance(cfg, dict):
                 continue
             group_priority = int(cfg.get("priority", 0) or 0)
-            category = "mind" if str(group).strip() == "consciousness_and_mind_ai" else ("future" if "futur" in str(group).lower() else "ai")
+            group_name = str(group).strip().casefold()
+            if "mind" in group_name or "cognition" in group_name:
+                category = "mind"
+            elif "future" in group_name or "philosophy" in group_name:
+                category = "future"
+            else:
+                category = "ai"
+            focus_terms = _PEOPLE_GROUP_DISCOVERY_TERMS.get(str(group).strip(), _LEADER_SIGNAL_TERMS)
             for raw_name in cfg.get("names", []) or []:
                 name = str(raw_name).strip()
                 if not name:
                     continue
                 actual_priority = 0  # person identity is not a ranking signal; freshness/quality decide later
                 rows.append({
-                    "query": f'"{name}" ({" OR ".join(_LEADER_SIGNAL_TERMS)})',
+                    "query": f'"{name}" ({" OR ".join(focus_terms)})',
                     "watch_person": name,
                     "category": category,
                     "tier": 1,
@@ -187,6 +202,7 @@ def _load_watchlist_people_queries():
                     "curated_discovery": True,
                     "leader_priority": group_priority,
                     "leader_query_priority": actual_priority,
+                    "leader_focus_terms": tuple(focus_terms),
                 })
     rows.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("watch_person") or "").casefold()))
     return rows
@@ -247,7 +263,16 @@ def _expand_leader_signal_queries(queries):
         primary = bucket[0]
         expanded.append(primary)
         person = str(primary.get("watch_person") or "").strip()
-        companion_query = f'"{person}" ({signal_terms})'
+        focus_terms = next(
+            (
+                q.get("leader_focus_terms")
+                for q in bucket
+                if q.get("leader_focus_terms")
+            ),
+            None,
+        )
+        companion_terms = " OR ".join(str(term) for term in (focus_terms or _LEADER_SIGNAL_TERMS))
+        companion_query = f'"{person}" ({companion_terms})'
         companion_key = companion_query.casefold()
         if companion_key not in existing:
             companion = dict(primary)

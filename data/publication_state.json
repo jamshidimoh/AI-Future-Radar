@@ -1,7 +1,185 @@
 {
-  "run_number": 619,
+  "run_number": 620,
   "last_education_run": 605,
   "last_education_slot": "2026-09-20:evening",
-  "last_published_news_score": 50.0,
-  "last_published_normal_news_score": 64.28
+  "last_published_news_score": 0.0,
+  "last_published_normal_news_score": 64.28,
+  "people_bootstrap": {
+    "status": "in_progress",
+    "bootstrap_at": "2026-09-22T08:30:30.824913+00:00",
+    "baseline": {
+      "Sam Altman": {
+        "title": "Anthropic's CEO urges the industry to slow down, and Sam Altman agrees - Mashable",
+        "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOV1B1cmVxVWc5Nkl5NHFmOWtuaHZHejN6TzBYb2QtRHlva1hUcGRpc2lPVmZIeDc1T1ppcHg0dF9raWcxcGpEVExjS1RhLU9OdmZUWlFwWGVtYzZoWTZBS1VyTTI3d3RIS0dtbDdSS3RQMEtNQlVocUVfNVlsLVhPODdtTQ?oc=5",
+        "published": "2026-09-22 03:21"
+      },
+      "Dario Amodei": {
+        "title": "Anthropic, CEO of which called for slowing AI development, may release new model ahead of IPO - The Times of India",
+        "link": "https://news.google.com/rss/articles/CBMihAJBVV95cUxON1c3WF8wNlB2QWhqWngzWTJoWXdlc0swTS1IeGlBdzg5SEl0RlFZdkNyNGx5VHVwcVZqbzlCQldzbG9jT2QxNUcwYUEycEZGYUVrSUI4UGttTjg1M1dCWkxfU3h0TUdLSXlNcGF6TXpoT0tsa2JEV0IyMHNpaVFoRkVsVXFTMXdEY040MnZjYU9GSzdGOVpiNThjcUdiVWZrSTNTaVR1LVhJbWlTYWNOSHY3dGNkNHl4a01JNFVvMER1TGR2RXA5Zkh5NjNKS0NPMkVWR3NtNG1fYUVPNnlkTWk4Ymgta1dvZnFkd3J2VUlPcFBNVlJxUHU0NzRXZVE5RVJGeNIBigJBVV95cUxNaHlFb2JtUU43WG1UNXVJZmc2WjdoNjJzMTJzbkFPMEFrSUo2LUdOSVl6eDlTU2xSbUktVmhpQWRHNFZKRXA5ZmpfRHNYWXplRXRFRXdTa3JLMm1HZ3Z4SDctV3JLdGx1bmlZQmFmbGhVdDVNS0NfMmUtQmpoZ0w2RjJVSlo2Uy1RYVNNWDhvVnNSem5OU0RwLUk1RDNlVDdIUE5fcU9ZOHZ1UWZqNFdTVmZSdWdybWJiU2xsYVhIWmk1OFoxUjdOZjRJd3pENkpaanJ4ZzlCVFVjRkkxY3JoY0xiX3EyZXFmbHBLdFJPZ2RINzhCN0Y5b3paMGV1c1ZHQkNKV2dsUHhCQQ?oc=5",
+        "published": "2026-09-21 02:30"
+      },
+      "Demis Hassabis": {
+        "title": "Google DeepMind Launches Institute To Debate AGI’s Future - WeRSM",
+        "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTFA1cm01QVBQMFd4OC1DX3VBVjFzYk4yOXBVMDlTb3htX0tvSW9QMHppcWVSZm1iMjZWWVl6b2JhTHA3aEZrNkl2SzVESDBjX211Qk52bUNBcWVqRjFXMHFTdXF6c1Y5WXZ0R3c?oc=5",
+        "published": "2026-09-18 18:13"
+      },
+      "Elon Musk": {
+        "title": "Elon Musk’s latest Boring Company pitch involves a Hyperloop between Austin and San Antonio",
+        "link": "https://techcrunch.com/2026/09/20/elon-musks-latest-boring-company-pitch-involves-a-hyperloop-between-austin-and-san-antonio/",
+        "published": "2026-09-20 19:38"
+      },
+      "Jensen Huang": {
+        "title": "Nvidia boss says there is ‘0% chance’ AI destroys the world by 2030 | AI (artificial intelligence) - The Guardian",
+        "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNR29qZDY0OGh1R2hYREF3UHBXR0xjUTFCaU5MWUxzZGNKX1NBeHVrQTVseURCRUlBX3d4RXFEZklnUVNFX3hsdVNMd0FKcDI4S2dOc3plZXdlSHZqbWdQLXk2Q1dKSE9TRUEwVmVjYXozenFVUU5SVVc3cThEVmZ6WVlnVG5VOWVtV3BiMnVqdGpWajhxTU9iMGxZTGtyNC1sQThfcUNkMGhSVGNvVGNaazBmRExMRXU5TVFHTkpOTQ?oc=5",
+        "published": "2026-09-21 07:12"
+      },
+      "Mustafa Suleyman": {
+        "title": "OpenAI’s latest AI incident is a ‘pretty serious situation,’ says Microsoft’s Mustafa Suleyman - CNBC TV18",
+        "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxOYVFRa1FLYVNyUTZPVzVSbFNCc1NTWkRrYjAyOUFhdHVIMGxXb1dERVRGUV9KM2E0dkhPQWI3NmxXMXNQR2dZMkVkOHNkZ21scmpnbWsxUjFOa0xQdmlXUTVybjY2OE5lMzZENFhKeEtEay0tb1k4NEctUzNwaEhKbjctbUVELWYxZElQM2lQN2NSUkJmNVRXTmVGVkZuUGZkNmZXWkREVUJoOE1URUFr0gG0AUFVX3lxTE1HYUplWFpDdkFidk9SQXVIaGYtR09DWGxVQm82b1A3LS1FY3dQeDZwR240MDlOM2o4RkRCcWFHOG5lcFd1VlpGMUFudEVlb1Q5dTJJOUhsSWZMZ0JyeGhJNXZXeE1nclltMlg4VU9WT2VoUEtZSzRhRVo2TGZKb25BUEhQY2VOZXVNVnVIcFdieHdUSHAyQXowNkluNTZWYk02d1VuSmkwZEZ6a3dyQjRLNW5CSA?oc=5",
+        "published": "2026-09-20 14:26"
+      },
+      "Eric Schmidt": {
+        "title": "Divisions emerge in the tech industry over calls for a coordinated AI slowdown - opb.org",
+        "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxPTm9ZRUxyRVBWZ2YzelNQVW81V1VQNVpwMmZOLXFQU0wyUXgtb3FfWEpSWjloejVjQmdOOEZmSmY1bmdVc3NhNGo1SEN6ZndxSl82U1h5WjRZdFlSb1RQZ2xaTW02aF9qSjk5OFFsTkhyR1drT0hVdGVBcG5PYjN6N1BkY3BoNWoxZU01MFRJRHptcDZsWGxzRmYwdlFqb2JVUnhTaGNIQTJ1ZU4yeXlGWHpMV0ZDY0kxRmc?oc=5",
+        "published": "2026-09-16 23:27"
+      },
+      "Andrew Ng": {
+        "title": "AI set to wipe out humans? Andrew Ng breaks his silence on artificial intelligence doomsday warnings as te - The Economic Times",
+        "link": "https://news.google.com/rss/articles/CBMihgNBVV95cUxOTXpndzlDZTdHWWpZNElZdWpoWXZEdm92dGotcjhVMVRrWHl1RVNoT3FlLTIxOGx6TWI1b1gya2QzMU13VkFBaFhqdEVpYkt6aFlPaVB1M0U0ZzV5dGVneU9FX0NmVWw1c0Qxb1FfcDljV1gwYXZMa0UxZGpkWnoyZ1E0Uy12em5qVGl3dkFURnNGR1NGR203R0N0SDJjaVFEX3pmeVZ3dmhKalowZ2lveWQ1bVMxaUYtMmNzZHNWQ21JdXNkMXhqanMzSXZiZnpnNWtQbWFuLWNmdW5DbTVzWEwtc1BGWFZ3OG4zdFJ2NHhxOGJDV21yaENRUjlLR2cwZHNfQ1YzNGo4MWtlS1RHb01XUzhXOGEzaGxfV01lOTRheTZURGpuNmhfczU1SmlVODN6TEw4N3dqQk11ZXhGOEw2RjFraWtFWXFydEZrdWVMTTJIUEV1REYtUDZoRkdXY3QzMjlTTXRSMzRVUlNiNWxYT3Ixa1g2TUR3MDdveFF4YTZFZ0HSAYsDQVVfeXFMTW5PM0ZUbXRWS0x2ZzFmZzRudEc0cWlzTFlkNHA3NmQ4U2N6NVpEUkpPZXNyWGJQLXhPWkFDTzg5YlhVdnBEcUNoSGRiNXcybHEyTTltM0Etc3NHcE9Eb3loWEYxY0xnR2ZuY253My1iSmRTYzJRcU9mQUJhMnhDdTU3TGZSbzBacWlxeTA5eXBDNlY5Y1pRRl9mUkFad3FIaWxSR0dVRS11TFN0YVNrQXB3MF9DTmF3eU53ZTBDTUgyVHhJT0d6TUctZzlZSXA1LTIxTGE2TGZ4N1pCOWJfWUctdVJVUUNFV0VxQVFSeGxyemMxTFItb2Z4N2E3dkJneml3UkVnSlZaUkphaDRFVllBMkUtTzBBQkZiS0M0M25ub0Y4WFdOWlloSGpwN1lXTVZoV2lObGRkQkRLUEIzUEIzcEFsY0lyRm00Y2poQlNJUkJsNnZHeUdyU1MzM3VlZE1JSnhQc2ZvbktiMzRwUXlVSmdjMktPMXN5a2NKQnVJVmxfc3FBRjhmalE?oc=5",
+        "published": "2026-09-18 14:07"
+      },
+      "Geoffrey Hinton": {
+        "title": "Geoffrey Hinton says 10 percent chance AI could end humanity is not unreasonable - 디지털투데이",
+        "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNenZXa1FNME9qbXhuNzNTSzNBMEZMandFeHBoNThEYlRTNTNmWUVqUkp1ZGtDSExtc1ZFNE92NE43ZnNwc0NINkhpQUlYaWY3QmZETVNDZW0yV0VDSURGTWxXZllaYWZFUDZHRDRhemxyb1ZUXzBBSzMtQ1BDUmhfdlhXQk5TdV8tQUs5b2ZsM042NVZzSEkwYmptZ0FCUFJCX2Z0VmkwV0QyamY5aW92TFE3clZCOFBRSDVPVDJXank?oc=5",
+        "published": "2026-09-11 01:29"
+      },
+      "Yann LeCun": {
+        "title": "Why AMI Labs’ Alexandre LeBrun won’t call his AI ‘AGI’ or ‘superintelligence’ - TechCrunch",
+        "link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPWEtJSWxIUnFhTnBkVjc5cUx3ZElsOGxTeGJub0xTQXBvMzBLbmdDTlRnajRaR1dOcXJwWVVDUkxyZGdKV3ZyUXRYRzgza0YwUEdmT2c4ZFlua1NaMjVWb1NHTU5NMmhhbjNGeUtheGptRkFsNGlyLTZIN2h0UktlRmV4VUZmbVlFckRTMGJtcGt2VUJmbXg2bGJOeEc2eVJiRkRuUmlWVFB6dw?oc=5",
+        "published": "2026-07-16 07:00"
+      },
+      "Yoshua Bengio": {
+        "title": "‘We’re Losing Control,’ AI Pioneer Yoshua Bengio Warns - ASHARQ AL-AWSAT English",
+        "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPRHNRbVVCTjd4VEgtWlI5VlRZYzhwWF96SGk2ZklYaVBXcW5ZSGJTSHdPd3VWaG8xMTdaNHBVQzMzRnd2TnhtMEV3X0l3ZnNLY0VrSFBQU3VYZzY0elI5RlRqODNaUldyakpPcXU5aU1aeHdoMjVLdHUtazh2aHVhLTlFN081NW80dDFzY1lpWkRqU2dKa1daZW15SG5tY2FTcU9LZzR1TnRCaXgtWHpCOTNjT1hCbmdQZDdlNThXa3Y?oc=5",
+        "published": "2026-09-16 17:02"
+      },
+      "Ilya Sutskever": {
+        "title": "NBIS, IREN, CRWV At Risk? OpenAI Co-Founder Warns AI Agents Could Turn Neoclouds Into Cybersecurity Targets — Palo Alto CEO Offers Fix - Stocktwits",
+        "link": "https://news.google.com/rss/articles/CBMinwJBVV95cUxPeUhKQjM3WkFHWTh6cFdTUkZncEwxNlhGSEs1dXpzVG9HQmh6WmwydlVlWXB3dWppTGRwYjQzUzZmb294TGYtRm94SWtoMEVxcFFuOXg2QXZIWGExSXkzVzRQY0pld2U4NEJNbG04QTQzMlgyNV9fSW56czNmc3ZjeExwYzZ4aGZDS21LRUFqSlJ0MXZyQ2o1TkFOQVctUlhqdVBHcDNrcFdsMXFUeE00SFE0VXVXMmZRay1fOWtodlJ4dU05TWNTd1h2czduV3BjTWlHQTd0b094RDhFMVFfbXFRNHh1Y2Q4d0QwRFJod0FKNEZwVW1fZWtFQ3RZc2tCaWx5QU1BMmswUkZQS0lxdC15dk1xbW5UQ29iS3hKMA?oc=5",
+        "published": "2026-09-02 04:57"
+      },
+      "Fei-Fei Li": {
+        "title": "Fei-Fei Li: AI's Next Leap Isn't More Text — It's Seeing the World in 3D - finance.biggo.com",
+        "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5SZXJxZ0FTWWNkMDJwZUxkM1NfZ0R3SENwNExCY2RLcENDZzJvb0E2amxNNW5XUXkwWmlOcHhEN0Q3dlB6VG1SbXQzdFJhS1dRUGNrb01icU1aMEE?oc=5",
+        "published": "2026-09-04 07:00"
+      },
+      "Andrej Karpathy": {
+        "title": "Here’s how tech leaders and countries reacted to Amodei’s call to slowdown AI - MediaNama",
+        "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxONjVsTi1TeGVKSmtkVFlNWlNPcUc4ZUVsMU54R0QyS1MxUUhJVjRORExzNk5qVGprTzRfazBDemg4QzRGRC1DSEw0Qzc2eFBOQmRlb0ZIT28xTVhIazBJMDVLQUQ1ay1oS19seTEteDVzdkxJM0ZNdlFnYXZCZlNVSGVweVNLbTA?oc=5",
+        "published": "2026-09-18 10:21"
+      },
+      "Judea Pearl": {
+        "title": "Chancellor ignites free speech dispute - PressReader",
+        "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9fMmZOVkdOd015MVBkYko5U0FPRVRDeUVjN0lweWxCcmwwbFJ0cWJodGZvMFF4VmFaMHdoZjZ6YUwxSzZuV3pDaXpiZmN1ckNsX2pKMnFvcDRoVnlzcjFwUFZ3MkhUWTVfWkxna0V4WnJubjUyTVg0ODQwbnp5eGc?oc=5",
+        "published": "2026-09-19 19:07"
+      },
+      "Stuart Russell": {
+        "title": "Video | AI Warning | 'Immense Harm In 5 Years': Google's AI Researcher Quits With Stark Warning - NDTV",
+        "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxORUtWTUZhaHNjdnZfbGVzZFo2SzRIbVpQYmtfc09LWFoyb3ppam9nUlJmWVNwbG9mdXJrMUdfd1pzam5DSVFBcWcybWZvUXBwM2NkZTdISkNDWHljZUF1WVZjUS15UnAtbkR2UXlUSjQ2elpnQ3Y4ODJmNDJCS0VYLVNJREJwVU1QdXlxNXN0Y0d5S05UNTN4amZpRDBjdGFkMHNDRE1ldC1iNWJYRDM5Vy1PclhLYlNH?oc=5",
+        "published": "2026-09-15 15:49"
+      },
+      "Nick Bostrom": {
+        "title": "[Interview] AI risk expert Nick Bostrom says pausing development will come at ‘cost’ - Hankyoreh : English Edition",
+        "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPMlFOdndPYkNYX2J5M2w4Vnc4cW9hNDNYYlNyRDFQd2lYZzUwYlFwU2lnZTE4Q1NfdWRzWWNzSG82ZnYxSHJfLUpPY3JIMUlkbmwwcjJJSTZYZjBfNjVIQjFWQVdIM2tYUE80anVoaUhfM0RIYnl3NjBRRkJqTlJNUXV3?oc=5",
+        "published": "2026-09-21 16:33"
+      },
+      "Max Tegmark": {
+        "title": "Humans are \"close to being outsmarted\" by superintelligence, AI expert says - CBS News",
+        "link": "https://news.google.com/rss/articles/CBMifEFVX3lxTE1ZbW5GVHhoRnRpN0pnNmJ5TWtTNHJZZFJyVnUxZkRLOGtfYXd0WHFueU5YaEVnS3FHWHh6WWVJLUZDQkVKTGY5dmdUNnd4UWQ1WFQxbzhfQVE1djFJQldiY3g5UEdxLXhFZ0lQMkstT0s0RkhlSG9GUUpRbWQ?oc=5",
+        "published": "2026-09-09 07:00"
+      },
+      "Yuval Noah Harari": {
+        "title": "The full-length interview with Yuval Noah Harari | The Economist - finance.biggo.com",
+        "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1rVEIyVndVWEtUa2FWeFBnT1FYMkFjakV6aDhIMXp2TE1TUGhBdlpUaWZ4cGpKTWltVzd2ZnkxcGZxQlhYQ1hudXNXVjh1blJmVVNCTjE0dGtDS181T1hz?oc=5",
+        "published": "2026-08-27 16:08"
+      },
+      "Ray Kurzweil": {
+        "title": "The Technological Singularity: Five Visions of the Future - Medium",
+        "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPd21fSGJZZ2h4dGpySnI1RXl6OWxnR1g5aUFpdF84RHoyUGU3MldvaERhVHRqNThlV3ZSNmNzRGZtVENxYlpUeXgycVNPblljcTlITmFsMWtic0ZEM3hmckE1bG1qZFVJdUJ4QVM3bXJMMHFVelAxTnZfWFl1TE9iSTFkd21ZT09fSnFsWG1GX2FSOUV1ZG1qYVE5a2g?oc=5",
+        "published": "2026-08-05 07:00"
+      },
+      "Kate Crawford": {
+        "title": "Adam Sandler officiates Taylor Swift-Travis Kelce wedding, fueling theories about singer's Israel stance - Jewish Telegraphic Agency",
+        "link": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxNQXBDVlhCOUNrTDgybno1cWdnYktNN20wZkNPY25weHIwVzctLTNZYy1qMHJrc01zMVBMNmY1SnROYVBVeUxRay1UVmpLU2FrQWVseVV2YVlxQ2xPcE1EZWhpY3hnZElIaWNsRmJuOW43RHZqRlI4TXU3MnBJZF91dGVpUzJ6MlRfUXF3al8tWEhuWVdLRl9XMDZsakw4YnRVU3Z1cm45Z0V2RXZIWEVHNkxaVmIwbHdMMWZVY0pSUXFoOW9QNVNOc0VZX0RlMEFGbEpjRC1JZ2g?oc=5",
+        "published": "2026-07-05 07:00"
+      },
+      "Anil Seth": {
+        "title": "The stuff matters: Consciousness, computation, and biology - Cambridge University Press & Assessment",
+        "link": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxNOWxkV2RrNzlJcmYyY011R0IyeWxtMVBON3I5QXhMdDdXalRac2ZabzE3Y0ZYZHNFMzlxZ3JlbUIyN3pjVXpRUHNYb05SWmtIUXdMWTlCSjN5MVJKSlFhb2ZscUE3aEZDcFdDZktNMzYzTEFid2FpbkdCbE9LVUhyRWgtbEtoajRuTzRtbFE5dnRlWEFuMlNNMW1WRExHU1NydW1CVko4Y0RDaElRb3BqUXp4Qnlzc2FZelV1R3BEZTNCUXZSUTFjdGFKSFJmWFcybWZhZHYxTjFPdE1wNHZKUmR5Xy1zWHZvZEZ6SGJwbGt4RUFS?oc=5",
+        "published": "2026-09-18 00:59"
+      },
+      "David Chalmers": {
+        "title": "AI agents have started writing to philosopher David Chalmers to discuss consciousness - open.kg",
+        "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOVjA4SEtpcHIyaENoTlQxUTZ3RWZQLW4wazBtRFU4MFR6ZXdxSlN4MU8tdzRTX0xXaGE4U0dlUzd1TDVLdUd4cnpUVlRPbFBieGNJdFNzNktacEF2VW5seDd0NDVPM0p2TElYZFhHSW5yelN5eHZ3MEg1b0pxZDY1VV9qb25mVklGcGhnZXVsVlVPUFlaOW5fU1VISWZHSnc4UzVyRE5oV1J0aW1HQy1LeVh0eGctSXpVNk14Mw?oc=5",
+        "published": "2026-09-08 06:46"
+      },
+      "Stanislas Dehaene": {
+        "title": "Anthropic Says Chatbots Have What May Be a Key Feature of Consciousness. Are They Right? - SingularityHub",
+        "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOcmE3S21EY2Y1c3lkbUNvU1UtemlyNUxieFgxdUpGN29OOWZtcDhUeDRNdkFKVDVwbGJ0WnlQZFAtbWQ5VnZENXYwUnhTQXdFMy1zV2xxN0xGQjRCdFZ3aGNDT3BtRzJDVmhDVjRLaFkta25oRk1IdF9oQzNIRU1xYjZXOU1IMjBkU1MwWXVOTWQxOFl3Zk4wd1VteTZpQU9KcW92WnYwWHQxVEt5eHpieTJDLWpPNW9FTW04RlZuOC1BQnc?oc=5",
+        "published": "2026-07-17 07:00"
+      },
+      "George Church": {
+        "title": "Chandanappally church swaps fireworks for a home and hope - The Hindu",
+        "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOcjZ1UE5zRFp3UW92RDh1SWNGWEJFY3d3b3FUSjFWQzktYlZEdVE4MDUwQWFYd1N3d2RtcWpVRXdnUUlpTFZBR2YxclRWTU14OVVDN1hvbXVmTkd2a0FZWUtJZm5kMVh4ZV9zNEZyTFcyeUdkOGt5ZVg5RWFsNHJmUmxwd01nQldLbEVEWjBIYU9QR0F6Rm5SbzRfZ0xvdjUyWUx0S2gtNEg0SVBaMzExeUxuVXhzSllDd1lrWmtsM3LSAccBQVVfeXFMTmRfcnpneGdHSWxfSGdTekVhZGpLZVV0MjFVSGxrRGYzenVhVDczajVnbEhnN19CUGdQZmxWZDQ1VUdtUjJSYkxCWXp5VTFXdTJmMmw4YldSM3c0V2FubXc3bUFpeERWOEM3VTJuQVZZdlRNYm41aF9Wc09lNzhDcUx4eFRobllyZ1JzLWYyRjBUUWNGLXJRSEozNzdTLU9oT1lDbE9JVXRqTHdJdDBaVmVEbmpwQVp0V0M3R194bjhKWXlEN2NSSQ?oc=5",
+        "published": "2026-07-02 07:00"
+      },
+      "Jennifer Doudna": {
+        "title": "Berkeley Lab Takes Major Step Toward Doudna with Delivery of Early Access System, Cech - Berkeley Lab News Center (.gov)",
+        "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOLXRvM21pNy01aEwxenh5ZDgyaXlTT3Q4MDJwZ0pqZDFUZS1MczJvSllFc1FpVVdYU1d6NWFuSExyaFZSZDlxbzFSWEZXUXlEN1UtWFhzbnM2VEx6SnVObHVRdnEyZ0RNMTA2czdQWHlqVy1XT2I0MEJ2VFpsbDRsNmFmTFN5WmpGQXFMU2JyNFY3b1dwQjJpYy1yWnM5ZWFLQ3M5cE11dE9OMWp4YWV5emwwbjZ3R3NvaGpWMm4xUDlYZw?oc=5",
+        "published": "2026-03-17 07:00"
+      },
+      "John Preskill": {
+        "title": "John Preskill, The Physicist Who Named Quantum Supremacy And NISQ - Quantum Zeitgeist",
+        "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1nWWdKMnQwVjdzX1RmVFYyeFdMdnc3SGIwdUhobHpQa3VjVy1HYThSd2FleV9iV0trcmJqeHpUOEhDXzZ4REhKaHc2QVYtdlZETzNCWl9R?oc=5",
+        "published": "2026-07-01 07:00"
+      },
+      "Scott Aaronson": {
+        "title": "Definium LSD drug goes 3 for 3 with another pivotal anxiety trial win - Fierce Biotech",
+        "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxOZ3hnZEpYUkhFRHM2Nzd6dmdFUEs5cjlldGF2VjFXeE9mVEx6dU5nZ2hLSVhWU3d2ZklPc25IcFBpelFUVnphVTlOZktPNXFWemVlMzJTQUtrSWlNQUwwVm9idExTaFVKTElkNTUyZVQzazgxQ2NXX21SVTd0UUtjUm9pTFItdTJSY2JoLWJYWFhXLWoxWFpzWUpZeG5lTEk?oc=5",
+        "published": "2026-09-14 10:57"
+      },
+      "Ethan Mollick": {
+        "title": "Top Literary Magazine Offers Bizarre Response to Accusations That It Published an AI-Generated Short Story - Futurism",
+        "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQZXh3Y1U5amxFMnIyQUZwWHlaa3VVeGJZOFI2UUEzZmI2bFplVHFSNjAtNklyVlJaOGtJUTNSRnlaTXdUSGNwR3p4eDdsTDBPMmFCeVVTUGJhQlV5QmpUandFZjFyOVkyZWRtSDNtWVI4ckgtcnFNOWpQX1dQV1BVaU9mUkRZbDVMVm8yWEpMT3dxZw?oc=5",
+        "published": "2026-05-20 07:00"
+      },
+      "Sal Khan": {
+        "title": "Can AI tools transform education for the better? - PBS",
+        "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNTjFrY2tCQTRwelBEMDhjZklQZWl3eWlwOS13bUVhV2YtaS13SWxaa2xFXzBLM2tKU2VoTk1JSkhpUmRPNUFxQ1daMnNDN0NucTVZVlNHQW9qenRuVUdkUkxaNjVzWnRuQ3RDWFlOT0prSERvQXNIcVJNTGdrX0JHdlZ1cGVyUkpJ?oc=5",
+        "published": "2026-04-30 07:00"
+      }
+    },
+    "delivered_people": [
+      "Andrej Karpathy",
+      "David Chalmers",
+      "Demis Hassabis",
+      "Elon Musk",
+      "Eric Schmidt",
+      "Ethan Mollick",
+      "Ilya Sutskever",
+      "Jennifer Doudna",
+      "Jensen Huang",
+      "John Preskill",
+      "Mustafa Suleyman",
+      "Ray Kurzweil",
+      "Sal Khan",
+      "Sam Altman",
+      "Scott Aaronson",
+      "Stanislas Dehaene",
+      "Yoshua Bengio",
+      "Yuval Noah Harari"
+    ],
+    "people_count": 30,
+    "delivered_count": 18
+  }
 }

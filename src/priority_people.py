@@ -15,6 +15,7 @@ INTERVIEW_TERMS=("interview","podcast","fireside chat","conversation","q&a","key
 MAX_FIELD_CHARS={"title":1200,"summary":4000,"description":4000,"source":600,"content_type":200,"speakers":1200,"speaker":600,"watch_person":600,"leader":600,"key_quote":1600}
 ROOT = Path(__file__).resolve().parents[1]
 IDEAS_PATH = ROOT / "config" / "leader_watchlist.yaml"
+PIONEERS_PATH = ROOT / "config" / "pioneers.yaml"
 _IDEA_CACHE: list[dict[str, object]] | None = None
 
 _NAME_PATTERNS={canonical: tuple(re.compile(rf"(?<!\w){re.escape(alias)}(?!\w)", re.I) for alias in aliases if " " in alias or any(ord(c) > 127 for c in alias)) for canonical, aliases in PERSON_ALIASES.items()}
@@ -166,6 +167,19 @@ def _person_groups(people: list[str]) -> set[str]:
     for row in _load_watchlist_people():
         if _normalize(str(row.get("name") or "")).strip().lower() in normalized:
             groups.add(str(row.get("group") or "").strip().lower())
+    if groups:
+        return groups
+    try:
+        document = yaml.safe_load(PIONEERS_PATH.read_text(encoding="utf-8")) or {}
+        for row in document.get("people", []) or []:
+            if not isinstance(row, dict):
+                continue
+            name = _normalize(str(row.get("name") or "")).strip().lower()
+            category = str(row.get("category") or "").strip().lower()
+            if name in normalized and category == "mind_consciousness":
+                groups.add("consciousness_and_mind_ai")
+    except (OSError, UnicodeDecodeError, yaml.YAMLError):
+        pass
     return groups
 
 def _apply_directional_idea_metadata(item, ideas: list[str], matched_details: list[dict[str, object]]) -> None:

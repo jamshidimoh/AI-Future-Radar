@@ -556,12 +556,15 @@ def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> 
         if not authoritative:
             break
 
-        def _replacement_for(victim: dict[str, Any]) -> tuple[dict[str, Any] | None, bool]:
+        def _replacement_for(
+            victim: dict[str, Any],
+            authoritative_pool: list[dict[str, Any]],
+        ) -> tuple[dict[str, Any] | None, bool]:
             same_area = [
-                x for x in authoritative
+                x for x in authoritative_pool
                 if mission_area(x) == mission_area(victim)
             ]
-            replacement_pool = same_area or authoritative
+            replacement_pool = same_area or authoritative_pool
             if not replacement_pool:
                 return None, False
             replacement = max(
@@ -585,7 +588,7 @@ def _repair_min_authoritative(p: _Portfolio, eligible: list[dict[str, Any]]) -> 
         # with less information loss.
         repair_options: list[tuple[tuple[Any, ...], dict[str, Any], dict[str, Any]]] = []
         for victim in removable:
-            replacement, same_area = _replacement_for(victim)
+            replacement, same_area = _replacement_for(victim, authoritative)
             if replacement is None:
                 continue
             quality_delta = candidate_score(replacement) - candidate_score(victim)

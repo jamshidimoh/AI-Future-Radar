@@ -88,3 +88,17 @@ def test_special_lane_accepts_substantive_ai_research_with_two_value_dimensions(
         "editorial_class": "research_breakthrough",
     }
     assert is_mind_ideas_voices_candidate(item)
+
+
+def test_mind_research_without_person_metadata_is_admissible_when_authoritative():
+    item = {
+        "title": "پژوهش جدید درباره آگاهی و شناخت در سامانه‌های هوشمند",
+        "summary": "پژوهشگران سازوکارهای شناخت و آگاهی را در سامانه‌های هوشمند بررسی کرده‌اند.",
+        "mission_area": "mind_cognition",
+        "content_type": "research",
+        "source": "Nature",
+        "source_type": "scientific",
+        "source_tier": 1,
+        "research_signal": True,
+    }
+    assert is_mind_ideas_voices_candidate(item)

@@ -163,7 +163,6 @@ def bootstrap_candidates(
     previous_state = previous_state or {}
     baseline = previous_state.get("baseline", {}) if isinstance(previous_state, dict) else {}
     delivered = set(previous_state.get("delivered_people", []) or []) if isinstance(previous_state, dict) else set()
-    seen = _seen_hash_set(seen_hashes)
     chosen: list[dict[str, Any]] = []
     for person in people:
         if person in delivered:

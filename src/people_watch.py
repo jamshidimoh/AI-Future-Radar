@@ -98,15 +98,30 @@ def person_for_item(item: dict[str, Any], people: list[str]) -> str:
     return ""
 
 
+def _contains_mission_term(text: str) -> bool:
+    for term in MISSION_TERMS:
+        # "ai" is too short for substring matching: "daily", "email", "trail",
+        # and many unrelated words contain those two letters. Treat it as a
+        # standalone token while retaining substring matching for established
+        # multi-character mission terms and the "futur" stem.
+        if term == "ai":
+            if re.search(r"(?<![a-z0-9_])ai(?![a-z0-9_])", text, flags=re.IGNORECASE):
+                return True
+            continue
+        if term in text:
+            return True
+    return False
+
+
 def relevant_people_item(item: dict[str, Any], person: str) -> bool:
     text = _item_text(item)
     if person.casefold() not in text and str(item.get("watch_person") or "").casefold() != person.casefold():
         return False
     query_context = str(item.get("discovery_query") or item.get("watch_query") or "").casefold()
     ctype = str(item.get("content_type") or "").casefold()
-    if any(term in text for term in MISSION_TERMS):
+    if _contains_mission_term(text):
         return True
-    if any(term in query_context for term in MISSION_TERMS):
+    if _contains_mission_term(query_context):
         return True
     return ctype in {
         "interview", "podcast", "talk", "lecture", "conversation",

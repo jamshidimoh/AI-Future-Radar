@@ -8,6 +8,7 @@ from typing import Any
 
 import yaml
 
+from src.dedup import _hash_link
 from src.story_identity import deduplicate_stories
 
 
@@ -137,8 +138,17 @@ def mark_people_item(item: dict[str, Any], person: str, *, bootstrap: bool = Fal
     return out
 
 
-def _seen_identity_set(seen_hashes: Any) -> set[str]:
+def _seen_hash_set(seen_hashes: Any) -> set[str]:
     return {str(x) for x in (seen_hashes or []) if isinstance(x, str)}
+
+
+def _is_seen_identity(value: str, seen_hashes: set[str]) -> bool:
+    if not value:
+        return False
+    try:
+        return _hash_link(value) in seen_hashes
+    except Exception:
+        return False
 
 
 def bootstrap_candidates(
@@ -152,7 +162,7 @@ def bootstrap_candidates(
     previous_state = previous_state or {}
     baseline = previous_state.get("baseline", {}) if isinstance(previous_state, dict) else {}
     delivered = set(previous_state.get("delivered_people", []) or []) if isinstance(previous_state, dict) else set()
-    seen = _seen_identity_set(seen_hashes)
+    seen = _seen_hash_set(seen_hashes)
     chosen: list[dict[str, Any]] = []
     for person in people:
         if person in delivered:
@@ -171,7 +181,7 @@ def bootstrap_candidates(
             if exact:
                 chosen.append(mark_people_item(exact[0], person, bootstrap=True))
                 continue
-        unseen = [item for item in pool if identity(item) not in seen]
+        unseen = [item for item in pool if not _is_seen_identity(identity(item), seen)]
         ranked = unseen or pool
         ranked.sort(key=lambda item: item_timestamp(item), reverse=True)
         chosen.append(mark_people_item(ranked[0], person, bootstrap=True))

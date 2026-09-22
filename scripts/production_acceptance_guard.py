@@ -218,7 +218,8 @@ def validate(log_text: str) -> tuple[bool, str]:
     mind_news = int(mind_match.group(1)) if mind_match else 0
     mind_max = int(mind_match.group(2)) if mind_match else 0
     people_news = int(people_match.group(1)) if people_match else 0
-    people_max = people_match.group(2) if people_match else "none"
+    if people_match and people_match.group(2).casefold() != "none":
+        return False, f"People lane must be uncapped; found people_max={people_match.group(2)}"
     tier0_news = int(tier0_match.group(1))
     tier0_quota_exempt = (tier0_match.group(2) or "false").lower() == "true"
     education = education_match.group(1)

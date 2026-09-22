@@ -335,9 +335,13 @@ def _publication_summary_budget(items, max_posts, policy):
     return bounded
 
 
-def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap=None, *, cap=None):
+def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap=None, *, cap=None, bootstrap_mode=False):
     if runtime_selection_cap is None:
         runtime_selection_cap = cap if cap is not None else max_posts + int(policy.get("leader_protected_max", 2) or 2) + MAX_MIND_IDEAS_VOICES_PER_PERIOD
+    if bootstrap_mode:
+        # Bootstrap selection already has explicit People batching plus the
+        # independent special lanes. Never refill with normal-lane candidates.
+        return selected
     target = min(runtime_selection_cap, max_posts + int(policy.get("leader_protected_max", 2) or 2) + MAX_MIND_IDEAS_VOICES_PER_PERIOD)
     people_selected = [x for x in selected if x.get("people_lane")]
     non_people_selected = [x for x in selected if not x.get("people_lane")]
@@ -720,8 +724,16 @@ def main(hooks=None):
 
     if people_bootstrap_mode:
         protected_items, regular_items = [], []
-        editorial_pool = list(people_candidates)
-        print(f"[People Bootstrap] publication_pool={len(editorial_pool)} normal_lanes=disabled")
+        people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
+        bootstrap_discovery_pool = [
+            x for x in new_items
+            if people_identity(x) not in people_ids
+        ]
+        editorial_pool = unique_candidates(list(people_candidates) + bootstrap_discovery_pool)
+        print(
+            f"[People Bootstrap] publication_pool={len(people_candidates)} "
+            f"special_discovery_pool={len(bootstrap_discovery_pool)} normal_lanes=disabled"
+        )
     else:
         normal_input_items = [x for x in new_items if people_identity(x) not in people_ids]
         protected_items, regular_items = split_protected_fn(normal_input_items, max_protected=leader_protected_max)
@@ -744,11 +756,35 @@ def main(hooks=None):
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
     if not people_bootstrap_mode:
         selected_regular = unique_candidates(selected_regular + people_candidates)
-    protected_candidates = [x for x in editorial_pool if x.get("protected_content")]
-    protected_selected = sorted(protected_candidates, key=lambda x: (int(x.get("leader_priority", 0) or 0), int(x.get("leader_source_authority", 0) or 0), 1 if _direct_interview_signal(x) else 0, x.get("published", "")), reverse=True)[:leader_protected_max]
+    protected_candidates = [] if people_bootstrap_mode else [x for x in editorial_pool if x.get("protected_content")]
+    protected_selected = (
+        []
+        if people_bootstrap_mode
+        else sorted(
+            protected_candidates,
+            key=lambda x: (
+                int(x.get("leader_priority", 0) or 0),
+                int(x.get("leader_source_authority", 0) or 0),
+                1 if _direct_interview_signal(x) else 0,
+                x.get("published", ""),
+            ),
+            reverse=True,
+        )[:leader_protected_max]
+    )
     selected = unique_candidates(protected_selected + selected_regular)
     print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={runtime_selection_cap} normal_capacity={max_posts} replacement_buffer={replacement_buffer} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD} people={sum(1 for x in selected if x.get('people_lane'))} people_cap=none", flush=True)
-    selected = _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap)
+    selected = _refill_after_late_dedup(
+        selected,
+        editorial_pool,
+        select_editorial_fn,
+        max_posts,
+        max_per_source,
+        max_per_type,
+        policy,
+        seen_hashes,
+        runtime_selection_cap,
+        bootstrap_mode=people_bootstrap_mode,
+    )
     selected = _publication_summary_budget(selected, max_posts, policy)
     if not selected:
         print("[Final Publication Guard] no publishable items remain", flush=True)

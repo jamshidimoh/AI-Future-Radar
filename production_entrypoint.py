@@ -18,6 +18,7 @@ from src.editorial_quality_policy import (
     protected_score_allowed,
 )
 from src.logging_setup import configure_logging
+from src.people_watch import item_timestamp
 from src.priority_people import is_substantive_priority_interview
 from src.protected_editorial_lane import choose_additive_candidates
 from src.state_io import StateCorruptionError, load_json_state
@@ -36,6 +37,9 @@ MAX_NORMAL_NEWS_PER_PERIOD = 3
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
 MAX_TECHNICAL_TREND_PER_PERIOD = 1
 MAX_VOICES_PERSPECTIVES_PER_PERIOD = MAX_VOICES_PER_PERIOD
+# Bootstrap still establishes all 30 baselines, but publication is batched so
+# one run does not flood Telegram or suppress the independent Mind/Voices lanes.
+MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 8
 NORMAL_RELATIVE_SCORE_GAP = 8.0
 RANK_WINDOW = int(EDITORIAL_CONTRACT["candidate_window"])
 PROTECTED_SUMMARY_SCORE_FLOOR = PROTECTED_SCORE_FLOOR
@@ -259,6 +263,15 @@ def _competitive_normal_candidates(candidates):
     return protected + kept
 
 
+def _people_bootstrap_batch(candidates, limit: int = MAX_PEOPLE_BOOTSTRAP_PER_PERIOD):
+    people = [item for item in candidates if item.get("people_lane")]
+    return sorted(
+        people,
+        key=lambda item: (item_timestamp(item), str(item.get("title") or "")),
+        reverse=True,
+    )[:max(0, int(limit))]
+    
+    
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
     people = [item for item in candidates if item.get("people_lane")]
@@ -358,11 +371,15 @@ def main(*, skip_education: bool = False) -> int:
 
     def select_with_feedback(items, max_posts, max_per_source, max_per_type, policy):
         people_items = [item for item in items if item.get("people_lane")]
+        bootstrap_count = sum(1 for item in people_items if item.get("people_bootstrap"))
         if people_items:
-            bootstrap_count = sum(1 for item in people_items if item.get("people_bootstrap"))
-            print(f"[People Selection] people_signals={len(people_items)} bootstrap={bootstrap_count} quota=none randomization=none")
-            if bootstrap_count:
-                return list(people_items)
+            print(
+                f"[People Selection] people_signals={len(people_items)} bootstrap={bootstrap_count} "
+                f"quota=none randomization=none batch_cap={MAX_PEOPLE_BOOTSTRAP_PER_PERIOD if bootstrap_count else 'none'}"
+            )
+        bootstrap_people = []
+        if bootstrap_count:
+            bootstrap_people = _people_bootstrap_batch(people_items)
         started = time.monotonic()
         for item in items:
             bonus = _feedback_bonus(store, item)
@@ -375,8 +392,9 @@ def main(*, skip_education: bool = False) -> int:
         special_window = lambda cap: cap + replacement_buffer
 
         # Reserve People/Voices and Frontier candidates before Normal ranking.
+        special_pool = [item for item in items if not item.get("people_lane")]
         voices_candidates = choose_voices_candidate(
-            items,
+            special_pool,
             existing_ids=set(),
             max_items=special_window(MAX_VOICES_PERSPECTIVES_PER_PERIOD),
         )
@@ -385,7 +403,7 @@ def main(*, skip_education: bool = False) -> int:
             print(f"[Voices/Perspectives Selection] rank={item.get('voices_period_rank')} score={item.get('voices_perspectives_score')} source={item.get('source')} person={item.get('person_name') or item.get('watch_person') or item.get('leader')} title={str(item.get('title', ''))[:120]}", flush=True)
 
         technical_candidates = choose_technical_trend_candidate(
-            items,
+            special_pool,
             existing_ids=voices_ids,
             max_items=special_window(MAX_TECHNICAL_TREND_PER_PERIOD),
         )
@@ -394,7 +412,17 @@ def main(*, skip_education: bool = False) -> int:
             print(f"[Frontier/Technical Selection] rank={item.get('technical_trend_period_rank')} score={item.get('technical_trend_score')} source={item.get('source')} title={str(item.get('title', ''))[:120]}", flush=True)
 
         people_ids = {id(item) for item in people_items}
-        normal_pool = [item for item in items if id(item) not in people_ids and id(item) not in voices_ids and id(item) not in technical_ids and not is_voices_candidate(item)]
+        normal_pool = (
+            []
+            if bootstrap_count
+            else [
+                item for item in items
+                if id(item) not in people_ids
+                and id(item) not in voices_ids
+                and id(item) not in technical_ids
+                and not is_voices_candidate(item)
+            ]
+        )
         normal_select_count = max(candidate_window, min(len(normal_pool), max_posts))
         normal_candidates = _competitive_normal_candidates(
             unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
@@ -402,14 +430,20 @@ def main(*, skip_education: bool = False) -> int:
         normal_ids = {id(item) for item in normal_candidates}
 
         mind_candidates = choose_additive_candidates(
-            items,
+            special_pool,
             existing_ids=voices_ids | technical_ids | normal_ids,
             max_items=special_window(MAX_MIND_IDEAS_VOICES_PER_PERIOD),
         )
         for item in mind_candidates:
             print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
 
-        candidates = unique_candidates(people_items + normal_candidates + technical_candidates + mind_candidates + voices_candidates)
+        candidates = unique_candidates(
+            (bootstrap_people if bootstrap_count else people_items)
+            + normal_candidates
+            + technical_candidates
+            + mind_candidates
+            + voices_candidates
+        )
         print(
             f"[Four Lane Selection] normal={len(normal_candidates)} technical_trend={len(technical_candidates)} mind_ideas_voices={len(mind_candidates)} voices_perspectives={len(voices_candidates)} technical_cap={MAX_TECHNICAL_TREND_PER_PERIOD} mind_cap={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_cap={MAX_VOICES_PERSPECTIVES_PER_PERIOD} normal_score_floor=normal_only",
             flush=True,
@@ -469,8 +503,12 @@ def main(*, skip_education: bool = False) -> int:
             if item.get("content_type") != "education":
                 score = _item_final_score(item)
                 render_state["published_news_scores"].append(score)
-                cadence["last_published_news_score"] = score
                 is_people = bool(item.get("people_lane"))
+                # People bootstrap deliberately has no global editorial score.
+                # Never let its synthetic 0.0 baseline overwrite the real news
+                # quality baseline used by the regular publication lane.
+                if not is_people:
+                    cadence["last_published_news_score"] = score
                 is_mind = _is_mind_ideas_voices(item)
                 is_technical = _is_technical_trend(item)
                 is_voices = _is_voices_perspectives(item)

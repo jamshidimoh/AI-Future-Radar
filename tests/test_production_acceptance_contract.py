@@ -195,3 +195,30 @@ def test_mission_recovery_exhausted_below_floor_is_no_candidate_not_hard_failure
     ok, message = validate(log)
     assert ok
     assert "no eligible candidate" in message
+
+
+
+def test_partial_people_bootstrap_progress_is_accepted():
+    log = """
+[Selection Timing] original_select candidates=10 candidate_window=6 elapsed=1.0s
+[Publication Summary Budget] input=10 protected=0 normal=0 output=10 normal_limit=6 mind_limit=2 voices_limit=1 replacement_buffer=3 score_floor=55.0
+[Production Contract] normal_news=0 normal_max=3 people=8 people_max=none technical_trend=0 technical_max=1 mind_ideas_voices=1 mind_max=1 voices_perspectives=1 voices_max=1 tier0_news=0 education=not_due
+[People Bootstrap] status=in_progress delivered=8/30 baseline=30/30 bootstrap_at=2026-09-22T09:00:00+00:00
+Posts sent: 10/10
+"""
+    ok, reason = validate(log)
+    assert ok, reason
+    assert "partial delivery is valid progress" in reason
+
+
+def test_zero_people_bootstrap_progress_stays_fail_closed():
+    log = """
+[Selection Timing] original_select candidates=10 candidate_window=6 elapsed=1.0s
+[Publication Summary Budget] input=10 protected=0 normal=0 output=10 normal_limit=6 mind_limit=2 voices_limit=1 replacement_buffer=3 score_floor=55.0
+[Production Contract] normal_news=0 normal_max=3 people=0 people_max=none technical_trend=0 technical_max=1 mind_ideas_voices=0 mind_max=1 voices_perspectives=0 voices_max=1 tier0_news=0 education=not_due
+[People Bootstrap] status=in_progress delivered=0/30 baseline=30/30 bootstrap_at=2026-09-22T09:00:00+00:00
+Posts sent: 0/10
+"""
+    ok, reason = validate(log)
+    assert not ok
+    assert "without confirmed delivery" in reason

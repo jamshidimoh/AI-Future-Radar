@@ -175,3 +175,51 @@ def test_bootstrap_state_records_same_checkpoint_and_delivery_progress():
     assert state["people_count"] == 1
     assert state["delivered_count"] == 1
     assert state["baseline"]["Sam Altman"]["link"] == "https://example.com/baseline"
+
+
+
+def test_relevant_people_item_rejects_query_and_category_only_false_positive():
+    item = {
+        "watch_person": "Kate Crawford",
+        "leader": "Kate Crawford",
+        "title": "Adam Sandler officiates a wedding",
+        "summary": "The event included celebrity guests and commentary.",
+        "category": "ai",
+        "topic_family": "future",
+        "content_type": "news",
+        "discovery_query": '"Kate Crawford" (AI OR AGI OR future)',
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/false-positive",
+    }
+    assert relevant_people_item(item, "Kate Crawford") is False
+
+
+def test_relevant_people_item_requires_person_evidence_not_watch_metadata():
+    item = {
+        "watch_person": "George Church",
+        "leader": "George Church",
+        "title": "A local church opens a new community center",
+        "summary": "The neighborhood project is unrelated to biotechnology.",
+        "category": "ai",
+        "content_type": "news",
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/name-collision",
+    }
+    assert relevant_people_item(item, "George Church") is False
+
+
+
+def test_people_relevance_ignores_category_topic_and_generic_leader_query_metadata():
+    item = {
+        "watch_person": "Kate Crawford",
+        "leader": "Kate Crawford",
+        "title": "Adam Sandler officiates a wedding",
+        "summary": "Celebrity news and commentary.",
+        "category": "ai",
+        "topic_family": "future",
+        "content_type": "leader_signal",
+        "discovery_query": '"Kate Crawford" (statement OR AI OR future)',
+        "published": "2026-09-22 10:00",
+        "link": "https://example.com/kate-false-positive-2",
+    }
+    assert relevant_people_item(item, "Kate Crawford") is False

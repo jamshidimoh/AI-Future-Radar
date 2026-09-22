@@ -18,11 +18,10 @@ MISSION_TERMS = (
     "foundation model", "agent", "agents", "robotics", "humanoid",
     "quantum", "quantum computing", "brain-computer", "bci", "neurotechnology",
     "consciousness", "cognition", "neuroscience", "philosophy of mind",
-    "philosophy of science", "future of ai", "futur", "genetics", "genomics",
-    "crispr", "synthetic biology", "protein", "education", "learning",
-    "technology", "science", "digital transformation", "ai safety",
-    "alignment", "governance", "singularity", "intelligence",
-    "هوش مصنوعی", "آگاهی", "شناخت", "کوانتوم", "ژنتیک", "آموزش",
+    "philosophy of science", "future of ai", "future of artificial intelligence",
+    "futur", "genetics", "genomics", "crispr", "synthetic biology", "protein",
+    "digital transformation", "ai safety", "alignment", "governance",
+    "singularity", "هوش مصنوعی", "آگاهی", "شناخت", "کوانتوم", "ژنتیک",
 )
 
 
@@ -72,13 +71,10 @@ def now_iso() -> str:
 
 
 def _item_text(item: dict[str, Any]) -> str:
+    """Return content evidence only; discovery metadata is never semantic evidence."""
     return " ".join(
         str(item.get(key) or "")
-        for key in (
-            "title", "summary", "description", "category", "topic_family",
-            "content_type", "speaker", "speakers", "author", "guest",
-            "interviewee",
-        )
+        for key in ("title", "summary", "description")
     ).casefold()
 
 

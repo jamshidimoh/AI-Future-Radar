@@ -22,6 +22,7 @@ SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output=(\
 CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*")
 NORMAL_CONTRACT_PATTERN = re.compile(r"normal_news=(\d+)\s+normal_max=(\d+)")
 MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
+PEOPLE_CONTRACT_PATTERN = re.compile(r"people=(\d+)\s+people_max=([^\s]+)")
 TIER0_CONTRACT_PATTERN = re.compile(r"tier0_news=(\d+)(?:\s+tier0_quota_exempt=(\w+))?")
 EDUCATION_CONTRACT_PATTERN = re.compile(r"education=(\w+)")
 POSTS_SENT_PATTERN = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)")
@@ -198,6 +199,7 @@ def validate(log_text: str) -> tuple[bool, str]:
     contract_line = contract_match.group(0)
     normal_match = NORMAL_CONTRACT_PATTERN.search(contract_line)
     mind_match = MIND_CONTRACT_PATTERN.search(contract_line)
+    people_match = PEOPLE_CONTRACT_PATTERN.search(contract_line)
     tier0_match = TIER0_CONTRACT_PATTERN.search(contract_line)
     education_match = EDUCATION_CONTRACT_PATTERN.search(contract_line)
     if normal_match is None or tier0_match is None or education_match is None:
@@ -206,6 +208,8 @@ def validate(log_text: str) -> tuple[bool, str]:
     normal_max = int(normal_match.group(2))
     mind_news = int(mind_match.group(1)) if mind_match else 0
     mind_max = int(mind_match.group(2)) if mind_match else 0
+    people_news = int(people_match.group(1)) if people_match else 0
+    people_max = people_match.group(2) if people_match else "none"
     tier0_news = int(tier0_match.group(1))
     tier0_quota_exempt = (tier0_match.group(2) or "false").lower() == "true"
     education = education_match.group(1)
@@ -232,7 +236,7 @@ def validate(log_text: str) -> tuple[bool, str]:
         if mind_news > mind_max > 0:
             return False, f"production contract violation: Mind lane exceeds configured cap: {mind_news}>{mind_max}"
 
-    published_news = normal_news + mind_news + tier0_news
+    published_news = normal_news + mind_news + people_news + tier0_news
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
     policy_rejections = sum(1 for line in lines if POLICY_REJECTION_PATTERN.search(line))
     publication_rejections = sum(1 for line in lines if PUBLICATION_REJECTION_PATTERN.search(line))

@@ -43,3 +43,14 @@ def test_publication_summary_budget_keeps_independent_mind_items_outside_protect
 
     bounded = _publication_summary_budget(selected, max_posts=1, policy={})
     assert [item["title"] for item in bounded] == ["normal-1", "mind-low-score"]
+
+
+def test_publication_summary_budget_preserves_technical_mind_and_voice_lanes():
+    selected = [
+        {"title": "normal-1", "normal_period_rank": 1},
+        {"title": "technical", "technical_trend_lane_selected": True, "technical_trend_period_rank": 1},
+        {"title": "mind", "mind_lane_selected": True, "mind_period_rank": 1, "mind_editorial_score": 70.0},
+        {"title": "voice", "voices_perspectives_lane_selected": True, "voices_period_rank": 1, "voices_perspectives_score": 90.0},
+    ]
+    bounded = _publication_summary_budget(selected, max_posts=1, policy={})
+    assert [item["title"] for item in bounded] == ["normal-1", "technical", "mind", "voice"]

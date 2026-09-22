@@ -181,9 +181,17 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     # Eligibility identifies valid candidates for this lane. Final publication
     # importance is enforced later by the production publication gate, so valid
     # AI interviews/podcasts and strong thematic signals must remain discoverable.
-    if mission == "mind_cognition" or thematic:
-        return True
-    if interview and (registry_person or explicit_person or _ai_relevant(item)):
+    # The Mind lane is first-class only for actual mind/awareness content or
+    # an identifiable expert voice. Generic forum/programming videos must not
+    # consume its single publication slot merely because they are labelled
+    # interviews or podcasts.
+    person_identity = registry_person or any(
+        str(item.get(key) or "").strip()
+        for key in ("watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name", "author", "speaker", "guest", "interviewee", "researcher")
+    )
+    if mission in {"mind_cognition", "mind"}:
+        return thematic or person_identity
+    if interview and (registry_person or person_identity or thematic):
         return True
     if not _importance_evidence(item):
         return False

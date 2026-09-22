@@ -65,3 +65,15 @@ def test_additive_candidates_use_independent_lane_score_and_two_item_cap():
     assert len(selected) == 2
     assert selected[0].get("mind_editorial_score", 0) >= selected[1].get("mind_editorial_score", 0)
     assert all(item.get("mind_lane_selected") for item in selected)
+
+
+def test_mind_lane_rejects_generic_forum_interview_without_mind_signal():
+    item = {
+        "title": "Sustainable Development Impact Meetings 2025",
+        "mission_area": "ai_core",
+        "content_type": "interview",
+        "source": "World Economic Forum",
+        "source_type": "global_forum",
+        "source_tier": 1,
+    }
+    assert not is_mind_ideas_voices_candidate(item)

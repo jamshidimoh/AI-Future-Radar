@@ -271,16 +271,48 @@ def _publication_summary_budget(items, max_posts, policy):
     buffer = max(0, int(policy.get("replacement_buffer", 3) or 3))
     mind = [x for x in items if _is_mind_ideas_voices(x)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
     mind_ids = {id(x) for x in mind}
+    voices = [x for x in items if _is_voices_perspectives(x)]
+    voices = voices[:1]
+    voices_ids = {id(x) for x in voices}
+    technical = [x for x in items if _is_technical_trend(x)]
+    technical = technical[:1]
+    technical_ids = {id(x) for x in technical}
     protected = [
         x for x in items
         if (x.get("protected_slot") or x.get("protected_content"))
         and id(x) not in mind_ids
+        and id(x) not in voices_ids
+        and id(x) not in technical_ids
     ]
-    normal = [x for x in items if id(x) not in mind_ids and x not in protected]
-    eligible_protected = [x for x in protected if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= PROTECTED_SUMMARY_SCORE_FLOOR]
+    special_ids = mind_ids | voices_ids | technical_ids
+    normal = [
+        x for x in items
+        if id(x) not in special_ids and x not in protected
+    ]
+    eligible_protected = [
+        x for x in protected
+        if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= PROTECTED_SUMMARY_SCORE_FLOOR
+    ]
     normal_window = max_posts + buffer
-    bounded = eligible_protected[:max_posts] + normal[:normal_window] + mind
-    print(f"[Publication Summary Budget] input={len(items)} protected={len(eligible_protected)} mind_ideas_voices={len(mind)} normal_window={normal_window} output={len(bounded)} normal_limit={normal_window} mind_limit={MAX_MIND_IDEAS_VOICES_PER_PERIOD} replacement_buffer={buffer} normal_score_floor={NORMAL_SCORE_FLOOR} mind_score_floor=not_applied mind_quality_floor={MIND_IDEAS_VOICES_SCORE_FLOOR}", flush=True)
+    # Every independent lane that survived editorial selection must survive the
+    # summary budget too. Otherwise the lane can be correctly selected and then
+    # silently disappear before Telegram publication.
+    bounded = (
+        eligible_protected[:max_posts]
+        + normal[:normal_window]
+        + technical
+        + mind
+        + voices
+    )
+    print(
+        f"[Publication Summary Budget] input={len(items)} protected={len(eligible_protected)} "
+        f"normal={len(normal[:normal_window])} technical_trend={len(technical)} "
+        f"mind_ideas_voices={len(mind)} voices_perspectives={len(voices)} "
+        f"normal_window={normal_window} output={len(bounded)} normal_limit={normal_window} "
+        f"mind_limit={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_limit=1 replacement_buffer={buffer} "
+        f"normal_score_floor={NORMAL_SCORE_FLOOR} special_lanes_score_floor=not_applied",
+        flush=True,
+    )
     return bounded
 
 

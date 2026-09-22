@@ -1,4 +1,5 @@
 """Simple People Signal lane: bootstrap once, then track every new independent signal."""
+# ruff: noqa: I001
 from __future__ import annotations
 
 import re

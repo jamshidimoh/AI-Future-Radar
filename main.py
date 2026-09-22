@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 import logging
 import os
 from concurrent.futures import ThreadPoolExecutor

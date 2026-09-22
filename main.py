@@ -15,7 +15,15 @@ from src.interview_evidence import has_interview_evidence
 from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
-from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, load_people_watchlist, now_iso, post_bootstrap_candidates, identity as people_identity
+from src.people_watch import (
+    bootstrap_candidates,
+    build_bootstrap_state,
+    deduplicate_people_signals,
+    identity as people_identity,
+    load_people_watchlist,
+    now_iso,
+    post_bootstrap_candidates,
+)
 from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, mind_ideas_voices_score
 from src.publication_contract import unique_candidates
 from src.rejection_telemetry import build_event, emit

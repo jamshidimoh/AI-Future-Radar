@@ -1,3 +1,4 @@
+from production_entrypoint import _people_bootstrap_batch
 from scripts.production_acceptance_guard import validate
 
 
@@ -22,3 +23,14 @@ def test_people_bootstrap_partial_progress_is_accepted():
     ok, message = validate(_people_log(delivered=29, baseline=30, status="in_progress"))
     assert ok, message
     assert "partial delivery is valid progress" in message
+
+
+
+def test_people_bootstrap_batch_is_freshness_first_and_bounded():
+    items = [
+        {"people_lane": True, "people_bootstrap": True, "title": f"Person {i}", "published": f"2026-09-{10+i:02d} 10:00"}
+        for i in range(10)
+    ]
+    batch = _people_bootstrap_batch(items)
+    assert len(batch) == 8
+    assert [item["title"] for item in batch] == [f"Person {i}" for i in range(9, 1, -1)]

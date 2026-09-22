@@ -673,6 +673,18 @@ def main(hooks=None):
         )
         people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=[])
         print(f"[People Bootstrap] required=30 discovered={len(people_candidates)}")
+        if len(people_candidates) != 30:
+            global PEOPLE_BOOTSTRAP_RESULT
+            PEOPLE_BOOTSTRAP_RESULT = build_bootstrap_state(
+                bootstrap_at=people_bootstrap_at,
+                candidates=people_candidates,
+                delivered_people=[],
+                status="in_progress",
+            )
+            print(f"[People Bootstrap] BLOCKED exact_30_required discovered={len(people_candidates)}", flush=True)
+            save_seen(seen_hashes, seen_signatures, source_history)
+            print("Posts sent: 0/0")
+            return
     else:
         people_candidates = post_bootstrap_candidates(
             new_items,

@@ -88,6 +88,40 @@ def test_people_dedup_removes_exact_duplicate_identity_but_keeps_independent_sig
     }
 
 
+def test_bootstrap_keeps_same_url_for_different_people():
+    people = ["Sam Altman", "Dario Amodei"]
+    items = [
+        {**_item("Sam Altman", "2025-01-01 10:00", "shared"), "title": "Shared event", "summary": "Sam Altman discusses AI."},
+        {**_item("Dario Amodei", "2025-01-01 10:05", "shared"), "title": "Shared event", "summary": "Dario Amodei discusses AI."},
+    ]
+    selected = bootstrap_candidates(items, people, seen_hashes=set())
+    assert len(selected) == 2
+    assert {item["person_name"] for item in selected} == set(people)
+
+
+def test_post_bootstrap_uses_historical_people_signatures():
+    people = ["Sam Altman"]
+    historical = _item("Sam Altman", "2026-09-22 10:00", "old-url")
+    current_same_event = {
+        **_item("Sam Altman", "2026-09-22 11:00", "new-url"),
+        "title": historical["title"],
+        "summary": historical["summary"],
+        "description": historical.get("description", ""),
+    }
+    from src.semantic_dedup import get_story_signature
+    selected = post_bootstrap_candidates(
+        [current_same_event],
+        people,
+        bootstrap_at="2026-09-22T09:00:00+00:00",
+        seen_hashes=set(),
+    )
+    selected = deduplicate_people_signals(
+        selected,
+        seen_signatures=[get_story_signature(historical)],
+    )
+    assert selected == []
+
+
 def test_bootstrap_state_records_same_checkpoint_and_delivery_progress():
     candidate = _item("Sam Altman", "2026-01-01 10:00", "baseline")
     state = build_bootstrap_state(

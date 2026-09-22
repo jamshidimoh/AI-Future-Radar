@@ -1,127 +1,3 @@
-# People & Ideas Radar
-# شخصیت‌های کلیدی و ایده‌های کلیدی مرتبط با AI/AGI، ذهن، آگاهی و آینده فناوری.
-# This registry is discovery/priority metadata; publication still requires evidence + editorial gates.
-
-people:
-  ai_frontier_builders:
-    priority: 10
-    names:
-      - Sam Altman
-      - Dario Amodei
-      - Demis Hassabis
-      - Elon Musk
-      - Jensen Huang
-      - Mustafa Suleyman
-      - Eric Schmidt
-  ai_research_and_foundations:
-    priority: 10
-    names:
-      - Andrew Ng
-      - Geoffrey Hinton
-      - Yann LeCun
-      - Yoshua Bengio
-      - Ilya Sutskever
-      - Fei-Fei Li
-      - Andrej Karpathy
-      - Judea Pearl
-      - Stuart Russell
-  future_philosophy_society:
-    priority: 10
-    names:
-      - Nick Bostrom
-      - Max Tegmark
-      - Yuval Noah Harari
-      - Ray Kurzweil
-      - Kate Crawford
-  mind_cognition:
-    priority: 10
-    names:
-      - Anil Seth
-      - David Chalmers
-      - Stanislas Dehaene
-  bio_quantum_education:
-    priority: 10
-    names:
-      - George Church
-      - Jennifer Doudna
-      - John Preskill
-      - Scott Aaronson
-      - Ethan Mollick
-      - Sal Khan
-
-ideas_and_theories:
-  consciousness:
-    priority: 10
-    mission_area: mind_cognition
-    ai_bridge_terms:
-      - machine consciousness
-      - AI consciousness
-      - artificial consciousness
-      - machine awareness
-      - sentience
-      - qualia
-      - self-awareness
-  predictive_processing:
-    priority: 10
-    mission_area: mind_cognition
-    ai_bridge_terms:
-      - predictive processing
-      - predictive coding
-      - controlled hallucination
-      - active inference
-      - generative models
-      - perception and intelligence
-  global_workspace:
-    priority: 10
-    mission_area: mind_cognition
-    ai_bridge_terms:
-      - global workspace theory
-      - global neuronal workspace
-      - conscious access
-      - machine consciousness
-  integrated_information:
-    priority: 10
-    mission_area: mind_cognition
-    ai_bridge_terms:
-      - integrated information theory
-      - IIT
-      - phi
-      - consciousness measure
-  embodied_and_extended_mind:
-    priority: 9
-    mission_area: mind_cognition
-    ai_bridge_terms:
-      - embodied cognition
-      - embodied mind
-      - extended mind
-      - enactivism
-      - situated cognition
-      - artificial agency
-  philosophy_of_mind_and_ai:
-    priority: 9
-    mission_area: mind_cognition
-    ai_bridge_terms:
-      - philosophy of mind
-      - philosophy of AI
-      - functionalism
-      - higher-order thought
-      - computationalism
-      - panpsychism
-      - epistemology of AI
-  future_of_mind:
-    priority: 9
-    mission_area: future_governance
-    ai_bridge_terms:
-      - digital minds
-      - brain-computer interface
-      - BCI
-      - neurotechnology
-      - whole brain emulation
-      - human-AI convergence
-      - future of consciousness
-
-# Discovery queries for the high-value people/ideas lane. These do not bypass quality gates.
-google_news_queries:
   - {query: "David Chalmers AI consciousness interview", watch_person: "David Chalmers", category: mind, tier: 1, content_type: interview}
   - {query: "David Chalmers philosophy of mind AI consciousness", watch_person: "David Chalmers", category: mind, tier: 1, content_type: research}
   - {query: "Anil Seth AI consciousness predictive processing interview", watch_person: "Anil Seth", category: mind, tier: 1, content_type: interview}
@@ -145,10 +21,21 @@ google_news_queries:
   - {query: "NVIDIA Jensen Huang AI product announcement platform launch", watch_person: "Jensen Huang", category: ai, tier: 1, content_type: product_news}
   - {query: "Elon Musk AI xAI future interview", watch_person: "Elon Musk", category: ai, tier: 1, content_type: interview}
   - {query: "Elon Musk xAI Grok product launch AI announcement", watch_person: "Elon Musk", category: ai, tier: 1, content_type: product_news}
-  - {query: "Mark Zuckerberg Meta AI Llama interview", watch_person: "Mark Zuckerberg", category: ai, tier: 1, content_type: interview}
+  - {query: "Mustafa Suleyman AI future safety regulation interview", watch_person: "Mustafa Suleyman", category: ai, tier: 1, content_type: interview}
   - {query: "Ilya Sutskever Safe Superintelligence AI interview", watch_person: "Ilya Sutskever", category: ai, tier: 1, content_type: interview}
-  - {query: "Fei-Fei Li AI future interview", watch_person: "Fei-Fei Li", category: ai, tier: 1, content_type: interview}
-  - {query: "Andrew Ng AI interview latest", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
+  - {query: "Fei-Fei Li AI future human centered AI interview", watch_person: "Fei-Fei Li", category: ai, tier: 1, content_type: interview}
+  - {query: "Andrew Ng AI interview latest agents education", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
+  - {query: "Andrej Karpathy AI agents LLM interview latest", watch_person: "Andrej Karpathy", category: ai, tier: 1, content_type: interview}
+  - {query: "Judea Pearl causality AI reasoning interview latest", watch_person: "Judea Pearl", category: ai, tier: 1, content_type: interview}
+  - {query: "Kate Crawford AI society technology interview latest", watch_person: "Kate Crawford", category: future, tier: 1, content_type: interview}
+  - {query: "Ray Kurzweil AI future technology interview latest", watch_person: "Ray Kurzweil", category: future, tier: 1, content_type: interview}
+  - {query: "Anil Seth AI consciousness predictive processing interview latest", watch_person: "Anil Seth", category: mind, tier: 1, content_type: interview}
+  - {query: "George Church genetics AI synthetic biology interview latest", watch_person: "George Church", category: science, tier: 1, content_type: interview}
+  - {query: "Jennifer Doudna CRISPR AI genomics interview latest", watch_person: "Jennifer Doudna", category: science, tier: 1, content_type: interview}
+  - {query: "John Preskill quantum computing AI interview latest", watch_person: "John Preskill", category: quantum, tier: 1, content_type: interview}
+  - {query: "Scott Aaronson quantum computing complexity AI interview latest", watch_person: "Scott Aaronson", category: quantum, tier: 1, content_type: interview}
+  - {query: "Ethan Mollick AI education work interview latest", watch_person: "Ethan Mollick", category: education, tier: 1, content_type: interview}
+  - {query: "Sal Khan AI education tutoring future learning interview latest", watch_person: "Sal Khan", category: education, tier: 1, content_type: interview}
   - {query: "Geoffrey Hinton AI future consciousness interview", watch_person: "Geoffrey Hinton", category: ai, tier: 1, content_type: interview}
   - {query: "Yann LeCun AI future world model interview", watch_person: "Yann LeCun", category: ai, tier: 1, content_type: interview}
   - {query: "Yoshua Bengio AI safety AGI interview", watch_person: "Yoshua Bengio", category: ai, tier: 1, content_type: interview}

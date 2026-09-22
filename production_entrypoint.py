@@ -261,13 +261,14 @@ def _competitive_normal_candidates(candidates):
 
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
+    people = [item for item in candidates if item.get("people_lane")]
     replacement_buffer = max(0, int(EDITORIAL_CONTRACT.get("replacement_buffer", 0) or 0))
-    voices = [item for item in candidates if _is_voices_perspectives(item)][:MAX_VOICES_PERSPECTIVES_PER_PERIOD + replacement_buffer]
-    technical = [item for item in candidates if _is_technical_trend(item)][:MAX_TECHNICAL_TREND_PER_PERIOD + replacement_buffer]
-    mind = [item for item in candidates if _is_mind_ideas_voices(item)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD + replacement_buffer]
+    voices = [item for item in candidates if _is_voices_perspectives(item) and not item.get("people_lane")][:MAX_VOICES_PERSPECTIVES_PER_PERIOD + replacement_buffer]
+    technical = [item for item in candidates if _is_technical_trend(item) and not item.get("people_lane")][:MAX_TECHNICAL_TREND_PER_PERIOD + replacement_buffer]
+    mind = [item for item in candidates if _is_mind_ideas_voices(item) and not item.get("people_lane")][:MAX_MIND_IDEAS_VOICES_PER_PERIOD + replacement_buffer]
     non_special = [
         item for item in candidates
-        if not _is_mind_ideas_voices(item) and not _is_technical_trend(item) and not _is_voices_perspectives(item)
+        if not item.get("people_lane") and not _is_mind_ideas_voices(item) and not _is_technical_trend(item) and not _is_voices_perspectives(item)
     ]
     protected_limit = max(0, int(policy.get("leader_protected_max", 2) or 0))
     normal_capacity = max(0, int(max_posts or 0))
@@ -288,7 +289,7 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     normals = [item for item in non_special if item.get("normal_period_rank") is not None][:normal_limit]
     bounded = []
     seen = set()
-    for item in protected + normals + technical + mind + voices:
+    for item in people + protected + normals + technical + mind + voices:
         key = id(item)
         if key in seen:
             continue
@@ -360,7 +361,7 @@ def main(*, skip_education: bool = False) -> int:
         if people_items:
             bootstrap_count = sum(1 for item in people_items if item.get("people_bootstrap"))
             print(f"[People Selection] people_signals={len(people_items)} bootstrap={bootstrap_count} quota=none randomization=none")
-            if bootstrap_count:
+            if bootstrap_count or people_items:
                 return list(people_items)
         started = time.monotonic()
         for item in items:
@@ -392,7 +393,8 @@ def main(*, skip_education: bool = False) -> int:
         for item in technical_candidates:
             print(f"[Frontier/Technical Selection] rank={item.get('technical_trend_period_rank')} score={item.get('technical_trend_score')} source={item.get('source')} title={str(item.get('title', ''))[:120]}", flush=True)
 
-        normal_pool = [item for item in items if id(item) not in voices_ids and id(item) not in technical_ids and not is_voices_candidate(item)]
+        people_ids = {id(item) for item in people_items}
+        normal_pool = [item for item in items if id(item) not in people_ids and id(item) not in voices_ids and id(item) not in technical_ids and not is_voices_candidate(item)]
         normal_select_count = max(candidate_window, min(len(normal_pool), max_posts))
         normal_candidates = _competitive_normal_candidates(
             unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
@@ -407,7 +409,7 @@ def main(*, skip_education: bool = False) -> int:
         for item in mind_candidates:
             print(f"[Mind/Ideas/Voices Selection] rank={item.get('mind_period_rank')} score={item.get('mind_editorial_score')} normal_score={item.get('editorial_score', 0)} normal_rank=None title={str(item.get('title', ''))[:120]}", flush=True)
 
-        candidates = unique_candidates(normal_candidates + technical_candidates + mind_candidates + voices_candidates)
+        candidates = unique_candidates(people_items + normal_candidates + technical_candidates + mind_candidates + voices_candidates)
         print(
             f"[Four Lane Selection] normal={len(normal_candidates)} technical_trend={len(technical_candidates)} mind_ideas_voices={len(mind_candidates)} voices_perspectives={len(voices_candidates)} technical_cap={MAX_TECHNICAL_TREND_PER_PERIOD} mind_cap={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_cap={MAX_VOICES_PERSPECTIVES_PER_PERIOD} normal_score_floor=normal_only",
             flush=True,

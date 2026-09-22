@@ -686,7 +686,7 @@ def main(hooks=None):
             return
     else:
         people_candidates = post_bootstrap_candidates(
-            new_items,
+            all_items,
             people_watchlist,
             bootstrap_at=people_bootstrap_at,
             seen_hashes=seen_hashes,

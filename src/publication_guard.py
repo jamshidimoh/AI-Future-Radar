@@ -205,6 +205,16 @@ def check_before_publish(text: str, source_link: str = "", records: list[dict] |
     candidate_title, candidate_summary = _extract_candidate(text)
     candidate_url = _canonical_url(source_link)
     title_key = _normalized_title(candidate_title)
+    candidate_person = ""
+    candidate_people_lane = False
+    # People signals from different watched people are independent perspectives.
+    # Keep same-event commentary from different people from being treated as one
+    # publication, while retaining normal same-person duplicate protection.
+    for record in runtime_records:
+        if str(record.get("title") or "").strip() == candidate_title.strip():
+            candidate_person = str(record.get("person_name") or record.get("watch_person") or record.get("leader") or "").strip()
+            candidate_people_lane = bool(record.get("people_lane"))
+            break
     for record in all_records:
         record_url = _canonical_url(record.get("link", ""))
         if candidate_url and record_url and candidate_url == record_url:
@@ -215,6 +225,10 @@ def check_before_publish(text: str, source_link: str = "", records: list[dict] |
     for record in all_records:
         if not str(record.get("title") or "").strip():
             continue
+        if candidate_people_lane and record.get("people_lane"):
+            stored_person = str(record.get("person_name") or record.get("watch_person") or record.get("leader") or "").strip()
+            if candidate_person and stored_person and candidate_person.casefold() != stored_person.casefold():
+                continue
         score = _semantic_conflict(candidate_title, candidate_summary, record)
         if score >= 0.82:
             return False, f"semantic_story_already_published score={score:.3f}"

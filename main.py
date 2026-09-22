@@ -609,6 +609,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
     return recovered
 
 def main(hooks=None):
+    global PEOPLE_BOOTSTRAP_RESULT
     configure_logging()
     hooks = dict(hooks or {})
     select_editorial_fn = hooks.get("select_editorial", _select_editorial_default)
@@ -680,7 +681,6 @@ def main(hooks=None):
         planned_people = baseline_people | discovered_people
         print(f"[People Bootstrap] required=30 discovered_now={len(discovered_people)} baseline={len(baseline_people)} planned={len(planned_people)}")
         if len(planned_people) != 30:
-            global PEOPLE_BOOTSTRAP_RESULT
             PEOPLE_BOOTSTRAP_RESULT = build_bootstrap_state(
                 bootstrap_at=people_bootstrap_at,
                 candidates=people_candidates,
@@ -868,7 +868,6 @@ def main(hooks=None):
             print(f"[ERROR] Telegram send failed for {item.get('title','')[:100]}: {exc}", flush=True)
     print(f"[Publication Lazy Refill] initial={initial_selected_count} lazy_replacements={lazy_replacements} final_attempt_queue={len(publication_queue)}", flush=True)
     if people_bootstrap_mode:
-        global PEOPLE_BOOTSTRAP_RESULT
         status = "complete" if people_sent == 30 and len(people_candidates) == 30 else "in_progress"
         PEOPLE_BOOTSTRAP_RESULT = build_bootstrap_state(
             bootstrap_at=people_bootstrap_at,

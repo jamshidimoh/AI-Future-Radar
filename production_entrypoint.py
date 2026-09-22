@@ -58,6 +58,7 @@ def _load_cadence() -> dict:
         "last_education_slot": str(data.get("last_education_slot", "")),
         "last_published_news_score": data.get("last_published_news_score"),
         "last_published_normal_news_score": data.get("last_published_normal_news_score", data.get("last_published_news_score")),
+        "people_bootstrap": data.get("people_bootstrap", {}) if isinstance(data.get("people_bootstrap", {}), dict) else {},
     }
 
 
@@ -489,7 +490,7 @@ def main(*, skip_education: bool = False) -> int:
                     render_state["normal_news_delivered_count"] += 1
                 if is_strategic:
                     render_state["strategic_analytical_news_delivered_count"] += 1
-                lane = "mind_ideas_voices" if is_mind else ("technical_trend" if is_technical else ("voices_perspectives" if is_voices else ("tier0" if is_tier0 else "normal")))
+                lane = "people" if is_people else ("mind_ideas_voices" if is_mind else ("technical_trend" if is_technical else ("voices_perspectives" if is_voices else ("tier0" if is_tier0 else "normal"))))
                 print(f"[Publication Ledger] message_id={meta.get('message_id')} lane={lane} published_news_score={score} normal_baseline={cadence.get('last_published_normal_news_score')} global_rank={item.get('period_rank')} normal_rank={item.get('normal_period_rank')} mind_rank={item.get('mind_period_rank')} technical_rank={item.get('technical_trend_period_rank')} voices_rank={item.get('voices_period_rank')}", flush=True)
             else:
                 render_state["education_delivered"] = True

@@ -25,3 +25,5 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
 
     assert 'omniroute providers add cloudflare-ai --credential-env CLOUDFLARE_API_TOKEN' in text
     assert 'CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}' in text
+
+# Production validation trigger: OmniRoute 3.8.51 contract.

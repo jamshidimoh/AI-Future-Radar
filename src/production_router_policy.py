@@ -110,7 +110,8 @@ def _omniroute_call(system_prompt, user_content):
         return None, None
     api_key = os.getenv("OMNIROUTE_API_KEY", "").strip()
     model = os.getenv("OMNIROUTE_MODEL", "auto/smart").strip() or "auto/smart"
-    url = f"{base_url}/v1/chat/completions"
+    api_base = base_url if base_url.endswith("/v1") else f"{base_url}/v1"
+    url = f"{api_base}/chat/completions"
     payload = {
         "model": model,
         "messages": [
@@ -119,6 +120,7 @@ def _omniroute_call(system_prompt, user_content):
         ],
         "temperature": 0.15,
         "max_tokens": max(256, int(os.getenv("RADAR_LLM_MAX_TOKENS", "700") or 700)),
+        "stream": False,
     }
     headers = {"Content-Type": "application/json"}
     if api_key:

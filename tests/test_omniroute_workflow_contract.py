@@ -31,3 +31,5 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     assert 'no provider inference smoke-test executed; quota is preserved' in text
 
 # Production validation trigger: OmniRoute 3.8.51 contract.
+
+# Final production validation: secrets + OmniRoute + TypeSafe.

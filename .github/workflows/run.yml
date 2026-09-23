@@ -96,6 +96,12 @@ jobs:
           RADAR_ENABLE_HF_FALLBACK: 1
           RADAR_LLM_MAX_TOKENS: 800
           RADAR_ROUTER_BUDGET_SECONDS: 10
+          # Optional persistent OmniRoute gateway. When configured, OmniRoute is the
+          # first model-selection layer; the existing registry remains the hard fallback.
+          OMNIROUTE_BASE_URL: ${{ secrets.OMNIROUTE_BASE_URL }}
+          OMNIROUTE_API_KEY: ${{ secrets.OMNIROUTE_API_KEY }}
+          OMNIROUTE_MODEL: ${{ vars.OMNIROUTE_MODEL }}
+          OMNIROUTE_TIMEOUT_SECONDS: 8
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

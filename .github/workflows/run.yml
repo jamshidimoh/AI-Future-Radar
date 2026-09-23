@@ -47,7 +47,7 @@ jobs:
           # Recurring/free provider credentials used by OmniRoute auto-routing.
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
           NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           LLM7_API_KEY: ${{ secrets.LLM7_API_KEY }}
@@ -228,11 +228,11 @@ jobs:
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE || secrets.TYPESAFE_API_KEY }}
           AI_RADAR_TYPESAFE_RERANK_MODE: active
           AI_RADAR_TYPESAFE_RERANK_WEIGHT: 0.20
         run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_protected_lane.py 2>&1 | tee run.log'
@@ -249,7 +249,7 @@ jobs:
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK: 1

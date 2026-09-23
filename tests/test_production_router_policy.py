@@ -27,6 +27,10 @@ def _reset(monkeypatch):
     monkeypatch.delenv("RADAR_MAX_LLM_ATTEMPTS", raising=False)
     monkeypatch.delenv("RADAR_ROUTER_BUDGET_SECONDS", raising=False)
     monkeypatch.delenv("RADAR_PRODUCTION_MODE", raising=False)
+    monkeypatch.delenv("OMNIROUTE_BASE_URL", raising=False)
+    monkeypatch.delenv("OMNIROUTE_API_KEY", raising=False)
+    monkeypatch.delenv("OMNIROUTE_MODEL", raising=False)
+    monkeypatch.delenv("OMNIROUTE_TIMEOUT_SECONDS", raising=False)
 
 
 def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
@@ -493,3 +497,73 @@ def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
     assert provider == "LocalOllamaFree"
     assert observed and observed[0] <= 18.0
     assert observed[0] >= 6.0
+
+
+def test_omniroute_is_primary_model_selection_layer_when_configured(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128/")
+    calls = []
+
+    class FakeResponse:
+        status_code = 200
+        headers = {"X-OmniRoute-Decision": "strategy=smart provider=free-test model=test-model"}
+
+        def json(self):
+            return {
+                "model": "free-test/test-model",
+                "choices": [{"message": {"content": '{"title":"omni"}'}}],
+            }
+
+    def fake_post(url, **kwargs):
+        calls.append((url, kwargs))
+        return FakeResponse()
+
+    monkeypatch.setattr("src.production_router_policy.requests.post", fake_post)
+    apply()
+
+    result, provider = router._call_litellm("system", "user")
+
+    assert result == '{"title":"omni"}'
+    assert provider == "OmniRoute:free-test/test-model"
+    assert calls[0][0] == "http://omniroute:20128/v1/chat/completions"
+    assert calls[0][1]["json"]["model"] == "auto/smart"
+    assert calls[0][1]["json"]["stream"] is False
+
+
+def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128/v1")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
+
+    def failing_post(*_args, **_kwargs):
+        raise RuntimeError("OmniRoute unavailable")
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            return type(
+                "Response",
+                (),
+                {
+                    "model": model,
+                    "choices": [
+                        type(
+                            "Choice",
+                            (),
+                            {"message": type("Message", (), {"content": '{"title":"fallback"}'})()},
+                        )()
+                    ],
+                },
+            )()
+
+    deployments = [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}},
+    ]
+    monkeypatch.setattr("src.production_router_policy.requests.post", failing_post)
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+    apply()
+
+    result, provider = router._call_litellm("system", "user")
+
+    assert result == '{"title":"fallback"}'
+    assert provider == "groq:model-a"

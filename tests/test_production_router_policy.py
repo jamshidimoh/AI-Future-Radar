@@ -501,6 +501,7 @@ def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
 
 def test_omniroute_is_primary_model_selection_layer_when_configured(monkeypatch):
     _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128/")
     calls = []
 
@@ -532,6 +533,7 @@ def test_omniroute_is_primary_model_selection_layer_when_configured(monkeypatch)
 
 def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
     _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128/v1")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
 

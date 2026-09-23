@@ -44,7 +44,7 @@ jobs:
           REQUIRE_API_KEY: "false"
           NODE_ENV: production
           DATA_DIR: /tmp/omniroute-data
-          # Recurring/free provider credentials used by OmniRoute auto-routing.
+          # Recurring/free provider credentials used by OmniRoute auto-routing. Verified published pin: 3.8.50.
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}

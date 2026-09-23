@@ -5,9 +5,9 @@ import logging
 import os
 import re
 import time
+from pathlib import Path
 
 import requests
-from pathlib import Path
 
 import src.llm_router_light as router
 from src.free_model_registry import build_production_chain

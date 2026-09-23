@@ -27,5 +27,7 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     assert 'cloudflare-ai: deferred (requires accountId in provider-specific connection data)' in text
     assert 'CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}' in text
     assert 'OMNIROUTE_READY' in text
+    assert 'providers test-all' not in text
+    assert 'no provider inference smoke-test executed; quota is preserved' in text
 
 # Production validation trigger: OmniRoute 3.8.51 contract.

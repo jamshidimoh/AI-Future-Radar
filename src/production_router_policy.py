@@ -5,6 +5,8 @@ import logging
 import os
 import re
 import time
+
+import requests
 from pathlib import Path
 
 import src.llm_router_light as router
@@ -94,6 +96,62 @@ def _persistently_unavailable(deployment_id: str, *, recovery_probe: bool = Fals
         )
         return False
     return True
+
+def _omniroute_call(system_prompt, user_content):
+    """Try OmniRoute first when an operator exposes a live gateway endpoint.
+
+    OmniRoute is deliberately an optional primary router: if the endpoint is not
+    configured or fails, the existing registry/circuit-breaker chain remains the
+    authoritative fallback. The radar therefore never becomes dependent on a
+    single routing gateway.
+    """
+    base_url = os.getenv("OMNIROUTE_BASE_URL", "").strip().rstrip("/")
+    if not base_url:
+        return None, None
+    api_key = os.getenv("OMNIROUTE_API_KEY", "").strip()
+    model = os.getenv("OMNIROUTE_MODEL", "auto/smart").strip() or "auto/smart"
+    url = f"{base_url}/v1/chat/completions"
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "temperature": 0.15,
+        "max_tokens": max(256, int(os.getenv("RADAR_LLM_MAX_TOKENS", "700") or 700)),
+    }
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+    timeout = max(0.5, min(8.0, float(os.getenv("OMNIROUTE_TIMEOUT_SECONDS", "8") or 8)))
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=timeout)
+        if response.status_code >= 400:
+            raise RuntimeError(f"OmniRoute HTTP {response.status_code}: {response.text[:500]}")
+        data = response.json()
+        choices = data.get("choices") or []
+        content = None
+        if choices:
+            message = choices[0].get("message") or {}
+            content = message.get("content")
+        if not content:
+            raise RuntimeError("OmniRoute response has no content")
+        decision = response.headers.get("X-OmniRoute-Decision", "")
+        selected = str(data.get("model") or decision or model)
+        print(
+            f"[OmniRoute Primary] success=true requested={model} selected={selected} "
+            f"decision={decision[:300]}",
+            flush=True,
+        )
+        return content, f"OmniRoute:{selected}"
+    except Exception as exc:
+        print(
+            f"[OmniRoute Primary] success=false reason={type(exc).__name__}: {exc}; falling back to production chain",
+            flush=True,
+        )
+        logger.warning("OmniRoute primary routing failed: %s", exc, exc_info=True)
+        return None, None
+
 
 def _install_production_circuit_breaker() -> None:
     if getattr(router, "_PRODUCTION_CIRCUIT_BREAKER_INSTALLED", False):
@@ -211,6 +269,14 @@ def _install_production_circuit_breaker() -> None:
                     flush=True,
                 )
                 return None
+
+        # OmniRoute is the first model-selection layer when configured. It owns
+        # dynamic provider/model choice (auto/smart by default) and its own
+        # health/quota/fallback logic. The local registry remains the hard fallback.
+        if os.getenv("OMNIROUTE_BASE_URL", "").strip():
+            omni_result = _omniroute_call(system_prompt, user_content)
+            if omni_result[0]:
+                return omni_result
 
         for deployment in model_list:
             result = _try_deployment(deployment)

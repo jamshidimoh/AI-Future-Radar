@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790081963,
+  "updated_at": 1790140562,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -13434,6 +13434,67 @@
       "why_it_matters": "ماکس Tegmark یکی از چهره‌های برجسته در بحث امنیت و آینده هوش مصنوعی است و کتاب «Life 3.0» مرجع مهمی برای سناریوهای تکامل حیات و کنترل AGI محسوب می‌شود. هر محتوای جدید از او در میدیام می‌تواند دیدگاه‌های به‌روز او درباره ریسک‌های وجودی، هم‌سازگاری ارزش‌ها یا سیاست‌گذاری AI را منعکس کند، اما بدون متن اصلی نمی‌توان اهمیت یا پیامدهای خاص این قطعه را ارزیابی کرد.",
       "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5sV0dKOXhQbF9PLVBRWUFHR3BTN3F6QjBtRDl2QmpERmxFSmxJWS1ad2g2LVF2QzUwMnNYQS11YVZWZGJlaktjS2FkbThEN1kyT0JDSmpKY0k2dmhwa0NvN0dMVUdNSVRyRmc0RXoyTURUQ2c?oc=5",
       "posted_at": 1790081963
+    },
+    "-1004482051328:1824": {
+      "chat_id": -1004482051328,
+      "message_id": 1824,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (BBC)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "title": "دریو آمودی، رئیس Anthropic، خواستار کاهش سرعت توسعه هوش مصنوعی شد",
+      "summary": "در مصاحبه‌ای با BBC، دریو آمودی، مدیرعامل Anthropic، بر ضرورت کاهش سرعت پیشرفت هوش مصنوعی تأکید کرد. او بر این باور است که سرعت فعلی توسعه می‌تواند خطرات ناشناخته‌ای به همراه داشته باشد و خواستار ایجاد چارچوب‌های ایمنی و نظارتی قوی‌تر شد. این دعوت به احتیاط، از سوی یکی از پیشروان حوزه ایمنی هوش مصنوعی مطرح شد.",
+      "why_it_matters": "بیان نگرانی‌های دریو آمودی، به عنوان رهبر Anthropic که به ایمنی هوش مصنوعی اختصاص دارد، می‌تواند Attention سیاست‌گذاران، سرمایه‌گذاران و شرکت‌های فناوری را به لزوم تنظیم مقررات و ارزیابی ریسک‌های پیشرفت سریع AI جلب کند. اگر این صداها جدی گرفته شوند، ممکن است مسیر توسعه فناوری به سمت شفافیت و مسئولیت‌پذیری بیشتری هدایت شود و خطرات احتمالی برای جامعه کاهش یابد.",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBrRjBnT05YelZFQXM0ejVFa0VZUDdYWENTbHowbzJSVmxwZWFpWEw2NFh4NHpjU01Ubi1jM21FQjhfWl82Z3JsczNTQnFIVFpkOWQyTXhQVzlGZw?oc=5",
+      "posted_at": 1790140559
+    },
+    "-1004482051328:1825": {
+      "chat_id": -1004482051328,
+      "message_id": 1825,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (marketscreener.com)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Fei-Fei Li",
+      "watch_person": "Fei-Fei Li",
+      "person_name": "Fei-Fei Li",
+      "people_lane": true,
+      "title": "Fei-Fei Li: آینده هوش مصنوعی «در مورد انسان‌ها»",
+      "summary": "در مصاحبه‌ای که توسط marketscreener.com منتشر شد، Fei‑Fei Li بیان کرد که آینده هوش مصنوعی باید حول انسان‌ها متمرکز باشد. او تأکید کرد که فناوری‌های AI باید برای ارتقای توانمندی‌ها و رفاه بشر طراحی شوند. این دیدگاه در عنوان مقاله «AI's Future Is 'About Humans'» خلاصه شده است.",
+      "why_it_matters": "تمرکز بر انسان در طراحی سیستم‌های AI باعث می‌شود که معیارهای ارزیابی شامل اثرات اجتماعی و اخلاقی شوند، که به‌طور مستقیم خطر بروز رفتارهای ناخواسته یا تبعیض‌آمیز را کاهش می‌دهد. وقتی توسعه‌دهندگان هدف انسانی را در حلقه بازخورد محصول می‌گنجانند، پذیرش عمومی و اعتماد کاربران افزایش می‌یابد. این رویکرد می‌تواند مسیر پژوهش و سرمایه‌گذاری را به سمت کاربردهای بهبود کیفیت زندگی، آموزش و بهداشت هدایت کند.",
+      "link": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNU25sdTNQem51bkhySmFVYVNMOGZTUXh4d3ZQWW5MbWRrdUpMM2VlNmNFTmJfMXdRbEpyUzZ6WFJFX0Yyb0NMcDFVMXB6MC1xT1RYZkg3ZTVOUnlTQXlXaWtGeTZOcXdINEl5RzRnaGhzamhWLWgydU5QQTVMVHN5WXNVTExlcEJCNi1WMThLbWt1VTRTdHc?oc=5",
+      "posted_at": 1790140560
+    },
+    "-1004482051328:1826": {
+      "chat_id": -1004482051328,
+      "message_id": 1826,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (디지털투데이)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Geoffrey Hinton",
+      "watch_person": "Geoffrey Hinton",
+      "person_name": "Geoffrey Hinton",
+      "people_lane": true,
+      "title": "Geoffrey Hinton: احتمال ۱۰٪ برای نابودی بشر توسط هوش مصنوعی غیر غیرمنطقی نیست",
+      "summary": "Geoffrey Hinton، یکی از پیشگامان Deep Learning، بیان کرد که احتمال ۱۰ ٪ برای اینکه هوش مصنوعی منجر به نابودی بشریت شود، غیر غیرمنطقی نیست. او تأکید کرد پیشرفت سریع سیستم‌های هوش مصنوعی نگرانی‌های وجودی جدی ایجاد می‌کند. این اظهار نظر نشان‌دهندهٔ افزایش بحث میان متخصصان دربارهٔ ایمنی و حاکمیت هوش مصنوعی پیشرفته است.",
+      "why_it_matters": "بیان این‌گونه خطر توسط هینتون، که به‌عنوان یکی از بنیان‌گذاران Deep Learning شناخته می‌شود، وزن خاصی به مسألهٔ ریسک‌های وجودی هوش مصنوعی می‌بخشد. احتمال ۱۰ ٪ می‌تواند انگیزه‌ای برای تسریع پژوهش‌های ایمنی، تدوین چارچوب‌های نظارتی و سرمایه‌گذاری در روش‌های هم‌راستایی (alignment) باشد. در عین حال، این اظهارنظر نشان می‌دهد که عدم قطعیت‌های علمی و فنی هنوز مانعی برای اتخاذ تصمیمات سیاست‌گذاری واضح نیست.",
+      "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNenZXa1FNME9qbXhuNzNTSzNBMEZMandFeHBoNThEYlRTNTNmWUVqUkp1ZGtDSExtc1ZFNE92NE43ZnNwc0NINkhpQUlYaWY3QmZETVNDZW0yV0VDSURGTWxXZllaYWZFUDZHRDRhemxyb1ZUXzBBSzMtQ1BDUmhfdlhXQk5TdV8tQUs5b2ZsM042NVZzSEkwYmptZ0FCUFJCX2Z0VmkwV0QyamY5aW92TFE3clZCOFBRSDVPVDJXank?oc=5",
+      "posted_at": 1790140562
     }
   }
 }

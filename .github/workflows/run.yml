@@ -108,14 +108,12 @@ jobs:
           add_provider nvidia NVIDIA_API_KEY
           add_provider anyapi ANYAPI_API_KEY
           add_provider api-airforce API_AIRFORCE_API_KEY
-          if [ -n "${CLOUDFLARE_API_TOKEN:-}" ] && [ -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
-            echo "[OmniRoute] provisioning cloudflare-ai"
-            omniroute providers add cloudflare-ai --credential-env CLOUDFLARE_API_TOKEN || true
-          else
-            echo "[OmniRoute] cloudflare-ai: skipped (token or account id unavailable)"
-          fi
-          # One-time/signup-credit providers remain outside automatic routing.
-          echo "[OmniRoute] one-time credit providers retained by Radar, not OmniRoute auto-pool: deepseek, sambanova"
+          add_provider sambanova SAMBANOVA_API_KEY
+          # Cloudflare requires provider-specific accountId data; credential-env alone cannot supply it.
+          # Keep the secret available to the Radar, but do not create a malformed OmniRoute connection.
+          echo "[OmniRoute] cloudflare-ai: deferred (requires accountId in provider-specific connection data)"
+          # One-time/signup-credit provider remains outside automatic routing.
+          echo "[OmniRoute] one-time credit provider retained by Radar, not OmniRoute auto-pool: deepseek"
           echo "[OmniRoute] credential presence inventory (names only):"
           for credential in GEMINI_API_KEY GROQ_API_KEY HF_TOKEN NARAROUTER_API_KEY MISTRAL_API_KEY LLM7_API_KEY NVIDIA_API_KEY ANYAPI_API_KEY API_AIRFORCE_API_KEY CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID DEEPSEEK_API_KEY SAMBANOVA_API_KEY; do
             if [ -n "${!credential:-}" ]; then
@@ -125,7 +123,24 @@ jobs:
             fi
           done
           echo "[OmniRoute] configured provider connections:"
-          omniroute providers list --json || true
+          omniroute providers list --json >/tmp/omniroute-providers.json || true
+          cat /tmp/omniroute-providers.json || true
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          payload = json.loads(Path('/tmp/omniroute-providers.json').read_text(encoding='utf-8')) if Path('/tmp/omniroute-providers.json').exists() else {}
+          rows = payload.get('data') if isinstance(payload, dict) else payload
+          if isinstance(rows, dict):
+              rows = rows.get('providers') or rows.get('connections') or []
+          if not isinstance(rows, list):
+              rows = []
+          active = [r for r in rows if isinstance(r, dict) and str(r.get('status') or r.get('testStatus') or 'active').lower() not in {'disabled','expired','failed'}]
+          print(f'[OmniRoute] active_connection_count={len(active)}')
+          ready = '1' if active else '0'
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as fh:
+              fh.write(f'OMNIROUTE_READY={ready}\\n')
+          PY
           echo "[OmniRoute] provider connectivity smoke test:"
           omniroute providers test-all || true
 
@@ -192,7 +207,7 @@ jobs:
           RADAR_ENABLE_HF_FALLBACK: 1
           RADAR_LLM_MAX_TOKENS: 800
           RADAR_ROUTER_BUDGET_SECONDS: 10
-          OMNIROUTE_BASE_URL: http://127.0.0.1:20128
+          OMNIROUTE_BASE_URL: ${{ env.OMNIROUTE_READY == '1' && 'http://127.0.0.1:20128' || '' }}
           OMNIROUTE_API_KEY: ""
           OMNIROUTE_MODEL: auto/smart
           OMNIROUTE_TIMEOUT_SECONDS: 8

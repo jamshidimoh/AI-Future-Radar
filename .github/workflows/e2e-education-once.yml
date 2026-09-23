@@ -66,7 +66,7 @@ jobs:
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
@@ -83,7 +83,7 @@ jobs:
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           FORCE_EDUCATION_PUBLICATION: false

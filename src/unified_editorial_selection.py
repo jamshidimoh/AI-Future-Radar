@@ -383,25 +383,34 @@ def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[
         viable = unseen_area
     freshness_weight = float(p.contract.get("freshness_weight", 10.0) or 10.0)
     freshness_half_life = float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0)
-    return max(
-        viable,
-        key=lambda x: (
-            # Freshness is the primary ordering signal once a candidate has
-            # already cleared the quality floor. This prevents an older,
-            # marginally higher-scoring story from displacing genuinely recent
-            # capability/research updates. Diversity/value remain tie-breakers.
-            freshness_score(x, freshness_half_life),
-            portfolio_value(
-                x,
-                p.selected,
-                diversity_weight=p.contract["diversity_weight"],
-                similarity_penalty=p.contract["similarity_penalty"],
-            ),
-            candidate_score(x) + freshness_score(x, freshness_half_life) * freshness_weight,
+    def _selection_key(x: dict[str, Any]) -> tuple:
+        value = portfolio_value(
+            x,
+            p.selected,
+            diversity_weight=p.contract["diversity_weight"],
+            similarity_penalty=p.contract["similarity_penalty"],
+        )
+        if p.mission_aware:
+            # Production editorial selection is mission-aware: once a candidate
+            # clears the quality floor, freshness must outrank a small legacy
+            # score advantage so genuinely recent capability/research updates win.
+            return (
+                freshness_score(x, freshness_half_life),
+                value,
+                candidate_score(x) + freshness_score(x, freshness_half_life) * freshness_weight,
+                _safe_float(x, "evidence_strength"),
+                str(x.get("published", "")),
+            )
+        # Keep the non-mission-aware characterization contract deterministic; this
+        # path is used by compatibility tests/tools rather than production routing.
+        return (
+            value + freshness_score(x, freshness_half_life) * freshness_weight,
+            candidate_score(x),
             _safe_float(x, "evidence_strength"),
             str(x.get("published", "")),
-        ),
-    )
+        )
+
+    return max(viable, key=_selection_key)
 
 
 def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:

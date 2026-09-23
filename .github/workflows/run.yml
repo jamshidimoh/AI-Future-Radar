@@ -62,7 +62,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
-          npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/
+          npm install -g omniroute@3.8.51 --registry=https://registry.npmjs.org/
           omniroute --version
           nohup omniroute > /tmp/omniroute.log 2>&1 &
           for attempt in $(seq 1 30); do
@@ -99,7 +99,7 @@ jobs:
             fi
           }
           # Core recurring/free pool.
-          add_provider google GEMINI_API_KEY
+          add_provider gemini GEMINI_API_KEY
           add_provider groq GROQ_API_KEY
           add_provider huggingface HF_TOKEN
           add_provider nara NARAROUTER_API_KEY

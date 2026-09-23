@@ -386,14 +386,18 @@ def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[
     return max(
         viable,
         key=lambda x: (
+            # Freshness is the primary ordering signal once a candidate has
+            # already cleared the quality floor. This prevents an older,
+            # marginally higher-scoring story from displacing genuinely recent
+            # capability/research updates. Diversity/value remain tie-breakers.
+            freshness_score(x, freshness_half_life),
             portfolio_value(
                 x,
                 p.selected,
                 diversity_weight=p.contract["diversity_weight"],
                 similarity_penalty=p.contract["similarity_penalty"],
-            )
-            + freshness_score(x, freshness_half_life) * freshness_weight,
-            candidate_score(x),
+            ),
+            candidate_score(x) + freshness_score(x, freshness_half_life) * freshness_weight,
             _safe_float(x, "evidence_strength"),
             str(x.get("published", "")),
         ),

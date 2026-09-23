@@ -20,10 +20,12 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
         ('nvidia', 'NVIDIA_API_KEY'),
         ('anyapi', 'ANYAPI_API_KEY'),
         ('api-airforce', 'API_AIRFORCE_API_KEY'),
+        ('sambanova', 'SAMBANOVA_API_KEY'),
     ):
         assert f'add_provider {provider} {credential}' in text
 
-    assert 'omniroute providers add cloudflare-ai --credential-env CLOUDFLARE_API_TOKEN' in text
+    assert 'cloudflare-ai: deferred (requires accountId in provider-specific connection data)' in text
     assert 'CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}' in text
+    assert 'OMNIROUTE_READY' in text
 
 # Production validation trigger: OmniRoute 3.8.51 contract.

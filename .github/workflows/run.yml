@@ -32,6 +32,45 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Set up ephemeral OmniRoute
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Install and start ephemeral OmniRoute
+        env:
+          PORT: 20128
+          OMNIROUTE_SERVER_HOST: 127.0.0.1
+          REQUIRE_API_KEY: "false"
+          NODE_ENV: production
+          DATA_DIR: /tmp/omniroute-data
+        run: |
+          set -euo pipefail
+          mkdir -p "$DATA_DIR"
+          npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/
+          omniroute --version
+          nohup omniroute serve --log > /tmp/omniroute.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:20128/v1/models >/tmp/omniroute-models.json 2>/dev/null; then
+              echo "[OmniRoute] healthy"
+              break
+            fi
+            sleep 2
+          done
+          if ! curl -fsS http://127.0.0.1:20128/v1/models >/tmp/omniroute-models.json 2>/dev/null; then
+            echo "[OmniRoute] health check failed; production router will use its hard fallback"
+            tail -n 80 /tmp/omniroute.log || true
+            exit 0
+          fi
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          payload = json.loads(Path("/tmp/omniroute-models.json").read_text())
+          models = payload.get("data") or payload.get("models") or []
+          print(f"[OmniRoute] discovered_models={len(models)}")
+          if not models:
+              print("[OmniRoute] warning: no models advertised; production router will fall back when needed")
+          PY
 
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
@@ -96,11 +135,9 @@ jobs:
           RADAR_ENABLE_HF_FALLBACK: 1
           RADAR_LLM_MAX_TOKENS: 800
           RADAR_ROUTER_BUDGET_SECONDS: 10
-          # Optional persistent OmniRoute gateway. When configured, OmniRoute is the
-          # first model-selection layer; the existing registry remains the hard fallback.
-          OMNIROUTE_BASE_URL: ${{ secrets.OMNIROUTE_BASE_URL }}
-          OMNIROUTE_API_KEY: ${{ secrets.OMNIROUTE_API_KEY }}
-          OMNIROUTE_MODEL: ${{ vars.OMNIROUTE_MODEL }}
+          OMNIROUTE_BASE_URL: http://127.0.0.1:20128
+          OMNIROUTE_API_KEY: ""
+          OMNIROUTE_MODEL: auto/smart
           OMNIROUTE_TIMEOUT_SECONDS: 8
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}

@@ -314,7 +314,19 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     eligible = _exclude_published_candidates(eligible)
     _prepare_rank_features(eligible)
     print(f"[Ranking Timing] feature_cache items={len(eligible)} elapsed={time.monotonic()-started:.3f}s", flush=True)
-    eligible.sort(key=lambda x: (int(bool(x.get("_rank_is_tier0"))), _score(x), int(bool(x.get("model_release_priority"))), float(x.get("signal_score", 0) or 0), int(x.get("leader_source_authority", 0) or 0), str(x.get("published", ""))), reverse=True)
+    # Freshness is the primary ordering signal for normal stories. Quality,
+    # signal and authority remain tie-breakers so an older high-score item cannot
+    # routinely displace a materially newer relevant item. Protected/Tier-0
+    # handling remains unchanged below this ordering layer.
+    eligible.sort(key=lambda x: (
+        int(bool(x.get("_rank_is_tier0"))),
+        freshness_score(x, 36.0),
+        str(x.get("published", "")),
+        _score(x),
+        int(bool(x.get("model_release_priority"))),
+        float(x.get("signal_score", 0) or 0),
+        int(x.get("leader_source_authority", 0) or 0),
+    ), reverse=True)
     priority_candidates = [x for x in eligible if x.get("_rank_is_tier0")]
     normal = [x for x in eligible if not x.get("_rank_is_tier0")]
     priority = _priority_story_diversified(priority_candidates)

@@ -569,3 +569,10 @@ def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
 
     assert result == '{"title":"fallback"}'
     assert provider == "groq:model-a"
+
+
+def test_omniroute_is_inert_when_not_configured(monkeypatch):
+    _reset(monkeypatch)
+    from src.production_router_policy import _omniroute_call
+
+    assert _omniroute_call("system", "user") == (None, None)

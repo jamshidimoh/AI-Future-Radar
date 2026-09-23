@@ -45,6 +45,9 @@ jobs:
           NODE_ENV: production
           DATA_DIR: /tmp/omniroute-data
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
@@ -63,6 +66,26 @@ jobs:
             tail -n 80 /tmp/omniroute.log || true
             exit 0
           fi
+
+          echo "[OmniRoute] provisioning Radar provider credentials"
+          add_provider() {
+            local provider="$1"
+            local credential_env="$2"
+            if [ -n "${!credential_env:-}" ]; then
+              echo "[OmniRoute] adding provider=${provider}"
+              omniroute providers add "$provider" --credential-env "$credential_env" || true
+            else
+              echo "[OmniRoute] provider=${provider} skipped: credential unavailable"
+            fi
+          }
+          add_provider google GEMINI_API_KEY
+          add_provider groq GROQ_API_KEY
+          add_provider openrouter OPENROUTER_API_KEY
+          add_provider huggingface HF_TOKEN
+          echo "[OmniRoute] configured providers:"
+          omniroute providers list --json || true
+          echo "[OmniRoute] testing configured providers:"
+          omniroute providers test-all || true
           python - <<'PY'
           import json
           from pathlib import Path

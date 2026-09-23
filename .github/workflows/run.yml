@@ -44,12 +44,13 @@ jobs:
           REQUIRE_API_KEY: "false"
           NODE_ENV: production
           DATA_DIR: /tmp/omniroute-data
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
           npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/
           omniroute --version
-          nohup omniroute serve --log > /tmp/omniroute.log 2>&1 &
+          nohup omniroute > /tmp/omniroute.log 2>&1 &
           for attempt in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:20128/v1/models >/tmp/omniroute-models.json 2>/dev/null; then
               echo "[OmniRoute] healthy"

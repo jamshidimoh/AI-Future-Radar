@@ -431,16 +431,12 @@ def main(*, skip_education: bool = False) -> int:
 
         people_ids = {id(item) for item in people_items}
         special_ids = voices_ids | technical_ids | mind_ids
-        normal_pool = (
-            []
-            if bootstrap_count
-            else [
-                item for item in items
-                if id(item) not in people_ids
-                and id(item) not in special_ids
-                and not is_voices_candidate(item)
-            ]
-        )
+        normal_pool = [
+            item for item in items
+            if id(item) not in people_ids
+            and id(item) not in special_ids
+            and not is_voices_candidate(item)
+        ]
         normal_select_count = max(candidate_window, min(len(normal_pool), max_posts))
         normal_candidates = _competitive_normal_candidates(
             unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
@@ -454,7 +450,7 @@ def main(*, skip_education: bool = False) -> int:
             + voices_candidates
         )
         print(
-            f"[Four Lane Selection] normal={len(normal_candidates)} technical_trend={len(technical_candidates)} mind_ideas_voices={len(mind_candidates)} voices_perspectives={len(voices_candidates)} technical_cap={MAX_TECHNICAL_TREND_PER_PERIOD} mind_cap={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_cap={MAX_VOICES_PERSPECTIVES_PER_PERIOD} normal_score_floor=normal_only",
+            f"[Four Lane Selection] normal={len(normal_candidates)} technical_trend={len(technical_candidates)} mind_ideas_voices={len(mind_candidates)} voices_perspectives={len(voices_candidates)} technical_cap={MAX_TECHNICAL_TREND_PER_PERIOD} mind_cap={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_cap={MAX_VOICES_PERSPECTIVES_PER_PERIOD} normal_score_floor=normal_only people_bootstrap_progressive=true",
             flush=True,
         )
         print(f"[Selection Timing] original_select candidates={len(candidates)} candidate_window={candidate_window} elapsed={time.monotonic() - rank_started:.3f}s", flush=True)

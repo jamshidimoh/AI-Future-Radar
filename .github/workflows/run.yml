@@ -20,7 +20,7 @@ jobs:
   run-bot:
     if: "github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore: persist production state [skip ci]')"
     runs-on: ubuntu-latest
-    timeout-minutes: 26
+    timeout-minutes: 38
     steps:
       - name: Checkout current ref
         uses: actions/checkout@v6
@@ -205,7 +205,7 @@ jobs:
         env:
           PYTHONUNBUFFERED: 1
           RADAR_PRODUCTION_MODE: 1
-          RADAR_WATCHDOG_MINUTES: 22
+          RADAR_WATCHDOG_MINUTES: 30
           RADAR_SUMMARY_WORKERS: 1
           AI_RADAR_EDITORIAL_REVIEW: 0
           RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK: 1
@@ -235,7 +235,7 @@ jobs:
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE || secrets.TYPESAFE_API_KEY }}
           AI_RADAR_TYPESAFE_RERANK_MODE: active
           AI_RADAR_TYPESAFE_RERANK_WEIGHT: 0.20
-        run: timeout 24m bash -o pipefail -c 'python -u scripts/production_with_protected_lane.py 2>&1 | tee run.log'
+        run: timeout 34m bash -o pipefail -c 'python -u scripts/production_with_protected_lane.py 2>&1 | tee run.log'
 
       - name: Recover required Education publication
         if: always()

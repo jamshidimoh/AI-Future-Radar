@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from src.claim_verification import deterministic_precheck, semantic_verify
-from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_ratio
+from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_editorial_naturalness_ok, persian_ratio
 from src.education_editor import news_terminology_review_prompt, normalize_editorial_text
 from src.llm_router_light import call_llm_with_fallback, get_quality_chain
 from src.rejection_telemetry import build_event, emit
@@ -165,6 +165,7 @@ def _language_ok(data):
         and summary.strip()
         and why.strip()
         and news_language_ok(title, summary, why)
+        and persian_editorial_naturalness_ok(title, summary, why)
         and editorial_fields_ok(title, summary, why)
     )
 

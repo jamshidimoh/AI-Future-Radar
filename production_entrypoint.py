@@ -39,7 +39,7 @@ MAX_TECHNICAL_TREND_PER_PERIOD = 1
 MAX_VOICES_PERSPECTIVES_PER_PERIOD = MAX_VOICES_PER_PERIOD
 # Bootstrap still establishes all 30 baselines, but publication is batched so
 # one run does not flood Telegram or suppress the independent Mind/Voices lanes.
-MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 8
+MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 2
 NORMAL_RELATIVE_SCORE_GAP = 8.0
 RANK_WINDOW = int(EDITORIAL_CONTRACT["candidate_window"])
 PROTECTED_SUMMARY_SCORE_FLOOR = PROTECTED_SCORE_FLOOR
@@ -276,9 +276,13 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
     people = [item for item in candidates if item.get("people_lane")]
     replacement_buffer = max(0, int(EDITORIAL_CONTRACT.get("replacement_buffer", 0) or 0))
-    voices = [item for item in candidates if _is_voices_perspectives(item) and not item.get("people_lane")][:MAX_VOICES_PERSPECTIVES_PER_PERIOD + replacement_buffer]
-    technical = [item for item in candidates if _is_technical_trend(item) and not item.get("people_lane")][:MAX_TECHNICAL_TREND_PER_PERIOD + replacement_buffer]
-    mind = [item for item in candidates if _is_mind_ideas_voices(item) and not item.get("people_lane")][:MAX_MIND_IDEAS_VOICES_PER_PERIOD + replacement_buffer]
+    # Summarization is expensive and provider quotas are finite. Replacement
+    # candidates remain in editorial_pool and are summarized lazily only after a
+    # selected item fails QA/publication. Do not spend LLM calls on the whole
+    # replacement buffer up front.
+    voices = [item for item in candidates if _is_voices_perspectives(item) and not item.get("people_lane")][:MAX_VOICES_PERSPECTIVES_PER_PERIOD]
+    technical = [item for item in candidates if _is_technical_trend(item) and not item.get("people_lane")][:MAX_TECHNICAL_TREND_PER_PERIOD]
+    mind = [item for item in candidates if _is_mind_ideas_voices(item) and not item.get("people_lane")][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
     non_special = [
         item for item in candidates
         if not item.get("people_lane") and not _is_mind_ideas_voices(item) and not _is_technical_trend(item) and not _is_voices_perspectives(item)
@@ -286,7 +290,7 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     protected_limit = max(0, int(policy.get("leader_protected_max", 2) or 0))
     normal_capacity = max(0, int(max_posts or 0))
     replacement_buffer = max(0, int(policy.get("replacement_buffer", EDITORIAL_CONTRACT.get("replacement_buffer", 0)) or 0))
-    normal_limit = normal_capacity + replacement_buffer
+    normal_limit = normal_capacity
     protected = []
     for item in non_special:
         if not item.get("protected_slot"):

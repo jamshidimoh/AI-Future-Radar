@@ -1,7 +1,7 @@
-from pathlib import Path
+import pathlib
 
 
-WORKFLOW = Path(__file__).resolve().parents[1] / '.github' / 'workflows' / 'run.yml'
+WORKFLOW = pathlib.Path(__file__).resolve().parents[1] / '.github' / 'workflows' / 'run.yml'
 
 
 def test_omniroute_workflow_uses_audited_release_and_provider_ids():

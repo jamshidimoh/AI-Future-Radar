@@ -44,7 +44,7 @@ jobs:
           REQUIRE_API_KEY: "false"
           NODE_ENV: production
           DATA_DIR: /tmp/omniroute-data
-          # Recurring/free provider credentials used by OmniRoute auto-routing. Verified published pin: 3.8.50.
+          # Recurring/free provider credentials used by OmniRoute auto-routing. Verified published pin: 3.8.51.
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
-          npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/
+          npm install -g omniroute@3.8.51 --registry=https://registry.npmjs.org/
           omniroute --version
           nohup omniroute > /tmp/omniroute.log 2>&1 &
           for attempt in $(seq 1 30); do

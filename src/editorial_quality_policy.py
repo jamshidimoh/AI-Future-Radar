@@ -46,6 +46,35 @@ _SPECIFICITY_MARKERS = (
 _GENERIC_WORDS = {"این", "آن", "برای", "در", "از", "به", "با", "که", "و", "یک", "است", "شود", "دارد", "همین", "موضوع", "خبر", "فناوری", "پژوهش"}
 
 
+_TRANSLATIONESE_PATTERNS = (
+    "گزارش می‌کند که",
+    "در یک حرکت",
+    "به منظور انجام",
+    "می‌باشد",
+    "می‌گردد",
+    "صورت می‌گیرد",
+    "این موضوع در حال حاضر",
+    "برای انجام این کار",
+    "در این راستا",
+    "لازم به ذکر است",
+)
+
+def persian_editorial_naturalness_ok(title: str, summary: str, why_it_matters: str) -> bool:
+    """Bounded deterministic check for fluent Persian rather than Persian-character ratio alone."""
+    fields = [str(title or "").strip(), str(summary or "").strip(), str(why_it_matters or "").strip()]
+    body = " ".join(fields[1:])
+    if not all(fields):
+        return False
+    if sum(body.count(pattern) for pattern in _TRANSLATIONESE_PATTERNS) >= 2:
+        return False
+    sentences = [s.strip() for s in re.split(r"(?<=[.!؟])\s+", body) if s.strip()]
+    if len(sentences) >= 3 and sum(len(s) > 240 for s in sentences) >= 2:
+        return False
+    if re.search(r"(?:^|[،,])\s*(?:و|اما|بنابراین|همچنین)\s+[وای][\u0600-\u06ff]+", body):
+        return False
+    return True
+
+
 def persian_ratio(text: str) -> float:
     letters = re.findall(r"[A-Za-z\u0600-\u06FF]", text or "")
     if not letters:

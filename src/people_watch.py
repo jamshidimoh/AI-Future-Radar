@@ -119,14 +119,14 @@ def relevant_people_item(item: dict[str, Any], person: str) -> bool:
     if not re.search(person_pattern, text):
         return False
     ctype = str(item.get("content_type") or "").casefold()
+    # Research/news hits must contain an actual AI/future/mind/technology
+    # signal in the item itself. Only direct expert formats may qualify from
+    # person identity alone because the format itself is substantive evidence.
     if _contains_mission_term(text):
         return True
-    # Discovery queries describe search intent, not article evidence. A generated
-    # People query deliberately contains mission terms, so trusting them here
-    # can turn an unrelated result into a false-positive People signal.
     return ctype in {
         "interview", "podcast", "talk", "lecture", "conversation",
-        "discussion", "q&a", "research", "essay", "commentary",
+        "discussion", "q&a", "essay", "commentary",
     } and bool(person)
 
 

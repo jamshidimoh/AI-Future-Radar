@@ -7,7 +7,7 @@ WORKFLOW = Path(__file__).resolve().parents[1] / '.github' / 'workflows' / 'run.
 def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     text = WORKFLOW.read_text(encoding='utf-8')
 
-    assert 'omniroute@3.8.51' in text
+    assert 'omniroute@3.8.50' in text
     assert 'add_provider gemini GEMINI_API_KEY' in text
     assert 'add_provider google GEMINI_API_KEY' not in text
 
@@ -30,6 +30,6 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     assert 'providers test-all' not in text
     assert 'no provider inference smoke-test executed; quota is preserved' in text
 
-# Production validation trigger: OmniRoute 3.8.51 contract.
+# Production validation trigger: OmniRoute 3.8.50 contract.
 
 # Final production validation: secrets + OmniRoute + TypeSafe.

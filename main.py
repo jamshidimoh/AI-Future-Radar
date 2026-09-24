@@ -746,9 +746,13 @@ def main(hooks=None):
     print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
     if people_bootstrap_mode:
         print("[People Bootstrap] progressive mode: normal/special lanes remain enabled")
+    if people_bootstrap_mode:
+        # People bootstrap candidates are an independent protected input to the
+        # production selector; they must reach the selector before the batch cap.
+        editorial_pool = unique_candidates(list(people_candidates) + list(editorial_pool))
+        print(f"[People Bootstrap] selector_input={len(people_candidates)} people_candidates_added=true", flush=True)
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
-    if not people_bootstrap_mode:
-        selected_regular = unique_candidates(selected_regular + people_candidates)
+    selected_regular = unique_candidates(selected_regular + people_candidates)
     protected_candidates = [] if people_bootstrap_mode else [x for x in editorial_pool if x.get("protected_content")]
     protected_selected = (
         []

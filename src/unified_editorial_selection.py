@@ -71,6 +71,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "freshness_weight": float(selection_cfg.get("freshness_weight", 10.0) or 10.0),
         "freshness_half_life_hours": float(selection_cfg.get("freshness_half_life_hours", 36.0) or 36.0),
         "target_quality_floor_ratio": float(selection_cfg.get("target_quality_floor_ratio", 0.88) or 0.88),
+        "mission_target_quality_floor_ratio": float(selection_cfg.get("mission_target_quality_floor_ratio", 0.80) or 0.80),
         "required_areas": ("ai_core", "convergence", "mind_cognition", "future_governance"),
         "window_runs": int(rotation_cfg.get("window_runs", 6) or 6),
         "max_same_source_in_window": int(rotation_cfg.get("max_same_source_in_window", 2) or 2),
@@ -487,7 +488,7 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
                 0.0,
                 min(
                     1.0,
-                    float(p.contract.get("diversity_quality_floor_ratio", 0.80) or 0.80),
+                    float(p.contract.get("mission_target_quality_floor_ratio", p.contract.get("diversity_quality_floor_ratio", 0.80)) or 0.80),
                 ),
             )
             if top_global > 0.0 and candidate_score(candidate) < top_global * floor:

@@ -89,9 +89,8 @@ jobs:
             sleep 2
           done
           if [ "${MODEL_READY}" -ne 1 ]; then
-            echo "[OmniRoute] model catalog readiness failed; production router will use its hard fallback"
-            tail -n 120 /tmp/omniroute.log || true
-            exit 0
+            echo "[OmniRoute] initial /v1/models catalog not ready; continuing with provider provisioning"
+            tail -n 80 /tmp/omniroute.log || true
           fi
           python - <<'PY'
           import json
@@ -142,11 +141,9 @@ jobs:
           omniroute providers list --json || true
           echo "[OmniRoute] validating local provider configuration without inference calls:"
           omniroute providers validate || true
-          echo "[OmniRoute] refreshing advertised model catalog after provisioning:"
-          READY=0
-          for attempt in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:20128/v1/models >/tmp/omniroute-post-models.json 2>/dev/null; then
-              MODEL_COUNT=$(python - <<'PY'
+          echo "[OmniRoute] validating post-provision model catalog"
+          curl -fsS http://127.0.0.1:20128/v1/models >/tmp/omniroute-post-models.json 2>/dev/null || true
+          MODEL_COUNT=$(python - <<'PY'
           import json
           from pathlib import Path
           try:
@@ -156,18 +153,22 @@ jobs:
           except Exception:
               print(0)
           PY
-              )
-              echo "[OmniRoute] post_provision_models=${MODEL_COUNT}"
-              if [ "${MODEL_COUNT}" -gt 0 ]; then
-                READY=1
-                break
-              fi
+          )
+          echo "[OmniRoute] post_provision_models=${MODEL_COUNT}"
+          echo "[OmniRoute] running minimal auto/smart inference smoke-test"
+          READY=0
+          for attempt in $(seq 1 6); do
+            if curl -4 -fsS --max-time 15 http://127.0.0.1:20128/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"auto/smart","messages":[{"role":"user","content":"Reply with OK only."}],"max_tokens":5,"temperature":0}' >/tmp/omniroute-smoke.json 2>/tmp/omniroute-smoke.err; then
+              READY=1
+              echo "[OmniRoute] inference_smoke=healthy attempt=${attempt}"
+              break
             fi
-            sleep 2
+            echo "[OmniRoute] inference_smoke attempt=${attempt} failed"
+            tail -n 20 /tmp/omniroute-smoke.err || true
+            sleep 3
           done
           echo "[OmniRoute] ready=${READY}"
           echo "OMNIROUTE_READY=${READY}" >> "$GITHUB_ENV"
-          echo "[OmniRoute] no provider inference smoke-test executed; quota is preserved"
 
       - name: Install dependencies
         run: python -m pip install -r requirements.txt

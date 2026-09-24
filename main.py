@@ -696,6 +696,9 @@ def main(hooks=None):
         discovered_people.discard("")
         planned_people = baseline_people | discovered_people
         print(f"[People Bootstrap] required=30 discovered_now={len(discovered_people)} baseline={len(baseline_people)} planned={len(planned_people)}")
+        # Bootstrap is progressive, not a global publication lock. Missing people
+        # are retried on later runs, while every currently qualified signal can
+        # still be published and the normal Radar lanes continue in parallel.
         if len(planned_people) != 30:
             PEOPLE_BOOTSTRAP_RESULT = build_bootstrap_state(
                 bootstrap_at=people_bootstrap_at,
@@ -704,10 +707,11 @@ def main(hooks=None):
                 status="in_progress",
                 previous_state=people_state,
             )
-            print(f"[People Bootstrap] BLOCKED exact_30_baseline_required planned={len(planned_people)}/30", flush=True)
-            save_seen(seen_hashes, seen_signatures, source_history)
-            print("Posts sent: 0/0")
-            return
+            print(
+                f"[People Bootstrap] partial baseline planned={len(planned_people)}/30; "
+                "continuing with available People + normal lanes",
+                flush=True,
+            )
     else:
         people_candidates = post_bootstrap_candidates(
             all_items,
@@ -722,37 +726,26 @@ def main(hooks=None):
     new_items = filter_new_items(all_items, seen_hashes)
     people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
 
+    normal_input_items = [x for x in new_items if people_identity(x) not in people_ids]
+    protected_items, regular_items = split_protected_fn(normal_input_items, max_protected=leader_protected_max)
+    print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}")
+    print("[4/7] AI-first relevance gate (regular pool only)")
+    regular_items = filter_ai_relevance(regular_items, bridge_keywords)
+    print("[5/7] Story clustering and canonical-source selection")
+    regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy)
+    regular_enriched = enrich_signal_items(regular_enriched)
+    _apply_signal_ranking(regular_enriched)
+    regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True)
+    leader_before = len([x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")])
+    regular_before = len([x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))])
+    editorial_pool = gate_story_candidates(protected_items, [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")], [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))], seen_signatures, threshold=story_threshold)
+    editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True)
+    leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal"))
+    regular_after = len([x for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal"))])
+    protected_after = sum(1 for x in editorial_pool if x.get("protected_content"))
+    print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
     if people_bootstrap_mode:
-        protected_items, regular_items = [], []
-        people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
-        bootstrap_discovery_pool = [
-            x for x in new_items
-            if people_identity(x) not in people_ids
-        ]
-        editorial_pool = unique_candidates(list(people_candidates) + bootstrap_discovery_pool)
-        print(
-            f"[People Bootstrap] publication_pool={len(people_candidates)} "
-            f"special_discovery_pool={len(bootstrap_discovery_pool)} normal_lanes=disabled"
-        )
-    else:
-        normal_input_items = [x for x in new_items if people_identity(x) not in people_ids]
-        protected_items, regular_items = split_protected_fn(normal_input_items, max_protected=leader_protected_max)
-        print(f"[Protected Leader Watch] selected={len(protected_items)} max={leader_protected_max} | regular_pool={len(regular_items)}")
-        print("[4/7] AI-first relevance gate (regular pool only)")
-        regular_items = filter_ai_relevance(regular_items, bridge_keywords)
-        print("[5/7] Story clustering and canonical-source selection")
-        regular_enriched = enrich_items(regular_items, leader_priorities, source_history, policy)
-        regular_enriched = enrich_signal_items(regular_enriched)
-        _apply_signal_ranking(regular_enriched)
-        regular_enriched.sort(key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True)
-        leader_before = len([x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")])
-        regular_before = len([x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))])
-        editorial_pool = gate_story_candidates(protected_items, [x for x in regular_enriched if x.get("is_leader") or x.get("leader_signal")], [x for x in regular_enriched if not (x.get("is_leader") or x.get("leader_signal"))], seen_signatures, threshold=story_threshold)
-        editorial_pool = sorted(editorial_pool, key=lambda x: (x.get("editorial_score", 0), x.get("signal_score", 0)), reverse=True)
-        leader_after = sum(1 for x in editorial_pool if x.get("is_leader") or x.get("leader_signal"))
-        regular_after = sum(1 for x in editorial_pool if not (x.get("is_leader") or x.get("leader_signal")))
-        protected_after = sum(1 for x in editorial_pool if x.get("protected_content"))
-        print(f"[Story Gate] leaders={leader_before}->{leader_after} | regular={regular_before}->{regular_after} | protected={protected_after} | final stories={len(editorial_pool)}")
+        print("[People Bootstrap] progressive mode: normal/special lanes remain enabled")
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
     if not people_bootstrap_mode:
         selected_regular = unique_candidates(selected_regular + people_candidates)

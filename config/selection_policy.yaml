@@ -17,6 +17,7 @@ selection:
   replacement_buffer: 3
   diversity_quality_floor_ratio: 0.88
   target_quality_floor_ratio: 0.92
+  mission_target_quality_floor_ratio: 0.80
   freshness_weight: 10.0
   freshness_half_life_hours: 24.0
 
@@ -31,7 +32,7 @@ editorial:
 
 # Unified production selection contract:
 # - max_posts=3 is the normal publication capacity.
-# - candidate_window=6 keeps the canonical bounded replacement pool for QA/rejection.
+# - candidate_window=8 keeps the canonical bounded replacement pool for QA/rejection.
 # - max_items_per_source=2 remains the adaptive ceiling and hard source cap. One item
 #   per source is preferred first; a second item is allowed only during adaptive backfill.
 # - The additive Mind/Ideas/Voices lane may add up to 2 qualifying special items per run.
@@ -51,7 +52,9 @@ editorial:
 # - ai_core_target_min/max, mind_cognition_target and convergence_target remain explicit
 #   normal-portfolio controls. They are filled after the normal eligibility/safety gates;
 #   the global target quality floor does not veto an explicit mission-coverage target.
-# - diversity_quality_floor_ratio=0.80 remains unchanged.
+# - diversity_quality_floor_ratio=0.88 preserves a strong general quality floor.
+# - mission_target_quality_floor_ratio=0.80 allows explicit Mind/Convergence coverage to
+#   survive when it is still within 80% of the strongest admissible alternative.
 # - max_same_mission_area=2 prevents an AI-only or single-domain normal run.
 # - Information gain is a bounded soft reranker; quality remains dominant.
 # - Current-portfolio entity/leader repetition receives explicit soft penalties.

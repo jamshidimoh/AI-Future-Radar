@@ -50,8 +50,8 @@ def test_mission_coverage_targets_are_explicit_opportunities():
     assert contract["research_target"] == 0
     assert contract["interview_target_max"] == 1
     assert contract["min_authoritative_items"] == 2
-    assert contract["diversity_weight"] == 8.0
-    assert contract["similarity_penalty"] == 12.0
+    assert contract["diversity_weight"] == 11.0
+    assert contract["similarity_penalty"] == 16.0
 
 
 def test_mind_future_target_selects_an_eligible_mind_or_future_item():

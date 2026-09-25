@@ -85,8 +85,12 @@ def _priority_person_signal(item: dict[str, Any]) -> bool:
 
 
 def _ai_relevant(item: dict[str, Any]) -> bool:
-    mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
-    if mission in {"ai", "ai_core"}:
+    # A legacy category=ai label is not evidence of actual AI relevance. Prefer
+    # explicit upstream linkage; otherwise require concrete AI/convergence anchors.
+    if item.get("_ai_link") is True or item.get("ai_relevance") is True:
+        return True
+    mission = str(item.get("mission_area") or "").strip().casefold()
+    if mission in {"mind_cognition", "mind"}:
         return True
     text = _text(item)
     return any(re.search(rf"(?<![a-z]){re.escape(a)}(?![a-z])", text) for a in AI_ANCHORS)

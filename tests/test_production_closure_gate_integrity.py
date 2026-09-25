@@ -23,6 +23,7 @@ def test_closure_gate_requires_three_executable_runs_as_a_failure_until_closed()
 def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "def code_fingerprint(sha):" in text
+    assert "dynamic_runtime_paths = {\"config/free_model_registry.yaml\"}" in text
     assert "startsWith(" not in text
     assert "if len(distinct_fingerprints) != 1:" in text
     assert "def all_runs(pattern):" in text

@@ -308,6 +308,34 @@ def test_freshness_is_exposed_and_recent_story_can_outweigh_small_quality_gap():
     assert "freshness_score" in selected[0]
 
 
+def test_mission_target_competes_with_selected_portfolio_not_raw_pool_max():
+    candidates = [
+        item("Very high scoring AI candidate", "OpenAI", 105, area="ai"),
+        item("Strong convergence result", "Nature", 90, area="robotics", content_type="research", research_signal=True),
+        item("Strong mind result", "Stanford HAI", 88, area="mind", content_type="research", research_signal=True),
+        item("Another AI result", "Anthropic", 80, area="ai"),
+    ]
+    contract = load_editorial_contract()
+    contract["ai_core_target_min"] = 1
+    contract["convergence_target"] = 1
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["research_target"] = 0
+    contract["min_authoritative_items"] = 0
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=2,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    assert {x["mission_area"] for x in selected} == {"ai_core", "convergence"}
+    assert any(x["mission_selection_reason"] == "mission_target:convergence" for x in selected)
+
+
 def test_weak_mission_target_does_not_displace_stronger_mainstream_candidate():
     candidates = [
         item("Strong frontier AI result", "OpenAI", 100, area="ai"),

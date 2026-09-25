@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790327931,
+  "updated_at": 1790337040,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -14476,6 +14476,43 @@
       "why_it_matters": "این مصاحبه نشان میدهد که متخصصان در زمینه هوش مصنوعی به دنبال یک تعادل بین پیشرفت فناوری و مدیریت ریسکهای بالقوه هستند. بستروم با اشاره به هزینههای اقتصادی و اجتماعی احتمالی توقف توسعه AI، اهمیت ایجاد یک رویکرد متعادل را برجسته میکند. این بحث نشاندهنده اهمیت بحثهای مستمر در مورد آینده فناوری و نقش آن در جامعه است.",
       "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPMlFOdndPYkNYX2J5M2w4Vnc4cW9hNDNYYlNyRDFQd2lYZzUwYlFwU2lnZTE4Q1NfdWRzWWNzSG82ZnYxSHJfLUpPY3JIMUlkbmwwcjJJSTZYZjBfNjVIQjFWQVdIM2tYUE80anVoaUhfM0RIYnl3NjBRRkJqTlJNUXV3?oc=5",
       "posted_at": 1790327921
+    },
+    "-1004482051328:1879": {
+      "chat_id": -1004482051328,
+      "message_id": 1879,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Latent Space",
+      "content_type": "interviews_podcasts",
+      "category": "frontier_builders_agents_ai_science",
+      "leader": "",
+      "title": "WorldPrompt شرکت Runway و مهندسی جهان‌های زمان‌واقعی",
+      "summary": "در پادکست Latent Space، تیم Runway به معرفی WorldPrompt می‌پردازد؛ سامانه‌ای که با استفاده از مدل‌های جهان‌پذیر، ویدیو و صدا را به‌صورت زنده تولید می‌کند. نسخهٔ دوم GWM Worlds با به‌کارگیری زمینهٔ پایدار (persistent context) و اقدام‌های زمان‌بندی‌شده (timed actions) می‌تواند جریان روایت را در زمان واقعی هدایت کند. این فناوری امکان ساخت محیط‌های تعاملی و پویا را برای محتواهای دیجیتال فراهم می‌آورد و به‌ویژه در تولید فیلم، بازی و شبیه‌سازی‌های آموزشی کاربرد دارد.",
+      "why_it_matters": "WorldPrompt با ترکیب مدل‌های مولد و کنترل دقیق زمان‌بندی، توانسته است محدودیت‌های تولید محتوای پیش‌ساخته را در حوزه‌های تصویری و صوتی برطرف کند. این قابلیت به سازندگان محتوا اجازه می‌دهد تا بدون پیش‌تولید، صحنه‌های پیچیده را به‌صورت زنده و واکنش‌پذیر بسازند؛ که می‌تواند هزینه‌ها و زمان تولید را به‌طور چشمگیری کاهش دهد. علاوه بر این، امکان ادغام این فناوری در پلتفرم‌های تعاملی، تجربهٔ کاربری غنی‌تری را در بازی‌ها و آموزش‌های مجازی به ارمغان می‌آورد.",
+      "link": "https://www.latent.space/p/runway",
+      "posted_at": 1790337020
+    },
+    "-1004482051328:1880": {
+      "chat_id": -1004482051328,
+      "message_id": 1880,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "معنای پیشرفت ریاضی هوش مصنوعی برای سوپرهوش مصنوعی – نوام براون",
+      "summary": "در این قسمت از برنامهٔ YouTube با حضور نوام براون و داور دوارکش پاتل، به بررسی یک پیشرفت جدید در توانایی‌های ریاضی هوش مصنوعی پرداخته می‌شود و سؤال می‌شود که این دستاورد چگونه می‌تواند مسیر توسعهٔ سوپرهوش مصنوعی را تحت تأثیر قرار دهد. عنوان و حضور نوام براون به عنوان پژوهشگر اصلی و دوارکش پاتل به عنوان مصاحبه‌کننده، دو نشانهٔ عینی از منبع هستند.",
+      "description": "Full episode: https://www.youtube.com/watch?v=6AgOfiZOWiY\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "اگر هوش مصنوعی بتواند مسائل ریاضی پیچیده را حل کند، می‌تواند به سرعت به توانایی‌های تصمیم‌گیری و برنامه‌ریزی پیشرفته‌تری دست یابد؛ این امر می‌تواند زمان رسیدن به سوپرهوش مصنوعی را کوتاه‌تر کند و به‌همین دلیل نیاز به چارچوب‌های ایمنی و حاکمیتی قوی‌تر را افزایش دهد. به‌علاوه، بهبود در توانایی‌های ریاضی می‌تواند ابزارهای پژوهشی جدیدی برای ارزیابی خطرات و فرصت‌های مرتبط با سوپرهوش فراهم آورد.",
+      "link": "https://www.youtube.com/watch?v=Ux1mOqAoaq0",
+      "posted_at": 1790337025
     }
   }
 }

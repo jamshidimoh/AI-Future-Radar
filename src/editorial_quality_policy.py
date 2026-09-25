@@ -70,9 +70,7 @@ def persian_editorial_naturalness_ok(title: str, summary: str, why_it_matters: s
     sentences = [s.strip() for s in re.split(r"(?<=[.!؟])\s+", body) if s.strip()]
     if len(sentences) >= 3 and sum(len(s) > 240 for s in sentences) >= 2:
         return False
-    if re.search(r"(?:^|[،,])\s*(?:و|اما|بنابراین|همچنین)\s+[وای][\u0600-\u06ff]+", body):
-        return False
-    return True
+    return re.search(r"(?:^|[،,])\s*(?:و|اما|بنابراین|همچنین)\s+[وای][\u0600-\u06ff]+", body) is None
 
 
 def persian_ratio(text: str) -> float:

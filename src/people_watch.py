@@ -183,8 +183,6 @@ def bootstrap_candidates(
     for person in people:
         if person in delivered:
             continue
-        prior = baseline.get(person, {}) if isinstance(baseline, dict) else {}
-        prior_link = str(prior.get("link") or "").strip() if isinstance(prior, dict) else ""
         pool = [
             dict(item)
             for item in items
@@ -192,14 +190,12 @@ def bootstrap_candidates(
         ]
         if not pool:
             continue
-        if prior_link:
-            exact = [item for item in pool if identity(item) == prior_link]
-            if exact:
-                chosen.append(mark_people_item(exact[0], person, bootstrap=True))
-                continue
+        # For undelivered people, always re-evaluate the current eligible pool.
+        # A previously persisted baseline is only historical state; it must not
+        # pin an undelivered person to stale content when a newer signal exists.
         # Bootstrap deliberately ignores the global seen-state: it establishes
-        # the baseline content for each watched person, even when that content
-        # was previously encountered elsewhere in Radar.
+        # the latest eligible baseline even when that content was encountered
+        # elsewhere in the Radar.
         ranked = list(pool)
         ranked.sort(key=lambda item: item_timestamp(item), reverse=True)
         chosen.append(mark_people_item(ranked[0], person, bootstrap=True))

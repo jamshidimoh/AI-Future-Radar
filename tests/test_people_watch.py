@@ -45,6 +45,32 @@ def test_bootstrap_picks_one_latest_content_per_person_even_when_old():
     assert all(item["people_bootstrap"] for item in selected)
 
 
+
+
+def test_bootstrap_replaces_stale_undelivered_baseline_with_newer_signal():
+    people = ["Sam Altman"]
+    old = _item("Sam Altman", "2026-09-22 10:00", "old")
+    newer = _item("Sam Altman", "2026-09-25 08:00", "new")
+    selected = bootstrap_candidates(
+        [old, newer],
+        people,
+        previous_state={
+            "baseline": {
+                "Sam Altman": {
+                    "title": old["title"],
+                    "link": old["link"],
+                    "published": old["published"],
+                }
+            },
+            "delivered_people": [],
+        },
+        seen_hashes=set(),
+    )
+    assert len(selected) == 1
+    assert selected[0]["link"] == newer["link"]
+    assert selected[0]["published"] == newer["published"]
+
+
 def test_post_bootstrap_returns_all_new_independent_signals_without_person_quota():
     people = ["Sam Altman"]
     items = [

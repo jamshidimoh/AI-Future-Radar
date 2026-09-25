@@ -118,7 +118,7 @@ jobs:
             local credential_env="$2"
             if [ -n "${!credential_env:-}" ]; then
               echo "[OmniRoute] provisioning ${provider}"
-              omniroute providers add "$provider" --credential-env "$credential_env" || true
+              timeout 20s omniroute providers add "$provider" --credential-env "$credential_env" || echo "[OmniRoute] $provider: provisioning timed out or failed; continuing"
             else
               echo "[OmniRoute] ${provider}: skipped (credential not present)"
             fi

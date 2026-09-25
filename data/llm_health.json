@@ -38,7 +38,7 @@
     },
     "kiraai:qwen3.8-flash": {
       "failures": 1,
-      "disabled_until": 1790070599.722,
+      "disabled_until": 1790345174.197,
       "last_error": "quota",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 31,
-      "disabled_until": 1790425158.398,
+      "failures": 32,
+      "disabled_until": 1790427974.197,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790425158.398,
+      "disabled_until": 1790427974.197,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -106,7 +106,7 @@
   "providers": {
     "kiraai": {
       "failures": 2,
-      "disabled_until": 1790340220.043,
+      "disabled_until": 1790427974.197,
       "last_error": "wallet",
       "last_success": 0.0
     },
@@ -117,8 +117,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 62,
-      "disabled_until": 1790425158.398,
+      "failures": 64,
+      "disabled_until": 1790427974.197,
       "last_error": "auth",
       "last_success": 0.0
     },

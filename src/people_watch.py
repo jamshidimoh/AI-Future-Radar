@@ -175,9 +175,8 @@ def bootstrap_candidates(
     previous_state: dict[str, Any] | None = None,
     seen_hashes: Any = None,
 ) -> list[dict[str, Any]]:
-    """Return one latest eligible item per person, preserving the same baseline on retry."""
+    """Return one latest eligible item per undelivered person."""
     previous_state = previous_state or {}
-    baseline = previous_state.get("baseline", {}) if isinstance(previous_state, dict) else {}
     delivered = set(previous_state.get("delivered_people", []) or []) if isinstance(previous_state, dict) else set()
     chosen: list[dict[str, Any]] = []
     for person in people:

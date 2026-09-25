@@ -788,8 +788,8 @@ def main(hooks=None):
         f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} "
         f"cap={runtime_selection_cap} normal_capacity={max_posts} replacement_buffer={replacement_buffer} "
         f"mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD} "
-        f"people={sum(1 for x in selected if x.get("people_lane"))} "
-        f"people_cap={"2" if people_bootstrap_mode else "post_bootstrap"}",
+        f"people={sum(1 for x in selected if x.get('people_lane'))} "
+        f"people_cap={'2' if people_bootstrap_mode else 'post_bootstrap'}",
         flush=True,
     )
     selected = _refill_after_late_dedup(

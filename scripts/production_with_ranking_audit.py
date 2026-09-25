@@ -20,6 +20,7 @@ import period_ranked_pipeline as pipeline
 from src.content_grounding import ensure_source_grounding
 from src.headline_grounding import ensure_headline_grounding
 from src.production_router_policy import apply as apply_production_router_policy
+from src.publication_quality_gate import ensure_publication_quality
 from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
 from src.source_authority import resolve_source_tier
@@ -318,7 +319,10 @@ def _audited_main(hooks=None):
         source_grounded = ensure_source_grounding(draft, item)
         if source_grounded is None:
             return None
-        return ensure_headline_grounding(source_grounded, item)
+        headline_grounded = ensure_headline_grounding(source_grounded, item)
+        if headline_grounded is None:
+            return None
+        return ensure_publication_quality(headline_grounded, item)
 
     def rtl_format(item, source_name, link, **kwargs):
         formatter = original_format or pipeline.format_post

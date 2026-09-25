@@ -143,11 +143,25 @@ def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
             low_signal = _load_yaml(MISSION_PATH).get("low_signal_terms", []) or []
             if any(str(term).strip().casefold() in text for term in low_signal):
                 return False
-            # Legacy category=ai is not sufficient evidence by itself. Upstream
-            # editorial enrichment must explicitly establish an AI relationship,
-            # unless stronger keyword evidence matched above.
+            # A legacy category=ai label is insufficient on its own, but concrete
+            # AI evidence in the item's editorial text is valid mission evidence.
+            # This preserves the bare-category rejection while allowing titles such
+            # as "Frontier AI model capability" to enter ai_core.
             explicit_ai_link = item.get("_ai_link") is True or item.get("ai_relevance") is True
-            if not explicit_ai_link:
+            concrete_ai_signal = any(
+                token in text
+                for token in (
+                    "artificial intelligence",
+                    "machine learning",
+                    "large language model",
+                    "llm",
+                    "frontier ai",
+                    "generative ai",
+                    "ai safety",
+                    "ai agents",
+                )
+            ) or bool(re.search(r"(?<![a-z])ai(?![a-z])", text))
+            if not explicit_ai_link and not concrete_ai_signal:
                 return False
         return True
     if not strict:

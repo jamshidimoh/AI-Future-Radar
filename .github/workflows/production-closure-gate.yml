@@ -85,14 +85,14 @@ jobs:
                   # make routine model refreshes invalidate an otherwise stable code
                   # evidence window.
                   dynamic_runtime_paths = {"config/free_model_registry.yaml"}
-              if (
-                  not path
-                  or path.startswith("data/")
-                  or path in dynamic_runtime_paths
-                  or row.get("type") != "blob"
-              ):
-                  continue
-              rows.append((path, blob_sha))
+                  if (
+                      not path
+                      or path.startswith("data/")
+                      or path in dynamic_runtime_paths
+                      or row.get("type") != "blob"
+                  ):
+                      continue
+                  rows.append((path, blob_sha))
               payload = "\n".join(f"{path}\0{blob}" for path, blob in sorted(rows))
               return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 

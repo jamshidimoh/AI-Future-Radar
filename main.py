@@ -16,6 +16,7 @@ from src.interview_evidence import has_interview_evidence
 from src.llm_router_light import QuotaExceeded
 from src.logging_setup import configure_logging
 from src.mission_selector import _source_tier
+from production_entrypoint import _people_bootstrap_batch
 from src.people_watch import (
     bootstrap_candidates,
     build_bootstrap_state,
@@ -696,6 +697,14 @@ def main(hooks=None):
         discovered_people.discard("")
         planned_people = baseline_people | discovered_people
         print(f"[People Bootstrap] required=30 discovered_now={len(discovered_people)} baseline={len(baseline_people)} planned={len(planned_people)}")
+        # Keep the full discovered set for baseline/state construction, but cap
+        # actual Telegram publication to the canonical per-run People batch.
+        people_publication_candidates = _people_bootstrap_batch(people_candidates)
+        print(
+            f"[People Bootstrap] publication_batch={len(people_publication_candidates)} "
+            f"discovered_pool={len(people_candidates)}",
+            flush=True,
+        )
         # Bootstrap is progressive, not a global publication lock. Missing people
         # are retried on later runs, while every currently qualified signal can
         # still be published and the normal Radar lanes continue in parallel.
@@ -713,6 +722,7 @@ def main(hooks=None):
                 flush=True,
             )
     else:
+        people_publication_candidates = people_candidates
         people_candidates = post_bootstrap_candidates(
             all_items,
             people_watchlist,
@@ -720,6 +730,7 @@ def main(hooks=None):
             seen_hashes=seen_hashes,
         )
         people_candidates = deduplicate_people_signals(people_candidates, seen_signatures=seen_signatures)
+        people_publication_candidates = people_candidates
         print(f"[People Signal] bootstrap_at={people_bootstrap_at} candidates_after_dedup={len(people_candidates)}")
     # Global seen/event dedup remains for the normal Radar lanes only. People
     # must reach its own per-person event clustering first.
@@ -749,10 +760,14 @@ def main(hooks=None):
     if people_bootstrap_mode:
         # People bootstrap candidates are an independent protected input to the
         # production selector; they must reach the selector before the batch cap.
-        editorial_pool = unique_candidates(list(people_candidates) + list(editorial_pool))
-        print(f"[People Bootstrap] selector_input={len(people_candidates)} people_candidates_added=true", flush=True)
+        editorial_pool = unique_candidates(list(people_publication_candidates) + list(editorial_pool))
+        print(
+            f"[People Bootstrap] selector_input={len(people_publication_candidates)} "
+            f"discovered_pool={len(people_candidates)} people_candidates_added=true",
+            flush=True,
+        )
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
-    selected_regular = unique_candidates(selected_regular + people_candidates)
+    selected_regular = unique_candidates(selected_regular + people_publication_candidates)
     protected_candidates = [] if people_bootstrap_mode else [x for x in editorial_pool if x.get("protected_content")]
     protected_selected = (
         []
@@ -769,7 +784,14 @@ def main(hooks=None):
         )[:leader_protected_max]
     )
     selected = unique_candidates(protected_selected + selected_regular)
-    print(f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} cap={runtime_selection_cap} normal_capacity={max_posts} replacement_buffer={replacement_buffer} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD} people={sum(1 for x in selected if x.get('people_lane'))} people_cap=none", flush=True)
+    print(
+        f"[Selection Guard] protected={len(protected_selected)} selected_unique={len(selected)} "
+        f"cap={runtime_selection_cap} normal_capacity={max_posts} replacement_buffer={replacement_buffer} "
+        f"mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD} "
+        f"people={sum(1 for x in selected if x.get("people_lane"))} "
+        f"people_cap={"2" if people_bootstrap_mode else "post_bootstrap"}",
+        flush=True,
+    )
     selected = _refill_after_late_dedup(
         selected,
         editorial_pool,

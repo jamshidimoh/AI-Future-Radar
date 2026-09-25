@@ -303,7 +303,7 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
             protected.append(item)
         if len(protected) >= protected_limit:
             break
-    normals = [item for item in non_special if item.get("normal_period_rank") is not None][:normal_limit]
+    normals = [item for item in non_special if item.get("normal_period_rank") is not None][:normal_limit + replacement_buffer]
     bounded = []
     seen = set()
     for item in people + protected + normals + technical + mind + voices:

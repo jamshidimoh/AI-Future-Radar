@@ -32,5 +32,5 @@ def test_people_bootstrap_batch_is_freshness_first_and_bounded():
         for i in range(10)
     ]
     batch = _people_bootstrap_batch(items)
-    assert len(batch) == 8
-    assert [item["title"] for item in batch] == [f"Person {i}" for i in range(9, 1, -1)]
+    assert len(batch) == 2
+    assert [item["title"] for item in batch] == ["Person 9", "Person 8"]

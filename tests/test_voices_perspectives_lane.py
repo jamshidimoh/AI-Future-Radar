@@ -170,3 +170,14 @@ def test_voice_lane_prefers_newer_direct_interview_over_older_higher_tier():
 
     selected = choose_voices_candidate([older, newer], max_items=1)
     assert selected and selected[0]["title"] == "Newer expert interview"
+
+
+def test_voice_lane_rejects_bare_ai_category_without_ai_evidence():
+    item = _voice("Why are wildfires increasing?")
+    item.pop("mission_area")
+    item["category"] = "ai"
+    item["summary"] = "A discussion of extreme heat, wind, dryness, and wildfire resilience."
+    item["source"] = "World Economic Forum"
+    item["source_name"] = "World Economic Forum"
+    item["person_name"] = "Natalie Çilem"
+    assert not is_voices_candidate(item)

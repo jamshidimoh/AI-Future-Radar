@@ -14,3 +14,14 @@ def test_explicit_ai_link_allows_protected_story():
 def test_specific_mission_category_is_relevant():
     item = {"title": "Quantum computing milestone", "category": "quantum"}
     assert is_mission_relevant(item, strict=True)
+
+
+def test_legacy_ai_category_is_not_mission_evidence_without_explicit_link():
+    item = {
+        "title": "Why wildfires are increasing",
+        "summary": "A discussion of extreme heat, wind, dryness, and wildfire resilience.",
+        "category": "ai",
+        "content_type": "interview",
+        "source": "World Economic Forum",
+    }
+    assert not is_mission_relevant(item, strict=True)

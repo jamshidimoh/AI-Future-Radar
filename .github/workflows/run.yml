@@ -92,14 +92,24 @@ jobs:
             echo "[OmniRoute] initial /v1/models catalog not ready; continuing with provider provisioning"
             tail -n 80 /tmp/omniroute.log || true
           fi
+          # /v1/models can be temporarily unavailable while OmniRoute is starting.
+          # Never let an empty/missing catalog turn a provider-readiness condition
+          # into a hard failure of the entire production pipeline.
+          if [ ! -s /tmp/omniroute-models.json ]; then
+            printf '%s\n' '{"data":[]}' > /tmp/omniroute-models.json
+          fi
           python - <<'PY'
           import json
           from pathlib import Path
-          payload = json.loads(Path("/tmp/omniroute-models.json").read_text())
+          try:
+              payload = json.loads(Path("/tmp/omniroute-models.json").read_text(encoding="utf-8"))
+          except Exception as exc:
+              print(f"[OmniRoute] catalog parse warning: {exc}")
+              payload = {}
           models = payload.get("data") or payload.get("models") or []
-          print(f"[OmniRoute] discovered_models={len(models)}")
+          print(f"[OmniRoute] discovered_models={len(models) if isinstance(models, list) else 0}")
           if not models:
-              print("[OmniRoute] warning: no models advertised; production router will fall back when needed")
+              print("[OmniRoute] warning: no models advertised; production router will use its hard fallback")
           PY
 
           echo "[OmniRoute] provisioning free/low-cost Radar providers"

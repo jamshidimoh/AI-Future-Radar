@@ -79,12 +79,12 @@ jobs:
                   path = str(row.get("path") or "")
                   blob_sha = str(row.get("sha") or "")
                   # Persistent production state and the free-model registry are
-              # runtime-operational state, not production source code. The registry
-              # is refreshed independently and is validated by every production run;
-              # letting its timestamp/health changes alter the code fingerprint would
-              # make routine model refreshes invalidate an otherwise stable code
-              # evidence window.
-              dynamic_runtime_paths = {"config/free_model_registry.yaml"}
+                  # runtime-operational state, not production source code. The registry
+                  # is refreshed independently and is validated by every production run;
+                  # letting its timestamp/health changes alter the code fingerprint would
+                  # make routine model refreshes invalidate an otherwise stable code
+                  # evidence window.
+                  dynamic_runtime_paths = {"config/free_model_registry.yaml"}
               if (
                   not path
                   or path.startswith("data/")

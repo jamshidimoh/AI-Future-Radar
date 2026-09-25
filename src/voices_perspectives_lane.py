@@ -89,8 +89,10 @@ def _ai_relevant(item: dict[str, Any]) -> bool:
     # explicit upstream linkage; otherwise require concrete AI/convergence anchors.
     if item.get("_ai_link") is True or item.get("ai_relevance") is True:
         return True
-    mission = str(item.get("mission_area") or "").strip().casefold()
-    if mission in {"mind_cognition", "mind"}:
+    explicit_mission = str(item.get("mission_area") or "").strip().casefold()
+    if explicit_mission in {"ai", "ai_core", "convergence"}:
+        return True
+    if explicit_mission in {"mind_cognition", "mind"}:
         return True
     text = _text(item)
     return any(re.search(rf"(?<![a-z]){re.escape(a)}(?![a-z])", text) for a in AI_ANCHORS)

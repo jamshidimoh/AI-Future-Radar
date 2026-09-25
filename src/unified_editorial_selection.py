@@ -143,6 +143,12 @@ def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
             low_signal = _load_yaml(MISSION_PATH).get("low_signal_terms", []) or []
             if any(str(term).strip().casefold() in text for term in low_signal):
                 return False
+            # Legacy category=ai is not sufficient evidence by itself. Upstream
+            # editorial enrichment must explicitly establish an AI relationship,
+            # unless stronger keyword evidence matched above.
+            explicit_ai_link = item.get("_ai_link") is True or item.get("ai_relevance") is True
+            if not explicit_ai_link:
+                return False
         return True
     if not strict:
         return True

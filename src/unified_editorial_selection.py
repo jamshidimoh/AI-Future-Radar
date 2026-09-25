@@ -475,7 +475,16 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             # This prevents weak Mind/Future/Convergence stories from displacing
             # materially stronger mainstream candidates while preserving genuine
             # cross-domain coverage when a solid candidate exists.
-            top_global = max(
+            # Compare the mission target with the weakest item already
+            # occupying the bounded normal portfolio, not the highest raw score
+            # anywhere in the remaining pool. Raw candidate scores can include
+            # out-of-cap / incompatible items and, in production, can be inflated
+            # relative to the post-gate publication score. Using the global maximum
+            # therefore starves scarce mission lanes such as Convergence and Mind.
+            # The selected-portfolio floor keeps the existing quality guard while
+            # making the configured coverage targets operational.
+            comparison_scores = [candidate_score(x) for x in p.selected if candidate_score(x) > 0.0]
+            top_global = min(comparison_scores) if comparison_scores else max(
                 (
                     candidate_score(x)
                     for x in ordered

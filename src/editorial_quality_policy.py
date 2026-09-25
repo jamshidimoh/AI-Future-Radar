@@ -19,6 +19,9 @@ NORMAL_SCORE_FLOOR = 55.0
 PROTECTED_SCORE_FLOOR = 55.0
 TITLE_MAX_CHARS = 160
 LATIN_TOKEN_MAX_CHARS = 64
+# Reject accidental Latin fragments embedded inside Persian words, such as
+# "قابلAttentionی". Official product/model names remain allowed when separated.
+_EMBEDDED_LATIN_RE = re.compile(r"[\u0600-\u06FF][A-Za-z]{4,}[\u0600-\u06FF]")
 _BIDI_CONTROLS = "\u202A\u202B\u202C\u202D\u202E\u2066\u2067\u2069\u200E\u200F"
 _LTR_TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9._+/#:&'’()\-]*")
 _URL_RE = re.compile(r"https?://[^\s<>\"]+")
@@ -209,6 +212,8 @@ def headline_quality_ok(title: str) -> bool:
 def terminology_safety_ok(text: str) -> bool:
     value = str(text or "")
     if any(ch in value for ch in _BIDI_CONTROLS):
+        return False
+    if _EMBEDDED_LATIN_RE.search(value):
         return False
     return all(not (len(token) > LATIN_TOKEN_MAX_CHARS and not _URL_RE.match(token)) for token in _LTR_TOKEN_RE.findall(value))
 

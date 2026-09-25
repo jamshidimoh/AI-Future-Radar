@@ -5,6 +5,7 @@ from src.editorial_quality_policy import (
     length_ok,
     news_language_ok,
     normal_score_allowed,
+    terminology_safety_ok,
 )
 
 
@@ -56,3 +57,8 @@ def test_previous_score_is_diagnostic_only_when_baseline_is_stale():
     assert normal_score_allowed(60.0, 25.23)
     assert normal_score_allowed(55.0, 77.16)
     assert not normal_score_allowed(54.9, 77.16)
+
+
+def test_embedded_latin_contamination_is_rejected():
+    assert not terminology_safety_ok("این متن دارای عبارت قابلAttentionی است که نباید منتشر شود.")
+    assert terminology_safety_ok("این متن درباره مدل GPT-5.6 و ارزیابی آن است.")

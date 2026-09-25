@@ -158,7 +158,7 @@ def test_critical_incident_with_reserved_slot_uses_tier0_publication_lane():
     assert not _is_tier0_publication_candidate({"critical_ai_incident": True, "protected_slot": False})
 
 
-def test_runtime_candidates_honor_replacement_buffer():
+def test_runtime_candidates_keep_publishable_lane_capacity_bounded():
     candidates = [
         {"normal_period_rank": rank, "editorial_score": 70 - rank}
         for rank in range(1, 6)
@@ -175,9 +175,12 @@ def test_runtime_candidates_honor_replacement_buffer():
         max_posts=3,
         policy={"leader_protected_max": 2, "replacement_buffer": 2},
     )
-    assert len(bounded) == 7
+    # Replacement candidates are retained in the editorial pool and summarized lazily
+    # only after a selected item fails QA/publication; initial runtime bounding remains
+    # limited to publishable capacity plus protected candidates.
+    assert len(bounded) == 5
     assert sum(1 for item in bounded if item.get("protected_slot")) == 2
-    assert [item.get("normal_period_rank") for item in bounded if item.get("normal_period_rank") is not None] == [1, 2, 3, 4, 5]
+    assert [item.get("normal_period_rank") for item in bounded if item.get("normal_period_rank") is not None] == [1, 2, 3]
 
 
 def test_mission_recovery_exhausted_below_floor_is_no_candidate_not_hard_failure():

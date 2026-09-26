@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import re
+
 import requests
 
 from src.editorial_quality_policy import persian_ratio, terminology_safety_ok

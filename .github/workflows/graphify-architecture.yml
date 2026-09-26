@@ -24,6 +24,7 @@ jobs:
       - name: Build code graph
         run: |
           uvx --from graphifyy graphify extract . --code-only --out .
+          uvx --from graphifyy graphify cluster-only . --out .
 
       - name: Validate graph
         run: |
@@ -38,6 +39,7 @@ jobs:
           edges = g.get("edges", g.get("links", []))
           print(f"Graphify nodes: {len(nodes)}")
           print(f"Graphify edges: {len(edges)}")
+          print(f"Graphify communities: {len({n.get('community') for n in nodes if n.get('community') is not None})}")
           if not nodes:
               raise SystemExit("Graphify produced an empty graph")
           PY

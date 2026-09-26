@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790406043,
+  "updated_at": 1790419111,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -15284,6 +15284,25 @@
       "why_it_matters": "اگر مشکل سخت هوشیاری واقعی نباشد، پژوهشگران می‌توانند منابع خود را بر روی توسعه مدل‌های عصبی و شناختی متمرکز کنند، به جای تلاش برای یافتن پاسخ‌های فلسفی که ممکن است بی‌فایده باشند. این تغییر تمرکز می‌تواند سرعت پیشرفت در حوزه‌های علوم اعصاب، هوش مصنوعی و روانشناسی را افزایش دهد، چرا که مدل‌های فیزیکی و تجربی می‌توانند به‌صورت مستقیم آزمایش شوند. در نتیجه، بازارهای مرتبط با فناوری‌های شناختی و درمان‌های عصبی می‌توانند بر اساس داده‌های تجربی و مدل‌های قابل پیش‌بینی، محصولات موثرتری ارائه دهند.",
       "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxORjBHYkZMaEJLWTBDU0dteDUtN1hkSGRoQVpvR2duRjNvNHp5bDkwNUtvYTBUdmdGT1ZvVktMcGlVV2hWWUs2YTZ3bmxaNnFTbFFBeTR6NEE1RnpzdmFNSkZpLTcwOU9IOGpIVmNZOVhGUWtPUy1hQmNBb2lOcFcyZlFFRnd4bnJZRmw5eXdLdWRvX3VWQ08wZml3MnhweTN5SVhmdlR5WlZ4R21o?oc=5",
       "posted_at": 1790406043
+    },
+    "-1004482051328:1922": {
+      "chat_id": -1004482051328,
+      "message_id": 1922,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "از مهندسی تا پژوهش هوش مصنوعی در MIT: مسیر Utkarsh در آزمایش‌های سریع و Machine Learning",
+      "summary": "Utkarsh که پیش از این مهندسی‌کار علاقه‌مند به شبیه‌سازی بود، هرگز انتظار نداشت در این حوزه پژوهش کند. امروز به عنوان دانشجوی دکتری سال پنجم در Julia Labِ MIT CSAIL، بر ترکیب شبیه‌سازی‌های پرسرعت، معادلات ریاضی و Machine Learning مدرن تمرکز دارد. هدف او این است که کامپیوترها بتوانند اثرات طبیعی را بازتولید و بررسی کنند. کار او مرزهای محاسبات علمی و هوش مصنوعی را به هم پیوند می‌دهد.",
+      "description": "Utkarsh never expected to end up doing this kind of research. Starting as an engineer fascinated by simulations, he became interested in how computers can reproduce and explore the effects we see in nature.\n\nNow, as a fifth-year PhD candidate at MIT CSAIL’s Julia Lab, he works at the intersection of fast simulations, equations, and modern machine learning.\n\n#MIT #MITCSAIL #ArtificialIntelligence #MachineLearning #ScientificComputing #JuliaLang #AIResearch #Engineering artificial intelligence",
+      "why_it_matters": "ادغام شبیه‌سازی‌های سریع با Machine Learning می‌تواند سرعت کشف علمی را به‌طور چشمگیری افزایش دهد، زیرا مدل‌های پیچیده طبیعی را با هزینه محاسباتی کمتر می‌توان ارزیابی کرد. استفاده از زبان Julia به این ترکیب کارایی بالایی می‌بخشد و امکان اجرای الگوریتم‌های پیشرفته را در مقیاس بزرگ فراهم می‌کند. این رویکرد می‌تواند در حوزه‌های مهندسی، فیزیک و زیست‌فناوری به‌کار گرفته شود و مسیر جدیدی برای پژوهش‌های بین‌رشته‌ای باز کند.",
+      "link": "https://www.youtube.com/shorts/WR2HVrbhXAk",
+      "posted_at": 1790419110
     }
   }
 }

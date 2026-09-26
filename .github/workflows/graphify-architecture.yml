@@ -3,7 +3,11 @@ name: Graphify Architecture Analysis
 on:
   push:
     branches:
+      - main
       - analysis/graphify-architecture
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:

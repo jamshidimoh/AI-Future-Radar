@@ -1,9 +1,9 @@
 {
-  "run_number": 638,
-  "last_education_run": 624,
-  "last_education_slot": "2026-09-24:evening",
-  "last_published_news_score": 94.0,
-  "last_published_normal_news_score": 60.09,
+  "run_number": 639,
+  "last_education_run": 639,
+  "last_education_slot": "2026-09-26:morning",
+  "last_published_news_score": 58.56,
+  "last_published_normal_news_score": 58.56,
   "people_bootstrap": {
     "status": "in_progress",
     "bootstrap_at": "2026-09-22T08:30:30.824913+00:00",

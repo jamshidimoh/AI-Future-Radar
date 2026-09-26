@@ -3,8 +3,6 @@ from __future__ import annotations
 
 import json
 import re
-from urllib.parse import urlsplit
-
 import requests
 
 from src.editorial_quality_policy import persian_ratio, terminology_safety_ok

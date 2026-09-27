@@ -91,7 +91,7 @@ def _trusted_source(item: dict[str, Any]) -> bool:
         str(item.get(key) or "")
         for key in ("source", "source_name", "source_type", "source_domain", "publisher")
     ).casefold()
-    return not any(marker in source_text for marker in ("reddit", "community", "aggregator"))
+    return not any(marker in source_text for marker in ("reddit", "community", "aggregator", "techmeme", "hacker news"))
 
 
 def _mission(item: dict[str, Any]) -> str:

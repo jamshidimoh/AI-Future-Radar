@@ -35,7 +35,7 @@ MAX_NORMAL_NEWS_PER_PERIOD = 3
 # Special lanes are candidate roles, not independent publication quotas.
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
 MAX_TECHNICAL_TREND_PER_PERIOD = 1
-MAX_VOICES_PERSPECTIVES_PER_PERIOD = MAX_VOICES_PER_PERIOD
+MAX_VOICES_PERSPECTIVES_PER_PERIOD = 1  # candidate-role breadth only; final publication capacity remains 3
 # Bootstrap still establishes all 30 baselines, but publication is batched so
 # one run does not flood Telegram or suppress the independent Mind/Voices lanes.
 MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 2

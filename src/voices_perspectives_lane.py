@@ -23,7 +23,7 @@ EXPERT_ANALYSIS_TYPES = {"opinion", "essay", "commentary"}
 VOICE_SIGNALS = (r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfireside\b", r"\bq&a\b", r"\bdiscussion\b", r"\bdebate\b", r"\btalk\b", r"\blecture\b", r"\bkeynote\b", r"\bexpert view\b", r"\bopinion\b", r"\bcommentary\b", r"\bquote\b", r"\bsays\b", r"\bargues\b", r"مصاحبه", r"گفتگو", r"گفت‌وگو", r"سخنرانی", r"دیدگاه", r"نظر", r"نقل قول")
 PERSON_KEYS = ("watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name", "author", "speaker", "guest", "interviewee", "researcher")
 MISSION_AREAS = {"ai", "ai_core", "convergence", "mind", "mind_cognition", "future", "future_governance"}
-EXCLUDED_SOURCE_MARKERS = ("reddit", "community", "aggregator", "arxiv.org", "arxiv")
+EXCLUDED_SOURCE_MARKERS = ("reddit", "community", "aggregator", "techmeme", "hacker news", "arxiv.org", "arxiv")
 AI_ANCHORS = ("artificial intelligence", "machine learning", "llm", "foundation model", "agent", "agentic", "reasoning", "robotics", "neuroscience", "consciousness", "bci", "quantum", "genomics", "synthetic biology", "هوش مصنوعی", "یادگیری ماشین")
 
 

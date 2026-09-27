@@ -187,7 +187,11 @@ def filter_topic_repetition(
                 prior,
                 semantic_threshold=soft_threshold,
             )
-            if not matches or score < soft_threshold:
+            family_match = bool(
+                _topic_family(item)[0]
+                and _topic_family(item)[0] == _topic_family(prior)[0]
+            )
+            if not matches or (score < soft_threshold and not family_match):
                 continue
             if score > best[0]:
                 best = (score, str(_signature(prior).get("title_text") or ""), prior)

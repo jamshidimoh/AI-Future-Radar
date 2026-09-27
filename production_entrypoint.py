@@ -315,10 +315,10 @@ def _allocate_core_portfolio(candidates, max_posts: int) -> list[dict]:
         and _core_candidate_quality_ok(x)
     ]
     target_groups = ("ai_core", "convergence_or_technical", "mind_future_or_expert_voice")
-    selected = []
-    used_sources = set()
-    used_types = {}
-    used_areas = {}
+    selected: list[dict[str, Any]] = []
+    used_sources: set[str] = set()
+    used_types: dict[str, int] = {}
+    used_areas: dict[str, int] = {}
 
     def admissible(x):
         source = source_key(x)

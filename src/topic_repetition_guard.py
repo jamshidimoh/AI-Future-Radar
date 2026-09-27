@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 """History-aware topic repetition guard for editorial publication.
 
 This guard is intentionally separate from same-story deduplication. It prevents

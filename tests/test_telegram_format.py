@@ -27,7 +27,7 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertNotIn("\u202b", text)
         self.assertNotIn("\u202c", text)
         self.assertIn("<a href=\"", text)
-        self.assertIn("<b>بررسی بیشتر با \u2066ChatGPT\u2069</b>", text)
+        self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", text)
         self.assertIn("🏛 \u2066Google News (The Times of India)\u2069", text)
         self.assertIn("🤖 مدل پردازش: \u2066Groq:qwen/qwen3.6-27b\u2069", text)
         self.assertIn("🗓 تاریخ انتشار: 2026/08/13", text)
@@ -43,8 +43,8 @@ class TelegramFormatTests(unittest.TestCase):
     def test_title_contains_rtl_edge_markers_for_wrapped_lines(self):
         text = format_post({"title": "عنوان فارسی طولانی برای آزمون شکستن خط و حفظ راست‌چین بودن خط دوم", "summary": "خلاصه", "why_it_matters": "اهمیت", "category": "ai"}, "منبع", "https://example.com/news")
         title_line = text.splitlines()[0]
-        self.assertTrue(title_line.startswith("\u2067<b>\u00a0📡\u200f"))
-        self.assertTrue(title_line.endswith("\u200f</b>\u2069"))
+        self.assertTrue(title_line.startswith("\u200f<b>📡"))
+        self.assertTrue(title_line.endswith("</b>\u200f"))
 
     def test_source_page_image_reads_og_image_from_same_link(self):
         response = Mock(status_code=200, url="https://example.com/article", text='<html><meta property="og:image" content="https://example.com/images/article.jpg"></html>')

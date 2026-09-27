@@ -5,7 +5,7 @@ selection:
   max_items_per_source: 2
   max_items_per_content_type: 2
   story_similarity_threshold: 0.45
-  diversity_mode: mission_portfolio
+  diversity_mode: adaptive
   diversity_weight: 11.0
   similarity_penalty: 16.0
   entity_repeat_penalty: 10.0

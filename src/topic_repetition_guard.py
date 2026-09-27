@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
+from src.event_identity import has_material_update
 from src.semantic_dedup import _similarity, get_story_signature
 
 
@@ -32,9 +33,9 @@ def find_topic_repetition(
     item: dict[str, Any],
     history: Iterable[dict[str, Any] | str],
     *,
-    threshold: float = 0.66,
-    soft_threshold: float = 0.60,
-    min_anchor_overlap: int = 1,
+    threshold: float = 0.68,
+    soft_threshold: float = 0.62,
+    min_anchor_overlap: int = 2,
 ) -> tuple[float, str]:
     """Return the strongest recent topic repetition score and matched title."""
     best_score = 0.0
@@ -78,6 +79,13 @@ def filter_history_topic_repetition(
             min_anchor_overlap=min_anchor_overlap,
         )
         if score >= threshold:
+            comparable = next((
+                prior for prior in recent
+                if str(_signature(prior).get("title_text") or "").strip() == matched
+            ), None)
+            if comparable is not None and has_material_update(item, comparable if isinstance(comparable, dict) else {"title": matched}):
+                kept.append(item)
+                continue
             blocked += 1
             print(
                 "[Topic Repetition Guard] blocked "

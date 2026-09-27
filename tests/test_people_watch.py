@@ -1,7 +1,7 @@
 # ruff: noqa: I001
 from pathlib import Path
 
-from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, filter_people_person_cooldown, load_people_watchlist, post_bootstrap_candidates, relevant_people_item
+from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, filter_people_person_cooldown, load_people_watchlist, post_bootstrap_candidates, reconcile_people_bootstrap_state, relevant_people_item
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -291,3 +291,41 @@ def test_people_person_cooldown_fails_open_when_all_candidates_are_same_recent_p
     )
     assert len(kept) == 1
     assert blocked == 1
+
+
+def test_bootstrap_reconciles_successful_people_publication_from_telegram_ledger(tmp_path):
+    feedback = tmp_path / "telegram_feedback.json"
+    feedback.write_text(
+        """{
+            "messages": {
+                "channel:1942": {
+                    "people_lane": true,
+                    "person_name": "Nick Bostrom",
+                    "leader": "Nick Bostrom",
+                    "title": "نیک بستروم: توقف توسعه هوش مصنوعی با هزینه همراه است",
+                    "link": "https://example.com/bostrom"
+                }
+            }
+        }""",
+        encoding="utf-8",
+    )
+    state = {
+        "status": "in_progress",
+        "baseline": {"Nick Bostrom": {"title": "old", "link": "old", "published": "2026-09-21"}},
+        "delivered_people": [],
+    }
+    reconciled = reconcile_people_bootstrap_state(
+        state,
+        people=["Nick Bostrom"],
+        feedback_path=feedback,
+    )
+    assert "Nick Bostrom" in reconciled["delivered_people"]
+
+    candidate = _item("Nick Bostrom", "2026-09-27 10:00", "new-bostrom")
+    selected = bootstrap_candidates(
+        [candidate],
+        ["Nick Bostrom"],
+        previous_state=reconciled,
+        seen_hashes=set(),
+    )
+    assert selected == []

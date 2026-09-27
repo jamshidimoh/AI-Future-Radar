@@ -141,8 +141,15 @@ def is_voices_candidate(item: dict[str, Any]):
         re.search(pattern, _text(item))
         for pattern in (r"\bargues\b", r"\bopinion\b", r"\bcommentary\b", r"\bperspective\b", r"دیدگاه", r"تحلیل")
     )
+    statement_signal = any(re.search(pattern, _text(item)) for pattern in (r"\bsays\b", r"\bargues\b", r"\bstated\b", r"\bannounced\b", r"اظهار", r"نظر"))
+    classified_interview = bool(
+        isinstance(item.get("leader_signal_classification"), dict)
+        and item["leader_signal_classification"].get("accepted")
+        and item["leader_signal_classification"].get("interview")
+    )
     return _ai_relevant(item) and person_signal and substantive_identity and (
-        direct_voice or expert_deep_lane or (expert_analysis and explicit_analysis)
+        direct_voice or classified_interview or statement_signal or expert_deep_lane
+        or (expert_analysis and explicit_analysis)
     )
 
 

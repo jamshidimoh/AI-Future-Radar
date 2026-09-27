@@ -18,24 +18,24 @@ class TelegramFormatTests(unittest.TestCase):
         plain = self._plain(text)
         for expected in ("مطالعه منبع اصلی", "بررسی بیشتر با ChatGPT", "Demis Hassabis", "Google News", "📡", title):
             self.assertIn(expected, plain)
-        self.assertIn("<b>📡", text)
-        self.assertIn("خلاصه 📌", text)
-        self.assertIn("اهمیت 💡", text)
+        self.assertIn("<b>\u00a0📡", text)
+        self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
+        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)
         self.assertIn("\u2066", text)
         self.assertIn("\u2069", text)
         self.assertIn("\u200f", text)
         self.assertNotIn("\u202b", text)
         self.assertNotIn("\u202c", text)
         self.assertIn("<a href=\"", text)
-        self.assertIn("🧠 بررسی بیشتر با ChatGPT", text)
-        self.assertIn("منبع: <a href=", text)
+        self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", text)
+        self.assertIn("🏛 <a href=", text)
         self.assertIn("\u2066Google News (The Times of India)\u2069", text)
-        self.assertIn("تاریخ انتشار: 2026/08/13", text)
+        self.assertIn("🗓 2026/08/13", text)
 
     def test_html_tags_are_not_corrupted_by_bidi_isolation(self):
         text = format_post({"title": "DeepMind: هوش مصنوعی", "summary": "خلاصه فارسی با ChatGPT", "why_it_matters": "اهمیت فناوری", "category": "ai"}, "Google News", "https://example.com/news")
-        self.assertIn("خلاصه 📌", text)
-        self.assertIn("اهمیت 💡", text)
+        self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
+        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)
         self.assertIn("<a href=\"", text)
         self.assertNotIn("<\u2066", text)
         self.assertNotIn("\u2069>", text)
@@ -43,8 +43,9 @@ class TelegramFormatTests(unittest.TestCase):
     def test_title_contains_rtl_edge_markers_for_wrapped_lines(self):
         text = format_post({"title": "عنوان فارسی طولانی برای آزمون شکستن خط و حفظ راست‌چین بودن خط دوم", "summary": "خلاصه", "why_it_matters": "اهمیت", "category": "ai"}, "منبع", "https://example.com/news")
         title_line = text.splitlines()[0]
-        self.assertTrue(title_line.startswith("\u200f<b>📡"))
-        self.assertTrue(title_line.endswith("</b>\u200f"))
+        self.assertTrue(title_line.startswith("\u2067"))
+        self.assertTrue(title_line.endswith("\u2069"))
+        self.assertIn("<b>\u00a0📡", title_line)
 
     def test_source_page_image_reads_og_image_from_same_link(self):
         response = Mock(status_code=200, url="https://example.com/article", text='<html><meta property="og:image" content="https://example.com/images/article.jpg"></html>')
@@ -88,7 +89,48 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertIn("یادگیری ماشین", text)
         self.assertIn("مدل‌های زبانی", text)
 
+    def test_english_first_primary_lines_keep_rtl_base_and_isolate_latin_runs(self):
+        text = format_post(
+            {
+                "title": "OpenAI یک قابلیت جدید برای عامل‌های هوشمند معرفی کرد",
+                "summary": "OpenAI این قابلیت را برای اجرای وظایف چندمرحله‌ای ارائه کرده است.",
+                "why_it_matters": "DeepMind و OpenAI در این حوزه رویکردهای متفاوتی دارند.",
+                "category": "ai",
+            },
+            "OpenAI News",
+            "https://example.com/openai",
+        )
+        lines = text.splitlines()
+        primary = [line for line in lines if "<blockquote>" in line or ("<b>" in line and "📡" in line)]
+        self.assertTrue(primary)
+        self.assertTrue(any(line.startswith("\u2067") for line in primary))
+        self.assertTrue(any("\u2066OpenAI" in line and "\u2069" in line for line in lines))
+        self.assertTrue(any("\u2066DeepMind" in line and "\u2069" in line for line in lines))
+        self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
+        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)
+
 if __name__ == "__main__":
     unittest.main()
 
 
+
+
+    def test_english_first_primary_lines_keep_rtl_base_and_isolate_latin_runs(self):
+        text = format_post(
+            {
+                "title": "OpenAI یک قابلیت جدید برای عامل‌های هوشمند معرفی کرد",
+                "summary": "OpenAI این قابلیت را برای اجرای وظایف چندمرحله‌ای ارائه کرده است.",
+                "why_it_matters": "DeepMind و OpenAI در این حوزه رویکردهای متفاوتی دارند.",
+                "category": "ai",
+            },
+            "OpenAI News",
+            "https://example.com/openai",
+        )
+        lines = text.splitlines()
+        primary = [line for line in lines if "<blockquote>" in line or "<b>" in line and "📡" in line]
+        self.assertTrue(primary)
+        self.assertTrue(any(line.startswith("\u2067") for line in primary))
+        self.assertTrue(any("\u2066OpenAI" in line and "\u2069" in line for line in lines))
+        self.assertTrue(any("\u2066DeepMind" in line and "\u2069" in line for line in lines))
+        self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
+        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)

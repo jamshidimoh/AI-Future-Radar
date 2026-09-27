@@ -184,6 +184,9 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
         return False
     if thematic:
         return True
+    interview = _interview_signal(item)
+    if interview:
+        return False
     # Eligibility identifies valid candidates for this lane. Final publication
     # importance is enforced later by the production publication gate, so valid
     # AI interviews/podcasts and strong thematic signals must remain discoverable.
@@ -277,7 +280,7 @@ def choose_additive_candidates(
         if float(item["mind_editorial_score"]) < MIND_IDEAS_VOICES_SCORE_FLOOR:
             continue
         eligible.append(item)
-    eligible.sort(key=lambda item: (-float(item.get("mind_editorial_score", 0.0) or 0.0), str(item.get("published") or "")),)
+    eligible.sort(key=lambda item: (float(item.get("mind_editorial_score", 0.0) or 0.0), str(item.get("published") or "")), reverse=True)
     selected = (
         eligible[:max(0, max_rank)]
         if max_items is None

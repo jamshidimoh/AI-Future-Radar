@@ -125,7 +125,6 @@ def is_voices_candidate(item: dict[str, Any]):
     expert_people, expert_deep_lane, _ = _expert_identity(item)
     voice_signal = _has_voice_signal(item)
     person_signal = _has_person_signal(item)
-    priority_person = _priority_person_signal(item)
     substantive_identity = bool(
         expert_people or expert_deep_lane or _matched_people(item)
         or any(str(item.get(k) or "").strip() for k in PERSON_KEYS)

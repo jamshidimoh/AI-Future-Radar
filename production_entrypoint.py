@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import time
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, cast
@@ -20,11 +21,9 @@ from src.editorial_quality_policy import (
 from src.logging_setup import configure_logging
 from src.people_watch import filter_people_person_cooldown, item_timestamp
 from src.priority_people import is_substantive_priority_interview
-from src.protected_editorial_lane import choose_additive_candidates
 from src.state_io import StateCorruptionError, load_json_state
-from src.technical_trend_lane import choose_technical_trend_candidate
+from src.publication_contract import unique_candidates
 from src.unified_editorial_selection import load_editorial_contract, mission_area, select_regular_portfolio, source_key
-from src.voices_perspectives_lane import MAX_VOICES_PER_PERIOD, choose_voices_candidate, is_voices_candidate
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +53,6 @@ STRATEGIC_ANALYTICAL_CATEGORIES = {"future", "future_governance", "mind", "mind_
 
 def _unified_portfolio_select(candidates, max_posts, policy, bootstrap_mode=False):
     """Arbitrate all editorial roles into one final portfolio and replacement buffer."""
-    from collections import Counter
     from src.dedup import load_seen, load_source_history
 
     all_candidates = unique_candidates([x for x in (candidates or []) if str(x.get("content_type") or "").strip().casefold() != "education"])
@@ -211,9 +209,7 @@ def _unified_portfolio_select(candidates, max_posts, policy, bootstrap_mode=Fals
         item["publication_rank_assigned"] = True
     normal_rank = 0
     for item in combined:
-        if _is_tier0_or_protected(item):
-            item["normal_period_rank"] = None
-        elif _is_mind_ideas_voices(item) or _is_technical_trend(item) or _is_voices_perspectives(item):
+        if _is_tier0_or_protected(item) or _is_mind_ideas_voices(item) or _is_technical_trend(item) or _is_voices_perspectives(item):
             item["normal_period_rank"] = None
         else:
             normal_rank += 1
@@ -522,7 +518,6 @@ def main(*, skip_education: bool = False) -> int:
     from src.future_significance import substantive_importance_ok
     from src.llm_router_light import call_llm_with_fallback, get_quality_chain
     from src.production_publication_adapter import publish_production_story
-    from src.publication_contract import unique_candidates
     from src.telegram_feedback import ingest_from_env, load_feedback, register_post, save_feedback
     from src.telegram_single_delivery import send
 
@@ -559,8 +554,6 @@ def main(*, skip_education: bool = False) -> int:
             education_item = None
             print(f"[Education Source Gate] DEFERRED slot={education_slot} reason={exc}; news orchestration continues and slot remains due", flush=True)
             logger.error("Education source gate deferred: %s", exc, exc_info=True)
-
-    original_select = pipeline.select_editorial
 
     def select_with_feedback(items, max_posts, max_per_source, max_per_type, policy):
         people_items = [item for item in items if item.get("people_lane")]

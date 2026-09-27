@@ -845,7 +845,7 @@ def main(hooks=None):
                     normal_rank = int(normal_rank)
                 except (TypeError, ValueError):
                     continue
-                if normal_rank > int(policy.get("candidate_window", RANK_WINDOW) or RANK_WINDOW) or score < NORMAL_SCORE_FLOOR:
+                if normal_rank > int(policy.get("candidate_window", 6) or 6) or score < NORMAL_SCORE_FLOOR:
                     continue
             candidate = dict(candidate)
             summary = _safe_summarize(candidate, summarize_fn)

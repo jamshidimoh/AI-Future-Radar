@@ -256,6 +256,40 @@ def deduplicate_people_signals(
     return survivors
 
 
+def filter_people_person_cooldown(
+    items: list[dict[str, Any]],
+    source_history: list[dict[str, Any]] | None = None,
+    *,
+    window: int = 8,
+) -> tuple[list[dict[str, Any]], int]:
+    """Keep the People lane rotating across people after Bootstrap."""
+    recent = list(source_history or [])[-max(0, int(window)):] if window else []
+    recent_people = {
+        str(row.get("leader") or "").strip().casefold()
+        for row in recent
+        if isinstance(row, dict) and str(row.get("leader") or "").strip()
+    }
+    kept: list[dict[str, Any]] = []
+    blocked = 0
+    for item in items:
+        person = str(
+            item.get("person_name")
+            or item.get("watch_person")
+            or item.get("leader")
+            or ""
+        ).strip()
+        if person and person.casefold() in recent_people:
+            blocked += 1
+            print(
+                f"[People Cooldown] blocked person={person} window={len(recent)} "
+                f"title={str(item.get('title') or '')[:120]}",
+                flush=True,
+            )
+            continue
+        kept.append(item)
+    return kept, blocked
+
+
 def build_bootstrap_state(
     *,
     bootstrap_at: str,

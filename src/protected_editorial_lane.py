@@ -213,6 +213,8 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
         return False
     if interview and (registry_person or person_identity or thematic):
         return True
+    if mission in {"future", "future_governance", "convergence"} and (registry_person or explicit_person) and _ai_relevant(item):
+        return True
     if not _importance_evidence(item):
         return False
     if item.get("research_signal") and str(item.get("content_type") or "").strip().casefold() in {

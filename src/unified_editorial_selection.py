@@ -42,10 +42,12 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
     mission_doc = _load_yaml(MISSION_PATH)
     mission = mission_doc.get("mission", {})
     rotation_cfg = mission_doc.get("rotation", {})
-    selection_cfg = selection or _load_yaml(SELECTION_PATH).get("selection", {})
+    selection_doc = _load_yaml(SELECTION_PATH)
+    selection_cfg = selection or selection_doc.get("selection", {})
+    portfolio_cfg = selection_doc.get("portfolio", {})
     return {
         "max_posts": int(selection_cfg.get("max_posts", mission.get("operational_publication_capacity", 4)) or 4),
-        "candidate_window": int(selection_cfg.get("candidate_window", 6) or 6),
+        "candidate_window": int(selection_cfg.get("candidate_window", 8) or 8),
         "replacement_buffer": int(selection_cfg.get("replacement_buffer", 2) or 2),
         "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),
@@ -81,6 +83,14 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "window_runs": int(rotation_cfg.get("window_runs", 6) or 6),
         "max_same_source_in_window": int(rotation_cfg.get("max_same_source_in_window", 2) or 2),
         "max_same_area_in_window": int(rotation_cfg.get("max_same_area_in_window", 3) or 3),
+        "core_capacity": int(portfolio_cfg.get("core_capacity", selection_cfg.get("max_posts", 3)) or 3),
+        "min_unique_core_sources": int(portfolio_cfg.get("min_unique_core_sources", mission.get("min_unique_sources", 3)) or 3),
+        "max_same_core_source": int(portfolio_cfg.get("max_same_core_source", 1) or 1),
+        "max_same_core_area": int(portfolio_cfg.get("max_same_core_area", 2) or 2),
+        "technical_lane_cap": int((portfolio_cfg.get("independent_lane_caps", {}) or {}).get("technical_trend", 1) or 1),
+        "mind_lane_cap": int((portfolio_cfg.get("independent_lane_caps", {}) or {}).get("mind_ideas_voices", 1) or 1),
+        "voices_lane_cap": int((portfolio_cfg.get("independent_lane_caps", {}) or {}).get("voices_perspectives", 1) or 1),
+        "strategic_lane_cap": int((portfolio_cfg.get("independent_lane_caps", {}) or {}).get("strategic_analytical", 1) or 1),
     }
 
 

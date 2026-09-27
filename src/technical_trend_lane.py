@@ -45,7 +45,7 @@ TECHNICAL_SIGNALS = (
 TECHNICAL_SOURCE_TYPES = {
     "research", "scientific", "technical_report", "technical", "official", "documentation", "specification", "standard",
 }
-EXCLUDED_SOURCE_MARKERS = ("reddit", "community", "aggregator", "arxiv.org", "arxiv")
+EXCLUDED_SOURCE_MARKERS = ("reddit", "community", "aggregator", "techmeme", "hacker news", "arxiv.org", "arxiv")
 AI_ANCHORS = (
     "artificial intelligence", "ai", "machine learning", "llm", "large language model", "foundation model",
     "agent", "agentic", "openai", "anthropic", "deepmind", "nvidia", "transformer", "هوش مصنوعی", "یادگیری ماشین",
@@ -142,23 +142,30 @@ def is_technical_trend_candidate(item: dict[str, Any]) -> bool:
 
 
 def technical_trend_score(item: dict[str, Any]) -> float:
+    """Return a calibrated 0..100 score comparable to other editorial lanes."""
     text = _text(item)
-    signals = _technical_signal_count(text)
-    frontier_signals = _frontier_signal_count(text)
-    score = min(32.0, signals * 6.0) + min(24.0, frontier_signals * 8.0)
-    technical_depth = sum(bool(re.search(pattern, text)) for pattern in (
-        r"architecture", r"protocol", r"runtime", r"infrastructure", r"serving", r"inference", r"kernel", r"memory", r"compiler",
+    signals = min(1.0, _technical_signal_count(text) / 4.0)
+    frontier = min(1.0, _frontier_signal_count(text) / 2.0)
+    depth_terms = (
+        r"architecture", r"protocol", r"runtime", r"infrastructure", r"serving",
+        r"inference", r"kernel", r"memory", r"compiler", r"quantization",
         r"معماری", r"پروتکل", r"زیرساخت", r"استنتاج",
-    ))
-    score += min(22.0, technical_depth * 5.0)
-    score += _source_authority(item)
-    score += _recency_bonus(item)
-    if str(item.get("content_type") or "").casefold() in {"research", "technical", "official"}:
-        score += 5.0
-    if bool(item.get("technical_report")) or bool(item.get("technical_depth_signal")):
-        score += 6.0
+    )
+    depth = min(1.0, sum(bool(re.search(pattern, text)) for pattern in depth_terms) / 4.0)
+    authority = _source_authority(item) / 30.0
+    recency = _recency_bonus(item) / 10.0
+    research_bonus = 0.08 if str(item.get("content_type") or "").casefold() in {"research", "technical", "official"} else 0.0
+    technical_bonus = 0.07 if bool(item.get("technical_report") or item.get("technical_depth_signal")) else 0.0
+    score = (
+        0.28 * signals
+        + 0.22 * frontier
+        + 0.20 * depth
+        + 0.18 * authority
+        + 0.12 * recency
+        + research_bonus
+        + technical_bonus
+    ) * 100.0
     return round(min(100.0, score), 2)
-
 
 def choose_technical_trend_candidate(
     candidates: Iterable[dict[str, Any]],

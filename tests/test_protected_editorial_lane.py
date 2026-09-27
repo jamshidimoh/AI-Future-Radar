@@ -6,13 +6,13 @@ def test_mind_candidate_detects_consciousness_content():
     assert is_mind_ideas_voices_candidate(item)
 
 
-def test_podcast_candidate_detects_specialist_format():
+def test_podcast_candidate_is_reserved_for_voice_lane():
     item = {"title": "AI and the mind", "mission_area": "ai_core", "content_type": "podcast"}
-    assert is_mind_ideas_voices_candidate(item)
+    assert not is_mind_ideas_voices_candidate(item)
 
 
-def test_registry_person_candidate_detects_influential_thinker():
-    item = {"title": "Yuval Noah Harari on AI and civilization", "mission_area": "future_governance", "content_type": "interview"}
+def test_influential_thinker_without_interview_format_can_enter_mind_lane():
+    item = {"title": "Yuval Noah Harari analysis of AI and civilization", "mission_area": "future_governance", "content_type": "article"}
     assert is_mind_ideas_voices_candidate(item)
 
 
@@ -58,8 +58,8 @@ def test_mind_lane_has_no_normal_score_floor():
 def test_additive_candidates_use_independent_lane_score_and_two_item_cap():
     candidates = [
         {"title": "A consciousness research", "mission_area": "mind_cognition", "content_type": "article", "normal_period_rank": 4, "final_editorial_score": 60.1},
-        {"title": "B future governance interview", "mission_area": "future_governance", "content_type": "interview", "source_tier": 1, "normal_period_rank": 5, "final_editorial_score": 56.0},
-        {"title": "D cognition podcast", "mission_area": "mind_cognition", "content_type": "podcast", "normal_period_rank": 7, "final_editorial_score": 55.8},
+        {"title": "B future governance analysis", "mission_area": "future_governance", "content_type": "article", "source_tier": 1, "normal_period_rank": 5, "final_editorial_score": 56.0},
+        {"title": "D cognition research", "mission_area": "mind_cognition", "content_type": "research", "source_tier": 1, "normal_period_rank": 7, "final_editorial_score": 55.8},
     ]
     selected = choose_additive_candidates(candidates, existing_ids=set(), max_rank=7, max_items=2)
     assert len(selected) == 2

@@ -41,19 +41,16 @@ editorial:
 # - candidate_window=8 keeps the canonical bounded replacement pool for QA/rejection.
 # - max_items_per_source=2 remains the adaptive ceiling and hard source cap. One item
 #   per source is preferred first; a second item is allowed only during adaptive backfill.
-# - The additive Mind/Ideas/Voices lane may add up to 2 qualifying special items per run.
-#   The lane is score/rank-driven within the existing bounded replacement pool, with
-#   the existing normal score floor and rank window still enforced.
+# - Special lanes are candidate classes inside the shared three-slot core budget; they
+#   do not add publication slots.
 # - Qualifying scope includes influential technology/AI leaders and CEOs, scientists,
 #   theorists, public intellectuals, sociologists, scientifically grounded futurists,
 #   their substantive interviews/podcasts/talks/conversations, and AI-relevant work
 #   on consciousness, philosophy of mind/science/technology, cognitive science,
 #   neuroscience/brain, genetics/genomics/synthetic biology, foresight/futures,
 #   society and technology, and related interdisciplinary AI/future domains.
-# - The additive lane never changes the canonical ranking formula or the first three
-#   normal candidates. The effective limits remain the existing ranked pool, rank window,
-#   score floor, source/deduplication rules, language, editorial quality, grounding,
-#   Telegram safety, final publication contract, and the explicit two-item lane cap.
+# - Special-lane candidates use their own eligibility score, then compete inside the
+#   shared core allocator. Replacements consume the same core slot as the failed item.
 # - Community/aggregator sources remain excluded.
 # - ai_core_target_min/max, mind_cognition_target and convergence_target remain explicit
 #   normal-portfolio controls. They are filled after the normal eligibility/safety gates;
@@ -71,3 +68,22 @@ editorial:
 #   gates; novelty penalties do not replace semantic duplicate detection.
 # - Education remains an independent scheduled product stream and is recovered fail-closed.
 # - Strategic Analytical Lane remains separate and limited to one mission-critical signal.
+
+portfolio:
+  core_capacity: 3
+  special_lanes_consume_core_slots: true
+  min_unique_core_sources: 3
+  max_same_core_source: 1
+  max_same_core_area: 2
+  slot_targets: [ai_core, convergence_or_technical, mind_future_or_expert_voice]
+  independent_lane_caps:
+    technical_trend: 1
+    mind_ideas_voices: 1
+    voices_perspectives: 1
+    strategic_analytical: 1
+  protected_people_max: 2
+  education_independent: true
+
+# The three core news slots are shared by Normal, Technical, Mind, Voices and Strategic
+# candidates. A special lane does not create an extra news slot. People/Tier-0 remain
+# quota-exempt but still pass quality, relevance, deduplication and publication gates.

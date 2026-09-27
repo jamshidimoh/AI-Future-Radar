@@ -91,7 +91,7 @@ def _trusted_source(item: dict[str, Any]) -> bool:
         str(item.get(key) or "")
         for key in ("source", "source_name", "source_type", "source_domain", "publisher")
     ).casefold()
-    return not any(marker in source_text for marker in ("reddit", "community", "aggregator"))
+    return not any(marker in source_text for marker in ("reddit", "community", "aggregator", "techmeme", "hacker news"))
 
 
 def _mission(item: dict[str, Any]) -> str:
@@ -182,8 +182,13 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     interview = _interview_signal(item)
     if not _ai_relevant(item):
         return False
+    interview = _interview_signal(item)
+    if interview:
+        return False
     if thematic:
         return True
+    if interview:
+        return False
     # Eligibility identifies valid candidates for this lane. Final publication
     # importance is enforced later by the production publication gate, so valid
     # AI interviews/podcasts and strong thematic signals must remain discoverable.
@@ -207,6 +212,8 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
             return tier <= 2
         return False
     if interview and (registry_person or person_identity or thematic):
+        return True
+    if mission in {"future", "future_governance", "convergence"} and (registry_person or explicit_person) and _ai_relevant(item):
         return True
     if not _importance_evidence(item):
         return False
@@ -277,7 +284,7 @@ def choose_additive_candidates(
         if float(item["mind_editorial_score"]) < MIND_IDEAS_VOICES_SCORE_FLOOR:
             continue
         eligible.append(item)
-    eligible.sort(key=lambda item: (-float(item.get("mind_editorial_score", 0.0) or 0.0), str(item.get("published") or "")),)
+    eligible.sort(key=lambda item: (float(item.get("mind_editorial_score", 0.0) or 0.0), str(item.get("published") or "")), reverse=True)
     selected = (
         eligible[:max(0, max_rank)]
         if max_items is None

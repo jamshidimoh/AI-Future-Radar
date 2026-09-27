@@ -22,7 +22,8 @@ Discovery
        -> authoritative/community boundary
        -> adaptive source diversity
        -> content-type and mission-area caps
-       -> replacement-aware candidate window (6)
+       -> shared three-slot core portfolio
+       -> replacement-aware candidate window (8 + bounded buffer)
   -> LLM transformation
   -> language / schema / editorial-quality gates
   -> ranked replacement candidates when a selected item fails QA
@@ -45,7 +46,7 @@ The selector has four explicit objectives, in order:
 3. Prefer distinct sources in the current run while treating historical source usage as a bounded preference signal rather than a hard exclusion.
 4. Fill remaining capacity by calibrated editorial score while respecting hard source, content-type, mission-area and community limits.
 
-Normal publication capacity is `max_posts=3`. The selector constructs a six-item candidate window (`candidate_window=6`); candidates beyond the first three are replacement candidates and never increase the publication quota. Transformation, editorial QA, language and publication policy apply equally to primary and replacement candidates.
+The shared Core Portfolio has `max_posts=3`. The selector constructs an eight-item canonical candidate window (`candidate_window=8`) plus a bounded replacement buffer; candidates beyond the three core slots are replacement candidates and never increase the publication quota. Transformation, editorial QA, language and publication policy apply equally to primary and replacement candidates.
 
 `max_items_per_source=2` is the hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. This distinction prevents source concentration without collapsing the run when only a small set of sources is available.
 

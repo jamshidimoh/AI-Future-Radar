@@ -165,7 +165,7 @@ def test_voice_lane_prefers_newer_direct_interview_over_older_higher_tier():
 
     newer = _voice("Newer expert interview")
     newer["published"] = "2026-09-22T06:00:00+00:00"
-    newer["source_tier"] = 3
+    newer["source_tier"] = 2
     newer["person_name"] = "Anil Seth"
 
     selected = choose_voices_candidate([older, newer], max_items=1)
@@ -180,4 +180,10 @@ def test_voice_lane_rejects_bare_ai_category_without_ai_evidence():
     item["source"] = "World Economic Forum"
     item["source_name"] = "World Economic Forum"
     item["person_name"] = "Natalie Çilem"
+    assert not is_voices_candidate(item)
+
+
+def test_voice_lane_rejects_tier_three_source():
+    item = _voice("Tier three interview")
+    item["source_tier"] = 3
     assert not is_voices_candidate(item)

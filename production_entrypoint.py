@@ -1,4 +1,4 @@
-"""Canonical production entrypoint with four independent editorial lanes."""
+"""Canonical production entrypoint with a shared three-slot editorial portfolio."""
 from __future__ import annotations
 
 import json
@@ -23,7 +23,7 @@ from src.priority_people import is_substantive_priority_interview
 from src.protected_editorial_lane import choose_additive_candidates
 from src.state_io import StateCorruptionError, load_json_state
 from src.technical_trend_lane import choose_technical_trend_candidate
-from src.unified_editorial_selection import load_editorial_contract
+from src.unified_editorial_selection import content_type_key, freshness_score, load_editorial_contract, mission_area, source_key
 from src.voices_perspectives_lane import MAX_VOICES_PER_PERIOD, choose_voices_candidate, is_voices_candidate
 
 logger = logging.getLogger(__name__)
@@ -32,11 +32,11 @@ ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
 CADENCE_PATH = ROOT / "data" / "publication_state.json"
 EDITORIAL_CONTRACT = load_editorial_contract()
-MAX_NORMAL_NEWS_PER_PERIOD = 3
-# Mind/Ideas/Voices is additive, not dominant. Keep one final publication slot.
-MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
-MAX_TECHNICAL_TREND_PER_PERIOD = 1
-MAX_VOICES_PERSPECTIVES_PER_PERIOD = MAX_VOICES_PER_PERIOD
+MAX_NORMAL_NEWS_PER_PERIOD = int(EDITORIAL_CONTRACT.get("core_capacity", 3) or 3)
+# Special editorial lanes share the three core publication slots.
+MAX_MIND_IDEAS_VOICES_PER_PERIOD = int(EDITORIAL_CONTRACT.get("mind_lane_cap", 1) or 1)
+MAX_TECHNICAL_TREND_PER_PERIOD = int(EDITORIAL_CONTRACT.get("technical_lane_cap", 1) or 1)
+MAX_VOICES_PERSPECTIVES_PER_PERIOD = int(EDITORIAL_CONTRACT.get("voices_lane_cap", MAX_VOICES_PER_PERIOD) or MAX_VOICES_PER_PERIOD)
 # Bootstrap still establishes all 30 baselines, but publication is batched so
 # one run does not flood Telegram or suppress the independent Mind/Voices lanes.
 MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 2
@@ -48,7 +48,7 @@ NEWS_FIELDS = ("title", "summary", "why_it_matters")
 GUARD_REASON_ENV = "AI_RADAR_PUBLICATION_GUARD_REASON"
 EDUCATION_WINDOWS_TEHRAN = ((5, 7, "morning"), (20, 7, "evening"))
 TEHRAN = timezone(timedelta(hours=3, minutes=30))
-STRATEGIC_ANALYTICAL_MAX_PER_PERIOD = 1
+STRATEGIC_ANALYTICAL_MAX_PER_PERIOD = int(EDITORIAL_CONTRACT.get("strategic_lane_cap", 1) or 1)
 STRATEGIC_ANALYTICAL_CATEGORIES = {"future", "future_governance", "mind", "mind_cognition"}
 
 
@@ -272,6 +272,133 @@ def _people_bootstrap_batch(candidates, limit: int = MAX_PEOPLE_BOOTSTRAP_PER_PE
     )[:max(0, int(limit))]
     
     
+def _core_lane(item: dict) -> str:
+    if _is_technical_trend(item) or str(item.get("mission_area") or "").strip().casefold() == "convergence":
+        return "convergence_or_technical"
+    if _is_mind_ideas_voices(item) or _is_voices_perspectives(item):
+        return "mind_future_or_expert_voice"
+    if str(item.get("mission_area") or "").strip().casefold() in {"mind_cognition", "future_governance"}:
+        return "mind_future_or_expert_voice"
+    return "ai_core"
+
+
+def _core_score(item: dict) -> float:
+    if _is_technical_trend(item):
+        return float(item.get("technical_trend_score", 0.0) or 0.0)
+    if _is_mind_ideas_voices(item):
+        return float(item.get("mind_editorial_score", 0.0) or 0.0)
+    if _is_voices_perspectives(item):
+        return float(item.get("voices_perspectives_score", 0.0) or 0.0)
+    return _item_final_score(item)
+
+
+def _core_candidate_quality_ok(item: dict) -> bool:
+    score = _core_score(item)
+    lane = "normal"
+    if _is_technical_trend(item):
+        lane = "technical"
+    elif _is_mind_ideas_voices(item):
+        lane = "mind"
+    elif _is_voices_perspectives(item):
+        lane = "voices"
+    floors = {"normal": NORMAL_SCORE_FLOOR, "technical": 60.0, "mind": 50.0, "voices": 65.0}
+    return score >= floors[lane]
+
+
+def _allocate_core_portfolio(candidates, max_posts: int) -> list[dict]:
+    pool = [
+        x for x in candidates
+        if not x.get("people_lane")
+        and not x.get("protected_slot")
+        and not x.get("_rank_is_tier0")
+        and not x.get("_publication_blocked")
+        and _core_candidate_quality_ok(x)
+    ]
+    target_groups = ("ai_core", "convergence_or_technical", "mind_future_or_expert_voice")
+    selected: list[dict[str, Any]] = []
+    used_sources: set[str] = set()
+    used_types: dict[str, int] = {}
+    used_areas: dict[str, int] = {}
+
+    def admissible(x):
+        source = source_key(x)
+        ctype = content_type_key(x)
+        area = mission_area(x)
+        return (
+            source not in used_sources
+            and used_types.get(ctype, 0) < 2
+            and used_areas.get(area, 0) < 2
+        )
+
+    def choose_group(group):
+        options = [x for x in pool if _core_lane(x) == group and id(x) not in {id(y) for y in selected} and admissible(x)]
+        if not options:
+            return None
+        return max(
+            options,
+            key=lambda x: (
+                _core_score(x),
+                1 if source_key(x) not in used_sources else 0,
+                freshness_score(x, 24.0),
+                float(x.get("evidence_strength", 0) or 0),
+                str(x.get("published") or ""),
+            ),
+        )
+
+    for group in target_groups:
+        if len(selected) >= max_posts:
+            break
+        candidate = choose_group(group)
+        if candidate is None:
+            continue
+        selected.append(candidate)
+        candidate["core_slot_group"] = group
+        candidate["core_selection_reason"] = f"coverage_target:{group}"
+        used_sources.add(source_key(candidate))
+        ctype = content_type_key(candidate)
+        area = mission_area(candidate)
+        used_types[ctype] = used_types.get(ctype, 0) + 1
+        used_areas[area] = used_areas.get(area, 0) + 1
+
+    while len(selected) < max_posts:
+        options = [x for x in pool if id(x) not in {id(y) for y in selected} and admissible(x)]
+        if not options:
+            break
+        candidate = max(
+            options,
+            key=lambda x: (
+                _core_score(x)
+                + (8.0 if source_key(x) not in used_sources else 0.0)
+                + (5.0 if mission_area(x) not in used_areas else 0.0),
+                freshness_score(x, 24.0),
+                float(x.get("evidence_strength", 0) or 0),
+            ),
+        )
+        selected.append(candidate)
+        candidate["core_slot_group"] = _core_lane(candidate)
+        candidate["core_selection_reason"] = "portfolio_fill"
+        used_sources.add(source_key(candidate))
+        ctype = content_type_key(candidate)
+        area = mission_area(candidate)
+        used_types[ctype] = used_types.get(ctype, 0) + 1
+        used_areas[area] = used_areas.get(area, 0) + 1
+
+    for index, item in enumerate(selected, 1):
+        item["core_slot"] = index
+    print(
+        "[Core Portfolio] selected="
+        + str(len(selected))
+        + " groups="
+        + ",".join(str(x.get("core_slot_group")) for x in selected)
+        + " sources="
+        + ",".join(str(source_key(x)) for x in selected)
+        + " scores="
+        + ",".join(f"{_core_score(x):.2f}" for x in selected),
+        flush=True,
+    )
+    return selected
+
+
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
     people = [item for item in candidates if item.get("people_lane")]
@@ -304,16 +431,19 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
         if len(protected) >= protected_limit:
             break
     normals = [item for item in non_special if item.get("normal_period_rank") is not None][:normal_limit + replacement_buffer]
+    core = _allocate_core_portfolio(normals + technical + mind + voices, max_posts=normal_capacity)
+    core_ids = {id(x) for x in core}
+    replacements = [x for x in normals if id(x) not in core_ids][:replacement_buffer]
     bounded = []
     seen = set()
-    for item in people + protected + normals + technical + mind + voices:
+    for item in people + protected + core + replacements:
         key = id(item)
         if key in seen:
             continue
         seen.add(key)
         bounded.append(item)
     print(
-        f"[Selection Budget Guard] normal={len(normals)} protected={len(protected)} technical_trend={len(technical)} mind_ideas_voices={len(mind)} voices_perspectives={len(voices)} output={len(bounded)} normal_capacity={normal_capacity} normal_limit={normal_limit} technical_quota={MAX_TECHNICAL_TREND_PER_PERIOD} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_quota={MAX_VOICES_PERSPECTIVES_PER_PERIOD}",
+        f"[Selection Budget Guard] normal_pool={len(normals)} protected={len(protected)} core={len(core)} replacements={len(replacements)} output={len(bounded)} core_capacity={normal_capacity} distinct_source_target=3",
         flush=True,
     )
     return bounded
@@ -345,7 +475,7 @@ def main(*, skip_education: bool = False) -> int:
         education_due = False
         education_slot = None
     previous_normal_score = cadence.get("last_published_normal_news_score")
-    print(f"[Cadence] run={run_number} tehran={now_tehran.isoformat()} normal_news=ranked_1_plus_2 max_normal={MAX_NORMAL_NEWS_PER_PERIOD} technical_trend=independent max_technical={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices=independent max_mind={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_perspectives=independent max_voices={MAX_VOICES_PERSPECTIVES_PER_PERIOD} education_due={education_due} education_slot={education_slot} previous_normal_score={previous_normal_score} last_any_news_score={cadence.get('last_published_news_score')}", flush=True)
+    print(f"[Cadence] run={run_number} tehran={now_tehran.isoformat()} core_capacity={MAX_NORMAL_NEWS_PER_PERIOD} special_lanes_share_core=true technical_max={MAX_TECHNICAL_TREND_PER_PERIOD} mind_max={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_max={MAX_VOICES_PERSPECTIVES_PER_PERIOD} education_due={education_due} education_slot={education_slot} previous_normal_score={previous_normal_score} last_any_news_score={cadence.get('last_published_news_score')}", flush=True)
 
     store = load_feedback(FEEDBACK_PATH)
     changed = ingest_from_env(FEEDBACK_PATH)
@@ -392,8 +522,7 @@ def main(*, skip_education: bool = False) -> int:
         print(f"[Selection Timing] feedback items={len(items)} elapsed={time.monotonic() - started:.3f}s", flush=True)
         rank_started = time.monotonic()
         candidate_window = int(EDITORIAL_CONTRACT["candidate_window"])
-        replacement_buffer = max(0, int(EDITORIAL_CONTRACT.get("replacement_buffer", 0) or 0))
-        special_window = lambda cap: cap + replacement_buffer
+        special_window = lambda cap: cap
 
         # Reserve independent special lanes before Normal ranking.
         # Mind is evaluated before Voices so a consciousness/awareness signal is
@@ -498,7 +627,7 @@ def main(*, skip_education: bool = False) -> int:
         return ([education_item] if education_item else []) + _bound_runtime_candidates(candidates, max_posts=max_posts, policy=policy)
 
     original_summarize = pipeline.summarize_item
-    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "normal_news_delivered_count": 0, "mind_ideas_voices_delivered_count": 0, "technical_trend_delivered_count": 0, "voices_perspectives_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "people_news_delivered_count": 0, "delivery_transport_failed": False}
+    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "core_news_delivered_count": 0, "normal_news_delivered_count": 0, "mind_ideas_voices_delivered_count": 0, "technical_trend_delivered_count": 0, "voices_perspectives_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "people_news_delivered_count": 0, "delivery_transport_failed": False}
 
     def summarize_with_education(item):
         if item.get("content_type") == "education":
@@ -566,14 +695,18 @@ def main(*, skip_education: bool = False) -> int:
                     cadence["last_published_normal_news_score"] = score
                 if is_mind:
                     render_state["mind_ideas_voices_delivered_count"] += 1
+                    render_state["core_news_delivered_count"] += 1
                 elif is_technical:
                     render_state["technical_trend_delivered_count"] += 1
+                    render_state["core_news_delivered_count"] += 1
                 elif is_voices:
                     render_state["voices_perspectives_delivered_count"] += 1
+                    render_state["core_news_delivered_count"] += 1
                 elif is_tier0:
                     render_state["tier0_news_delivered_count"] += 1
                 else:
                     render_state["normal_news_delivered_count"] += 1
+                    render_state["core_news_delivered_count"] += 1
                 if is_strategic:
                     render_state["strategic_analytical_news_delivered_count"] += 1
                 lane = "people" if is_people else ("mind_ideas_voices" if is_mind else ("technical_trend" if is_technical else ("voices_perspectives" if is_voices else ("tier0" if is_tier0 else "normal"))))
@@ -625,6 +758,8 @@ def main(*, skip_education: bool = False) -> int:
             score = _item_final_score(story)
             print(f"[Publication Policy] PUBLISH PEOPLE person={story.get('person_name') or story.get('watch_person') or story.get('leader')} score={score} quota_exempt=true cap=none")
             return delivered({"message_id": None})
+        if not priority_person and render_state["core_news_delivered_count"] >= MAX_NORMAL_NEWS_PER_PERIOD:
+            return policy_blocked("core_news_quota_exhausted")
         if is_voices:
             if render_state["voices_perspectives_delivered_count"] >= MAX_VOICES_PERSPECTIVES_PER_PERIOD:
                 return policy_blocked("voices_perspectives_quota_exhausted")
@@ -651,8 +786,6 @@ def main(*, skip_education: bool = False) -> int:
             return delivered({"message_id": None})
         if strategic_analytical and render_state["strategic_analytical_news_delivered_count"] >= STRATEGIC_ANALYTICAL_MAX_PER_PERIOD:
             return policy_blocked("strategic_analytical_lane_exhausted")
-        if not priority_person and render_state["normal_news_delivered_count"] >= MAX_NORMAL_NEWS_PER_PERIOD:
-            return policy_blocked("normal_quota_exhausted")
         if not _news_language_ok(story):
             return policy_blocked("news_language_gate")
         score = _item_final_score(story)

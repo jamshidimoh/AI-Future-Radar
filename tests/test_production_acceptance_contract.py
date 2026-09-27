@@ -142,10 +142,10 @@ def test_runtime_selection_keeps_only_publishable_protected_and_normal_candidate
         {"period_rank": 1, "normal_period_rank": None, "protected_slot": True, "final_editorial_score": 70.0},
         {"period_rank": 2, "normal_period_rank": None, "protected_slot": True, "final_editorial_score": 69.0},
         {"period_rank": 3, "normal_period_rank": None, "protected_slot": True, "final_editorial_score": 68.0},
-        {"period_rank": 4, "normal_period_rank": 1, "protected_slot": False},
-        {"period_rank": 5, "normal_period_rank": 2, "protected_slot": False},
-        {"period_rank": 6, "normal_period_rank": 3, "protected_slot": False},
-        {"period_rank": 7, "normal_period_rank": 4, "protected_slot": False},
+        {"period_rank": 4, "normal_period_rank": 1, "protected_slot": False, "source": "A", "source_tier": 1, "final_editorial_score": 70.0, "mission_area": "ai_core"},
+        {"period_rank": 5, "normal_period_rank": 2, "protected_slot": False, "source": "B", "source_tier": 1, "final_editorial_score": 68.0, "mission_area": "convergence"},
+        {"period_rank": 6, "normal_period_rank": 3, "protected_slot": False, "source": "C", "source_tier": 2, "final_editorial_score": 66.0, "mission_area": "mind_cognition"},
+        {"period_rank": 7, "normal_period_rank": 4, "protected_slot": False, "source": "D", "source_tier": 2, "final_editorial_score": 64.0, "mission_area": "future_governance"},
     ]
     bounded = _bound_runtime_candidates(candidates, max_posts=3, policy={"leader_protected_max": 2, "replacement_buffer": 0})
     assert len(bounded) == 5
@@ -160,7 +160,14 @@ def test_critical_incident_with_reserved_slot_uses_tier0_publication_lane():
 
 def test_runtime_candidates_honor_replacement_buffer():
     candidates = [
-        {"normal_period_rank": rank, "editorial_score": 70 - rank}
+        {
+            "normal_period_rank": rank,
+            "editorial_score": 70 - rank,
+            "final_editorial_score": 70 - rank,
+            "source": chr(64 + rank),
+            "source_tier": 1 if rank <= 3 else 2,
+            "mission_area": ("ai_core", "convergence", "mind_cognition", "future_governance")[rank % 4],
+        }
         for rank in range(1, 6)
     ]
     candidates.extend(
@@ -222,3 +229,20 @@ Posts sent: 0/10
     ok, reason = validate(log)
     assert not ok
     assert "without confirmed delivery" in reason
+
+
+def test_shared_core_portfolio_selects_three_distinct_source_slots():
+    from production_entrypoint import _allocate_core_portfolio
+
+    candidates = [
+        {"title": "AI core", "source": "OpenAI", "source_tier": 1, "mission_area": "ai_core", "final_editorial_score": 82, "content_type": "news"},
+        {"title": "Convergence", "source": "Nature", "source_tier": 1, "mission_area": "convergence", "final_editorial_score": 78, "content_type": "research"},
+        {"title": "Mind", "source": "MIT News", "source_tier": 1, "mission_area": "mind_cognition", "final_editorial_score": 74, "content_type": "research"},
+        {"title": "Same source lower", "source": "OpenAI", "source_tier": 1, "mission_area": "ai_core", "final_editorial_score": 81, "content_type": "news"},
+    ]
+    selected = _allocate_core_portfolio(candidates, 3)
+    assert len(selected) == 3
+    assert len({x["source"] for x in selected}) == 3
+    assert {x["core_slot_group"] for x in selected} == {
+        "ai_core", "convergence_or_technical", "mind_future_or_expert_voice"
+    }

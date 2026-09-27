@@ -61,3 +61,16 @@ def test_frontier_capability_candidate_is_eligible():
     selected = choose_technical_trend_candidate([item])
     assert len(selected) == 1
     assert selected[0]["technical_trend_lane_selected"] is True
+
+
+def test_discovery_only_curated_sources_never_publish():
+    for source in ("Techmeme", "Hacker News"):
+        item = {
+            "title": "AI inference architecture update",
+            "summary": "A technical runtime and protocol development for AI systems.",
+            "source": source,
+            "source_type": "technical",
+            "source_tier": 2,
+            "category": "ai",
+        }
+        assert not is_technical_trend_candidate(item)

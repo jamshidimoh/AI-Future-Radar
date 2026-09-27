@@ -1,7 +1,7 @@
 # ruff: noqa: I001
 from pathlib import Path
 
-from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, load_people_watchlist, post_bootstrap_candidates, relevant_people_item
+from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, filter_people_person_cooldown, load_people_watchlist, post_bootstrap_candidates, relevant_people_item
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -249,3 +249,18 @@ def test_people_relevance_ignores_category_topic_and_generic_leader_query_metada
         "link": "https://example.com/kate-false-positive-2",
     }
     assert relevant_people_item(item, "Kate Crawford") is False
+
+
+def test_people_person_cooldown_rotates_recently_published_people():
+    items = [
+        _item("Sam Altman", "2026-09-27 09:00", "sam-new"),
+        _item("Dario Amodei", "2026-09-27 08:00", "dario-new"),
+    ]
+    history = [
+        {"leader": "Sam Altman", "ts": 1},
+        {"leader": "Jensen Huang", "ts": 2},
+    ]
+    kept, blocked = filter_people_person_cooldown(items, history, window=8)
+    assert blocked == 1
+    assert len(kept) == 1
+    assert kept[0]["person_name"] == "Dario Amodei"

@@ -36,7 +36,7 @@ MAX_NORMAL_NEWS_PER_PERIOD = int(EDITORIAL_CONTRACT.get("core_capacity", 3) or 3
 # Special editorial lanes share the three core publication slots.
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = int(EDITORIAL_CONTRACT.get("mind_lane_cap", 1) or 1)
 MAX_TECHNICAL_TREND_PER_PERIOD = int(EDITORIAL_CONTRACT.get("technical_lane_cap", 1) or 1)
-MAX_VOICES_PERSPECTIVES_PER_PERIOD = MAX_VOICES_PER_PERIOD
+MAX_VOICES_PERSPECTIVES_PER_PERIOD = int(EDITORIAL_CONTRACT.get("voices_lane_cap", MAX_VOICES_PER_PERIOD) or MAX_VOICES_PER_PERIOD)
 # Bootstrap still establishes all 30 baselines, but publication is batched so
 # one run does not flood Telegram or suppress the independent Mind/Voices lanes.
 MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 2
@@ -48,7 +48,7 @@ NEWS_FIELDS = ("title", "summary", "why_it_matters")
 GUARD_REASON_ENV = "AI_RADAR_PUBLICATION_GUARD_REASON"
 EDUCATION_WINDOWS_TEHRAN = ((5, 7, "morning"), (20, 7, "evening"))
 TEHRAN = timezone(timedelta(hours=3, minutes=30))
-STRATEGIC_ANALYTICAL_MAX_PER_PERIOD = 1
+STRATEGIC_ANALYTICAL_MAX_PER_PERIOD = int(EDITORIAL_CONTRACT.get("strategic_lane_cap", 1) or 1)
 STRATEGIC_ANALYTICAL_CATEGORIES = {"future", "future_governance", "mind", "mind_cognition"}
 
 

@@ -135,14 +135,18 @@ def is_voices_candidate(item: dict[str, Any]):
         source_tier = 3
     source_type = str(item.get("source_type") or item.get("type") or "").strip().casefold()
     source_is_authoritative = source_tier <= 2 or source_type in {"official", "university", "scientific", "specialist", "expert_interviews", "research_lab"}
+    classification = item.get("leader_signal_classification") or {}
+    classified_interview = bool(isinstance(classification, dict) and classification.get("accepted") and classification.get("interview"))
     direct_interview = _direct_interview_signal(item)
+    priority_person = _priority_person_signal(item)
     substantive_voice_context = bool(
         expert_deep_lane
         or str(item.get("editorial_class") or "").strip().casefold() == "leader_interview"
         or (voice_signal and str(item.get("mission_area") or "").strip().casefold() in {"mind_cognition", "future_governance", "convergence"})
+        or (priority_person and voice_signal and str(item.get("mission_area") or "").strip().casefold() in MISSION_AREAS)
     )
     return _ai_relevant(item) and person_signal and substantive_identity and source_is_authoritative and (
-        direct_interview or substantive_voice_context
+        direct_interview or classified_interview or substantive_voice_context
     )
 
 
@@ -162,8 +166,11 @@ def _direct_interview_signal(item: dict[str, Any]) -> bool:
     content_type = str(item.get("content_type") or "").strip().casefold()
     source_type = str(item.get("source_type") or item.get("type") or item.get("format") or "").strip().casefold()
     title = str(item.get("title") or "").casefold()
+    classification = item.get("leader_signal_classification") or {}
+    classified_interview = bool(isinstance(classification, dict) and classification.get("accepted") and classification.get("interview"))
     return (
-        content_type in VOICE_TYPES
+        classified_interview
+        or content_type in VOICE_TYPES
         or source_type in VOICE_TYPES
         or any(re.search(pattern, title) for pattern in (
             r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfireside\b",

@@ -69,8 +69,9 @@ class FinalProductionAcceptanceTests(unittest.TestCase):
     def test_period_ranked_pipeline_exports_ranked_selector(self):
         self.assertIs(ranking.select_editorial, ranking._global_ranked_selection)
         source = inspect.getsource(production.main)
-        self.assertIn("original_select = pipeline.select_editorial", source)
-        self.assertNotIn("from main import select_editorial", source)
+        self.assertIn("_unified_portfolio_select", source)
+        self.assertIn("select_with_feedback", source)
+        self.assertNotIn("original_select = pipeline.select_editorial", source)
 
     def test_production_state_contains_real_published_baseline(self):
         state = json.loads(STATE_PATH.read_text(encoding="utf-8"))

@@ -56,6 +56,7 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert contract["community_max"] == mission["community_max"]
     assert selection["diversity_mode"] == "unified_final_portfolio"
     assert selection["distinct_sources_first"] is True
+    assert selection["candidate_window"] + selection["replacement_buffer"] == 9
     assert contract["max_posts"] == 3
 
 

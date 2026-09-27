@@ -83,6 +83,10 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "window_runs": int(rotation_cfg.get("window_runs", 6) or 6),
         "max_same_source_in_window": int(rotation_cfg.get("max_same_source_in_window", 2) or 2),
         "max_same_area_in_window": int(rotation_cfg.get("max_same_area_in_window", 3) or 3),
+        "core_capacity": int(portfolio_cfg.get("core_capacity", selection_cfg.get("max_posts", 3)) or 3),
+        "min_unique_core_sources": int(portfolio_cfg.get("min_unique_core_sources", mission.get("min_unique_sources", 3)) or 3),
+        "max_same_core_source": int(portfolio_cfg.get("max_same_core_source", 1) or 1),
+        "max_same_core_area": int(portfolio_cfg.get("max_same_core_area", 2) or 2),
     }
 
 

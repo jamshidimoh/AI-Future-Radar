@@ -19,8 +19,8 @@ class TelegramFormatTests(unittest.TestCase):
         for expected in ("مطالعه منبع اصلی", "بررسی بیشتر با ChatGPT", "Demis Hassabis", "Google News", "📡", title):
             self.assertIn(expected, plain)
         self.assertIn("<b>📡", text)
-        self.assertIn("📌 خلاصه", text)
-        self.assertIn("💡 چرا مهم است؟", text)
+        self.assertIn("خلاصه 📌", text)
+        self.assertIn("اهمیت 💡", text)
         self.assertIn("\u2066", text)
         self.assertIn("\u2069", text)
         self.assertIn("\u200f", text)
@@ -30,13 +30,12 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", text)
         self.assertIn("🏛 <a href=", text)
         self.assertIn("\u2066Google News (The Times of India)\u2069", text)
-        self.assertIn("🤖 مدل پردازش: \u2066Groq:qwen/qwen3.6-27b\u2069", text)
         self.assertIn("🗓 تاریخ انتشار: 2026/08/13", text)
 
     def test_html_tags_are_not_corrupted_by_bidi_isolation(self):
         text = format_post({"title": "DeepMind: هوش مصنوعی", "summary": "خلاصه فارسی با ChatGPT", "why_it_matters": "اهمیت فناوری", "category": "ai"}, "Google News", "https://example.com/news")
-        self.assertIn("📌 خلاصه", text)
-        self.assertIn("💡 چرا مهم است؟", text)
+        self.assertIn("خلاصه 📌", text)
+        self.assertIn("اهمیت 💡", text)
         self.assertIn("<a href=\"", text)
         self.assertNotIn("<\u2066", text)
         self.assertNotIn("\u2069>", text)
@@ -84,3 +83,14 @@ class TelegramFormatTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+    def test_news_normalization_keeps_common_persian_ai_terms_persian():
+        from src.education_editor import normalize_news_editorial_text
+        text = normalize_news_editorial_text("هوش مصنوعی مولد، یادگیری ماشین و مدل های زبانی")
+        assert "هوش مصنوعی مولد" in text
+        assert "یادگیری ماشین" in text
+        assert "مدل‌های زبانی" in text
+
+

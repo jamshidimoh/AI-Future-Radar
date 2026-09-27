@@ -32,7 +32,7 @@ ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
 CADENCE_PATH = ROOT / "data" / "publication_state.json"
 EDITORIAL_CONTRACT = load_editorial_contract()
-MAX_NORMAL_NEWS_PER_PERIOD = 3
+MAX_NORMAL_NEWS_PER_PERIOD = int(EDITORIAL_CONTRACT.get("core_capacity", 3) or 3)
 # Special editorial lanes share the three core publication slots.
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
 MAX_TECHNICAL_TREND_PER_PERIOD = 1

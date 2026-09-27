@@ -229,3 +229,20 @@ Posts sent: 0/10
     ok, reason = validate(log)
     assert not ok
     assert "without confirmed delivery" in reason
+
+
+def test_shared_core_portfolio_selects_three_distinct_source_slots():
+    from production_entrypoint import _allocate_core_portfolio
+
+    candidates = [
+        {"title": "AI core", "source": "OpenAI", "source_tier": 1, "mission_area": "ai_core", "final_editorial_score": 82, "content_type": "news"},
+        {"title": "Convergence", "source": "Nature", "source_tier": 1, "mission_area": "convergence", "final_editorial_score": 78, "content_type": "research"},
+        {"title": "Mind", "source": "MIT News", "source_tier": 1, "mission_area": "mind_cognition", "final_editorial_score": 74, "content_type": "research"},
+        {"title": "Same source lower", "source": "OpenAI", "source_tier": 1, "mission_area": "ai_core", "final_editorial_score": 81, "content_type": "news"},
+    ]
+    selected = _allocate_core_portfolio(candidates, 3)
+    assert len(selected) == 3
+    assert len({x["source"] for x in selected}) == 3
+    assert {x["core_slot_group"] for x in selected} == {
+        "ai_core", "convergence_or_technical", "mind_future_or_expert_voice"
+    }

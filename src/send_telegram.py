@@ -223,10 +223,11 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
 
     source_name_clean = str(source_name or "منبع").strip()
     source_url = _esc(link, quote=True)
-    if re.search(r"[\u0600-\u06ff]", source_name_clean):
-        source_row = _rtl_text(f"🏛 {source_name_clean}")
-    else:
-        source_row = _ltr_text(f"🏛 {source_name_clean}")
+    source_row = (
+        _rtl_text(f"🏛 {source_name_clean}")
+        if re.search(r"[\u0600-\u06ff]", source_name_clean)
+        else _ltr_text(f"🏛 {source_name_clean}")
+    )
     source_link_row = _rtl_text(
         f'🔗 <a href="{source_url}">مطالعه منبع اصلی</a>',
         escape=False,

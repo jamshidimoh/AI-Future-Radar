@@ -272,6 +272,133 @@ def _people_bootstrap_batch(candidates, limit: int = MAX_PEOPLE_BOOTSTRAP_PER_PE
     )[:max(0, int(limit))]
     
     
+def _core_lane(item: dict) -> str:
+    if _is_technical_trend(item) or str(item.get("mission_area") or "").strip().casefold() == "convergence":
+        return "convergence_or_technical"
+    if _is_mind_ideas_voices(item) or _is_voices_perspectives(item):
+        return "mind_future_or_expert_voice"
+    if str(item.get("mission_area") or "").strip().casefold() in {"mind_cognition", "future_governance"}:
+        return "mind_future_or_expert_voice"
+    return "ai_core"
+
+
+def _core_score(item: dict) -> float:
+    if _is_technical_trend(item):
+        return float(item.get("technical_trend_score", 0.0) or 0.0)
+    if _is_mind_ideas_voices(item):
+        return float(item.get("mind_editorial_score", 0.0) or 0.0)
+    if _is_voices_perspectives(item):
+        return float(item.get("voices_perspectives_score", 0.0) or 0.0)
+    return _item_final_score(item)
+
+
+def _core_candidate_quality_ok(item: dict) -> bool:
+    score = _core_score(item)
+    lane = "normal"
+    if _is_technical_trend(item):
+        lane = "technical"
+    elif _is_mind_ideas_voices(item):
+        lane = "mind"
+    elif _is_voices_perspectives(item):
+        lane = "voices"
+    floors = {"normal": NORMAL_SCORE_FLOOR, "technical": 60.0, "mind": 50.0, "voices": 65.0}
+    return score >= floors[lane]
+
+
+def _allocate_core_portfolio(candidates, max_posts: int) -> list[dict]:
+    pool = [
+        x for x in candidates
+        if not x.get("people_lane")
+        and not x.get("protected_slot")
+        and not x.get("_rank_is_tier0")
+        and not x.get("_publication_blocked")
+        and _core_candidate_quality_ok(x)
+    ]
+    target_groups = ("ai_core", "convergence_or_technical", "mind_future_or_expert_voice")
+    selected = []
+    used_sources = set()
+    used_types = {}
+    used_areas = {}
+
+    def admissible(x):
+        source = source_key(x)
+        ctype = content_type_key(x)
+        area = mission_area(x)
+        return (
+            source not in used_sources
+            and used_types.get(ctype, 0) < 2
+            and used_areas.get(area, 0) < 2
+        )
+
+    def choose_group(group):
+        options = [x for x in pool if _core_lane(x) == group and id(x) not in {id(y) for y in selected} and admissible(x)]
+        if not options:
+            return None
+        return max(
+            options,
+            key=lambda x: (
+                _core_score(x),
+                1 if source_key(x) not in used_sources else 0,
+                freshness_score(x, 24.0),
+                float(x.get("evidence_strength", 0) or 0),
+                str(x.get("published") or ""),
+            ),
+        )
+
+    for group in target_groups:
+        if len(selected) >= max_posts:
+            break
+        candidate = choose_group(group)
+        if candidate is None:
+            continue
+        selected.append(candidate)
+        candidate["core_slot_group"] = group
+        candidate["core_selection_reason"] = f"coverage_target:{group}"
+        used_sources.add(source_key(candidate))
+        ctype = content_type_key(candidate)
+        area = mission_area(candidate)
+        used_types[ctype] = used_types.get(ctype, 0) + 1
+        used_areas[area] = used_areas.get(area, 0) + 1
+
+    while len(selected) < max_posts:
+        options = [x for x in pool if id(x) not in {id(y) for y in selected} and admissible(x)]
+        if not options:
+            break
+        candidate = max(
+            options,
+            key=lambda x: (
+                _core_score(x)
+                + (8.0 if source_key(x) not in used_sources else 0.0)
+                + (5.0 if mission_area(x) not in used_areas else 0.0),
+                freshness_score(x, 24.0),
+                float(x.get("evidence_strength", 0) or 0),
+            ),
+        )
+        selected.append(candidate)
+        candidate["core_slot_group"] = _core_lane(candidate)
+        candidate["core_selection_reason"] = "portfolio_fill"
+        used_sources.add(source_key(candidate))
+        ctype = content_type_key(candidate)
+        area = mission_area(candidate)
+        used_types[ctype] = used_types.get(ctype, 0) + 1
+        used_areas[area] = used_areas.get(area, 0) + 1
+
+    for index, item in enumerate(selected, 1):
+        item["core_slot"] = index
+    print(
+        "[Core Portfolio] selected="
+        + str(len(selected))
+        + " groups="
+        + ",".join(str(x.get("core_slot_group")) for x in selected)
+        + " sources="
+        + ",".join(str(source_key(x)) for x in selected)
+        + " scores="
+        + ",".join(f"{_core_score(x):.2f}" for x in selected),
+        flush=True,
+    )
+    return selected
+
+
 def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     candidates = list(candidates or [])
     people = [item for item in candidates if item.get("people_lane")]
@@ -304,16 +431,19 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
         if len(protected) >= protected_limit:
             break
     normals = [item for item in non_special if item.get("normal_period_rank") is not None][:normal_limit + replacement_buffer]
+    core = _allocate_core_portfolio(normals + technical + mind + voices, max_posts=normal_capacity)
+    core_ids = {id(x) for x in core}
+    replacements = [x for x in normals if id(x) not in core_ids][:replacement_buffer]
     bounded = []
     seen = set()
-    for item in people + protected + normals + technical + mind + voices:
+    for item in people + protected + core + replacements:
         key = id(item)
         if key in seen:
             continue
         seen.add(key)
         bounded.append(item)
     print(
-        f"[Selection Budget Guard] normal={len(normals)} protected={len(protected)} technical_trend={len(technical)} mind_ideas_voices={len(mind)} voices_perspectives={len(voices)} output={len(bounded)} normal_capacity={normal_capacity} normal_limit={normal_limit} technical_quota={MAX_TECHNICAL_TREND_PER_PERIOD} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_quota={MAX_VOICES_PERSPECTIVES_PER_PERIOD}",
+        f"[Selection Budget Guard] normal_pool={len(normals)} protected={len(protected)} core={len(core)} replacements={len(replacements)} output={len(bounded)} core_capacity={normal_capacity} distinct_source_target=3",
         flush=True,
     )
     return bounded
@@ -393,7 +523,7 @@ def main(*, skip_education: bool = False) -> int:
         rank_started = time.monotonic()
         candidate_window = int(EDITORIAL_CONTRACT["candidate_window"])
         replacement_buffer = max(0, int(EDITORIAL_CONTRACT.get("replacement_buffer", 0) or 0))
-        special_window = lambda cap: cap + replacement_buffer
+        special_window = lambda cap: cap
 
         # Reserve independent special lanes before Normal ranking.
         # Mind is evaluated before Voices so a consciousness/awareness signal is

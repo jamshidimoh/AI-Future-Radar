@@ -98,6 +98,14 @@ def _persistently_unavailable(deployment_id: str, *, recovery_probe: bool = Fals
         return False
     return True
 
+def _omniroute_structured_json_ok(content: str) -> bool:
+    raw = str(content or '').strip()
+    try:
+        return isinstance(json.loads(raw), dict)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return False
+
+
 def _omniroute_call(system_prompt, user_content):
     """Try OmniRoute first when an operator exposes a live gateway endpoint.
 

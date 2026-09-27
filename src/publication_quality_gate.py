@@ -113,6 +113,8 @@ def ensure_publication_quality(draft: dict, item: dict) -> dict | None:
 
     if not language_bad:
         draft["_publication_quality_verified"] = True
+        # Keep the return contract explicit: the RTL contract is validated here;
+        # the publication payload itself remains the structured dictionary.
         force_rtl_blocks(json.dumps(draft, ensure_ascii=False))
         return draft
 

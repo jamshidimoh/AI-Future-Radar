@@ -33,6 +33,14 @@ def _reset(monkeypatch):
     monkeypatch.delenv("OMNIROUTE_TIMEOUT_SECONDS", raising=False)
 
 
+
+
+def test_omniroute_structured_output_rejects_malformed_json():
+    from src.production_router_policy import _omniroute_structured_json_ok
+    assert _omniroute_structured_json_ok('{"title":"ok"}') is True
+    assert _omniroute_structured_json_ok("{'title': 'broken'}") is False
+    assert _omniroute_structured_json_ok("plain model prose") is False
+
 def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
     _reset(monkeypatch)
     import src.summarize as summarize

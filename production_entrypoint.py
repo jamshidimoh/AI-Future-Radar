@@ -759,6 +759,8 @@ def main(*, skip_education: bool = False) -> int:
             score = _item_final_score(story)
             print(f"[Publication Policy] PUBLISH PEOPLE person={story.get('person_name') or story.get('watch_person') or story.get('leader')} score={score} quota_exempt=true cap=none")
             return delivered({"message_id": None})
+        if not priority_person and render_state["core_news_delivered_count"] >= MAX_NORMAL_NEWS_PER_PERIOD:
+            return policy_blocked("core_news_quota_exhausted")
         if is_voices:
             if render_state["voices_perspectives_delivered_count"] >= MAX_VOICES_PERSPECTIVES_PER_PERIOD:
                 return policy_blocked("voices_perspectives_quota_exhausted")
@@ -783,8 +785,6 @@ def main(*, skip_education: bool = False) -> int:
             score = _item_final_score(story)
             print(f"[Publication Policy] PUBLISH technical_trend tech_rank={story.get('technical_trend_period_rank')} score={score} normal_floor=not_applied normal_rank=None independent_lane=true", flush=True)
             return delivered({"message_id": None})
-        if not is_people and not priority_person and render_state["core_news_delivered_count"] >= MAX_NORMAL_NEWS_PER_PERIOD:
-            return policy_blocked("core_news_quota_exhausted")
         if strategic_analytical and render_state["strategic_analytical_news_delivered_count"] >= STRATEGIC_ANALYTICAL_MAX_PER_PERIOD:
             return policy_blocked("strategic_analytical_lane_exhausted")
         if not _news_language_ok(story):

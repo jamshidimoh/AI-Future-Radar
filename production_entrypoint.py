@@ -1,4 +1,4 @@
-"""Canonical production entrypoint with four independent editorial lanes."""
+"""Canonical production entrypoint with a shared three-slot editorial portfolio."""
 from __future__ import annotations
 
 import json
@@ -33,7 +33,7 @@ FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
 CADENCE_PATH = ROOT / "data" / "publication_state.json"
 EDITORIAL_CONTRACT = load_editorial_contract()
 MAX_NORMAL_NEWS_PER_PERIOD = 3
-# Mind/Ideas/Voices is additive, not dominant. Keep one final publication slot.
+# Special editorial lanes share the three core publication slots.
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
 MAX_TECHNICAL_TREND_PER_PERIOD = 1
 MAX_VOICES_PERSPECTIVES_PER_PERIOD = MAX_VOICES_PER_PERIOD

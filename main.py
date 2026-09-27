@@ -25,6 +25,7 @@ from src.people_watch import (
     load_people_watchlist,
     now_iso,
     post_bootstrap_candidates,
+    reconcile_people_bootstrap_state,
 )
 from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR, mind_ideas_voices_score
 from src.publication_contract import unique_candidates
@@ -646,7 +647,10 @@ def main(hooks=None):
         cadence_snapshot = json.loads(cadence_state_path.read_text(encoding="utf-8"))
     except (OSError, ValueError, TypeError):
         cadence_snapshot = {}
-    people_state = cadence_snapshot.get("people_bootstrap", {}) if isinstance(cadence_snapshot, dict) else {}
+    people_state = reconcile_people_bootstrap_state(
+        cadence_snapshot.get("people_bootstrap", {}) if isinstance(cadence_snapshot, dict) else {},
+        people=people_watchlist,
+    )
     people_bootstrap_mode = str(people_state.get("status") or "").casefold() != "complete"
     people_bootstrap_at = str(people_state.get("bootstrap_at") or "").strip() or now_iso()
     selection = load_yaml(SELECTION_POLICY_PATH).get("selection", {})

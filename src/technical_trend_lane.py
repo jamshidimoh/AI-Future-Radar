@@ -45,7 +45,7 @@ TECHNICAL_SIGNALS = (
 TECHNICAL_SOURCE_TYPES = {
     "research", "scientific", "technical_report", "technical", "official", "documentation", "specification", "standard",
 }
-EXCLUDED_SOURCE_MARKERS = ("reddit", "community", "aggregator", "arxiv.org", "arxiv")
+EXCLUDED_SOURCE_MARKERS = ("reddit", "community", "aggregator", "techmeme", "hacker news", "arxiv.org", "arxiv")
 AI_ANCHORS = (
     "artificial intelligence", "ai", "machine learning", "llm", "large language model", "foundation model",
     "agent", "agentic", "openai", "anthropic", "deepmind", "nvidia", "transformer", "هوش مصنوعی", "یادگیری ماشین",

@@ -90,8 +90,9 @@ class FinalProductionAcceptanceTests(unittest.TestCase):
 
     def test_single_publication_orchestrator_still_owns_selection_hook(self):
         source = inspect.getsource(production.main)
-        self.assertEqual(source.count("original_select = pipeline.select_editorial"), 1)
-        self.assertIn("unique_candidates(original_select(", source)
+        self.assertIn('hooks = {"select_editorial": select_with_feedback', source)
+        self.assertIn("_unified_portfolio_select(", source)
+        self.assertIn("unique_candidates(", inspect.getsource(production._unified_portfolio_select))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790500279,
+  "updated_at": 1790502181,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -15841,6 +15841,27 @@
       "why_it_matters": "تقویت داده‌های چندرسانه‌ای تنوع ورودی را افزایش و خطر بیش‌برازش را کاهش می‌دهد؛ همزمان با تست‌های ادورسیال، پژوهشگران می‌توانند نقاط ضعف امنیتی مدل‌ها را پیش از استقرار شناسایی کنند. این رویکرد برای برنامه‌های حساس مانند تشخیص تقلب، سیستم‌های نظارتی و دستیارهای صوتی حیاتی است، چرا که ضعف در یک مد می‌تواند کل زنجیره را به خطر اندازد. استفاده از AugLy به‌عنوان ابزار یکپارچه، پیاده‌سازی سریع و مقیاس‌پذیر این فرآیندها را ممکن می‌سازد.",
       "link": "https://www.marktechpost.com/2026/09/26/end-to-end-multimodal-data-augmentation-and-adversarial-robustness-benchmark-with-augly-for-images-text-audio-and-pytorch/",
       "posted_at": 1790500279
+    },
+    "-1004482051328:1951": {
+      "chat_id": -1004482051328,
+      "message_id": 1951,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Jewish Journal)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Judea Pearl",
+      "watch_person": "Judea Pearl",
+      "person_name": "Judea Pearl",
+      "people_lane": true,
+      "title": "جودا پیر دربارهٔ فقدان، هوش مصنوعی و زیونوفوبیا",
+      "summary": "جودا پیر در مصاحبه‌ای با Jewish Journal به تفکر دربارهٔ فقدان شخصی، وضعیت فعلی هوش مصنوعی و نگرانی‌های خود نسبت به زیونوفوبیا پرداخت. او تأکید کرد که این سه موضوع به‌صورت مشترک می‌توانند بر توسعهٔ هوش مصنوعی تأثیر بگذارند. پیر اشاره کرد که شناخت دقیق این مسائل می‌تواند به شکل‌گیری راهکارهای اخلاقی و مسئولانه در حوزهٔ هوش مصنوعی کمک کند. او به ضرورت گفت‌وگوی میان‌رشته‌ای برای رسیدن به این اهداف اشاره کرد.",
+      "why_it_matters": "با توجه به تأکید پیر بر ارتباط بین فقدان، هوش مصنوعی و زیونوفوبیا، عدم توجه به این عوامل می‌تواند باعث تکرار تعصبات تاریخی در سیستم‌های هوش مصنوعی شود. او نشان داد که شناخت این مسائل می‌تواند به سیاستگذاران و توسعه‌دهندگان کمک کند تا چارچوب‌های اخلاقی و شفاف‌سازی‌پذیر برای AI ایجاد کنند. این رویکرد می‌تواند به کاهش تبعیض‌های دیجیتالی و افزایش اعتماد عمومی به فناوری‌های هوش مصنوعی منجر شود.",
+      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNNHdfVmc3a0RNX0tOZnZoZUZSUnRienhzZ2ZPTkFMTlo3TE5pOTNCWXlSZ0hJTW1pTjFWUUQyNjVzQW00a29Oc21ocDZ4Vk1mcjlOYTdsNWpGQ3ROaGlZYUN5N3FJc2pITFFfUVpYUmZvNnZVVHhfWXVRUUNSRU1XMlZQSTYxZWJmaDAxV0VwQXJTU0ZqT0tPODFkd3VNV2JGOTctek90SXY0bmVJWk5XZnZBbFh6dHFk?oc=5",
+      "posted_at": 1790502181
     }
   }
 }

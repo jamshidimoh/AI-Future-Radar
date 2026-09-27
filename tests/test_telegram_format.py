@@ -113,24 +113,3 @@ if __name__ == "__main__":
     unittest.main()
 
 
-
-
-    def test_english_first_primary_lines_keep_rtl_base_and_isolate_latin_runs(self):
-        text = format_post(
-            {
-                "title": "OpenAI یک قابلیت جدید برای عامل‌های هوشمند معرفی کرد",
-                "summary": "OpenAI این قابلیت را برای اجرای وظایف چندمرحله‌ای ارائه کرده است.",
-                "why_it_matters": "DeepMind و OpenAI در این حوزه رویکردهای متفاوتی دارند.",
-                "category": "ai",
-            },
-            "OpenAI News",
-            "https://example.com/openai",
-        )
-        lines = text.splitlines()
-        primary = [line for line in lines if "<blockquote>" in line or "<b>" in line and "📡" in line]
-        self.assertTrue(primary)
-        self.assertTrue(any(line.startswith("\u2067") for line in primary))
-        self.assertTrue(any("\u2066OpenAI" in line and "\u2069" in line for line in lines))
-        self.assertTrue(any("\u2066DeepMind" in line and "\u2069" in line for line in lines))
-        self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
-        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)

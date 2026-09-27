@@ -449,7 +449,7 @@ def main(*, skip_education: bool = False) -> int:
         # Apply topic diversity across independently selected special lanes so
         # a Voice/technical story cannot reintroduce the same theme already chosen
         # by another lane or by the recent publication history.
-        from src.dedup import load_seen
+        from src.dedup import load_seen, load_source_history
         from src.topic_repetition_guard import filter_topic_repetition
 
         _, recent_signatures = load_seen()

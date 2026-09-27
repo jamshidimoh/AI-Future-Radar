@@ -433,6 +433,29 @@ def main(*, skip_education: bool = False) -> int:
         for item in voices_candidates:
             print(f"[Voices/Perspectives Selection] rank={item.get('voices_period_rank')} score={item.get('voices_perspectives_score')} source={item.get('source')} person={item.get('person_name') or item.get('watch_person') or item.get('leader')} title={str(item.get('title', ''))[:120]}", flush=True)
 
+        # Apply topic diversity across independently selected special lanes so
+        # a Voice/technical story cannot reintroduce the same theme already chosen
+        # by another lane or by the recent publication history.
+        from src.dedup import load_seen
+        from src.topic_repetition_guard import filter_topic_repetition
+
+        _, recent_signatures = load_seen()
+        special_candidates = technical_candidates + mind_candidates + voices_candidates
+        special_candidates, special_blocked = filter_topic_repetition(
+            special_candidates,
+            recent_signatures,
+            current_items=normal_candidates,
+            window=int(EDITORIAL_CONTRACT.get("history_topic_guard_window", 24) or 24),
+            threshold=float(EDITORIAL_CONTRACT.get("history_topic_guard_threshold", 0.68) or 0.68),
+            soft_threshold=float(EDITORIAL_CONTRACT.get("history_topic_guard_soft_threshold", 0.62) or 0.62),
+            min_anchor_overlap=int(EDITORIAL_CONTRACT.get("history_topic_guard_min_anchor_overlap", 2) or 2),
+        )
+        if special_blocked:
+            print(f"[Cross-Lane Topic Guard] blocked={special_blocked} special_candidates={len(special_candidates)}", flush=True)
+        technical_candidates = [item for item in special_candidates if _is_technical_trend(item)]
+        mind_candidates = [item for item in special_candidates if _is_mind_ideas_voices(item)]
+        voices_candidates = [item for item in special_candidates if _is_voices_perspectives(item)]
+
         people_ids = {id(item) for item in people_items}
         special_ids = voices_ids | technical_ids | mind_ids
         normal_pool = [

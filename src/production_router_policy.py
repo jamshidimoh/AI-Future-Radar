@@ -172,7 +172,7 @@ def _install_production_circuit_breaker() -> None:
 
     max_attempts = max(1, int(os.getenv("RADAR_MAX_LLM_ATTEMPTS", "8") or 8))
     budget_seconds = max(5.0, float(os.getenv("RADAR_ROUTER_BUDGET_SECONDS", "24") or 24))
-    max_tokens = max(256, int(os.getenv("RADAR_LLM_MAX_TOKENS", "700") or 700))
+    max_tokens = max(256, int(os.getenv("RADAR_LLM_MAX_TOKENS", "950") or 950))
 
     def _call_litellm_guarded(system_prompt, user_content):
         litellm_router = router._get_litellm_router()

@@ -2,6 +2,7 @@
 # ruff: noqa: I001
 from __future__ import annotations
 
+import json
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -69,6 +70,64 @@ def parse_time(value: Any) -> float | None:
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+def load_published_people(feedback_path: str | Path | None = None) -> set[str]:
+    """Read successful People-lane publications from the persistent Telegram ledger."""
+    path = Path(feedback_path) if feedback_path is not None else Path(__file__).resolve().parents[1] / "data" / "telegram_feedback.json"
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, TypeError):
+        return set()
+    messages = payload.get("messages", {}) if isinstance(payload, dict) else {}
+    if not isinstance(messages, dict):
+        return set()
+    published: set[str] = set()
+    for record in messages.values():
+        if not isinstance(record, dict) or not record.get("people_lane"):
+            continue
+        person = str(
+            record.get("person_name")
+            or record.get("watch_person")
+            or record.get("leader")
+            or ""
+        ).strip()
+        if person:
+            published.add(person)
+    return published
+
+
+def reconcile_people_bootstrap_state(
+    state: dict[str, Any] | None,
+    *,
+    people: list[str] | None = None,
+    feedback_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Reconcile bootstrap delivery state with successful Telegram People publications."""
+    out = dict(state or {})
+    existing = {
+        str(value).strip()
+        for value in (out.get("delivered_people", []) if isinstance(out, dict) else [])
+        if str(value).strip()
+    }
+    published = load_published_people(feedback_path)
+    canonical = {
+        str(name).strip().casefold(): str(name).strip()
+        for name in (people or [])
+        if str(name).strip()
+    }
+    for name in published:
+        existing.add(canonical.get(name.casefold(), name))
+    out["delivered_people"] = sorted(existing)
+    baseline = out.get("baseline", {})
+    baseline_count = len(baseline) if isinstance(baseline, dict) else 0
+    out["delivered_count"] = len(existing)
+    out["people_count"] = baseline_count
+    if baseline_count >= 30 and len(existing) >= 30:
+        out["status"] = "complete"
+    elif str(out.get("status") or "").casefold() == "complete" and len(existing) < 30:
+        out["status"] = "in_progress"
+    return out
+
 
 
 def _item_text(item: dict[str, Any]) -> str:

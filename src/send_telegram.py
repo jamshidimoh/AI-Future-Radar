@@ -236,6 +236,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
     chatgpt_row = _rtl_text(
         f'🧠 <a href="{chatgpt_url}"><b>بررسی بیشتر با ChatGPT</b></a>',
         escape=False,
+        isolate_latin=False,
     )
 
     lines.extend(["", DIVIDER, source_row, source_link_row, "", chatgpt_row])

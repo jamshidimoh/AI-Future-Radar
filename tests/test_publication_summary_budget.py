@@ -18,12 +18,11 @@ def test_publication_summary_budget_keeps_rank_breadth_without_summarizing_all_r
 
     assert titles == [
         "tier0-high",
+        "tier0-low",
         "normal-1",
         "normal-2",
         "normal-3",
         "normal-4",
-        "normal-5",
-        "normal-6",
     ]
 
 

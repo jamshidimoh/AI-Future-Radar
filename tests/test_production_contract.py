@@ -19,7 +19,7 @@ def _load(path):
 
 def test_production_contract_is_explicit_and_versioned():
     data = _load(CONTRACT)
-    assert data["contract"]["version"] == 3
+    assert data["contract"]["version"] == 4
     assert data["contract"]["mission_policy"] == "config/mission_policy.yaml"
     assert data["contract"]["selection_policy"] == "config/selection_policy.yaml"
     assert data["contract"]["architecture_document"] == "ARCHITECTURE.md"
@@ -32,7 +32,7 @@ def test_protected_leader_and_source_contract_matches_current_configuration():
 
     protected = contract["protected"]
     assert protected["people"]["distinct_per_run"] is True
-    assert protected["people"]["max_slots"] == 2
+    assert protected["people"]["max_slots"] == 1
     source_names = {x["name"] for x in protected["sources"]}
     mission_names = {x["name"] for x in mission.get("protected_sources", [])}
     preferred_names = {x["name"] for x in sources.get("action_policy", {}).get("preferred_authoritative_sources", [])}
@@ -46,16 +46,17 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     selection = _load(SELECTION)["selection"]
     mission = _load(MISSION)["mission"]
     assert contract["max_posts"] == selection["max_posts"] == 3
-    assert mission["max_posts"] >= contract["max_posts"]
-    assert contract["candidate_window"] == 8
+    assert mission["max_posts"] == contract["max_posts"] == 3
+    assert contract["candidate_window"] == selection["candidate_window"] == 6
     assert contract["replacement_buffer"] == 3
     assert contract["preferred_max_same_source"] == mission["max_same_source"] == 1
     assert contract["hard_max_same_source"] == selection["max_items_per_source"] == 2
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
     assert contract["min_authoritative_items"] == mission["min_authoritative_items"]
     assert contract["community_max"] == mission["community_max"]
-    assert selection["diversity_mode"] == "adaptive"
+    assert selection["diversity_mode"] == "unified_final_portfolio"
     assert selection["distinct_sources_first"] is True
+    assert contract["max_posts"] == 3
 
 
 def test_mission_diversity_is_explicit_and_canonical():

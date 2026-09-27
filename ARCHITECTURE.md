@@ -22,7 +22,8 @@ Discovery
        -> authoritative/community boundary
        -> adaptive source diversity
        -> content-type and mission-area caps
-       -> replacement-aware candidate window (6)
+       -> shared three-slot core portfolio
+       -> replacement-aware candidate window (8 + bounded buffer)
   -> LLM transformation
   -> language / schema / editorial-quality gates
   -> ranked replacement candidates when a selected item fails QA

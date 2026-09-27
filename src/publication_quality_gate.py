@@ -113,7 +113,8 @@ def ensure_publication_quality(draft: dict, item: dict) -> dict | None:
 
     if not language_bad:
         draft["_publication_quality_verified"] = True
-        return force_rtl_blocks(json.dumps(draft, ensure_ascii=False)) and draft
+        force_rtl_blocks(json.dumps(draft, ensure_ascii=False))
+        return draft
 
     if not source_text:
         print("[Publication Quality Gate] blocked: language/entity defect without source evidence", flush=True)

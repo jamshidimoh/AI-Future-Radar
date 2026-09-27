@@ -130,7 +130,18 @@ google_news_queries:
   - {query: "future of intelligence AI long term", category: future, tier: 1, content_type: research}
 
 max_posts_per_run: 4
+# Discovery weighting is for recall/query allocation only; it is not a publication quota.
+# Publication composition is controlled centrally by selection_policy.yaml.
 category_weights: {ai: 0.70, quantum: 0.075, genetics: 0.075, mind: 0.075, future: 0.075}
+
+source_roles:
+  primary_research: {preferred_tier: 1, publication: true}
+  authoritative_reporting: {preferred_tier: 1, publication: true}
+  specialist_reporting: {preferred_tier: 2, publication: true}
+  expert_voice: {preferred_tier: 1, max_tier: 2, publication: true}
+  discovery_only: {publication: false}
+  community_aggregator: {publication: false}
+
 
 influential_people:
   - "Sam Altman"

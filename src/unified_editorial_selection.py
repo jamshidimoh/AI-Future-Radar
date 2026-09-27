@@ -87,6 +87,10 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "min_unique_core_sources": int(portfolio_cfg.get("min_unique_core_sources", mission.get("min_unique_sources", 3)) or 3),
         "max_same_core_source": int(portfolio_cfg.get("max_same_core_source", 1) or 1),
         "max_same_core_area": int(portfolio_cfg.get("max_same_core_area", 2) or 2),
+        "technical_lane_cap": int((portfolio_cfg.get("independent_lane_caps", {}) or {}).get("technical_trend", 1) or 1),
+        "mind_lane_cap": int((portfolio_cfg.get("independent_lane_caps", {}) or {}).get("mind_ideas_voices", 1) or 1),
+        "voices_lane_cap": int((portfolio_cfg.get("independent_lane_caps", {}) or {}).get("voices_perspectives", 1) or 1),
+        "strategic_lane_cap": int((portfolio_cfg.get("independent_lane_caps", {}) or {}).get("strategic_analytical", 1) or 1),
     }
 
 

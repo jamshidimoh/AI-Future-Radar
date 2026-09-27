@@ -28,8 +28,8 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertNotIn("\u202c", text)
         self.assertIn("<a href=\"", text)
         self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", text)
-        self.assertIn("🏛 <a href=", text)
-        self.assertIn("\u2066Google News (The Times of India)\u2069", text)
+        self.assertIn("\u2066🏛 Google News (The Times of India)\u2069", text)
+        self.assertIn("<a href=\"https://example.com/news\">مطالعه منبع اصلی</a>", text)
         self.assertIn("🗓 2026/08/13", text)
 
     def test_html_tags_are_not_corrupted_by_bidi_isolation(self):

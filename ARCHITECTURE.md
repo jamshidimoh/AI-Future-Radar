@@ -4,7 +4,7 @@
 
 AI Future Radar is a deterministic editorial pipeline that discovers technology signals, removes duplicates, evaluates relevance and evidence, constructs a mission-aware editorial portfolio, uses an LLM only for transformation and bounded quality repair, and delivers validated content to Telegram.
 
-The current production cadence is one normal news publication every 4 hours and one educational publication every 12 hours. Normal news capacity is three items per run; Tier-0 protected material is quota-exempt. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
+The current production cadence is one news publication cycle every 4 hours and one educational publication every 12 hours. Final news capacity is three items per run. Protected material may receive priority within those three slots; it does not create an additional publication quota. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
 
 The system must remain useful when any individual LLM provider, RSS feed, YouTube transport, or image source is unavailable.
 
@@ -22,7 +22,8 @@ Discovery
        -> authoritative/community boundary
        -> adaptive source diversity
        -> content-type and mission-area caps
-       -> replacement-aware candidate window (6)
+       -> candidate window (6) + replacement buffer (3)
+       -> unified final portfolio arbitration (3 publication slots)
   -> LLM transformation
   -> language / schema / editorial-quality gates
   -> ranked replacement candidates when a selected item fails QA
@@ -38,16 +39,17 @@ Collectors are not responsible for editorial selection. LLMs are not the sole au
 
 ## Unified editorial selection
 
-The selector has four explicit objectives, in order:
+The selector uses one final portfolio objective rather than separate publication quotas for each lane. It operates in this order:
 
-1. Protect eligible Tier-0/leader material without creating a publication bypass.
-2. Give eligible mission areas and research evidence explicit coverage opportunities.
-3. Prefer distinct sources in the current run while treating historical source usage as a bounded preference signal rather than a hard exclusion.
-4. Fill remaining capacity by calibrated editorial score while respecting hard source, content-type, mission-area and community limits.
+1. Protect at most one eligible Tier-0/leader candidate when its substantive-quality floor is met.
+2. Satisfy configured mission opportunities for AI Core, Convergence and Mind/Cognition when an eligible candidate is competitive with the current portfolio.
+3. Enforce source, content-type, mission-area, community and cross-run rotation constraints.
+4. Maximize portfolio value using editorial quality, evidence, freshness and bounded information gain.
+5. Return three primary candidates plus a bounded replacement buffer; replacements never increase publication capacity.
 
-Normal publication capacity is `max_posts=3`. The selector constructs a six-item candidate window (`candidate_window=6`); candidates beyond the first three are replacement candidates and never increase the publication quota. Transformation, editorial QA, language and publication policy apply equally to primary and replacement candidates.
+Normal publication capacity is `max_posts=3`. The canonical candidate window is `candidate_window=6` with `replacement_buffer=3` available downstream for late QA/delivery failures. Technical/Frontier, Mind/Ideas/Voices and Voices/Perspectives are candidate roles inside this portfolio, not additive publication quotas.
 
-`max_items_per_source=2` is the hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. This distinction prevents source concentration without collapsing the run when only a small set of sources is available.
+`max_items_per_source=2` is the hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. The allocator fills a new source before allowing a repeated source and never uses the replacement buffer to bypass the source cap.
 
 Mission targets are opportunities, not fabricated quotas. When an eligible candidate for convergence, mind/cognition, future/governance or research exists, the selector gives it an explicit opportunity; when no eligible candidate exists, the system continues without inventing coverage.
 
@@ -85,7 +87,7 @@ The radar has two distinct protected classes:
 - People: high-priority leaders such as Andrew Ng, Sam Altman, Demis Hassabis, Elon Musk, Jensen Huang and other configured leaders.
 - Protected sources: authoritative recurring sources such as MIT CSAIL — Building 32.
 
-Protected leader slots enforce diversity. The same person cannot occupy multiple protected slots in one run. Protected sources are priority candidates, not AI-relevance or publication-quality bypasses. They still cross normal deduplication, language, editorial-quality and delivery gates.
+Protected leader selection is deliberately limited to one final slot per run to preserve portfolio diversity. The same person cannot occupy multiple protected slots in one run. Protected sources are priority candidates, not AI-relevance or publication-quality bypasses. They still cross normal deduplication, language, editorial-quality and delivery gates.
 
 Protected classification and publication classification must remain aligned: a candidate marked Tier-0 by ranking must carry the same semantic status into the Publication Contract. A leader activity item is not automatically an interview; the interview/activity reason must remain explicit.
 
@@ -95,7 +97,7 @@ The LLM router is provider-agnostic. A provider that reports quota exhaustion, p
 
 If all providers fail, the item is not published. Invalid LLM JSON and insufficient Persian-language output never reach Telegram.
 
-A failed transformation or editorial-quality check does not automatically fail the whole run. The candidate is blocked and a lower-ranked replacement candidate may be attempted when one exists, subject to the same publication contract. This is bounded replacement, not quality relaxation.
+A failed transformation or editorial-quality check does not automatically fail the whole run. The candidate is blocked and a lower-ranked replacement candidate may be attempted when one exists, subject to the same final three-item publication capacity and the same publication contract. This is bounded replacement, not quality relaxation.
 
 ## Telegram delivery contract
 
@@ -137,7 +139,7 @@ Every production run reports:
 - Telegram message IDs and delivery mode
 - state persistence outcome
 
-Ranking audit artifacts should permit reconstruction of why each published or blocked candidate crossed each major boundary.
+Ranking audit artifacts should permit reconstruction of why each published or blocked candidate crossed each major boundary, including its lane roles, portfolio score, mission contribution, source-history saturation and replacement position.
 
 ## Regression strategy
 
@@ -145,7 +147,7 @@ The regression suite protects production contracts rather than only unit-level h
 
 `tests/test_production_contract.py` checks that the protected-source declaration, mission targets, selection mechanics, source registry, quality thresholds, source boundary and architecture document remain synchronized. `tests/test_unified_editorial_selection.py` tests behavior, including distinct-source preference, adaptive backfill, mission coverage opportunities, community exclusion and hard caps.
 
-A contract drift is a CI failure, not a silent editorial change. Any change to a production contract must update the corresponding regression test before production is considered ready.
+A contract drift is a CI failure, not a silent editorial change. The production contract is the authoritative cross-layer schema; runtime counters must reconcile to the same final news capacity. Any change to a production contract must update the corresponding regression test before production is considered ready.
 
 ## Design boundary
 

@@ -1,7 +1,7 @@
-# Production runtime verification trigger: diversity policy is intentional.
+# Production runtime verification trigger: unified portfolio policy is intentional.
 selection:
   max_posts: 3
-  candidate_window: 8
+  candidate_window: 6
   max_items_per_source: 2
   max_items_per_content_type: 2
   story_similarity_threshold: 0.45
@@ -15,9 +15,9 @@ selection:
   preferred_max_same_source: 1
   distinct_sources_first: true
   replacement_buffer: 3
-  diversity_quality_floor_ratio: 0.88
+  diversity_quality_floor_ratio: 0.90
   target_quality_floor_ratio: 0.92
-  mission_target_quality_floor_ratio: 0.80
+  mission_target_quality_floor_ratio: 0.82
   freshness_weight: 10.0
   freshness_half_life_hours: 24.0
   # Prevent materially repeated recent themes from re-entering normal news.
@@ -29,7 +29,7 @@ selection:
 
 editorial:
   leader_priority_weight: 2
-  leader_protected_max: 2
+  leader_protected_max: 1
   technical_depth_penalty: 3
   community_penalty: 30
   rotation_days: 7
@@ -41,19 +41,17 @@ editorial:
 # - candidate_window=8 keeps the canonical bounded replacement pool for QA/rejection.
 # - max_items_per_source=2 remains the adaptive ceiling and hard source cap. One item
 #   per source is preferred first; a second item is allowed only during adaptive backfill.
-# - The additive Mind/Ideas/Voices lane may add up to 2 qualifying special items per run.
-#   The lane is score/rank-driven within the existing bounded replacement pool, with
-#   the existing normal score floor and rank window still enforced.
+# - Mind/Ideas/Voices, Technical/Frontier and Voices/Perspectives are selection roles,
+#   not additive publication quotas. They compete for the same final three news slots.
 # - Qualifying scope includes influential technology/AI leaders and CEOs, scientists,
 #   theorists, public intellectuals, sociologists, scientifically grounded futurists,
 #   their substantive interviews/podcasts/talks/conversations, and AI-relevant work
 #   on consciousness, philosophy of mind/science/technology, cognitive science,
 #   neuroscience/brain, genetics/genomics/synthetic biology, foresight/futures,
 #   society and technology, and related interdisciplinary AI/future domains.
-# - The additive lane never changes the canonical ranking formula or the first three
-#   normal candidates. The effective limits remain the existing ranked pool, rank window,
-#   score floor, source/deduplication rules, language, editorial quality, grounding,
-#   Telegram safety, final publication contract, and the explicit two-item lane cap.
+# - Special lanes annotate candidates with domain-specific evidence and scoring; the
+#   final portfolio arbitrates all roles together. No special lane may expand the
+#   three-item final news capacity.
 # - Community/aggregator sources remain excluded.
 # - ai_core_target_min/max, mind_cognition_target and convergence_target remain explicit
 #   normal-portfolio controls. They are filled after the normal eligibility/safety gates;
@@ -61,7 +59,7 @@ editorial:
 # - diversity_quality_floor_ratio=0.88 preserves a strong general quality floor.
 # - mission_target_quality_floor_ratio=0.80 allows explicit Mind/Convergence coverage to
 #   survive when it is still within 80% of the strongest admissible alternative.
-# - max_same_mission_area=2 prevents an AI-only or single-domain normal run.
+# - max_same_mission_area=2 prevents an AI-only or single-domain final portfolio.
 # - Information gain is a bounded soft reranker; quality remains dominant.
 # - Current-portfolio entity/leader repetition receives explicit soft penalties.
 # - Recent publication history contributes topic/entity saturation penalties so
@@ -70,4 +68,5 @@ editorial:
 # - Same-story duplication remains a hard rejection at the canonical/publication
 #   gates; novelty penalties do not replace semantic duplicate detection.
 # - Education remains an independent scheduled product stream and is recovered fail-closed.
+# - The replacement buffer is candidate breadth only; it never increases final Telegram capacity.
 # - Strategic Analytical Lane remains separate and limited to one mission-critical signal.

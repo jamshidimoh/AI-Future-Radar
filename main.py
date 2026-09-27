@@ -285,53 +285,17 @@ def _split_protected(items, max_protected=2):
 
 
 def _publication_summary_budget(items, max_posts, policy):
+    """Keep the unified portfolio and its bounded replacement buffer intact."""
     buffer = max(0, int(policy.get("replacement_buffer", 3) or 3))
-    people = [x for x in items if x.get("people_lane")]
-    people_ids = {id(x) for x in people}
-    mind = [x for x in items if id(x) not in people_ids and _is_mind_ideas_voices(x)][:MAX_MIND_IDEAS_VOICES_PER_PERIOD]
-    mind_ids = {id(x) for x in mind}
-    voices = [x for x in items if _is_voices_perspectives(x)]
-    voices = voices[:1]
-    voices_ids = {id(x) for x in voices}
-    technical = [x for x in items if _is_technical_trend(x)]
-    technical = technical[:1]
-    technical_ids = {id(x) for x in technical}
-    protected = [
-        x for x in items
-        if (x.get("protected_slot") or x.get("protected_content"))
-        and id(x) not in people_ids
-        and id(x) not in mind_ids
-        and id(x) not in voices_ids
-        and id(x) not in technical_ids
-    ]
-    special_ids = mind_ids | voices_ids | technical_ids
-    normal = [
-        x for x in items
-        if id(x) not in people_ids and id(x) not in special_ids and x not in protected
-    ]
-    eligible_protected = [
-        x for x in protected
-        if float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0) >= PROTECTED_SUMMARY_SCORE_FLOOR
-    ]
-    normal_window = max_posts + buffer
-    # Every independent lane that survived editorial selection must survive the
-    # summary budget too. Otherwise the lane can be correctly selected and then
-    # silently disappear before Telegram publication.
-    bounded = (
-        eligible_protected[:max_posts]
-        + normal[:normal_window]
-        + technical
-        + mind
-        + voices
-        + people
-    )
+    education = [x for x in items if str(x.get("content_type") or "").strip().casefold() == "education"]
+    news = [x for x in items if x not in education]
+    normal_window = max(0, int(max_posts or 0)) + buffer
+    bounded_news = unique_candidates(news)[:normal_window]
+    bounded = education + bounded_news
     print(
-        f"[Publication Summary Budget] input={len(items)} protected={len(eligible_protected)} "
-        f"normal={len(normal[:normal_window])} technical_trend={len(technical)} "
-        f"mind_ideas_voices={len(mind)} voices_perspectives={len(voices)} "
-        f"normal_window={normal_window} output={len(bounded)} normal_limit={normal_window} "
-        f"mind_limit={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_limit=1 replacement_buffer={buffer} "
-        f"normal_score_floor={NORMAL_SCORE_FLOOR} special_lanes_score_floor=not_applied",
+        f"[Publication Summary Budget] mode=unified_portfolio input={len(items)} news={len(news)} "
+        f"education={len(education)} output_news={len(bounded_news)} final_capacity={max_posts} "
+        f"candidate_window={normal_window} replacement_buffer={buffer}",
         flush=True,
     )
     return bounded
@@ -851,6 +815,8 @@ def main(hooks=None):
         nonlocal lazy_replacements, next_candidate_index
         if lazy_replacements >= replacement_limit:
             return None
+        if sent >= int(max_posts):
+            return None
         while next_candidate_index < len(editorial_pool):
             candidate = editorial_pool[next_candidate_index]
             next_candidate_index += 1
@@ -858,30 +824,28 @@ def main(hooks=None):
             if identity in publication_attempted:
                 continue
             mind = _is_mind_ideas_voices(candidate)
-            raw_score = (
-                candidate.get("mind_editorial_score")
-                if mind
-                else candidate.get("final_editorial_score", candidate.get("editorial_score", 0))
-            )
-            score = float(
-                raw_score if raw_score is not None else mind_ideas_voices_score(candidate) if mind else 0
-            )
-            if mind and "mind_editorial_score" not in candidate:
-                score = mind_ideas_voices_score(candidate)
+            special = mind or _is_technical_trend(candidate) or _is_voices_perspectives(candidate) or bool(candidate.get("people_lane"))
+            if mind:
+                score = float(candidate.get("mind_editorial_score", 0) or 0)
+            elif _is_technical_trend(candidate):
+                score = float(candidate.get("technical_trend_score", 0) or 0)
+            elif _is_voices_perspectives(candidate):
+                score = float(candidate.get("voices_perspectives_score", 0) or 0)
+            else:
+                score = float(candidate.get("final_editorial_score", candidate.get("editorial_score", 0)) or 0)
             if mind and score < MIND_IDEAS_VOICES_SCORE_FLOOR:
                 continue
-            if not mind:
-                if candidate.get("protected_content"):
-                    if score < PROTECTED_SUMMARY_SCORE_FLOOR:
-                        continue
-                else:
-                    normal_rank = candidate.get("normal_period_rank")
-                    try:
-                        normal_rank = int(normal_rank)
-                    except (TypeError, ValueError):
-                        continue
-                    if normal_rank > int(policy.get("candidate_window", 6) or 6) or score < NORMAL_SCORE_FLOOR:
-                        continue
+            if special and not mind:
+                if candidate.get("protected_content") and score < PROTECTED_SUMMARY_SCORE_FLOOR:
+                    continue
+            elif not special:
+                normal_rank = candidate.get("normal_period_rank")
+                try:
+                    normal_rank = int(normal_rank)
+                except (TypeError, ValueError):
+                    continue
+                if normal_rank > int(policy.get("candidate_window", RANK_WINDOW) or RANK_WINDOW) or score < NORMAL_SCORE_FLOOR:
+                    continue
             candidate = dict(candidate)
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
@@ -891,8 +855,20 @@ def main(hooks=None):
             candidate["source_image"] = resolve_source_image(candidate)
             publication_attempted.add(identity)
             lazy_replacements += 1
-            lane = "mind_ideas_voices" if mind else ("protected" if candidate.get("protected_content") else "normal")
-            print(f"[Publication Lazy Refill] prepared replacement={lazy_replacements}/{replacement_limit} lane={lane} normal_rank={candidate.get('normal_period_rank')} mind_rank={candidate.get('mind_period_rank')} score={score}", flush=True)
+            lane = (
+                "people" if candidate.get("people_lane")
+                else "mind_ideas_voices" if mind
+                else "technical_trend" if _is_technical_trend(candidate)
+                else "voices_perspectives" if _is_voices_perspectives(candidate)
+                else "normal"
+            )
+            print(
+                f"[Publication Lazy Refill] prepared replacement={lazy_replacements}/{replacement_limit} "
+                f"lane={lane} normal_rank={candidate.get('normal_period_rank')} "
+                f"mind_rank={candidate.get('mind_period_rank')} technical_rank={candidate.get('technical_trend_period_rank')} "
+                f"voices_rank={candidate.get('voices_period_rank')} score={score}",
+                flush=True,
+            )
             return candidate
         return None
 

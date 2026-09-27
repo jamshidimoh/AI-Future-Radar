@@ -130,8 +130,20 @@ def is_voices_candidate(item: dict[str, Any]):
         expert_people or expert_deep_lane or _matched_people(item)
         or any(str(item.get(k) or "").strip() for k in PERSON_KEYS)
     )
-    return _ai_relevant(item) and person_signal and substantive_identity and (
-        voice_signal or priority_person or expert_deep_lane
+    try:
+        source_tier = int(item.get("source_tier", 3) or 3)
+    except (TypeError, ValueError):
+        source_tier = 3
+    source_type = str(item.get("source_type") or item.get("type") or "").strip().casefold()
+    source_is_authoritative = source_tier <= 2 or source_type in {"official", "university", "scientific", "specialist", "expert_interviews", "research_lab"}
+    direct_interview = _direct_interview_signal(item)
+    substantive_voice_context = bool(
+        expert_deep_lane
+        or str(item.get("editorial_class") or "").strip().casefold() == "leader_interview"
+        or (voice_signal and str(item.get("mission_area") or "").strip().casefold() in {"mind_cognition", "future_governance", "convergence"})
+    )
+    return _ai_relevant(item) and person_signal and substantive_identity and source_is_authoritative and (
+        direct_interview or substantive_voice_context
     )
 
 

@@ -40,7 +40,6 @@ def find_topic_repetition(
     """Return the strongest recent topic repetition score and matched title."""
     best_score = 0.0
     best_title = ""
-    candidate = get_story_signature(item)
     for prior in history or ():
         score, anchors = _topic_score(item, prior)
         if score < soft_threshold or anchors < min_anchor_overlap:

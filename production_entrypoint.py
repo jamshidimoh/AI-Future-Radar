@@ -34,8 +34,8 @@ CADENCE_PATH = ROOT / "data" / "publication_state.json"
 EDITORIAL_CONTRACT = load_editorial_contract()
 MAX_NORMAL_NEWS_PER_PERIOD = int(EDITORIAL_CONTRACT.get("core_capacity", 3) or 3)
 # Special editorial lanes share the three core publication slots.
-MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
-MAX_TECHNICAL_TREND_PER_PERIOD = 1
+MAX_MIND_IDEAS_VOICES_PER_PERIOD = int(EDITORIAL_CONTRACT.get("mind_lane_cap", 1) or 1)
+MAX_TECHNICAL_TREND_PER_PERIOD = int(EDITORIAL_CONTRACT.get("technical_lane_cap", 1) or 1)
 MAX_VOICES_PERSPECTIVES_PER_PERIOD = MAX_VOICES_PER_PERIOD
 # Bootstrap still establishes all 30 baselines, but publication is batched so
 # one run does not flood Telegram or suppress the independent Mind/Voices lanes.

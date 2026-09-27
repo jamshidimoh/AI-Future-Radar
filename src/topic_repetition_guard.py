@@ -207,7 +207,6 @@ def filter_topic_repetition(
             same_family_soft = (
                 _topic_family(item)[0]
                 and _topic_family(item)[0] == _topic_family(best[2])[0]
-                and best[0] >= 0.15
                 and _topic_family(item)[1] >= 2
                 and _topic_family(best[2])[1] >= 2
             )

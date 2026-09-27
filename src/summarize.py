@@ -8,7 +8,7 @@ from pathlib import Path
 from src.claim_verification import deterministic_precheck, semantic_verify
 from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_editorial_naturalness_ok, persian_ratio
 from src.education_editor import news_terminology_review_prompt, normalize_news_editorial_text
-from src.llm_router_light import call_llm_with_fallback, get_quality_chain
+from src.llm_router_light import _disable, call_llm_with_fallback, get_quality_chain
 from src.rejection_telemetry import build_event, emit
 
 _DEPTH = {
@@ -56,6 +56,18 @@ why_it_matters باید 3 تا 4 جمله کامل فارسی باشد و یک �
 
 پیش‌نویس:
 {draft}
+
+متن منبع:
+{source}"""
+
+_JSON_RECOVERY_PROMPT = """پاسخ قبلی مدل برای این خبر JSON معتبر نبود یا ناقص بود.
+از متن منبع و پاسخ ناقص زیر فقط برای استخراج اطلاعات استفاده کن و یک پاسخ جدید تولید کن.
+خروجی فقط یک شیء JSON معتبر و کامل باشد، بدون Markdown، بدون توضیح اضافی و بدون کوتاه‌کردن رشته‌ها.
+کلیدها دقیقاً این‌ها باشند: title, summary, why_it_matters, speakers, key_quote, category.
+نام رسمی افراد، شرکت‌ها، محصولات و مدل‌ها را Latin نگه دار. summary سه تا پنج جمله کامل و why_it_matters سه تا چهار جمله کامل باشد. هیچ ادعای جدیدی اضافه نکن.
+
+پاسخ ناقص مدل:
+{raw}
 
 متن منبع:
 {source}"""
@@ -469,8 +481,25 @@ def summarize_item(item):
     try:
         final = _normalize(_extract_json(raw), item)
     except (json.JSONDecodeError, TypeError, ValueError) as exc:
-        print(f"[WARN] Summary JSON invalid: {exc}", flush=True)
-        return None
+        print(f"[WARN] Summary JSON invalid: {exc}; attempting one bounded provider recovery", flush=True)
+        if provider:
+            try:
+                _disable(provider, "transient")
+            except (TypeError, ValueError):
+                pass
+        recovery_prompt = _JSON_RECOVERY_PROMPT.format(raw=str(raw or "")[:5000], source=raw_text[:3500])
+        try:
+            recovered_raw, recovered_provider = call_llm_with_fallback(
+                recovery_prompt,
+                json.dumps({"invalid_response": str(raw or "")[:5000], "source": raw_text[:3500]}, ensure_ascii=False),
+                providers=get_quality_chain(),
+            )
+            final = _normalize(_extract_json(recovered_raw or ""), item)
+            provider = recovered_provider or provider
+            print(f"[Summary JSON Recovery] success provider={provider}", flush=True)
+        except (json.JSONDecodeError, TypeError, ValueError) as recovery_exc:
+            print(f"[Summary JSON Recovery] failed: {recovery_exc}", flush=True)
+            return None
 
     editorial_provider = None
     if _language_ok(final) and _length_ok(final, raw_text):

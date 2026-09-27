@@ -42,7 +42,9 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
     mission_doc = _load_yaml(MISSION_PATH)
     mission = mission_doc.get("mission", {})
     rotation_cfg = mission_doc.get("rotation", {})
-    selection_cfg = selection or _load_yaml(SELECTION_PATH).get("selection", {})
+    selection_doc = _load_yaml(SELECTION_PATH)
+    selection_cfg = selection or selection_doc.get("selection", {})
+    portfolio_cfg = selection_doc.get("portfolio", {})
     return {
         "max_posts": int(selection_cfg.get("max_posts", mission.get("operational_publication_capacity", 4)) or 4),
         "candidate_window": int(selection_cfg.get("candidate_window", 8) or 8),

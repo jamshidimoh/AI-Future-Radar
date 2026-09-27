@@ -1,4 +1,4 @@
-from src.topic_repetition_guard import filter_history_topic_repetition
+from src.topic_repetition_guard import filter_history_topic_repetition, filter_topic_repetition
 
 
 def _sig(title, summary, anchors):
@@ -57,3 +57,45 @@ def test_history_topic_guard_preserves_material_update():
     )
     assert blocked == 0
     assert kept == candidates
+
+
+def test_history_topic_guard_blocks_same_theme_even_with_different_wording():
+    history = [_sig(
+        "Leading AI researchers debate existential risk",
+        "Researchers discuss AI safety and the possibility of catastrophic outcomes.",
+        ["ai", "superintelligence"],
+    )]
+    candidates = [{
+        "title": "Experts call for caution as advanced AI capabilities accelerate",
+        "summary": "The discussion focuses on controlling increasingly capable systems and potential extreme risks.",
+    }]
+    kept, blocked = filter_history_topic_repetition(
+        candidates,
+        history,
+        threshold=0.68,
+        soft_threshold=0.62,
+        min_anchor_overlap=2,
+    )
+    assert blocked == 1
+    assert kept == []
+
+
+def test_current_run_topic_guard_prevents_cross_lane_theme_collision():
+    selected = [{
+        "title": "AI safety researchers warn about loss of control",
+        "summary": "The discussion centers on alignment and catastrophic risk.",
+    }]
+    candidate = {
+        "title": "Another expert discusses how to slow down advanced AI",
+        "summary": "The proposal concerns safety, control, and slowing development.",
+    }
+    kept, blocked = filter_topic_repetition(
+        [candidate],
+        [],
+        current_items=selected,
+        threshold=0.68,
+        soft_threshold=0.62,
+        min_anchor_overlap=2,
+    )
+    assert blocked == 1
+    assert kept == []

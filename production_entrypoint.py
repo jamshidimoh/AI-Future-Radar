@@ -18,7 +18,7 @@ from src.editorial_quality_policy import (
     protected_score_allowed,
 )
 from src.logging_setup import configure_logging
-from src.people_watch import item_timestamp
+from src.people_watch import filter_people_person_cooldown, item_timestamp
 from src.priority_people import is_substantive_priority_interview
 from src.protected_editorial_lane import choose_additive_candidates
 from src.state_io import StateCorruptionError, load_json_state
@@ -446,8 +446,45 @@ def main(*, skip_education: bool = False) -> int:
             unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
         )
 
+        # Apply topic diversity across independently selected special lanes so
+        # a Voice/technical story cannot reintroduce the same theme already chosen
+        # by another lane or by the recent publication history.
+        from src.dedup import load_seen, load_source_history
+        from src.topic_repetition_guard import filter_topic_repetition
+
+        _, recent_signatures = load_seen()
+        special_candidates = technical_candidates + mind_candidates + voices_candidates
+        special_candidates, special_blocked = filter_topic_repetition(
+            special_candidates,
+            recent_signatures,
+            current_items=normal_candidates,
+            window=int(EDITORIAL_CONTRACT.get("history_topic_guard_window", 24) or 24),
+            threshold=float(EDITORIAL_CONTRACT.get("history_topic_guard_threshold", 0.68) or 0.68),
+            soft_threshold=float(EDITORIAL_CONTRACT.get("history_topic_guard_soft_threshold", 0.62) or 0.62),
+            min_anchor_overlap=int(EDITORIAL_CONTRACT.get("history_topic_guard_min_anchor_overlap", 2) or 2),
+        )
+        if special_blocked:
+            print(f"[Cross-Lane Topic Guard] blocked={special_blocked} special_candidates={len(special_candidates)}", flush=True)
+        technical_candidates = [item for item in special_candidates if _is_technical_trend(item)]
+        mind_candidates = [item for item in special_candidates if _is_mind_ideas_voices(item)]
+        voices_candidates = [item for item in special_candidates if _is_voices_perspectives(item)]
+
+        selected_people = bootstrap_people if bootstrap_count else people_items
+        if not bootstrap_count and people_items:
+            selected_people, people_blocked = filter_people_person_cooldown(
+                people_items,
+                load_source_history(),
+                window=int(EDITORIAL_CONTRACT.get("people_person_cooldown_publications", 8) or 8),
+            )
+            if people_blocked:
+                print(
+                    f"[People Selection] person_cooldown_blocked={people_blocked} "
+                    f"remaining={len(selected_people)}",
+                    flush=True,
+                )
+
         candidates = unique_candidates(
-            (bootstrap_people if bootstrap_count else people_items)
+            selected_people
             + normal_candidates
             + technical_candidates
             + mind_candidates

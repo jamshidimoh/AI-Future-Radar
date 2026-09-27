@@ -179,33 +179,33 @@ def _rtl_html_fragment(text):
     return f"{RLM}{value}{RLM}"
 
 def format_post(summary_data, source_name, link, is_video=False, published="", content_type="news", source_tier=3, source_type="news", leader=""):
+    """Build a compact Persian-first Telegram card with stable bidirectional text."""
     title_raw = str(summary_data.get("title", "")).strip()
     summary_raw = str(summary_data.get("summary", "")).strip()
     why_raw = str(summary_data.get("why_it_matters", "")).strip()
     quote_raw = str(summary_data.get("key_quote", "")).strip()
-    model = _model_name(summary_data)
     date = _gregorian_date(published)
 
     title_html = _isolate_latin_html(_esc(title_raw))
-    lines = [f"{RLM}<b>{TITLE_ICON} {title_html}</b>{RLM}", ""]
+    lines = [f"{RLM}<b>📡 {title_html}</b>{RLM}", ""]
     if summary_raw:
-        lines.extend([f"{RLM}<b>📌 خلاصه</b>{RLM}", _rtl_html_fragment(summary_raw)])
+        lines.extend([f"{RLM}<b>خلاصه 📌</b>{RLM}", _rtl_html_fragment(summary_raw)])
     if why_raw:
-        lines.extend(["", f"{RLM}<b>💡 چرا مهم است؟</b>{RLM}", _rtl_html_fragment(why_raw)])
+        lines.extend(["", f"{RLM}<b>اهمیت 💡</b>{RLM}", _rtl_html_fragment(why_raw)])
     if quote_raw and content_type in {"interview", "podcast", "talk", "lecture", "conversation", "q&a"}:
-        lines.extend(["", f"{RLM}<b>💬 نقل‌قول کلیدی</b>{RLM}", _rtl_html_fragment(f"«{quote_raw}»")])
+        lines.extend(["", f"{RLM}<b>نقل‌قول کلیدی 💬</b>{RLM}", _rtl_html_fragment(f"«{quote_raw}»")])
 
     source_name_clean = str(source_name or "منبع").strip()
     source_url = _esc(link, quote=True)
     source_fragment = f'<a href="{source_url}">{_isolate_latin_html(_esc(source_name_clean))}</a>' if link else _isolate_latin_html(_esc(source_name_clean))
-    lines.extend(["", DIVIDER, f"{RLM}🏛 {source_fragment}{RLM}"])
+    lines.extend(["", DIVIDER, f"{RLM}منبع: {source_fragment}{RLM}"])
     if date:
-        lines.append(f"{RLM}🗓 تاریخ انتشار: {_esc(date)}{RLM}")
-    if model:
-        lines.append(f"{RLM}🤖 مدل پردازش: {_isolate_latin_html(_esc(model))}{RLM}")
+        lines.append(f"{RLM}تاریخ انتشار: {date}{RLM}")
     if link:
-        lines.append(f"{RLM}🔗 <a href=\"{source_url}\">مطالعه منبع اصلی</a>{RLM}")
-    lines.extend(["", f"{RLM}🧠 <a href=\"{_esc(_chatgpt_link(title_raw, link), quote=True)}\"><b>بررسی بیشتر با ChatGPT</b></a>{RLM}"])
+        lines.append(f'{RLM}<a href="{source_url}">🔗 مطالعه منبع اصلی</a>{RLM}')
+    lines.append(
+        f'{RLM}<a href="{_esc(_chatgpt_link(title_raw, link), quote=True)}">🧠 بررسی بیشتر با ChatGPT</a>{RLM}'
+    )
     return "\n".join(lines)
 
 def resolve_source_image(item):

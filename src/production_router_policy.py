@@ -1,6 +1,7 @@
 """Production-only LLM routing policy with bounded, quota-aware failover."""
 from __future__ import annotations
 
+import json
 import logging
 import os
 import re
@@ -97,6 +98,14 @@ def _persistently_unavailable(deployment_id: str, *, recovery_probe: bool = Fals
         return False
     return True
 
+def _omniroute_structured_json_ok(content: str) -> bool:
+    raw = str(content or '').strip()
+    try:
+        return isinstance(json.loads(raw), dict)
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return False
+
+
 def _omniroute_call(system_prompt, user_content):
     """Try OmniRoute first when an operator exposes a live gateway endpoint.
 
@@ -138,6 +147,8 @@ def _omniroute_call(system_prompt, user_content):
             content = message.get("content")
         if not content:
             raise RuntimeError("OmniRoute response has no content")
+        if not _omniroute_structured_json_ok(content):
+            raise RuntimeError("OmniRoute returned invalid structured JSON; response rejected before editorial pipeline")
         decision = response.headers.get("X-OmniRoute-Decision", "")
         selected = str(data.get("model") or decision or model)
         print(

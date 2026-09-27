@@ -256,6 +256,72 @@ def deduplicate_people_signals(
     return survivors
 
 
+def filter_people_person_cooldown(
+    items: list[dict[str, Any]],
+    source_history: list[dict[str, Any]] | None = None,
+    *,
+    window: int = 8,
+) -> tuple[list[dict[str, Any]], int]:
+    """Rotate People publications without sacrificing the only eligible signal."""
+    recent = [
+        row for row in list(source_history or [])[-max(0, int(window)):]
+        if isinstance(row, dict)
+        and str(row.get("content_type") or "").strip().lower()
+        in {"interview", "podcast", "talk", "conversation", "leader_signal", "people"}
+    ] if window else []
+    recent_people = {
+        str(row.get("leader") or "").strip().casefold()
+        for row in recent
+        if str(row.get("leader") or "").strip()
+    }
+
+    kept: list[dict[str, Any]] = []
+    blocked_items: list[dict[str, Any]] = []
+    blocked = 0
+    for item in items:
+        person = str(
+            item.get("person_name")
+            or item.get("watch_person")
+            or item.get("leader")
+            or ""
+        ).strip()
+        protected = bool(
+            item.get("protected_content")
+            or item.get("_named_leader_interview")
+            or item.get("leader_watch_protected")
+        )
+        if person and person.casefold() in recent_people and not protected:
+            blocked_items.append(item)
+            blocked += 1
+            print(
+                f"[People Cooldown] blocked person={person} window={len(recent)} "
+                f"title={str(item.get('title') or '')[:120]}",
+                flush=True,
+            )
+            continue
+        kept.append(item)
+
+    # Fail open when cooldown would otherwise erase the whole People lane.
+    if not kept and blocked_items:
+        fallback = max(
+            blocked_items,
+            key=lambda item: float(
+                item.get("people_score")
+                or item.get("leader_score")
+                or item.get("score")
+                or 0
+            ),
+        )
+        kept.append(fallback)
+        blocked -= 1
+        print(
+            f"[People Cooldown] fail_open=true person="
+            f"{str(fallback.get('person_name') or fallback.get('watch_person') or fallback.get('leader') or '').strip()}",
+            flush=True,
+        )
+
+    return kept, max(0, blocked)
+
 def build_bootstrap_state(
     *,
     bootstrap_at: str,

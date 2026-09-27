@@ -25,6 +25,7 @@ selection:
   history_topic_guard_threshold: 0.68
   history_topic_guard_soft_threshold: 0.62
   history_topic_guard_min_anchor_overlap: 2
+  people_person_cooldown_publications: 8
 
 editorial:
   leader_priority_weight: 2

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790502181,
+  "updated_at": 1790503388,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -15862,6 +15862,44 @@
       "why_it_matters": "با توجه به تأکید پیر بر ارتباط بین فقدان، هوش مصنوعی و زیونوفوبیا، عدم توجه به این عوامل می‌تواند باعث تکرار تعصبات تاریخی در سیستم‌های هوش مصنوعی شود. او نشان داد که شناخت این مسائل می‌تواند به سیاستگذاران و توسعه‌دهندگان کمک کند تا چارچوب‌های اخلاقی و شفاف‌سازی‌پذیر برای AI ایجاد کنند. این رویکرد می‌تواند به کاهش تبعیض‌های دیجیتالی و افزایش اعتماد عمومی به فناوری‌های هوش مصنوعی منجر شود.",
       "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNNHdfVmc3a0RNX0tOZnZoZUZSUnRienhzZ2ZPTkFMTlo3TE5pOTNCWXlSZ0hJTW1pTjFWUUQyNjVzQW00a29Oc21ocDZ4Vk1mcjlOYTdsNWpGQ3ROaGlZYUN5N3FJc2pITFFfUVpYUmZvNnZVVHhfWXVRUUNSRU1XMlZQSTYxZWJmaDAxV0VwQXJTU0ZqT0tPODFkd3VNV2JGOTctek90SXY0bmVJWk5XZnZBbFh6dHFk?oc=5",
       "posted_at": 1790502181
+    },
+    "-1004482051328:1952": {
+      "chat_id": -1004482051328,
+      "message_id": 1952,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "ژاپن رکورد جدید گردشگری را ثبت کرد",
+      "summary": "ژاپن در سال ۲۰۲۵ بیشترین تعداد بازدیدکنندگان را به‌دست آورد؛ رشد چشمگیری در سال‌های ۲۰۲۳ و ۲۰۲۴ داشته است. این افزایش باعث شلوغی بیش از حد در مکان‌های تاریخی مانند توکیو و کوه فوجی شد. برای کاهش فشار، دولت بلیط‌های رایگان داخلی هوایی ارائه کرد تا گردشگران به مناطق کمتر شناخته‌شده جذب شوند. جزئیات بیشتر در گزارش «Travel and Tourism Development Index 2026» سازمان World Economic Forum موجود است.",
+      "description": "Japan welcomed a record number of visitors in 2025, after large rises in 2024 and 2023.\n\nYear-on-year growth sounds like a good thing, but there are downsides to new #tourism records.\n\nSome of Japan’s most historic sites, such as Tokyo and Mount Fuji, became overcrowded. So what did Japan do? It took measures to promote its more overlooked regions - including offering free domestic plane tickets.\n\nFor more about why #Japan has been crowned the world’s most tourism-ready country, read the World Economic Forum’s Travel and Tourism Development Index 2026: https://www.weforum.org/publications/travel-tourism-development-index-2026/\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "رکورد گردشگری نشان‌دهنده جذابیت ژاپن برای مسافران بین‌المللی است، اما تراکم بیش از حد می‌تواند به تخریب میراث فرهنگی و کاهش کیفیت تجربه بازدیدکنندگان منجر شود. توزیع گردشگر به مناطق کمتر شناخته‌شده فشار بر مکان‌های مشهور را کم می‌کند و فرصت‌های اقتصادی جدیدی برای این مناطق ایجاد می‌کند؛ رویکردی که می‌تواند برای سایر مقاصد جهان الگو باشد.",
+      "link": "https://www.youtube.com/shorts/dixUxL01ryc",
+      "posted_at": 1790503384
+    },
+    "-1004482051328:1953": {
+      "chat_id": -1004482051328,
+      "message_id": 1953,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "ربات‌های OpenAI ۱۶٬۰۰۰ درخواست به پایگاه داده سازمان ملل ارسال کردند و فیلتر امنیتی را دور زدند",
+      "summary": "گزارش Wall Street Journal توسط رابرٹ مک‌میلان نشان می‌دهد که ربات‌های خودکار OpenAI بین آوریل و پایان ژوئن بیش از ۱۶٬۰۰۰ بار به پایگاه داده عمومی سازمان ملل (UN) درخواست ارسال کردند. این درخواست‌ها با استفاده از تکنیک‌های پیشرفته فیلتر حفاظتی که دسترسی را مسدود می‌کرد، عبور کردند. پژوهشگران تأیید کردند که این عملیات کاملاً خودکار و بدون نظارت انسانی انجام شد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این حادثه نشان می‌دهد که فیلترهای حفاظتی مبتنی بر بلوک‌کردن درخواست می‌توانند توسط ربات‌های هوش مصنوعی با حملهٔ فشار (rate‑spamming) دور زده شوند. نتیجهٔ این امر، نیاز به مکانیزم‌های محدودسازی نرخ درخواست و تشخیص رفتار خودکار در وب‌سایت‌های دولتی و بین‌المللی را تقویت می‌کند. بدون این اقدامات، استخراج انبوه داده و نقض حریم‌خصوصی در منابع عمومی امکان‌پذیر می‌شود.",
+      "link": "https://www.techmeme.com/260926/p19#a260926p19",
+      "posted_at": 1790503388
     }
   }
 }

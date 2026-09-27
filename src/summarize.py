@@ -7,7 +7,7 @@ from pathlib import Path
 
 from src.claim_verification import deterministic_precheck, semantic_verify
 from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_editorial_naturalness_ok, persian_ratio
-from src.education_editor import news_terminology_review_prompt, normalize_editorial_text
+from src.education_editor import news_terminology_review_prompt, normalize_news_editorial_text
 from src.llm_router_light import call_llm_with_fallback, get_quality_chain
 from src.rejection_telemetry import build_event, emit
 
@@ -132,10 +132,10 @@ def _normalize(data, item):
     if not isinstance(data, dict):
         raise TypeError("summary must be an object")
     data["category"] = item.get("category", "ai")
-    data["title"] = normalize_editorial_text(str(data.get("title", item.get("title", "")))[:160].strip())
-    data["summary"] = normalize_editorial_text(str(data.get("summary", "")).strip())
-    data["why_it_matters"] = normalize_editorial_text(str(data.get("why_it_matters", "")).strip())
-    data["speakers"] = normalize_editorial_text(str(data.get("speakers", "")).strip())
+    data["title"] = normalize_news_editorial_text(str(data.get("title", item.get("title", "")))[:160].strip())
+    data["summary"] = normalize_news_editorial_text(str(data.get("summary", "")).strip())
+    data["why_it_matters"] = normalize_news_editorial_text(str(data.get("why_it_matters", "")).strip())
+    data["speakers"] = normalize_news_editorial_text(str(data.get("speakers", "")).strip())
     known_people = [
         str(x).strip()
         for x in (item.get("voice_identity_people") or item.get("people") or [])
@@ -149,7 +149,7 @@ def _normalize(data, item):
         missing = [name for name in known_people if name.casefold() not in speaker_text.casefold()]
         if missing:
             data["speakers"] = ", ".join([speaker_text, *missing]).strip(", ") if speaker_text else ", ".join(known_people)
-    data["key_quote"] = normalize_editorial_text(str(data.get("key_quote", "")).strip()[:240])
+    data["key_quote"] = normalize_news_editorial_text(str(data.get("key_quote", "")).strip()[:240])
     source_text = _source_text(item)
     if data["key_quote"] and data["key_quote"] not in source_text:
         data["key_quote"] = ""
@@ -185,7 +185,7 @@ def _value_ok(data, source_text):
 
 def _fallback_title_from_persian_summary(data):
     """Provider-independent title recovery when all translation models are unavailable."""
-    summary = normalize_editorial_text(str(data.get("summary", "")).strip())
+    summary = normalize_news_editorial_text(str(data.get("summary", "")).strip())
     if persian_ratio(summary) < 0.45:
         return None
     sentences = [x.strip() for x in re.split(r"(?<=[.!؟])\s+", summary) if x.strip()]
@@ -218,7 +218,7 @@ def _repair_title(data):
     try:
         repaired = _extract_json(raw or "")
         candidate = dict(data)
-        new_title = normalize_editorial_text(str(repaired.get("title", "")).strip())[:160]
+        new_title = normalize_news_editorial_text(str(repaired.get("title", "")).strip())[:160]
         candidate["title"] = new_title
         if persian_ratio(new_title) >= 0.35 and editorial_fields_ok(
             new_title, candidate.get("summary", ""), candidate.get("why_it_matters", "")
@@ -311,8 +311,8 @@ def _repair_persian_fields(data, item, providers=None):
     try:
         repaired = _extract_json(raw or "")
         candidate = dict(data)
-        candidate["summary"] = normalize_editorial_text(str(repaired.get("summary", "")).strip())
-        candidate["why_it_matters"] = normalize_editorial_text(str(repaired.get("why_it_matters", "")).strip())
+        candidate["summary"] = normalize_news_editorial_text(str(repaired.get("summary", "")).strip())
+        candidate["why_it_matters"] = normalize_news_editorial_text(str(repaired.get("why_it_matters", "")).strip())
     except (json.JSONDecodeError, TypeError, ValueError):
         print("[Field Language Recovery] invalid JSON; preserving original draft", flush=True)
         return data, provider

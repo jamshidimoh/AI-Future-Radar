@@ -45,7 +45,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
     selection_cfg = selection or _load_yaml(SELECTION_PATH).get("selection", {})
     return {
         "max_posts": int(selection_cfg.get("max_posts", mission.get("operational_publication_capacity", 4)) or 4),
-        "candidate_window": int(selection_cfg.get("candidate_window", 6) or 6),
+        "candidate_window": int(selection_cfg.get("candidate_window", 8) or 8),
         "replacement_buffer": int(selection_cfg.get("replacement_buffer", 2) or 2),
         "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),

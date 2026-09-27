@@ -141,7 +141,7 @@ def is_voices_candidate(item: dict[str, Any]):
     expert_analysis = content_type in EXPERT_ANALYSIS_TYPES or source_type in EXPERT_ANALYSIS_TYPES
     explicit_analysis = any(
         re.search(pattern, _text(item))
-        for pattern in (r"\\bargues\\b", r"\\bopinion\\b", r"\\bcommentary\\b", r"\\bperspective\\b", r"دیدگاه", r"تحلیل")
+        for pattern in (r"\bargues\b", r"\bopinion\b", r"\bcommentary\b", r"\bperspective\b", r"دیدگاه", r"تحلیل")
     )
     return _ai_relevant(item) and person_signal and substantive_identity and (
         direct_voice or expert_deep_lane or (expert_analysis and explicit_analysis)

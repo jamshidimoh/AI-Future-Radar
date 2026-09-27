@@ -171,7 +171,7 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     history_topic_anchor_min = max(1, int(contract.get("history_topic_guard_min_anchor_overlap", 1) or 1))
     normal, topic_repetition_blocked = filter_history_topic_repetition(
         normal,
-        history,
+        seen_signatures,
         window=history_topic_window,
         threshold=history_topic_threshold,
         soft_threshold=history_topic_soft_threshold,

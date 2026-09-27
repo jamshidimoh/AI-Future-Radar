@@ -522,7 +522,6 @@ def main(*, skip_education: bool = False) -> int:
         print(f"[Selection Timing] feedback items={len(items)} elapsed={time.monotonic() - started:.3f}s", flush=True)
         rank_started = time.monotonic()
         candidate_window = int(EDITORIAL_CONTRACT["candidate_window"])
-        replacement_buffer = max(0, int(EDITORIAL_CONTRACT.get("replacement_buffer", 0) or 0))
         special_window = lambda cap: cap
 
         # Reserve independent special lanes before Normal ranking.

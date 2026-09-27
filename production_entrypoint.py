@@ -21,8 +21,8 @@ from src.editorial_quality_policy import (
 from src.logging_setup import configure_logging
 from src.people_watch import filter_people_person_cooldown, item_timestamp
 from src.priority_people import is_substantive_priority_interview
-from src.state_io import StateCorruptionError, load_json_state
 from src.publication_contract import unique_candidates
+from src.state_io import StateCorruptionError, load_json_state
 from src.unified_editorial_selection import load_editorial_contract, mission_area, select_regular_portfolio, source_key
 
 logger = logging.getLogger(__name__)

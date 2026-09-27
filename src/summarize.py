@@ -1,9 +1,9 @@
 """Evidence-safe Persian summary with bounded editorial QA."""
-from contextlib import suppress
 import hashlib
 import json
 import os
 import re
+from contextlib import suppress
 from pathlib import Path
 
 from src.claim_verification import deterministic_precheck, semantic_verify

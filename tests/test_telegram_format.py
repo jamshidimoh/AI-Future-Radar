@@ -81,16 +81,14 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertEqual(_gregorian_date("2026-08-13 10:30"), "2026/08/13")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
-
-    def test_news_normalization_keeps_common_persian_ai_terms_persian():
+    def test_news_normalization_keeps_common_persian_ai_terms_persian(self):
         from src.education_editor import normalize_news_editorial_text
         text = normalize_news_editorial_text("هوش مصنوعی مولد، یادگیری ماشین و مدل های زبانی")
-        assert "هوش مصنوعی مولد" in text
-        assert "یادگیری ماشین" in text
-        assert "مدل‌های زبانی" in text
+        self.assertIn("هوش مصنوعی مولد", text)
+        self.assertIn("یادگیری ماشین", text)
+        self.assertIn("مدل‌های زبانی", text)
+
+if __name__ == "__main__":
+    unittest.main()
 
 

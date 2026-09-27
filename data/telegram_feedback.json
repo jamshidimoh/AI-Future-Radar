@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790492253,
+  "updated_at": 1790493596,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -15769,6 +15769,42 @@
       "why_it_matters": "این نکته اهمیت دارد زیرا نشان می‌دهد که تصمیم به توقف توسعه هوش مصنوعی ممکن است پیامدهای اقتصادی یا اجتماعی قابل توجهی داشته باشد. اگر توسعه AI متوقف شود، ممکن است فرصت‌های نوآوری و بهره‌وری کاهش یابد. در نتیجه، سیاستگذاران باید هزینه‌ها و فواید را به دقت بررسی کنند تا تصمیمات آگاهانه‌ای اتخاذ کنند.",
       "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPMlFOdndPYkNYX2J5M2w4Vnc4cW9hNDNYYlNyRDFQd2lYZzUwYlFwU2lnZTE4Q1NfdWRzWWNzSG82ZnYxSHJfLUpPY3JIMUlkbmwwcjJJSTZYZjBfNjVIQjFWQVdIM2tYUE80anVoaUhfM0RIYnl3NjBRRkJqTlJNUXV3?oc=5",
       "posted_at": 1790492253
+    },
+    "-1004482051328:1947": {
+      "chat_id": -1004482051328,
+      "message_id": 1947,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "بررسی شکاف واقع‌گرایی در ویدیوهای جراحی تولیدشده توسط هوش مصنوعی",
+      "summary": "یک مطالعه در Nature Computational Biology and Bioinformatics با ارزیابی متخصصان، تفاوت‌های ظریف بین ویدیوهای جراحی تولیدشده توسط مدل‌های هوش مصنوعی مولد و واقعیت بالینی را کمّی کرد. نتایج نشان داد که مدل‌ها ساختار کلی صحنه را بازسازی می‌کنند، اما در جزئیات فیزیکی و منطق جراحی خطاهای قابل‌توجهی دارند و مرزهای فعلی قابلیت اعتماد این فناوری را در محیط‌های حساس پزشکی مشخص می‌کند.",
+      "why_it_matters": "دقت در تولید ویدیوهای جراحی برای آموزش و شبیه‌سازی عملیات حیاتی است؛ شناسایی نقاط ضعف الگوریتم‌ها معیارهای عینی برای بهبود مدل‌ها فراهم می‌کند و از استفاده نادرست در بالین جلوگیری می‌نماید. این پژوهش پایه‌ای برای توسعه سیستم‌های هوشمندتر و قابل‌اعتمادتر در سلامت دیجیتال می‌گذارد.",
+      "link": "https://www.nature.com/articles/s41746-026-03276-z",
+      "posted_at": 1790493593
+    },
+    "-1004482051328:1948": {
+      "chat_id": -1004482051328,
+      "message_id": 1948,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "The Verge - AI",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "متیو پرینس، مدیرعامل Cloudflare: چگونه شرکت می‌تواند وب را در برابر تهدیدهای هوش مصنوعی محافظت کند",
+      "summary": "در قسمت دوم سری «آیندهٔ کسب‌وکار» تهیه‌شده توسط The Verge‑AI، متیو پرینس دربارهٔ ابزارهای امنیتی لبهٔ شبکه و سرویس‌های مقابله با حملات مبتنی بر هوش مصنوعی که Cloudflare ارائه می‌دهد، توضیح داد. او به نقش شرکت در شناسایی و مهار محتوای مخرب تولیدشده توسط هوش مصنوعی و حفظ عملکرد وب‌سایت‌ها در مقیاس جهانی اشاره کرد.",
+      "why_it_matters": "Cloudflare زیرساخت بیش از یک‌میلیارد وب‌سایت را پشتیبانی می‌کند؛ هر نقص امنیتی می‌تواند به سرعت به سطح جهانی گسترش یابد. استراتژی‌های جدید این شرکت برای شناسایی تهدیدهای هوش مصنوعی می‌تواند استانداردهای امنیتی لبهٔ شبکه را ارتقا دهد و به سیاست‌گذاران و دیگر ارائه‌دهندگان خدمات اینترنتی راهنمایی‌های عملی بدهد.",
+      "link": "https://www.theverge.com/podcast/1000344/cloudflare-matthew-prince-google-zero-ai-web-advertising",
+      "posted_at": 1790493596
     }
   }
 }

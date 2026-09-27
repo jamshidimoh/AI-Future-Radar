@@ -57,7 +57,7 @@ _THEME_FAMILIES: dict[str, set[str]] = {
     },
     "governance_policy": {
         "governance", "policy", "regulation", "regulatory", "law", "laws",
-        "government", "senate", "eu", "governance", "حکمرانی", "سیاست",
+        "government", "senate", "eu", "حکمرانی", "سیاست",
         "مقررات", "قانون", "دولت", "نهاد",
     },
     "education_work": {
@@ -179,7 +179,6 @@ def filter_topic_repetition(
     comparison_pool.extend(current)
 
     for item in materialized:
-        conflict = False
         best = (0.0, "", None)
         for prior in comparison_pool:
             matches, score, anchors, _ = _topic_conflict(

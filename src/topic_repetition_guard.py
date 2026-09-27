@@ -83,9 +83,18 @@ def filter_history_topic_repetition(
                 prior for prior in recent
                 if str(_signature(prior).get("title_text") or "").strip() == matched
             ), None)
-            if comparable is not None and has_material_update(item, comparable if isinstance(comparable, dict) else {"title": matched}):
-                kept.append(item)
-                continue
+            if comparable is not None:
+                if isinstance(comparable, dict):
+                    prior_item = comparable
+                else:
+                    prior_sig = _signature(comparable)
+                    prior_item = {
+                        "title": str(prior_sig.get("title_text") or matched),
+                        "summary": " ".join(str(x) for x in (prior_sig.get("context") or [])),
+                    }
+                if has_material_update(item, prior_item):
+                    kept.append(item)
+                    continue
             blocked += 1
             print(
                 "[Topic Repetition Guard] blocked "

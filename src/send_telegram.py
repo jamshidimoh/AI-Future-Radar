@@ -197,10 +197,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
 
     source_name_clean = str(source_name or "منبع").strip()
     source_url = _esc(link, quote=True)
-    if link:
-        source_fragment = f'<a href="{source_url}">{_isolate_latin_html(_esc(source_name_clean))}</a>'
-    else:
-        source_fragment = _isolate_latin_html(_esc(source_name_clean))
+    source_fragment = f'<a href="{source_url}">{_isolate_latin_html(_esc(source_name_clean))}</a>' if link else _isolate_latin_html(_esc(source_name_clean))
     lines.extend(["", DIVIDER, f"{RLM}🏛 {source_fragment}{RLM}"])
     if date:
         lines.append(f"{RLM}🗓 تاریخ انتشار: {_esc(date)}{RLM}")

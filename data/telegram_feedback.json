@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790461297,
+  "updated_at": 1790486606,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -15651,6 +15651,46 @@
       "why_it_matters": "این اظهارات نشان می‌دهد که سیاست‌گذاران باید بین خطرات احتمالی AI و هزینه‌های مستقیم توقف توسعه تعادل برقرار کنند؛ به‌ویژه، هزینه‌های اقتصادی می‌تواند مانع از اجرای اقدامات محدودکننده شدید شود. بنابراین، چارچوب‌های نظارتی باید شامل تحلیل‌های هزینه‑فایده باشند تا بتوانند خطرات را بدون ایجاد خسارات بزرگ برای اقتصاد و جامعه مدیریت کنند. این رویکرد می‌تواند مسیر توسعه مسئولانه AI را شکل دهد و از بروز واکنش‌های ناپایدار در بازارهای فناوری جلوگیری کند.",
       "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPMlFOdndPYkNYX2J5M2w4Vnc4cW9hNDNYYlNyRDFQd2lYZzUwYlFwU2lnZTE4Q1NfdWRzWWNzSG82ZnYxSHJfLUpPY3JIMUlkbmwwcjJJSTZYZjBfNjVIQjFWQVdIM2tYUE80anVoaUhfM0RIYnl3NjBRRkJqTlJNUXV3?oc=5",
       "posted_at": 1790461297
+    },
+    "-1004482051328:1941": {
+      "chat_id": -1004482051328,
+      "message_id": 1941,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Yahoo Finance)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "سام آلتمن زمانبندی رسیدن AGI را به پایان ۲۰۲۸ بازنگری کرد",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در مصاحبهای با Yahoo Finance اعتراف کرد که پیشبینی اولیهاش درباره سرعت اختلالات ناشی از هوش مصنوعی بیش از حد خوشبین بود. او اکنون پیشبینی میکند که رسیدن به هوش مصنوعی عمومی (AGI) تا پایان سال ۲۰۲۸ امکانپذیر خواهد بود. این تغییر زمانبندی نشان میدهد که تیم OpenAI بهدقت بیشتری در ارزیابی چالشهای فنی و اخلاقی AGI عمل میکند. او تأکید کرد که هنوز مسیر طولانی و پیچیدهای برای رسیدن به این هدف وجود دارد.",
+      "why_it_matters": "تصحیح زمانبندی سام آلتمن تأثیر قابل Attentionی بر برنامهریزی سرمایهگذاران، پژوهشگران و سیاستگذاران دارد؛ زیرا پیشبینیهای سریعتر میتوانستند منابع را بهصورت نادرست توزیع کنند. با اعلام پایان ۲۰۲۸، انتظار میرود که توسعهگران و شرکتهای فناوری بهدقتتری در برنامهریزی پروژههای خود عمل کنند. این تغییر همچنین نشان میدهد که چالشهای فنی و اخلاقی AGI هنوز بهطور کامل حل نشدهاند و نیاز به تحقیقات عمیقتری دارد.",
+      "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNVVl2bzd1S01IQTJSREs5MnQyOHd3ckhvNnZ1T3JtLXQ3ZTl2a1RrYmI5bXJhMld0SWV5eE52NXJrMWxReFVCbkQ2Rlo2c2tvSFJHTGlVSXhUMTd6ZExUWm51cE1CSXY3Z0plNUFxUDhqd1BFdFVHcUxFczN6aUphRWs4bU1GRHk5YTZ4TDB1R0NWUURKdEJlbGVVNi1aVVNhN2c?oc=5",
+      "posted_at": 1790486604
+    },
+    "-1004482051328:1942": {
+      "chat_id": -1004482051328,
+      "message_id": 1942,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Hankyoreh : English Edition)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Nick Bostrom",
+      "watch_person": "Nick Bostrom",
+      "person_name": "Nick Bostrom",
+      "people_lane": true,
+      "title": "نیک بستروم: توقف توسعه هوش مصنوعی با هزینهای همراه است",
+      "summary": "نیک بستروم، متخصص ریسکهای AI، در مصاحبهای با Hankyoreh : English Edition گفت که توقف توسعه هوش مصنوعی با هزینههای اجتماعی و اقتصادی قابل Attentionی همراه خواهد بود. او استدلال کرد که هرگونه توقف در پیشرفت AI، به ویژه در زمینههای حیاتی مانند سلامت و امنیت ملی، میتواند منجر به عقبماندگیهای جدی شود. بستروم همچنین تأکید کرد که هرگونه تصمیم برای توقف توسعه AI باید با در نظر گرفتن تأثیرات بلندمدت و اثرات اجتماعی آن اتخاذ شود.",
+      "why_it_matters": "این مصاحبه نشان میدهد که متخصصان در زمینه هوش مصنوعی با چالشهای اخلاقی و اجتماعی مرتبط با توسعه سریع این فناوری روبرو هستند. تصمیم برای توقف توسعه AI، اگرچه ممکن است از نظر ریسکهای بالقوه ضروری باشد، اما با هزینههای قابل Attentionی همراه است. این موضوع اهمیت آن را در زمینه سیاستگذاری و مدیریت فناوریهای پیشرفته برجسته میکند. همچنین، این مصاحبه به بحث در مورد تعادل بین پیشرفت فناوری و مدیریت ریسکها میپردازد.",
+      "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPMlFOdndPYkNYX2J5M2w4Vnc4cW9hNDNYYlNyRDFQd2lYZzUwYlFwU2lnZTE4Q1NfdWRzWWNzSG82ZnYxSHJfLUpPY3JIMUlkbmwwcjJJSTZYZjBfNjVIQjFWQVdIM2tYUE80anVoaUhfM0RIYnl3NjBRRkJqTlJNUXV3?oc=5",
+      "posted_at": 1790486605
     }
   }
 }

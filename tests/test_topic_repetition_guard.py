@@ -43,3 +43,17 @@ def test_history_topic_guard_does_not_block_generic_ai_only_overlap():
     )
     assert blocked == 0
     assert kept == candidates
+
+
+def test_history_topic_guard_preserves_material_update():
+    history = [_sig("OpenAI launches reasoning model", "OpenAI model", ["openai", "reasoning"])]
+    candidates = [{"title": "OpenAI reveals reasoning model evaluation findings", "summary": "OpenAI publishes new findings with a 37% improvement and new evaluation details."}]
+    kept, blocked = filter_history_topic_repetition(
+        candidates,
+        history,
+        threshold=0.55,
+        soft_threshold=0.50,
+        min_anchor_overlap=1,
+    )
+    assert blocked == 0
+    assert kept == candidates

@@ -474,7 +474,7 @@ def summarize_item(item):
 
     editorial_provider = None
     if _language_ok(final) and _length_ok(final, raw_text):
-        if os.getenv("AI_RADAR_EDITORIAL_REVIEW", "0").strip().lower() in {"1", "true", "yes"}:
+        if os.getenv("AI_RADAR_EDITORIAL_REVIEW", "1").strip().lower() in {"1", "true", "yes"}:
             final, editorial_provider = _editorial_review(final)
     else:
         if not _language_ok(final):
@@ -489,6 +489,11 @@ def summarize_item(item):
 
     final = _normalize(final, item)
     if not _language_ok(final):
+        language_checks = {
+            "language": news_language_ok(str(final.get("title","")), str(final.get("summary","")), str(final.get("why_it_matters",""))),
+            "naturalness": persian_editorial_naturalness_ok(str(final.get("title","")), str(final.get("summary","")), str(final.get("why_it_matters",""))),
+            "fields": editorial_fields_ok(str(final.get("title","")), str(final.get("summary","")), str(final.get("why_it_matters",""))),
+        }
         print(
             "[Language Gate] non-educational translation rejected: "
             f"ratios title={persian_ratio(final.get('title','')):.2f} "
@@ -496,6 +501,7 @@ def summarize_item(item):
             f"why={persian_ratio(final.get('why_it_matters','')):.2f}",
             flush=True,
         )
+        print(f"[Language Gate Diagnostics] {json.dumps(language_checks, ensure_ascii=False, sort_keys=True)}", flush=True)
         _telemetry_event(item, stage="language", decision="reject", reason_code="language_gate_failure")
         return None
     if not _length_ok(final, raw_text):

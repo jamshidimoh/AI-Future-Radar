@@ -18,25 +18,25 @@ class TelegramFormatTests(unittest.TestCase):
         plain = self._plain(text)
         for expected in ("مطالعه منبع اصلی", "بررسی بیشتر با ChatGPT", "Demis Hassabis", "Google News", "📡", title):
             self.assertIn(expected, plain)
-        self.assertIn("<b>\u00a0📡", text)
-        self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
-        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)
-        self.assertIn("\u2067", text)
+        self.assertIn("<b>📡", text)
+        self.assertIn("📌 خلاصه", text)
+        self.assertIn("💡 چرا مهم است؟", text)
         self.assertIn("\u2066", text)
         self.assertIn("\u2069", text)
         self.assertIn("\u200f", text)
         self.assertNotIn("\u202b", text)
         self.assertNotIn("\u202c", text)
         self.assertIn("<a href=\"", text)
-        self.assertIn("<b>بررسی بیشتر با \u2066ChatGPT\u2069</b>", text)
-        self.assertIn("\u2066🏛 Google News (The Times of India)\u2069", text)
-        self.assertIn("🤖 \u2066Groq:qwen/qwen3.6-27b\u2069", text)
-        self.assertIn("🗓 2026/08/13", text)
+        self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", text)
+        self.assertIn("🏛 <a href=", text)
+        self.assertIn("\u2066Google News (The Times of India)\u2069", text)
+        self.assertIn("🤖 مدل پردازش: \u2066Groq:qwen/qwen3.6-27b\u2069", text)
+        self.assertIn("🗓 تاریخ انتشار: 2026/08/13", text)
 
     def test_html_tags_are_not_corrupted_by_bidi_isolation(self):
         text = format_post({"title": "DeepMind: هوش مصنوعی", "summary": "خلاصه فارسی با ChatGPT", "why_it_matters": "اهمیت فناوری", "category": "ai"}, "Google News", "https://example.com/news")
-        self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
-        self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)
+        self.assertIn("📌 خلاصه", text)
+        self.assertIn("💡 چرا مهم است؟", text)
         self.assertIn("<a href=\"", text)
         self.assertNotIn("<\u2066", text)
         self.assertNotIn("\u2069>", text)
@@ -44,8 +44,8 @@ class TelegramFormatTests(unittest.TestCase):
     def test_title_contains_rtl_edge_markers_for_wrapped_lines(self):
         text = format_post({"title": "عنوان فارسی طولانی برای آزمون شکستن خط و حفظ راست‌چین بودن خط دوم", "summary": "خلاصه", "why_it_matters": "اهمیت", "category": "ai"}, "منبع", "https://example.com/news")
         title_line = text.splitlines()[0]
-        self.assertTrue(title_line.startswith("\u2067<b>\u00a0📡\u200f"))
-        self.assertTrue(title_line.endswith("\u200f</b>\u2069"))
+        self.assertTrue(title_line.startswith("\u200f<b>📡"))
+        self.assertTrue(title_line.endswith("</b>\u200f"))
 
     def test_source_page_image_reads_og_image_from_same_link(self):
         response = Mock(status_code=200, url="https://example.com/article", text='<html><meta property="og:image" content="https://example.com/images/article.jpg"></html>')

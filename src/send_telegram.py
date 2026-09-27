@@ -172,6 +172,12 @@ def _validate_remote_image(image_url):
         return False
 
 
+def _rtl_html_fragment(text):
+    """Render one Persian-first line while isolating Latin runs only."""
+    raw = str(text or "")
+    value = _isolate_latin_html(_esc(raw))
+    return f"{RLM}{value}{RLM}"
+
 def format_post(summary_data, source_name, link, is_video=False, published="", content_type="news", source_tier=3, source_type="news", leader=""):
     title_raw = str(summary_data.get("title", "")).strip()
     summary_raw = str(summary_data.get("summary", "")).strip()
@@ -179,28 +185,28 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
     quote_raw = str(summary_data.get("key_quote", "")).strip()
     model = _model_name(summary_data)
     date = _gregorian_date(published)
-    title_html = f"<b>{NBSP}{TITLE_ICON}{RLM} {title_raw}{RLM}</b>"
-    lines = [_rtl_text(title_html, escape=False), "", _rtl_text(f"<blockquote>📌 <b>خلاصه</b>\n{_esc(summary_raw)}</blockquote>", escape=False)]
+
+    title_html = _isolate_latin_html(_esc(title_raw))
+    lines = [f"{RLM}<b>{TITLE_ICON} {title_html}</b>{RLM}", ""]
+    if summary_raw:
+        lines.extend([f"{RLM}<b>📌 خلاصه</b>{RLM}", _rtl_html_fragment(summary_raw)])
     if why_raw:
-        lines += ["", _rtl_text(f"<blockquote>💡 <b>چرا مهم است؟</b>\n{_esc(why_raw)}</blockquote>", escape=False)]
+        lines.extend(["", f"{RLM}<b>💡 چرا مهم است؟</b>{RLM}", _rtl_html_fragment(why_raw)])
     if quote_raw and content_type in {"interview", "podcast", "talk", "lecture", "conversation", "q&a"}:
-        lines += ["", _rtl_text(f"<blockquote>💬 <b>نقل‌قول کلیدی</b>\n«{_esc(quote_raw)}»</blockquote>", escape=False)]
+        lines.extend(["", f"{RLM}<b>💬 نقل‌قول کلیدی</b>{RLM}", _rtl_html_fragment(f"«{quote_raw}»")])
+
     source_name_clean = str(source_name or "منبع").strip()
     source_url = _esc(link, quote=True)
-    source_row = _rtl_text(f"🏛 {source_name_clean}") if re.search(r"[\u0600-\u06ff]", source_name_clean) else _ltr_text(f"🏛 {source_name_clean}")
-    source_link_row = _rtl_text(f"🔗 <a href=\"{source_url}\">مطالعه منبع اصلی</a>", escape=False)
-    chatgpt_url = _esc(_chatgpt_link(title_raw, link), quote=True)
-    chatgpt_row = _rtl_text(f"🧠 <a href=\"{chatgpt_url}\"><b>بررسی بیشتر با ChatGPT</b></a>", escape=False)
-    lines += ["", DIVIDER, source_row, source_link_row, "", chatgpt_row]
-    metadata_parts = []
-    if model:
-        metadata_parts.append(f"🤖 {_esc(model)}")
+    source_fragment = f'<a href="{source_url}">{_isolate_latin_html(_esc(source_name_clean))}</a>' if link else _isolate_latin_html(_esc(source_name_clean))
+    lines.extend(["", DIVIDER, f"{RLM}🏛 {source_fragment}{RLM}"])
     if date:
-        metadata_parts.append(f"🗓 {_esc(date)}")
-    if metadata_parts:
-        lines += ["", _rtl_text(f"<i>{'  ·  '.join(metadata_parts)}</i>", escape=False)]
+        lines.append(f"{RLM}🗓 تاریخ انتشار: {_esc(date)}{RLM}")
+    if model:
+        lines.append(f"{RLM}🤖 مدل پردازش: {_isolate_latin_html(_esc(model))}{RLM}")
+    if link:
+        lines.append(f"{RLM}🔗 <a href=\"{source_url}\">مطالعه منبع اصلی</a>{RLM}")
+    lines.extend(["", f"{RLM}🧠 <a href=\"{_esc(_chatgpt_link(title_raw, link), quote=True)}\"><b>بررسی بیشتر با ChatGPT</b></a>{RLM}"])
     return "\n".join(lines)
-
 
 def resolve_source_image(item):
     if not isinstance(item, dict):

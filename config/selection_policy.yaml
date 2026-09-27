@@ -20,6 +20,11 @@ selection:
   mission_target_quality_floor_ratio: 0.80
   freshness_weight: 10.0
   freshness_half_life_hours: 24.0
+  # Prevent materially repeated recent themes from re-entering normal news.
+  history_topic_guard_window: 24
+  history_topic_guard_threshold: 0.68
+  history_topic_guard_soft_threshold: 0.62
+  history_topic_guard_min_anchor_overlap: 2
 
 editorial:
   leader_priority_weight: 2

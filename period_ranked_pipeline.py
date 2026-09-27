@@ -20,6 +20,7 @@ from src.protected_story_identity import probable_same_story
 from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
 from src.semantic_dedup import get_story_signature
 from src.story_gate import _technology_relevant
+from src.topic_repetition_guard import filter_history_topic_repetition
 from src.typesafe_judgment import rerank_candidates
 from src.unified_editorial_selection import freshness_score, load_editorial_contract, mission_area, select_regular_portfolio
 
@@ -164,6 +165,24 @@ def _diversify_normal_candidates(normal, max_posts, max_per_source, max_per_type
     strict_relevance = bool(policy.get("strict_relevance", False))
     window_items = int(contract.get("window_runs", 6) or 6) * max(1, requested)
     window_source_counts, window_area_counts = _window_counts(source_history, window_items)
+    history_topic_window = max(0, int(contract.get("history_topic_guard_window", 24) or 24))
+    history_topic_threshold = float(contract.get("history_topic_guard_threshold", 0.66) or 0.66)
+    history_topic_soft_threshold = float(contract.get("history_topic_guard_soft_threshold", 0.60) or 0.60)
+    history_topic_anchor_min = max(1, int(contract.get("history_topic_guard_min_anchor_overlap", 1) or 1))
+    normal, topic_repetition_blocked = filter_history_topic_repetition(
+        normal,
+        seen_signatures,
+        window=history_topic_window,
+        threshold=history_topic_threshold,
+        soft_threshold=history_topic_soft_threshold,
+        min_anchor_overlap=history_topic_anchor_min,
+    )
+    if topic_repetition_blocked:
+        print(
+            f"[Topic Repetition Guard] normal_candidates_blocked={topic_repetition_blocked} history_window={history_topic_window}",
+            flush=True,
+        )
+
     selected = select_regular_portfolio(
         normal,
         max_posts=limit,

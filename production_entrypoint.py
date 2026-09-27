@@ -433,6 +433,15 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
     normals = [item for item in non_special if item.get("normal_period_rank") is not None][:normal_limit + replacement_buffer]
     core = _allocate_core_portfolio(normals + technical + mind + voices, max_posts=normal_capacity)
     core_ids = {id(x) for x in core}
+    if len(core) < normal_capacity:
+        for item in normals:
+            if len(core) >= normal_capacity or id(item) in core_ids:
+                continue
+            item["core_slot_group"] = _core_lane(item)
+            item["core_selection_reason"] = "fallback_core_capacity"
+            item["core_slot"] = len(core) + 1
+            core.append(item)
+            core_ids.add(id(item))
     replacements = [x for x in normals if id(x) not in core_ids][:replacement_buffer]
     bounded = []
     seen = set()

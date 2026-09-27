@@ -56,6 +56,16 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert contract["community_max"] == mission["community_max"]
     assert selection["diversity_mode"] == "adaptive"
     assert selection["distinct_sources_first"] is True
+    portfolio = _load(SELECTION).get("portfolio", {})
+    assert portfolio["core_capacity"] == 3
+    assert portfolio["special_lanes_consume_core_slots"] is True
+    assert portfolio["min_unique_core_sources"] == 3
+    assert portfolio["max_same_core_source"] == 1
+    assert portfolio["max_same_core_area"] == 2
+    assert portfolio["slot_targets"] == ["ai_core", "convergence_or_technical", "mind_future_or_expert_voice"]
+    assert portfolio["independent_lane_caps"]["technical_trend"] == 1
+    assert portfolio["independent_lane_caps"]["mind_ideas_voices"] == 1
+    assert portfolio["independent_lane_caps"]["voices_perspectives"] == 1
 
 
 def test_mission_diversity_is_explicit_and_canonical():

@@ -28,7 +28,8 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertNotIn("\u202c", text)
         self.assertIn("<a href=\"", text)
         self.assertIn("<b>بررسی بیشتر با ChatGPT</b>", text)
-        self.assertIn("🏛 \u2066Google News (The Times of India)\u2069", text)
+        self.assertIn("🏛 <a href=", text)
+        self.assertIn("\u2066Google News (The Times of India)\u2069", text)
         self.assertIn("🤖 مدل پردازش: \u2066Groq:qwen/qwen3.6-27b\u2069", text)
         self.assertIn("🗓 تاریخ انتشار: 2026/08/13", text)
 

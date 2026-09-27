@@ -124,6 +124,9 @@ def is_voices_candidate(item: dict[str, Any]):
     if _voice_source_excluded(item): return False
     mission = str(item.get("mission_area") or item.get("category") or "").strip().casefold()
     if mission not in MISSION_AREAS: return False
+    try: source_tier = int(item.get("source_tier", 3) or 3)
+    except (TypeError, ValueError): source_tier = 3
+    if source_tier > 2: return False
     expert_people, expert_deep_lane, _ = _expert_identity(item)
     voice_signal = _has_voice_signal(item)
     person_signal = _has_person_signal(item)

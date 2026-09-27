@@ -1,4 +1,5 @@
 """Evidence-safe Persian summary with bounded editorial QA."""
+from contextlib import suppress
 import hashlib
 import json
 import os
@@ -483,10 +484,8 @@ def summarize_item(item):
     except (json.JSONDecodeError, TypeError, ValueError) as exc:
         print(f"[WARN] Summary JSON invalid: {exc}; attempting one bounded provider recovery", flush=True)
         if provider:
-            try:
+            with suppress(TypeError, ValueError):
                 _disable(provider, "transient")
-            except (TypeError, ValueError):
-                pass
         recovery_prompt = _JSON_RECOVERY_PROMPT.format(raw=str(raw or "")[:5000], source=raw_text[:3500])
         try:
             recovered_raw, recovered_provider = call_llm_with_fallback(

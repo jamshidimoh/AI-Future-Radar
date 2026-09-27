@@ -87,11 +87,18 @@ def _topic_score(item: dict[str, Any], prior: dict[str, Any] | str) -> tuple[flo
 
 def _topic_family(value: dict[str, Any] | str) -> tuple[str, int]:
     sig = _signature(value)
-    tokens = set(sig.get("context") or []) | set(sig.get("title") or [])
+    if isinstance(value, dict):
+        raw_text = " ".join(
+            str(value.get(key) or "")
+            for key in ("title", "summary", "description", "content", "why_it_matters", "why", "leader", "watch_person")
+        )
+    else:
+        raw_text = str(value or "")
+    searchable = f"{raw_text} {' '.join(str(x) for x in sig.get('context') or [])}".casefold()
     best_family = ""
     best_hits = 0
     for family, terms in _THEME_FAMILIES.items():
-        hits = len(tokens & terms)
+        hits = sum(1 for term in terms if str(term).casefold() in searchable)
         if hits > best_hits:
             best_family, best_hits = family, hits
     return best_family, best_hits
@@ -119,7 +126,7 @@ def _topic_conflict(
     prior_family, prior_hits = _topic_family(prior)
     same_family = bool(family and family == prior_family)
     strong_semantic = score >= semantic_threshold and anchors >= 1
-    thematic_conflict = same_family and hits >= 1 and prior_hits >= 1 and (score >= 0.23 or anchors >= 1)
+    thematic_conflict = same_family and hits >= 2 and prior_hits >= 2
     return strong_semantic or thematic_conflict, score, anchors, family if same_family else ""
 
 
@@ -145,7 +152,7 @@ def find_topic_repetition(
         score, anchors = _topic_score(item, prior)
         family, hits = _topic_family(item)
         prior_family, prior_hits = _topic_family(prior)
-        same_family = bool(family and family == prior_family and hits and prior_hits)
+        same_family = bool(family and family == prior_family and hits >= 2 and prior_hits >= 2)
         qualifies = (
             (score >= soft_threshold and anchors >= min_anchor_overlap)
             or (same_family and score >= 0.23)
@@ -200,7 +207,9 @@ def filter_topic_repetition(
             same_family_soft = (
                 _topic_family(item)[0]
                 and _topic_family(item)[0] == _topic_family(best[2])[0]
-                and best[0] >= 0.23
+                and best[0] >= 0.15
+                and _topic_family(item)[1] >= 2
+                and _topic_family(best[2])[1] >= 2
             )
             if strong_block or same_family_soft:
                 if _material_update_or_keep(item, best[2]):

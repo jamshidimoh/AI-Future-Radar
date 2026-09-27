@@ -433,6 +433,19 @@ def main(*, skip_education: bool = False) -> int:
         for item in voices_candidates:
             print(f"[Voices/Perspectives Selection] rank={item.get('voices_period_rank')} score={item.get('voices_perspectives_score')} source={item.get('source')} person={item.get('person_name') or item.get('watch_person') or item.get('leader')} title={str(item.get('title', ''))[:120]}", flush=True)
 
+        people_ids = {id(item) for item in people_items}
+        special_ids = voices_ids | technical_ids | mind_ids
+        normal_pool = [
+            item for item in items
+            if id(item) not in people_ids
+            and id(item) not in special_ids
+            and not is_voices_candidate(item)
+        ]
+        normal_select_count = max(candidate_window, min(len(normal_pool), max_posts))
+        normal_candidates = _competitive_normal_candidates(
+            unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
+        )
+
         # Apply topic diversity across independently selected special lanes so
         # a Voice/technical story cannot reintroduce the same theme already chosen
         # by another lane or by the recent publication history.
@@ -455,19 +468,6 @@ def main(*, skip_education: bool = False) -> int:
         technical_candidates = [item for item in special_candidates if _is_technical_trend(item)]
         mind_candidates = [item for item in special_candidates if _is_mind_ideas_voices(item)]
         voices_candidates = [item for item in special_candidates if _is_voices_perspectives(item)]
-
-        people_ids = {id(item) for item in people_items}
-        special_ids = voices_ids | technical_ids | mind_ids
-        normal_pool = [
-            item for item in items
-            if id(item) not in people_ids
-            and id(item) not in special_ids
-            and not is_voices_candidate(item)
-        ]
-        normal_select_count = max(candidate_window, min(len(normal_pool), max_posts))
-        normal_candidates = _competitive_normal_candidates(
-            unique_candidates(original_select(normal_pool, normal_select_count, max_per_source, max_per_type, policy))
-        )
 
         candidates = unique_candidates(
             (bootstrap_people if bootstrap_count else people_items)

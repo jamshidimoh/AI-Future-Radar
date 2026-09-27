@@ -71,3 +71,22 @@ editorial:
 #   gates; novelty penalties do not replace semantic duplicate detection.
 # - Education remains an independent scheduled product stream and is recovered fail-closed.
 # - Strategic Analytical Lane remains separate and limited to one mission-critical signal.
+
+portfolio:
+  core_capacity: 3
+  special_lanes_consume_core_slots: true
+  min_unique_core_sources: 3
+  max_same_core_source: 1
+  max_same_core_area: 2
+  slot_targets: [ai_core, convergence_or_technical, mind_future_or_expert_voice]
+  independent_lane_caps:
+    technical_trend: 1
+    mind_ideas_voices: 1
+    voices_perspectives: 1
+    strategic_analytical: 1
+  protected_people_max: 2
+  education_independent: true
+
+# The three core news slots are shared by Normal, Technical, Mind, Voices and Strategic
+# candidates. A special lane does not create an extra news slot. People/Tier-0 remain
+# quota-exempt but still pass quality, relevance, deduplication and publication gates.

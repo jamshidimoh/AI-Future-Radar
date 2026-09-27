@@ -257,10 +257,37 @@ def test_people_person_cooldown_rotates_recently_published_people():
         _item("Dario Amodei", "2026-09-27 08:00", "dario-new"),
     ]
     history = [
-        {"leader": "Sam Altman", "ts": 1},
-        {"leader": "Jensen Huang", "ts": 2},
+        {"leader": "Sam Altman", "ts": 1, "content_type": "interview"},
+        {"leader": "Jensen Huang", "ts": 2, "content_type": "news"},
     ]
     kept, blocked = filter_people_person_cooldown(items, history, window=8)
     assert blocked == 1
     assert len(kept) == 1
     assert kept[0]["person_name"] == "Dario Amodei"
+
+
+
+def test_people_person_cooldown_does_not_block_protected_leader():
+    item = _item("Sam Altman", "2026-09-27 09:00", "protected")
+    item["protected_content"] = True
+    kept, blocked = filter_people_person_cooldown(
+        [item],
+        [{"leader": "Sam Altman", "content_type": "interview", "ts": 1}],
+        window=8,
+    )
+    assert kept == [item]
+    assert blocked == 0
+
+
+def test_people_person_cooldown_fails_open_when_all_candidates_are_same_recent_person():
+    items = [
+        _item("Sam Altman", "2026-09-27 09:00", "one"),
+        _item("Sam Altman", "2026-09-27 08:00", "two"),
+    ]
+    kept, blocked = filter_people_person_cooldown(
+        items,
+        [{"leader": "Sam Altman", "content_type": "interview", "ts": 1}],
+        window=8,
+    )
+    assert len(kept) == 1
+    assert blocked == 1

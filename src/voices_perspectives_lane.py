@@ -135,8 +135,16 @@ def is_voices_candidate(item: dict[str, Any]):
         expert_people or expert_deep_lane or _matched_people(item)
         or any(str(item.get(k) or "").strip() for k in PERSON_KEYS)
     )
+    content_type = str(item.get("content_type") or "").strip().casefold()
+    source_type = str(item.get("source_type") or item.get("type") or item.get("format") or "").strip().casefold()
+    direct_voice = content_type in DIRECT_VOICE_TYPES or source_type in DIRECT_VOICE_TYPES
+    expert_analysis = content_type in EXPERT_ANALYSIS_TYPES or source_type in EXPERT_ANALYSIS_TYPES
+    explicit_analysis = any(
+        re.search(pattern, _text(item))
+        for pattern in (r"\\bargues\\b", r"\\bopinion\\b", r"\\bcommentary\\b", r"\\bperspective\\b", r"دیدگاه", r"تحلیل")
+    )
     return _ai_relevant(item) and person_signal and substantive_identity and (
-        voice_signal or priority_person or expert_deep_lane
+        direct_voice or expert_deep_lane or (expert_analysis and explicit_analysis)
     )
 
 

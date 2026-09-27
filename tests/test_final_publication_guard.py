@@ -73,3 +73,35 @@ def test_leader_name_alone_does_not_block_a_different_event(tmp_path):
     allowed, reason = publication_guard.check_before_publish(text, "https://example.com/ipo")
     assert allowed
     assert reason == "no_publication_conflict"
+
+
+def test_people_bootstrap_same_person_is_blocked_by_persistent_ledger(tmp_path):
+    _write_ledger(
+        tmp_path,
+        [{
+            "title": "نیک بستروم درباره توقف توسعه هوش مصنوعی",
+            "summary": "Nick Bostrom discussed the costs associated with pausing AI development.",
+            "leader": "Nick Bostrom",
+            "person_name": "Nick Bostrom",
+            "people_lane": True,
+            "link": "https://example.com/bostrom-old",
+        }],
+    )
+    text = (
+        "<b>📡 نیک بستروم درباره هزینه توقف توسعه هوش مصنوعی</b>
+"
+        "<blockquote>📌 <b>خلاصه</b>
+Nick Bostrom discusses the economic cost of pausing AI development.</blockquote>"
+    )
+    allowed, reason = publication_guard.check_before_publish(
+        text,
+        "https://example.com/bostrom-new",
+        candidate={
+            "people_lane": True,
+            "people_bootstrap": True,
+            "person_name": "Nick Bostrom",
+            "leader": "Nick Bostrom",
+        },
+    )
+    assert not allowed
+    assert reason == "people_bootstrap_person_already_published"

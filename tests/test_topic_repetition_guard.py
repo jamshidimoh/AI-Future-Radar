@@ -1,4 +1,4 @@
-from src.topic_repetition_guard import filter_history_topic_repetition
+from src.topic_repetition_guard import filter_history_topic_repetition, filter_topic_repetition
 
 
 def _sig(title, summary, anchors):
@@ -89,7 +89,7 @@ def test_current_run_topic_guard_prevents_cross_lane_theme_collision():
         "title": "Another expert discusses how to slow down advanced AI",
         "summary": "The proposal concerns safety, control, and slowing development.",
     }
-    kept, blocked = filter_history_topic_repetition(
+    kept, blocked = filter_topic_repetition(
         [candidate],
         [],
         current_items=selected,

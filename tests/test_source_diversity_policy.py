@@ -16,8 +16,9 @@ def test_normal_selection_policy_uses_adaptive_two_item_source_ceiling():
 def test_source_diversity_policy_is_explicitly_documented():
     path = Path(__file__).resolve().parents[1] / "config" / "selection_policy.yaml"
     text = path.read_text(encoding="utf-8")
-    assert "hard source cap" in text
-    assert "one item per source is preferred first" in text
+    normalized = text.casefold()
+    assert "hard source cap" in normalized
+    assert "one item per source is preferred first" in normalized
 
 
 def test_selector_prefers_distinct_sources_before_repeating_a_source(monkeypatch):

@@ -187,7 +187,7 @@ def filter_topic_repetition(
     comparison_pool.extend(current)
 
     for item in materialized:
-        best = (0.0, "", None)
+        best: tuple[float, str, dict[str, Any] | str | None] = (0.0, "", None)
         for prior in comparison_pool:
             matches, score, anchors, _ = _topic_conflict(
                 item,

@@ -182,9 +182,11 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     interview = _interview_signal(item)
     if not _ai_relevant(item):
         return False
+    interview = _interview_signal(item)
+    if interview:
+        return False
     if thematic:
         return True
-    interview = _interview_signal(item)
     if interview:
         return False
     # Eligibility identifies valid candidates for this lane. Final publication

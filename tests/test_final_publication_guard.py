@@ -88,10 +88,8 @@ def test_people_bootstrap_same_person_is_blocked_by_persistent_ledger(tmp_path):
         }],
     )
     text = (
-        "<b>📡 نیک بستروم درباره هزینه توقف توسعه هوش مصنوعی</b>
-"
-        "<blockquote>📌 <b>خلاصه</b>
-Nick Bostrom discusses the economic cost of pausing AI development.</blockquote>"
+        "<b>📡 نیک بستروم درباره هزینه توقف توسعه هوش مصنوعی</b>\n"
+        "<blockquote>📌 <b>خلاصه</b>\nNick Bostrom discusses the economic cost of pausing AI development.</blockquote>"
     )
     allowed, reason = publication_guard.check_before_publish(
         text,

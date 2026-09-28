@@ -73,3 +73,49 @@ def test_field_level_recovery_can_repair_persian_body_after_full_draft_failure(m
     assert provider == "test-provider"
     assert "در این ویدئو" in candidate["summary"]
     assert "اهمیت این بحث" in candidate["why_it_matters"]
+
+
+def test_length_gate_attempts_bounded_editorial_repair_before_reject(monkeypatch):
+    import json
+    import src.summarize as summarize
+
+    short = {
+        "title": "حل معمای آگاهی",
+        "summary": "پژوهشگران درباره سنجش آگاهی در هوش مصنوعی و تفاوت آن با رفتار هوشمند بحث می‌کنند.",
+        "why_it_matters": "این بحث برای طراحی آزمون‌های دقیق‌تر درباره آگاهی ماشین اهمیت دارد.",
+        "speakers": "",
+        "key_quote": "",
+        "category": "mind",
+    }
+    repaired = {
+        "title": "حل معمای آگاهی در سامانه‌های هوش مصنوعی",
+        "summary": "پژوهشگران درباره سنجش آگاهی در سامانه‌های هوش مصنوعی و تفاوت آن با رفتار هوشمند بحث می‌کنند. تمرکز اصلی بر معیارهایی است که بتوانند تجربه آگاهانه را از صرفاً عملکرد درست سامانه جدا کنند. این تمایز برای تفسیر ادعاهای مربوط به آگاهی ماشین اهمیت دارد و نشان می‌دهد آزمون‌های رفتاری به‌تنهایی ممکن است کافی نباشند.",
+        "why_it_matters": "تفاوت میان عملکرد هوشمند و تجربه آگاهانه می‌تواند طراحی آزمون‌های آینده برای سامانه‌های هوشمند را تغییر دهد. در صورتی که معیارهای فعلی فقط رفتار قابل مشاهده را بسنجند، ممکن است میان موفقیت وظیفه و وجود تجربه آگاهانه خلط ایجاد شود. بنابراین ارزیابی‌های آینده باید سازوکار و شواهد مستقل‌تری برای این دو مفهوم در نظر بگیرند.",
+        "speakers": "",
+        "key_quote": "",
+        "category": "mind",
+    }
+    calls = {"n": 0}
+
+    def fake_call(*args, **kwargs):
+        calls["n"] += 1
+        payload = short if calls["n"] == 1 else repaired
+        return json.dumps(payload, ensure_ascii=False), "test-provider"
+
+    monkeypatch.setattr(summarize, "call_llm_with_fallback", fake_call)
+    monkeypatch.setattr(summarize, "get_quality_chain", lambda: [("test-provider", lambda *a, **k: json.dumps(repaired, ensure_ascii=False))])
+    monkeypatch.setenv("AI_RADAR_EDITORIAL_REVIEW", "0")
+
+    item = {
+        "title": "Solving the mystery of consciousness",
+        "summary": "This source discusses consciousness in artificial intelligence and distinguishes intelligent behavior from conscious experience. " * 10,
+        "source": "The Economist",
+        "category": "mind",
+        "mission_area": "mind_cognition",
+        "link": "https://example.invalid/mind",
+    }
+    result = summarize.summarize_item(item)
+    assert result is not None
+    assert len(result["summary"]) >= 180
+    assert len(result["why_it_matters"]) >= 140
+    assert calls["n"] >= 2

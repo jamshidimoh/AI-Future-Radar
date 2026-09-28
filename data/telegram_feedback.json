@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790581738,
+  "updated_at": 1790582706,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16067,6 +16067,43 @@
       "why_it_matters": "حذف مرحلهٔ تولید متن باعث کاهش چشمگیر زمان پردازش و هزینهٔ محاسبه می‌شود و امکان تصمیم‌گیری دقیق‌تر در برنامه‌های خودکار را می‌دهد. ارائهٔ تصمیمات تایپ‌شده و احتمال‌دار ریسک خطاهای زبانی را در حوزه‌های حساس مانند مالی یا پزشکی کاهش می‌دهد. مقایسهٔ هزینه و عملکرد نشان می‌دهد Jev می‌تواند گزینه‌ای مقرون‌به‌صرفه برای توسعه‌دهندگان هوش مصنوعی در پروژه‌های مقیاس‌پذیر باشد.",
       "link": "https://www.marktechpost.com/2026/09/27/20-agentic-use-cases-of-typesafe-ais-jev/",
       "posted_at": 1790580506
+    },
+    "-1004482051328:1963": {
+      "chat_id": -1004482051328,
+      "message_id": 1963,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "زمانی که ژاپن جنگ را آغاز کرد و به آمریکا برای پایان دادن به آن تکیه داشت - Sarah Paine",
+      "summary": "ویدئویی با عنوان \"When Japan Started a War and Counted on America to End It\" توسط Sarah Paine ساخته شده و در کانال YouTube Dwarkesh Patel منتشر شده است. این ویدئو به بررسی آغاز جنگ توسط ژاپن و تکیه آن بر آمریکا برای پایان دادن به جنگ می‌پردازد. در صفحه ویدئو، لینک کامل به قسمت کامل ویدئو و حساب توییتر Dwarkesh Patel نیز آورده شده است.",
+      "description": "Full episode: https://www.youtube.com/watch?v=f6cjAEr08qk\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "این ویدئو به مخاطبان امکان می‌دهد تا دیدگاهی درباره نقش ژاپن در آغاز جنگ و نقش آمریکا در خاتمه آن کسب کنند. با مشاهده این محتوا، پژوهشگران و علاقه‌مندان می‌توانند به تحلیل‌های تاریخی و روابط بین‌المللی در دوران جنگ بپردازند. این منبع می‌تواند به عنوان یک نقطه شروع برای بررسی تأثیرات استراتژیک و سیاسی در جنگ‌های جهانی مورد استفاده قرار گیرد.",
+      "link": "https://www.youtube.com/watch?v=iGVtd2wTz_s",
+      "posted_at": 1790582700
+    },
+    "-1004482051328:1964": {
+      "chat_id": -1004482051328,
+      "message_id": 1964,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Fireworks AI انتشار Ember-1 داد: یک Kimi K3 پس‌آموخته که حدود ۴۰٪ توکن کمتر مصرف می‌کند",
+      "summary": "Fireworks AI مدل Ember-1 را منتشر کرد که یک نسخۀ پس‌آموخته از Kimi K3 است و برای تولید ردیابی‌های استدلالی کوتاه‌تر به‌جای کاهش تلاش استدلالی طراحی شده. شرکت گزارش می‌دهد که حدود ۴۰٪ توکن کمتر مصرف می‌شود، طوری که توکن‌های خروجی برای هر وظیفه در یک تست A/B تولیدی از ۴۹.۳ هزار به ۲۹.۹ هزار کاهش یافته، در حالی که امتیاز به‌صورت اساسی تغییر نکرده. Ember-1 اکنون به‌عنوان پیش‌نمایش تحقیقاتی فقط-API با قیمت‌گذاری Kimi K3 در دسترس است.",
+      "why_it_matters": "کاهش ۴۰ درصدی توکن‌های خروجی مستقیماً هزینه‌های محاسبه‌ای و مصرف انرژی را در استقرارهای مقیاس‌بزرگ کاهش می‌دهد، بدون اینکه کیفیت خروجی از بین برود. تأیید عملکرد در محیط تولیدی با تست A/B نشان می‌دهد که بهینه‌سازی طول استدلال می‌تواند جایگزینِ عملی برای مدل‌های سنگین‌تر باشد. در دسترس بودن از طریق API به‌صورت پیش‌نمایش تحقیقاتی امکان ارزیابی سریع و مقایسه با نسخه‌های قبلی را برای تیم‌های توسعه فراهم می‌کند.",
+      "link": "https://www.marktechpost.com/2026/09/28/fireworks-ai-releases-ember-1-a-post-trained-kimi-k3-that-uses-about-40-fewer-tokens/",
+      "posted_at": 1790582706
     }
   }
 }

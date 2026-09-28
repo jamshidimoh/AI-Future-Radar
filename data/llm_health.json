@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 59,
-      "disabled_until": 1790675291.319,
+      "failures": 60,
+      "disabled_until": 1790676135.076,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790675291.319,
+      "disabled_until": 1790676135.076,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -123,8 +123,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 118,
-      "disabled_until": 1790675291.319,
+      "failures": 120,
+      "disabled_until": 1790676135.076,
       "last_error": "auth",
       "last_success": 0.0
     },

@@ -198,6 +198,37 @@ def test_mission_recovery_exhausted_below_floor_is_no_candidate_not_hard_failure
 
 
 
+def test_partial_people_bootstrap_does_not_mask_unmet_mission_coverage():
+    log = """
+[Selection Timing] original_select candidates=10 candidate_window=6 elapsed=1.0s
+[Publication Summary Budget] input=6 protected=0 normal_window=6 output=6 normal_limit=6 replacement_buffer=3 score_floor=55.0
+[Mission Coverage Recovery] missing_lanes=1 attempts=3 recovered=0 status=unmet
+[Production Contract] normal_news=3 normal_max=3 people=0 people_max=none tier0_news=0 tier0_quota_exempt=true education=not_due
+[People Bootstrap] status=in_progress delivered=27/30 baseline=30/30 bootstrap_at=2026-09-22T09:00:00+00:00
+Posts sent: 3/6
+"""
+    ok, reason = validate(log)
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in reason
+
+
+def test_independent_lane_not_score_gated_can_be_classified_as_no_candidate():
+    log = """
+[Selection Timing] original_select candidates=5 candidate_window=6 elapsed=1.0s
+[Publication Summary Budget] input=5 protected=0 normal_window=5 output=5 normal_limit=5 replacement_buffer=3 score_floor=55.0
+[Mission Coverage Recovery] attempt=1 area=mind_cognition title=A status=independent_lane_not_score_gated
+[Mission Coverage Recovery] attempt=2 area=mind_cognition title=B status=independent_lane_not_score_gated
+[Mission Coverage Recovery] attempt=3 area=mind_cognition title=C status=independent_lane_not_score_gated
+[Mission Coverage Recovery] lane=mind_cognition status=unmet
+[Mission Coverage Recovery] missing_lanes=1 attempts=3 recovered=0 status=unmet
+[Production Contract] normal_news=1 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 1/5
+"""
+    ok, reason = validate(log)
+    assert ok is True
+    assert "no eligible candidate" in reason
+
+
 def test_partial_people_bootstrap_progress_is_accepted():
     log = """
 [Selection Timing] original_select candidates=10 candidate_window=6 elapsed=1.0s

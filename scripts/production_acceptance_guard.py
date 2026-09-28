@@ -55,7 +55,7 @@ MISSION_COVERAGE_HARD_FAILURE_PATTERN = re.compile(
     r"\[Mission Coverage Recovery\].*?status=(?:failed|below_score_floor|independent_lane_not_score_gated)"
 )
 MISSION_COVERAGE_ATTEMPT_PATTERN = re.compile(
-    r"\[Mission Coverage Recovery\]\s+attempt=\d+\s+area=([^\s]+).*?status=(recovered|failed|below_score_floor|independent_lane_not_score_gated)"
+    r"\[Mission Coverage Recovery\]\s+attempt=\d+\s+area=([^\s]+).*?status=(recovered|failed|provider_unavailable|below_score_floor|independent_lane_not_score_gated)"
 )
 
 
@@ -142,12 +142,12 @@ def _mission_coverage_status(lines):
             continue
         area, status = attempt.group(1).casefold(), attempt.group(2).casefold()
         attempts_by_lane.setdefault(area, []).append(status)
-    exhausted_quality_only = {
+    exhausted_nonpublishable_only = {
         area for area, statuses in attempts_by_lane.items()
         if statuses and area not in explicit_no_candidate
-        and all(status in {"below_score_floor", "independent_lane_not_score_gated"} for status in statuses)
+        and all(status in {"below_score_floor", "provider_unavailable", "independent_lane_not_score_gated"} for status in statuses)
     }
-    result["no_candidate_lanes"] = len(explicit_no_candidate | exhausted_quality_only)
+    result["no_candidate_lanes"] = len(explicit_no_candidate | exhausted_nonpublishable_only)
     result["hard_failures"] = _mission_recovery_hard_failures(lines)
     return result
 

@@ -1,3 +1,5 @@
+import json
+
 from src.summarize import _language_ok, _repair_persian_draft, _repair_persian_fields
 
 
@@ -76,7 +78,6 @@ def test_field_level_recovery_can_repair_persian_body_after_full_draft_failure(m
 
 
 def test_length_gate_attempts_bounded_editorial_repair_before_reject(monkeypatch):
-    import json
     import src.summarize as summarize
 
     short = {

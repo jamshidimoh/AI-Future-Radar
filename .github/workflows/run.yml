@@ -213,8 +213,9 @@ jobs:
           python -u scripts/refresh_free_model_registry.py --strict
           status=$?
           if [ "$status" -ne 0 ]; then
-            echo "[Free Model Registry] strict validation unavailable; continuing with runtime fallbacks status=$status"
-            python -u scripts/refresh_free_model_registry.py
+            echo "[Free Model Registry] refresh unavailable; continuing with committed/validated runtime fallbacks status=$status"
+          else
+            echo "[Free Model Registry] refresh completed successfully"
           fi
           exit 0
 

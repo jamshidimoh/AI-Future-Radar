@@ -193,7 +193,7 @@ def test_unmet_mission_coverage_is_fail_closed():
 def test_unmet_mission_candidate_failure_is_not_hard_failure():
     log = """
 [Production Selection] total=6
-[Mission Coverage Recovery] attempt=1 area=ai title=candidate failed translation/QA status=failed
+[Mission Coverage Recovery] attempt=1 area=ai title=provider unavailable status=provider_unavailable
 [Mission Coverage Recovery] missing_lanes=1 attempts=1 recovered=0 status=unmet
 [Production Contract] normal_news=2 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
 Posts sent: 2/6

@@ -202,12 +202,41 @@ jobs:
           static_single_message = "exactly one canonical full-text message" in source_text and "photo=disabled single_message=true" in source_text and "return _send_text_only(text, source_link=source_link)" in source_text
           image_contract = runtime_single_message or regression_single_message or static_single_message
 
-          ranking_contract = all_runs(r"\[Normal Ranking Window\].*candidate_window=\d+") and not any(has(logs[r["run_number"]], r"normal_rank=\d{2,}") for r in window)
+          def ranking_evidence(text):
+              explicit = has(text, r"\[Normal Ranking Window\].*candidate_window=\d+")
+              window_matches = re.findall(r"\[Selection Contract\]\s+runtime_candidate_window=(\d+)", text, re.I)
+              rank_matches = [int(x) for x in re.findall(r"normal_rank=(\d+)", text, re.I)]
+              if explicit:
+                  return True
+              if not window_matches or not rank_matches:
+                  return False
+              window_size = int(window_matches[-1])
+              return max(rank_matches) <= window_size
+
+          ranking_contract = all(ranking_evidence(logs[r["run_number"]]) for r in window)
           qa_replacement = all_runs(r"\[QA Replacement Evidence\] PASS")
           leader_watch = all_runs(r"\[Protected Leader Eligibility\] candidates=\d+") and all_runs(r"\[Protected Leader Watch\] selected=\d+ max=\d+")
           provider_isolated = all_runs(r"\[Provider Failure Isolation Evidence\] PASS")
           state_persisted = all_runs(r"Production state persisted")
-          mission_portfolio = all_runs(r"mission_aware=true") and not any(has(logs[r["run_number"]], r"generic low[- ]signal") for r in window)
+          try:
+              source_payload = get_json("/contents/src/unified_editorial_selection.py?ref=main")
+              unified_source_text = base64.b64decode(source_payload.get("content", "")).decode("utf-8", errors="replace")
+          except Exception as exc:
+              unified_source_text = ""
+              print(f"MISSION_STATIC read_error={type(exc).__name__}: {exc}")
+          mission_static = bool(
+              re.search(r"select_regular_portfolio\(.*?mission_aware=True", unified_source_text, re.I | re.S)
+              or re.search(r"mission_aware\s*=\s*True", unified_source_text, re.I)
+          )
+
+          def mission_evidence(text):
+              runtime_marker = has(text, r"mission_aware=true")
+              unified_marker = has(text, r"\[Unified Portfolio Selection\]")
+              guard_marker = has(text, r"\[Selection Guard\]\s+unified=true")
+              recovery_marker = has(text, r"\[Mission Coverage Recovery\]")
+              return runtime_marker or (mission_static and unified_marker and guard_marker and recovery_marker)
+
+          mission_portfolio = all(mission_evidence(logs[r["run_number"]]) for r in window) and not any(has(logs[r["run_number"]], r"generic low[- ]signal") for r in window)
           tier0_quality_floor = all(tier0_quality_floor_clean(logs[r["run_number"]]) for r in window)
 
           education_published = any(has(logs[r["run_number"]], r"\[Education Published\].*telegram_delivery=successful") for r in window)

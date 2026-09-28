@@ -77,7 +77,7 @@ Posts sent: 1/3
 
 UNMET_MISSION_COVERAGE = """
 [Production Selection] total=6
-[Mission Coverage Recovery] attempt=1 area=ai title=wrong lane status=failed
+[Mission Coverage Recovery] attempt=1 area=ai title=runtime infrastructure failure status=hard_failure
 [Mission Coverage Recovery] target=1 prepared=0 attempts=3 recovered=0 status=unmet
 [Production Contract] normal_news=2 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
 Posts sent: 2/6
@@ -188,6 +188,19 @@ def test_unmet_mission_coverage_is_fail_closed():
     ok, message = validate(UNMET_MISSION_COVERAGE)
     assert ok is False
     assert "mission portfolio coverage remained unmet" in message
+
+
+def test_unmet_mission_candidate_failure_is_not_hard_failure():
+    log = """
+[Production Selection] total=6
+[Mission Coverage Recovery] attempt=1 area=ai title=candidate failed translation/QA status=failed
+[Mission Coverage Recovery] missing_lanes=1 attempts=1 recovered=0 status=unmet
+[Production Contract] normal_news=2 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 2/6
+"""
+    ok, message = validate(log)
+    assert ok is True
+    assert "no eligible candidate" in message
 
 
 def test_compact_unmet_mission_coverage_is_fail_closed():

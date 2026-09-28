@@ -17,6 +17,7 @@ from pathlib import Path
 CANDIDATE_PATTERNS = (
     re.compile(r"\[Production Selection\].*?total=(\d+)"),
     re.compile(r"\[Selection Timing\].*?candidates=(\d+)"),
+    re.compile(r"\[Unified Portfolio Selection\].*?candidates=(\d+)"),
 )
 SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output=(\d+)")
 CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*")

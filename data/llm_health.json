@@ -1,8 +1,8 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 30,
-      "disabled_until": 1790608636.814,
+      "failures": 31,
+      "disabled_until": 1790609499.124,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 57,
-      "disabled_until": 1790673436.814,
+      "failures": 58,
+      "disabled_until": 1790674299.124,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790673436.814,
+      "disabled_until": 1790674299.124,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -123,8 +123,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 114,
-      "disabled_until": 1790673436.814,
+      "failures": 116,
+      "disabled_until": 1790674299.124,
       "last_error": "auth",
       "last_success": 0.0
     },

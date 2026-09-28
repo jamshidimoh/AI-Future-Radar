@@ -90,8 +90,8 @@ def test_length_gate_attempts_bounded_editorial_repair_before_reject(monkeypatch
     }
     repaired = {
         "title": "حل معمای آگاهی در سامانه‌های هوش مصنوعی",
-        "summary": "پژوهشگران درباره سنجش آگاهی در سامانه‌های هوش مصنوعی و تفاوت آن با رفتار هوشمند بحث می‌کنند. تمرکز اصلی بر معیارهایی است که بتوانند تجربه آگاهانه را از صرفاً عملکرد درست سامانه جدا کنند. این تمایز برای تفسیر ادعاهای مربوط به آگاهی ماشین اهمیت دارد و نشان می‌دهد آزمون‌های رفتاری به‌تنهایی ممکن است کافی نباشند.",
-        "why_it_matters": "تفاوت میان عملکرد هوشمند و تجربه آگاهانه می‌تواند طراحی آزمون‌های آینده برای سامانه‌های هوشمند را تغییر دهد. در صورتی که معیارهای فعلی فقط رفتار قابل مشاهده را بسنجند، ممکن است میان موفقیت وظیفه و وجود تجربه آگاهانه خلط ایجاد شود. بنابراین ارزیابی‌های آینده باید سازوکار و شواهد مستقل‌تری برای این دو مفهوم در نظر بگیرند.",
+        "summary": "پژوهشگران درباره سنجش آگاهی در سامانه‌های AI و تفاوت آن با رفتار هوشمند بحث می‌کنند. تمرکز اصلی بر معیارهایی است که بتوانند تجربه آگاهانه را از صرفاً عملکرد درست سامانه جدا کنند. این تمایز برای تفسیر ادعاهای مربوط به آگاهی ماشین در بحث 2023 اهمیت دارد و نشان می‌دهد آزمون‌های رفتاری به‌تنهایی ممکن است کافی نباشند.",
+        "why_it_matters": "تفاوت میان عملکرد هوشمند و تجربه آگاهانه می‌تواند طراحی آزمون‌های آینده برای سامانه‌های AI را تغییر دهد. در صورتی که معیارهای فعلی فقط رفتار قابل مشاهده را بسنجند، ممکن است میان موفقیت وظیفه و وجود تجربه آگاهانه خلط ایجاد شود. بنابراین ارزیابی‌های آینده باید سازوکار و شواهد مستقل‌تری برای این دو مفهوم را با توجه به بحث 2023 در نظر بگیرند.",
         "speakers": "",
         "key_quote": "",
         "category": "mind",
@@ -109,7 +109,7 @@ def test_length_gate_attempts_bounded_editorial_repair_before_reject(monkeypatch
 
     item = {
         "title": "Solving the mystery of consciousness",
-        "summary": "This source discusses consciousness in artificial intelligence and distinguishes intelligent behavior from conscious experience. " * 10,
+        "summary": "This source discusses AI consciousness and distinguishes intelligent behavior from conscious experience in the 2023 debate. " * 10,
         "source": "The Economist",
         "category": "mind",
         "mission_area": "mind_cognition",

@@ -1,14 +1,14 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 29,
-      "disabled_until": 1790607678.451,
+      "failures": 30,
+      "disabled_until": 1790608636.814,
       "last_error": "model",
       "last_success": 0.0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 9,
-      "disabled_until": 1790584107.404,
+      "disabled_until": 1790590636.814,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 56,
-      "disabled_until": 1790672478.451,
+      "failures": 57,
+      "disabled_until": 1790673436.814,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790672478.451,
+      "disabled_until": 1790673436.814,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -123,8 +123,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 112,
-      "disabled_until": 1790672478.451,
+      "failures": 114,
+      "disabled_until": 1790673436.814,
       "last_error": "auth",
       "last_success": 0.0
     },

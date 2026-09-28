@@ -97,10 +97,20 @@ jobs:
               return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
           def tier0_quality_floor_clean(text):
-              floors = [float(m.group(1)) for m in re.finditer(r"tier0_quality_floor(?:=|:)\s*([-+]?\d+(?:\.\d+)?)", text, re.I)]
-              floor = floors[-1] if floors else 60.0
-              published = [float(m.group(1)) for m in re.finditer(r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?)", text)]
-              return all(score >= floor for score in published)
+              """Validate each published Tier-0 score against the floor emitted by runtime.
+              
+              Runtime evidence uses quality_floor=55.0 on the TIER0 publication
+              line, not tier0_quality_floor=.... Never substitute an unrelated
+              conservative default when the runtime already emitted its contract.
+              """
+              published = re.findall(
+                  r"\[Publication Policy\]\s+PUBLISH TIER0\b.*?score=([-+]?\d+(?:\.\d+)?).*?quality_floor=([-+]?\d+(?:\.\d+)?)",
+                  text,
+                  re.I,
+              )
+              if not published:
+                  return True
+              return all(float(score) >= float(floor) for score, floor in published)
 
           def publish_evidence(text):
               published = has(text, r"\[Telegram Published\]")

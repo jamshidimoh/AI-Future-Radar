@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790583767,
+  "updated_at": 1790585183,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16123,6 +16123,62 @@
       "why_it_matters": "این دیدگاه از سوی یکی از پیشگامان حوزه‌ی هوش مصنوعی، پیامدهای مهمی برای سیاست‌گذاری، اخلاق و تحقیقات آینده در این حوزه دارد. اگر این پیش‌بینی درست باشد، می‌تواند باعث تغییر در اولویت‌های تحقیقاتی و سرمایه‌گذاری‌های صنعتی شود. درک موقعیت فعلی در مسیر تکامل هوش مصنوعی برای برنامه‌ریزی‌های بلندمدت و مدیریت ریسک‌های مرتبط ضروری است.",
       "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNWkUzV1NaaHZWTGtyRjZmaXI2aEQ5dC0yRlFqcDRfOGNRSDFvbVVDaGd0MnAwWnVWam0xZnZPXzV2cUI1NFdBQVI0WkFMTlZtYzN2RWpWU21BYXB1OUNkT1ZOUjFkc3BvVG0td1lvV0JqRXhKSkE1dnZ5bm9KLTZkU096V2pOT3RlSHZRa2ZUWQ?oc=5",
       "posted_at": 1790583767
+    },
+    "-1004482051328:1966": {
+      "chat_id": -1004482051328,
+      "message_id": 1966,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - 80,000 Hours",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "پیشنهادهای میلیون‌دولاری برای راه‌اندازی سازمان‌های غیرانتفاعی ایمنی هوش مصنوعی",
+      "summary": "Coefficient Giving پروژه Tailwind را راه‌اندازی کرده که گرنت‌های پیش‌دانه بین ۲۰۰ هزار تا ۲ میلیون دلار برای سازمان‌های غیرانتفاعی ایمنی هوش مصنوعی ارائه می‌دهد. این گرنت‌ها برای استارتاپ‌های جدید تا ۲۰ میلیون دلار افزایش می‌یابند و حتی برای پروژه‌های استثنایی مانند مرکز تحقیقاتی Resolution جفری ایروینگ، ۱۶۰ میلیون دلار در نظر گرفته شده است. برنامه به دنبال بنیان‌گذارانی است که بتوانند مشکلات نادیده‌گرفته‌شده ایمنی هوش مصنوعی را حل کنند، از جمله ارزیابی مستقل ادعاهای ایمنی شرکت‌ها، پژوهش برای همراستایی سیستم‌های بسیار قدرتمند و زیرساخت‌های مشترک تسریع‌کننده حوزه.",
+      "description": "There are millions in funding available for anyone who can launch a successful nonprofit AI safety startup. The hard part, it turns out, is finding people to take the money. Coefficient Giving has drawn up a list of dozens of ideas for organisations it would like someone to start — and it’s looking for founders. \n\nToday’s guest, Max Nadeau, works on Coefficient Giving’s Technical AI Safety team, where he’s trying to find talented people who can turn neglected AI safety problems into effective organisations.\n\nProject Tailwind is Coefficient Giving’s attempt to get those organisations started.\n• Preseed grants run $200,000–$2 million, with no preliminary results required.\n• Teams with early results can seek $2–$20 million.\n• For exceptional organisations, much larger grants are possible, even for brand-new startups— Coefficient recently gave $160 million to Geoffrey Irving’s new research centre, Resolution.\n• The gaps Max most wants filled include independent assessment of AI companies’ safety claims, research aimed at aligning far more powerful systems, and shared infrastructure that speeds up the whole field.\n\n*Project Tailwind website:* https://80k.info/tailwind\n\nBut money can’t supply the hardest part: a founder with a convincing account of how their work will actually reduce catastrophic risks. Producing good research is only one step. Someone has to use it, change their decisions, or adopt the safeguards it makes possible.\n\nMax and host Zershaaneh Qureshi discuss what makes a proposal worth backing, why nonprofits can have a bigger impact on safety than frontier companies, and which gaps most urgently need someone to fill them.\n\n*Learn more & full transcript:* https://80k.info/mn\n\nIf you know someone who would be a great founder, pass their name along to tailwind@cg.org and encourage them to submit an expression of interest on the Tailwind site: https://coefficientgiving.org/tailwind/get-involved/\n\n_Disclosure: Coefficient Giving is 80,000 Hours’s largest donor, though we haven’t received funding directly from Max’s team._\n\nThis episode was recorded on August 18, 2026.\n\nChapters:\n00:00:00 Cold open\n00:00:37 Who’s Max Nadeau?\n00:01:55 Max’s journey from AI research to grantmaking\n00:03:24 Project Tailwind: Funding ambitious AI safety nonprofits\n00:13:23 “The only bottleneck is talent”\n00:19:52 Mistakes startups make\n00:22:34 The importance of dramatic pivots\n00:28:16 Why AI safety needs outsiders\n00:37:06 Is impact possible within AI companies?\n00:41:44 Working at AI companies to escape the permanent underclass\n00:44:34 For-profit vs nonprofit for ambitious founders\n00:50:50 What makes a bad founder?\n00:55:38 Top 6 AI safety ideas Max wants to fund\n01:01:55 Improving your odds of getting a grant\n\n_Our production team includes:_\n• _Video editors: Josh Alward, Dominic Armstrong, Ollie Bignell, Jasper Luithlen, Milo McGuire, Luke Monsour, and Simon Monsour_\n• _Producers: Elizabeth Cox and Nick Stockton_\n• _Coordination and support: Katy Moore and",
+      "why_it_matters": "تأمین مالی گسترده برای سازمان‌های ایمنی هوش مصنوعی، امکان ایجاد سریع تیم‌های متخصص را فراهم می‌کند که به‌صورت مستقل به ارزیابی ادعاهای ایمنی می‌پردازند و خطرات ناشی از پیشرفت‌های قدرتمند را پیش‌بینی می‌کنند. اما مهم‌ترین مانع، یافتن فردی است که بتواند به طور قانع‌کننده نشان دهد کار او چگونه خطرات فاجعه‌بار هوش مصنوعی را کاهش می‌دهد، چرا که تولید پژوهش کافی نیست؛ باید تصمیم‌گیری‌ها و سیاست‌ها را تحت تأثیر قرار دهد.",
+      "link": "https://www.youtube.com/watch?v=_UXQxcDzHBs",
+      "posted_at": 1790585174
+    },
+    "-1004482051328:1967": {
+      "chat_id": -1004482051328,
+      "message_id": 1967,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Sarvam AI، مدل گفتاربهمتن Saaras V4 را برای ۲۲ زبان هندی و انگلیسی منتشر کرد",
+      "summary": "مدل گفتار‑به‑متن Saaras V4 توسط Sarvam AI برای تمام ۲۲ زبان هندی و انگلیسی جهانی عرضه شده است. این مدل ترکیبی از یک رمزگذار صوتی و یک دیکودر ۳ بیلیون پارامتری hybrid state‑space استفاده می‌کند. قابلیت keyterm prompting تا ۵۰ واژه و پنج حالت خروجی را از یک مدل فراهم می‌کند و در حالت استریمینگ زمان تاخیر اولین توکن زیر ۱۵۰ میلی‌ثانیه است.",
+      "why_it_matters": "این پیشرفت باعث می‌شود تشخیص گفتار به‌صورت چندزبانه برای جوامع زبانی متنوع در هند قابل دسترس‌تر شود. زمان تاخیر کم (<150 ms) امکان استفاده در برنامه‌های زمان‑حقیقی مانند ترجمه زنده یا دستیارهای صوتی را فراهم می‌کند. همچنین هزینهٔ استفاده از API به‌صورت ₹30 در هر ساعت، راه‌حلی اقتصادی برای توسعه‌دهندگان و کسب‌وکارها ارائه می‌دهد.",
+      "link": "https://www.marktechpost.com/2026/09/26/sarvam-ai-releases-saaras-v4-a-speech-to-text-model-for-all-22-indian-languages-and-global-english/",
+      "posted_at": 1790585179
+    },
+    "-1004482051328:1968": {
+      "chat_id": -1004482051328,
+      "message_id": 1968,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Stanford Report)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Fei-Fei Li",
+      "watch_person": "Fei-Fei Li",
+      "title": "چرا استنفورد برای عصر بعدی هوش مصنوعی ساختار خود را بازنگری می‌کند",
+      "summary": "گزارش Stanford Report نشان می‌دهد که دانشگاه استنفورد در حال بازنگری ساختاری برای مواجهه با عصر جدید هوش مصنوعی است. این تغییر ساختاری برای همسو کردن واحدهای آموزشی و پژوهشی با پیشرفت‌های سریع هوش مصنوعی انجام می‌شود. هدف این بازسازی حفظ موقعیت پیشرو در نوآوری‌های هوش مصنوعی است.",
+      "why_it_matters": "این بازنگری ساختاری نشان می‌دهد که یک مؤسسه پیشرو مانند استنفورد، تأثیر تحول‌آفرین هوش مصنوعی را به‌طور جدی می‌پذیرد؛ امری که می‌تواند برنامه‌های آموزشی را بازطراحی کرده، جذب پژوهشگر و دانشجوی برتر را تسهیل کند و پروژه‌های میان‌رشته‌ای را تقویت نماید. چنین گامی می‌تواند الگویی برای سایر دانشگاه‌ها باشد و به تسریع پیشرفت‌های هوش مصنوعی و کاربردهای اجتماعی آن کمک کند. همچنین این تغییر می‌تواند فرصت‌های جدید برای همکاری با صنعت و جذب سرمایه‌گذاری‌های پژوهشی فراهم آورد.",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNUUIxU0ZldEVvdXl3eG8xaE91N0FieFRQQ3VCdG42V0N5cVpXeWZYZldOeDBkOGdkMXV3QzhZODFQUjE4UXNCYWRvakpzVjQ0dDZGMFAweGtKc2RJUXdJRkNqRklvREpjNzBJWk1nR0owS1YwdmJEUm1IejZPb3V0N0p2bllPVDZPSzN5TkxGTlJ4eC00S0NKcA?oc=5",
+      "posted_at": 1790585183
     }
   }
 }

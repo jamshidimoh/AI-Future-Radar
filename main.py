@@ -538,17 +538,24 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
 
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
+                provider_unavailable = bool(candidate.get("_summary_provider_failure"))
+                reason_code = "mission_recovery_provider_unavailable" if provider_unavailable else "mission_recovery_candidate_failure"
                 _runtime_telemetry_event(
                     candidate,
                     stage="mission_recovery",
-                    decision="reject",
-                    reason_code="mission_recovery_candidate_failure",
-                    details={"mission_area": _area(candidate), "attempt": attempts},
+                    decision="unavailable" if provider_unavailable else "reject",
+                    reason_code=reason_code,
+                    details={
+                        "mission_area": _area(candidate),
+                        "attempt": attempts,
+                        "provider_failure": candidate.get("_summary_provider_failure"),
+                    },
                     attempt=attempts,
                 )
+                status = "provider_unavailable" if provider_unavailable else "failed"
                 print(
                     f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
-                    f"title={str(candidate.get('title',''))[:120]} status=failed",
+                    f"title={str(candidate.get('title',''))[:120]} status={status}",
                     flush=True,
                 )
                 continue

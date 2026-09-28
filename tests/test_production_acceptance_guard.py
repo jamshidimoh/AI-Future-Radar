@@ -229,6 +229,7 @@ def test_current_runtime_contract_without_optional_tier0_flag_is_accepted():
 def test_unified_portfolio_selection_is_valid_candidate_evidence():
     log = """
 [Unified Portfolio Selection] capacity=3 candidate_window=6 replacement_buffer=3 candidates=9 lane_candidates={'normal': 3} source_diversity=3
+[Publication Summary Budget] input=9 output=3 normal_window=6 replacement_buffer=3
 [Production Contract] normal_news=3 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
 Posts sent: 3/3
 """

@@ -534,12 +534,38 @@ def summarize_item(item):
         return None
     if not _length_ok(final, raw_text):
         print(
-            f"[Length Gate] rejected terse summary summary={len(final.get('summary',''))} "
-            f"why={len(final.get('why_it_matters',''))} source={len(raw_text)}",
+            f"[Length Gate] initial failure; attempting one bounded editorial-length repair "
+            f"summary={len(final.get('summary',''))} why={len(final.get('why_it_matters',''))} source={len(raw_text)}",
             flush=True,
         )
-        _telemetry_event(item, stage="editorial_quality", decision="reject", reason_code="length_gate_failure")
-        return None
+        repair_chain = get_quality_chain()
+        repaired_length, length_repair_provider = _repair_editorial_value(final, item, repair_chain)
+        if (
+            _language_ok(repaired_length)
+            and _length_ok(repaired_length, raw_text)
+            and _value_ok(repaired_length, raw_text)
+        ):
+            final = repaired_length
+            editorial_provider = length_repair_provider
+            print(
+                f"[Length Gate] repaired and accepted summary={len(final.get('summary',''))} "
+                f"why={len(final.get('why_it_matters',''))} provider={length_repair_provider or '-'}",
+                flush=True,
+            )
+        else:
+            print(
+                f"[Length Gate] rejected after bounded repair summary={len(repaired_length.get('summary',''))} "
+                f"why={len(repaired_length.get('why_it_matters',''))} source={len(raw_text)}",
+                flush=True,
+            )
+            _telemetry_event(
+                item,
+                stage="editorial_quality",
+                decision="reject",
+                reason_code="length_gate_failure",
+                details={"repair_provider": length_repair_provider},
+            )
+            return None
 
     if not _value_ok(final, raw_text):
         print("[Editorial Value Gate] weak summary; attempting one bounded repair", flush=True)

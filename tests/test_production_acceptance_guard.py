@@ -226,6 +226,17 @@ def test_current_runtime_contract_without_optional_tier0_flag_is_accepted():
     assert ok is True
     assert "mind_ideas_voices=1" in message
 
+def test_unified_portfolio_selection_is_valid_candidate_evidence():
+    log = """
+[Unified Portfolio Selection] capacity=3 candidate_window=6 replacement_buffer=3 candidates=9 lane_candidates={'normal': 3} source_diversity=3
+[Publication Summary Budget] input=9 output=3 normal_window=6 replacement_buffer=3
+[Production Contract] normal_news=3 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 3/3
+"""
+    ok, message = validate(log)
+    assert ok is True
+    assert "published_news=3" in message
+
 
 def test_normal_competitive_gate_preserves_mission_target_candidate_below_relative_cutoff():
     from production_entrypoint import _competitive_normal_candidates

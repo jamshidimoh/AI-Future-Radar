@@ -59,7 +59,22 @@ def portfolio_value(item: dict[str, Any], selected: Iterable[dict[str, Any]], *,
     return base + diversity_weight * (1.0 - similarity) - similarity_penalty * similarity
 
 
-def _signature(value: dict[str, Any] | str) -> dict[str, Any]:
+def _signature(value: dict[str, Any] | str | list[Any]) -> dict[str, Any]:
+    """Normalize current and legacy history signatures to one safe mapping shape."""
+    if isinstance(value, list):
+        # Legacy history can contain a bare token list. Preserve it as
+        # title/context so novelty scoring remains meaningful and safe.
+        tokens = [str(token) for token in value if str(token).strip()]
+        return {
+            "title": tokens,
+            "title_text": " ".join(tokens),
+            "context": tokens,
+            "anchors": [],
+            "events": [],
+            "personnel": [],
+            "numbers": [],
+            "leader": "",
+        }
     if isinstance(value, dict):
         try:
             from src.semantic_dedup import get_story_signature
@@ -113,15 +128,9 @@ def max_history_entity_overlap(item: dict[str, Any], history_signatures: Iterabl
     return max((entity_overlap(item, other) for other in history_signatures), default=0.0)
 
 
-def max_history_topic_similarity(item: dict[str, Any], history_signatures: Iterable[dict[str, Any] | str]) -> float:
+def max_history_topic_similarity(item: dict[str, Any], history_signatures: Iterable[dict[str, Any] | str | list[Any]]) -> float:
     return max(
-        (
-            topic_similarity(
-                item,
-                _signature(other) if isinstance(other, str) else other,
-            )
-            for other in history_signatures
-        ),
+        (topic_similarity(item, _signature(other)) for other in history_signatures),
         default=0.0,
     )
 

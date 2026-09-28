@@ -263,6 +263,16 @@ def test_recent_history_saturation_penalizes_same_topic_without_hard_block():
     assert selected[0]["title"] == "Quantum sensing improves biological measurements" or len(selected) == 2
 
 
+def test_legacy_list_history_signature_is_safe_and_measurable():
+    from src.information_gain import editorial_novelty_score
+
+    item_data = item("Robotics reasoning system update", "Nature", 90, area="robotics")
+    legacy_history = [["robotics", "reasoning", "system", "update"]]
+    result = editorial_novelty_score(item_data, [], legacy_history)
+    assert 0.0 <= result["history_topic_similarity"] <= 1.0
+    assert result["novelty"] <= 1.0
+
+
 def test_selection_exposes_history_and_entity_novelty_metrics():
     selected = select_regular_portfolio(
         [

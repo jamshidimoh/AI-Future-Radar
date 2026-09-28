@@ -147,7 +147,7 @@ def _mission_coverage_status(lines):
     exhausted_nonpublishable_only = {
         area for area, statuses in attempts_by_lane.items()
         if statuses and area not in explicit_no_candidate
-        and all(status in {"below_score_floor", "provider_unavailable", "independent_lane_not_score_gated"} for status in statuses)
+        and all(status in {"failed", "below_score_floor", "provider_unavailable", "independent_lane_not_score_gated"} for status in statuses)
     }
     result["no_candidate_lanes"] = len(explicit_no_candidate | exhausted_nonpublishable_only)
     result["hard_failures"] = _mission_recovery_hard_failures(lines)

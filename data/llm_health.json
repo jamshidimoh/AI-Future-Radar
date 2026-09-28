@@ -32,7 +32,7 @@
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 5,
-      "disabled_until": 1790576916.163,
+      "disabled_until": 1790587368.564,
       "last_error": "rate_limit",
       "last_success": 0.0
     },

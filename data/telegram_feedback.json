@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790582706,
+  "updated_at": 1790583767,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16104,6 +16104,25 @@
       "why_it_matters": "کاهش ۴۰ درصدی توکن‌های خروجی مستقیماً هزینه‌های محاسبه‌ای و مصرف انرژی را در استقرارهای مقیاس‌بزرگ کاهش می‌دهد، بدون اینکه کیفیت خروجی از بین برود. تأیید عملکرد در محیط تولیدی با تست A/B نشان می‌دهد که بهینه‌سازی طول استدلال می‌تواند جایگزینِ عملی برای مدل‌های سنگین‌تر باشد. در دسترس بودن از طریق API به‌صورت پیش‌نمایش تحقیقاتی امکان ارزیابی سریع و مقایسه با نسخه‌های قبلی را برای تیم‌های توسعه فراهم می‌کند.",
       "link": "https://www.marktechpost.com/2026/09/28/fireworks-ai-releases-ember-1-a-post-trained-kimi-k3-that-uses-about-40-fewer-tokens/",
       "posted_at": 1790582706
+    },
+    "-1004482051328:1965": {
+      "chat_id": -1004482051328,
+      "message_id": 1965,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Stanford Graduate School of Business)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Demis Hassabis",
+      "watch_person": "Demis Hassabis",
+      "title": "دیمیس هاسابیس: در دل 'شیب‌کوه‌های' تکامل هوش مصنوعی",
+      "summary": "دیمیس هاسابیس، مدیر عامل شرکت DeepMind، در مقاله‌ای منتشر شده توسط Stanford Graduate School of Business اظهار می‌کند که ما در «شیب‌کوه‌های» تکامل هوش مصنوعی قرار داریم. این دیدگاه نشان می‌دهد که او بر این باور است که مرحله‌ی اولیه‌ی تکامل هوش مصنوعی در مسیر رسیدن به نقطه‌ی تکامل (singularity) قرار دارد. مقاله به بررسی این دیدگاه و تأثیر آن بر آینده‌ی هوش مصنوعی می‌پردازد.",
+      "why_it_matters": "این دیدگاه از سوی یکی از پیشگامان حوزه‌ی هوش مصنوعی، پیامدهای مهمی برای سیاست‌گذاری، اخلاق و تحقیقات آینده در این حوزه دارد. اگر این پیش‌بینی درست باشد، می‌تواند باعث تغییر در اولویت‌های تحقیقاتی و سرمایه‌گذاری‌های صنعتی شود. درک موقعیت فعلی در مسیر تکامل هوش مصنوعی برای برنامه‌ریزی‌های بلندمدت و مدیریت ریسک‌های مرتبط ضروری است.",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNWkUzV1NaaHZWTGtyRjZmaXI2aEQ5dC0yRlFqcDRfOGNRSDFvbVVDaGd0MnAwWnVWam0xZnZPXzV2cUI1NFdBQVI0WkFMTlZtYzN2RWpWU21BYXB1OUNkT1ZOUjFkc3BvVG0td1lvV0JqRXhKSkE1dnZ5bm9KLTZkU096V2pOT3RlSHZRa2ZUWQ?oc=5",
+      "posted_at": 1790583767
     }
   }
 }

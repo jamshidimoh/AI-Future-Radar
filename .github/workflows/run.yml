@@ -214,7 +214,16 @@ jobs:
         env:
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: python -u scripts/bridge_free_llm_router.py
+        run: |
+          set +e
+          python -u scripts/bridge_free_llm_router.py
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo "[Free LLM Router Bridge] unavailable; continuing with validated runtime fallbacks status=$status"
+          else
+            echo "[Free LLM Router Bridge] completed successfully"
+          fi
+          exit 0
 
       - name: Install local Ollama fallback
         run: |

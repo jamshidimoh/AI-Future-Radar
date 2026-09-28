@@ -78,17 +78,17 @@ jobs:
               for row in tree.get("tree", []):
                   path = str(row.get("path") or "")
                   blob_sha = str(row.get("sha") or "")
-                  # Persistent production state and the free-model registry are
-                  # runtime-operational state, not production source code. The registry
-                  # is refreshed independently and is validated by every production run;
-                  # letting its timestamp/health changes alter the code fingerprint would
-                  # make routine model refreshes invalidate an otherwise stable code
-                  # evidence window.
+                  # Persistent runtime state, the free-model registry, and CI workflow
+                  # definitions are not the Production application baseline. Workflow-only
+                  # changes (for example execution timeout/concurrency settings) must not
+                  # invalidate otherwise identical application-code evidence.
                   dynamic_runtime_paths = {"config/free_model_registry.yaml"}
+                  is_ci_workflow = path.startswith(".github/workflows/")
                   if (
                       not path
                       or path.startswith("data/")
                       or path in dynamic_runtime_paths
+                      or is_ci_workflow
                       or row.get("type") != "blob"
                   ):
                       continue

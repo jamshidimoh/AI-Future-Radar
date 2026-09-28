@@ -145,7 +145,7 @@ def _mission_coverage_status(lines):
     exhausted_quality_only = {
         area for area, statuses in attempts_by_lane.items()
         if statuses and area not in explicit_no_candidate
-        and all(status == "below_score_floor" for status in statuses)
+        and all(status in {"below_score_floor", "independent_lane_not_score_gated"} for status in statuses)
     }
     result["no_candidate_lanes"] = len(explicit_no_candidate | exhausted_quality_only)
     result["hard_failures"] = _mission_recovery_hard_failures(lines)
@@ -189,7 +189,11 @@ def validate(log_text: str) -> tuple[bool, str]:
     if contract_match is None:
         return False, "missing production contract summary"
 
-    if bootstrap_progress and not bootstrap_progress["complete"]:
+    mission_coverage = _mission_coverage_status(lines)
+
+    if bootstrap_progress and not bootstrap_progress["complete"] and not (
+        mission_coverage and mission_coverage["status"] == "unmet"
+    ):
         posts_match = _last_match(lines, (POSTS_SENT_PATTERN,))
         delivered = bootstrap_progress["delivered"]
         posts_sent = int(posts_match.group(1)) if posts_match else 0
@@ -203,7 +207,7 @@ def validate(log_text: str) -> tuple[bool, str]:
             f"baseline=30/30, delivered={delivered}/30, posts_sent={posts_sent}"
         )
 
-    mission_coverage = _mission_coverage_status(lines)
+    
     if mission_coverage and mission_coverage["status"] == "unmet":
         accounted = mission_coverage["recovered"] + mission_coverage["prepared"]
         gap = max(0, mission_coverage["target"] - accounted)

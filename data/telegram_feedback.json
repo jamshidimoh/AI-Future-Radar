@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790574606,
+  "updated_at": 1790580506,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16012,6 +16012,61 @@
       "why_it_matters": "حذف محدودیت‌های ایمنی از مدل‌های بسیار بزرگ می‌تواند رفتارهای پیش‌بینی‌نشده یا مضر ایجاد کند و خطرات جدی برای کاربران و زیرساخت‌های حیاتی به‌وجود آورد. نهاد بین‌صنعتی می‌تواند پروتکل‌های استاندارد آزمون و نظارت مستمر را فراهم کند و احتمال بروز چنین شکست‌هایی را کاهش دهد. مشارکت دولت می‌تواند مسئولیت‌پذیری را تحمیل کرده و شفافیت ارزیابی‌ها را تضمین کند، که در نهایت اعتماد بازار و توسعه مسئولانه هوش مصنوعی پیشرفته را تقویت می‌کند.",
       "link": "https://www.techmeme.com/260927/p10#a260927p10",
       "posted_at": 1790574606
+    },
+    "-1004482051328:1960": {
+      "chat_id": -1004482051328,
+      "message_id": 1960,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Google Research: Co‑Director هوش مصنوعی برای تولید ویدیوهای طولانی",
+      "summary": "Google Research یک سامانه به نام AI Video Co‑Director ارائه داد که با ترکیب چهار چارچوب عامل (agentic frameworks) کلیپ‌های کوتاه را به داستان‌های چند دقیقه‌ای تبدیل می‌کند. این سامانه به‌طور خاص دو مشکل اساسی «انحراف هویت» (identity drift) و «خطاهای زنجیره‌ای» (cascading errors) را در زنجیره تولید ویدیوهای چند‑صحنه‌ای رفع می‌کند. نتیجه، ویدیوهای بلند با ثبات بصری و بدون شکست‌های ناخواسته است که می‌توانند به‌صورت خودکار تولید شوند.",
+      "why_it_matters": "با استفاده از چارچوب‌های عامل برای کنترل هویت و جلوگیری از انباشت خطاها، این فناوری امکان تولید ویدیوهای طولانی را بدون نیاز به ویرایش دستی فراهم می‌کند؛ این امر هزینه‌های تولید در صنایع سرگرمی، آموزش و تبلیغات را به‌طور چشمگیری کاهش می‌دهد. همچنین، ثبات داستانی و بصری در ویدیوهای چند‑دقیقه‌ای باعث گسترش کاربردهای جدید مانند روایت‌های تعاملی و تجربه‌های شخصی‌سازی‌شده می‌شود. در نهایت، رفع دو شکست اصلی (identity drift و cascading errors) مسیر را برای مقیاس‌پذیری بیشتر تولید محتوای ویدئویی توسط هوش مصنوعی هموار می‌کند.",
+      "link": "https://www.marktechpost.com/2026/09/27/google-research-introduces-an-ai-video-co-director-4-agentic-frameworks-for-coherent-minutes-long-video-generation/",
+      "posted_at": 1790580496
+    },
+    "-1004482051328:1961": {
+      "chat_id": -1004482051328,
+      "message_id": 1961,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "آوشالوم الیتزور: زمان به‌عنوان کمیتی بنیادی جریان دارد",
+      "summary": "در این سخنرانی، فیزیک‌دان کوانتومی و خالق آزمایش فکری Elitzur–Vaidman، آوشالوم الیتزور، ادعا کرد که پژوهش‌های جدید یک لایه زیرکوانتومی را شناسایی کرده‌اند که در آن زمان به‌عنوان عنصر اساسی و جاری وجود دارد. او بیان کرد که این لایه می‌تواند حس «شدن» ما را توجیه کند و به‌جای اینکه زمان صرفاً توهم انسانی باشد، به‌عنوان یک کمیت فیزیکی واقعی در نظر گرفته شود. الیتزور این دیدگاه را به‌عنوان چالشی به ارتوریتی سنتی فیزیک‌دانان که زمان را ثابت و غیرجریان‌دار می‌دانند، مطرح کرد. این ادعا مستقیماً به آزمایش فکری مشهور Elitzur–Vaidman و مفهوم «بمب تستر» اشاره دارد.",
+      "description": "Avshalom Elitzur discusses quantum physics and how we experience time.\n\nDid Einstein get it right?\n\nWith a free trial, you can watch the full talk NOW at https://iai.tv/video/physics-has-misunderstood-time?stage=Stage?utm_source=YouTube&amp;utm_medium=description\n\nTime, we are told by most physicists, does not truly flow; its apparent passage is dismissed as a human illusion. Join creator of the Elitzur–Vaidman bomb tester, quantum physicist Avshalom Elitzur, as he challenges that orthodoxy. Rather than burying the lived sense of becoming beneath abstract equations, he explores research uncovering a subtle sub-quantum realm where time is the most basic ingredient of the universe. If time’s flow is fundamental, then physics itself may need redesigning.\n\n#physics #time #einstein \n\nAvshalom Elitzur is an Israeli physicist and philosopher at the Israeli Institute for Advanced Research whose Elitzur–Vaidman thought experiment reshaped debates on the role of the observer in quantum theory.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=https://iai.tv/video/physics-has-misunderstood-time?stage=Stage\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "اگر زمان به‌عنوان کمیتی بنیادی جریان داشته باشد، مدل‌های گرانش کوانتومی که زمان را به‌عنوان یک پدیده مشتق‌شده یا صرفاً پارامتر ریاضی می‌پذیرند، باید بازنگری شوند؛ این بازنگری می‌تواند چارچوبی برای ادغام دینامیک زمان نسبیتی با مکانیک کوانتومی فراهم کند. به‌علاوه، پذیرش زمان جاری می‌تواند راه‌های جدیدی برای طراحی آزمایش‌های زیرکوانتومی باز کند که در آن تغییرات زمانی به‌صورت مستقیم قابل اندازه‌گیری باشند. در نهایت، این تغییر مفهومی می‌تواند به‌طور ملموس بر توسعه نظریه‌های یکپارچه‌سازی (Unified Theories) و پیش‌بینی پدیده‌های جدید در فیزیک بنیادی تأثیر بگذارد.",
+      "link": "https://www.youtube.com/watch?v=dns7lv-uKMA",
+      "posted_at": 1790580501
+    },
+    "-1004482051328:1962": {
+      "chat_id": -1004482051328,
+      "message_id": 1962,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Jev از TypeSafe AI: ۲۰ سناریوی کاربردی با هزینهٔ توکن پایین",
+      "summary": "Jev، سرویس جدید TypeSafe AI، به‌جای تولید متن، تصمیمات تایپ‌شده با احتمال‌های کالیبره‌شده برمی‌گرداند. هزینهٔ ورودی این سرویس ۰٫۰۴۲ دلار برای هر یک میلیون توکن است و خروجی رایگان. تیم MarkTechPost ۲۰ سناریوی عامل‌محور را آزمایش کرد؛ شامل مسیریابی مدل، کنترل فراخوانی ابزار، باز‌رتبه‌بندی و فیلتر تزریق. نتایج با نزدیک‌ترین رقیبان متن‌باز و مدل‌های زبانی بزرگ مقایسه شد.",
+      "why_it_matters": "حذف مرحلهٔ تولید متن باعث کاهش چشمگیر زمان پردازش و هزینهٔ محاسبه می‌شود و امکان تصمیم‌گیری دقیق‌تر در برنامه‌های خودکار را می‌دهد. ارائهٔ تصمیمات تایپ‌شده و احتمال‌دار ریسک خطاهای زبانی را در حوزه‌های حساس مانند مالی یا پزشکی کاهش می‌دهد. مقایسهٔ هزینه و عملکرد نشان می‌دهد Jev می‌تواند گزینه‌ای مقرون‌به‌صرفه برای توسعه‌دهندگان هوش مصنوعی در پروژه‌های مقیاس‌پذیر باشد.",
+      "link": "https://www.marktechpost.com/2026/09/27/20-agentic-use-cases-of-typesafe-ais-jev/",
+      "posted_at": 1790580506
     }
   }
 }

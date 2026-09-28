@@ -52,10 +52,10 @@ MISSION_COVERAGE_NO_CANDIDATE_PATTERN = re.compile(
     r"\[Mission Coverage Recovery\].*?area=([^\s]+).*?status=no_candidate"
 )
 MISSION_COVERAGE_HARD_FAILURE_PATTERN = re.compile(
-    r"\[Mission Coverage Recovery\].*?status=(?:failed|below_score_floor|independent_lane_not_score_gated)"
+    r"\[Mission Coverage Recovery\].*?status=(?:hard_failure)"
 )
 MISSION_COVERAGE_ATTEMPT_PATTERN = re.compile(
-    r"\[Mission Coverage Recovery\]\s+attempt=\d+\s+area=([^\s]+).*?status=(recovered|failed|provider_unavailable|below_score_floor|independent_lane_not_score_gated)"
+    r"\[Mission Coverage Recovery\]\s+attempt=\d+\s+area=([^\s]+).*?status=(recovered|failed|hard_failure|provider_unavailable|below_score_floor|independent_lane_not_score_gated)"
 )
 
 
@@ -104,12 +104,14 @@ def _mission_recovery_hard_failures(lines):
         status = match.group(2).casefold()
         if status == "recovered":
             lane_outcomes[area] = "recovered"
-        elif status == "failed" and lane_outcomes.get(area) != "recovered":
-            # Candidate-level quality/eligibility outcomes such as
-            # below_score_floor are not infrastructure/terminal failures.
-            # They may legitimately leave a lane with no eligible candidate.
-            lane_outcomes[area] = "failed"
-    return sum(1 for outcome in lane_outcomes.values() if outcome == "failed")
+        elif status == "hard_failure" and lane_outcomes.get(area) != "recovered":
+            # Only an explicitly classified hard failure is infrastructure/contract
+            # failure. Candidate-level outcomes (failed, below_score_floor,
+            # provider_unavailable, independent_lane_not_score_gated) mean the
+            # candidate could not become publishable and may legitimately leave a
+            # mission lane unresolved.
+            lane_outcomes[area] = "hard_failure"
+    return sum(1 for outcome in lane_outcomes.values() if outcome == "hard_failure")
 
 
 def _mission_coverage_status(lines):

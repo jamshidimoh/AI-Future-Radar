@@ -127,7 +127,7 @@ def test_mission_recovery_unresolved_candidate_failure_stays_fail_closed():
     log = """
 [Selection Timing] original_select candidates=8 candidate_window=6 elapsed=1.0s
 [Publication Summary Budget] input=3 protected=2 normal_window=1 output=3 normal_limit=3 replacement_buffer=2 score_floor=55.0
-[Mission Coverage Recovery] attempt=1 area=mind_cognition title=only candidate status=failed
+[Mission Coverage Recovery] attempt=1 area=mind_cognition title=runtime infrastructure failure status=hard_failure
 [Mission Coverage Recovery] missing_lanes=1 attempts=1 recovered=0 status=unmet
 [Production Contract] normal_news=1 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
 Posts sent: 1/3

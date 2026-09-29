@@ -44,7 +44,7 @@
     },
     "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free": {
       "failures": 1,
-      "disabled_until": 1790287029.461,
+      "disabled_until": 1790661655.569,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 71,
-      "disabled_until": 1790742584.336,
+      "failures": 72,
+      "disabled_until": 1790744455.569,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790742584.336,
+      "disabled_until": 1790744455.569,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -118,13 +118,13 @@
     },
     "openrouter": {
       "failures": 9,
-      "disabled_until": 1790652077.563,
+      "disabled_until": 1790679655.569,
       "last_error": "quota",
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 142,
-      "disabled_until": 1790742584.336,
+      "failures": 144,
+      "disabled_until": 1790744455.569,
       "last_error": "auth",
       "last_success": 0.0
     },

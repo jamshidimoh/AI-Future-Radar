@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790656158,
+  "updated_at": 1790658054,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16418,6 +16418,24 @@
       "why_it_matters": "اگر مدل‌های هوش مصنوعی به‌صورت سیستم‌های اعتیادآور عمل کنند، حلقه‌های بازخورد پاداشی باعث می‌شود کاربران زمان بیشتری را صرف تعامل با این سیستم‌ها کنند، که می‌تواند منجر به افزایش مصرف داده، فشار بر زیرساخت‌های دیجیتال و بروز مشکلات سلامت روانی جمعی شود. این رفتارهای افزایشی فشار بر سیاست‌گذاران برای ایجاد مقررات نظارتی و الزامات شفافیت در طراحی الگوریتم‌ها را افزایش می‌دهد. در نتیجه، عدم کنترل این پدیده می‌تواند بازارهای فناوری را به سمت رشد غیرپایدار و خطرات امنیتی سوق دهد.",
       "link": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPdEg0eG9uNmxPYTlVTXlBT1hWVzBmMlcyRkVBa25yX3BBcmtHTldFZzlyUjN3bTRrLVNfcFVPc3hmUnU5ODlVQ1Nta25VWTQ0YVlTYVl1dGFnNW8tdHNucHFLMXlUakh4QW5oajBaN3c0QTVzTlIzUUZPd2k1NTAyNExWcEEyWGvSAYwBQVVfeXFMTUdXZW02NkRGY2lOZlFabHVHaWp2ZE91RUVhaHBmSzdlUDUwa2s2M3RoR0RUN0Y2SGtncDgtWHVQN2d5RmZWbllka2xWY3d4Y1pPQ0IwczRzN0xOU3pPM0RiYWtNY0hZNjdPV2o4WmtwbmJfdjlQemh3ZHJFY0Nxc1NxM1NzVno4NEszRlk?oc=5",
       "posted_at": 1790654670
+    },
+    "-1004482051328:1982": {
+      "chat_id": -1004482051328,
+      "message_id": 1982,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "ناخطی‌های سلول‌های افقی باعث پردازش نامتقارن بافت در مسیرهای ON و OFF رتینای پرایمیت می‌شوند",
+      "summary": "مطالعه نشان می‌دهد که پاسخ‌دهی ناخطی سلول‌های افقی در رتینای پرایمیت، inhibitions متقاطع بین نورون‌های بیپولار و گانگلیونی را به‌شکلی نامتقارن تنظیم می‌کند. در نتیجه مسیر ON (افزایش روشنایی) و مسیر OFF (کاهش روشنایی) بافت‌های بصری را با ویژگی‌های محاسبه‌ای متمایز پردازش می‌کنند.",
+      "why_it_matters": "این یافتن دیدگاه کلاسیک را که مسیرهای ON/OFF تنها تقسیم‌کار ساده افزایش/کاهش نور هستند، زیر سوال می‌برد و نشان می‌دهد که نامتقارنی محاسباتی از مراحل اولیه رتینا آغاز می‌شود. درک این مکانیزم برای مدل‌سازی دقیق کدگذاری رتینا، طراحی پروتزهای بینایی که هر دو مسیر را به‌درستی تحریک کنند، و تفسیر اختلالات بینایی ناشی از اختلال در inhibitions جانبی ضروری است.",
+      "link": "https://www.nature.com/articles/s41467-026-77883-5",
+      "posted_at": 1790658054
     }
   }
 }

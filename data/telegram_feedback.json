@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790658054,
+  "updated_at": 1790668173,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16436,6 +16436,63 @@
       "why_it_matters": "این یافتن دیدگاه کلاسیک را که مسیرهای ON/OFF تنها تقسیم‌کار ساده افزایش/کاهش نور هستند، زیر سوال می‌برد و نشان می‌دهد که نامتقارنی محاسباتی از مراحل اولیه رتینا آغاز می‌شود. درک این مکانیزم برای مدل‌سازی دقیق کدگذاری رتینا، طراحی پروتزهای بینایی که هر دو مسیر را به‌درستی تحریک کنند، و تفسیر اختلالات بینایی ناشی از اختلال در inhibitions جانبی ضروری است.",
       "link": "https://www.nature.com/articles/s41467-026-77883-5",
       "posted_at": 1790658054
+    },
+    "-1004482051328:1983": {
+      "chat_id": -1004482051328,
+      "message_id": 1983,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "The Cognitive Revolution",
+      "content_type": "interviews_podcasts",
+      "category": "ai_innovators_experts",
+      "leader": "",
+      "title": "گاریسون لاولی: خودکارسازی کار می‌تواند قدرت چانه‌زنی کارگران را نابود کند",
+      "summary": "گاریسون لاولی، نویسندهٔ کتاب Obsolete، در گفت‌وگویی با ناتان به بررسی انگیزه‌های رهبران هوش مصنوعی می‌پردازد. او تفاوت بین هوش مصنوعی تخصصی مانند AlphaFold و پروژه‌های هدفمند برای جایگزینی تمام کار انسانی را روشن می‌کند و هشدار می‌دهد که تصور اجتناب‌ناپذیر خودکارسازی، توان چانه‌زنی کارگران را در آستانهٔ فروپاشی می‌گذارد. لاولی برای مقابله با این خطر، سیاست صنعتی هدفمند برای پیشرفت‌های پزشکی، حاکمیت دموکراتیک قوی و گسترش شبکه‌های ایمنی اجتماعی را پیشنهاد می‌کند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "اگر خودکارسازی به‌عنوان سرنوشت‌ساز پذیرفته شود، بازار کار تحت فشار شدید قرار می‌گیرد و تمرکز قدرت اقتصادی در دست چند شرکت فناوری رخ می‌دهد؛ این می‌تواند پایه‌های دموکراسی را تهدید کند. سیاست‌های پیشنهادی لاولی راه‌حل عملی برای مهار این خطرات و حفظ ارزش‌های انسانی در عصر هوش مصنوعی ارائه می‌دهند.",
+      "link": "https://www.cognitiverevolution.ai/obsolete-or-irreplaceable-garrison-lovely-on-stopping-the-race-to-replace-human-labor/",
+      "posted_at": 1790668163
+    },
+    "-1004482051328:1984": {
+      "chat_id": -1004482051328,
+      "message_id": 1984,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "TechCrunch",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "پیشنهادنامه Anthropic: زیان‌های ده‌ها میلیارد دلاری، رشد شگفت‌انگیز و هشدار به خطر انقراض بشر توسط هوش مصنوعی‌اش",
+      "summary": "پیشنهادنامه Anthropic نشان می‌دهد که شرکت در حال حاضر سالانه ده‌ها میلیارد دلار ضرر می‌کند، در حالی که در عین حال رشد چشمگیری دارد. این گزارش همچنین هشدار می‌دهد که مدل‌های هوش مصنوعی آن ممکن است خطر وجودی برای بشریت ایجاد کنند. ترکیب خسارت مالی و تهدید ایمنی نشان می‌دهد که Anthropic در مرحله‌ای قرار دارد که نیازمند توجه دقیق سرمایه‌گذاران و تنظیم‌کنندگان است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "اگر Anthropic به سرعت رشد کند، سرمایه‌گذاران ممکن است به دنبال سود سریع باشند و ریسک‌های ایمنی را نادیده بگیرند. این می‌تواند باعث شود چارچوب‌های نظارتی به‌جای پیشگیری، فقط واکنش‌گرا شوند. در نتیجه، عدم تعادل بین رشد و ایمنی ممکن است باعث تأخیر در اجرای تدابیر ایمنی و افزایش احتمال وقوع خطرات وجودی شود.",
+      "link": "https://techcrunch.com/2026/09/28/anthropics-prospectus-details-losses-growth-and-yes-a-warning-that-its-ai-could-end-humanity/",
+      "posted_at": 1790668169
+    },
+    "-1004482051328:1985": {
+      "chat_id": -1004482051328,
+      "message_id": 1985,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Economist)",
+      "content_type": "interview",
+      "category": "mind",
+      "leader": "David Chalmers",
+      "watch_person": "David Chalmers",
+      "title": "حل معمای آگاهی - The Economist",
+      "summary": "متن منبع ارائهشده تنها شامل عنوان مقاله «Solving the mystery of consciousness» و لینک ارجاعی به Google News است. هیچ محتوای متنی، دادهای یا شواهد عینی از مقاله اصلی The Economist در دسترس نیست. بنابراین امکان استخراج اطلاعات فنی، نظری یا جزئیات مربوط به بحث آگاهی از متن موجود امکانپذیر نمیباشد.",
+      "why_it_matters": "به دلیل فقدان متن اصلی، تبیین پیامد یا اهمیت موضوع بر اساس شواهد عینی امکانپذیر نیست. هیچ سازوکار «چرا/چگونه» یا دادهای در متن موجود برای تحلیل وجود ندارد. این خلأ اطلاعاتی مانع از ارائه تحلیل معتبر و مبتنی بر منبع میشود.",
+      "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOQlF4Smo5R3BWdkR5c1J4QXFpck9vTEFfcHBDNXhjVUFxVU1Wdk0zMVBVT2lZM19iWS15QkotWjE2RGNpVnVKTnhZeXU2OElUOGNTRF9JX3JOcHpWcDBhbE1KYWlkZVcxcmhPeUVRVkhJaXotQmFSTU9ma2pUdTNndzZaUGtyLTJ6?oc=5",
+      "posted_at": 1790668173
     }
   }
 }

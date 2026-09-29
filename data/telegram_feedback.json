@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790668173,
+  "updated_at": 1790691511,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16493,6 +16493,44 @@
       "why_it_matters": "به دلیل فقدان متن اصلی، تبیین پیامد یا اهمیت موضوع بر اساس شواهد عینی امکانپذیر نیست. هیچ سازوکار «چرا/چگونه» یا دادهای در متن موجود برای تحلیل وجود ندارد. این خلأ اطلاعاتی مانع از ارائه تحلیل معتبر و مبتنی بر منبع میشود.",
       "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOQlF4Smo5R3BWdkR5c1J4QXFpck9vTEFfcHBDNXhjVUFxVU1Wdk0zMVBVT2lZM19iWS15QkotWjE2RGNpVnVKTnhZeXU2OElUOGNTRF9JX3JOcHpWcDBhbE1KYWlkZVcxcmhPeUVRVkhJaXotQmFSTU9ma2pUdTNndzZaUGtyLTJ6?oc=5",
       "posted_at": 1790668173
+    },
+    "-1004482051328:1986": {
+      "chat_id": -1004482051328,
+      "message_id": 1986,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "انتشار چارچوب متنباز RRSI برای خودبهبودی عاملهای هوش مصنوعی",
+      "summary": "گروه تحقیقاتی Google Cloud AI چارچوب متنباز RRSI را منتشر کرد. این ابزار به عاملهای مبتنی بر مدلهای زبانی بزرگ اجازه میدهد پرامپتها، ابزارها و حافظه خود را بازنویسی کنند، در حالی که وزنهای مدل ثابت میمانند. RRSI با مکانیزمهایی مانند نقدگر نشتی (leakage critic) و کف نویز، اطمینان میدهد که بهبودها به وظایف جدید تعمیم یابند. در آزمایش با مدل Claude Opus 4.8، عملکرد در بنچمارک Terminal-Bench 2.1 از ۷۴.۲ درصد به ۸۰.۲ درصد افزایش یافت و در تمام بخشهای آزمون بهبود یافت.",
+      "description": "artificial intelligence",
+      "why_it_matters": "امکان خودبهبودی عاملهای هوش مصنوعی بدون تغییر وزنهای مدل، هزینههای آموزشی را کاهش میدهد و خطر بیشبرازش را مهار میکند. تعمیمپذیری بهبودها به وظایف جدید، انعطافپذیری و مقیاسپذیری سامانهها را افزایش میدهد و توسعه ابزارهای تخصصی را تسریع میکند، زیرا مدلها میتوانند بدون بازآموزی کامل با دادههای جدید سازگار شوند.",
+      "link": "https://www.marktechpost.com/2026/09/29/google-research-open-sources-rrsi-ai-agents-that-improve-their-own-harness-without-overfitting/",
+      "posted_at": 1790691507
+    },
+    "-1004482051328:1987": {
+      "chat_id": -1004482051328,
+      "message_id": 1987,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CNBC)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "title": "ربات‌های انسان‌نما در نمایشگاه CES به صحنه آمدند",
+      "summary": "در نمایشگاه CES که در لاس‌وگاس برگزار شد، تعداد زیادی ربات انسان‌نما به‌صورت عمومی به نمایش گذاشته شد؛ این حضور نشان‌دهندهٔ تمرکز صنعت فناوری بر آیندهٔ هوش مصنوعی در رباتیک است. مقالهٔ CNBC به این رویداد اشاره کرد و تأکید کرد که شرکت‌های مختلف از ربات‌های انسان‌نما برای نشان دادن پیشرفت‌های AI استفاده کردند.",
+      "why_it_matters": "نمایش گستردهٔ ربات‌های انسان‌نما در یک نمایشگاه بزرگ نشان می‌دهد که پیشرفت‌های هوش مصنوعی درک و کنترل محیط‌های انسانی را برای ربات‌ها بهبود می‌بخشد، که می‌تواند به‌سرعت به‌کارگیری ربات‌ها در تولید، خدمات و کارهای خانگی منجر شود. این تسهیل فنی باعث می‌شود شرکت‌ها سرمایه‌گذاری بیشتری در رباتیک هوشمند انجام دهند و در عین حال نیاز به چارچوب‌های نظارتی و ایمنی جدید برای تعامل انسان‑ربات را افزایش می‌دهد.",
+      "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQ29heDhjcF9TTGY4SmRtSmhhQjRRRFJsLUFUd1NHb2NZMWZLUTFUOG9MTlJiN3I5SGRWamFZVzltQWY5WWtxMkxfV1R6Ul83YndxYVlLdEQ2bDFIamY4NmRLcFJCZ1J3bU9rTzhZdlVKSjdSR0xJa0RTOFFkUXNyVWVTci0ya3F1cjU5bUNWbkdwQnJKSDZlaW9OS3FFb1dlX25jYkh30gGrAUFVX3lxTE9JUnpCX0JRWE5CM1ZHM0VvZlVDOGstbHNIUVdubXVfV0pPXzBkNHlPdXZyNVg0VFhDWXhTbWtYWnlQa1V2VnhfMTNKS2QxVk9YeXdMcEFIZDFxVEk2QklUYXdfNW40c1VEbFFvOGJEV183ZXltUXVBSXlscEQ4ai1xdTk4aWQzeXl6d1FrdXM4VDgwQ3N5Zm9IU0lLbEJ4VV9ka2Frb3VxNWJWNA?oc=5",
+      "posted_at": 1790691511
     }
   }
 }

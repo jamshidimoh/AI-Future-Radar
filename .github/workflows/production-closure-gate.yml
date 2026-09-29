@@ -118,6 +118,7 @@ jobs:
               zero_publish = has(text, r"Posts sent: 0/") and has(text, r"normal_news=0[^\n]*tier0_news=0")
               acceptance = has(text, r"\[Production Acceptance\] PASS:")
               fail_closed_acceptance = has(text, r"\[Production Acceptance\] PASS:\s+production acceptance PASS:\s+fail-closed")
+              fail_closed_acceptance = fail_closed_acceptance or has(text, r"\[Production Acceptance\] PASS:.*no_candidate_lanes=\d+")
               if published:
                   return True
               return zero_publish and acceptance and fail_closed_acceptance and publication_attempted

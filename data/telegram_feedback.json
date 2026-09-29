@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790691511,
+  "updated_at": 1790710832,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16531,6 +16531,44 @@
       "why_it_matters": "نمایش گستردهٔ ربات‌های انسان‌نما در یک نمایشگاه بزرگ نشان می‌دهد که پیشرفت‌های هوش مصنوعی درک و کنترل محیط‌های انسانی را برای ربات‌ها بهبود می‌بخشد، که می‌تواند به‌سرعت به‌کارگیری ربات‌ها در تولید، خدمات و کارهای خانگی منجر شود. این تسهیل فنی باعث می‌شود شرکت‌ها سرمایه‌گذاری بیشتری در رباتیک هوشمند انجام دهند و در عین حال نیاز به چارچوب‌های نظارتی و ایمنی جدید برای تعامل انسان‑ربات را افزایش می‌دهد.",
       "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQ29heDhjcF9TTGY4SmRtSmhhQjRRRFJsLUFUd1NHb2NZMWZLUTFUOG9MTlJiN3I5SGRWamFZVzltQWY5WWtxMkxfV1R6Ul83YndxYVlLdEQ2bDFIamY4NmRLcFJCZ1J3bU9rTzhZdlVKSjdSR0xJa0RTOFFkUXNyVWVTci0ya3F1cjU5bUNWbkdwQnJKSDZlaW9OS3FFb1dlX25jYkh30gGrAUFVX3lxTE9JUnpCX0JRWE5CM1ZHM0VvZlVDOGstbHNIUVdubXVfV0pPXzBkNHlPdXZyNVg0VFhDWXhTbWtYWnlQa1V2VnhfMTNKS2QxVk9YeXdMcEFIZDFxVEk2QklUYXdfNW40c1VEbFFvOGJEV183ZXltUXVBSXlscEQ4ai1xdTk4aWQzeXl6d1FrdXM4VDgwQ3N5Zm9IU0lLbEJ4VV9ka2Frb3VxNWJWNA?oc=5",
       "posted_at": 1790691511
+    },
+    "-1004482051328:1988": {
+      "chat_id": -1004482051328,
+      "message_id": 1988,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - 80,000 Hours",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "کج‌دست‌تر: تسلط هوش مصنوعی یا تسلط انسان‌های طمع‌کار؟",
+      "summary": "در پادکست 80,000 Hours، کاتیا گریس (بنیان‌گذار AI Impacts) و تام دیویدسون (پژوهشگر ارشد Forethought) دربارهٔ خطرات بزرگ هوش مصنوعی بحث می‌کنند. گریس معتقد است تسلط هوش مصنوعی نادرست احتمالاً شایع‌تر و وخیم‌تر است، در حالی که دیویدسون خطر استفاده از هوش مصنوعی توسط گروهی کوچک برای تصاحب قدرت را به‌عنوان ریسک مقایسه‌ای می‌داند. هر دو بر لزوم «کاهش سرعت» پیشرفت‌های AI تأکید می‌کنند؛ گریس می‌گوید ساخت موجوداتی که می‌توانند ما را در همهٔ زمینه‌ها شکست دهند، حتماً به مشکلات منجر می‌شود. دیویدسون هشدار می‌دهد که یک توقف نادرست می‌تواند اختیار تصمیم‌گیری دربارهٔ انتشار مدل‌ها را به یک فرد یا دولت متمرکز کند و برای جلوگیری از این خطر، طرح توقف باید توسط حسابرس‌های مستقل بازنگری شود. میزبان زرشانه قریشی نیز نقاط اختلاف باقی‌مانده و شرایطی که می‌توانند نظراتشان را تغییر دهد، می‌پرسد.",
+      "description": "In our first-ever debate, we asked two leading AI risk researchers which catastrophe we should fear most: misaligned AI seizing control from humans, or a small group of humans using AI to seize power. We got very different answers. But when the conversation turned to what to actually do, they agreed on a surprising amount.\n\nKatja Grace — one of the founders of AI Impacts, known for some of the world’s largest surveys of machine learning researchers, and one of TIME’s 100 most influential people in AI in 2024 — argues AI takeover is both likelier and worse.\n\nTom Davidson — senior research fellow at Forethought and author of leading work on AI-enabled coups — thinks human power grabs are a comparable risk that deserves far more attention, not least because the people leading countries and top AI companies “are often people who have been willing to seek power.”\n\nYet both land on slowing down. As Katja puts it, “If you make a bunch of creatures that can overpower you and outwit you in every way and put them out in the world, you’re going to run into trouble one way or another.” Tom calls pausing “a pretty robustly good thing to do.”\n\nBut Tom warns that a badly designed pause could hand one person the power to decide which AI companies get to build what. Picture a president who approves or blocks new models case by case, and waves through the one model that’s helpful only to them. So he wants pause advocates to “properly red-team the plan for pausing it” — for example, by making deployment depend on third-party auditors the president can’t fire. Katja points out this cuts both ways: an executive with that much power could itself be manipulated by a misaligned AI.\n\nHost Zershaaneh Qureshi also presses them on where their disagreements still bite at the end of the conversation, and what would change their minds.\n\n*Learn more & full transcript:* https://80k.info/katja-v-tom\n\n_This episode was recorded on August 28, 2026._\n\nChapters:\n00:00:00 Our first debate! Introducing Katja and Tom\n00:05:09 Which is scarier: misaligned AIs or human power grabs?\n00:14:30 How AI timelines influence could shift the balance of risk\n00:17:36 How likely is misaligned AI in the first place?\n00:19:39 How likely are human power grabs?\n00:28:57 Which would be worse: a human dictator or AI takeover?\n00:42:39 Could we reverse a takeover?\n00:46:35 We know less about what AI rule would look like\n00:50:31 How to pause AI without enabling coups\n01:04:44 Centralising AI development: safer or scarier?\n01:08:59 Nobody really ‘wins’ a US–China AI race\n01:13:52 Where Tom and Katja most agreed with each other\n01:17:21 What we should actually do\n01:22:36 What evidence would change their minds?\n01:25:49 Zershaaneh’s outro\n\n_Our production team includes:_\n• _Video editors: Josh Alward, Dominic Armstrong, Jasper Luithlen, Milo McGuire, Luke Monsour, and Simon Monsour_\n• _Producers: Elizabeth Cox and Nick Stockton_\n• _Coordination and support: Katy Moore and Lou Moran_ artificial intelligence",
+      "why_it_matters": "این گفتگو نشان می‌دهد که خطرات ناشی از هوش مصنوعی نه تنها به‌دلیل خود فناوری، بلکه به‌دلیل سوءاستفادهٔ انسانی از آن می‌تواند تهدیدی جدی برای جامعه باشد. پیشنهاد مشترک برای «کاهش سرعت» توسعه AI، اگر بدون چارچوب نظارتی مناسب اجرا شود، ممکن است به تمرکز قدرت در دست یک نهاد یا فرد منجر شود و خطر جدیدی ایجاد کند. بنابراین، طراحی دقیق مکانیزم‌های توقف—مانند استفاده از حسابرس‌های مستقل که قابل حذف توسط دولت نیستند—برای جلوگیری از سوءاستفادهٔ سیاسی و تضمین ایمنی بلندمدت فناوری ضروری است. این نکات برای سیاست‌گذاران، شرکت‌های فناوری و جامعهٔ علمی اهمیت دارد زیرا تصمیم‌گیری‌های آینده می‌تواند مسیر توسعهٔ هوش مصنوعی و تأثیرات آن بر ساختارهای قدرت را شکل دهد.",
+      "link": "https://www.youtube.com/watch?v=FHCxnHU6jFQ",
+      "posted_at": 1790710826
+    },
+    "-1004482051328:1989": {
+      "chat_id": -1004482051328,
+      "message_id": 1989,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "OpenAI DevDay 2026: سام آلتمن و تیمش ۲۰+ محصول جدید از جمله GPT‑6.1 Sol و Astra Ultrafast را رونمایی کردند",
+      "summary": "در مراسم OpenAI DevDay 2026، سام آلتمن به همراه رمان هوِت، تجال پاتوردن و هولی لی بیش از بیست محصول و سرویس جدید را معرفی کردند. مهم‌ترین اعلامیه‌ها شامل مدل زبانی پیشرفته GPT‑6.1 Sol بود که ادعا می‌کند توان پردازشی دو برابر GPT‑4 را با هزینهٔ انرژی نصف ارائه می‌دهد. همچنین پلتفرم ChatGPT Spaces برای ساخت محیط‌های تعاملی سفارشی و سرویس Astra Ultrafast که سرعت استنتاج را تا ۱۰ برابر افزایش می‌دهد، به نمایش گذاشته شد. دیگر نوآوری‌ها شامل ابزارهای «dots» برای تجزیه و تحلیل داده‌های گرافی و قابلیت‌های جدید در بستر «ChatGPT Plugins» بود.",
+      "why_it_matters": "GPT‑6.1 Sol می‌تواند مرزهای هوش مصنوعی را با توان پردازشی بالاتر و هزینهٔ عملیاتی کمتر گسترش دهد و زمینهٔ پیشرفت برنامه‌های پیچیده‌تر را فراهم کند. ChatGPT Spaces به توسعه‌دهندگان امکان می‌دهد تا رابط‌های کاربری سفارشی و تعاملی بسازند و کاربردهای AI را به حوزه‌های تخصصی نزدیک‌تر کنند. سرعت استنتاج Astra Ultrafast، که تا ده برابر سریع‌تر است، برای برنامه‌های زمان‑حقیقی مانند بازی‌های آنلاین یا پردازش ویدئو حیاتی است. این مجموعه نوآوری‌ها به‌سرعت‌تری پذیرش هوش مصنوعی در صنایع مختلف را تسهیل می‌کند.",
+      "link": "https://www.youtube.com/watch?v=Fls_onRviPM",
+      "posted_at": 1790710832
     }
   }
 }

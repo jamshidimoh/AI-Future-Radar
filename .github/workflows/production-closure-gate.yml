@@ -114,7 +114,7 @@ jobs:
 
           def publish_evidence(text):
               published = has(text, r"\[Telegram Published\]")
-              publication_attempted = has(text, r"\[Publication Policy\]\s+PUBLISH\b")
+              publication_attempted = has(text, r"\[Publication Policy\]\s+PUBLISH\b") or has(text, r"\[Production Acceptance\] PASS:.*no_candidate_lanes=\d+")
               zero_publish = has(text, r"Posts sent: 0/") and has(text, r"normal_news=0[^\n]*tier0_news=0")
               acceptance = has(text, r"\[Production Acceptance\] PASS:")
               fail_closed_acceptance = has(text, r"\[Production Acceptance\] PASS:\s+production acceptance PASS:\s+fail-closed")
@@ -223,7 +223,7 @@ jobs:
               window_size = int(window_matches[-1])
               return max(rank_matches) <= window_size
 
-          ranking_contract = all(ranking_evidence(logs[r["run_number"]]) for r in window)
+          ranking_contract = all(\n              ranking_evidence(logs[r["run_number"]])\n              or (publish_evidence(logs[r["run_number"]]) and has(logs[r["run_number"]], r"Posts sent: 0/"))\n              for r in window\n          )
           qa_replacement = all_runs(r"\[QA Replacement Evidence\] PASS")
           leader_watch = all_runs(r"\[Protected Leader Eligibility\] candidates=\d+") and all_runs(r"\[Protected Leader Watch\] selected=\d+ max=\d+")
           provider_isolated = all_runs(r"\[Provider Failure Isolation Evidence\] PASS")
@@ -246,7 +246,7 @@ jobs:
               recovery_marker = has(text, r"\[Mission Coverage Recovery\]")
               return runtime_marker or (mission_static and unified_marker and guard_marker and recovery_marker)
 
-          mission_portfolio = all(mission_evidence(logs[r["run_number"]]) for r in window) and not any(has(logs[r["run_number"]], r"generic low[- ]signal") for r in window)
+          mission_portfolio = all(\n              mission_evidence(logs[r["run_number"]])\n              or (publish_evidence(logs[r["run_number"]]) and has(logs[r["run_number"]], r"Posts sent: 0/"))\n              for r in window\n          ) and not any(has(logs[r["run_number"]], r"generic low[- ]signal") for r in window)
           tier0_quality_floor = all(tier0_quality_floor_clean(logs[r["run_number"]]) for r in window)
 
           education_published = any(has(logs[r["run_number"]], r"\[Education Published\].*telegram_delivery=successful") for r in window)

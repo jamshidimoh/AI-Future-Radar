@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "ProxyBridge Chrome Connector",
+  "version": "0.1.0",
+  "description": "Use the same local PAC configuration managed by ProxyBridge.",
+  "permissions": ["proxy", "storage"],
+  "action": {
+    "default_title": "ProxyBridge",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html"
+}

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790776879,
+  "updated_at": 1790797131,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16845,6 +16845,62 @@
       "why_it_matters": "این تحلیل، با جمع‌آوری دیدگاه‌های مستقیم از بیش از ۵۰ متخصص، به تصمیم‌گیرندگان کمک می‌کند تا درک دقیقی از چالش‌ها و فرصت‌های فعلی در حوزه هوش مصنوعی داشته باشند. شناخت این چهار درس می‌تواند به‌عنوان راهنمایی برای تنظیم استراتژی‌های تحقیق و توسعه، تخصیص منابع و تدوین سیاست‌های عمومی در زمینه AI عمل کند. به‌ویژه، تمرکز بر این نکات می‌تواند به کاهش ریسک‌های اخلاقی و فنی مرتبط با پیاده‌سازی فناوری‌های هوش مصنوعی کمک نماید.",
       "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQSVdKcW1IYVRUTmJhdnBjY3gtSHRzVU1JdTF5bHJ5WW1ESkpqcGtfWXI2Zy1LM25LekthTDFQUTVudWtXMGV5NHZKc2JyNUMtY0picXRwNnhLZm5VV210Y01UUWJWRW1sbDQ4Rld3TzZoY0d6M2tYMVBYQWo2dEdaWFlmcUQyU2pHa0lvQzhpUlk5eEN0LThIOFNRbDQ4SjRzZXItQkM3NzhiTFhRQmFSVUp4eEY?oc=5",
       "posted_at": 1790776879
+    },
+    "-1004482051328:2005": {
+      "chat_id": -1004482051328,
+      "message_id": 2005,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چرا قدرتهای بزرگ در برابر شورشیان شکست میخورند؟",
+      "summary": "متن ارائهشده تنها شامل عنوان ویدیوی مصاحبه با Sarah Paine در کانال Dwarkesh Patel است و فاقد محتوای متنی یا ترنسکریپت گفتوگو میباشد. بنابراین امکان استخراج استدلالها، شواهد یا دیدگاههای تخصصی از این منبع وجود ندارد. تنها اطلاعات قابلاستناد، موضوع کلی بحث درباره شکست قدرتهای بزرگ در برابر شورشیان است. جزئیات فنی یا تحلیلی خاصی در متن ورودی ذکر نشده است.",
+      "description": "Full episode: https://www.youtube.com/watch?v=f6cjAEr08qk\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "به دلیل نبود متن کامل یا ترنسکریپت، نمیتوان پیامد یا اهمیت دقیق دیدگاههای مطرحشده را تحلیل کرد. این محدودیت مانع از ارائه تحلیل عمیق از دلایل شکست قدرتهای بزرگ میشود. تنها میتوان گفت که این موضوع به بررسی شکافهای استراتژیک در جنگهای نامتقارن میپردازد، اما بدون جزئیات بیشتر، ارزیابی دقیق امکانپذیر نیست.",
+      "link": "https://www.youtube.com/watch?v=6tVCx8AMH38",
+      "posted_at": 1790797121
+    },
+    "-1004482051328:2006": {
+      "chat_id": -1004482051328,
+      "message_id": 2006,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "مدل پیش‌بینی مبتنی بر کانکتوم، تفاوت‌های جنسیتی در پیری مغز را آشکار کرد",
+      "summary": "در مقاله‌ای در Nature Neuroscience، پژوهشگران با به‌کارگیری مدل پیش‌بینی مبتنی بر کانکتوم، ساختار شبکه‌ای متفاوت بین مردان و زنان را در مغز پیر شناسایی کردند و نشان دادند که رفتارهای خاص می‌توانند سرعت یا الگوی پیری را به‌صورت جنس‑محور تنظیم کنند.",
+      "why_it_matters": "این کشف امکان توسعه روش‌های پیشگیری و درمان هدفمند بر پایه جنس را فراهم می‌کند و نشان می‌دهد که مداخلات رفتاری می‌توانند مسیر پیری مغز را تغییر دهند؛ بنابراین می‌تواند به بهبود پیش‌بینی ریسک بیماری‌های نورودژنراتیو و طراحی برنامه‌های سلامت شناختی کمک کند.",
+      "link": "https://www.nature.com/articles/s41514-026-00531-1",
+      "posted_at": 1790797126
+    },
+    "-1004482051328:2007": {
+      "chat_id": -1004482051328,
+      "message_id": 2007,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (MIT Technology Review)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Yoshua Bengio",
+      "watch_person": "Yoshua Bengio",
+      "title": "مخالفان سرنوشت‌گرای هوش مصنوعی بی‌تزلزل باقی می‌مانند",
+      "summary": "مقالهٔ MIT Technology Review با عنوان «The AI doomers feel undeterred» به این نکته می‌پردازد که افراد مخالف پیشرفت‌های سریع هوش مصنوعی و هشداردهندگان دربارهٔ خطرات وجودی آن، علیرغم انتقادات و فشارهای مخالف، موضع خود را بدون تغییر حفظ می‌کنند. این مقاله بر پایداری نگرش این گروه تأکید دارد.",
+      "why_it_matters": "پایداری مخالفان سرنوشت‌گرای هوش مصنوعی می‌تواند بر شکل‌گیری سیاست‌های نظارتی، سرمایه‌گذاری‌های پژوهشی و نگرش عمومی نسبت به فناوری‌های نوظهور تأثیرگذار باشد. وقتی این گروه بدون تزلزل ادامه می‌دهند، بحث‌های عمومی حول ریسک‌های احتمالی هوش مصنوعی تشدید می‌شود و ممکن است منجر به اتخاذ رویکردهای پیشگیرانه یا محدودکننده شود. در عین حال، عدم انعطاف‌پذیری آن‌ها می‌تواند مانع از بررسی متعادل‌تر مزایا و معایب فناوری شود.",
+      "link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOY25SMFdnQU9Vemh0Y1VvZjdTN3RhSHprOHZtSDJIOUp4aFVYUjg0NFpQUkEwNjdMV1FBUUZpWjh5M3JBOHgtOXFFbzFyUTJSTmJNdW9VRVlfWV94VUM1VndZell5S1pTRWRpVl80OUE1dHNGQWg3d1dHSnluZHJFejNqNGo1Wl81S1lv0gGQAUFVX3lxTE1QVHZFbEtFWkRvVlB3a1NMMVA3TW5aU01CUDI3MWJIdDN6RnlUTFZPVXdmQ2lrMUFLOTdPUUJqVklKR0JnV0NJYkY1Rk8wVHNKU1N1TFU4d2ZGQkJ4UWxVcWlYM1VxR3NOZnV2OXRUUFhpZUtTWnZIT040TVVLbWVlNDl4Ny1QYlZIX05zd0t5eg?oc=5",
+      "posted_at": 1790797131
     }
   }
 }

@@ -8,7 +8,7 @@
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 12,
-      "disabled_until": 1790755747.907,
+      "disabled_until": 1790800732.928,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -56,19 +56,19 @@
     },
     "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
       "failures": 3,
-      "disabled_until": 1790596298.54,
+      "disabled_until": 1790800732.928,
       "last_error": "quota",
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 81,
-      "disabled_until": 1790863280.495,
+      "failures": 82,
+      "disabled_until": 1790883532.928,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790863280.495,
+      "disabled_until": 1790883532.928,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -118,13 +118,13 @@
     },
     "openrouter": {
       "failures": 9,
-      "disabled_until": 1790713113.26,
+      "disabled_until": 1790818732.928,
       "last_error": "quota",
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 162,
-      "disabled_until": 1790863280.495,
+      "failures": 164,
+      "disabled_until": 1790883532.928,
       "last_error": "auth",
       "last_success": 0.0
     },

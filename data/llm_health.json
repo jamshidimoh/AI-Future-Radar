@@ -2,7 +2,7 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 37,
-      "disabled_until": 1790732433.709,
+      "disabled_until": 1790769016.334,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -20,13 +20,13 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 4,
-      "disabled_until": 1790695113.26,
+      "disabled_until": 1790751016.334,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 3,
-      "disabled_until": 1790658284.952,
+      "disabled_until": 1790751016.334,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -38,7 +38,7 @@
     },
     "kiraai:qwen3.8-flash": {
       "failures": 1,
-      "disabled_until": 1790634077.563,
+      "disabled_until": 1790751016.334,
       "last_error": "quota",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 75,
-      "disabled_until": 1790797233.709,
+      "failures": 76,
+      "disabled_until": 1790833816.334,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790797233.709,
+      "disabled_until": 1790833816.334,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -112,7 +112,7 @@
   "providers": {
     "kiraai": {
       "failures": 2,
-      "disabled_until": 1790716877.563,
+      "disabled_until": 1790833816.334,
       "last_error": "wallet",
       "last_success": 0.0
     },
@@ -123,8 +123,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 150,
-      "disabled_until": 1790797233.709,
+      "failures": 152,
+      "disabled_until": 1790833816.334,
       "last_error": "auth",
       "last_success": 0.0
     },

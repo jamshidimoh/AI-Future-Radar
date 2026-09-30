@@ -49,7 +49,7 @@ def test_kiraai_free_quota_lane_is_included_when_credentialed(monkeypatch):
     monkeypatch.setenv("KIRAAI_API_KEY", "test-kira")
     names = [name for name, _ in registry.build_production_chain(router)]
     assert "KiraAI:minimax-m3-free" in names
-    assert names.index("KiraAI:minimax-m3-free") > names.index("Groq:openai/gpt-oss-20b")
+    assert names.index("KiraAI:minimax-m3-free") < names.index("Groq:openai/gpt-oss-20b")
     assert "KiraAI:gpt-5.6-luna-free" not in names
     assert "KiraAI:kira-auto" in names
 

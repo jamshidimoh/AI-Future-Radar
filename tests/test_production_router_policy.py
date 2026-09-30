@@ -52,10 +52,11 @@ def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
     router_names = [name for name, _ in router.get_quality_chain()]
     assert summarize_names == router_names
     assert router_names[0] == "Groq:openai/gpt-oss-120b"
-    assert router_names[1] == "Groq:qwen/qwen3.6-27b"
-    assert router_names[2] == "Groq:openai/gpt-oss-20b"
+    assert router_names[1].startswith("OpenRouter:")
+    assert router_names[2] == "Groq:qwen/qwen3.6-27b"
     assert "Groq:qwen/qwen3.8-27b" not in router_names
     assert "OpenRouter:openai/gpt-oss-20b:free" in router_names
+    assert router_names.index("OpenRouter:nvidia/nemotron-3-ultra-550b-a55b:free") < router_names.index("Groq:openai/gpt-oss-20b")
     assert router_names.index("OpenRouter:google/gemma-4-26b-a4b-it:free") < router_names.index("OpenRouter:openai/gpt-oss-20b:free")
 
 

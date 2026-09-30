@@ -160,3 +160,9 @@ def test_optional_gemini_and_hf_are_disabled_by_default(monkeypatch):
     monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
     names = [name for name, _ in registry.build_production_chain(router)]
     assert names[-1] == "Gemini"
+
+
+def test_discovered_media_models_are_not_promoted_to_production_json_chain(monkeypatch):
+    _reset(monkeypatch)
+    names = [name for name, _ in registry.build_production_chain(router)]
+    assert not any("lyria" in name.casefold() for name in names)

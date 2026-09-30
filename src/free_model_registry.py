@@ -13,7 +13,13 @@ REGISTRY_PATH = ROOT / "config" / "free_model_registry.yaml"
 RUNTIME_REGISTRY_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 
 _PROVIDER_ORDER = {"groq": 0, "nararouter": 1, "openrouter": 2, "kiraai": 3, "gemini": 4, "huggingface": 5}
-_BLOCKED_OPENROUTER_IDS = {"openrouter/free", "openrouter/auto"}
+_BLOCKED_OPENROUTER_IDS = {
+    "openrouter/free",
+    "openrouter/auto",
+    # Media-generation models must not enter the structured editorial text chain.
+    "google/lyria-3-clip-preview",
+    "google/lyria-3-pro-preview",
+}
 NARA_DEFAULT_MODEL = "auto/bynara"
 
 
@@ -123,7 +129,8 @@ def canonical_entries() -> list[dict]:
             continue
         if candidate.get("free") is not True or candidate.get("chat_capable") is not True:
             continue
-        if data.get("require_json_capability", True) and candidate.get("json_capable") is not True:
+        # Dynamic discovery metadata is not sufficient for production JSON.
+        if candidate.get("json_capable") is not True:
             continue
         score = _quality_score(candidate)
         if score < 50:

@@ -9,7 +9,7 @@ from pathlib import Path
 from src.claim_verification import deterministic_precheck, semantic_verify
 from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_editorial_naturalness_ok, persian_ratio
 from src.education_editor import news_terminology_review_prompt, normalize_news_editorial_text
-from src.llm_router_light import _disable, call_llm_with_fallback, get_quality_chain
+from src.llm_router_light import QuotaExceeded, _disable, _ollama_local, call_llm_with_fallback, get_quality_chain
 from src.rejection_telemetry import build_event, emit
 
 _DEPTH = {
@@ -249,6 +249,30 @@ def _repair_title(data):
     return data, provider
 
 
+def _language_repair_providers(item):
+    """Use a bounded mission-specific Persian recovery path before normal providers."""
+    if not item.get("_mission_recovery_attempt"):
+        return get_quality_chain()
+
+    providers = []
+    if os.getenv("OMNIROUTE_BASE_URL", "").strip():
+        from src.production_router_policy import _omniroute_call
+
+        def _omni_repair(system_prompt, user_content):
+            raw, _provider = _omniroute_call(system_prompt, user_content)
+            if raw:
+                return raw
+            raise QuotaExceeded("OmniRoute unavailable during mission Persian recovery")
+
+        providers.append(("OmniRoute:mission-persian-repair", _omni_repair))
+
+    if os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}:
+        providers.append(("OllamaLocal:qwen3:1.7b:mission-persian-repair", _ollama_local))
+
+    providers.extend(get_quality_chain())
+    return providers
+
+
 def _repair_persian_draft(data, item):
     """Recover the complete Persian editorial draft before the final language gate.
 
@@ -264,7 +288,7 @@ def _repair_persian_draft(data, item):
     raw, provider = call_llm_with_fallback(
         prompt,
         json.dumps({"draft": data, "source": _source_text(item)}, ensure_ascii=False),
-        providers=get_quality_chain(),
+        providers=_language_repair_providers(item),
     )
     try:
         candidate = _normalize(_extract_json(raw or ""), item)
@@ -319,7 +343,7 @@ def _repair_persian_fields(data, item, providers=None):
             },
             ensure_ascii=False,
         ),
-        providers=providers or get_quality_chain(),
+        providers=providers or _language_repair_providers(item),
     )
     try:
         repaired = _extract_json(raw or "")

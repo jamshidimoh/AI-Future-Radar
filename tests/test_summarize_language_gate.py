@@ -120,3 +120,29 @@ def test_length_gate_attempts_bounded_editorial_repair_before_reject(monkeypatch
     assert len(result["summary"]) >= 180
     assert len(result["why_it_matters"]) >= 140
     assert calls["n"] >= 2
+
+
+def test_mission_language_repair_chain_prioritizes_omniroute_and_audited_ollama(monkeypatch):
+    import src.summarize as summarize
+
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://127.0.0.1:9999")
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
+    monkeypatch.setattr(
+        summarize,
+        "get_quality_chain",
+        lambda: [("test-provider", lambda *args, **kwargs: "{}")],
+    )
+
+    chain = summarize._language_repair_providers({"_mission_recovery_attempt": True})
+    assert [name for name, _ in chain[:2]] == [
+        "OmniRoute:mission-persian-repair",
+        "OllamaLocal:qwen3:1.7b:mission-persian-repair",
+    ]
+
+
+def test_normal_language_repair_keeps_canonical_chain(monkeypatch):
+    import src.summarize as summarize
+
+    expected = [("test-provider", lambda *args, **kwargs: "{}")]
+    monkeypatch.setattr(summarize, "get_quality_chain", lambda: expected)
+    assert summarize._language_repair_providers({}) is expected

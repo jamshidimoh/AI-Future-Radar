@@ -498,6 +498,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                 )[:1]
 
             candidate = chosen[0]
+            candidate["_mission_recovery_attempt"] = True
             identity = _publication_identity(candidate)
             pool = [x for x in pool if _publication_identity(x) != identity]
             lane_attempts += 1

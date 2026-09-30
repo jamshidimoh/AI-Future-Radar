@@ -65,7 +65,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
-          if ! timeout 90s npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/; then
+          if ! timeout 180s npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/ --no-audit --no-fund --prefer-offline; then
             echo "[OmniRoute] npm installation timed out or failed; production router will use its hard fallback"
             echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"
             exit 0
@@ -263,12 +263,13 @@ jobs:
           AI_RADAR_EDITORIAL_REVIEW: 1
           RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK: 1
           RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b
-          RADAR_OLLAMA_TIMEOUT_SECONDS: 8
+          RADAR_OLLAMA_TIMEOUT_SECONDS: 20
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
           RADAR_ENABLE_GEMINI_FALLBACK: 1
           RADAR_ENABLE_HF_FALLBACK: 1
-          RADAR_LLM_MAX_TOKENS: 1000
-          RADAR_ROUTER_BUDGET_SECONDS: 10
+          RADAR_MAX_LLM_ATTEMPTS: 10
+          RADAR_LLM_MAX_TOKENS: 700
+          RADAR_ROUTER_BUDGET_SECONDS: 24
           OMNIROUTE_BASE_URL: ${{ env.OMNIROUTE_READY == '1' && 'http://127.0.0.1:20128' || '' }}
           OMNIROUTE_API_KEY: ""
           OMNIROUTE_MODEL: auto/smart
@@ -307,7 +308,7 @@ jobs:
           HF_POLICY: free-first
           RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK: 1
           RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b
-          RADAR_OLLAMA_TIMEOUT_SECONDS: 8
+          RADAR_OLLAMA_TIMEOUT_SECONDS: 20
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
           FORCE_EDUCATION_PUBLICATION: false
         run: |

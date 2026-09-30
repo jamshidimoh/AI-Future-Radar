@@ -141,10 +141,30 @@ def canonical_entries() -> list[dict]:
     return sorted(rows, key=_routing_key)
 
 
+def _interleave_provider_families(entries: list[dict]) -> list[dict]:
+    """Interleave provider families while preserving quality order per family."""
+    groups: dict[str, list[dict]] = {}
+    for entry in entries:
+        family = str(entry.get("family") or "").strip().casefold() or "unknown"
+        groups.setdefault(family, []).append(entry)
+    families = sorted(groups, key=lambda family: (_PROVIDER_ORDER.get(family, 99), family))
+    result: list[dict] = []
+    while True:
+        progressed = False
+        for family in families:
+            bucket = groups.get(family) or []
+            if bucket:
+                result.append(bucket.pop(0))
+                progressed = True
+        if not progressed:
+            break
+    return result
+
+
 def ranked_entries() -> list[dict]:
     from src.free_model_service import get_intelligence
-    ranked = get_intelligence().rank(canonical_entries())
-    return sorted(ranked, key=_routing_key)
+    ranked = sorted(get_intelligence().rank(canonical_entries()), key=_routing_key)
+    return _interleave_provider_families(ranked)
 
 
 def model_capability(model_id: str) -> dict:

@@ -22,24 +22,25 @@ def _reset(monkeypatch):
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
 
 
-def test_provider_order_is_primary_and_quality_orders_models_within_provider(monkeypatch):
+def test_provider_families_are_interleaved_for_resilient_runtime_order():
+    entries = [
+        {"family": "groq", "id": "g1", "quality_score": 100},
+        {"family": "groq", "id": "g2", "quality_score": 90},
+        {"family": "openrouter", "id": "o1", "quality_score": 99},
+        {"family": "openrouter", "id": "o2", "quality_score": 89},
+        {"family": "kiraai", "id": "k1", "quality_score": 98},
+    ]
+    ordered = registry._interleave_provider_families(entries)
+    assert [row["id"] for row in ordered] == ["g1", "o1", "k1", "g2", "o2"]
+
+
+def test_runtime_chain_does_not_exhaust_groq_before_openrouter(monkeypatch):
     _reset(monkeypatch)
     names = [name for name, _ in registry.build_production_chain(router)]
-    assert names[:3] == [
-        "Groq:openai/gpt-oss-120b",
-        "Groq:qwen/qwen3.6-27b",
-        "Groq:openai/gpt-oss-20b",
-    ]
-    assert names[3:] == [
-        "OpenRouter:nvidia/nemotron-3-ultra-550b-a55b:free",
-        "OpenRouter:nvidia/nemotron-3-super-120b-a12b:free",
-        "OpenRouter:openai/gpt-oss-120b:free",
-        "OpenRouter:qwen/qwen3-next-80b-a3b-instruct:free",
-        "OpenRouter:google/gemma-4-31b-it:free",
-        "OpenRouter:google/gemma-4-26b-a4b-it:free",
-        "OpenRouter:openai/gpt-oss-20b:free",
-        "OpenRouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-    ]
+    groq_positions = [i for i, name in enumerate(names) if name.startswith("Groq:")]
+    openrouter_positions = [i for i, name in enumerate(names) if name.startswith("OpenRouter:")]
+    assert groq_positions and openrouter_positions
+    assert min(openrouter_positions) < max(groq_positions)
     assert "OpenRouter:openrouter/free" not in names
 
 

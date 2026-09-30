@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790754521,
+  "updated_at": 1790776879,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16788,6 +16788,63 @@
       "why_it_matters": "این یافتهها اهمیت بالینی و اجتماعی استفاده از چتباتها را در زمینه سلامت روان برجسته میکنند. درک مکانیسمهای تنظیم عاطفی و رضایت نیازهای اساسی، مسیرهای مداخلهای هدفمندتری برای کاهش عوارض روانشناختی استثنای اجتماعی فراهم میآورد. این رویکرد میتواند به توسعه ابزارهای حمایتی هوشمندتر و مؤثرتری برای گروههای آسیبپذیر منجر شود.",
       "link": "https://www.nature.com/articles/s41599-026-08786-5",
       "posted_at": 1790754521
+    },
+    "-1004482051328:2002": {
+      "chat_id": -1004482051328,
+      "message_id": 2002,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "کاهش تاخیر استنتاج در spiking neural network برای کلونینگ رفتار با input adaptive leakage",
+      "summary": "مطالعه‌ای در Nature Neuroscience روش جدیدی برای کاهش زمان استنتاج در spiking neural networks (SNNs) هنگام رفتار کلونینگ معرفی می‌کند. این روش با تنظیم پویا \"input adaptive leakage\" بر پایه سیگنال‌های ورودی، تاخیر پردازش را به‌طور قابل‌توجهی کاهش می‌دهد. نتایج نشان می‌دهد که دقت رفتار کلونینگ حفظ می‌شود و تاخیر استنتاج به‌طور قابل‌ملاحظه‌ای کمتر می‌شود. آزمایش‌ها بر روی وظایف کنترل حساس به زمان انجام شد و عملکرد بهتری نسبت به مدل‌های با \"fixed leakage\" به‌دست آمد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "کاهش تاخیر استنتاج در SNNها باعث می‌شود ربات‌ها و سیستم‌های تعبیه‌شده بتوانند تصمیم‌گیری‌های زمان‌حساس را سریع‌تر انجام دهند. پردازش سریع‌تر منجر به مصرف انرژی کمتر می‌شود، زیرا تعداد پالس‌های لازم برای رسیدن به خروجی کاهش می‌یابد. به‌علاوه، سازگاری \"input adaptive leakage\" به شبکه اجازه می‌دهد تا به‌طور پویا با تغییرات ورودی سازگار شود و در محیط‌های واقعی کارایی بالاتری داشته باشد.",
+      "link": "https://www.nature.com/articles/s41598-026-71551-w",
+      "posted_at": 1790776869
+    },
+    "-1004482051328:2003": {
+      "chat_id": -1004482051328,
+      "message_id": 2003,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Last Week in AI",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "Anthropic و OpenAI مدل‌های هوشمندتر و ارزان‌تر؛ افشای نه مورد عدم‌سازگاری",
+      "summary": "در شماره ۳۴۵ خبرنامه Last Week in AI، پنج مدل جدید هوش مصنوعی معرفی شد. Anthropic و OpenAI هر دو در حال ساخت مدل‌هایی هستند که هم هوشمندترند و هم هزینهٔ اجرا را کاهش می‌دهند. OpenAI به‌صورت شفاف نه مورد عدم‌سازگاری (misalignment) را گزارش کرد. در همین خبرنامه به پروژهٔ Dots نیز اشاره شد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "رقابت بین این دو شرکت می‌تواند سرعت پیشرفت فناوری را افزایش داده و هزینهٔ استفاده از مدل‌های بزرگ را برای کاربران و کسب‌وکارها پایین بیاورد، اما همزمان خطرات ایمنی را نیز تقویت می‌کند. افشای شفاف موارد عدم‌سازگاری نشان می‌دهد که شرکت‌ها به مسئولیت‌پذیری در زمینهٔ ایمنی هوش مصنوعی می‌پردازند و این می‌تواند برای تدوین چارچوب‌های نظارتی و تصمیم‌گیری‌های سیاسی مفید باشد.",
+      "link": "https://lastweekin.ai/p/last-week-in-ai-345-5-new-models",
+      "posted_at": 1790776874
+    },
+    "-1004482051328:2004": {
+      "chat_id": -1004482051328,
+      "message_id": 2004,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Fei-Fei Li",
+      "watch_person": "Fei-Fei Li",
+      "title": "چهار درس کلیدی هوش مصنوعی از مصاحبه با بیش از ۵۰ رهبر فناوری",
+      "summary": "در یک سال، نویسنده مصاحبه‌های طولانی با بیش از ۵۰ رهبر فناوری در حوزه هوش مصنوعی انجام داد و بر اساس این گفتگوها، چهار درس اصلی را استخراج کرد. این درس‌ها بر مبنای نظرات و تجربیات مستقیم این رهبران شکل گرفته‌اند. مقاله در Business Insider منتشر شد و به‌عنوان یک منبع جامع برای درک دیدگاه‌های پیشرو در صنعت AI مطرح می‌شود.",
+      "why_it_matters": "این تحلیل، با جمع‌آوری دیدگاه‌های مستقیم از بیش از ۵۰ متخصص، به تصمیم‌گیرندگان کمک می‌کند تا درک دقیقی از چالش‌ها و فرصت‌های فعلی در حوزه هوش مصنوعی داشته باشند. شناخت این چهار درس می‌تواند به‌عنوان راهنمایی برای تنظیم استراتژی‌های تحقیق و توسعه، تخصیص منابع و تدوین سیاست‌های عمومی در زمینه AI عمل کند. به‌ویژه، تمرکز بر این نکات می‌تواند به کاهش ریسک‌های اخلاقی و فنی مرتبط با پیاده‌سازی فناوری‌های هوش مصنوعی کمک نماید.",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQSVdKcW1IYVRUTmJhdnBjY3gtSHRzVU1JdTF5bHJ5WW1ESkpqcGtfWXI2Zy1LM25LekthTDFQUTVudWtXMGV5NHZKc2JyNUMtY0picXRwNnhLZm5VV210Y01UUWJWRW1sbDQ4Rld3TzZoY0d6M2tYMVBYQWo2dEdaWFlmcUQyU2pHa0lvQzhpUlk5eEN0LThIOFNRbDQ4SjRzZXItQkM3NzhiTFhRQmFSVUp4eEY?oc=5",
+      "posted_at": 1790776879
     }
   }
 }

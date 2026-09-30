@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790752146,
+  "updated_at": 1790754521,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16752,6 +16752,42 @@
       "why_it_matters": "اگر پنهانکردن ویژگیهای إیستیک به دلایل دیگری نسبت میگذاری شده است، ممکن است این موضوع به کاهش استیگما و بهبود شناخت عمومی از تجربهٔ إیستیک داده شود.",
       "link": "https://www.nature.com/articles/s41598-026-72656-y",
       "posted_at": 1790752146
+    },
+    "-1004482051328:2000": {
+      "chat_id": -1004482051328,
+      "message_id": 2000,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "مدل ترکیبی RNA کوچک و داده‌های بالینی نتوانست glaucoma primary open-angle و pseudoexfoliative را تفکیک کند",
+      "summary": "پژوهشی تیمی با ترکیب RNA کوچک aqueous humor و متغیرهای بالینی، یک مدل تشخیص glaucoma primary open-angle و pseudoexfoliative ساخت. پژوهش در مجله Nature Computational Biology and Bioinformatics منتشر شد و نشان داد که این مدل توانایی تفکیک کافی بین این دو نوع glaucoma را ندارد. محدودیت این مدل به استفاده تنها از RNA کوچک aqueous humor به‌عنوان بیومارکر منفرد برای تفکیک این بیماری‌ها نشان می‌دهد.",
+      "why_it_matters": "این تحقیق نشان می‌دهد که تکیه تنها بر RNA کوچک aqueous humor و ویژگی‌های بالینی برای تفکیک glaucoma primary open-angle و pseudoexfoliative کافی نیست. این محدودیت به ضرورت یافتن بیومارکرهای حساستر یا ترکیب‌های multimodal پیشرفته‌تر اشاره دارد. برای پزشکان، این به معنای خطر تشخیص نادرست و نیاز به روش‌های تکمیلی مانند عکسبرداری است.",
+      "link": "https://www.nature.com/articles/s41598-026-71391-8",
+      "posted_at": 1790754515
+    },
+    "-1004482051328:2001": {
+      "chat_id": -1004482051328,
+      "message_id": 2001,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "مداخله هوش مصنوعی برای استثنای اجتماعی: عملکرد تنظیم عاطفی و مکانیسم رضایت نیازهای اساسی چتباتها",
+      "summary": "این پژوهش در مجله Nature Neuroscience به بررسی نقش چتباتها در کاهش اثرات استثنای اجتماعی میپردازد. مطالعه نشان میدهد که این ابزارهای هوش مصنوعی از طریق دو مکانیسم اصلی عمل میکنند: تنظیم عاطفی و رضایت نیازهای اساسی. چتباتها با ایجاد تعاملات عاطفی مثبت، به کاربران کمک میکنند تا احساسات منفی ناشی از انزوا را مدیریت کنند. همچنین، این سیستمها با پاسخگویی به نیازهای بنیادین روانشناختی، حس تعلق و ارزشمندی فرد را تقویت میکنند.",
+      "why_it_matters": "این یافتهها اهمیت بالینی و اجتماعی استفاده از چتباتها را در زمینه سلامت روان برجسته میکنند. درک مکانیسمهای تنظیم عاطفی و رضایت نیازهای اساسی، مسیرهای مداخلهای هدفمندتری برای کاهش عوارض روانشناختی استثنای اجتماعی فراهم میآورد. این رویکرد میتواند به توسعه ابزارهای حمایتی هوشمندتر و مؤثرتری برای گروههای آسیبپذیر منجر شود.",
+      "link": "https://www.nature.com/articles/s41599-026-08786-5",
+      "posted_at": 1790754521
     }
   }
 }

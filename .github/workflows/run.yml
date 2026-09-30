@@ -65,7 +65,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
-          if ! timeout 180s npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/ --no-audit --no-fund --prefer-offline; then
+          if ! timeout 420s npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/ --no-audit --no-fund --prefer-offline --no-progress; then
             echo "[OmniRoute] npm installation timed out or failed; production router will use its hard fallback"
             echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"
             exit 0
@@ -270,7 +270,7 @@ jobs:
           RADAR_MAX_LLM_ATTEMPTS: 10
           RADAR_LLM_MAX_TOKENS: 700
           RADAR_ROUTER_BUDGET_SECONDS: 24
-          OMNIROUTE_BASE_URL: ${{ env.OMNIROUTE_READY == '1' && 'http://127.0.0.1:20128' || '' }}
+          OMNIROUTE_BASE_URL: http://127.0.0.1:20128
           OMNIROUTE_API_KEY: ""
           OMNIROUTE_MODEL: auto/smart
           OMNIROUTE_TIMEOUT_SECONDS: 8

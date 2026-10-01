@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790797131,
+  "updated_at": 1790842032,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -16901,6 +16901,61 @@
       "why_it_matters": "پایداری مخالفان سرنوشت‌گرای هوش مصنوعی می‌تواند بر شکل‌گیری سیاست‌های نظارتی، سرمایه‌گذاری‌های پژوهشی و نگرش عمومی نسبت به فناوری‌های نوظهور تأثیرگذار باشد. وقتی این گروه بدون تزلزل ادامه می‌دهند، بحث‌های عمومی حول ریسک‌های احتمالی هوش مصنوعی تشدید می‌شود و ممکن است منجر به اتخاذ رویکردهای پیشگیرانه یا محدودکننده شود. در عین حال، عدم انعطاف‌پذیری آن‌ها می‌تواند مانع از بررسی متعادل‌تر مزایا و معایب فناوری شود.",
       "link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOY25SMFdnQU9Vemh0Y1VvZjdTN3RhSHprOHZtSDJIOUp4aFVYUjg0NFpQUkEwNjdMV1FBUUZpWjh5M3JBOHgtOXFFbzFyUTJSTmJNdW9VRVlfWV94VUM1VndZell5S1pTRWRpVl80OUE1dHNGQWg3d1dHSnluZHJFejNqNGo1Wl81S1lv0gGQAUFVX3lxTE1QVHZFbEtFWkRvVlB3a1NMMVA3TW5aU01CUDI3MWJIdDN6RnlUTFZPVXdmQ2lrMUFLOTdPUUJqVklKR0JnV0NJYkY1Rk8wVHNKU1N1TFU4d2ZGQkJ4UWxVcWlYM1VxR3NOZnV2OXRUUFhpZUtTWnZIT040TVVLbWVlNDl4Ny1QYlZIX05zd0t5eg?oc=5",
       "posted_at": 1790797131
+    },
+    "-1004482051328:2008": {
+      "chat_id": -1004482051328,
+      "message_id": 2008,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "کوریه نشان می‌دهد چرا هر جنگی به هدف واضحی نیاز دارد",
+      "summary": "در این ویدئوی YouTube که توسط Dwarkesh Patel منتشر شده است، Sarah Paine بررسی میکند که چگونه جنگ کره نشان میدهد هر جنگی برای موفقیت به هدف واضحی نیاز دارد. وی با اشاره به رویدادهای نظامی در شبهجزیره کره، استدلال میکند که عدم تعیین هدف مشخص میتواند منجر به تداوم درگیری و هزینههای انسانی و مالی بالا شود. این تحلیل در قالب یک قسمت کامل (Full episode) در آدرس https://www.youtube.com/watch?v=f6cjAEr08qk ارائه شده است.",
+      "description": "Full episode: https://www.youtube.com/watch?v=f6cjAEr08qk\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "چرا داشتن هدف واضح در جنگ مهم است؟ چون بدون هدف مشخص، استراتژیهای نظامی میتوانند پراکنده شوند و نیروها بهسختی میتوانند پیشرفت خود را ارزیابی کنند؛ این مسأله منجر به طولانی شدن جنگ و افزایش تلفات میشود. بنابراین، درک دقیق هدف میتواند به تصمیمگیریهای مؤثرتر و کاهش هزینههای انسانی و مالی کمک کند.",
+      "link": "https://www.youtube.com/watch?v=shnwID5sN5Q",
+      "posted_at": 1790842016
+    },
+    "-1004482051328:2009": {
+      "chat_id": -1004482051328,
+      "message_id": 2009,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Machine Learning",
+      "content_type": "research",
+      "category": "ai_science",
+      "leader": "",
+      "title": "پروتئینهای مصنوعی با واترمارک مخفی «ساختهشده توسط هوش مصنوعی» علامتگذاری میشوند",
+      "summary": "مقاله در Nature - Machine Learning rapporteurs یک روش جدید برای افزودن واترمارک مخفی به توالی پروتئینهای تولید شده توسط هوش مصنوعی معرفی می‌کند. این واترمارک در ساختار سهبعدی پروتئین نهفته است و با استفاده از الگوریتم‌های یادگیری ماشین قابل شناسایی می‌باشد. آزمایش‌های نشان داده‌اند که با این watermark می‌توان پروتئینهای مصنوعی را از پروتئینهای طبیعی با دقت قابل توجه تمایز داد. هدف این کار، ایجاد علامت «ساختهشده توسط هوش مصنوعی» برای پروتئین‌های engineered است.",
+      "why_it_matters": "وجود watermark مخفی امکان ردیابی دقیق محصولات دارویی و غذایی که توسط AI تولید شده‌اند را فراهم می‌سازد و به جلوگیری از استفاده نادرست یا اشتباه در آزمایش‌های clínیک کمک می‌کند. این مکانیسم، از طریق تشخیص خودکار watermark توسط مدل‌های یادگیری ماشین، نظارت بر زنجیره تأمین بیوتکنولوژیک را تقویت می‌کند و استانداردهای ایمنی و کیفیت را ارتقا می‌بخشد. таким образом، ابزار جدیدی برای کنترل کیفیت و تأمین امنیت در صنایع بیوتکنولوژی به دست می‌آید.",
+      "link": "https://www.nature.com/articles/d41586-026-03033-y",
+      "posted_at": 1790842027
+    },
+    "-1004482051328:2010": {
+      "chat_id": -1004482051328,
+      "message_id": 2010,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "پویایی مشارکت دانشآموزان در یادگیری تعاونی با روش چندرسانهای",
+      "summary": "این پژوهش که در مجله Nature Neuroscience منتشر شده، از رویکرد چندرسانهای برای تحلیل پویایی مشارکت دانشآموزان در یادگیری علمی تعاونی استفاده میکند. این مطالعه با ترکیب دادههای مختلف، نوسانات لحظهای در سطح درگیری و تعاملات گروهی را در محیطهای آموزشی پیگیری میکند. هدف اصلی ارائه درکی دقیقتر از مکانیزمهای رفتاری و شناختی حاکم بر فرآیند یادگیری گروهی است.",
+      "why_it_matters": "استفاده از رویکرد چندرسانهای امکان شناسایی همزمانیهای ظریف بین رفتار و وضعیت درونی دانشآموزان را فراهم میآورد که با روشهای سنتی قابل رصد نیستند. این قابلیت به طراحان آموزشی اجازه میدهد تا مداخلات خود را بر اساس دادههای لحظهای و دقیقتر تنظیم کنند تا از افت مشارکت در جلسات تعاونی جلوگیری شود. در نتیجه، زیرساختهای یادگیری میتوانند با بازخورد دادهمحور، اثربخشی تعاملات گروهی را بهصورت هدفمند افزایش دهند.",
+      "link": "https://www.nature.com/articles/s41539-026-00457-z",
+      "posted_at": 1790842032
     }
   }
 }

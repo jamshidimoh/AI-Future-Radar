@@ -2,13 +2,13 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 39,
-      "disabled_until": 1790798480.495,
+      "disabled_until": 1790863633.275,
       "last_error": "model",
       "last_success": 0.0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 12,
-      "disabled_until": 1790800732.928,
+      "disabled_until": 1790845633.275,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -20,13 +20,13 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 4,
-      "disabled_until": 1790780480.495,
+      "disabled_until": 1790845633.275,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 3,
-      "disabled_until": 1790780480.495,
+      "disabled_until": 1790845633.275,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -38,7 +38,7 @@
     },
     "kiraai:qwen3.8-flash": {
       "failures": 1,
-      "disabled_until": 1790751016.334,
+      "disabled_until": 1790845633.275,
       "last_error": "quota",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 82,
-      "disabled_until": 1790883532.928,
+      "failures": 83,
+      "disabled_until": 1790928433.275,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1790883532.928,
+      "disabled_until": 1790928433.275,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -112,7 +112,7 @@
   "providers": {
     "kiraai": {
       "failures": 2,
-      "disabled_until": 1790833816.334,
+      "disabled_until": 1790928433.275,
       "last_error": "wallet",
       "last_success": 0.0
     },
@@ -123,8 +123,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 164,
-      "disabled_until": 1790883532.928,
+      "failures": 166,
+      "disabled_until": 1790928433.275,
       "last_error": "auth",
       "last_success": 0.0
     },

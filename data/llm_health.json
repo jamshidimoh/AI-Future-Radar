@@ -2,7 +2,7 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 39,
-      "disabled_until": 1790949207.641,
+      "disabled_until": 1790971549.742,
       "last_error": "model",
       "last_success": 0.0
     },

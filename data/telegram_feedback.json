@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1790927606,
+  "updated_at": 1790949948,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17105,6 +17105,63 @@
       "why_it_matters": "حفظ امنیت داده‌های داخلی برای سازمان‌های هوش مصنوعی امری حیاتی است؛ هر گونه سهل‌انگاری می‌تواند به افشای جزئیات حساس پژوهشی یا تجاری منجر شود و اعتماد عمومی را تحت‌الشعاع قرار دهد. با قطع همکاری پژوهشگران متهم، OpenAI پیام واضحی به جامعه علمی می‌دهد: تخلف در مدیریت اطلاعات قابل‌قبول نیست. این رویداد می‌تواند بر جذب و نگهداشت استعدادهای برتر در حوزه ایمنی هوش مصنوعی تأثیر بگذارد و سایر شرکت‌ها را به تقویت پروتکل‌های داخلی تشویق کند.",
       "link": "https://techcrunch.com/2026/10/01/openai-cuts-ties-with-three-safety-researchers-wsj-reports/",
       "posted_at": 1790927606
+    },
+    "-1004482051328:2019": {
+      "chat_id": -1004482051328,
+      "message_id": 2019,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "ارزیابی ایمنی پیش‌بینی چندبعدی مدل‌های یادگیری ماشین برای تشخیص دیابت",
+      "summary": "پژوهش منتشر شده در Nature – Computational Biology and Bioinformatics، روش‌های مختلف ارزیابی ریسک و قابلیت اطمینان مدل‌های یادگیری ماشین را در تشخیص دیابت بررسی می‌کند و معیارهای ضروری برای عملکرد پایدار در محیط‌های بالینی را شناسایی می‌نماید.",
+      "description": "artificial intelligence",
+      "why_it_matters": "بدون تضمین ایمنی پیش‌بینی، پذیرش هوش مصنوعی در تشخیص دیابت دشوار می‌شود؛ شناسایی نقاط ضعف و ارزیابی ریسک به بهبود دقت و افزایش اعتماد پزشکان به این ابزارها کمک می‌کند.",
+      "link": "https://www.nature.com/articles/s41598-026-73801-3",
+      "posted_at": 1790949940
+    },
+    "-1004482051328:2020": {
+      "chat_id": -1004482051328,
+      "message_id": 2020,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Google DeepMind",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "SynthID: واترمارک ریاضی برای ردیابی محتوا و پروتئینهای مصنوعی",
+      "summary": "در این گفتوگو، هانن فری با پوشمیت کولی و جری رِتکلِف از گوگل دیپمایند درباره فناوری SynthID صحبت میکنند. این سیستم از واترمارکهای ریاضی نامرئی برای ردیابی منشأ محتواهای تولیدشده توسط هوش مصنوعی و جلوگیری از سوءاستفاده استفاده میکند. بخش جدید SynthID Bio این فناوری را به طراحی توالیهای پروتئین اعمال کرده تا بدون تغییر در عملکرد زیستی، اصالت دادهها تضمین شود.",
+      "description": "How do you know if what you're seeing is real? Professor Hannah Fry sits down with Pushmeet Kohli (VP of Science) and Jeremy Ratcliffe (Research Scientist) to break down SynthID, the watermarking technology expanding from text, images, and video straight into biology. Learn how invisible, mathematical watermarks help trace AI provenance, protect against misuse, and safeguard protein sequence design without impacting biological function. \n\nTimecodes: \n00:00 Introduction \n00:34 What is a watermark?\n04:35 SynthID\n15:16 Images and video \n19:28 SynthID Bio\n28:00 Future of resilience \n\nLearn more about SynthID Bio: https://deepmind.google/blog/introducing-synthid-bio/ \n\n___\n\nSubscribe to our channel https://www.youtube.com/@googledeepmind \nFind us on X https://x.com/GoogleDeepMind\nFollow us on Instagram https://instagram.com/googledeepmind \nAdd us on Linkedin https://www.linkedin.com/company/deepmind/",
+      "why_it_matters": "گسترش SynthID به حوزه زیستشناسی مرز بین امنیت دیجیتال و ایمنی بیولوژیکی را محو میکند و امکان ردیابی طراحیهای مصنوعی پروتئین را فراهم میآورد. این رویکرد ریاضی، بدون تغییر در ساختار مولکولها، شفافیت و مسئولیتپذیری را به ابزارهای طراحی هوشمند اضافه میکند. با افزایش دقت مدلهای مولد، وجود مکانیزمهای پنهان برای تمایز بین محتوای واقعی و مصنوعی در هر دو حوزه ضروری است.",
+      "link": "https://www.youtube.com/watch?v=HIUzrxQxTtw",
+      "posted_at": 1790949944
+    },
+    "-1004482051328:2021": {
+      "chat_id": -1004482051328,
+      "message_id": 2021,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "مدل Vision Transformer با قابلیت توضیح‌پذیری برای تشخیص خودکار اختلالات عصبی از MRI",
+      "summary": "محققان مدل Vision Transformer (ViT) با مکانیزم توجه (attention) طراحی کردند که به‌صورت خودکار انواع اختلالات عصبی را از اسکن‌های MRI مغز شناسایی می‌کند. این روش با نمایش بصری نواحی مهم تصویر، شفافیت تصمیم‌گیری را فراهم می‌آورد و دقت تشخیص را نسبت به روش‌های سنتی ارتقا می‌دهد؛ در نتیجه می‌تواند به‌عنوان ابزار کمکی برای پزشکان در فرآیند تشخیص به کار رود.",
+      "description": "artificial intelligence",
+      "why_it_matters": "توضیح‌پذیری مدل‌های هوش مصنوعی در پزشکی، اعتماد متخصصان را جلب می‌کند و امکان بررسی دلایل تصمیم‌گیری را می‌دهد. این ویژگی می‌تواند خطاهای تشخیصی را کاهش داده، سرعت ارزیابی‌های بالینی را افزایش دهد و بار کاری رادیولوژیست‌ها را در مراکز کم‌منابع کم کند.",
+      "link": "https://www.nature.com/articles/s41598-026-71565-4",
+      "posted_at": 1790949948
     }
   }
 }

@@ -24,13 +24,18 @@ registry:
     - id: qwen/qwen3.8-27b:free
       health: healthy
       health_score: 100
-      catalog_score: 74.09
-      verified_at: '2026-10-01T10:08:21.893956+00:00'
+      catalog_score: 74.05
+      verified_at: '2026-10-02T09:46:18.069546+00:00'
     - id: dots-studio/dots-3-note-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 73.695
-      verified_at: '2026-10-01T10:08:21.893988+00:00'
+      catalog_score: 73.656
+      verified_at: '2026-10-02T09:46:18.069594+00:00'
+    - id: apodex/apodex-1.1-mini:free
+      health: healthy
+      health_score: 100
+      catalog_score: 67.973
+      verified_at: '2026-10-02T09:46:18.069496+00:00'
     - priority: 2
       id: nvidia/nemotron-3-super-120b-a12b:free
       free: true
@@ -41,8 +46,8 @@ registry:
       task_fit: 94
       health: healthy
       health_score: 100
-      catalog_score: 67.85
-      verified_at: '2026-10-01T10:08:21.894146+00:00'
+      catalog_score: 67.811
+      verified_at: '2026-10-02T09:46:18.069713+00:00'
     - id: nex-agi/nex-n2.5-mini:free
       health: healthy
       health_score: 100
@@ -63,8 +68,8 @@ registry:
       task_fit: 95
       health: healthy
       health_score: 100
-      catalog_score: 65.368
-      verified_at: '2026-10-01T10:08:21.894110+00:00'
+      catalog_score: 65.329
+      verified_at: '2026-10-02T09:46:18.069681+00:00'
     - priority: 6
       id: google/gemma-4-31b-it:free
       free: true
@@ -75,13 +80,13 @@ registry:
       task_fit: 98
       health: healthy
       health_score: 100
-      catalog_score: 65.331
-      verified_at: '2026-10-01T10:08:21.894124+00:00'
+      catalog_score: 65.292
+      verified_at: '2026-10-02T09:46:18.069696+00:00'
     - id: liquid/lfm-2.5-2.6b:free
       health: healthy
       health_score: 100
-      catalog_score: 55.373
-      verified_at: '2026-10-01T10:08:21.894013+00:00'
+      catalog_score: 55.333
+      verified_at: '2026-10-02T09:46:18.069619+00:00'
     - priority: 1
       id: nvidia/nemotron-3-ultra-550b-a55b:free
       free: true
@@ -279,4 +284,4 @@ registry:
     models: []
     reason: Dynamic discovery/emergency lane; never outranks quality-scored trusted
       models without evidence
-  last_refresh: '2026-10-01T10:08:21.894217+00:00'
+  last_refresh: '2026-10-02T09:46:18.069769+00:00'

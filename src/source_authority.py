@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 _TIER1_DOMAIN_MARKERS = (
     "openai.com", "anthropic.com", "deepmind.google", "blog.google", "research.google",
     "hai.stanford.edu", "stanford.edu", "csail.mit.edu", "news.mit.edu", "mit.edu",
-    "nature.com", "ncsu.edu", "cmu.edu", "nvidia.com", "nist.gov", "ieee.org", "quanta.com",
+    "nature.com", "science.org", "ncsu.edu", "cmu.edu", "nvidia.com", "nist.gov", "ieee.org", "quanta.com",
     # Philosophy / philosophy-of-AI authoritative reference and scholarly publisher domains.
     "plato.stanford.edu", "cambridge.org", "academic.oup.com",
 )

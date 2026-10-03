@@ -206,7 +206,13 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
                 tier = 3
             return tier <= 2
         return False
-    if interview and (registry_person or person_identity or thematic):
+    # Generic expert interviews belong to the dedicated Voices lane.
+    # The Mind lane accepts an interview only when its content is substantively
+    # tied to mind/cognition/future questions or an explicit thematic signal.
+    if interview and (
+        thematic
+        or (mission in {"mind", "mind_cognition", "future", "future_governance"} and (registry_person or person_identity))
+    ):
         return True
     if not _importance_evidence(item):
         return False
@@ -245,7 +251,9 @@ def mind_ideas_voices_score(item: dict[str, Any]) -> float:
         score += 18.0
     elif explicit_person:
         score += 14.0
-    if content_type in INTERVIEW_TYPES:
+    if content_type in INTERVIEW_TYPES and (
+        thematic or mission in {"mind", "mind_cognition", "future", "future_governance"}
+    ):
         score += 10.0
     try:
         source_tier = int(item.get("source_tier", 3) or 3)

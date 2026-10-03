@@ -1,4 +1,5 @@
 from production_entrypoint import _people_bootstrap_batch
+from production_entrypoint import _people_bootstrap_quality_allowed
 from scripts.production_acceptance_guard import validate
 
 
@@ -12,6 +13,15 @@ def _people_log(delivered=30, baseline=30, status="complete"):
 [People Bootstrap] status={status} delivered={delivered}/30 baseline={baseline}/30 bootstrap_at=2026-09-22T09:00:00+00:00
 Posts sent: {delivered}/{delivered}
 """
+
+
+def test_people_bootstrap_requires_explicit_validation_and_authority():
+    valid = {"people_bootstrap": True, "people_bootstrap_validated": True, "source_tier": 1}
+    weak = {"people_bootstrap": True, "people_bootstrap_validated": True, "source_tier": 3}
+    unvalidated = {"people_bootstrap": True, "source_tier": 1}
+    assert _people_bootstrap_quality_allowed(valid) is True
+    assert _people_bootstrap_quality_allowed(weak) is False
+    assert _people_bootstrap_quality_allowed(unvalidated) is False
 
 
 def test_people_bootstrap_exact_30_is_accepted():

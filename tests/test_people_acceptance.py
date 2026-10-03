@@ -1,5 +1,4 @@
-from production_entrypoint import _people_bootstrap_batch
-from production_entrypoint import _people_bootstrap_quality_allowed
+from production_entrypoint import _people_bootstrap_batch, _people_bootstrap_quality_allowed
 from scripts.production_acceptance_guard import validate
 
 

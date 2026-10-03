@@ -38,3 +38,22 @@ def test_normal_persian_with_zwnj_remains_valid():
         "این روش داده‌های تصویربرداری را با یک مدل Transformer تحلیل می‌کند و نتیجه پژوهش را روی چند نمونه ارزیابی می‌کند.",
         "اهمیت آن در این است که بهبود دقت می‌تواند ارزیابی بالینی را دقیق‌تر کند، هرچند کیفیت داده و اعتبارسنجی مستقل همچنان محدودیت اصلی است.",
     )
+
+
+def test_generic_ai_leader_interview_is_not_mind_lane():
+    from src.protected_editorial_lane import is_mind_ideas_voices_candidate
+
+    item = {
+        "title": "Sam Altman interview on AI scaling",
+        "summary": "A substantive interview about model scaling and research.",
+        "content_type": "interview",
+        "source_type": "podcast",
+        "source": "Trusted AI Podcast",
+        "source_tier": 1,
+        "category": "ai",
+        "leader": "Sam Altman",
+        "is_leader_watch": True,
+        "leader_priority": 10,
+        "interview_signal": True,
+    }
+    assert not is_mind_ideas_voices_candidate(item)

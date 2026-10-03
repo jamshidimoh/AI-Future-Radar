@@ -26,8 +26,6 @@ from src.topic_repetition_guard import filter_history_topic_repetition
 from src.typesafe_judgment import rerank_candidates
 from src.unified_editorial_selection import freshness_score, load_editorial_contract, mission_area, select_regular_portfolio
 from src.voices_perspectives_lane import choose_voices_candidate
-from src.typesafe_judgment import rerank_candidates
-from src.unified_editorial_selection import freshness_score, load_editorial_contract, mission_area, select_regular_portfolio
 
 logger = logging.getLogger(__name__)
 

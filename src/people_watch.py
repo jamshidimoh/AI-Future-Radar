@@ -211,6 +211,7 @@ def mark_people_item(item: dict[str, Any], person: str, *, bootstrap: bool = Fal
     out["is_leader_watch"] = True
     out["leader_watch_protected"] = True
     out["people_bootstrap"] = bool(bootstrap)
+    out["people_bootstrap_validated"] = bool(bootstrap)
     return out
 
 
@@ -248,6 +249,20 @@ def bootstrap_candidates(
         ]
         if not pool:
             continue
+        # Bootstrap is an evidence-establishment step, not a source-quality bypass.
+        # Prefer candidates whose resolved source authority is Tier 1/2 whenever
+        # such a candidate exists; retain a fallback only when no authoritative
+        # candidate is available so a temporary source gap does not deadlock the lane.
+        authoritative_pool = []
+        for item in pool:
+            try:
+                tier = int(item.get("source_tier", 3) or 3)
+            except (TypeError, ValueError):
+                tier = 3
+            if tier <= 2:
+                authoritative_pool.append(item)
+        if authoritative_pool:
+            pool = authoritative_pool
         # For undelivered people, always re-evaluate the current eligible pool.
         # A previously persisted baseline is only historical state; it must not
         # pin an undelivered person to stale content when a newer signal exists.

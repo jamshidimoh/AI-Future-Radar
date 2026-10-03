@@ -1,4 +1,5 @@
 name: Run AI Future Radar Bot
+# Closure evidence: production workflow trigger marker (application fingerprint excludes CI workflows).
 
 on:
   push:

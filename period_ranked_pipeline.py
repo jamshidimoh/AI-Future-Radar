@@ -17,6 +17,9 @@ from src.logging_setup import configure_logging
 from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
 from src.protected_story_identity import probable_same_story
+from src.protected_editorial_lane import choose_additive_candidate
+from src.technical_trend_lane import choose_technical_trend_candidate
+from src.voices_perspectives_lane import choose_voices_candidate
 from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
 from src.semantic_dedup import get_story_signature
 from src.story_gate import _technology_relevant
@@ -332,6 +335,50 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     eligible = [x for x in items if not x.get("duplicate") and not x.get("publication_blocked")]
     eligible = _exclude_published_candidates(eligible)
     _prepare_rank_features(eligible)
+
+    # Activate mission-specialist roles before global portfolio arbitration.
+    # These are candidate annotations only; they never create extra Telegram slots.
+    special_pool = [
+        x for x in eligible
+        if not x.get("_rank_is_tier0")
+        and not x.get("protected_slot")
+        and not x.get("people_lane")
+    ]
+    used_special_ids: set[int] = set()
+    mind_candidate = choose_additive_candidate(
+        special_pool,
+        existing_ids=used_special_ids,
+        max_rank=12,
+    )
+    if mind_candidate is not None:
+        used_special_ids.add(id(mind_candidate))
+        mind_candidate["_portfolio_selection_score"] = float(mind_candidate.get("mind_editorial_score", 0) or 0)
+        mind_candidate["final_editorial_score"] = mind_candidate["_portfolio_selection_score"]
+    technical_candidates = choose_technical_trend_candidate(
+        special_pool,
+        existing_ids=used_special_ids,
+        max_items=1,
+    )
+    for candidate in technical_candidates:
+        used_special_ids.add(id(candidate))
+        candidate["_portfolio_selection_score"] = float(candidate.get("technical_trend_score", 0) or 0)
+        candidate["final_editorial_score"] = candidate["_portfolio_selection_score"]
+    voice_candidates = choose_voices_candidate(
+        special_pool,
+        existing_ids=used_special_ids,
+        max_items=1,
+    )
+    for candidate in voice_candidates:
+        used_special_ids.add(id(candidate))
+        candidate["_portfolio_selection_score"] = float(candidate.get("voices_perspectives_score", 0) or 0)
+        candidate["final_editorial_score"] = candidate["_portfolio_selection_score"]
+    print(
+        f"[Special Lane Annotation] mind={1 if mind_candidate else 0} "
+        f"technical={len(technical_candidates)} voices={len(voice_candidates)} "
+        "roles_are_candidate_annotations=true",
+        flush=True,
+    )
+
     print(f"[Ranking Timing] feature_cache items={len(eligible)} elapsed={time.monotonic()-started:.3f}s", flush=True)
     # Freshness is the primary ordering signal for normal stories. Quality,
     # signal and authority remain tie-breakers so an older high-score item cannot
@@ -365,10 +412,18 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
         is_tier0 = bool(item.get("_rank_is_tier0"))
         item["period_rank"] = global_rank
         item["publication_rank_assigned"] = True
+        is_special = bool(
+            item.get("mind_lane_selected")
+            or item.get("technical_trend_lane_selected")
+            or item.get("voices_perspectives_lane_selected")
+        )
         if is_tier0:
             tier0_rank += 1
             item["tier0_rank"] = tier0_rank
             item["normal_period_rank"] = None
+        elif is_special:
+            item["normal_period_rank"] = None
+            item["tier0_rank"] = None
         else:
             normal_rank += 1
             item["normal_period_rank"] = normal_rank

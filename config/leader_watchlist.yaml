@@ -147,6 +147,11 @@ google_news_queries:
   - {query: "Ilya Sutskever Safe Superintelligence AI interview", watch_person: "Ilya Sutskever", category: ai, tier: 1, content_type: interview}
   - {query: "Fei-Fei Li AI future interview", watch_person: "Fei-Fei Li", category: ai, tier: 1, content_type: interview}
   - {query: "Andrew Ng AI interview latest", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
+  - {query: "Andrew Ng LearnVector AI education agents interview", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
+  - {query: "George Church AI genomics synthetic biology machine learning", watch_person: "George Church", category: bio, tier: 1, content_type: research}
+  - {query: "George Church genomics future biotechnology interview", watch_person: "George Church", category: bio, tier: 1, content_type: interview}
+  - {query: "Kate Crawford AI data labor algorithms interview", watch_person: "Kate Crawford", category: future, tier: 1, content_type: interview}
+  - {query: "Kate Crawford artificial intelligence society technology interview", watch_person: "Kate Crawford", category: future, tier: 1, content_type: interview}
   - {query: "Geoffrey Hinton AI future consciousness interview", watch_person: "Geoffrey Hinton", category: ai, tier: 1, content_type: interview}
   - {query: "Yann LeCun AI future world model interview", watch_person: "Yann LeCun", category: ai, tier: 1, content_type: interview}
   - {query: "Yoshua Bengio AI safety AGI interview", watch_person: "Yoshua Bengio", category: ai, tier: 1, content_type: interview}

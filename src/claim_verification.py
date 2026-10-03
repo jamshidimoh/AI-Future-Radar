@@ -32,6 +32,25 @@ RISK_TYPES = (
     "quote_claim", "date_claim",
 )
 
+# Deterministic hard-stop reasons for publication. Provider unavailability is
+# deliberately excluded: it is observable and logged, but should not by itself
+# fabricate certainty or make the whole radar silent.
+HARD_PUBLICATION_FLAGS = frozenset({
+    "unsupported_named_entity",
+    "unsupported_model_version",
+    "unsupported_benchmark",
+    "unsupported_comparison",
+    "unsupported_superlative",
+    "causal_overreach",
+    "unsupported_attribution",
+    "unsupported_quote",
+    "temporal_mismatch",
+    "semantic_entailment_failure",
+})
+
+def hard_publication_flags(flags: Any) -> set[str]:
+    return {str(flag) for flag in (flags or ()) if str(flag) in HARD_PUBLICATION_FLAGS}
+
 _COMPARISON_RE = re.compile(
     r"(?:\b\d+(?:[.,]\d+)?\s*%\s*(?:سریع|کند|بهتر|بیشتر|کمتر)|"
     r"(?:\b\d+(?:[.,]\d+)?\s*(?:x|×)\b)|"

@@ -16,8 +16,8 @@ from src.dedup import load_seen
 from src.logging_setup import configure_logging
 from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
-from src.protected_story_identity import probable_same_story
 from src.protected_editorial_lane import choose_additive_candidate
+from src.protected_story_identity import probable_same_story
 from src.technical_trend_lane import choose_technical_trend_candidate
 from src.voices_perspectives_lane import choose_voices_candidate
 from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict

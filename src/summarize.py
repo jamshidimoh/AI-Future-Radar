@@ -6,7 +6,7 @@ import re
 from contextlib import suppress
 from pathlib import Path
 
-from src.claim_verification import deterministic_precheck, semantic_verify, hard_publication_flags
+from src.claim_verification import deterministic_precheck, hard_publication_flags, semantic_verify
 from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_editorial_naturalness_ok, persian_ratio
 from src.education_editor import news_terminology_review_prompt, normalize_news_editorial_text
 from src.llm_router_light import QuotaExceeded, _disable, _ollama_local, call_llm_with_fallback, get_quality_chain

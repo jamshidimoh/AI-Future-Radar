@@ -256,11 +256,21 @@ def bootstrap_candidates(
         # candidate is available so a temporary source gap does not deadlock the lane.
         authoritative_pool = []
         for item in pool:
+            configured_tier = item.get("source_tier") or item.get("tier")
             tier = resolve_source_tier(
                 source_name=item.get("source") or item.get("source_name") or item.get("publisher") or "",
                 source_url=item.get("canonical_url") or item.get("link") or item.get("url") or "",
-                configured_tier=item.get("source_tier") or item.get("tier"),
+                configured_tier=configured_tier,
             )
+            # Preserve an upstream-resolved Tier-1/2 classification when the URL
+            # cannot independently identify the publisher. A recognized publisher
+            # domain still overrides weaker metadata deterministically.
+            try:
+                configured_value = int(configured_tier)
+            except (TypeError, ValueError):
+                configured_value = 3
+            if tier > 2 and configured_value <= 2:
+                tier = configured_value
             item["source_tier"] = tier
             item["people_bootstrap_source_tier"] = tier
             if tier <= 2:

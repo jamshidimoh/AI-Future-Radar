@@ -87,7 +87,9 @@ def persian_editorial_naturalness_ok(title: str, summary: str, why_it_matters: s
     normalized_body = body.replace("\u200c", "")
     if any(form in normalized_body for form in _PERSIAN_ORTHOGRAPHIC_BAD_FORMS):
         return False
-    if _PERSIAN_JOINED_VERBS.search(normalized_body):
+    # Inspect the original text here: removing ZWNJ would make correct forms
+    # such as «می‌کند» indistinguishable from the incorrect «میکند».
+    if _PERSIAN_JOINED_VERBS.search(body):
         return False
     sentences = [s.strip() for s in re.split(r"(?<=[.!؟])\s+", body) if s.strip()]
     if len(sentences) >= 3 and sum(len(s) > 240 for s in sentences) >= 2:

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1791010210,
+  "updated_at": 1791013613,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17237,6 +17237,27 @@
       "why_it_matters": "تغییر در تولید و مصرف غذا می‌تواند به‌طور مستقیم بر سلامت عمومی و تنوع زیستی تأثیر بگذارد؛ گوشت‌سازی آزمایشگاهی می‌تواند مصرف گوشت را کاهش داده و گازهای گلخانه‌ای را کم کند. کشاورزی بازگردانی، با بهبود خاک و حفظ اکوسیستم، می‌تواند پایداری منابع آب و خاک را تضمین کند. اگر این فناوری‌ها و روش‌ها به‌طور گسترده پذیرفته نشوند، احتمالاً بحران‌های غذایی و تغییرات اقلیمی شدیدتری رخ خواهد داد.",
       "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9BbkxmdmstTHdBTG9NcjBBV0YxNExjWWVXa2VjRnZIb1VobHVma1NsVnVzYS1XM3d4WjQyak5yazA2dk5tbmtHOFFUdDBPOWxUamZSd0IyTWpuMXk0VFdfbF9SX25fS082YmxPbUlGUXVXd3REY3JkLXVRdXBHZw?oc=5",
       "posted_at": 1791008897
+    },
+    "-1004482051328:2026": {
+      "chat_id": -1004482051328,
+      "message_id": 2026,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (reuters.com)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Andrew Ng",
+      "watch_person": "Andrew Ng",
+      "person_name": "Andrew Ng",
+      "people_lane": true,
+      "title": "سرمایهگذاری ۱۰۰ میلیون دلاری Coursera در استارتاپ آموزشی AI Andrew Ng",
+      "summary": "Coursera سرمایه‌گذاری ۱۰۰ ملیون دلاری در شرکت آموزشی هوش مصنوعی تازه تأسیس Andrew Ng انجام داد. این سرمایه‌گذاری توسط Coursera، یکی از بزرگترین پلتفرم‌های آموزش آنلاین، اعلام شد. Andrew Ng، هم‌بنیان‌گذار Coursera، بنیان‌گذار این استارتاپ جدید است. مبلغ ۱۰۰ ملیون دلار نشان‌دهنده تعهد Coursera به توسعه آموزش AI است. این اقدام می‌تواند به گسترش دسترسی به دوره‌های تخصصی AI کمک کند.",
+      "why_it_matters": "سرمایه‌گذاری ۱۰۰ ملیون دلاری نشان می‌دهد که Coursera به عنوان یک اکوسیستم آموزشی، در حال تقویت مهارت‌های هوش مصنوعی در نیروی کار است. با حمایت مالی، Andrew Ng می‌تواند دوره‌های پیشرفته‌تری را توسعه دهد که به دانشجویان امکان یادگیری کاربردی AI را می‌دهد. این حرکت باعث می‌شود تا بازار کار در حوزه AI به سرعت به نیازهای جدید پاسخ دهد. در نتیجه، این سرمایه‌گذاری می‌تواند شکاف مهارتی در صنعت AI را کاهش دهد.",
+      "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNNDBBczc5Q21jMGFpRUdBbUJwWHBqem9mZDJFel9GMTlxVzFXWjEwMEhYSERVd2pPZ1Uzc2JXbGZQWG96aUdCaW9LRFlLaHRsYldNczltR2tmTmg1VmlYUkNyd3ZKRnB4NGxvaXkzeWlvWE1rSlNMdEFUTlVzSThFaGZrdjY3dF9wQXFyQ3dFR3NHdEdnekRSVDJfWDZLS1NtbEx1U3JSTF9VTHowU2c3UTV3OEVWQlozSm1zNFVtaw?oc=5",
+      "posted_at": 1791013589
     }
   }
 }

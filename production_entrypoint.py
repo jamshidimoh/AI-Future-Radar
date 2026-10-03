@@ -449,6 +449,19 @@ def _competitive_normal_candidates(candidates):
     return protected + kept
 
 
+def _people_bootstrap_quality_allowed(item: dict) -> bool:
+    """Bootstrap People items must pass an explicit validation and authority gate."""
+    if not item.get("people_bootstrap"):
+        return True
+    if not item.get("people_bootstrap_validated"):
+        return False
+    try:
+        source_tier = int(item.get("source_tier", 3) or 3)
+    except (TypeError, ValueError):
+        source_tier = 3
+    return source_tier <= 2
+
+
 def _people_bootstrap_batch(candidates, limit: int = MAX_PEOPLE_BOOTSTRAP_PER_PERIOD):
     people = [item for item in candidates if item.get("people_lane")]
     return sorted(
@@ -711,6 +724,8 @@ def main(*, skip_education: bool = False) -> int:
         priority_person = _is_tier0_publication_candidate(story)
         strategic_analytical = _is_strategic_analytical_signal(story)
         if is_people:
+            if story.get("people_bootstrap") and not _people_bootstrap_quality_allowed(story):
+                return policy_blocked("people_bootstrap_quality_gate")
             if not story.get("people_bootstrap") and not is_substantive_priority_interview(story):
                 return policy_blocked("people_quality_gate")
             if not _news_language_ok(story):

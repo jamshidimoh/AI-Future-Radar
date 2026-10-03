@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1791051047,
+  "updated_at": 1791066334,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17279,6 +17279,44 @@
       "why_it_matters": "مصرف انرژی عظیم مدل‌های هوش مصنوعی مستقیماً به افزایش انتشار گازهای گلخانه‌ای و تسریع تغییرات اقلیمی منجر می‌شود، در حالی که استخراج داده‌های ناعادلانه به‌خصوص از جوامع حاشیه‌نشین، ساختارهای قدرت نابرابر را تقویت می‌کند. این ترکیب فشارهای زیست‌محیطی و اجتماعی نشان می‌دهد که برای جلوگیری از بحران‌های آینده، سیاست‌گذاران باید چارچوب‌های نظارتی برای بهینه‌سازی مصرف انرژی و محدود کردن جمع‌آوری داده‌های غیرضروری ایجاد کنند.",
       "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNai1yR2tCV0l0TGVxUmJqRm1obXZqbm5ESnAxeU92emhRWWdYeGhiaGFUMFZUU2xKSmlTU1ZXQkk0MTlaV2xCdTVrMnhrVjI0ZjN0Qld6ZXd2Z2ZQRFF0aHc4a3pma0F2bDE2aHpyVGJYNmpicVBNQ2p2UDRNUmtYZ3dOMzBOci12V2htY0JvRG1rYUpYWHVRTTl3dTB2MGZMMzRzSENTdzFxVzRCQy1lcE9R?oc=5",
       "posted_at": 1791016275
+    },
+    "-1004482051328:2028": {
+      "chat_id": -1004482051328,
+      "message_id": 2028,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چرا ثروت‌های نوین اسپانیا در جهان جدید به عقب افتاد – Si Sheppard",
+      "summary": "متن منبع فقط شامل عنوان ویدیو و لینک‌های مرتبط با کانال Dwarkesh Patel است و هیچ توضیح یا گفت‌وگوی متنی در مورد محتوا یا تحلیل‌های Si Sheppard ارائه نمی‌دهد. در نتیجه، استخراج نظریه، آزمون یا شواهد عینی برای خلاصه‌سازی امکان‌پذیر نیست. سند صرفاً یک صفحه فرود ویدیویی در پلتفرم YouTube است.",
+      "description": "Full episode: https://youtu.be/LwQQ7nBCGSs\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "بدون دسترسی به محتوای اصلی گفت‌وگو، نمی‌توان پیامد یا اهمیت موضوع را با سازوکار مشخص توضیح داد. تنها اطلاعات موجود شناسایی میزبان به عنوان Dwarkesh Patel و مهمان به عنوان Si Sheppard است. بدون تحلیل اقتصادی یا تاریخی، تأثیر بر پژوهش، محصول یا بازار قابل تعیین نیست.",
+      "link": "https://www.youtube.com/watch?v=KO8JE7XK4Gs",
+      "posted_at": 1791066327
+    },
+    "-1004482051328:2029": {
+      "chat_id": -1004482051328,
+      "message_id": 2029,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Y Combinator",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "پیش‌بینی آیندهٔ هوش مصنوعی بدون GPU: محاسبات نوری، نورومورفیک و سلول‌های مغزی",
+      "summary": "در جلسهٔ Paper Club ی‌کمبیناتور، متخصصان به بررسی راه‌های جایگزین برای محاسبهٔ هوش مصنوعی پرداختند. فرانسهٔ شوبارد به ضرورت تغییر در معماری‌های محاسباتی اشاره کرد و به جای بیک‌پروپگیشن، به بهینه‌سازی صفر‌نرخ و الگوریتم SOMA پرداخته شد. ایلکر اوگوز نمونه‌های عملی محاسبهٔ نوری را معرفی کرد، از جمله ساخت مدل انتشار (Diffusion) با نور، در حالی که علک واسودیو به معماری‌های نورومورفیک و درس‌های مغز برای طراحی تراشه‌ها پرداخت. سِیان کُل به آزمایش‌های آموزشی سلول‌های مغزی برای بازی Doom و یادگیری تقویتی اشاره کرد، نشان‌دهندهٔ امکان استفاده از سلول‌های واقعی در یادگیری ماشین. این گفتگو نشان می‌دهد که محاسبات دیجیتال سنتی ممکن است به زودی به حداکثر بهره‌وری برسد و راه‌های نوینی برای ساخت ماشین‌های هوشمند در پیش است.",
+      "description": "This week’s Paper Club is all about alternative compute.\n\nModern AI has been shaped by a tight coupling between transformers, backpropagation, and GPUs. But as compute efficiency starts to plateau, there may be very different ways to build the machines that come next.\n\nWe explore what AI compute could look like beyond conventional digital hardware through optical systems that use light to perform computation, neuromorphic architectures inspired by the brain, and experiments teaching living brain cells to play Doom.\n\nSign up for the next Paper Club, where we'll discuss AI Safety: https://events.ycombinator.com/yc-paperclub-oct7\n\nChapters:\n00:00 — Intro\n00:07 — Francois Chaubard: Why Alternative Compute?\n03:38 — Beyond Backpropagation\n08:08 — Zero-Order Optimization and SOMA\n15:06 — Ilker Oguz: Computing With Light\n19:27 — Why Optical Computing Isn’t Everywhere Yet\n22:23 — Building a Diffusion Model With Light\n30:03 — Optical Computing Q&amp;A\n39:00 — Alok Vasudev: What Is Neuromorphic Computing?\n45:23 — What the Brain Can Teach Us About Chips\n49:35 — Where Neuromorphic Computing Stands Today\n54:24 — Neuromorphic Computing Q&amp;A\n1:04:24 — Sean Cole: Teaching Brain Cells to Play Doom\n1:07:48 — Training Biological Neurons With Reinforcement Learning\n1:12:28 — How Brain Cells Learn From Feedback\n1:15:40 — Biological Computing Q&amp;A\n\nApply to Y Combinator: https://www.ycombinator.com/apply\nWork at a startup: https://www.ycombinator.com/jobs artificial intelligence",
+      "why_it_matters": "پیشرفت در محاسبهٔ هوش مصنوعی بدون GPU می‌تواند به کاهش مصرف انرژی، هزینه و زمان آموزش مدل‌های بزرگ کمک کند. استفاده از نور برای پردازش، امکان پردازش موازی و سرعت بالاتر را فراهم می‌آورد، در حالی که معماری‌های نورومورفیک می‌توانند به تقلید از ساختار مغز انسان نزدیک‌تر شوند. آموزش سلول‌های مغزی برای انجام وظایف پیچیده نشان می‌دهد که می‌توان از سیستم‌های بیولوژیکی به‌عنوان پردازنده‌های هوشمند بهره برد. این مسیرها می‌توانند به شکلی پایدار و مقیاس‌پذیر، آیندهٔ هوش مصنوعی را شکل دهند.",
+      "link": "https://www.youtube.com/watch?v=xc2FTBGRSJo",
+      "posted_at": 1791066334
     }
   }
 }

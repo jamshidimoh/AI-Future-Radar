@@ -341,3 +341,16 @@ def test_bootstrap_reconciles_successful_people_publication_from_telegram_ledger
         seen_hashes=set(),
     )
     assert selected == []
+
+def test_bootstrap_resolves_authoritative_domain_even_when_metadata_tier_is_weak():
+    people = ["Andrew Ng"]
+    item = _item("Andrew Ng", "2026-09-30 10:00", "reuters")
+    item["source"] = "Reuters"
+    item["link"] = "https://www.reuters.com/technology/artificial-intelligence/andrew-ng-example/"
+    item["source_tier"] = 3
+    selected = bootstrap_candidates([item], people, seen_hashes=set())
+    assert len(selected) == 1
+    assert selected[0]["source_tier"] == 2
+    assert selected[0]["people_bootstrap_source_tier"] == 2
+    assert selected[0]["people_bootstrap_validated"] is True
+

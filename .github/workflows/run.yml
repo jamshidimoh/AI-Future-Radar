@@ -15,7 +15,8 @@ concurrency:
   # A stuck production execution must not block the latest code from reaching
   # production. State persistence already performs a remote-state merge, so the
   # newest run can safely supersede an older execution.
-  cancel-in-progress: true
+  # A scheduled run must never pre-empt a code-triggered production run; pushes may still supersede older scheduled/dispatch executions.
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 permissions:
   contents: write

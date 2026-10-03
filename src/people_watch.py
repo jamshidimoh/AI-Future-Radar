@@ -12,7 +12,6 @@ import yaml
 
 from src.dedup import _hash_link
 from src.story_identity import deduplicate_stories
-from src.source_authority import resolve_source_tier
 
 
 MISSION_TERMS = (

@@ -6,7 +6,7 @@ import re
 from contextlib import suppress
 from pathlib import Path
 
-from src.claim_verification import deterministic_precheck, semantic_verify
+from src.claim_verification import deterministic_precheck, semantic_verify, hard_publication_flags
 from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_editorial_naturalness_ok, persian_ratio
 from src.education_editor import news_terminology_review_prompt, normalize_news_editorial_text
 from src.llm_router_light import QuotaExceeded, _disable, _ollama_local, call_llm_with_fallback, get_quality_chain
@@ -620,6 +620,30 @@ def summarize_item(item):
                 return None
 
     final = _run_shadow_claim_verification(final, item, raw_text)
+    claim_result = final.get("_claim_verification") or {}
+    claim_status = str(claim_result.get("status") or "").upper()
+    claim_flags = set(str(flag) for flag in (claim_result.get("flags") or []))
+    severe_flags = hard_publication_flags(claim_flags)
+    if claim_status == "REJECTED" or severe_flags:
+        print(
+            f"[Claim Alignment Gate] rejected status={claim_status or 'UNKNOWN'} "
+            f"flags={','.join(sorted(severe_flags)) or '-'}",
+            flush=True,
+        )
+        _telemetry_event(
+            item,
+            stage="claim_alignment",
+            decision="reject",
+            reason_code="claim_alignment_hard_gate",
+            details={"status": claim_status, "flags": sorted(severe_flags)},
+        )
+        return None
+    if claim_status in {"NEEDS_REVIEW", "UNAVAILABLE"}:
+        print(
+            f"[Claim Alignment Gate] non-blocking status={claim_status}; "
+            "publication remains allowed only when no hard-risk flags are present",
+            flush=True,
+        )
     final["_provider"] = provider
     final["_provider_draft"] = provider
     final["_provider_editorial"] = editorial_provider

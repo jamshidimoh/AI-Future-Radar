@@ -228,7 +228,8 @@ def _unified_portfolio_select(candidates, max_posts, policy, bootstrap_mode=Fals
         f"replacement_buffer={replacement_buffer} protected={sum(1 for x in selected if x.get('protected_slot') or x.get('_rank_is_tier0'))} "
         f"people_bootstrap={sum(1 for x in selected if x.get('people_bootstrap'))} "
         f"candidates={len(combined)} lane_candidates={dict(lane_counts)} "
-        f"source_diversity={len({source_key(x) for x in combined})}",
+        f"source_diversity={len({source_key(x) for x in combined})} "
+        "mission_aware=true strict_relevance=true",
         flush=True,
     )
     return combined[:max(0, int(max_posts) - len(people_bootstrap)) + replacement_buffer + len(people_bootstrap)]

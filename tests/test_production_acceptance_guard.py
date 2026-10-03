@@ -304,3 +304,17 @@ def test_production_contract_parser_reads_mind_and_tier0_after_other_lane_fields
     ok, message = validate(CURRENT_LANE_COUNTER_CONTRACT)
     assert ok is True
     assert "mind_ideas_voices=2" in message
+
+def test_unmet_mission_candidate_failure_is_treated_as_no_candidate():
+    log = """
+[Production Selection] total=6
+[Mission Coverage Recovery] attempt=1 area=mind_cognition title=quality-rejected mind story status=failed
+[Mission Coverage Recovery] attempt=2 area=mind_cognition title=second quality-rejected mind story status=failed
+[Mission Coverage Recovery] missing_lanes=2 attempts=2 recovered=0 status=unmet
+[Production Contract] normal_news=2 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 2/6
+"""
+    ok, message = validate(log)
+    assert ok is True
+    assert "no eligible candidate" in message
+

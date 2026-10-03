@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1791015109,
+  "updated_at": 1791016275,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17258,6 +17258,27 @@
       "why_it_matters": "سرمایه‌گذاری ۱۰۰ ملیون دلاری نشان می‌دهد که Coursera به عنوان یک اکوسیستم آموزشی، در حال تقویت مهارت‌های هوش مصنوعی در نیروی کار است. با حمایت مالی، Andrew Ng می‌تواند دوره‌های پیشرفته‌تری را توسعه دهد که به دانشجویان امکان یادگیری کاربردی AI را می‌دهد. این حرکت باعث می‌شود تا بازار کار در حوزه AI به سرعت به نیازهای جدید پاسخ دهد. در نتیجه، این سرمایه‌گذاری می‌تواند شکاف مهارتی در صنعت AI را کاهش دهد.",
       "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNNDBBczc5Q21jMGFpRUdBbUJwWHBqem9mZDJFel9GMTlxVzFXWjEwMEhYSERVd2pPZ1Uzc2JXbGZQWG96aUdCaW9LRFlLaHRsYldNczltR2tmTmg1VmlYUkNyd3ZKRnB4NGxvaXkzeWlvWE1rSlNMdEFUTlVzSThFaGZrdjY3dF9wQXFyQ3dFR3NHdEdnekRSVDJfWDZLS1NtbEx1U3JSTF9VTHowU2c3UTV3OEVWQlozSm1zNFVtaw?oc=5",
       "posted_at": 1791013589
+    },
+    "-1004482051328:2027": {
+      "chat_id": -1004482051328,
+      "message_id": 2027,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (newscientist.com)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Kate Crawford",
+      "watch_person": "Kate Crawford",
+      "person_name": "Kate Crawford",
+      "people_lane": true,
+      "title": "کیت کراوفورد: هوش مصنوعی چگونه مردم و سیاره را بهره‌برداری می‌کند",
+      "summary": "در مصاحبه‌ای با Kate Crawford، او اشاره می‌کند که آموزش مدل‌های بزرگ هوش مصنوعی به‌صورت سالانه صدها مگاوات‑ساعت برق مصرف می‌کند که منجر به اثرات مخرب زیست‌محیطی می‌شود. او همچنین بیان می‌دارد که جمع‌آوری داده‌های وسیع از کاربران، به‌ویژه از جوامع حاشیه‌نشین، به‌صورت سیستماتیک نابرابری‌های اجتماعی را تقویت می‌کند. Crawford هشدار می‌دهد این دو پدیده – مصرف انرژی و استخراج داده – به‌عنوان یک بحران ترکیبی برای مردم و سیاره عمل می‌کنند.",
+      "why_it_matters": "مصرف انرژی عظیم مدل‌های هوش مصنوعی مستقیماً به افزایش انتشار گازهای گلخانه‌ای و تسریع تغییرات اقلیمی منجر می‌شود، در حالی که استخراج داده‌های ناعادلانه به‌خصوص از جوامع حاشیه‌نشین، ساختارهای قدرت نابرابر را تقویت می‌کند. این ترکیب فشارهای زیست‌محیطی و اجتماعی نشان می‌دهد که برای جلوگیری از بحران‌های آینده، سیاست‌گذاران باید چارچوب‌های نظارتی برای بهینه‌سازی مصرف انرژی و محدود کردن جمع‌آوری داده‌های غیرضروری ایجاد کنند.",
+      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNai1yR2tCV0l0TGVxUmJqRm1obXZqbm5ESnAxeU92emhRWWdYeGhiaGFUMFZUU2xKSmlTU1ZXQkk0MTlaV2xCdTVrMnhrVjI0ZjN0Qld6ZXd2Z2ZQRFF0aHc4a3pma0F2bDE2aHpyVGJYNmpicVBNQ2p2UDRNUmtYZ3dOMzBOci12V2htY0JvRG1rYUpYWHVRTTl3dTB2MGZMMzRzSENTdzFxVzRCQy1lcE9R?oc=5",
+      "posted_at": 1791016275
     }
   }
 }

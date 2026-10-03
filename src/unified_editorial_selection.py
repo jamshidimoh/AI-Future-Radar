@@ -193,7 +193,10 @@ def _is_community(item: dict[str, Any]) -> bool:
 
 
 def candidate_score(item: dict[str, Any]) -> float:
-    for key in ("final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
+    # Special editorial lanes supply a common arbitration score explicitly.
+    # Prefer it whenever present so lane scoring cannot be accidentally replaced
+    # by a stale normal-news score.
+    for key in ("_portfolio_selection_score", "final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
         except (TypeError, ValueError):

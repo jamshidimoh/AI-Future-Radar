@@ -11,9 +11,10 @@ on:
 
 concurrency:
   group: ai-future-radar-production
-  # Queue production runs so a later run consumes the state persisted by the
-  # preceding run instead of cancelling it and starting from a stale snapshot.
-  cancel-in-progress: false
+  # A stuck production execution must not block the latest code from reaching
+  # production. State persistence already performs a remote-state merge, so the
+  # newest run can safely supersede an older execution.
+  cancel-in-progress: true
 
 permissions:
   contents: write

@@ -146,3 +146,43 @@ def test_normal_language_repair_keeps_canonical_chain(monkeypatch):
     expected = [("test-provider", lambda *args, **kwargs: "{}")]
     monkeypatch.setattr(summarize, "get_quality_chain", lambda: expected)
     assert summarize._language_repair_providers({}) is expected
+
+
+def test_mission_recovery_initial_summary_uses_mission_provider_chain(monkeypatch):
+    import src.summarize as summarize
+
+    sentinel = [("mission-provider", lambda *args, **kwargs: "ignored")]
+    calls = {}
+    payload = {
+        "title": "خبر تازه هوش مصنوعی",
+        "summary": "این خبر درباره یک سامانه هوش مصنوعی جدید و روش ارزیابی آن است. پژوهشگران نتایج یک آزمون مشخص را گزارش کرده‌اند.",
+        "why_it_matters": "نتیجه این آزمون می‌تواند نحوه ارزیابی سامانه‌های هوش مصنوعی را دقیق‌تر کند و محدودیت‌های روش فعلی را آشکار سازد.",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+    }
+
+    def fake_call(*args, **kwargs):
+        calls["providers"] = kwargs.get("providers")
+        return json.dumps(payload, ensure_ascii=False), "mission-provider"
+
+    monkeypatch.setattr(summarize, "_language_repair_providers", lambda _item: sentinel)
+    monkeypatch.setattr(summarize, "get_quality_chain", lambda: [("canonical-provider", lambda *a, **k: "ignored")])
+    monkeypatch.setattr(summarize, "call_llm_with_fallback", fake_call)
+    monkeypatch.setattr(summarize, "_language_ok", lambda _data: True)
+    monkeypatch.setattr(summarize, "_length_ok", lambda _data, _source: True)
+    monkeypatch.setattr(summarize, "_value_ok", lambda _data, _source: True)
+    monkeypatch.setattr(summarize, "_run_shadow_claim_verification", lambda data, _item, _source: data)
+    monkeypatch.setenv("AI_RADAR_EDITORIAL_REVIEW", "0")
+
+    result = summarize.summarize_item({
+        "title": "Fresh AI story",
+        "summary": "The source describes a new AI system and a specific evaluation test.",
+        "source": "Nature",
+        "category": "ai",
+        "mission_area": "ai_core",
+        "link": "https://example.invalid/mission",
+        "_mission_recovery_attempt": True,
+    })
+    assert result is not None
+    assert calls["providers"] is sentinel

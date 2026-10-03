@@ -112,7 +112,7 @@
       "failures": 1,
       "disabled_until": 1790973667.149,
       "last_error": "rate_limit",
-      "last_success": 0
+      "last_success": 0.0
     }
   },
   "providers": {

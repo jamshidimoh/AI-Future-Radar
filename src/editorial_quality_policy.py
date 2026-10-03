@@ -62,6 +62,20 @@ _TRANSLATIONESE_PATTERNS = (
     "لازم به ذکر است",
 )
 
+# Common orthographic failures observed in production output. The list is
+# intentionally conservative: it targets missing ZWNJ/spacing in forms that
+# materially degrade professional Persian without rejecting ordinary words.
+_PERSIAN_ORTHOGRAPHIC_BAD_FORMS = (
+    "شبکههای", "دادههای", "تحلیلهای", "تفاوتهای", "پروتئینهای",
+    "سلسلهمراتب", "چهطور", "ردهپوش", "میجاسوسد",
+)
+_PERSIAN_JOINED_VERBS = re.compile(
+    r"\bمی(?:تواند|توانند|شود|شوند|کند|کنند|دهد|دهند|گیرد|گیرند|رسد|رسند|رود|روند|"
+    r"ماند|مانند|سازد|سازند|گذارد|گذارند|گیرد|گیرند|گوید|گویند)\b"
+    r"|\bنمی(?:تواند|توانند|شود|شوند|کند|کنند|دهد|دهند|گیرد|گیرند|رسد|رسند|رود|روند|"
+    r"ماند|مانند|سازد|سازند|گذارد|گذارند|گوید|گویند)\b"
+)
+
 def persian_editorial_naturalness_ok(title: str, summary: str, why_it_matters: str) -> bool:
     """Bounded deterministic check for fluent Persian rather than Persian-character ratio alone."""
     fields = [str(title or "").strip(), str(summary or "").strip(), str(why_it_matters or "").strip()]
@@ -69,6 +83,11 @@ def persian_editorial_naturalness_ok(title: str, summary: str, why_it_matters: s
     if not all(fields):
         return False
     if sum(body.count(pattern) for pattern in _TRANSLATIONESE_PATTERNS) >= 2:
+        return False
+    normalized_body = body.replace("\u200c", "")
+    if any(form in normalized_body for form in _PERSIAN_ORTHOGRAPHIC_BAD_FORMS):
+        return False
+    if _PERSIAN_JOINED_VERBS.search(normalized_body):
         return False
     sentences = [s.strip() for s in re.split(r"(?<=[.!؟])\s+", body) if s.strip()]
     if len(sentences) >= 3 and sum(len(s) > 240 for s in sentences) >= 2:

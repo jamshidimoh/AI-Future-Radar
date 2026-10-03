@@ -260,9 +260,13 @@ def _language_repair_providers(item):
 
         def _omni_repair(system_prompt, user_content):
             raw, _provider = _omniroute_call(system_prompt, user_content)
-            if raw:
-                return raw
-            raise QuotaExceeded("OmniRoute unavailable during mission Persian recovery")
+            if not raw:
+                raise QuotaExceeded("OmniRoute unavailable during mission Persian recovery")
+            try:
+                _extract_json(raw)
+            except (json.JSONDecodeError, TypeError, ValueError) as exc:
+                raise QuotaExceeded("OmniRoute returned invalid structured JSON during mission Persian recovery") from exc
+            return raw
 
         providers.append(("OmniRoute:mission-persian-repair", _omni_repair))
 
@@ -395,7 +399,7 @@ def _repair_editorial_value(data, item, providers=None):
     return candidate, provider
 
 
-def _editorial_review(data):
+def _editorial_review(data, *, providers=None):
     original = dict(data)
     raw, provider = call_llm_with_fallback(
         news_terminology_review_prompt(),
@@ -500,7 +504,8 @@ def summarize_item(item):
         f"امتیاز Expert: {item.get('voice_expert_score') or item.get('expert_score') or ''}\n"
         f"متن/شواهد: {raw_text[:3500]}"
     )
-    raw, provider = call_llm_with_fallback(prompt, user, providers=get_quality_chain())
+    summary_providers = _language_repair_providers(item) if item.get("_mission_recovery_attempt") else get_quality_chain()
+    raw, provider = call_llm_with_fallback(prompt, user, providers=summary_providers)
     if not raw:
         return None
     try:
@@ -512,10 +517,11 @@ def summarize_item(item):
                 _disable(provider, "transient")
         recovery_prompt = _JSON_RECOVERY_PROMPT.format(raw=str(raw or "")[:5000], source=raw_text[:3500])
         try:
+            recovery_providers = _language_repair_providers(item) if item.get("_mission_recovery_attempt") else get_quality_chain()
             recovered_raw, recovered_provider = call_llm_with_fallback(
                 recovery_prompt,
                 json.dumps({"invalid_response": str(raw or "")[:5000], "source": raw_text[:3500]}, ensure_ascii=False),
-                providers=get_quality_chain(),
+                providers=recovery_providers,
             )
             final = _normalize(_extract_json(recovered_raw or ""), item)
             provider = recovered_provider or provider
@@ -527,7 +533,8 @@ def summarize_item(item):
     editorial_provider = None
     if _language_ok(final) and _length_ok(final, raw_text):
         if os.getenv("AI_RADAR_EDITORIAL_REVIEW", "1").strip().lower() in {"1", "true", "yes"}:
-            final, editorial_provider = _editorial_review(final)
+            review_providers = _language_repair_providers(item) if item.get("_mission_recovery_attempt") else get_quality_chain()
+            final, editorial_provider = _editorial_review(final, providers=review_providers)
     else:
         if not _language_ok(final):
             final, recovery_provider = _repair_persian_draft(final, item)
@@ -562,7 +569,7 @@ def summarize_item(item):
             f"summary={len(final.get('summary',''))} why={len(final.get('why_it_matters',''))} source={len(raw_text)}",
             flush=True,
         )
-        repair_chain = get_quality_chain()
+        repair_chain = _language_repair_providers(item) if item.get("_mission_recovery_attempt") else get_quality_chain()
         repaired_length, length_repair_provider = _repair_editorial_value(final, item, repair_chain)
         if (
             _language_ok(repaired_length)
@@ -593,7 +600,7 @@ def summarize_item(item):
 
     if not _value_ok(final, raw_text):
         print("[Editorial Value Gate] weak summary; attempting one bounded repair", flush=True)
-        repair_chain = get_quality_chain()
+        repair_chain = _language_repair_providers(item) if item.get("_mission_recovery_attempt") else get_quality_chain()
         repaired, repair_provider = _repair_editorial_value(final, item, repair_chain)
         if _language_ok(repaired) and _length_ok(repaired, raw_text) and _value_ok(repaired, raw_text):
             final = repaired

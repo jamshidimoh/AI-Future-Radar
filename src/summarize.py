@@ -500,7 +500,8 @@ def summarize_item(item):
         f"امتیاز Expert: {item.get('voice_expert_score') or item.get('expert_score') or ''}\n"
         f"متن/شواهد: {raw_text[:3500]}"
     )
-    raw, provider = call_llm_with_fallback(prompt, user, providers=get_quality_chain())
+    summary_providers = _language_repair_providers(item) if item.get("_mission_recovery_attempt") else get_quality_chain()
+    raw, provider = call_llm_with_fallback(prompt, user, providers=summary_providers)
     if not raw:
         return None
     try:

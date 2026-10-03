@@ -33,6 +33,18 @@ def test_watchlist_has_exactly_30_people():
     assert "Sam Altman" in people
 
 
+def test_bootstrap_prefers_authoritative_source_over_newer_weak_source():
+    people = ["Andrew Ng"]
+    weak = _item("Andrew Ng", "2026-10-03 10:00", "weak")
+    weak["source_tier"] = 3
+    strong = _item("Andrew Ng", "2026-09-30 10:00", "strong")
+    strong["source_tier"] = 1
+    selected = bootstrap_candidates([weak, strong], people, seen_hashes=set())
+    assert len(selected) == 1
+    assert selected[0]["link"] == strong["link"]
+    assert selected[0]["people_bootstrap_validated"] is True
+
+
 def test_bootstrap_picks_one_latest_content_per_person_even_when_old():
     people = load_people_watchlist(WATCHLIST)
     items = [

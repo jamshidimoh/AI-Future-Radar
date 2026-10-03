@@ -11,6 +11,7 @@ from typing import Any
 import yaml
 
 from src.dedup import _hash_link
+from src.source_authority import resolve_source_tier
 from src.story_identity import deduplicate_stories
 
 
@@ -255,10 +256,13 @@ def bootstrap_candidates(
         # candidate is available so a temporary source gap does not deadlock the lane.
         authoritative_pool = []
         for item in pool:
-            try:
-                tier = int(item.get("source_tier", 3) or 3)
-            except (TypeError, ValueError):
-                tier = 3
+            tier = resolve_source_tier(
+                source_name=item.get("source") or item.get("source_name") or item.get("publisher") or "",
+                source_url=item.get("canonical_url") or item.get("link") or item.get("url") or "",
+                configured_tier=item.get("source_tier") or item.get("tier"),
+            )
+            item["source_tier"] = tier
+            item["people_bootstrap_source_tier"] = tier
             if tier <= 2:
                 authoritative_pool.append(item)
         if authoritative_pool:

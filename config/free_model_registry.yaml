@@ -24,18 +24,18 @@ registry:
     - id: qwen/qwen3.8-27b:free
       health: healthy
       health_score: 100
-      catalog_score: 73.97
-      verified_at: '2026-10-04T09:47:44.774248+00:00'
+      catalog_score: 73.929
+      verified_at: '2026-10-05T10:27:02.197452+00:00'
     - id: dots-studio/dots-3-note-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 73.576
-      verified_at: '2026-10-04T09:47:44.774265+00:00'
+      catalog_score: 73.534
+      verified_at: '2026-10-05T10:27:02.197472+00:00'
     - id: apodex/apodex-1.1-mini:free
       health: healthy
       health_score: 100
-      catalog_score: 67.893
-      verified_at: '2026-10-04T09:47:44.774196+00:00'
+      catalog_score: 67.852
+      verified_at: '2026-10-05T10:27:02.197389+00:00'
     - priority: 2
       id: nvidia/nemotron-3-super-120b-a12b:free
       free: true
@@ -46,8 +46,8 @@ registry:
       task_fit: 94
       health: healthy
       health_score: 100
-      catalog_score: 67.731
-      verified_at: '2026-10-04T09:47:44.774384+00:00'
+      catalog_score: 67.689
+      verified_at: '2026-10-05T10:27:02.197615+00:00'
     - id: nex-agi/nex-n2.5-mini:free
       health: healthy
       health_score: 100
@@ -68,8 +68,8 @@ registry:
       task_fit: 95
       health: healthy
       health_score: 100
-      catalog_score: 65.248
-      verified_at: '2026-10-04T09:47:44.774352+00:00'
+      catalog_score: 65.207
+      verified_at: '2026-10-05T10:27:02.197579+00:00'
     - priority: 6
       id: google/gemma-4-31b-it:free
       free: true
@@ -80,13 +80,13 @@ registry:
       task_fit: 98
       health: healthy
       health_score: 100
-      catalog_score: 65.212
-      verified_at: '2026-10-04T09:47:44.774365+00:00'
+      catalog_score: 65.171
+      verified_at: '2026-10-05T10:27:02.197595+00:00'
     - id: liquid/lfm-2.5-2.6b:free
       health: healthy
       health_score: 100
-      catalog_score: 55.253
-      verified_at: '2026-10-04T09:47:44.774285+00:00'
+      catalog_score: 55.212
+      verified_at: '2026-10-05T10:27:02.197496+00:00'
     - priority: 1
       id: nvidia/nemotron-3-ultra-550b-a55b:free
       free: true
@@ -284,4 +284,4 @@ registry:
     models: []
     reason: Dynamic discovery/emergency lane; never outranks quality-scored trusted
       models without evidence
-  last_refresh: '2026-10-04T09:47:44.774455+00:00'
+  last_refresh: '2026-10-05T10:27:02.197707+00:00'

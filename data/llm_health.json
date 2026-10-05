@@ -2,7 +2,7 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 49,
-      "disabled_until": 1791239261.479,
+      "disabled_until": 1791264605.275,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -20,13 +20,13 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 4,
-      "disabled_until": 1791221261.479,
+      "disabled_until": 1791246605.275,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 3,
-      "disabled_until": 1791221261.479,
+      "disabled_until": 1791246605.275,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -38,7 +38,7 @@
     },
     "kiraai:qwen3.8-flash": {
       "failures": 1,
-      "disabled_until": 1791156910.817,
+      "disabled_until": 1791246605.275,
       "last_error": "quota",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 102,
-      "disabled_until": 1791304061.479,
+      "failures": 103,
+      "disabled_until": 1791329405.275,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1791304061.479,
+      "disabled_until": 1791329405.275,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -98,7 +98,7 @@
     },
     "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
       "failures": 1,
-      "disabled_until": 1791174910.817,
+      "disabled_until": 1791264605.275,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -124,7 +124,7 @@
   "providers": {
     "kiraai": {
       "failures": 2,
-      "disabled_until": 1791239710.817,
+      "disabled_until": 1791329405.275,
       "last_error": "wallet",
       "last_success": 0.0
     },
@@ -135,8 +135,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 204,
-      "disabled_until": 1791304061.479,
+      "failures": 206,
+      "disabled_until": 1791329405.275,
       "last_error": "auth",
       "last_success": 0.0
     },

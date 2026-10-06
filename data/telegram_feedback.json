@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1791243002,
+  "updated_at": 1791275366,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17448,6 +17448,43 @@
       "why_it_matters": "نتایج این آزمایش نشان می‌دهد که مدل‌های بزرگ زبان، حتی با پارامترهای بالا، در انجام محاسبات دقیق و تبدیل نتایج به متن کلمات محدودیت دارند. این محدودیت برای کاربردهای مالی، آموزشی و هر حوزه‌ای که صحت عددی ضروری است، خطرناک است. مقایسهٔ واضح بین GPT‑4o و Qwen3.8، اهمیت انتخاب مدل مناسب بر اساس نیازهای دقیق را برجسته می‌کند.",
       "link": "https://simonwillison.net/2026/Oct/4/qwen38-addition-in-words/",
       "posted_at": 1791242981
+    },
+    "-1004482051328:2037": {
+      "chat_id": -1004482051328,
+      "message_id": 2037,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "معرفی Beam؛ مدل MoE با 501B پارامتر از Reflection AI برای کدنویسی و وظایف عامل",
+      "summary": "Reflection AI معرفی Beam، اولین مدل وزن‑باز خود، که یک مدل sparse Mixture‑of‑Experts با 501B پارامتر است. این مدل 23B پارامتر فعال دارد و برای کارهای کدنویسی و وظایف عامل طراحی شده است. گزارش می‌شود که Beam در مهارت استدلال با 3 تا 4 برابر کمتر از محاسبهٔ استنتاج، با GLM‑5.2 هم‌سطح است. وزن‌های مدل تحت مجوز Apache 2.0 در اکتبر 2026 منتشر خواهند شد.",
+      "why_it_matters": "Beam با ترکیب 501B پارامتر و 23B فعال، امکان استدلال سریع‌تر را با مصرف کمتر انرژی فراهم می‌کند، که برای توسعهٔ ابزارهای برنامه‌نویسی و هوش مصنوعی عامل حیاتی است. این کارایی باعث می‌شود مدل در محیط‌های محدود منابع قابل اجرا باشد، که دسترسی به فناوری پیشرفته را گسترش می‌دهد. انتشار وزن‌های باز، همکاری و نوآوری در جامعهٔ پژوهشی را تسهیل می‌کند.",
+      "link": "https://www.marktechpost.com/2026/10/05/reflection-ai-introduces-beam-a-501b-open-weight-moe-model-with-23b-active-parameters-for-coding-and-agentic-workloads/",
+      "posted_at": 1791275361
+    },
+    "-1004482051328:2038": {
+      "chat_id": -1004482051328,
+      "message_id": 2038,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "لحظه‌ای که هوش مصنوعی ریاضیات را برای همیشه تغییر داد: گفتگوی Tristan Buckmaster با Brian Greene",
+      "summary": "در این گفتگو، Tristan Buckmaster، استاد ریاضیات در Courant Institute، به بررسی معادلات Euler و Navier-Stokes و چالش رسیدن راهکارهای آن‌ها به سرعت نامحدود می‌پردازد. او مسیر تکامل اثبات‌های کمکی کامپیوتری تا همکاری اخیر خود با Google DeepMind را شرح می‌دهد. Buckmaster ضمن تأیید صحت اثبات‌های تولید شده توسط هوش مصنوعی، آن‌ها را از نظر کیفیت ریاضی ضعیف‌ترین نمونه‌های مشاهده شده می‌داند. همچنین بحث‌هایی پیرامون امکان توسعه زبان اختصاصی توسط سیستم‌های هوش مصنوعی و پیامدهای آن برای آینده ریاضیات مطرح می‌شود.",
+      "description": "Has a machine just solved one of the most famous open problems in mathematics? Brian Greene speaks with Tristan Buckmaster, professor of mathematics at NYU's Courant Institute, about the Navier-Stokes equations, the Clay Institute's million dollar Millennium Prize, and the role artificial intelligence played in the progress toward an answer.\n\nBuckmaster explains what the Euler and Navier-Stokes equations describe and why mathematicians have long asked whether their solutions can reach infinite velocity, a result that would mean the equations break down as a model of the physical world. He traces the path from early computer-assisted proofs through his own collaboration with Google DeepMind, and describes proofs produced by AI that he calls the worst mathematics he has ever seen while confirming they were correct. Brian presses him on what it means to hold a proof that no human can read, and whether AI systems are beginning to develop a language of their own. Buckmaster closes on what all of this means for the future of mathematics, for students entering the field, and for the questions in fluid dynamics that remain wide open, including why nobody can yet explain lift from first principles.\n\nThis program is part of the Rethinking Reality series, supported by the John Templeton Foundation. \n\nParticipant: Tristan Buckmaster\nModerator: Brian Greene\n\nDon't miss a video! Subscribe NOW:\nhttps://www.youtube.com/worldsciencefestival?sub_confirmation=1 \n\nABOUT WORLD SCIENCE FESTIVAL: \nThe World Science Festival (WSF) is a multimedia organization bringing the most transformative ideas in science to global audiences. Through long- and short-form videos spanning physics, cosmology, quantum mechanics, biology, neuroscience, consciousness, medicine, space exploration, the dilemma of free will, artificial intelligence, engineering, robotics, and beyond. WSF gathers world-renowned scientists, artists, and thinkers for dynamic discussions, debates, lectures, performances, films, and immersive live experiences. \n\nFounded in 2008 and headquartered in New York City, the World Science Festival is a production of the World Science Foundation, a 501(c)(3) nonprofit organization. Our mission is to cultivate a public informed by science, inspired by its wonder, convinced of its value, and prepared to engage with its implications for the future. With live events reaching millions worldwide and hundreds of millions of digital views, WSF continues to expand its global impact through festivals, educational initiatives like World Science U, and digital content that explores the near and far future of our world. \n\nFOLLOW WORLD SCIENCE FESTIVAL:\nWebsite: https://worldsciencefestival.com/\nInstagram: https://www.instagram.com/worldscifest/\nTikTok: https://www.tiktok.com/@worldscifest\nX(Twitter): https://twitter.com/worldscifest\nFacebook: https://www.facebook.com/worldsciencefestival\nLinkedIn: https://www.linkedin.com/company/world-science-festival\n\nCHAPTERS:\n00:00 Can AI Really Be artificial intelligence",
+      "why_it_matters": "این گفتگو نشان می‌دهد که چگونه هوش مصنوعی می‌تواند در پیشبرد مسائل باز و پیچیده ریاضی مانند معادلات Navier-Stokes نقش ایفا کند. استفاده از هوش مصنوعی منجر به تولید اثبات‌هایی شده است که اگرچه صحیح هستند، اما برای درک انسانی غیرقابل خواندن می‌باشند. این موضوع چالش‌های جدیدی را در مورد آینده آموزش ریاضیات، ماهیت زبان در ماشین‌ها و درک اصول اولیه دینامیک سیالات ایجاد می‌کند.",
+      "link": "https://www.youtube.com/watch?v=PQYFRuZ5phs",
+      "posted_at": 1791275366
     }
   }
 }

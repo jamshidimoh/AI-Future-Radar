@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1791384579,
+  "updated_at": 1791411608,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17522,6 +17522,25 @@
       "why_it_matters": "کشف خودکار نشانه‌های تصویری توسط هوش مصنوعی عامل‌محور می‌تواند زمان و هزینه تشخیص گلیوبلاستومای چهارگانه را کاهش دهد و دقت طبقه‌بندی تومور را ارتقا بخشد. این رویکرد ترکیب داده‌های تصویری و مولکولی را ممکن می‌سازد و برای پیش‌بینی پاسخ به درمان‌های هدفمند اهمیت دارد؛ در نهایت، تولید الگوهای جدید بدون نظارت انسانی مسیرهای درمانی شخصی‌سازی‌شده را شناسایی می‌کند.",
       "link": "https://www.nature.com/articles/s41746-026-03331-9",
       "posted_at": 1791384579
+    },
+    "-1004482051328:2041": {
+      "chat_id": -1004482051328,
+      "message_id": 2041,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چرا امپراتوران آزتک و اینکا با اسیران خود همکاری کردند",
+      "summary": "در ویدئوی «Why the Aztec and Inca emperors cooperated with their captors» که توسط Si Sheppard در کانال YouTube Dwarkesh Patel منتشر شد، به بررسی دلایل همکاری امپراتوران آزتک و اینکا با اسیران خود پرداخته می‌شود. این تحلیل در لینک https://youtu.be/LwQQ7nBCGSs قابل دسترسی است و به بررسی استراتژی‌های سیاسی این دو امپراتوری می‌پردازد. ویدئو نشان می‌دهد که چگونه تعامل با دشمنان می‌توانست به نفع قدرت‌های مرکزی باشد.",
+      "description": "Full episode: https://youtu.be/LwQQ7nBCGSs\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "درک دلایل همکاری امپراتوران آزتک و اینکا با اسیرانشان، امکان تحلیل دقیق‌تری از ساختارهای قدرت و سازوکارهای بقا در جوامع پیشین را فراهم می‌کند. این بینش می‌تواند به ما کمک کند تا درک بهتری از تصمیم‌گیری‌های استراتژیک در شرایط بحران داشته باشیم و الگوهای مشابه را در مطالعات تاریخی و سیاسی شناسایی کنیم.",
+      "link": "https://www.youtube.com/watch?v=dpjf-6wZhSg",
+      "posted_at": 1791411574
     }
   }
 }

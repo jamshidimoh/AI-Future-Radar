@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1791411608,
+  "updated_at": 1791448074,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17541,6 +17541,25 @@
       "why_it_matters": "درک دلایل همکاری امپراتوران آزتک و اینکا با اسیرانشان، امکان تحلیل دقیق‌تری از ساختارهای قدرت و سازوکارهای بقا در جوامع پیشین را فراهم می‌کند. این بینش می‌تواند به ما کمک کند تا درک بهتری از تصمیم‌گیری‌های استراتژیک در شرایط بحران داشته باشیم و الگوهای مشابه را در مطالعات تاریخی و سیاسی شناسایی کنیم.",
       "link": "https://www.youtube.com/watch?v=dpjf-6wZhSg",
       "posted_at": 1791411574
+    },
+    "-1004482051328:2042": {
+      "chat_id": -1004482051328,
+      "message_id": 2042,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "جایزه نوبل فیزیک 2026: نوترینوها و دستگاه IceCube",
+      "summary": "در برنامه‌ای که Brian Greene ارائه می‌دهد، توضیح می‌دهد که جایزه نوبل فیزیک 2026 به دلیل پیشرفت در شناسایی نوترینوهای پرانرژی از فضاهای عمیق اعطا شده است. نوترینوها در دههٔ 1930 توسط نظریه‌پردازان پیشنهاد شدند تا انرژی گمشده در برخوردهای ذره‌ای را توجیه کنند و دو دههٔ بعد، یعنی در دههٔ 1950، به‌صورت تجربی تأیید شدند. Greene نحوهٔ کار IceCube Detector را که در عمق یخ‌های قطب جنوب مستقر است، شرح می‌دهد و می‌گوید این دستگاه بزرگ تنها حدود یک نوترینوی پرانرژی در روز ثبت می‌کند.",
+      "description": "The 2026 Nobel Prize in Physics has been announced. Brian Greene explains the science behind it, and why detecting neutrinos from deep space opens a genuinely new way of observing the universe.\n\nNeutrinos were proposed in the 1930s to account for energy that seemed to vanish during particle interactions and were confirmed experimentally two decades later. They almost never interact with matter, making them hard to detect, but also uniquely valuable since they arrive from their source essentially undisturbed. Brian walks through how the IceCube detector works, why it is buried deep in Antarctic ice, and what it means that a detector that size records only about one of these high-energy neutrinos per day.\n\nThis program is part of the Rethinking Reality series, supported by the John Templeton Foundation. \n\nDon't miss a video! Subscribe NOW:\nhttps://www.youtube.com/worldsciencefestival?sub_confirmation=1 \n\nABOUT WORLD SCIENCE FESTIVAL: \nThe World Science Festival (WSF) is a multimedia organization bringing the most transformative ideas in science to global audiences. Through long- and short-form videos spanning physics, cosmology, quantum mechanics, biology, neuroscience, consciousness, medicine, space exploration, the dilemma of free will, artificial intelligence, engineering, robotics, and beyond. WSF gathers world-renowned scientists, artists, and thinkers for dynamic discussions, debates, lectures, performances, films, and immersive live experiences. \n\nFounded in 2008 and headquartered in New York City, the World Science Festival is a production of the World Science Foundation, a 501(c)(3) nonprofit organization. Our mission is to cultivate a public informed by science, inspired by its wonder, convinced of its value, and prepared to engage with its implications for the future. With live events reaching millions worldwide and hundreds of millions of digital views, WSF continues to expand its global impact through festivals, educational initiatives like World Science U, and digital content that explores the near and far future of our world. \n\nFOLLOW WORLD SCIENCE FESTIVAL:\nWebsite: https://worldsciencefestival.com/\nInstagram: https://www.instagram.com/worldscifest/\nTikTok: https://www.tiktok.com/@worldscifest\nX(Twitter): https://twitter.com/worldscifest\nFacebook: https://www.facebook.com/worldsciencefestival\nLinkedIn: https://www.linkedin.com/company/world-science-festival\n\nThe 2026 Nobel Prize in Physics Explained | World Science Festival\nhttps://www.youtube.com/channel/UCShHFwKyhcDo3g7hr4f1R8A\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube. artificial intelligence",
+      "why_it_matters": "چون نوترینوها به‌ندرت با ماده تعامل می‌کنند، اطلاعاتی که از منبع خود می‌آورند تقریباً بدون تغییر باقی می‌ماند و امکان مطالعهٔ فرآیندهای کیهانی پرانرژی مانند ابرنواخترها و سیاهچاله‌ها را فراهم می‌کند. IceCube به‌عنوان اولین آشکارساز نوترینوی مقیاس بزرگ، زیرساختی برای مشاهدات نجومی مدرن ایجاد کرده و ارتباط بین فیزیک ذرات و کیهان‌شناسی را تقویت می‌کند. این پیشرفت، مسیر را برای توسعهٔ نجوم چند پیام‌رسانی هموار می‌سازد.",
+      "link": "https://www.youtube.com/watch?v=HkyAt6gbgVc",
+      "posted_at": 1791448021
     }
   }
 }

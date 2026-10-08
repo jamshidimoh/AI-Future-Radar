@@ -2,7 +2,7 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 49,
-      "disabled_until": 1791433218.983,
+      "disabled_until": 1791469675.41,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -20,13 +20,13 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 4,
-      "disabled_until": 1791415218.983,
+      "disabled_until": 1791451675.41,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 3,
-      "disabled_until": 1791415218.983,
+      "disabled_until": 1791451675.41,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -38,13 +38,13 @@
     },
     "kiraai:qwen3.8-flash": {
       "failures": 1,
-      "disabled_until": 1791363596.274,
+      "disabled_until": 1791451675.41,
       "last_error": "quota",
       "last_success": 0.0
     },
     "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free": {
       "failures": 1,
-      "disabled_until": 1791337913.707,
+      "disabled_until": 1791469675.41,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 109,
-      "disabled_until": 1791498018.983,
+      "failures": 110,
+      "disabled_until": 1791534475.41,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1791498018.983,
+      "disabled_until": 1791534475.41,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -124,7 +124,7 @@
   "providers": {
     "kiraai": {
       "failures": 2,
-      "disabled_until": 1791446396.274,
+      "disabled_until": 1791534475.41,
       "last_error": "wallet",
       "last_success": 0.0
     },
@@ -135,8 +135,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 218,
-      "disabled_until": 1791498018.983,
+      "failures": 220,
+      "disabled_until": 1791534475.41,
       "last_error": "auth",
       "last_success": 0.0
     },

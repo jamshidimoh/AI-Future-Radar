@@ -29,13 +29,13 @@ registry:
     - id: dots-studio/dots-3-note-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 73.374
-      verified_at: '2026-10-09T10:33:40.257149+00:00'
+      catalog_score: 73.335
+      verified_at: '2026-10-10T09:50:37.498237+00:00'
     - id: apodex/apodex-1.1-mini:free
       health: healthy
       health_score: 100
-      catalog_score: 67.691
-      verified_at: '2026-10-09T10:33:40.257085+00:00'
+      catalog_score: 67.653
+      verified_at: '2026-10-10T09:50:37.498171+00:00'
     - priority: 2
       id: nvidia/nemotron-3-super-120b-a12b:free
       free: true
@@ -46,8 +46,8 @@ registry:
       task_fit: 94
       health: healthy
       health_score: 100
-      catalog_score: 67.529
-      verified_at: '2026-10-09T10:33:40.257301+00:00'
+      catalog_score: 67.49
+      verified_at: '2026-10-10T09:50:37.498402+00:00'
     - id: nex-agi/nex-n2.5-mini:free
       health: healthy
       health_score: 100
@@ -68,8 +68,8 @@ registry:
       task_fit: 95
       health: healthy
       health_score: 100
-      catalog_score: 65.047
-      verified_at: '2026-10-09T10:33:40.257264+00:00'
+      catalog_score: 65.008
+      verified_at: '2026-10-10T09:50:37.498364+00:00'
     - priority: 6
       id: google/gemma-4-31b-it:free
       free: true
@@ -80,13 +80,13 @@ registry:
       task_fit: 98
       health: healthy
       health_score: 100
-      catalog_score: 65.01
-      verified_at: '2026-10-09T10:33:40.257280+00:00'
+      catalog_score: 64.972
+      verified_at: '2026-10-10T09:50:37.498381+00:00'
     - id: liquid/lfm-2.5-2.6b:free
       health: healthy
       health_score: 100
-      catalog_score: 55.052
-      verified_at: '2026-10-09T10:33:40.257178+00:00'
+      catalog_score: 55.013
+      verified_at: '2026-10-10T09:50:37.498266+00:00'
     - priority: 1
       id: nvidia/nemotron-3-ultra-550b-a55b:free
       free: true
@@ -284,4 +284,4 @@ registry:
     models: []
     reason: Dynamic discovery/emergency lane; never outranks quality-scored trusted
       models without evidence
-  last_refresh: '2026-10-09T10:33:40.257374+00:00'
+  last_refresh: '2026-10-10T09:50:37.498481+00:00'

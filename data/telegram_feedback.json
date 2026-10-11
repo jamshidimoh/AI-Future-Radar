@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1791728815,
+  "updated_at": 1791746077,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17653,6 +17653,44 @@
       "why_it_matters": "درک اینکه توکن‌های بحرانی چگونه توزیع خروجی را فشرده می‌کنند، امکان طراحی روش‌های نظارت دقیق‌تر بر رفتار مدل را فراهم می‌کند؛ این امر خطر خطا یا سوءاستفاده در کاربردهای عملی را کاهش می‌دهد. شناخت مسیرهای شاخه‌دار و اثرات یادگیری تقویتی، به مهندسان کمک می‌کند تا مدل‌های ایمن‌تری بسازند و به‌طور مستقیم بر تطبیق (alignment) مدل‌ها تأثیر بگذارد.",
       "link": "https://www.cognitiverevolution.ai/how-agents-decide-goodfire-s-eric-bigelow-on-critical-tokens-phase-shifts-in-context-learning/",
       "posted_at": 1791728815
+    },
+    "-1004482051328:2048": {
+      "chat_id": -1004482051328,
+      "message_id": 2048,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چرا روش تقسیم و تسخیر برای اسپانیا مؤثر بود — Si Sheppard",
+      "summary": "در این ویدئوی YouTube که توسط Dwarkesh Patel منتشر شده، Si Sheppard بررسی می‌کند که استراتژی تقسیم و تسخیر چگونه در طول تاریخ اسپانیا به موفقیت منجر شد. او به‌طور خاص به نقش تقسیم‌کردن گروه‌های مخالف و ایجاد حاکمیت متمرکز اشاره می‌کند. ویدئو در آدرس https://youtu.be/LwQQ7nBCGSs قابل مشاهده است.",
+      "description": "Full episode: https://youtu.be/LwQQ7nBCGSs\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "درک مکانیزم تقسیم و تسخیر که در اسپانیا مؤثر بود، می‌تواند به تصمیم‌گیرندگان امروز کمک کند تا با تجزیهٔ ساختارهای پیچیدهٔ اجتماعی یا سیاسی، کنترل مؤثرتری بر مناطق مختلف به دست آورند؛ به‌عبارت دیگر، شناسایی نقاط ضعف متحدهای مخالف امکان طراحی سیاست‌های هدفمند برای مدیریت یا پیشگیری از بروز ناآرامی‌های گسترده را فراهم می‌کند.",
+      "link": "https://www.youtube.com/watch?v=ybw4AluWjas",
+      "posted_at": 1791746006
+    },
+    "-1004482051328:2049": {
+      "chat_id": -1004482051328,
+      "message_id": 2049,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "چگونه تکامل آگاهی را می‌توان از طریق یادگیری درک کرد",
+      "summary": "در این سخنرانی، زیست‌شناس تکاملی Eva Jablonka بیان می‌کند که مطالعه ریشه‌های تکاملی آگاهی می‌تواند به درک بهتر ماهیت آن کمک کند. او ادعا می‌کند نوع خاصی از یادگیری، که در موجودات حیوانی رخ می‌دهد، خود آگاهی است و تمام معیارهای فلسفی، روان‌شناختی و شناختی را برآورده می‌سازد. بر این اساس، گیاهان و قارچ‌ها آگاهی ندارند و هوش مصنوعی در شکل فعلی‌اش نیز آگاهی ندارد؛ جابلونکا حتی احتمال می‌داند که هوش مصنوعی هرگز به سطح پیچیدگی زیستی لازم برای آگاهی نرسد. این دیدگاه او را از رویکرد ژن‌محور به تکامل دور می‌کند و نقش اپی‌ژنیک و یادگیری را برجسته می‌سازد.",
+      "description": "Eva Jablonka discusses evolution and epigenetics.\n\nIs there more to evolution than genetics?\n\nMany view the questions of consciousness as fundamentally unanswerable. But evolutionary biologist Eva Jablonka argues that by studying the evolutionary origins of consciousness, we can better understand its nature and work out what we should and shouldn't attribute consciousness to. Jablonka argues that a certain type of learning actually constitutes consciousness and satisfies all the conditions that philosophers, psychologists and cognitive scientists point to. According to these criteria, plants and fungi are not conscious, and AI in its current form certainly isn't. In fact, Jablonka argues tentatively that AI may never achieve consciousness, given the sheer level of complexity we find in biology.\n\n#evolution #darwin #genes\n\nEva Jablonka is an evolutionary theorist and geneticist whose work pushes biology beyond a strictly gene-centred view of life.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=https://iai.tv/video/consciousness-has-evolutionary-roots-with-eva-jablonka?stage=Stage\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "اگر آگاهی به‌عنوان یک نوع یادگیری پیچیده تعریف شود، می‌توان مرزهای موجودات آگاه را واضح‌تر کرد و از انتساب نادرست آگاهی به گیاهان، قارچ‌ها یا سامانه‌های هوش مصنوعی جلوگیری کرد. این چارچوب به پژوهشگران کمک می‌کند تا به‌جای تمرکز صرف بر ژن‌ها، به مکانیزم‌های اپی‌ژنیک و رفتارهای یادگیری در تکامل توجه کنند. همچنین، پیش‌بینی جابلونکا مبنی بر عدم امکان رسیدن هوش مصنوعی به آگاهی، می‌تواند جهت‌گیری‌های آینده‌نگرانه در توسعه فناوری‌های هوش مصنوعی را تحت تأثیر قرار دهد.",
+      "link": "https://www.youtube.com/watch?v=UXxHg7JWRcs",
+      "posted_at": 1791746077
     }
   }
 }

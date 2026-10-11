@@ -2,13 +2,13 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 52,
-      "disabled_until": 1791750416.258,
+      "disabled_until": 1791781981.709,
       "last_error": "model",
       "last_success": 0.0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 13,
-      "disabled_until": 1791749681.642,
+      "disabled_until": 1791763981.709,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -20,13 +20,13 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 4,
-      "disabled_until": 1791749681.642,
+      "disabled_until": 1791763981.709,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 3,
-      "disabled_until": 1791749681.642,
+      "disabled_until": 1791763981.709,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
@@ -61,14 +61,14 @@
       "last_success": 0.0
     },
     "gemini:gemini-3.8-flash": {
-      "failures": 122,
-      "disabled_until": 1791832481.642,
+      "failures": 123,
+      "disabled_until": 1791846781.709,
       "last_error": "auth",
       "last_success": 0.0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1791832481.642,
+      "disabled_until": 1791846781.709,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -98,7 +98,7 @@
     },
     "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
       "failures": 1,
-      "disabled_until": 1791728132.717,
+      "disabled_until": 1791781981.709,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -135,8 +135,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 244,
-      "disabled_until": 1791832481.642,
+      "failures": 246,
+      "disabled_until": 1791846781.709,
       "last_error": "auth",
       "last_success": 0.0
     },

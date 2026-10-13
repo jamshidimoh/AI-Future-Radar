@@ -40,6 +40,8 @@ PRIMARY_DOMAINS = {
     "deepmind.google", "research.google", "microsoft.com", "ibm.com", "nvidia.com",
 }
 
+# Explicitly reviewed against current official documentation on 2026-10-13.
+# Only exact first-party URLs are overridden; unrelated older pages remain rejected.
 VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents": 2026,
     "https://www.openai.com/academy/workspace-agents": 2026,
@@ -47,6 +49,14 @@ VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative": 2026,
     "https://www.anthropic.com/research/building-effective-agents": 2026,
     "https://platform.openai.com/docs/guides/agents": 2026,
+    "https://platform.openai.com/docs/guides/agent-evals": 2026,
+    "https://platform.openai.com/docs/guides/tools-computer-use": 2026,
+    "https://ai.google.dev/gemini-api/docs/computer-use": 2026,
+    "https://platform.openai.com/docs/guides/realtime": 2026,
+    "https://ai.google.dev/gemini-api/docs/live": 2026,
+    "https://platform.openai.com/docs/guides/structured-outputs": 2026,
+    "https://ai.google.dev/gemini-api/docs/structured-output": 2026,
+    "https://platform.openai.com/docs/guides/safety-best-practices": 2026,
 }
 
 

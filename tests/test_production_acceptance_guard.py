@@ -136,16 +136,30 @@ Posts sent: 2/3
 """
 
 
-def test_all_selected_candidates_rejected_downstream_is_fail_closed_pass():
+def test_all_selected_candidates_rejected_downstream_still_fails_zero_publication_contract():
     ok, message = validate(FAIL_CLOSED_EDITORIAL_REJECTION)
-    assert ok is True
-    assert "fail-closed editorial/policy/publication rejection/accounting verified" in message
+    assert ok is False
+    assert "zero publication despite selected candidates" in message
 
 
 def test_zero_publication_without_rejection_evidence_is_failure():
     ok, message = validate(UNEXPECTED_ZERO_PUBLICATION)
     assert ok is False
-    assert "did not provide evidence" in message
+    assert "zero publication despite selected candidates" in message
+
+
+NO_SELECTED_CANDIDATES = """
+[Production Selection] total=3
+[Publication Summary Budget] input=3 output=0 normal_window=0 replacement_buffer=3
+[Production Contract] normal_news=0 normal_max=3 mind_ideas_voices=0 mind_max=2 people=0 people_max=none technical_trend=0 voices_perspectives=0 strategic_analytical=0 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 0/3
+"""
+
+
+def test_explicitly_empty_final_selection_can_pass_with_confirmed_zero_delivery():
+    ok, message = validate(NO_SELECTED_CANDIDATES)
+    assert ok is True
+    assert "no eligible candidates were selected" in message
 
 
 def test_successful_publication_remains_pass_when_all_selected_are_accounted_for():

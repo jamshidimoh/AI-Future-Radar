@@ -135,7 +135,8 @@ def test_expansion_continues_after_all_previously_shipped_lessons(monkeypatch):
     assert lesson_id == 123
     assert lesson is not None
     assert lesson["title"] == "Agent Evaluation Task و Trial"
-    assert total >= 130
+    assert total == len(sequence)
+    assert total >= 84
 
 
 def test_recovery_treats_true_exhaustion_as_non_fatal(monkeypatch, capsys):

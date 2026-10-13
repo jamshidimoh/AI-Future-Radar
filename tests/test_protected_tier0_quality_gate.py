@@ -23,7 +23,7 @@ def test_production_entrypoint_enforces_protected_floor_before_publish():
     assert "quality_floor={PROTECTED_SCORE_FLOOR}" in text
 
 
-def test_tier0_quality_rejection_still_fails_when_no_candidate_is_published():
+def test_tier0_quality_rejection_is_terminally_accounted_without_publication():
     log = """
 [Production Selection] canonical_period_rank=true total=1
 [Publication Contract] candidate rejected reason=tier0_score_policy_blocked:28.16<floor:55.0; continuing to next ranked candidate
@@ -31,8 +31,8 @@ def test_tier0_quality_rejection_still_fails_when_no_candidate_is_published():
 Posts sent: 0/1
 """
     ok, reason = validate(log)
-    assert not ok
-    assert "zero publication despite selected candidates" in reason
+    assert ok, reason
+    assert "fail-closed editorial/policy/publication rejection/accounting verified" in reason
 
 
 def test_low_quality_tier0_publication_is_fail_closed():

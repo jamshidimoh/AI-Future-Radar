@@ -33,15 +33,18 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     assert "if log_errors or len(logs) != 3:" in text
 
 
-def test_closure_gate_allows_zero_publish_only_for_explicitly_empty_selection():
+def test_closure_gate_requires_empty_selection_or_complete_quality_rejection_accounting():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "if final_budget:" in text
     assert "selected_count = final_selection[-1] if final_selection else (" in text
-    assert r"\[Publication Summary Budget\][^\n]*\boutput=(\d+)" in text
+    assert r"\[Publication Summary Budget\][^\n]*\boutput(?:_news)?=(\d+)" in text
     assert "final_budget = re.findall(" in text
     assert r"\[Production Selection\][^\n]*\btotal=(\d+)" in text
     assert "no_selected_candidates = int(final_budget[-1]) == 0" in text
-    assert "return zero_publish and no_selected_candidates and acceptance" in text
+    assert "complete_rejection_accounting = any(" in text
+    assert r"fail-closed editorial/policy/publication rejection/accounting verified" in text
+    assert "int(accounted) >= int(selected)" in text
+    assert "return zero_publish and acceptance and (" in text
     assert "fail_closed_acceptance" not in text
     assert "publication_attempted" not in text
 

@@ -41,7 +41,7 @@ def test_closure_gate_uses_shared_strict_publication_evidence_contract():
     assert "per_run_publish = {r[\"run_number\"]: publish_evidence(logs[r[\"run_number\"]]) for r in window}" in text
     assert "selected == 0" in helper
     assert "sent > 0" in helper
-    assert "[Telegram Published]" in helper
+    assert r"\[Telegram Published\]" in helper
     assert "return zero_candidate_run" in helper
     assert "fail_closed_acceptance = has(text" not in text
 

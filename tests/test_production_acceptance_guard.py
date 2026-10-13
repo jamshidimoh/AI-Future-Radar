@@ -367,3 +367,36 @@ Posts sent: 2/6
     assert ok is True
     assert "no eligible candidate" in message
 
+
+
+
+def test_compact_runtime_contract_cannot_bypass_zero_delivery_guard():
+    # Mirrors production run #1426: the budget selected six stories, all summary
+    # providers failed, delivery was zero, and the compact contract omitted legacy
+    # fields normal_max / tier0_quota_exempt. Mission-coverage fallback must not
+    # override this delivery failure.
+    log = """
+[Unified Portfolio Selection] capacity=3 candidate_window=6 replacement_buffer=3 protected=0 people_bootstrap=1 candidates=6 lane_candidates={'people': 1, 'normal': 5} source_diversity=6 mission_aware=true strict_relevance=true
+[Publication Summary Budget] mode=unified_portfolio input=6 news=6 education=0 output_news=6 final_capacity=3 candidate_window=6 replacement_buffer=3
+[Mission Coverage Recovery] target=3 prepared=0 attempts=2 recovered=2 status=unmet
+[Mission Coverage Recovery] attempt=1 area=ai_core title=provider-unavailable story status=provider_unavailable
+[Production Contract] final_news=0 final_capacity=3 normal_news=0 people=0 technical_trend=0 mind_ideas_voices=0 voices_perspectives=0 tier0_news=0 strategic_analytical=0 lane_quotas=selection_roles_only normal_score_floor=55.0 education=not_due
+[People Bootstrap] status=in_progress delivered=29/30 baseline=30/30
+Posts sent: 0/8
+"""
+    ok, message = validate(log)
+    assert ok is False
+    assert "zero news items were published from a non-empty selected set" in message
+    assert "selected=6, published_news=0" in message
+
+
+def test_compact_runtime_contract_allows_zero_delivery_only_when_final_budget_is_empty():
+    log = """
+[Selection Timing] candidates=8
+[Publication Summary Budget] mode=unified_portfolio input=8 news=0 education=0 output_news=0 final_capacity=3 candidate_window=6
+[Production Contract] final_news=0 final_capacity=3 normal_news=0 people=0 technical_trend=0 mind_ideas_voices=0 voices_perspectives=0 tier0_news=0 strategic_analytical=0 lane_quotas=selection_roles_only normal_score_floor=55.0 education=not_due
+Posts sent: 0/0
+"""
+    ok, message = validate(log)
+    assert ok is True, message
+    assert "selected=0" in message

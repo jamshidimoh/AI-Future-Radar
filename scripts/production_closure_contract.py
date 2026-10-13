@@ -14,16 +14,24 @@ _POSTS_SENT = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)", re.I)
 
 
 def selected_candidate_count(log_text: str) -> int | None:
-    """Return the last effective selection count; prefer the post-budget count."""
+    """Return post-budget output count, else the last runtime selection count."""
     lines = str(log_text or "").splitlines()
-    # The publication budget is the effective post-selection set. If present,
-    # it takes precedence over earlier discovery/selection counters.
-    for pattern in _SELECTED_PATTERNS:
-        matches = [pattern.search(line) for line in lines]
-        matches = [match for match in matches if match]
-        if matches:
-            return int(matches[-1].group(1))
-    return None
+    budget_matches = [
+        (index, SUMMARY.match(line))
+        for index, line in enumerate(lines)
+        if (SUMMARY := re.compile(r"\[Publication Summary Budget\].*?output=(\d+)", re.I)).search(line)
+    ]
+    if budget_matches:
+        return int(budget_matches[-1][1].group(1))
+    fallback = []
+    for index, line in enumerate(lines):
+        for pattern in _SELECTED_PATTERNS[1:]:
+            match = pattern.search(line)
+            if match:
+                fallback.append((index, match))
+    if not fallback:
+        return None
+    return int(max(fallback, key=lambda item: item[0])[1].group(1))
 
 
 def posts_sent_counts(log_text: str) -> tuple[int, int] | None:
@@ -44,11 +52,19 @@ def publish_evidence(log_text: str) -> bool:
     if counts is None or selected is None or not accepted:
         return False
     sent, total = counts
-    confirmed_publication = (
+    confirmed_news_delivery = (
         sent > 0
         and re.search(r"\[Telegram Published\]", text, re.I) is not None
     )
-    if confirmed_publication:
+    confirmed_education_delivery = (
+        re.search(
+            r"\[Education Published\]\s+CONFIRMED\b.*?telegram_delivery=successful",
+            text,
+            re.I,
+        )
+        is not None
+    )
+    if confirmed_news_delivery or confirmed_education_delivery:
         return True
     # Zero publication is valid only when no item was selected for publication;
     # explicit downstream rejections do not excuse losing the entire selected set.

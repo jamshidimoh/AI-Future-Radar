@@ -35,7 +35,8 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
 
 def test_closure_gate_allows_zero_publish_only_for_explicitly_empty_selection():
     text = WORKFLOW.read_text(encoding="utf-8")
-    assert "no_selected_candidates = (" in text
+    assert "if final_budget:" in text
+    assert "selected_count = final_selection[-1] if final_selection else (" in text
     assert r"\[Publication Summary Budget\].*\boutput=0\b" in text
     assert "final_budget = re.findall(" in text
     assert r"\[Production Selection\][^\n]*\btotal=(\d+)" in text

@@ -323,6 +323,29 @@ def _repair_persian_draft(data, item):
     return data, provider
 
 
+def _repair_persian_naturalness(data, item):
+    """Retry one complete draft when language ratios pass but Persian fluency fails.
+
+    Field-only recovery can produce Persian-character-compliant prose that still
+    fails deterministic orthography/naturalness checks. Retry the complete draft
+    once, but return it only when the full language contract passes.
+    """
+    title = str(data.get("title", ""))
+    summary = str(data.get("summary", ""))
+    why = str(data.get("why_it_matters", ""))
+    if not news_language_ok(title, summary, why):
+        return data, None
+    if persian_editorial_naturalness_ok(title, summary, why):
+        return data, None
+
+    recovered, provider = _repair_persian_draft(data, item)
+    if _language_ok(recovered):
+        print("[Naturalness Recovery] full draft passed language contract", flush=True)
+        return recovered, provider
+    print("[Naturalness Recovery] full draft rejected; retaining fail-closed behavior", flush=True)
+    return data, provider
+
+
 def _repair_persian_fields(data, item, providers=None):
     """Recover only the failed body fields with a smaller, field-focused prompt."""
     prompt = _PERSIAN_FIELDS_REPAIR_PROMPT.format(
@@ -541,6 +564,9 @@ def summarize_item(item):
             provider = provider or recovery_provider
         if not _language_ok(final):
             final, recovery_provider = _repair_persian_fields(final, item)
+            provider = provider or recovery_provider
+        if not _language_ok(final):
+            final, recovery_provider = _repair_persian_naturalness(final, item)
             provider = provider or recovery_provider
         if not _language_ok(final) or not _length_ok(final, raw_text):
             final, recovery_provider = _repair_title(final)

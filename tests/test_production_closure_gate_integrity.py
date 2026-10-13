@@ -37,7 +37,9 @@ def test_closure_gate_allows_zero_publish_only_for_explicitly_empty_selection():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "no_selected_candidates = (" in text
     assert r"\[Publication Summary Budget\].*\boutput=0\b" in text
-    assert r"\[Production Selection\].*\btotal=0\b" in text
+    assert "final_budget = re.findall(" in text
+    assert r"\[Production Selection\][^\n]*\btotal=(\d+)" in text
+    assert "no_selected_candidates = int(final_budget[-1]) == 0" in text
     assert "return zero_publish and no_selected_candidates and acceptance" in text
     assert "fail_closed_acceptance" not in text
     assert "publication_attempted" not in text
@@ -59,4 +61,5 @@ def test_closure_gate_zero_publish_evidence_counts_all_publication_lanes():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "lane_counts = [" in text
     assert "all(value == 0 for value in lane_counts)" in text
+    assert r"\b(?:final_news|normal_news|mind_ideas_voices|people|technical_trend|voices_perspectives|strategic_analytical|tier0_news)=(\d+)" in text
     assert r"\[Education Published\].*telegram_delivery=successful" in text

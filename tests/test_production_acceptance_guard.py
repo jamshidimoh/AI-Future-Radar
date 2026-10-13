@@ -160,6 +160,28 @@ Posts sent: 0/0
     assert "selected=0" in message
 
 
+def test_runtime_guard_uses_final_output_news_budget_over_earlier_selection():
+    empty_log = """
+[Selection Timing] candidates=8
+[Publication Summary Budget] input=8 output_news=0 final_capacity=3 candidate_window=6
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 0/0
+"""
+    ok, message = validate(empty_log)
+    assert ok, message
+    assert "selected=0" in message
+
+    nonempty_log = """
+[Selection Timing] candidates=8
+[Publication Summary Budget] input=8 output_news=2 final_capacity=3 candidate_window=6
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 0/2
+"""
+    ok, message = validate(nonempty_log)
+    assert not ok
+    assert "zero news items were published" in message
+
+
 def test_successful_publication_remains_pass_when_all_selected_are_accounted_for():
     ok, message = validate(SUCCESSFUL_PUBLICATION)
     assert ok is True

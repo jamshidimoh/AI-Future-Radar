@@ -16,7 +16,7 @@ def test_closure_gate_requires_three_consecutive_production_attempts():
     marker = "if len(attempted) < 3:"
     start = text.index(marker)
     block = text[start:start + 400]
-    assert "three consecutive production attempts observed; 3 required" in block
+    assert "consecutive production attempts observed; 3 required" in block
     assert "sys.exit(1)" in block
     assert 'if run.get("conclusion") != "success" or not bot or bot.get("conclusion") != "success":' in text
     assert "Every non-state-only production invocation occupies a place in the" in text

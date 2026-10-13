@@ -19,7 +19,14 @@ logger = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parents[1]
 HEALTH_PATH = ROOT / "data" / "llm_health.json"
 _PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|insufficient.*(?:credit|balance))", re.IGNORECASE)
-_PROVIDER_AUTH_PATTERNS = re.compile(r"(?:\b401\b|unauthorized|invalid.*(?:api|credential|key|token)|authentication.*(?:failed|error))", re.IGNORECASE)
+# NaraRouter's telegram_required response is an account-level access block,
+# not a model-specific 403. Classify this exact marker as provider-wide auth so
+# production failover stops retrying NaraRouter for every candidate in the run.
+_PROVIDER_AUTH_PATTERNS = re.compile(
+    r"(?:\b401\b|unauthorized|invalid.*(?:api|credential|key|token)|"
+    r"authentication.*(?:failed|error)|telegram_required)",
+    re.IGNORECASE,
+)
 _KIRAAI_WALLET_PATTERN = re.compile(r"(?:insufficient.*(?:vnd|wallet|balance)|wallet.*balance|vnd.*balance)", re.IGNORECASE)
 
 

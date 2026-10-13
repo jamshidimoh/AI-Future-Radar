@@ -44,3 +44,18 @@ def test_json_generation_failure_does_not_disable_provider():
     message = "Failed to generate JSON. failed_generation=max completion tokens reached"
     assert not _is_provider_auth(message)
     assert not _is_provider_quota(message)
+
+
+
+def test_nara_telegram_required_is_provider_level_auth_failure():
+    message = (
+        "NaraRouter auto/bynara: HTTP 403 "
+        "{'type':'forbidden','message':'telegram_required: Join the required "
+        "Telegram group/channel and relink at /settings to continue.'}"
+    )
+    assert _is_provider_auth(message)
+
+
+def test_nara_model_permission_403_is_not_misclassified_as_provider_auth():
+    message = "Groq qwen/qwen3.6-27b: HTTP 403 model_permission_blocked_project"
+    assert not _is_provider_auth(message)

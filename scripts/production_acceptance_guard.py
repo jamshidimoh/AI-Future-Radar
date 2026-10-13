@@ -93,6 +93,40 @@ def _observed_tier0_floor(lines):
     return value
 
 
+def _rejection_accounting(lines):
+    """Count explicit terminal outcomes without double-counting score-policy blocks."""
+    editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
+    policy_rejections = sum(1 for line in lines if POLICY_REJECTION_PATTERN.search(line))
+    publication_rejections = 0
+    for line in lines:
+        match = PUBLICATION_REJECTION_PATTERN.search(line)
+        if not match:
+            continue
+        reason = match.group(1).strip()
+        if re.match(r"(?:normal_score_policy_blocked|tier0_score_policy_blocked):", reason):
+            continue
+        publication_rejections += 1
+    return {
+        "editorial_rejections": editorial_rejections,
+        "policy_rejections": policy_rejections,
+        "publication_rejections": publication_rejections,
+        "terminal_rejections": editorial_rejections + policy_rejections + publication_rejections,
+    }
+
+
+def _zero_publication_has_infrastructure_failure(lines):
+    """A provider/transport failure is not an editorial reason to certify zero delivery."""
+    patterns = (
+        re.compile(r"\[Editorial Gate\]\s+provider failure isolated candidate="),
+        re.compile(r"\[Mission Coverage Recovery\].*?status=hard_failure"),
+        re.compile(r"\[ERROR\]\s+Telegram send failed"),
+        re.compile(r"Telegram transport failure:"),
+        re.compile(r"Telegram delivery returned false"),
+        re.compile(r"\[Telegram Published\].*?duplicate", re.I),
+    )
+    return any(pattern.search(line) for line in lines for pattern in patterns)
+
+
 def _mission_recovery_hard_failures(lines):
     """Count only failures that remain unresolved at the end of each mission lane."""
     lane_outcomes = {}
@@ -210,14 +244,37 @@ def validate(log_text: str) -> tuple[bool, str]:
         summary_budget_match is not None and int(summary_budget_match.group(1)) == 0
     ) or int(candidate_match.group(1)) == 0
 
-    # A counted rejection is not a successful production outcome when the final
-    # selected set is non-empty but Telegram received no publication. Keep this
-    # check before mission-coverage and bootstrap early returns so those paths
-    # cannot accidentally certify a zero-publication run.
-    if selected > 0 and early_published_count == 0 and posts_sent in (None, 0) and not education_confirmed:
+    # Zero news may be legitimate when every final candidate was explicitly rejected
+    # by deterministic quality/editorial/publication gates. It is not legitimate when
+    # the run lacks terminal rejection evidence or reports provider/transport failure.
+    rejection_evidence = _rejection_accounting(lines)
+    zero_publication_candidate_set = (
+        selected > 0
+        and early_published_count == 0
+        and posts_sent == 0
+        and not education_confirmed
+    )
+    zero_publication_rejection_verified = (
+        zero_publication_candidate_set
+        and rejection_evidence["terminal_rejections"] >= selected
+        and not _zero_publication_has_infrastructure_failure(lines)
+    )
+    if zero_publication_candidate_set and not zero_publication_rejection_verified:
         return False, (
-            "production contract violation: zero publication despite selected candidates; "
-            f"selected={selected}, published=0, posts_sent={posts_sent}"
+            "production contract violation: zero publication lacks complete deterministic "
+            "rejection accounting or has infrastructure failure; "
+            f"selected={selected}, published=0, posts_sent={posts_sent}, "
+            f"terminal_rejections={rejection_evidence['terminal_rejections']}, "
+            f"infrastructure_failure={_zero_publication_has_infrastructure_failure(lines)}"
+        )
+    if (
+        bootstrap_progress
+        and not bootstrap_progress["complete"]
+        and posts_sent == 0
+    ):
+        return False, (
+            "production contract violation: People Bootstrap reported partial state without "
+            f"confirmed delivery; delivered={bootstrap_progress['delivered']}/30"
         )
     if (
         selected == 0
@@ -323,9 +380,9 @@ def validate(log_text: str) -> tuple[bool, str]:
             return False, f"production contract violation: Mind lane exceeds configured cap: {mind_news}>{mind_max}"
 
     published_news = normal_news + mind_news + people_news + tier0_news
-    editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
-    policy_rejections = sum(1 for line in lines if POLICY_REJECTION_PATTERN.search(line))
-    publication_rejections = sum(1 for line in lines if PUBLICATION_REJECTION_PATTERN.search(line))
+    editorial_rejections = rejection_evidence["editorial_rejections"]
+    policy_rejections = rejection_evidence["policy_rejections"]
+    publication_rejections = rejection_evidence["publication_rejections"]
 
     protected_blocked = _last_group_int(lines, re.compile(r"protected_same_story_blocked=(\d+)")) or 0
     canonical_story_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?story_rejected=(\d+)")) or 0
@@ -353,11 +410,23 @@ def validate(log_text: str) -> tuple[bool, str]:
             f"scores={violating_mind_scores}, floor={MIND_IDEAS_VOICES_SCORE_FLOOR}"
         )
     if selected > 0 and published_news == 0 and education != "confirmed":
+        if (
+            posts_sent == 0
+            and rejection_evidence["terminal_rejections"] >= selected
+            and not _zero_publication_has_infrastructure_failure(lines)
+        ):
+            return True, (
+                "production acceptance PASS: fail-closed editorial/policy/publication rejection/accounting verified; "
+                f"selected={selected}, published=0, editorial_rejections={editorial_rejections}, "
+                f"policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, "
+                f"accounted={rejection_evidence['terminal_rejections']}, education={education}"
+            )
         return False, (
-            "production contract violation: zero publication despite selected candidates; "
+            "production contract violation: zero publication lacks complete deterministic "
+            "rejection accounting or has infrastructure failure; "
             f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, "
             f"policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, "
-            f"upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
+            f"accounted={rejection_evidence['terminal_rejections']}, education={education}"
         )
     if selected == 0 and published_news == 0 and education != "confirmed":
         if posts_sent != 0:

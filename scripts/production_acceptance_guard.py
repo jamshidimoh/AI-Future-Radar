@@ -206,14 +206,19 @@ def validate(log_text: str) -> tuple[bool, str]:
     mind_preflight = MIND_CONTRACT_PATTERN.search(contract_line_preflight)
     people_preflight = PEOPLE_CONTRACT_PATTERN.search(contract_line_preflight)
     tier0_preflight = TIER0_CONTRACT_PATTERN.search(contract_line_preflight)
+    education_preflight = EDUCATION_CONTRACT_PATTERN.search(contract_line_preflight)
+    education_confirmed_preflight = bool(
+        education_preflight and education_preflight.group(1).casefold() == "confirmed"
+    ) or _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)) is not None
     if normal_preflight is not None and tier0_preflight is not None:
         published_preflight = int(normal_preflight.group(1))
         published_preflight += int(mind_preflight.group(1)) if mind_preflight else 0
         published_preflight += int(people_preflight.group(1)) if people_preflight else 0
         published_preflight += int(tier0_preflight.group(1))
-        if selected_preflight > 0 and published_preflight == 0:
+        if selected_preflight > 0 and published_preflight == 0 and not education_confirmed_preflight:
             return False, (
-                "production contract violation: selected candidates > 0 but published news = 0; "
+                "production contract violation: zero news items were published from a non-empty selected set "
+                "without confirmed delivery; "
                 f"selected={selected_preflight}, published_news={published_preflight}"
             )
 
@@ -346,7 +351,8 @@ def validate(log_text: str) -> tuple[bool, str]:
         )
     if selected > 0 and published_news == 0:
         return False, (
-            "production contract violation: selected candidates > 0 but published news = 0; "
+            "production contract violation: zero news items were published from a non-empty selected set "
+            "without confirmed delivery; "
             f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
         )
 

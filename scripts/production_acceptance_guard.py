@@ -191,6 +191,33 @@ def validate(log_text: str) -> tuple[bool, str]:
     if contract_match is None:
         return False, "missing production contract summary"
 
+    # Enforce the final production definition of done before any mission-lane or
+    # bootstrap shortcut can return PASS: when candidates reached the publication
+    # budget but zero news items were published, the run is a production failure.
+    # A genuine zero-candidate run remains acceptable when the effective selected
+    # count is exactly zero.
+    contract_line_preflight = contract_match.group(0)
+    summary_budget_preflight = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))
+    selected_preflight = (
+        int(summary_budget_preflight.group(1))
+        if summary_budget_preflight is not None
+        else int(candidate_match.group(1))
+    )
+    normal_preflight = NORMAL_CONTRACT_PATTERN.search(contract_line_preflight)
+    mind_preflight = MIND_CONTRACT_PATTERN.search(contract_line_preflight)
+    people_preflight = PEOPLE_CONTRACT_PATTERN.search(contract_line_preflight)
+    tier0_preflight = TIER0_CONTRACT_PATTERN.search(contract_line_preflight)
+    if normal_preflight is not None and tier0_preflight is not None:
+        published_preflight = int(normal_preflight.group(1))
+        published_preflight += int(mind_preflight.group(1)) if mind_preflight else 0
+        published_preflight += int(people_preflight.group(1)) if people_preflight else 0
+        published_preflight += int(tier0_preflight.group(1))
+        if selected_preflight > 0 and published_preflight == 0:
+            return False, (
+                "production contract violation: selected candidates > 0 but published news = 0; "
+                f"selected={selected_preflight}, published_news={published_preflight}"
+            )
+
     mission_coverage = _mission_coverage_status(lines)
 
     if bootstrap_progress and not bootstrap_progress["complete"] and not (
@@ -318,14 +345,9 @@ def validate(log_text: str) -> tuple[bool, str]:
             "production contract violation: low-quality Mind/Ideas/Voices publication observed; "
             f"scores={violating_mind_scores}, floor={MIND_IDEAS_VOICES_SCORE_FLOOR}"
         )
-    if selected > 0 and published_news == 0 and education != "confirmed":
-        if accounted >= selected and (posts_sent is None or posts_sent == 0):
-            return True, (
-                "production acceptance PASS: fail-closed editorial/policy/publication rejection/accounting verified; "
-                f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, education={education}"
-            )
+    if selected > 0 and published_news == 0:
         return False, (
-            "production contract violation: zero news items were published and the selected set did not provide evidence of publication or explicit rejection; "
+            "production contract violation: selected candidates > 0 but published news = 0; "
             f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
         )
 

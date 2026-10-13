@@ -18,7 +18,7 @@ CANDIDATE_PATTERNS = (
     re.compile(r"\[Selection Timing\].*?candidates=(\d+)"),
     re.compile(r"\[Unified Portfolio Selection\].*?candidates=(\d+)"),
 )
-SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output=(\d+)")
+SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output(?:_news)?=(\d+)")
 CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*")
 NORMAL_CONTRACT_PATTERN = re.compile(r"normal_news=(\d+)\s+normal_max=(\d+)")
 MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")

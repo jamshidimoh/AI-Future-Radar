@@ -1,12 +1,11 @@
 """Runtime acceptance guard for the production publication contract.
 
-A selected candidate must end in an auditable terminal state: publication,
-explicit editorial/policy/publication rejection, or an upstream structural
-rejection such as canonical-story deduplication. Mission portfolio coverage is
-also a production invariant: when the runtime explicitly reports an unmet
-mission-coverage target, acceptance must fail closed rather than passing on
-publication accounting alone. Normal and Mind/Ideas/Voices lanes are validated
-as distinct contracts; the normal score floor never applies to Mind.
+A production run that selects one or more candidates but publishes no news is a
+failure, even if every selected candidate was rejected downstream. Zero publication
+is acceptable only when the effective post-budget selection is genuinely empty.
+Mission portfolio coverage is also a production invariant. Normal and
+Mind/Ideas/Voices lanes are validated as distinct contracts; the normal score
+floor never applies to Mind.
 """
 from __future__ import annotations
 

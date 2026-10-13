@@ -661,6 +661,8 @@ def main(hooks=None):
     all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities)
     seen_hashes, seen_signatures = load_seen()
     source_history = load_source_history()
+    # The completed-bootstrap branch also consumes this local list below.
+    people_candidates = []
     if people_bootstrap_mode:
         people_candidates = bootstrap_candidates(
             all_items,

@@ -219,12 +219,16 @@ def validate(log_text: str) -> tuple[bool, str]:
             "production contract violation: zero publication despite selected candidates; "
             f"selected={selected}, published=0, posts_sent={posts_sent}"
         )
-    if selected == 0 and early_published_count == 0 and not education_confirmed:
-        if not explicit_empty_selection or posts_sent != 0:
-            return False, (
-                "production contract violation: zero publication lacks explicit zero-selection "
-                f"and delivery evidence; selected={selected}, posts_sent={posts_sent}"
-            )
+    if (
+        selected == 0
+        and early_published_count == 0
+        and not education_confirmed
+        and (not explicit_empty_selection or posts_sent != 0)
+    ):
+        return False, (
+            "production contract violation: zero publication lacks explicit zero-selection "
+            f"and delivery evidence; selected={selected}, posts_sent={posts_sent}"
+        )
 
     mission_coverage = _mission_coverage_status(lines)
 

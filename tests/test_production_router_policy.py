@@ -585,3 +585,39 @@ def test_omniroute_is_inert_when_not_configured(monkeypatch):
     from src.production_router_policy import _omniroute_call
 
     assert _omniroute_call("system", "user") == (None, None)
+
+
+
+def test_omniroute_primary_requests_json_object_mode(monkeypatch):
+    _reset(monkeypatch)
+    import src.production_router_policy as production_router_policy
+
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://127.0.0.1:20128")
+    calls = {}
+
+    class Response:
+        status_code = 200
+        text = '{"ok": true}'
+        headers = {"X-OmniRoute-Decision": "test-provider"}
+
+        def json(self):
+            return {
+                "model": "auto/smart",
+                "choices": [{"message": {"content": '{"summary":"ok"}'}}],
+            }
+
+    def post(url, **kwargs):
+        calls["url"] = url
+        calls.update(kwargs)
+        return Response()
+
+    monkeypatch.setattr(production_router_policy.requests, "post", post)
+    result, provider = production_router_policy._omniroute_call(
+        "Return a JSON object only.",
+        "Summarize this test input.",
+    )
+
+    assert result == '{"summary":"ok"}'
+    assert provider == "OmniRoute:auto/smart"
+    assert calls["url"] == "http://127.0.0.1:20128/v1/chat/completions"
+    assert calls["json"]["response_format"] == {"type": "json_object"}

@@ -11,13 +11,16 @@ def test_closure_gate_does_not_certify_when_logs_are_unavailable():
     assert "sys.exit(1)" in text
 
 
-def test_closure_gate_requires_three_executable_runs_as_a_failure_until_closed():
+def test_closure_gate_requires_three_consecutive_production_attempts():
     text = WORKFLOW.read_text(encoding="utf-8")
-    marker = "if len(executable) < 3:"
+    marker = "if len(attempted) < 3:"
     start = text.index(marker)
-    block = text[start:start + 300]
-    assert "3 required" in block
+    block = text[start:start + 400]
+    assert "three consecutive production attempts observed; 3 required" in block
     assert "sys.exit(1)" in block
+    assert 'if run.get("conclusion") != "success" or not bot or bot.get("conclusion") != "success":' in text
+    assert "Every non-state-only production invocation occupies a place in the" in text
+    assert "is_persisted_state_skip(run, bot)" in text
 
 
 def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
@@ -31,11 +34,16 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     assert "if log_errors or len(logs) != 3:" in text
 
 
-def test_closure_gate_uses_runtime_acceptance_for_zero_publish():
+def test_closure_gate_uses_shared_strict_publication_evidence_contract():
     text = WORKFLOW.read_text(encoding="utf-8")
-    assert "fail_closed_acceptance = has(text, r\"\\[Production Acceptance\\] PASS:\\s+production acceptance PASS:\\s+fail-closed\")" in text
-    assert "return zero_publish and acceptance and fail_closed_acceptance and publication_attempted" in text
-    assert "[Fail-Closed Acceptance Evidence] PASS" not in text
+    helper = (WORKFLOW.parents[2] / "scripts" / "production_closure_contract.py").read_text(encoding="utf-8")
+    assert "from scripts.production_closure_contract import is_persisted_state_skip, publish_evidence" in text
+    assert "per_run_publish = {r[\"run_number\"]: publish_evidence(logs[r[\"run_number\"]]) for r in window}" in text
+    assert "selected == 0" in helper
+    assert "sent > 0" in helper
+    assert "[Telegram Published]" in helper
+    assert "return zero_candidate_run" in helper
+    assert "fail_closed_acceptance = has(text" not in text
 
 
 def test_closure_gate_blocks_unresolved_evidence_with_failure_status():

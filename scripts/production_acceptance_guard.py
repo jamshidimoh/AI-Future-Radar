@@ -349,7 +349,7 @@ def validate(log_text: str) -> tuple[bool, str]:
             "production contract violation: low-quality Mind/Ideas/Voices publication observed; "
             f"scores={violating_mind_scores}, floor={MIND_IDEAS_VOICES_SCORE_FLOOR}"
         )
-    if selected > 0 and published_news == 0:
+    if selected > 0 and published_news == 0 and education != "confirmed":
         return False, (
             "production contract violation: zero news items were published from a non-empty selected set "
             "without confirmed delivery; "

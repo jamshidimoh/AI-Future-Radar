@@ -136,16 +136,28 @@ Posts sent: 2/3
 """
 
 
-def test_all_selected_candidates_rejected_downstream_is_fail_closed_pass():
+def test_selected_candidates_all_rejected_downstream_still_fails_zero_publication():
     ok, message = validate(FAIL_CLOSED_EDITORIAL_REJECTION)
-    assert ok is True
-    assert "fail-closed editorial/policy/publication rejection/accounting verified" in message
+    assert ok is False
+    assert "selected candidates > 0 but published news = 0" in message
 
 
 def test_zero_publication_without_rejection_evidence_is_failure():
     ok, message = validate(UNEXPECTED_ZERO_PUBLICATION)
     assert ok is False
-    assert "did not provide evidence" in message
+    assert "selected candidates > 0 but published news = 0" in message
+
+
+def test_zero_candidates_and_zero_publications_are_acceptable():
+    log = """
+[Production Selection] total=0
+[Publication Summary Budget] input=0 output=0 normal_window=0 replacement_buffer=0
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 0/0
+"""
+    ok, message = validate(log)
+    assert ok is True
+    assert "selected=0" in message
 
 
 def test_successful_publication_remains_pass_when_all_selected_are_accounted_for():
@@ -160,10 +172,10 @@ def test_partial_publication_without_selected_set_accounting_is_failure():
     assert "left selected candidates unaccounted" in message
 
 
-def test_confirmed_education_recovery_is_accounted_for():
+def test_education_recovery_does_not_hide_zero_news_after_candidates_were_selected():
     ok, message = validate(CONFIRMED_EDUCATION_RECOVERY)
-    assert ok is True
-    assert "education=confirmed" in message
+    assert ok is False
+    assert "selected candidates > 0 but published news = 0" in message
 
 
 def test_protected_tier0_fallback_requires_normal_candidate_accounting():

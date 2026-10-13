@@ -40,17 +40,19 @@ def test_zero_publication_fails_when_candidates_were_selected():
 """
     ok, reason = validate(log)
     assert not ok
-    assert "zero news items" in reason
+    assert "zero publication despite selected candidates" in reason
 
 
 def test_zero_publication_is_allowed_only_when_no_candidates_exist():
     log = """
 [Production Selection] canonical_period_rank=true total=0
+[Publication Summary Budget] input=0 output=0 normal_window=0 replacement_buffer=0
 [Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 0/0
 """
     ok, reason = validate(log)
     assert ok
-    assert "selected=0" in reason
+    assert "no eligible candidates were selected" in reason
 
 
 def test_confirmed_education_can_satisfy_an_education_slot():
@@ -82,7 +84,7 @@ def test_runtime_education_confirmation_requires_successful_delivery():
 """
     ok, reason = validate(log)
     assert not ok
-    assert "zero news items" in reason
+    assert "zero publication despite selected candidates" in reason
 
 
 def test_production_state_preserves_real_baseline_fields():

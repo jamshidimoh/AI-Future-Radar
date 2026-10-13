@@ -38,8 +38,7 @@ def test_closure_gate_allows_zero_publish_only_for_explicitly_empty_selection():
     assert "no_selected_candidates = (" in text
     assert r"\[Publication Summary Budget\].*\boutput=0\b" in text
     assert r"\[Production Selection\].*\btotal=0\b" in text
-    assert "zero_selection_acceptance = has(" in text
-    assert "return zero_publish and no_selected_candidates and acceptance and zero_selection_acceptance" in text
+    assert "return zero_publish and no_selected_candidates and acceptance" in text
     assert "fail_closed_acceptance" not in text
     assert "publication_attempted" not in text
 

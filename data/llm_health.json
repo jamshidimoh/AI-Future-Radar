@@ -118,7 +118,7 @@
       "failures": 1,
       "disabled_until": 1791239261.479,
       "last_error": "model",
-      "last_success": 0
+      "last_success": 0.0
     }
   },
   "providers": {

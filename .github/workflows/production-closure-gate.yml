@@ -133,7 +133,7 @@ jobs:
               # discovery/selection counter of zero must not override a later nonzero
               # final output count.
               final_budget = re.findall(
-                  r"\[Publication Summary Budget\][^\n]*\boutput=(\d+)", text
+                  r"\[Publication Summary Budget\][^\n]*\boutput(?:_news)?=(\d+)", text
               )
               if final_budget:
                   no_selected_candidates = int(final_budget[-1]) == 0
@@ -149,11 +149,25 @@ jobs:
                   )
                   no_selected_candidates = selected_count == "0"
               acceptance = has(text, r"\[Production Acceptance\] PASS:")
+              rejected_accounting = re.findall(
+                  r"\[Production Acceptance\] PASS:\s+production acceptance PASS:\s+"
+                  r"fail-closed editorial/policy/publication rejection/accounting verified;\s+"
+                  r"selected=(\d+),\s+published=0,.*?accounted=(\d+)",
+                  text,
+                  re.I,
+              )
+              complete_rejection_accounting = any(
+                  int(selected) > 0 and int(accounted) >= int(selected)
+                  for selected, accounted in rejected_accounting
+              )
               if published:
                   return True
-              # Zero-delivery is valid only when the final selection was explicitly
-              # empty. Explicit rejection accounting must not mask selected>0 / sent=0.
-              return zero_publish and no_selected_candidates and acceptance
+              # Zero-delivery is valid only when no final candidates remained, or when
+              # every selected candidate has an explicit deterministic terminal rejection.
+              # Provider/transport failures never qualify as editorial rejection evidence.
+              return zero_publish and acceptance and (
+                  no_selected_candidates or complete_rejection_accounting
+              )
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
           if trigger_conclusion != "success":

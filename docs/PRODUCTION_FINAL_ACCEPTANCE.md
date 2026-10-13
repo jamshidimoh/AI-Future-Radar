@@ -43,10 +43,11 @@ The following evidence cannot be honestly proven by static CI alone and must be 
 
 ## What does NOT constitute a failure
 
-- A zero-publication run when no candidate clears the frozen quality floor.
-- Temporary upstream source outages when fallback and fail-closed contracts remain intact.
-- A lower-than-target mission area count when no eligible high-quality candidate exists for that area.
+- An empty final post-budget publication selection, explicitly recorded as `output=0` or `output_news=0`, with confirmed zero delivery (`Posts sent: 0/0`) and a passing runtime acceptance contract.
+- A lower-than-target mission area count when no eligible high-quality candidate exists for that area, provided the run otherwise satisfies the delivery and acceptance contracts.
 - Candidate replacement after QA rejection, provided the replacement passes the identical publication contract.
+
+A non-empty final selected set with zero delivered news is not a healthy production result, even when all selected candidates were rejected downstream. Provider-generation failures and Telegram transport failures cannot be reclassified as editorial rejections. The closure workflow requires confirmed news/education delivery or an explicitly empty final selection; it does not infer success from a generic PASS marker.
 
 ## Final declaration rule
 

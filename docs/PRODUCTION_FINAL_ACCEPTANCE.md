@@ -48,6 +48,17 @@ The following evidence cannot be honestly proven by static CI alone and must be 
 - A lower-than-target mission area count when no eligible high-quality candidate exists for that area.
 - Candidate replacement after QA rejection, provided the replacement passes the identical publication contract.
 
+## Zero-publication acceptance contract
+
+A run with zero delivered news is acceptable only through one of these two paths:
+
+1. The final publication budget is explicitly empty (the final `output`/`output_news` count is zero) and the runtime records `Posts sent: 0/N`.
+2. The final selected set is non-empty, but every selected candidate has an explicit terminal rejection under the deterministic editorial, score-floor, duplicate, or publication-policy gates. The terminal rejection count must cover the final selected count, Telegram delivery must explicitly report zero sends, and the run must contain no isolated provider-generation failure, unresolved mission-recovery hard failure, or Telegram transport error.
+
+A non-empty selected set with no publication and incomplete rejection accounting is a failure. Provider or transport outages are not editorial rejections, even when the log also contains rejected candidates. The guard must not infer success from a generic `PASS` string or from an upstream discovery count that differs from the final publication budget.
+
+The closure workflow checks the latest three actual production runtime attempts in sequence. It does not skip a failed/cancelled execution to assemble three older successes. Provider-failure isolation and late-QA replacement evidence is emitted only after the corresponding deterministic integration regressions pass.
+
 ## Final declaration rule
 
 The repository must not be labeled production-complete until all deterministic gates are green and all real-production evidence items above have been observed. Static CI success is necessary but not sufficient evidence for long-run operational reliability.

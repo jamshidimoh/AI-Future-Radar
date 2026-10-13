@@ -55,6 +55,18 @@ jobs:
               with urllib.request.urlopen(req, timeout=30) as response:
                   return json.load(response)
 
+          def patch_json(path, payload):
+              patch_headers = dict(headers)
+              patch_headers["Content-Type"] = "application/json"
+              req = urllib.request.Request(
+                  base + path,
+                  data=json.dumps(payload).encode("utf-8"),
+                  headers=patch_headers,
+                  method="PATCH",
+              )
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
           class NoRedirect(urllib.request.HTTPRedirectHandler):
               def redirect_request(self, req, fp, code, msg, headers, newurl):
                   return None
@@ -302,5 +314,9 @@ jobs:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))
               print("CLOSURE: ACCEPTANCE IN PROGRESS")
               sys.exit(1)
+          closed_issue = patch_json("/issues/69", {"state": "closed", "state_reason": "completed"})
+          if closed_issue.get("state") != "closed":
+              raise RuntimeError("closure evidence passed but issue #69 did not confirm closed state")
           print("CLOSURE: CLOSED — deterministic, code-pinned production evidence checks passed.")
+          print(f"FINAL_ISSUE: #{closed_issue.get('number')} state={closed_issue.get('state')} url={closed_issue.get('html_url')}")
           PY

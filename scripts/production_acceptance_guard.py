@@ -251,11 +251,12 @@ def validate(log_text: str) -> tuple[bool, str]:
     zero_publication_candidate_set = (
         selected > 0
         and early_published_count == 0
-        and posts_sent == 0
+        and posts_sent in (None, 0)
         and not education_confirmed
     )
     zero_publication_rejection_verified = (
         zero_publication_candidate_set
+        and posts_sent == 0
         and rejection_evidence["terminal_rejections"] >= selected
         and not _zero_publication_has_infrastructure_failure(lines)
     )
@@ -318,10 +319,13 @@ def validate(log_text: str) -> tuple[bool, str]:
         # remains unrecovered; a later successful recovery of the same lane closes
         # the earlier candidate-level failure.
         if gap > 0 and no_candidate >= gap and hard_failures == 0:
-            return True, (
-                "production acceptance PASS: mission coverage gap is attributable only to lanes with no eligible candidate; "
-                f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"
-            )
+            if not zero_publication_candidate_set:
+                return True, (
+                    "production acceptance PASS: mission coverage gap is attributable only to lanes with no eligible candidate; "
+                    f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"
+                )
+            # When no story was delivered, defer the final PASS until the selected-set
+            # rejection-accounting branch below has emitted the zero-publication contract.
         return False, (
             "production contract violation: mission portfolio coverage remained unmet; "
             f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}, hard_failures={hard_failures}"
@@ -330,10 +334,12 @@ def validate(log_text: str) -> tuple[bool, str]:
         gap = mission_coverage["target"] - (mission_coverage["recovered"] + mission_coverage["prepared"])
         no_candidate = mission_coverage.get("no_candidate_lanes", 0)
         if no_candidate >= gap:
-            return True, (
-                "production acceptance PASS: mission coverage evidence leaves only deterministic no-candidate lanes unresolved; "
-                f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"
-            )
+            if not zero_publication_candidate_set:
+                return True, (
+                    "production acceptance PASS: mission coverage evidence leaves only deterministic no-candidate lanes unresolved; "
+                    f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"
+                )
+            # Defer zero-delivery acceptance to the explicit selected-set accounting check.
         return False, (
             "production contract violation: mission portfolio coverage evidence is inconsistent; "
             f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"

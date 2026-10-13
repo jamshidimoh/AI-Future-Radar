@@ -172,6 +172,21 @@ def test_partial_publication_without_selected_set_accounting_is_failure():
     assert "left selected candidates unaccounted" in message
 
 
+def test_independent_published_lanes_count_as_valid_production_delivery():
+    log = """
+[Production Selection] total=3
+[Publication Summary Budget] input=3 output=3
+[Publication Policy] PUBLISH technical_trend rank=1
+[Publication Policy] PUBLISH voices_perspectives rank=1
+[Publication Policy] PUBLISH strategic_analytical rank=1
+[Production Contract] normal_news=0 normal_max=3 people=0 people_max=none technical_trend=1 technical_max=1 mind_ideas_voices=0 mind_max=1 voices_perspectives=1 voices_max=1 tier0_news=0 strategic_analytical=1 strategic_max=1 education=not_due
+Posts sent: 3/3
+"""
+    ok, message = validate(log)
+    assert ok is True
+    assert "published_news=3" in message
+
+
 def test_confirmed_education_recovery_counts_as_confirmed_production_delivery():
     ok, message = validate(CONFIRMED_EDUCATION_RECOVERY)
     assert ok is True

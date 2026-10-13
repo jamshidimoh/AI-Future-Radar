@@ -42,6 +42,27 @@ Posts sent: 1/1
         self.assertFalse(publish_evidence(log))
         self.assertTrue(publish_evidence(log + "\n[Telegram Published] message_id=12"))
 
+    def test_confirmed_education_is_a_real_publication(self):
+        log = """
+[Production Selection] total=0
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 education=confirmed
+Posts sent: 0/0
+[Production Acceptance] PASS: selected=0, published_news=0, education=confirmed
+[Education Published] CONFIRMED lesson_slot=2026-10-13:morning run=734 telegram_delivery=successful
+"""
+        self.assertTrue(publish_evidence(log))
+
+    def test_latest_runtime_selection_count_wins_without_budget_marker(self):
+        log = """
+[Selection Timing] candidates=8
+[Production Selection] total=2
+Posts sent: 1/2
+[Telegram Published] message_id=13
+[Production Acceptance] PASS: published_news=1
+"""
+        self.assertEqual(selected_candidate_count(log), 2)
+        self.assertTrue(publish_evidence(log))
+
     def test_only_skipped_state_persistence_push_is_ignored(self):
         run = {"event": "push", "head_commit": {"message": "chore: persist production state [skip ci]"}}
         self.assertTrue(is_persisted_state_skip(run, {"conclusion": "skipped"}))

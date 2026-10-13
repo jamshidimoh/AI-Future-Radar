@@ -135,6 +135,10 @@ def _omniroute_call(system_prompt, user_content):
             {"role": "user", "content": user_content},
         ],
         "temperature": 0.15,
+        # OmniRoute v3.8.50 supports OpenAI-compatible structured output. Request
+        # JSON mode explicitly instead of relying only on prompt wording; the
+        # existing strict parser still rejects any malformed/non-object result.
+        "response_format": {"type": "json_object"},
         "max_tokens": max(256, int(os.getenv("RADAR_LLM_MAX_TOKENS", "700") or 700)),
         "stream": False,
     }

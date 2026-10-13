@@ -99,7 +99,7 @@ def test_expansion_is_loaded_after_existing_curriculum():
     sequence = module.educational_content._lesson_sequence()
     ids = [int(lesson.get("id", 0) or 0) for _, lesson in sequence]
     assert 115 in ids
-    assert ids[-1] >= 122
+    assert ids[-1] >= 130
     assert ids.index(115) > ids.index(114)
     tracks = {lesson_id: track for track, lesson in sequence for lesson_id in [int(lesson.get("id", 0) or 0)]}
     assert tracks[115] == "expansion"
@@ -117,6 +117,26 @@ def test_expansion_prevents_premature_exhaustion_with_all_previous_lessons_compl
     assert lesson_id == 115
     assert lesson == expansion_lesson
     assert total == 3
+
+
+def test_expansion_continues_after_all_previously_shipped_lessons(monkeypatch):
+    sequence = module.educational_content._lesson_sequence()
+    ids = [int(lesson.get("id", 0) or 0) for _, lesson in sequence]
+    assert all(lesson_id in ids for lesson_id in range(123, 131))
+
+    # Model the production state where all previously published lessons through
+    # 122 are complete, but none of the newly added continuation lessons are.
+    monkeypatch.setattr(
+        module.educational_content,
+        "_completed_ids",
+        lambda: set(range(1, 123)),
+    )
+    lesson, lesson_id, total = module.educational_content._next_lesson()
+    assert lesson_id == 123
+    assert lesson is not None
+    assert lesson["title"] == "Agent Evaluation Task و Trial"
+    assert total == len(sequence)
+    assert total >= 84
 
 
 def test_recovery_treats_true_exhaustion_as_non_fatal(monkeypatch, capsys):

@@ -198,7 +198,7 @@ def validate(log_text: str) -> tuple[bool, str]:
     early_lane_counts = [
         int(value)
         for value in re.findall(
-            r"\b(?:normal_news|mind_ideas_voices|people|technical_trend|voices_perspectives|strategic_analytical|tier0_news)=(\d+)",
+            r"\b(?:final_news|normal_news|mind_ideas_voices|people|technical_trend|voices_perspectives|strategic_analytical|tier0_news)=(\d+)",
             contract_line,
         )
     ]

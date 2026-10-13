@@ -661,6 +661,9 @@ def main(hooks=None):
     all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities)
     seen_hashes, seen_signatures = load_seen()
     source_history = load_source_history()
+    # Initialize the local list for the completed-bootstrap branch as well; the
+    # first run after bootstrap completion must not reference an unbound local.
+    people_candidates = []
     if people_bootstrap_mode:
         people_candidates = bootstrap_candidates(
             all_items,

@@ -21,6 +21,28 @@ Posts sent: 0/0
         self.assertEqual(posts_sent_counts(log), (0, 0))
         self.assertTrue(publish_evidence(log))
 
+    def test_output_news_budget_zero_is_authoritative_over_earlier_selection(self):
+        log = """
+[Selection Timing] candidates=8
+[Publication Summary Budget] input=8 output_news=0 final_capacity=3 candidate_window=6
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 0/0
+[Production Acceptance] PASS: selected=0, published_news=0
+"""
+        self.assertEqual(selected_candidate_count(log), 0)
+        self.assertTrue(publish_evidence(log))
+
+    def test_output_news_nonzero_blocks_zero_candidate_evidence(self):
+        log = """
+[Selection Timing] candidates=8
+[Publication Summary Budget] input=8 output_news=2 final_capacity=3 candidate_window=6
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 0/2
+[Production Acceptance] PASS: selected=2, published_news=0
+"""
+        self.assertEqual(selected_candidate_count(log), 2)
+        self.assertFalse(publish_evidence(log))
+
     def test_downstream_rejection_is_not_zero_candidate_evidence(self):
         log = """
 [Production Selection] total=1

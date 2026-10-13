@@ -35,3 +35,10 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
 # Production validation trigger: OmniRoute 3.8.50 contract.
 
 # Final production validation: secrets + OmniRoute + TypeSafe.
+
+
+
+def test_local_ollama_fallback_has_cold_start_timeout_for_cpu_inference():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert text.count("RADAR_OLLAMA_TIMEOUT_SECONDS: 90") == 2
+    assert "RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b" in text

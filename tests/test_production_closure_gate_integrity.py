@@ -11,13 +11,15 @@ def test_closure_gate_does_not_certify_when_logs_are_unavailable():
     assert "sys.exit(1)" in text
 
 
-def test_closure_gate_requires_three_executable_runs_as_a_failure_until_closed():
+def test_closure_gate_requires_three_consecutive_runtime_attempts_and_blocks_failures():
     text = WORKFLOW.read_text(encoding="utf-8")
-    marker = "if len(executable) < 3:"
+    marker = "if len(runtime_attempts) < 3:"
     start = text.index(marker)
-    block = text[start:start + 300]
+    block = text[start:start + 450]
     assert "3 required" in block
     assert "sys.exit(1)" in block
+    assert "if failed_runtime_attempts:" in text
+    assert "latest three consecutive production runtime attempts include failures" in text
 
 
 def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
@@ -31,11 +33,15 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     assert "if log_errors or len(logs) != 3:" in text
 
 
-def test_closure_gate_uses_runtime_acceptance_for_zero_publish():
+def test_closure_gate_allows_zero_publish_only_for_explicitly_empty_selection():
     text = WORKFLOW.read_text(encoding="utf-8")
-    assert "fail_closed_acceptance = has(text, r\"\\[Production Acceptance\\] PASS:\\s+production acceptance PASS:\\s+fail-closed\")" in text
-    assert "return zero_publish and acceptance and fail_closed_acceptance and publication_attempted" in text
-    assert "[Fail-Closed Acceptance Evidence] PASS" not in text
+    assert "no_selected_candidates = (" in text
+    assert r"\[Publication Summary Budget\].*\boutput=0\b" in text
+    assert r"\[Production Selection\].*\btotal=0\b" in text
+    assert "zero_selection_acceptance = has(" in text
+    assert "return zero_publish and no_selected_candidates and acceptance and zero_selection_acceptance" in text
+    assert "fail_closed_acceptance" not in text
+    assert "publication_attempted" not in text
 
 
 def test_closure_gate_blocks_unresolved_evidence_with_failure_status():
@@ -48,3 +54,10 @@ def test_closure_gate_blocks_unresolved_evidence_with_failure_status():
 def test_closure_gate_has_no_push_trigger():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "\n  push:" not in text
+
+
+def test_closure_gate_zero_publish_evidence_counts_all_publication_lanes():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "lane_counts = [" in text
+    assert "all(value == 0 for value in lane_counts)" in text
+    assert r"\[Education Published\].*telegram_delivery=successful" in text

@@ -136,16 +136,28 @@ Posts sent: 2/3
 """
 
 
-def test_all_selected_candidates_rejected_downstream_is_fail_closed_pass():
+def test_selected_candidates_all_rejected_downstream_still_fails_zero_publication():
     ok, message = validate(FAIL_CLOSED_EDITORIAL_REJECTION)
-    assert ok is True
-    assert "fail-closed editorial/policy/publication rejection/accounting verified" in message
+    assert ok is False
+    assert "zero news items were published from a non-empty selected set" in message
 
 
 def test_zero_publication_without_rejection_evidence_is_failure():
     ok, message = validate(UNEXPECTED_ZERO_PUBLICATION)
     assert ok is False
-    assert "did not provide evidence" in message
+    assert "zero news items were published from a non-empty selected set" in message
+
+
+def test_zero_candidates_and_zero_publications_are_acceptable():
+    log = """
+[Production Selection] total=0
+[Publication Summary Budget] input=0 output=0 normal_window=0 replacement_buffer=0
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 0/0
+"""
+    ok, message = validate(log)
+    assert ok is True
+    assert "selected=0" in message
 
 
 def test_successful_publication_remains_pass_when_all_selected_are_accounted_for():
@@ -160,7 +172,22 @@ def test_partial_publication_without_selected_set_accounting_is_failure():
     assert "left selected candidates unaccounted" in message
 
 
-def test_confirmed_education_recovery_is_accounted_for():
+def test_independent_published_lanes_count_as_valid_production_delivery():
+    log = """
+[Production Selection] total=3
+[Publication Summary Budget] input=3 output=3
+[Publication Policy] PUBLISH technical_trend rank=1
+[Publication Policy] PUBLISH voices_perspectives rank=1
+[Publication Policy] PUBLISH strategic_analytical rank=1
+[Production Contract] normal_news=0 normal_max=3 people=0 people_max=none technical_trend=1 technical_max=1 mind_ideas_voices=0 mind_max=1 voices_perspectives=1 voices_max=1 tier0_news=0 strategic_analytical=1 strategic_max=1 education=not_due
+Posts sent: 3/3
+"""
+    ok, message = validate(log)
+    assert ok is True
+    assert "published_news=3" in message
+
+
+def test_confirmed_education_recovery_counts_as_confirmed_production_delivery():
     ok, message = validate(CONFIRMED_EDUCATION_RECOVERY)
     assert ok is True
     assert "education=confirmed" in message

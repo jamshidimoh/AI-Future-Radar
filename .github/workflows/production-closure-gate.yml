@@ -15,6 +15,14 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'cancelled' || github.event.workflow_run.conclusion == 'timed_out' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout production contract code
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: Test production closure contract helpers
+        run: python -m unittest discover -s tests -p 'test_production_closure_contract.py' -v
+
       - name: Evaluate production evidence
         env:
           GH_TOKEN: ${{ github.token }}
@@ -33,6 +41,8 @@ jobs:
           import urllib.error
           import urllib.request
 
+          from scripts.production_closure_contract import is_persisted_state_skip, publish_evidence
+
           repo = os.environ["REPO"]
           token = os.environ["GH_TOKEN"]
           trigger_conclusion = os.environ.get("TRIGGER_CONCLUSION", "unknown")
@@ -42,6 +52,18 @@ jobs:
 
           def get_json(path):
               req = urllib.request.Request(base + path, headers=headers)
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          def patch_json(path, payload):
+              patch_headers = dict(headers)
+              patch_headers["Content-Type"] = "application/json"
+              req = urllib.request.Request(
+                  base + path,
+                  data=json.dumps(payload).encode("utf-8"),
+                  headers=patch_headers,
+                  method="PATCH",
+              )
               with urllib.request.urlopen(req, timeout=30) as response:
                   return json.load(response)
 
@@ -112,16 +134,7 @@ jobs:
                   return True
               return all(float(score) >= float(floor) for score, floor in published)
 
-          def publish_evidence(text):
-              published = has(text, r"\[Telegram Published\]")
-              publication_attempted = has(text, r"\[Publication Policy\]\s+PUBLISH\b") or has(text, r"\[Production Acceptance\] PASS:.*no_candidate_lanes=\d+")
-              zero_publish = has(text, r"Posts sent: 0/") and has(text, r"normal_news=0[^\n]*tier0_news=0")
-              acceptance = has(text, r"\[Production Acceptance\] PASS:")
-              fail_closed_acceptance = has(text, r"\[Production Acceptance\] PASS:\s+production acceptance PASS:\s+fail-closed")
-              fail_closed_acceptance = fail_closed_acceptance or has(text, r"\[Production Acceptance\] PASS:.*no_candidate_lanes=\d+")
-              if published:
-                  return True
-              return zero_publish and acceptance and fail_closed_acceptance and publication_attempted
+          # Publication acceptance is shared and unit-tested in scripts/production_closure_contract.py.
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
           if trigger_conclusion != "success":
@@ -136,40 +149,52 @@ jobs:
           # provider quotas. A 30-run API page was too shallow and could hide the
           # last successful production evidence, causing a false closure block.
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=100")
-          runs = [r for r in runs_data.get("workflow_runs", []) if r.get("name") == "Run AI Future Radar Bot"]
-          executable = []
+          runs = [
+              r for r in runs_data.get("workflow_runs", [])
+              if r.get("name") == "Run AI Future Radar Bot" and r.get("head_branch") == "main"
+          ]
+          attempted = []
           excluded = []
           for run in runs:
-              if run.get("conclusion") != "success":
-                  excluded.append((run.get("run_number"), run.get("conclusion"), "workflow_not_success"))
-                  continue
               jobs = get_json(f"/actions/runs/{run['id']}/jobs?per_page=50").get("jobs", [])
               bots = [j for j in jobs if j.get("name") == "run-bot"]
-              if not bots:
-                  excluded.append((run.get("run_number"), run.get("conclusion"), "run-bot_missing"))
+              bot = bots[0] if bots else None
+              if is_persisted_state_skip(run, bot):
+                  excluded.append((run.get("run_number"), "state-only skip"))
                   continue
-              bot = bots[0]
-              if bot.get("conclusion") != "success":
-                  excluded.append((run.get("run_number"), bot.get("conclusion"), "run-bot_not_success"))
-                  continue
-              steps = {s.get("name"): s.get("conclusion") for s in bot.get("steps", [])}
-              if steps.get("Run bot with ranking audit") != "success":
-                  excluded.append((run.get("run_number"), bot.get("conclusion"), "runtime_not_reached"))
-                  continue
-              if steps.get("Enforce runtime production acceptance") != "success":
-                  excluded.append((run.get("run_number"), bot.get("conclusion"), "runtime_acceptance_missing"))
-                  continue
-              executable.append(run)
+              # Every non-state-only production invocation occupies a place in the
+              # consecutive evidence window, including failures and cancellations.
+              # Such a run must block closure instead of being silently skipped.
+              attempted.append({"run": run, "bot": bot})
+              if len(attempted) == 3:
+                  break
 
-          if len(executable) < 3:
-              print(f"CLOSURE: BLOCKED — only {len(executable)} executable production runs observed; 3 required.")
-              print("Excluded runs:", excluded[:100])
+          if len(attempted) < 3:
+              print(f"CLOSURE: BLOCKED — only {len(attempted)} consecutive production attempts observed; 3 required.")
+              print("Excluded state-only runs:", excluded[:100])
               sys.exit(1)
 
-          window = executable[:3]
+          window = [entry["run"] for entry in attempted]
+          for entry in attempted:
+              run, bot = entry["run"], entry["bot"]
+              if run.get("conclusion") != "success" or not bot or bot.get("conclusion") != "success":
+                  print(
+                      "CLOSURE: BLOCKED — one of the latest three consecutive production attempts failed: "
+                      f"run=#{run.get('run_number')} workflow={run.get('conclusion')} "
+                      f"run_bot={bot.get('conclusion') if bot else 'missing'}"
+                  )
+                  sys.exit(1)
+              steps = {s.get("name"): s.get("conclusion") for s in bot.get("steps", [])}
+              if steps.get("Run bot with ranking audit") != "success":
+                  print(f"CLOSURE: BLOCKED — runtime was not reached in run #{run.get('run_number')}")
+                  sys.exit(1)
+              if steps.get("Enforce runtime production acceptance") != "success":
+                  print(f"CLOSURE: BLOCKED — runtime acceptance did not pass in run #{run.get('run_number')}")
+                  sys.exit(1)
+
           fingerprints = {run["run_number"]: code_fingerprint(run["head_sha"]) for run in window}
           distinct_fingerprints = sorted(set(fingerprints.values()))
-          print("Closure window:", [(r.get("run_number"), r.get("id"), r.get("head_sha", "")[:8]) for r in window])
+          print("Closure window (three consecutive production attempts):", [(r.get("run_number"), r.get("id"), r.get("head_sha", "")[:8]) for r in window])
           print("Code fingerprints:", fingerprints)
           if len(distinct_fingerprints) != 1:
               print("CLOSURE: BLOCKED — closure window is not code-pinned; production code changed within the 3-run evidence window")
@@ -289,5 +314,9 @@ jobs:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))
               print("CLOSURE: ACCEPTANCE IN PROGRESS")
               sys.exit(1)
+          closed_issue = patch_json("/issues/69", {"state": "closed", "state_reason": "completed"})
+          if closed_issue.get("state") != "closed":
+              raise RuntimeError("closure evidence passed but issue #69 did not confirm closed state")
           print("CLOSURE: CLOSED — deterministic, code-pinned production evidence checks passed.")
+          print(f"FINAL_ISSUE: #{closed_issue.get('number')} state={closed_issue.get('state')} url={closed_issue.get('html_url')}")
           PY

@@ -1,12 +1,11 @@
 """Runtime acceptance guard for the production publication contract.
 
-A selected candidate must end in an auditable terminal state: publication,
-explicit editorial/policy/publication rejection, or an upstream structural
-rejection such as canonical-story deduplication. Mission portfolio coverage is
-also a production invariant: when the runtime explicitly reports an unmet
-mission-coverage target, acceptance must fail closed rather than passing on
-publication accounting alone. Normal and Mind/Ideas/Voices lanes are validated
-as distinct contracts; the normal score floor never applies to Mind.
+A production run that selects one or more candidates but publishes no news is a
+failure, even if every selected candidate was rejected downstream. Zero publication
+is acceptable only when the effective post-budget selection is genuinely empty.
+Mission portfolio coverage is also a production invariant. Normal and
+Mind/Ideas/Voices lanes are validated as distinct contracts; the normal score
+floor never applies to Mind.
 """
 from __future__ import annotations
 
@@ -24,6 +23,9 @@ CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*")
 NORMAL_CONTRACT_PATTERN = re.compile(r"normal_news=(\d+)\s+normal_max=(\d+)")
 MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
 PEOPLE_CONTRACT_PATTERN = re.compile(r"people=(\d+)\s+people_max=([^\s]+)")
+TECHNICAL_TREND_CONTRACT_PATTERN = re.compile(r"technical_trend=(\d+)")
+VOICES_PERSPECTIVES_CONTRACT_PATTERN = re.compile(r"voices_perspectives=(\d+)")
+STRATEGIC_ANALYTICAL_CONTRACT_PATTERN = re.compile(r"strategic_analytical=(\d+)")
 PEOPLE_BOOTSTRAP_PATTERN = re.compile(r"\[People Bootstrap\]\s+status=(\w+)\s+delivered=(\d+)/(\d+)\s+baseline=(\d+)/(\d+)")
 TIER0_CONTRACT_PATTERN = re.compile(r"tier0_news=(\d+)(?:\s+tier0_quota_exempt=(\w+))?")
 EDUCATION_CONTRACT_PATTERN = re.compile(r"education=(\w+)")
@@ -191,6 +193,44 @@ def validate(log_text: str) -> tuple[bool, str]:
     if contract_match is None:
         return False, "missing production contract summary"
 
+    # Enforce the final production definition of done before any mission-lane or
+    # bootstrap shortcut can return PASS: when candidates reached the publication
+    # budget but zero news items were published, the run is a production failure.
+    # A genuine zero-candidate run remains acceptable when the effective selected
+    # count is exactly zero.
+    contract_line_preflight = contract_match.group(0)
+    summary_budget_preflight = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))
+    selected_preflight = (
+        int(summary_budget_preflight.group(1))
+        if summary_budget_preflight is not None
+        else int(candidate_match.group(1))
+    )
+    normal_preflight = NORMAL_CONTRACT_PATTERN.search(contract_line_preflight)
+    mind_preflight = MIND_CONTRACT_PATTERN.search(contract_line_preflight)
+    people_preflight = PEOPLE_CONTRACT_PATTERN.search(contract_line_preflight)
+    tier0_preflight = TIER0_CONTRACT_PATTERN.search(contract_line_preflight)
+    education_preflight = EDUCATION_CONTRACT_PATTERN.search(contract_line_preflight)
+    technical_preflight = TECHNICAL_TREND_CONTRACT_PATTERN.search(contract_line_preflight)
+    voices_preflight = VOICES_PERSPECTIVES_CONTRACT_PATTERN.search(contract_line_preflight)
+    strategic_preflight = STRATEGIC_ANALYTICAL_CONTRACT_PATTERN.search(contract_line_preflight)
+    education_confirmed_preflight = bool(
+        education_preflight and education_preflight.group(1).casefold() == "confirmed"
+    ) or _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)) is not None
+    if normal_preflight is not None and tier0_preflight is not None:
+        published_preflight = int(normal_preflight.group(1))
+        published_preflight += int(mind_preflight.group(1)) if mind_preflight else 0
+        published_preflight += int(people_preflight.group(1)) if people_preflight else 0
+        published_preflight += int(technical_preflight.group(1)) if technical_preflight else 0
+        published_preflight += int(voices_preflight.group(1)) if voices_preflight else 0
+        published_preflight += int(strategic_preflight.group(1)) if strategic_preflight else 0
+        published_preflight += int(tier0_preflight.group(1))
+        if selected_preflight > 0 and published_preflight == 0 and not education_confirmed_preflight:
+            return False, (
+                "production contract violation: zero news items were published from a non-empty selected set "
+                "without confirmed delivery; "
+                f"selected={selected_preflight}, published_news={published_preflight}"
+            )
+
     mission_coverage = _mission_coverage_status(lines)
 
     if bootstrap_progress and not bootstrap_progress["complete"] and not (
@@ -261,6 +301,12 @@ def validate(log_text: str) -> tuple[bool, str]:
     if people_match and people_match.group(2).casefold() != "none":
         return False, f"People lane must be uncapped; found people_max={people_match.group(2)}"
     tier0_news = int(tier0_match.group(1))
+    technical_match = TECHNICAL_TREND_CONTRACT_PATTERN.search(contract_line)
+    voices_match = VOICES_PERSPECTIVES_CONTRACT_PATTERN.search(contract_line)
+    strategic_match = STRATEGIC_ANALYTICAL_CONTRACT_PATTERN.search(contract_line)
+    technical_news = int(technical_match.group(1)) if technical_match else 0
+    voices_news = int(voices_match.group(1)) if voices_match else 0
+    strategic_news = int(strategic_match.group(1)) if strategic_match else 0
     tier0_quota_exempt = (tier0_match.group(2) or "false").lower() == "true"
     education = education_match.group(1)
     if _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
@@ -286,7 +332,15 @@ def validate(log_text: str) -> tuple[bool, str]:
         if mind_news > mind_max > 0:
             return False, f"production contract violation: Mind lane exceeds configured cap: {mind_news}>{mind_max}"
 
-    published_news = normal_news + mind_news + people_news + tier0_news
+    published_news = (
+        normal_news
+        + mind_news
+        + people_news
+        + technical_news
+        + voices_news
+        + strategic_news
+        + tier0_news
+    )
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
     policy_rejections = sum(1 for line in lines if POLICY_REJECTION_PATTERN.search(line))
     publication_rejections = sum(1 for line in lines if PUBLICATION_REJECTION_PATTERN.search(line))
@@ -319,13 +373,9 @@ def validate(log_text: str) -> tuple[bool, str]:
             f"scores={violating_mind_scores}, floor={MIND_IDEAS_VOICES_SCORE_FLOOR}"
         )
     if selected > 0 and published_news == 0 and education != "confirmed":
-        if accounted >= selected and (posts_sent is None or posts_sent == 0):
-            return True, (
-                "production acceptance PASS: fail-closed editorial/policy/publication rejection/accounting verified; "
-                f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, education={education}"
-            )
         return False, (
-            "production contract violation: zero news items were published and the selected set did not provide evidence of publication or explicit rejection; "
+            "production contract violation: zero news items were published from a non-empty selected set "
+            "without confirmed delivery; "
             f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
         )
 

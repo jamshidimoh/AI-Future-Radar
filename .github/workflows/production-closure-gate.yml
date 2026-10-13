@@ -122,18 +122,32 @@ jobs:
               lane_counts = [
                   int(value)
                   for value in re.findall(
-                      r"\b(?:normal_news|mind_ideas_voices|people|technical_trend|voices_perspectives|strategic_analytical|tier0_news)=(\d+)",
+                      r"\b(?:final_news|normal_news|mind_ideas_voices|people|technical_trend|voices_perspectives|strategic_analytical|tier0_news)=(\d+)",
                       contract_line,
                   )
               ]
               zero_publish = bool(lane_counts) and all(value == 0 for value in lane_counts) and has(
                   text, r"Posts sent:\s*0/\s*\d+"
               )
-              no_selected_candidates = (
-                  has(text, r"\[Publication Summary Budget\].*\boutput=0\b")
-                  or has(text, r"\[Production Selection\].*\btotal=0\b")
-                  or has(text, r"\[Selection Timing\].*\bcandidates=0\b")
+              # The final summary budget is authoritative when present. An earlier
+              # discovery/selection counter of zero must not override a later nonzero
+              # final output count.
+              final_budget = re.findall(
+                  r"\[Publication Summary Budget\][^\n]*\boutput=(\d+)", text
               )
+              if final_budget:
+                  no_selected_candidates = int(final_budget[-1]) == 0
+              else:
+                  final_selection = re.findall(
+                      r"\[Production Selection\][^\n]*\btotal=(\d+)", text
+                  )
+                  timing_candidates = re.findall(
+                      r"\[Selection Timing\][^\n]*\bcandidates=(\d+)", text
+                  )
+                  selected_count = final_selection[-1] if final_selection else (
+                      timing_candidates[-1] if timing_candidates else None
+                  )
+                  no_selected_candidates = selected_count == "0"
               acceptance = has(text, r"\[Production Acceptance\] PASS:")
               if published:
                   return True

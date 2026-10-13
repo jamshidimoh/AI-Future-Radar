@@ -23,6 +23,9 @@ CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*")
 NORMAL_CONTRACT_PATTERN = re.compile(r"normal_news=(\d+)\s+normal_max=(\d+)")
 MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
 PEOPLE_CONTRACT_PATTERN = re.compile(r"people=(\d+)\s+people_max=([^\s]+)")
+TECHNICAL_TREND_CONTRACT_PATTERN = re.compile(r"technical_trend=(\d+)")
+VOICES_PERSPECTIVES_CONTRACT_PATTERN = re.compile(r"voices_perspectives=(\d+)")
+STRATEGIC_ANALYTICAL_CONTRACT_PATTERN = re.compile(r"strategic_analytical=(\d+)")
 PEOPLE_BOOTSTRAP_PATTERN = re.compile(r"\[People Bootstrap\]\s+status=(\w+)\s+delivered=(\d+)/(\d+)\s+baseline=(\d+)/(\d+)")
 TIER0_CONTRACT_PATTERN = re.compile(r"tier0_news=(\d+)(?:\s+tier0_quota_exempt=(\w+))?")
 EDUCATION_CONTRACT_PATTERN = re.compile(r"education=(\w+)")
@@ -207,6 +210,9 @@ def validate(log_text: str) -> tuple[bool, str]:
     people_preflight = PEOPLE_CONTRACT_PATTERN.search(contract_line_preflight)
     tier0_preflight = TIER0_CONTRACT_PATTERN.search(contract_line_preflight)
     education_preflight = EDUCATION_CONTRACT_PATTERN.search(contract_line_preflight)
+    technical_preflight = TECHNICAL_TREND_CONTRACT_PATTERN.search(contract_line_preflight)
+    voices_preflight = VOICES_PERSPECTIVES_CONTRACT_PATTERN.search(contract_line_preflight)
+    strategic_preflight = STRATEGIC_ANALYTICAL_CONTRACT_PATTERN.search(contract_line_preflight)
     education_confirmed_preflight = bool(
         education_preflight and education_preflight.group(1).casefold() == "confirmed"
     ) or _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)) is not None
@@ -214,6 +220,9 @@ def validate(log_text: str) -> tuple[bool, str]:
         published_preflight = int(normal_preflight.group(1))
         published_preflight += int(mind_preflight.group(1)) if mind_preflight else 0
         published_preflight += int(people_preflight.group(1)) if people_preflight else 0
+        published_preflight += int(technical_preflight.group(1)) if technical_preflight else 0
+        published_preflight += int(voices_preflight.group(1)) if voices_preflight else 0
+        published_preflight += int(strategic_preflight.group(1)) if strategic_preflight else 0
         published_preflight += int(tier0_preflight.group(1))
         if selected_preflight > 0 and published_preflight == 0 and not education_confirmed_preflight:
             return False, (
@@ -292,6 +301,12 @@ def validate(log_text: str) -> tuple[bool, str]:
     if people_match and people_match.group(2).casefold() != "none":
         return False, f"People lane must be uncapped; found people_max={people_match.group(2)}"
     tier0_news = int(tier0_match.group(1))
+    technical_match = TECHNICAL_TREND_CONTRACT_PATTERN.search(contract_line)
+    voices_match = VOICES_PERSPECTIVES_CONTRACT_PATTERN.search(contract_line)
+    strategic_match = STRATEGIC_ANALYTICAL_CONTRACT_PATTERN.search(contract_line)
+    technical_news = int(technical_match.group(1)) if technical_match else 0
+    voices_news = int(voices_match.group(1)) if voices_match else 0
+    strategic_news = int(strategic_match.group(1)) if strategic_match else 0
     tier0_quota_exempt = (tier0_match.group(2) or "false").lower() == "true"
     education = education_match.group(1)
     if _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)):
@@ -317,7 +332,15 @@ def validate(log_text: str) -> tuple[bool, str]:
         if mind_news > mind_max > 0:
             return False, f"production contract violation: Mind lane exceeds configured cap: {mind_news}>{mind_max}"
 
-    published_news = normal_news + mind_news + people_news + tier0_news
+    published_news = (
+        normal_news
+        + mind_news
+        + people_news
+        + technical_news
+        + voices_news
+        + strategic_news
+        + tier0_news
+    )
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
     policy_rejections = sum(1 for line in lines if POLICY_REJECTION_PATTERN.search(line))
     publication_rejections = sum(1 for line in lines if PUBLICATION_REJECTION_PATTERN.search(line))

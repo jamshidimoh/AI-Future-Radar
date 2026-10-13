@@ -113,15 +113,36 @@ jobs:
               return all(float(score) >= float(floor) for score, floor in published)
 
           def publish_evidence(text):
-              published = has(text, r"\[Telegram Published\]")
-              publication_attempted = has(text, r"\[Publication Policy\]\s+PUBLISH\b") or has(text, r"\[Production Acceptance\] PASS:.*no_candidate_lanes=\d+")
-              zero_publish = has(text, r"Posts sent: 0/") and has(text, r"normal_news=0[^\n]*tier0_news=0")
+              # Education delivery is a real Telegram publication too.
+              published = has(text, r"\[Telegram Published\]") or has(
+                  text, r"\[Education Published\].*telegram_delivery=successful"
+              )
+              contract_lines = re.findall(r"\[Production Contract\][^\n]*", text)
+              contract_line = contract_lines[-1] if contract_lines else ""
+              lane_counts = [
+                  int(value)
+                  for value in re.findall(
+                      r"\b(?:normal_news|mind_ideas_voices|people|technical_trend|voices_perspectives|strategic_analytical|tier0_news)=(\d+)",
+                      contract_line,
+                  )
+              ]
+              zero_publish = bool(lane_counts) and all(value == 0 for value in lane_counts) and has(
+                  text, r"Posts sent:\s*0/\s*\d+"
+              )
+              no_selected_candidates = (
+                  has(text, r"\[Publication Summary Budget\].*\boutput=0\b")
+                  or has(text, r"\[Production Selection\].*\btotal=0\b")
+                  or has(text, r"\[Selection Timing\].*\bcandidates=0\b")
+              )
+              zero_selection_acceptance = has(
+                  text, r"\[Production Acceptance\] PASS:.*\bselected=0\b"
+              )
               acceptance = has(text, r"\[Production Acceptance\] PASS:")
-              fail_closed_acceptance = has(text, r"\[Production Acceptance\] PASS:\s+production acceptance PASS:\s+fail-closed")
-              fail_closed_acceptance = fail_closed_acceptance or has(text, r"\[Production Acceptance\] PASS:.*no_candidate_lanes=\d+")
               if published:
                   return True
-              return zero_publish and acceptance and fail_closed_acceptance and publication_attempted
+              # Zero-delivery is valid only when the final selection was explicitly
+              # empty. Explicit rejection accounting must not mask selected>0 / sent=0.
+              return zero_publish and no_selected_candidates and acceptance and zero_selection_acceptance
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
           if trigger_conclusion != "success":
@@ -131,17 +152,20 @@ jobs:
               )
               print("CLOSURE: ACCEPTANCE IN PROGRESS")
               sys.exit(1)
-          # Keep a sufficiently deep evidence window. The production workflow can
-          # legitimately create many cancelled/failed runs while recovering from
-          # provider quotas. A 30-run API page was too shallow and could hide the
-          # last successful production evidence, causing a false closure block.
+          # Inspect the newest actual runtime attempts in descending creation order.
+          # A failed/cancelled attempt must stay in the window; filtering failures
+          # out and then taking three older successes would falsely certify closure.
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=100")
           runs = [r for r in runs_data.get("workflow_runs", []) if r.get("name") == "Run AI Future Radar Bot"]
-          executable = []
+          runtime_attempts = []
           excluded = []
           for run in runs:
-              if run.get("conclusion") != "success":
-                  excluded.append((run.get("run_number"), run.get("conclusion"), "workflow_not_success"))
+              # State-persistence pushes intentionally skip run-bot and are not
+              # production executions. Scheduled/dispatch runs at the same SHA
+              # remain eligible and must not be filtered by commit message alone.
+              commit_message = str((run.get("head_commit") or {}).get("message") or "")
+              if run.get("event") == "push" and commit_message.startswith("chore: persist production state [skip ci]"):
+                  excluded.append((run.get("run_number"), run.get("conclusion"), "state_persistence_only"))
                   continue
               jobs = get_json(f"/actions/runs/{run['id']}/jobs?per_page=50").get("jobs", [])
               bots = [j for j in jobs if j.get("name") == "run-bot"]
@@ -149,24 +173,41 @@ jobs:
                   excluded.append((run.get("run_number"), run.get("conclusion"), "run-bot_missing"))
                   continue
               bot = bots[0]
-              if bot.get("conclusion") != "success":
-                  excluded.append((run.get("run_number"), bot.get("conclusion"), "run-bot_not_success"))
-                  continue
               steps = {s.get("name"): s.get("conclusion") for s in bot.get("steps", [])}
-              if steps.get("Run bot with ranking audit") != "success":
+              runtime_conclusion = steps.get("Run bot with ranking audit")
+              if runtime_conclusion not in {"success", "failure", "cancelled", "timed_out"}:
                   excluded.append((run.get("run_number"), bot.get("conclusion"), "runtime_not_reached"))
                   continue
-              if steps.get("Enforce runtime production acceptance") != "success":
-                  excluded.append((run.get("run_number"), bot.get("conclusion"), "runtime_acceptance_missing"))
-                  continue
-              executable.append(run)
+              acceptance_conclusion = steps.get("Enforce runtime production acceptance")
+              runtime_ok = (
+                  run.get("conclusion") == "success"
+                  and bot.get("conclusion") == "success"
+                  and runtime_conclusion == "success"
+                  and acceptance_conclusion == "success"
+              )
+              attempt = dict(run)
+              attempt["_runtime_ok"] = runtime_ok
+              attempt["_runtime_conclusion"] = runtime_conclusion
+              attempt["_bot_conclusion"] = bot.get("conclusion")
+              attempt["_acceptance_conclusion"] = acceptance_conclusion
+              runtime_attempts.append(attempt)
+              if len(runtime_attempts) == 3:
+                  break
 
-          if len(executable) < 3:
-              print(f"CLOSURE: BLOCKED — only {len(executable)} executable production runs observed; 3 required.")
+          if len(runtime_attempts) < 3:
+              print(f"CLOSURE: BLOCKED — only {len(runtime_attempts)} consecutive runtime attempts found; 3 required.")
               print("Excluded runs:", excluded[:100])
               sys.exit(1)
 
-          window = executable[:3]
+          window = runtime_attempts[:3]
+          failed_runtime_attempts = [
+              (r.get("run_number"), r.get("_runtime_conclusion"), r.get("_bot_conclusion"), r.get("_acceptance_conclusion"))
+              for r in window if not r.get("_runtime_ok")
+          ]
+          if failed_runtime_attempts:
+              print("CLOSURE: BLOCKED — latest three consecutive production runtime attempts include failures.")
+              print("Failed attempts (run, runtime, job, acceptance):", failed_runtime_attempts)
+              sys.exit(1)
           fingerprints = {run["run_number"]: code_fingerprint(run["head_sha"]) for run in window}
           distinct_fingerprints = sorted(set(fingerprints.values()))
           print("Closure window:", [(r.get("run_number"), r.get("id"), r.get("head_sha", "")[:8]) for r in window])

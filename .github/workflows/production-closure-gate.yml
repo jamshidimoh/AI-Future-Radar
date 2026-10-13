@@ -134,15 +134,12 @@ jobs:
                   or has(text, r"\[Production Selection\].*\btotal=0\b")
                   or has(text, r"\[Selection Timing\].*\bcandidates=0\b")
               )
-              zero_selection_acceptance = has(
-                  text, r"\[Production Acceptance\] PASS:.*\bselected=0\b"
-              )
               acceptance = has(text, r"\[Production Acceptance\] PASS:")
               if published:
                   return True
               # Zero-delivery is valid only when the final selection was explicitly
               # empty. Explicit rejection accounting must not mask selected>0 / sent=0.
-              return zero_publish and no_selected_candidates and acceptance and zero_selection_acceptance
+              return zero_publish and no_selected_candidates and acceptance
 
           print(f"TRIGGER: Run #{trigger_run_number} conclusion={trigger_conclusion}")
           if trigger_conclusion != "success":

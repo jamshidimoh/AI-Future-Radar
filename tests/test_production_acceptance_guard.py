@@ -136,10 +136,23 @@ Posts sent: 2/3
 """
 
 
-def test_all_selected_candidates_rejected_downstream_still_fails_zero_publication_contract():
+def test_all_selected_candidates_rejected_by_editorial_gate_is_accounted_for():
     ok, message = validate(FAIL_CLOSED_EDITORIAL_REJECTION)
+    assert ok is True
+    assert "fail-closed editorial/policy/publication rejection/accounting verified" in message
+
+
+def test_provider_failure_does_not_qualify_as_editorial_zero_publication():
+    log = """
+[Production Selection] total=1
+[Editorial Gate] provider failure isolated candidate=story one exception=QuotaExceeded
+[Editorial Gate] skipped candidate: story one
+Posts sent: 0/1
+[Production Contract] normal_news=0 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+"""
+    ok, message = validate(log)
     assert ok is False
-    assert "zero publication despite selected candidates" in message
+    assert "infrastructure failure" in message
 
 
 def test_zero_publication_without_rejection_evidence_is_failure():

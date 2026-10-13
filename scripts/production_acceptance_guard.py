@@ -297,14 +297,27 @@ def validate(log_text: str) -> tuple[bool, str]:
     selected = int(summary_budget_match.group(1)) if summary_budget_match is not None else int(candidate_match.group(1))
     contract_line = contract_match.group(0)
     normal_match = NORMAL_CONTRACT_PATTERN.search(contract_line)
+    # New runtime emits normal_news and final_capacity but no longer emits
+    # the legacy normal_max field. Use the total final capacity as a conservative
+    # upper bound for this compact contract form.
+    compact_normal_match = re.search(r"\bnormal_news=(\d+)", contract_line)
+    final_capacity_match = re.search(r"\bfinal_capacity=(\d+)", contract_line)
     mind_match = MIND_CONTRACT_PATTERN.search(contract_line)
     people_match = PEOPLE_CONTRACT_PATTERN.search(contract_line)
     tier0_match = TIER0_CONTRACT_PATTERN.search(contract_line)
     education_match = EDUCATION_CONTRACT_PATTERN.search(contract_line)
-    if normal_match is None or tier0_match is None or education_match is None:
+    if (
+        (normal_match is None and (compact_normal_match is None or final_capacity_match is None))
+        or tier0_match is None
+        or education_match is None
+    ):
         return False, "incomplete production contract summary"
-    normal_news = int(normal_match.group(1))
-    normal_max = int(normal_match.group(2))
+    if normal_match is not None:
+        normal_news = int(normal_match.group(1))
+        normal_max = int(normal_match.group(2))
+    else:
+        normal_news = int(compact_normal_match.group(1))
+        normal_max = int(final_capacity_match.group(1))
     mind_news = int(mind_match.group(1)) if mind_match else 0
     mind_max = int(mind_match.group(2)) if mind_match else 0
     people_news = int(people_match.group(1)) if people_match else 0

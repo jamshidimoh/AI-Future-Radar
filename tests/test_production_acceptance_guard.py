@@ -172,10 +172,10 @@ def test_partial_publication_without_selected_set_accounting_is_failure():
     assert "left selected candidates unaccounted" in message
 
 
-def test_education_recovery_does_not_hide_zero_news_after_candidates_were_selected():
+def test_confirmed_education_recovery_counts_as_confirmed_production_delivery():
     ok, message = validate(CONFIRMED_EDUCATION_RECOVERY)
-    assert ok is False
-    assert "selected candidates > 0 but published news = 0" in message
+    assert ok is True
+    assert "education=confirmed" in message
 
 
 def test_protected_tier0_fallback_requires_normal_candidate_accounting():

@@ -191,6 +191,41 @@ def validate(log_text: str) -> tuple[bool, str]:
     if contract_match is None:
         return False, "missing production contract summary"
 
+    summary_budget_match = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))
+    selected = int(summary_budget_match.group(1)) if summary_budget_match is not None else int(candidate_match.group(1))
+    contract_line = contract_match.group(0)
+    posts_sent = int(posts_match.group(1)) if posts_match else None
+    early_lane_counts = [
+        int(value)
+        for value in re.findall(
+            r"\b(?:normal_news|mind_ideas_voices|people|technical_trend|voices_perspectives|strategic_analytical|tier0_news)=(\d+)",
+            contract_line,
+        )
+    ]
+    early_published_count = sum(early_lane_counts)
+    education_confirmed = bool(_last_match(lines, (EDUCATION_CONFIRMED_PATTERN,))) or bool(
+        re.search(r"\beducation=confirmed\b", contract_line, re.I)
+    )
+    explicit_empty_selection = (
+        summary_budget_match is not None and int(summary_budget_match.group(1)) == 0
+    ) or int(candidate_match.group(1)) == 0
+
+    # A counted rejection is not a successful production outcome when the final
+    # selected set is non-empty but Telegram received no publication. Keep this
+    # check before mission-coverage and bootstrap early returns so those paths
+    # cannot accidentally certify a zero-publication run.
+    if selected > 0 and early_published_count == 0 and posts_sent in (None, 0) and not education_confirmed:
+        return False, (
+            "production contract violation: zero publication despite selected candidates; "
+            f"selected={selected}, published=0, posts_sent={posts_sent}"
+        )
+    if selected == 0 and early_published_count == 0 and not education_confirmed:
+        if not explicit_empty_selection or posts_sent != 0:
+            return False, (
+                "production contract violation: zero publication lacks explicit zero-selection "
+                f"and delivery evidence; selected={selected}, posts_sent={posts_sent}"
+            )
+
     mission_coverage = _mission_coverage_status(lines)
 
     if bootstrap_progress and not bootstrap_progress["complete"] and not (
@@ -243,9 +278,6 @@ def validate(log_text: str) -> tuple[bool, str]:
             f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}"
         )
 
-    summary_budget_match = _last_match(lines, (SUMMARY_BUDGET_PATTERN,))
-    selected = int(summary_budget_match.group(1)) if summary_budget_match is not None else int(candidate_match.group(1))
-    contract_line = contract_match.group(0)
     normal_match = NORMAL_CONTRACT_PATTERN.search(contract_line)
     mind_match = MIND_CONTRACT_PATTERN.search(contract_line)
     people_match = PEOPLE_CONTRACT_PATTERN.search(contract_line)
@@ -297,8 +329,6 @@ def validate(log_text: str) -> tuple[bool, str]:
     canonical_url_rejected = _last_group_int(lines, re.compile(r"\[Canonical Story Gate\].*?url_rejected=(\d+)")) or 0
     upstream_rejections = max(protected_blocked, canonical_story_rejected + canonical_semantic_rejected + canonical_url_rejected)
     accounted = published_news + editorial_rejections + policy_rejections + publication_rejections + upstream_rejections
-    posts_sent = int(posts_match.group(1)) if posts_match else None
-
     tier0_retained = _last_group_int(lines, TIER0_PRIORITY_PATTERN) or 0
     tier0_publish_matches = _published_tier0_scores(lines)
     tier0_publish_policy = bool(tier0_publish_matches)
@@ -319,14 +349,21 @@ def validate(log_text: str) -> tuple[bool, str]:
             f"scores={violating_mind_scores}, floor={MIND_IDEAS_VOICES_SCORE_FLOOR}"
         )
     if selected > 0 and published_news == 0 and education != "confirmed":
-        if accounted >= selected and (posts_sent is None or posts_sent == 0):
-            return True, (
-                "production acceptance PASS: fail-closed editorial/policy/publication rejection/accounting verified; "
-                f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, education={education}"
-            )
         return False, (
-            "production contract violation: zero news items were published and the selected set did not provide evidence of publication or explicit rejection; "
-            f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
+            "production contract violation: zero publication despite selected candidates; "
+            f"selected={selected}, published={published_news}, editorial_rejections={editorial_rejections}, "
+            f"policy_rejections={policy_rejections}, publication_rejections={publication_rejections}, "
+            f"upstream_rejections={upstream_rejections}, accounted={accounted}, education={education}"
+        )
+    if selected == 0 and published_news == 0 and education != "confirmed":
+        if posts_sent != 0:
+            return False, (
+                "production contract violation: empty candidate selection lacks confirmed zero-delivery evidence; "
+                f"selected={selected}, posts_sent={posts_sent}"
+            )
+        return True, (
+            "production acceptance PASS: no eligible candidates were selected; "
+            f"selected={selected}, published={published_news}, posts_sent={posts_sent}, education={education}"
         )
 
     if published_news > 0 and normal_news == 0 and tier0_news > 0 and mind_news == 0:

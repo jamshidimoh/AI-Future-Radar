@@ -260,6 +260,15 @@ def validate(log_text: str) -> tuple[bool, str]:
         and rejection_evidence["terminal_rejections"] >= selected
         and not _zero_publication_has_infrastructure_failure(lines)
     )
+    if (
+        bootstrap_progress
+        and not bootstrap_progress["complete"]
+        and posts_sent in (None, 0)
+    ):
+        return False, (
+            "production contract violation: People Bootstrap reported partial state without "
+            f"confirmed delivery; delivered={bootstrap_progress['delivered']}/30"
+        )
     if zero_publication_candidate_set and not zero_publication_rejection_verified:
         return False, (
             "production contract violation: zero publication lacks complete deterministic "
@@ -267,15 +276,6 @@ def validate(log_text: str) -> tuple[bool, str]:
             f"selected={selected}, published=0, posts_sent={posts_sent}, "
             f"terminal_rejections={rejection_evidence['terminal_rejections']}, "
             f"infrastructure_failure={_zero_publication_has_infrastructure_failure(lines)}"
-        )
-    if (
-        bootstrap_progress
-        and not bootstrap_progress["complete"]
-        and posts_sent == 0
-    ):
-        return False, (
-            "production contract violation: People Bootstrap reported partial state without "
-            f"confirmed delivery; delivered={bootstrap_progress['delivered']}/30"
         )
     if (
         selected == 0

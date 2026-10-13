@@ -16,10 +16,11 @@ _POSTS_SENT = re.compile(r"Posts sent:\s*(\d+)\s*/\s*(\d+)", re.I)
 def selected_candidate_count(log_text: str) -> int | None:
     """Return post-budget output count, else the last runtime selection count."""
     lines = str(log_text or "").splitlines()
+    budget_pattern = _SELECTED_PATTERNS[0]
     budget_matches = [
-        (index, SUMMARY.match(line))
+        (index, match)
         for index, line in enumerate(lines)
-        if (SUMMARY := re.compile(r"\[Publication Summary Budget\].*?output=(\d+)", re.I)).search(line)
+        if (match := budget_pattern.search(line))
     ]
     if budget_matches:
         return int(budget_matches[-1][1].group(1))
@@ -44,7 +45,7 @@ def posts_sent_counts(log_text: str) -> tuple[int, int] | None:
 
 
 def publish_evidence(log_text: str) -> bool:
-    """Require confirmed delivery, or a genuinely empty, accepted production run."""
+    """Require confirmed news/education delivery or a genuinely empty accepted run."""
     text = str(log_text or "")
     counts = posts_sent_counts(text)
     selected = selected_candidate_count(text)

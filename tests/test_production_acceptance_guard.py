@@ -139,13 +139,13 @@ Posts sent: 2/3
 def test_selected_candidates_all_rejected_downstream_still_fails_zero_publication():
     ok, message = validate(FAIL_CLOSED_EDITORIAL_REJECTION)
     assert ok is False
-    assert "selected candidates > 0 but published news = 0" in message
+    assert "zero news items were published from a non-empty selected set" in message
 
 
 def test_zero_publication_without_rejection_evidence_is_failure():
     ok, message = validate(UNEXPECTED_ZERO_PUBLICATION)
     assert ok is False
-    assert "selected candidates > 0 but published news = 0" in message
+    assert "zero news items were published from a non-empty selected set" in message
 
 
 def test_zero_candidates_and_zero_publications_are_acceptable():

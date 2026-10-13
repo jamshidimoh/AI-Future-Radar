@@ -73,3 +73,38 @@ def test_unrelated_outdated_source_remains_rejected():
     )
     assert result["current"] is False
     assert result["status"] == "outdated"
+
+
+
+def test_new_official_education_sources_survive_historical_page_date_noise():
+    urls = [
+        "https://platform.openai.com/docs/guides/agent-evals",
+        "https://platform.openai.com/docs/guides/tools-computer-use",
+        "https://ai.google.dev/gemini-api/docs/computer-use",
+        "https://platform.openai.com/docs/guides/realtime",
+        "https://ai.google.dev/gemini-api/docs/live",
+        "https://platform.openai.com/docs/guides/structured-outputs",
+        "https://ai.google.dev/gemini-api/docs/structured-output",
+        "https://platform.openai.com/docs/guides/safety-best-practices",
+    ]
+    for url in urls:
+        result = assess_source(
+            url=url,
+            reachable=True,
+            detected_year=2024,
+            declared_year=2026,
+        )
+        assert result["current"] is True, url
+        assert result["status"] == "dated_current", url
+        assert result["year"] == 2026, url
+
+
+def test_unrelated_outdated_official_looking_url_is_not_globally_overridden():
+    result = assess_source(
+        url="https://platform.openai.com/docs/archive/obsolete-model",
+        reachable=True,
+        detected_year=2024,
+        declared_year=2026,
+    )
+    assert result["current"] is False
+    assert result["status"] == "outdated"

@@ -252,4 +252,4 @@ Posts sent: 0/10
 """
     ok, reason = validate(log)
     assert not ok
-    assert "without confirmed delivery" in reason
+    assert "zero publication despite selected candidates" in reason

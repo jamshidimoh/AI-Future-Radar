@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 _SELECTED_PATTERNS = (
-    re.compile(r"\[Publication Summary Budget\].*?output=(\d+)", re.I),
+    re.compile(r"\[Publication Summary Budget\].*?output(?:_news)?=(\d+)", re.I),
     re.compile(r"\[Unified Portfolio Selection\].*?candidates=(\d+)", re.I),
     re.compile(r"\[Selection Timing\].*?candidates=(\d+)", re.I),
     re.compile(r"\[Production Selection\].*?total=(\d+)", re.I),

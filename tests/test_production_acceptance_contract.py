@@ -40,7 +40,7 @@ def test_zero_publication_fails_when_candidates_were_selected():
 """
     ok, reason = validate(log)
     assert not ok
-    assert "zero publication despite selected candidates" in reason
+    assert "zero publication lacks complete deterministic" in reason
 
 
 def test_zero_publication_is_allowed_only_when_no_candidates_exist():
@@ -84,7 +84,7 @@ def test_runtime_education_confirmation_requires_successful_delivery():
 """
     ok, reason = validate(log)
     assert not ok
-    assert "zero publication despite selected candidates" in reason
+    assert "without confirmed delivery" in reason
 
 
 def test_production_state_preserves_real_baseline_fields():
@@ -254,4 +254,4 @@ Posts sent: 0/10
 """
     ok, reason = validate(log)
     assert not ok
-    assert "zero publication despite selected candidates" in reason
+    assert "zero publication lacks complete deterministic" in reason

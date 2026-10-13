@@ -158,7 +158,7 @@ Posts sent: 0/1
 def test_zero_publication_without_rejection_evidence_is_failure():
     ok, message = validate(UNEXPECTED_ZERO_PUBLICATION)
     assert ok is False
-    assert "zero publication despite selected candidates" in message
+    assert "zero publication lacks complete deterministic" in message
 
 
 NO_SELECTED_CANDIDATES = """

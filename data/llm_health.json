@@ -2,7 +2,7 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 55,
-      "disabled_until": 1791982916.831,
+      "disabled_until": 1792006604.459,
       "last_error": "model",
       "last_success": 0.0
     },
@@ -20,13 +20,13 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 4,
-      "disabled_until": 1791964916.831,
+      "disabled_until": 1791988604.459,
       "last_error": "rate_limit",
       "last_success": 0.0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 3,
-      "disabled_until": 1791964916.831,
+      "disabled_until": 1791988604.459,
       "last_error": "rate_limit",
       "last_success": 0.0
     },

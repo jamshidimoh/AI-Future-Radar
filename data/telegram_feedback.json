@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792009536,
+  "updated_at": 1792017478,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17748,6 +17748,25 @@
       "why_it_matters": "سرعت‌پذیری در استخراج اطلاعات از پتنت‌های شیمیایی می‌تواند چرخه تحقیق و توسعه را به‌طور قابل‌توجهی کوتاه کند، به‌ویژه در حوزه‌های داروسازی و مواد پیشرفته که زمان‌بری تجزیه و تحلیل اسناد طولانی یک مانع اساسی است. با تبدیل خودکار متون به داده‌های ساختاریافته، خطای انسانی کاهش می‌یابد و تیم‌های پژوهشی می‌توانند به‌سرعت به بینش‌های مرتبط دست یابند. این پیشرفت نشان می‌دهد که مدل‌های چندرسانه‌ای می‌توانند در مراحل اولیه پژوهش علمی، به‌ویژه در حوزه‌های پیچیده شیمی، نقش کلیدی ایفا کنند.",
       "link": "https://www.youtube.com/watch?v=9jQA7IgPhBE",
       "posted_at": 1792009536
+    },
+    "-1004482051328:2053": {
+      "chat_id": -1004482051328,
+      "message_id": 2053,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چگونه یک جنگ کوچک به جنگ جهانی تبدیل می‌شود",
+      "summary": "متن یا رونوشت مصاحبه در دسترس نیست؛ بنابراین نمی‌توان ادعاها، استدلال‌ها یا شواهد ارائه‌شده توسط Sarah Paine یا Dwarkesh Patel را استخراج کرد.",
+      "description": "Full episode: https://www.youtube.com/watch?v=f6cjAEr08qk\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "بدون دسترسی به محتوای مصاحبه، نمی‌توان پیامدها یا اهمیت موضوع مطرح‌شده را ارزیابی کرد؛ این محدودیت مانع از تحلیل دقیق و ارائه نکات کلیدی می‌شود.",
+      "link": "https://www.youtube.com/watch?v=O3-gGygBy3w",
+      "posted_at": 1792017478
     }
   }
 }

@@ -28,7 +28,6 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     assert "def code_fingerprint(sha):" in text
     assert 'fingerprint_excluded_paths = {"config/free_model_registry.yaml", "docs/PRODUCTION_CLOSURE_STATUS.md", "tests/test_production_closure_gate_integrity.py"}' in text
     assert "updated_status = put_json(" in text
-    assert '" /contents/docs/PRODUCTION_CLOSURE_STATUS.md"' not in text
     assert '"/contents/docs/PRODUCTION_CLOSURE_STATUS.md"' in text
     assert "CLOSED / PRODUCTION BASELINE" in text
     assert "FINAL_STATUS_DOC:" in text

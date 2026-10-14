@@ -4,8 +4,8 @@ from src.editorial_quality_policy import (
     TITLE_PERSIAN_RATIO_MIN,
     length_ok,
     news_language_ok,
-    persian_editorial_naturalness_ok,
     normal_score_allowed,
+    persian_editorial_naturalness_ok,
     terminology_safety_ok,
 )
 

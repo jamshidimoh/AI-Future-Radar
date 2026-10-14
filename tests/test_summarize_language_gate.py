@@ -186,3 +186,53 @@ def test_mission_recovery_initial_summary_uses_mission_provider_chain(monkeypatc
     })
     assert result is not None
     assert calls["providers"] is sentinel
+
+
+def test_naturalness_recovery_retries_full_draft_only_after_ratio_pass(monkeypatch):
+    import src.summarize as summarize
+
+    original = {
+        "title": "مدل هوش مصنوعی معرفی شد",
+        "summary": "متن فارسی اولیه با ساختار نامأنوس است و نیاز به بازنویسی کامل دارد.",
+        "why_it_matters": "این روش برای ارزیابی مدل اهمیت دارد و محدودیت‌های آن باید دقیق توضیح داده شود.",
+    }
+    repaired = {
+        **original,
+        "summary": "پژوهشگران یک مدل هوش مصنوعی را معرفی کرده‌اند. ارزیابی آن بر چند آزمون مشخص تکیه دارد و نتایج، محدودیت‌هایی را در روش فعلی نشان می‌دهد.",
+        "why_it_matters": "این نتیجه به مقایسه دقیق‌تر مدل‌ها کمک می‌کند. چون آزمون‌ها محدودیت دارند، برای تصمیم‌گیری عملی باید شواهد مستقل دیگری هم بررسی شود.",
+    }
+    calls = {"count": 0}
+    monkeypatch.setattr(summarize, "news_language_ok", lambda *args: True)
+    monkeypatch.setattr(summarize, "persian_editorial_naturalness_ok", lambda *args: False)
+    def fake_repair(data, item):
+        calls["count"] += 1
+        return repaired, "test-provider"
+    monkeypatch.setattr(summarize, "_repair_persian_draft", fake_repair)
+    monkeypatch.setattr(summarize, "_language_ok", lambda data: data is repaired)
+
+    result, provider = summarize._repair_persian_naturalness(original, {"title": "source"})
+
+    assert result is repaired
+    assert provider == "test-provider"
+    assert calls["count"] == 1
+
+
+def test_naturalness_recovery_fails_closed_when_full_draft_still_invalid(monkeypatch):
+    import src.summarize as summarize
+
+    original = {
+        "title": "مدل هوش مصنوعی معرفی شد",
+        "summary": "متن فارسی اولیه است.",
+        "why_it_matters": "این روش اهمیت دارد.",
+    }
+    invalid_recovery = {**original, "summary": "متن بازنویسی‌شده هنوز نامعتبر است."}
+    monkeypatch.setattr(summarize, "news_language_ok", lambda *args: True)
+    monkeypatch.setattr(summarize, "persian_editorial_naturalness_ok", lambda *args: False)
+    monkeypatch.setattr(summarize, "_repair_persian_draft", lambda data, item: (invalid_recovery, "test-provider"))
+    monkeypatch.setattr(summarize, "_language_ok", lambda data: False)
+
+    result, provider = summarize._repair_persian_naturalness(original, {"title": "source"})
+
+    assert result is original
+    assert provider == "test-provider"
+

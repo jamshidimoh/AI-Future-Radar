@@ -71,8 +71,8 @@ def test_closure_gate_embedded_python_compiles():
     steps = document["jobs"]["closure-evidence"]["steps"]
     evaluation = next(step for step in steps if step.get("name") == "Evaluate production evidence")
     run = evaluation["run"]
-    marker = "python - <<'PY'\\n"
+    marker = "python - <<'PY'\n"
     assert marker in run
-    script = run.split(marker, 1)[1].rsplit("\\nPY", 1)[0]
+    script = run.split(marker, 1)[1].rsplit("\nPY", 1)[0]
     compile(script, str(WORKFLOW), "exec")
 

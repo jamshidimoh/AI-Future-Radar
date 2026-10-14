@@ -38,6 +38,7 @@ jobs:
           import os
           import re
           import sys
+          from datetime import datetime, timezone
           import urllib.error
           import urllib.request
 
@@ -63,6 +64,18 @@ jobs:
                   data=json.dumps(payload).encode("utf-8"),
                   headers=patch_headers,
                   method="PATCH",
+              )
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          def put_json(path, payload):
+              put_headers = dict(headers)
+              put_headers["Content-Type"] = "application/json"
+              req = urllib.request.Request(
+                  base + path,
+                  data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+                  headers=put_headers,
+                  method="PUT",
               )
               with urllib.request.urlopen(req, timeout=30) as response:
                   return json.load(response)
@@ -100,11 +113,10 @@ jobs:
               for row in tree.get("tree", []):
                   path = str(row.get("path") or "")
                   blob_sha = str(row.get("sha") or "")
-                  # Persistent runtime state, the free-model registry, and CI workflow
-                  # definitions are not the Production application baseline. Workflow-only
-                  # changes (for example execution timeout/concurrency settings) must not
-                  # invalidate otherwise identical application-code evidence.
-                  dynamic_runtime_paths = {"config/free_model_registry.yaml"}
+                  # Persistent runtime state, the free-model registry, generated closure status,
+                  # and CI workflow definitions are not the production application baseline.
+                  # Updating this derived report must not invalidate application evidence.
+                  dynamic_runtime_paths = {"config/free_model_registry.yaml", "docs/PRODUCTION_CLOSURE_STATUS.md"}
                   is_ci_workflow = path.startswith(".github/workflows/")
                   if (
                       not path
@@ -317,6 +329,70 @@ jobs:
           closed_issue = patch_json("/issues/69", {"state": "closed", "state_reason": "completed"})
           if closed_issue.get("state") != "closed":
               raise RuntimeError("closure evidence passed but issue #69 did not confirm closed state")
+          # Persist a final, human-readable record after all evidence gates pass.
+          # The status report is excluded from code_fingerprint because it is derived.
+          run_records = "\n".join(
+              f"- Run #{r.get('run_number')} — SHA `{r.get('head_sha')}` — "
+              f"workflow `{r.get('conclusion')}` — fingerprint `{fingerprints.get(r.get('run_number'))}`"
+              for r in window
+          )
+          evidence_records = "\n".join(
+              f"- `{key}`: **PASS**" for key, value in evidence.items() if value
+          )
+          status_date = datetime.now(timezone.utc).date().isoformat()
+          status_doc = f"""# AI Future Radar — Production Closure Status
+
+Status date: {status_date}
+
+## وضعیت نهایی
+
+**وضعیت فعلی: `CLOSED / PRODUCTION BASELINE`**
+
+تأیید نهایی فقط پس از سه اجرای متوالی موفق روی fingerprint یکسان، شواهد واقعی انتشار، کنترل عدم انتشار تکراری و عبور همه قراردادهای کیفیت انجام شده است.
+
+## پنجره شواهد نهایی
+
+{run_records}
+
+## معیارهای پذیرش
+
+{evidence_records}
+
+## شواهد تحویل
+
+`PUBLISH_PER_RUN`: `{per_run_publish}`
+
+`PROVIDER_EVIDENCE`: deterministic regression `{provider_isolated}`
+
+`EDUCATION_EVIDENCE`: published `{education_published}`, recovery `{education_recovery_confirmed}`, not due `{education_not_due_all}`, contract not due `{education_contract_not_due}`
+
+## مرز پذیرش
+
+- تولید روی یک baseline ثابت اجرا شده است.
+- شواهد ناقص یا اجرای ناموفق به‌عنوان پذیرش موفق محسوب نشده است.
+- کیفیت فارسی، اعتبار منبع، جلوگیری از duplicate، رتبه‌بندی و قرارداد تحویل همچنان الزامی‌اند.
+- هر اجرای آینده‌ای که قرارداد انتشار را نقض کند باید مجدداً بررسی شود؛ این گواهی جایگزین پایش تولید نیست.
+
+ثبت نهایی خودکار توسط Production Closure Gate انجام شده است.
+"""
+          status_current = get_json("/contents/docs/PRODUCTION_CLOSURE_STATUS.md?ref=main")
+          status_sha = status_current.get("sha")
+          if not status_sha:
+              raise RuntimeError("closure-status document is missing its current blob SHA")
+          try:
+              updated_status = put_json(
+                  "/contents/docs/PRODUCTION_CLOSURE_STATUS.md",
+                  {
+                      "message": "chore: persist production state [skip ci] - record verified closure",
+                      "content": base64.b64encode(status_doc.encode("utf-8")).decode("ascii"),
+                      "sha": status_sha,
+                      "branch": "main",
+                  },
+              )
+          except Exception:
+              patch_json("/issues/69", {"state": "open", "state_reason": "reopened"})
+              raise
           print("CLOSURE: CLOSED — deterministic, code-pinned production evidence checks passed.")
           print(f"FINAL_ISSUE: #{closed_issue.get('number')} state={closed_issue.get('state')} url={closed_issue.get('html_url')}")
+          print(f"FINAL_STATUS_DOC: {updated_status.get('content', {}).get('html_url') or updated_status.get('commit', {}).get('html_url')}")
           PY

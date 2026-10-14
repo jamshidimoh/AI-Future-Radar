@@ -41,7 +41,7 @@ _TITLE_REPAIR_PROMPT = """عنوان زیر را برای انتشار در یک
 
 _DRAFT_REPAIR_PROMPT = """پیش‌نویس زیر برای انتشار فارسی نامعتبر است. آن را از نو و کامل بازنویسی کن؛ فقط از شواهد موجود در منبع استفاده کن و هیچ ادعای جدیدی نساز.
 تمام سه فیلد title، summary و why_it_matters باید فارسی حرفه‌ای باشند. نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها را Latin نگه دار و آوانویسی فارسی نام خاص انجام نده.
-summary باید 3 تا 5 جمله کامل و اطلاعات مهم منبع را حفظ کند و why_it_matters باید 3 تا 4 جمله کامل و معمولاً 320 تا 500 نویسه باشد. why_it_matters باید از summary تکراری نباشد و پیامد، کاربرد، محدودیت یا اهمیت واقعی را فقط بر پایه شواهد منبع بیان کند. key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن منبع باشد و در غیر این صورت خالی. category را از مقدار فعلی حفظ کن.
+summary باید 3 تا 5 جمله کامل و اطلاعات مهم منبع را حفظ کند و why_it_matters باید 3 تا 4 جمله کامل و معمولاً 320 تا 500 نویسه باشد. جمله‌ها را کوتاه، روشن و با دستور طبیعی فارسی بنویس؛ بیش از یک بار از عبارت‌های ترجمه‌ای مانند «در این راستا»، «لازم به ذکر است»، «صورت می‌گیرد»، «می‌باشد» و «گزارش می‌کند که» استفاده نکن و ترجیحاً از آن‌ها کاملاً پرهیز کن. فعل‌ها را با نیم‌فاصله درست بنویس و ترکیب‌های چسبیده‌ای مانند «دادههای» یا «تحلیلهای» نساز. هر یک از summary و why_it_matters باید از نظر زبان، طول و ارزش اطلاعاتی قرارداد انتشار را رعایت کند و دو فیلد تکراری نباشند. why_it_matters باید از summary تکراری نباشد و پیامد، کاربرد، محدودیت یا اهمیت واقعی را فقط بر پایه شواهد منبع بیان کند. key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن منبع باشد و در غیر این صورت خالی. category را از مقدار فعلی حفظ کن.
 خروجی دقیقاً JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 
 پیش‌نویس: {draft}
@@ -52,6 +52,7 @@ _PERSIAN_FIELDS_REPAIR_PROMPT = """پیش‌نویس زیر از نظر زبان
 فقط دو فیلد summary و why_it_matters را با تکیه صرف بر متن منبع بازنویسی کن.
 summary باید 3 تا 5 جمله کامل فارسی باشد و دست‌کم دو شاهد عینی از منبع (نام فرد، نظریه، آزمون، سیستم، روش، عدد یا نمونه) را در صورت وجود حفظ کند.
 why_it_matters باید 3 تا 4 جمله کامل فارسی باشد و یک پیامد یا اهمیت مشخص را با سازوکار «چرا/چگونه» و فقط بر اساس شواهد منبع توضیح دهد.
+نثر باید طبیعی، کوتاه و با دستور فارسی باشد. از عبارت‌های ترجمه‌ای «در این راستا»، «لازم به ذکر است»، «صورت می‌گیرد»، «می‌باشد» و «گزارش می‌کند که»، از جمله‌های بسیار بلند و از شکل‌های املایی چسبیده مانند «دادههای» و «تحلیلهای» پرهیز کن. طول و ارزش اطلاعاتی هر دو فیلد باید معیار انتشار را برآورده کند.
 نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها را Latin نگه دار. ترجمه یا آوانویسی فارسی نام خاص انجام نده. از ادعای جدید، کلی‌گویی و تکرار عنوان خودداری کن.
 خروجی دقیقاً JSON معتبر با کلیدهای summary, why_it_matters باشد.
 
@@ -76,7 +77,7 @@ _JSON_RECOVERY_PROMPT = """پاسخ قبلی مدل برای این خبر JSON 
 _VALUE_REPAIR_PROMPT = """تو ویراستار ارشد محتوای یک رسانه تخصصی فناوری هستی. پیش‌نویس زیر از نظر زبان معتبر است اما از نظر ارزش اطلاعاتی ضعیف است.
 فقط با استفاده از متن منبع آن را اصلاح کن.
 summary باید 3 تا 5 جمله کامل باشد و مشخصاً بگوید چه اتفاقی افتاده، مهم‌ترین روش/یافته/قابلیت/عدد یا محدودیت چیست. حداقل دو نشانه عینی از منبع مانند نام فرد، نظریه، آزمون، سیستم، روش، عدد یا نمونه را در صورت وجود حفظ کن. کلی‌گویی و تکرار عنوان ممنوع.
-why_it_matters باید 3 تا 4 جمله کامل باشد و بر پایه همان شواهد، یک پیامد مشخص برای پژوهش، محصول، زیرساخت، بازار، ایمنی، حکمرانی یا مسیر آینده فناوری توضیح دهد. دست‌کم یک سازوکار مشخصِ «چرا/چگونه» را از منبع یا از رابطه مستقیم میان یافته و پیامد بیان کن و از جمله‌های صرفاً کلی پرهیز کن. از کلیشه‌هایی مانند «این موضوع آینده AI را تغییر می‌دهد» بدون سازوکار مشخص استفاده نکن.
+why_it_matters باید 3 تا 4 جمله کامل باشد و بر پایه همان شواهد، یک پیامد مشخص برای پژوهش، محصول، زیرساخت، بازار، ایمنی، حکمرانی یا مسیر آینده فناوری توضیح دهد. دست‌کم یک سازوکار مشخصِ «چرا/چگونه» را از منبع یا از رابطه مستقیم میان یافته و پیامد بیان کن و از جمله‌های صرفاً کلی پرهیز کن. جمله‌ها باید کوتاه و با دستور طبیعی فارسی باشند؛ از عبارت‌های ترجمه‌ای «در این راستا»، «لازم به ذکر است»، «صورت می‌گیرد»، «می‌باشد» و «گزارش می‌کند که» و نیز شکل‌های چسبیده مانند «دادههای» پرهیز کن و طول/زبان/ارزش اطلاعاتی را پیش از بازگرداندن JSON بررسی کن. از کلیشه‌هایی مانند «این موضوع آینده AI را تغییر می‌دهد» بدون سازوکار مشخص استفاده نکن.
 summary و why_it_matters نباید یکدیگر را تکرار کنند. هیچ ادعایی خارج از منبع اضافه نکن. جزئیات فنی، اعداد، نام مدل/سیستم و محدودیت‌های صریح منبع را در صورت وجود حفظ کن. نام رسمی افراد، شرکت‌ها، مدل‌ها و پروژه‌ها Latin بماند.
 خروجی فقط JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 
@@ -88,6 +89,7 @@ summary و why_it_matters نباید یکدیگر را تکرار کنند. هی
 _CLAIM_REPAIR_PROMPT = """این پیش‌نویس فارسی از گیت تطبیق ادعا با منبع عبور نکرده است.
 فقط ادعاهایی را اصلاح کن که پشتیبانی صریح ندارند؛ اطلاعات معتبر و جزئیات فنی تأییدشده را حفظ کن.
 پرچم‌های تشخیص‌داده‌شده: {flags}
+قراردادهای کیفی که در پیش‌نویس قبلی رعایت نشده‌اند: {contract_failures}
 قواعد قطعی:
 - فقط از متن منبع استفاده کن؛ دانش عمومی یا حدس را وارد نکن.
 - هر مقایسه، صفت عالی، رابطه علّی، انتساب به فرد، نقل‌قول، نام نهاد/مدل، عدد یا تاریخ را که منبع صریحاً پشتیبانی نمی‌کند حذف کن.
@@ -96,6 +98,12 @@ _CLAIM_REPAIR_PROMPT = """این پیش‌نویس فارسی از گیت تطب
 - key_quote را فقط وقتی نگه دار که نقل‌قول کوتاه عیناً در متن منبع وجود داشته باشد؛ در غیر این صورت خالی باشد.
 - نام رسمی اشخاص، شرکت‌ها، محصولات و مدل‌ها Latin بماند. عنوان، summary و why_it_matters فارسی روان و حرفه‌ای باشند.
 - summary باید 3 تا 5 جمله کامل و why_it_matters باید 3 تا 4 جمله کامل باشد؛ دو فیلد همدیگر را تکرار نکنند.
+- برای منبعی با حداقل 350 نویسه، summary دست‌کم 180 نویسه و why_it_matters دست‌کم 140 نویسه باشد؛ برای منبع کوتاه‌تر به‌ترتیب حداقل 120 و 100 نویسه.
+- اگر منبع بلند است، هر دو فیلد باید دست‌کم دو جمله کامل داشته باشند. جمله‌ها را روشن و نسبتاً کوتاه بنویس؛ از دو جمله بسیار بلندتر از 240 نویسه پرهیز کن.
+- از نثر ترجمه‌ای و عبارت‌های «گزارش می‌کند که»، «در یک حرکت»، «به منظور انجام»، «می‌باشد»، «می‌گردد»، «صورت می‌گیرد»، «این موضوع در حال حاضر»، «برای انجام این کار»، «در این راستا» و «لازم به ذکر است» پرهیز کن.
+- فعل‌های فارسی را با نیم‌فاصله و املای درست بنویس؛ از ترکیب‌های چسبیده‌ای مانند «شبکههای»، «دادههای»، «تحلیلهای» و «تفاوتهای» استفاده نکن.
+- title باید تیتر فارسی حرفه‌ای باشد؛ دست‌کم 25٪ نویسه‌های عنوان و 60٪ نویسه‌های هر یک از دو بدنه باید فارسی باشند.
+- summary و why_it_matters باید جزئیات مشخص منبع را حفظ کنند، ارزش اطلاعاتی داشته باشند و از تعمیم‌های کلی و تکراری پرهیز کنند.
 - هیچ شواهد، ادعا، عدد یا رویدادی را که در منبع وجود ندارد اضافه نکن.
 خروجی دقیقاً یک JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 پیش‌نویس: {draft}
@@ -531,42 +539,106 @@ def _run_shadow_claim_verification(final, item, source_text):
     return final
 
 
+def _claim_repair_contract_failures(candidate, source_text):
+    """Return precise editorial-contract failures before claim verification is retried."""
+    failures = []
+    if not _language_ok(candidate):
+        failures.append("Persian language/naturalness/terminology")
+    if not _length_ok(candidate, str(source_text or "")):
+        failures.append(
+            f"length(summary={len(str(candidate.get('summary') or ''))},"
+            f"why={len(str(candidate.get('why_it_matters') or ''))})"
+        )
+    if not _value_ok(candidate, str(source_text or "")):
+        failures.append("editorial value/source evidence")
+    return failures
+
+
 def _repair_claim_alignment(data, item, source_text, flags):
-    """Perform one bounded source-grounded repair and re-run the claim gate."""
+    """Repair unsupported claims, then allow one bounded contract-compliance retry."""
     flag_text = ", ".join(sorted(str(flag) for flag in (flags or ()))) or "semantic_entailment_failure"
-    draft = {
-        key: data.get(key, "")
-        for key in ("title", "summary", "why_it_matters", "speakers", "key_quote", "category")
-    }
-    prompt = _CLAIM_REPAIR_PROMPT.format(
-        flags=flag_text,
-        draft=json.dumps(draft, ensure_ascii=False),
-        source=str(source_text or "")[:3500],
-    )
+    source_excerpt = str(source_text or "")[:3500]
     try:
         provider_chain = get_quality_chain()
-        raw, provider = call_llm_with_fallback(
-            prompt,
-            json.dumps({"flags": flag_text, "draft": draft, "source": str(source_text or "")[:3500]}, ensure_ascii=False),
-            providers=provider_chain,
-        )
     except Exception as exc:
         print(
             f"[Claim Alignment Recovery] provider unavailable ({type(exc).__name__}); rejecting candidate",
             flush=True,
         )
         return None, None
-    try:
-        candidate = _normalize(_extract_json(raw or ""), item)
-    except (json.JSONDecodeError, TypeError, ValueError):
-        print("[Claim Alignment Recovery] invalid JSON; rejecting candidate", flush=True)
+
+    candidate = None
+    provider = None
+    failures = []
+    current_draft = data
+    for attempt in (1, 2):
+        draft = {
+            key: current_draft.get(key, "")
+            for key in ("title", "summary", "why_it_matters", "speakers", "key_quote", "category")
+        }
+        contract_failures = (
+            "initial source-grounded repair; satisfy every publication contract"
+            if attempt == 1
+            else "; ".join(failures)
+        )
+        prompt = _CLAIM_REPAIR_PROMPT.format(
+            flags=flag_text,
+            contract_failures=contract_failures,
+            draft=json.dumps(draft, ensure_ascii=False),
+            source=source_excerpt,
+        )
+        try:
+            raw, attempt_provider = call_llm_with_fallback(
+                prompt,
+                json.dumps(
+                    {
+                        "flags": flag_text,
+                        "contract_failures": contract_failures,
+                        "draft": draft,
+                        "source": source_excerpt,
+                    },
+                    ensure_ascii=False,
+                ),
+                providers=provider_chain,
+            )
+        except Exception as exc:
+            print(
+                f"[Claim Alignment Recovery] provider unavailable on pass={attempt} "
+                f"({type(exc).__name__}); rejecting candidate",
+                flush=True,
+            )
+            return None, provider or None
+        if attempt_provider:
+            provider = attempt_provider
+        try:
+            candidate = _normalize(_extract_json(raw or ""), item)
+        except (json.JSONDecodeError, TypeError, ValueError):
+            print(
+                f"[Claim Alignment Recovery] invalid JSON on pass={attempt}; rejecting candidate",
+                flush=True,
+            )
+            return None, provider
+
+        failures = _claim_repair_contract_failures(candidate, source_excerpt)
+        if not failures:
+            break
+        if attempt == 1:
+            print(
+                "[Claim Alignment Recovery] contract mismatch="
+                + ",".join(failures)
+                + "; retrying once with explicit failed checks",
+                flush=True,
+            )
+
+    if candidate is None or failures:
+        print(
+            "[Claim Alignment Recovery] rejected draft after bounded compliance retry: "
+            + (",".join(failures) if failures else "no candidate"),
+            flush=True,
+        )
         return None, provider
 
-    if not _language_ok(candidate) or not _length_ok(candidate, str(source_text or "")) or not _value_ok(candidate, str(source_text or "")):
-        print("[Claim Alignment Recovery] rejected draft: language, length, or editorial-value contract failed", flush=True)
-        return None, provider
-
-    candidate = _run_shadow_claim_verification(candidate, item, str(source_text or ""))
+    candidate = _run_shadow_claim_verification(candidate, item, source_excerpt)
     result = candidate.get("_claim_verification") or {}
     status = str(result.get("status") or "").upper()
     remaining_flags = hard_publication_flags(result.get("flags") or [])

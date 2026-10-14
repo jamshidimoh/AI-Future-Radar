@@ -39,6 +39,7 @@ jobs:
           import re
           import sys
           from datetime import datetime, timezone
+          import textwrap
           import urllib.error
           import urllib.request
 
@@ -331,50 +332,54 @@ jobs:
               raise RuntimeError("closure evidence passed but issue #69 did not confirm closed state")
           # Persist a final, human-readable record after all evidence gates pass.
           # The status report is excluded from code_fingerprint because it is derived.
-          run_records = "\n".join(
-              f"- Run #{r.get('run_number')} — SHA `{r.get('head_sha')}` — "
-              f"workflow `{r.get('conclusion')}` — fingerprint `{fingerprints.get(r.get('run_number'))}`"
-              for r in window
+          run_records = textwrap.indent(
+              "\n".join(
+                  f"- Run #{r.get('run_number')} — SHA {r.get('head_sha')} — "
+                  f"workflow {r.get('conclusion')} — fingerprint {fingerprints.get(r.get('run_number'))}"
+                  for r in window
+              ),
+              "          ",
           )
-          evidence_records = "\n".join(
-              f"- `{key}`: **PASS**" for key, value in evidence.items() if value
+          evidence_records = textwrap.indent(
+              "\n".join(f"- {key}: PASS" for key, value in evidence.items() if value),
+              "          ",
           )
           status_date = datetime.now(timezone.utc).date().isoformat()
-          status_doc = f"""# AI Future Radar — Production Closure Status
-          
+          status_doc = textwrap.dedent(f"""# AI Future Radar — Production Closure Status
+
           Status date: {status_date}
-          
+
           ## وضعیت نهایی
-          
-          **وضعیت فعلی: `CLOSED / PRODUCTION BASELINE`**
-          
+
+          **وضعیت فعلی: CLOSED / PRODUCTION BASELINE**
+
           تأیید نهایی فقط پس از سه اجرای متوالی موفق روی fingerprint یکسان، شواهد واقعی انتشار، کنترل عدم انتشار تکراری و عبور همه قراردادهای کیفیت انجام شده است.
-          
+
           ## پنجره شواهد نهایی
-          
+
           {run_records}
-          
+
           ## معیارهای پذیرش
-          
+
           {evidence_records}
-          
+
           ## شواهد تحویل
-          
-          `PUBLISH_PER_RUN`: `{per_run_publish}`
-          
-          `PROVIDER_EVIDENCE`: deterministic regression `{provider_isolated}`
-          
-          `EDUCATION_EVIDENCE`: published `{education_published}`, recovery `{education_recovery_confirmed}`, not due `{education_not_due_all}`, contract not due `{education_contract_not_due}`
-          
+
+          PUBLISH_PER_RUN: {per_run_publish}
+
+          PROVIDER_EVIDENCE: deterministic regression {provider_isolated}
+
+          EDUCATION_EVIDENCE: published {education_published}, recovery {education_recovery_confirmed}, not due {education_not_due_all}, contract not due {education_contract_not_due}
+
           ## مرز پذیرش
-          
+
           - تولید روی یک baseline ثابت اجرا شده است.
           - شواهد ناقص یا اجرای ناموفق به‌عنوان پذیرش موفق محسوب نشده است.
           - کیفیت فارسی، اعتبار منبع، جلوگیری از duplicate، رتبه‌بندی و قرارداد تحویل همچنان الزامی‌اند.
           - هر اجرای آینده‌ای که قرارداد انتشار را نقض کند باید مجدداً بررسی شود؛ این گواهی جایگزین پایش تولید نیست.
-          
+
           ثبت نهایی خودکار توسط Production Closure Gate انجام شده است.
-          """
+          """).lstrip()
           status_current = get_json("/contents/docs/PRODUCTION_CLOSURE_STATUS.md?ref=main")
           status_sha = status_current.get("sha")
           if not status_sha:

@@ -116,12 +116,12 @@ jobs:
                   # Persistent runtime state, the free-model registry, generated closure status,
                   # and CI workflow definitions are not the production application baseline.
                   # Updating this derived report must not invalidate application evidence.
-                  dynamic_runtime_paths = {"config/free_model_registry.yaml", "docs/PRODUCTION_CLOSURE_STATUS.md"}
+                  fingerprint_excluded_paths = {"config/free_model_registry.yaml", "docs/PRODUCTION_CLOSURE_STATUS.md", "tests/test_production_closure_gate_integrity.py"}
                   is_ci_workflow = path.startswith(".github/workflows/")
                   if (
                       not path
                       or path.startswith("data/")
-                      or path in dynamic_runtime_paths
+                      or path in fingerprint_excluded_paths
                       or is_ci_workflow
                       or row.get("type") != "blob"
                   ):

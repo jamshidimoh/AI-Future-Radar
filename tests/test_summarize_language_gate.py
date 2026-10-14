@@ -236,3 +236,76 @@ def test_naturalness_recovery_fails_closed_when_full_draft_still_invalid(monkeyp
     assert result is original
     assert provider == "test-provider"
 
+def test_claim_alignment_recovery_rechecks_and_accepts_grounded_repair(monkeypatch):
+    import src.summarize as summarize
+
+    repaired = {
+        "title": "پژوهش تازه درباره ارزیابی مدل هوش مصنوعی",
+        "summary": "پژوهشگران یک روش ارزیابی برای مدل هوش مصنوعی بررسی کرده‌اند. متن منبع روش و دامنه آزمون را توضیح می‌دهد. گزارش جزئیات مشخصی درباره ارزیابی ارائه می‌کند.",
+        "why_it_matters": "این اطلاعات برای فهم دامنه آزمون و تفسیر نتیجه‌های گزارش‌شده کاربرد دارد. خواننده می‌تواند بر اساس جزئیات منبع، محدودیت‌های روش را بهتر بررسی کند. ادعای فراتر از شواهد در این توضیح مطرح نمی‌شود.",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+    }
+    monkeypatch.setattr(
+        summarize,
+        "call_llm_with_fallback",
+        lambda *args, **kwargs: (json.dumps(repaired, ensure_ascii=False), "test-provider"),
+    )
+    monkeypatch.setattr(summarize, "_language_ok", lambda _data: True)
+    monkeypatch.setattr(summarize, "_length_ok", lambda _data, _source: True)
+    monkeypatch.setattr(summarize, "_value_ok", lambda _data, _source: True)
+
+    def verified(candidate, _item, _source):
+        candidate["_claim_verification"] = {"status": "VERIFIED", "flags": []}
+        return candidate
+
+    monkeypatch.setattr(summarize, "_run_shadow_claim_verification", verified)
+    candidate, provider = summarize._repair_claim_alignment(
+        repaired,
+        {"category": "ai", "title": "AI evaluation method"},
+        "The source describes a method and the scope of a specific evaluation.",
+        {"causal_overreach", "unsupported_superlative"},
+    )
+    assert provider == "test-provider"
+    assert candidate is not None
+    assert candidate["_claim_verification"]["flags"] == []
+    assert candidate["_provider_claim_repair"] == "test-provider"
+
+
+def test_claim_alignment_recovery_fails_closed_when_hard_flags_remain(monkeypatch):
+    import src.summarize as summarize
+
+    repaired = {
+        "title": "پژوهش درباره ارزیابی مدل هوش مصنوعی",
+        "summary": "پژوهشگران یک روش ارزیابی برای مدل هوش مصنوعی بررسی کرده‌اند. متن منبع دامنه آزمون و جزئیات روش را شرح می‌دهد. گزارش اطلاعات مشخصی درباره این ارزیابی ارائه می‌کند.",
+        "why_it_matters": "این جزئیات به فهم روش ارزیابی کمک می‌کند. تفسیر نتیجه‌ها باید به دامنه آزمون و محدودیت‌های گزارش توجه داشته باشد. توضیح حاضر ادعای قطعی دیگری اضافه نمی‌کند.",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+    }
+    monkeypatch.setattr(
+        summarize,
+        "call_llm_with_fallback",
+        lambda *args, **kwargs: (json.dumps(repaired, ensure_ascii=False), "test-provider"),
+    )
+    monkeypatch.setattr(summarize, "_language_ok", lambda _data: True)
+    monkeypatch.setattr(summarize, "_length_ok", lambda _data, _source: True)
+    monkeypatch.setattr(summarize, "_value_ok", lambda _data, _source: True)
+
+    def still_unverified(candidate, _item, _source):
+        candidate["_claim_verification"] = {
+            "status": "VERIFIED",
+            "flags": ["causal_overreach"],
+        }
+        return candidate
+
+    monkeypatch.setattr(summarize, "_run_shadow_claim_verification", still_unverified)
+    candidate, _provider = summarize._repair_claim_alignment(
+        repaired,
+        {"category": "ai", "title": "AI evaluation method"},
+        "The source describes a method and the scope of a specific evaluation.",
+        {"causal_overreach"},
+    )
+    assert candidate is None
+

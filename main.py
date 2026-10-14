@@ -912,9 +912,8 @@ def main(hooks=None):
                 score = float(candidate.get("final_editorial_score", candidate.get("editorial_score", 0)) or 0)
             if mind and score < MIND_IDEAS_VOICES_SCORE_FLOOR:
                 continue
-            if special and not mind:
-                if candidate.get("protected_content") and score < PROTECTED_SUMMARY_SCORE_FLOOR:
-                    continue
+            if special and not mind and candidate.get("protected_content") and score < PROTECTED_SUMMARY_SCORE_FLOOR:
+                continue
             candidate = dict(candidate)
             candidate["period_rank"] = len(publication_queue) + 1
             candidate["publication_rank_assigned"] = True

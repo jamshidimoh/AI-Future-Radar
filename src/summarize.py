@@ -85,6 +85,22 @@ summary و why_it_matters نباید یکدیگر را تکرار کنند. هی
 متن منبع: {source}"""
 
 
+_CLAIM_REPAIR_PROMPT = """این پیش‌نویس فارسی از گیت تطبیق ادعا با منبع عبور نکرده است.
+فقط ادعاهایی را اصلاح کن که پشتیبانی صریح ندارند؛ اطلاعات معتبر و جزئیات فنی تأییدشده را حفظ کن.
+پرچم‌های تشخیص‌داده‌شده: {flags}
+قواعد قطعی:
+- فقط از متن منبع استفاده کن؛ دانش عمومی یا حدس را وارد نکن.
+- هر مقایسه، صفت عالی، رابطه علّی، انتساب به فرد، نقل‌قول، نام نهاد/مدل، عدد یا تاریخ را که منبع صریحاً پشتیبانی نمی‌کند حذف کن.
+- اگر رابطه علّی یا مقایسه در منبع صریح نیست، آن را با ادعای علّی ضعیف‌تر جایگزین نکن؛ جمله را به یک واقعیت مستقیم و مستند تبدیل کن.
+- در why_it_matters اهمیت را به شکل محدود و شفاف بیان کن؛ پیامد قطعی یا رابطه علّی تازه نساز.
+- key_quote را فقط وقتی نگه دار که نقل‌قول کوتاه عیناً در متن منبع وجود داشته باشد؛ در غیر این صورت خالی باشد.
+- نام رسمی اشخاص، شرکت‌ها، محصولات و مدل‌ها Latin بماند. عنوان، summary و why_it_matters فارسی روان و حرفه‌ای باشند.
+- summary باید 3 تا 5 جمله کامل و why_it_matters باید 3 تا 4 جمله کامل باشد؛ دو فیلد همدیگر را تکرار نکنند.
+- هیچ شواهد، ادعا، عدد یا رویدادی را که در منبع وجود ندارد اضافه نکن.
+خروجی دقیقاً یک JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
+پیش‌نویس: {draft}
+متن منبع: {source}"""
+
 def _extract_json(raw):
     text = (raw or "").strip()
     if text.startswith("```"):
@@ -515,6 +531,50 @@ def _run_shadow_claim_verification(final, item, source_text):
     return final
 
 
+def _repair_claim_alignment(data, item, source_text, flags):
+    """Perform one bounded source-grounded repair and re-run the claim gate."""
+    flag_text = ", ".join(sorted(str(flag) for flag in (flags or ()))) or "semantic_entailment_failure"
+    draft = {
+        key: data.get(key, "")
+        for key in ("title", "summary", "why_it_matters", "speakers", "key_quote", "category")
+    }
+    prompt = _CLAIM_REPAIR_PROMPT.format(
+        flags=flag_text,
+        draft=json.dumps(draft, ensure_ascii=False),
+        source=str(source_text or "")[:3500],
+    )
+    raw, provider = call_llm_with_fallback(
+        prompt,
+        json.dumps({"flags": flag_text, "draft": draft, "source": str(source_text or "")[:3500]}, ensure_ascii=False),
+        providers=get_quality_chain(),
+    )
+    try:
+        candidate = _normalize(_extract_json(raw or ""), item)
+    except (json.JSONDecodeError, TypeError, ValueError):
+        print("[Claim Alignment Recovery] invalid JSON; rejecting candidate", flush=True)
+        return None, provider
+
+    if not _language_ok(candidate) or not _length_ok(candidate, str(source_text or "")) or not _value_ok(candidate, str(source_text or "")):
+        print("[Claim Alignment Recovery] rejected draft: language, length, or editorial-value contract failed", flush=True)
+        return None, provider
+
+    candidate = _run_shadow_claim_verification(candidate, item, str(source_text or ""))
+    result = candidate.get("_claim_verification") or {}
+    status = str(result.get("status") or "").upper()
+    remaining_flags = hard_publication_flags(result.get("flags") or [])
+    if status == "REJECTED" or remaining_flags:
+        print(
+            f"[Claim Alignment Recovery] rejected after recheck status={status or 'UNKNOWN'} "
+            f"flags={','.join(sorted(remaining_flags)) or '-'}",
+            flush=True,
+        )
+        return None, provider
+
+    candidate["_provider_claim_repair"] = provider
+    print(f"[Claim Alignment Recovery] accepted after source recheck provider={provider or '-'}", flush=True)
+    return candidate, provider
+
+
 def summarize_item(item):
     prompt = _PROMPT.format(depth=_summary_depth(item))
     raw_text = _source_text(item)
@@ -659,18 +719,30 @@ def summarize_item(item):
     severe_flags = hard_publication_flags(claim_flags)
     if claim_status == "REJECTED" or severe_flags:
         print(
-            f"[Claim Alignment Gate] rejected status={claim_status or 'UNKNOWN'} "
+            f"[Claim Alignment Gate] first draft needs repair status={claim_status or 'UNKNOWN'} "
             f"flags={','.join(sorted(severe_flags)) or '-'}",
             flush=True,
         )
-        _telemetry_event(
+        repaired, claim_repair_provider = _repair_claim_alignment(
+            final,
             item,
-            stage="claim_alignment",
-            decision="reject",
-            reason_code="claim_alignment_hard_gate",
-            details={"status": claim_status, "flags": sorted(severe_flags)},
+            raw_text,
+            severe_flags or claim_flags or {"semantic_entailment_failure"},
         )
-        return None
+        if repaired is None:
+            _telemetry_event(
+                item,
+                stage="claim_alignment",
+                decision="reject",
+                reason_code="claim_alignment_hard_gate",
+                details={"status": claim_status, "flags": sorted(severe_flags), "repair_attempted": True},
+                attempt=1,
+            )
+            print("[Claim Alignment Gate] blocked after bounded source-grounded repair", flush=True)
+            return None
+        final = repaired
+        editorial_provider = editorial_provider or claim_repair_provider
+        print("[Claim Alignment Gate] accepted after bounded source-grounded repair", flush=True)
     if claim_status in {"NEEDS_REVIEW", "UNAVAILABLE"}:
         print(
             f"[Claim Alignment Gate] non-blocking status={claim_status}; "

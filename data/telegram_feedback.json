@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792007276,
+  "updated_at": 1792009536,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17710,6 +17710,44 @@
       "why_it_matters": "Explicit lazy imports به برنامه‌نویسان اجازه می‌دهد تا هزینهٔ زمان اجرا را کاهش داده و تجربهٔ کاربری سریع‌تری ارائه دهند؛ این موضوع در ابزارهای خط فرمانی و سرویس‌های وب که سرعت بارگذاری اهمیت دارد، تاثیر قابل‌توجهی دارد. سینتکس جدید unpacking in comprehensions کدهای پردازش داده را ساده‌تر و خواناتر می‌کند و خطر خطاهای برنامه‌نویسی را کم می‌کند. این به‌روزرسانی‌ها نشان می‌دهد که جامعهٔ Python به‌طور فعال به بهینه‌سازی عملکرد و بهبود نگهداری کد می‌پردازد، مسیری که برای آیندهٔ توسعهٔ نرم‌افزارهای متن‌باز حیاتی است.",
       "link": "https://simonwillison.net/2026/Oct/12/python-3-15/",
       "posted_at": 1791849488
+    },
+    "-1004482051328:2051": {
+      "chat_id": -1004482051328,
+      "message_id": 2051,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "کوانتوم‌محاسبه و چالش‌های رمزنگاری انتها‑به‑انتها",
+      "summary": "ویدئوی MIT CSAIL به این سؤال می‌پردازد که آیا رایانه‌های کوانتومی می‌توانند رمزنگاری انتها‑به‑انتها را که بر مشکلات ریاضی سخت برای کامپیوترهای کلاسیک تکیه دارد، شکسته کنند. این فناوری نوظهور می‌تواند توان محاسباتی لازم برای حل برخی از این مسائل را فراهم آورد و امنیت پیام‌های رمزگذاری‌شده را زیر سؤال ببرد. محققان به بررسی این خطر و ضرورت توسعه روش‌های رمزنگاری مقاوم در برابر حملات کوانتومی می‌پردازند. در پایان، ضرورت آمادگی برای گذار به رمزنگاری پساکوانتومی تأکید می‌شود.",
+      "description": "Could a quantum computer break the encryption protecting your messages?\n\nEnd-to-end encryption relies on mathematical problems that are incredibly difficult for today’s computers to solve. But quantum computers could change the game. So how secure is your encrypted data, really?\n\n#QuantumComputing #Encryption #Cybersecurity #TechnologyNews #ComputerScience #Quantum #MIT #MITCSAIL",
+      "why_it_matters": "اگر رایانه‌های کوانتومی بتوانند الگوریتم‌های رمزنگاری فعلی را شکست دهند، حریم خصوصی کاربران و امنیت ارتباطات دیجیتال به خطر می‌افتد. این موضوع فشار بر توسعه و پذیرش استانداردهای رمزنگاری پساکوانتومی را افزایش می‌دهد تا داده‌های حساس در آینده نیز محافظت شوند. همچنین، شناخت دقیق توانمندی‌های کوانتومی به سیاست‌گذاران و شرکت‌های فناوری کمک می‌کند تا استراتژی‌های دفاعی مناسب را برنامه‌ریزی کنند.",
+      "link": "https://www.youtube.com/shorts/5SBoOtoGtZA",
+      "posted_at": 1792009530
+    },
+    "-1004482051328:2052": {
+      "chat_id": -1004482051328,
+      "message_id": 2052,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Google DeepMind",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "تجزیه و تحلیل پتنت‌های شیمیایی ۵۰۰ صفحه‌ای با Gemini 4 Argon",
+      "summary": "در Isomorphic Labs، پژوهشگران Brian Bender و Santosh Adhikari از قابلیت‌های چندرسانه‌ای Gemini 4 Argon برای پردازش خودکار متون شیمیایی استفاده می‌کنند. مدل می‌تواند مقالات چگال و پتنت‌های شیمیایی را در یک بعدازظهر به‌جای یک ماه تجزیه و خلاصه کند و داده‌ها را به‌صورت گزارش‌های ساختاریافته ارائه دهد. این روش زمان بررسی را به‌طور چشمگیری کاهش می‌دهد و امکان کشف سریع‌تر ارتباطات بین ساختار مولکولی و نتایج آزمایشی را فراهم می‌کند.",
+      "description": "Auditing chemistry literature usually means weeks of manual, error-prone reading, where a molecule’s structure can sit 50 pages away from its experimental readout. At Isomorphic Labs, researchers Brian Bender and Santosh Adhikari are using Gemini 4 Argon’s multimodal capabilities to help tackle this early research bottleneck. The model synthesizes dense papers and extracts patent data into structured reports in an afternoon instead of a month, helping teams uncover connected insights faster.\n\nLearn more about Gemini 4 Argon: https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/\n\n___\n\nSubscribe to our channel https://www.youtube.com/@googledeepmind \nFind us on X https://x.com/GoogleDeepMind\nFollow us on Instagram https://instagram.com/googledeepmind \nAdd us on Linkedin https://www.linkedin.com/company/deepmind/ artificial intelligence",
+      "why_it_matters": "سرعت‌پذیری در استخراج اطلاعات از پتنت‌های شیمیایی می‌تواند چرخه تحقیق و توسعه را به‌طور قابل‌توجهی کوتاه کند، به‌ویژه در حوزه‌های داروسازی و مواد پیشرفته که زمان‌بری تجزیه و تحلیل اسناد طولانی یک مانع اساسی است. با تبدیل خودکار متون به داده‌های ساختاریافته، خطای انسانی کاهش می‌یابد و تیم‌های پژوهشی می‌توانند به‌سرعت به بینش‌های مرتبط دست یابند. این پیشرفت نشان می‌دهد که مدل‌های چندرسانه‌ای می‌توانند در مراحل اولیه پژوهش علمی، به‌ویژه در حوزه‌های پیچیده شیمی، نقش کلیدی ایفا کنند.",
+      "link": "https://www.youtube.com/watch?v=9jQA7IgPhBE",
+      "posted_at": 1792009536
     }
   }
 }

@@ -4,6 +4,7 @@ from src.editorial_quality_policy import (
     TITLE_PERSIAN_RATIO_MIN,
     length_ok,
     news_language_ok,
+    persian_editorial_naturalness_ok,
     normal_score_allowed,
     terminology_safety_ok,
 )
@@ -62,3 +63,23 @@ def test_previous_score_is_diagnostic_only_when_baseline_is_stale():
 def test_embedded_latin_contamination_is_rejected():
     assert not terminology_safety_ok("این متن دارای عبارت قابلAttentionی است که نباید منتشر شود.")
     assert terminology_safety_ok("این متن درباره مدل GPT-5.6 و ارزیابی آن است.")
+
+
+def test_naturalness_gate_accepts_valid_persian_conjunctions():
+    title = "پژوهش جدید درباره ارزیابی مدل‌ها"
+    summary = (
+        "پژوهشگران مدلی تازه معرفی کرده‌اند، اما این نتیجه هنوز به بررسی مستقل نیاز دارد. "
+        "داده‌ها در چند آزمون اولیه عملکرد بهتری نشان داده‌اند."
+    )
+    why = (
+        "این نتیجه برای مقایسه مدل‌ها مفید است، اما این یافته به‌تنهایی کارایی عملی را ثابت نمی‌کند. "
+        "ارزیابی در شرایط واقعی همچنان ضروری است."
+    )
+    assert persian_editorial_naturalness_ok(title, summary, why)
+
+
+def test_naturalness_gate_still_rejects_repeated_translationese():
+    title = "ارزیابی یک فناوری جدید"
+    summary = "این سامانه آماده می‌باشد و نتیجه آن روشن می‌باشد."
+    why = "این روش مفید می‌باشد و برای تصمیم‌گیری مناسب می‌باشد."
+    assert not persian_editorial_naturalness_ok(title, summary, why)

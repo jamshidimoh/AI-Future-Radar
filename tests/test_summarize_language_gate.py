@@ -381,7 +381,7 @@ def test_claim_alignment_recovery_retries_once_for_contract_mismatch(monkeypatch
     )
 
     assert len(calls) == 2
-    assert "contract_failures" in calls[1][0][0]
+    assert "Persian language/naturalness/terminology" in calls[1][0][0]
     assert candidate is not None
     assert candidate["summary"] == "READY"
     assert provider == "test-provider"

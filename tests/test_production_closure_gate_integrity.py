@@ -30,6 +30,7 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     assert 'put_json("/contents/docs/PRODUCTION_CLOSURE_STATUS.md"' in text
     assert "CLOSED / PRODUCTION BASELINE" in text
     assert "FINAL_STATUS_DOC:" in text
+    assert "contents: write" in text
     assert "startsWith(" not in text
     assert "if len(distinct_fingerprints) != 1:" in text
     assert "def all_runs(pattern):" in text

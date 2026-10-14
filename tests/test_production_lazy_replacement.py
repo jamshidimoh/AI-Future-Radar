@@ -153,3 +153,39 @@ def test_provider_failure_for_one_summary_does_not_abort_other_publication(monke
     assert "candidate with provider failure" not in delivered_posts[0]
     assert "[Editorial Gate] provider failure isolated candidate=" in output
     assert "Posts sent: 1/2" in output
+
+
+def test_final_publication_ranking_rebuilds_ranks_after_summary_rejections():
+    blocked = {
+        "title": "rejected summary",
+        "_publication_blocked": True,
+        "period_rank": 1,
+        "publication_rank_assigned": True,
+        "normal_period_rank": 1,
+    }
+    first = {"title": "normal candidate one"}
+    mind = {"title": "mind candidate", "mind_lane_selected": True}
+    second = {"title": "normal candidate two"}
+    education = {"title": "education", "content_type": "education"}
+    queue = [blocked, first, mind, second, education]
+
+    main._assign_final_publication_ranks(queue)
+
+    assert "period_rank" not in blocked
+    assert first["period_rank"] == 1
+    assert first["normal_period_rank"] == 1
+    assert mind["period_rank"] == 2
+    assert mind["normal_period_rank"] is None
+    assert second["period_rank"] == 3
+    assert second["normal_period_rank"] == 2
+    assert "period_rank" not in education
+
+
+def test_late_replacement_rank_uses_open_slots_and_respects_window():
+    queue = [
+        {"period_rank": 1, "normal_period_rank": 1},
+        {"period_rank": 2, "normal_period_rank": 2},
+    ]
+    assert main._next_lazy_normal_rank(queue, 0, 3) == 3
+    assert main._next_lazy_normal_rank(queue, 0, 2) is None
+    assert main._next_lazy_normal_rank([], 0, 3) == 1

@@ -331,3 +331,57 @@ def test_claim_alignment_recovery_fails_closed_when_provider_chain_unavailable(m
     assert candidate is None
     assert provider is None
 
+
+
+def test_claim_alignment_recovery_retries_once_for_contract_mismatch(monkeypatch):
+    import src.summarize as summarize
+
+    initial = {
+        "title": "پژوهش درباره مدل هوش مصنوعی",
+        "summary": "draft",
+        "why_it_matters": "draft",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+    }
+    repaired = {
+        "title": "ارزیابی مستند یک مدل هوش مصنوعی",
+        "summary": "READY",
+        "why_it_matters": "READY",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+    }
+    responses = [
+        (json.dumps(initial, ensure_ascii=False), "test-provider"),
+        (json.dumps(repaired, ensure_ascii=False), "test-provider"),
+    ]
+    calls = []
+    monkeypatch.setattr(summarize, "get_quality_chain", lambda: [("test-provider", lambda *args, **kwargs: "")])
+
+    def fake_call(*args, **kwargs):
+        calls.append((args, kwargs))
+        return responses.pop(0)
+
+    monkeypatch.setattr(summarize, "call_llm_with_fallback", fake_call)
+    monkeypatch.setattr(summarize, "_language_ok", lambda candidate: candidate.get("summary") == "READY")
+    monkeypatch.setattr(summarize, "_length_ok", lambda candidate, source: candidate.get("summary") == "READY")
+    monkeypatch.setattr(summarize, "_value_ok", lambda candidate, source: candidate.get("summary") == "READY")
+
+    def verified(candidate, _item, _source):
+        candidate["_claim_verification"] = {"status": "VERIFIED", "flags": []}
+        return candidate
+
+    monkeypatch.setattr(summarize, "_run_shadow_claim_verification", verified)
+    candidate, provider = summarize._repair_claim_alignment(
+        initial,
+        {"category": "ai", "title": "AI model evaluation"},
+        "The source describes an AI model evaluation and its reported scope.",
+        {"unsupported_comparison"},
+    )
+
+    assert len(calls) == 2
+    assert "Persian language/naturalness/terminology" in calls[1][0][0]
+    assert candidate is not None
+    assert candidate["summary"] == "READY"
+    assert provider == "test-provider"

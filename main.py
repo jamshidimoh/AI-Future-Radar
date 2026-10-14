@@ -301,6 +301,67 @@ def _publication_summary_budget(items, max_posts, policy):
     return bounded
 
 
+
+def _assign_final_publication_ranks(items):
+    """Assign ranks after QA/recovery, so blocked drafts do not consume publication slots."""
+    candidates = []
+    for item in items or []:
+        if str(item.get("content_type") or "").strip().casefold() == "education":
+            continue
+        if item.get("_publication_blocked"):
+            item.pop("period_rank", None)
+            item.pop("publication_rank_assigned", None)
+            item.pop("normal_period_rank", None)
+            continue
+        candidates.append(item)
+
+    normal_rank = 0
+    for global_rank, item in enumerate(candidates, 1):
+        item["period_rank"] = global_rank
+        item["publication_rank_assigned"] = True
+        special_lane = bool(
+            _is_mind_ideas_voices(item)
+            or _is_voices_perspectives(item)
+            or item.get("technical_trend_lane_selected")
+            or item.get("editorial_lane") == "technical_trend"
+        )
+        if special_lane:
+            item["normal_period_rank"] = None
+        else:
+            normal_rank += 1
+            item["normal_period_rank"] = normal_rank
+
+    print(
+        f"[Final Publication Ranking] candidates={len(candidates)} "
+        f"normal={normal_rank} blocked={sum(1 for x in (items or []) if x.get('_publication_blocked'))}",
+        flush=True,
+    )
+    return items
+
+
+def _next_lazy_normal_rank(publication_queue, start_index, rank_window):
+    """Return the next bounded normal rank for a late replacement from the wider pool."""
+    active_ranks = []
+    for item in (publication_queue or [])[max(0, int(start_index or 0)):]:
+        if item.get("_publication_blocked"):
+            continue
+        if str(item.get("content_type") or "").strip().casefold() == "education":
+            continue
+        value = item.get("normal_period_rank")
+        try:
+            rank = int(value)
+        except (TypeError, ValueError):
+            continue
+        if rank > 0:
+            active_ranks.append(rank)
+    next_rank = max(active_ranks, default=0) + 1
+    try:
+        window = max(0, int(rank_window))
+    except (TypeError, ValueError):
+        window = 0
+    return next_rank if next_rank <= window else None
+
+
 def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap=None, *, cap=None, bootstrap_mode=False):
     if runtime_selection_cap is None:
         runtime_selection_cap = cap if cap is not None else max_posts + int(policy.get("leader_protected_max", 2) or 2) + MAX_MIND_IDEAS_VOICES_PER_PERIOD
@@ -808,6 +869,11 @@ def main(hooks=None):
     for candidate, _summary in mission_recovery:
         candidate["source_image"] = resolve_source_image(candidate)
         selected.append(candidate)
+
+    # The bounded voice/mission recovery paths may append candidates that never
+    # passed through the initial portfolio rank assignment. Rebuild final ranks
+    # after those paths and after summary QA, excluding rejected drafts.
+    _assign_final_publication_ranks(selected)
     print("[7/7] Telegram publication")
     sent = 0
     people_sent = 0
@@ -846,18 +912,18 @@ def main(hooks=None):
                 score = float(candidate.get("final_editorial_score", candidate.get("editorial_score", 0)) or 0)
             if mind and score < MIND_IDEAS_VOICES_SCORE_FLOOR:
                 continue
-            if special and not mind:
-                if candidate.get("protected_content") and score < PROTECTED_SUMMARY_SCORE_FLOOR:
-                    continue
-            elif not special:
-                normal_rank = candidate.get("normal_period_rank")
-                try:
-                    normal_rank = int(normal_rank)
-                except (TypeError, ValueError):
-                    continue
-                if normal_rank > int(policy.get("candidate_window", 6) or 6) or score < NORMAL_SCORE_FLOOR:
-                    continue
+            if special and not mind and candidate.get("protected_content") and score < PROTECTED_SUMMARY_SCORE_FLOOR:
+                continue
             candidate = dict(candidate)
+            candidate["period_rank"] = len(publication_queue) + 1
+            candidate["publication_rank_assigned"] = True
+            if not special:
+                rank_window = int(policy.get("candidate_window", 6) or 6)
+                normal_rank = _next_lazy_normal_rank(publication_queue, queue_index, rank_window)
+                if normal_rank is None or score < NORMAL_SCORE_FLOOR:
+                    continue
+                candidate["normal_period_rank"] = normal_rank
+                candidate["_late_publication_replacement"] = True
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
                 print(f"[Publication Lazy Refill] summary blocked; skipping candidate: {str(candidate.get('title',''))[:120]}", flush=True)
@@ -894,6 +960,8 @@ def main(hooks=None):
             link = str(item.get("link") or item.get("url") or "")
             post = format_fn(item, source_name, link, is_video=str(item.get("source_type") or "").lower() in {"youtube", "video"}, published=item.get("published", ""), content_type=item.get("content_type", "news"), source_tier=item.get("source_tier", 3), source_type=item.get("source_type", "news"), leader=item.get("leader") or item.get("watch_person") or "")
             if not _publication_text_within_limit(post):
+                item["_publication_blocked"] = True
+                _assign_final_publication_ranks(publication_queue[queue_index:])
                 replacement = _prepare_lazy_replacement()
                 if replacement is not None:
                     publication_queue.append(replacement)
@@ -909,6 +977,8 @@ def main(hooks=None):
                     persist_fn(item, seen_hashes, seen_signatures, source_history)
                     continue
                 if status_value in {"policy_blocked", "rejected", "duplicate"}:
+                    item["_publication_blocked"] = True
+                    _assign_final_publication_ranks(publication_queue[queue_index:])
                     print(f"[Publication Contract] candidate rejected reason={getattr(result, 'reason', '')}; continuing to next ranked candidate", flush=True)
                     replacement = _prepare_lazy_replacement()
                     if replacement is not None:

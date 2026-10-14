@@ -238,6 +238,7 @@ def test_naturalness_recovery_fails_closed_when_full_draft_still_invalid(monkeyp
 
 def test_claim_alignment_recovery_rechecks_and_accepts_grounded_repair(monkeypatch):
     import src.summarize as summarize
+    monkeypatch.setattr(summarize, "get_quality_chain", lambda: [("test-provider", lambda *args, **kwargs: "")])
 
     repaired = {
         "title": "پژوهش تازه درباره ارزیابی مدل هوش مصنوعی",
@@ -275,6 +276,7 @@ def test_claim_alignment_recovery_rechecks_and_accepts_grounded_repair(monkeypat
 
 def test_claim_alignment_recovery_fails_closed_when_hard_flags_remain(monkeypatch):
     import src.summarize as summarize
+    monkeypatch.setattr(summarize, "get_quality_chain", lambda: [("test-provider", lambda *args, **kwargs: "")])
 
     repaired = {
         "title": "پژوهش درباره ارزیابی مدل هوش مصنوعی",

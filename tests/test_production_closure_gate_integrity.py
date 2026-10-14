@@ -30,6 +30,8 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     assert "updated_status = put_json(" in text
     assert '"/contents/docs/PRODUCTION_CLOSURE_STATUS.md"' in text
     assert "CLOSED / PRODUCTION BASELINE" in text
+    assert "textwrap.dedent(f\"\"\"" in text
+    assert "textwrap.indent(" in text
     assert "FINAL_STATUS_DOC:" in text
     assert "contents: write" in text
     assert "startsWith(" not in text

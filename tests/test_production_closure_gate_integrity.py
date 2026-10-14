@@ -62,6 +62,8 @@ def test_closure_gate_has_no_push_trigger():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "\n  push:" not in text
 
+
+
 def test_closure_gate_embedded_python_compiles():
     import yaml
 

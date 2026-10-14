@@ -311,3 +311,23 @@ def test_claim_alignment_recovery_fails_closed_when_hard_flags_remain(monkeypatc
     )
     assert candidate is None
 
+def test_claim_alignment_recovery_fails_closed_when_provider_chain_unavailable(monkeypatch):
+    import src.summarize as summarize
+
+    def unavailable():
+        raise RuntimeError("no credentialed provider")
+
+    monkeypatch.setattr(summarize, "get_quality_chain", unavailable)
+    candidate, provider = summarize._repair_claim_alignment(
+        {
+            "title": "عنوان فارسی",
+            "summary": "خلاصه فارسی",
+            "why_it_matters": "اهمیت فارسی",
+        },
+        {"category": "ai", "title": "Source title"},
+        "Source evidence",
+        {"causal_overreach"},
+    )
+    assert candidate is None
+    assert provider is None
+

@@ -26,7 +26,7 @@ def test_closure_gate_requires_three_consecutive_production_attempts():
 def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "def code_fingerprint(sha):" in text
-    assert 'dynamic_runtime_paths = {"config/free_model_registry.yaml", "docs/PRODUCTION_CLOSURE_STATUS.md"}' in text
+    assert 'fingerprint_excluded_paths = {"config/free_model_registry.yaml", "docs/PRODUCTION_CLOSURE_STATUS.md", "tests/test_production_closure_gate_integrity.py"}' in text
     assert 'put_json("/contents/docs/PRODUCTION_CLOSURE_STATUS.md"' in text
     assert "CLOSED / PRODUCTION BASELINE" in text
     assert "FINAL_STATUS_DOC:" in text

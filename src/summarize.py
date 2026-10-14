@@ -543,11 +543,19 @@ def _repair_claim_alignment(data, item, source_text, flags):
         draft=json.dumps(draft, ensure_ascii=False),
         source=str(source_text or "")[:3500],
     )
-    raw, provider = call_llm_with_fallback(
-        prompt,
-        json.dumps({"flags": flag_text, "draft": draft, "source": str(source_text or "")[:3500]}, ensure_ascii=False),
-        providers=get_quality_chain(),
-    )
+    try:
+        provider_chain = get_quality_chain()
+        raw, provider = call_llm_with_fallback(
+            prompt,
+            json.dumps({"flags": flag_text, "draft": draft, "source": str(source_text or "")[:3500]}, ensure_ascii=False),
+            providers=provider_chain,
+        )
+    except Exception as exc:
+        print(
+            f"[Claim Alignment Recovery] provider unavailable ({type(exc).__name__}); rejecting candidate",
+            flush=True,
+        )
+        return None, None
     try:
         candidate = _normalize(_extract_json(raw or ""), item)
     except (json.JSONDecodeError, TypeError, ValueError):

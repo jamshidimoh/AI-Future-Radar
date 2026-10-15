@@ -5,6 +5,7 @@ from src.editorial_quality_policy import (
     length_ok,
     news_language_ok,
     normal_score_allowed,
+    persian_editorial_naturalness_issues,
     persian_editorial_naturalness_ok,
     terminology_safety_ok,
 )
@@ -82,4 +83,15 @@ def test_naturalness_gate_still_rejects_repeated_translationese():
     title = "ارزیابی یک فناوری جدید"
     summary = "این سامانه آماده می‌باشد و نتیجه آن روشن می‌باشد."
     why = "این روش مفید می‌باشد و برای تصمیم‌گیری مناسب می‌باشد."
+    assert not persian_editorial_naturalness_ok(title, summary, why)
+    issues = persian_editorial_naturalness_issues(title, summary, why)
+    assert any(issue.startswith("repeated_translationese:") for issue in issues)
+
+
+def test_naturalness_diagnostics_identify_joined_verbs_without_weakening_gate():
+    title = "ارزیابی یک فناوری جدید"
+    summary = "این سامانه میتواند داده‌ها را تحلیل کند و نتیجه را روشن سازد."
+    why = "این روش مفید است و کاربرد آن در ارزیابی مدل‌ها اهمیت دارد."
+    issues = persian_editorial_naturalness_issues(title, summary, why)
+    assert any(issue.startswith("joined_verb_without_zwnj:") for issue in issues)
     assert not persian_editorial_naturalness_ok(title, summary, why)

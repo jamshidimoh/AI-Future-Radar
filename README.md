@@ -23,13 +23,15 @@
 
 راهنمای کامل اجرای نسخه منتشرشده، تنظیم environment، اجرای Docker، نگهداری state، اتصال Telegram، ارتقا و rollback در `docs/USER_GUIDE.md` قرار دارد.
 
-برای شروع سریع، release مرجع ثبت‌شده فعلی `V1.0.1.On.Publish` است:
+در تاریخچهٔ GitHub Release، تگ `v1.0.2` در ۵ سپتامبر ۲۰۲۶ آخرین انتشار ثبت‌شده است؛ با این حال، ادعای «CLOSED» آن انتشار با بازبینی سخت‌گیرانهٔ ۱۵ اکتبر ۲۰۲۶ جایگزین شده و تا تکمیل سه اجرای متوالی روی کد نهایی، پروژه دوباره گواهی نهایی دریافت نکرده است. این تگ تاریخی را نباید به‌عنوان اثبات وضعیت تولید فعلی تلقی کرد.
+
+برای دریافت image از GHCR، فقط tag/digestای را pin کنید که وجود و محتوای آن در Package Registry واقعاً تأیید شده باشد. مسیر دریافت tag متحرک، در صورت موجود و عمومی بودن Package:
 
 ```bash
-docker pull ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish
+docker pull ghcr.io/jamshidimoh/ai-future-radar:latest
 ```
 
-سپس container را با یک فایل `.env` و یک دایرکتوری persistent برای `/app/data` اجرا کنید. در صورت عمومی بودن Package، pull از GHCR بدون authentication امکان‌پذیر است.
+سپس container را با یک فایل `.env` و دایرکتوری persistent برای `/app/data` اجرا کنید. وجود tag `latest` و عمومی‌بودن Package باید در GHCR بررسی شود؛ موفقیت CI به‌تنهایی وجود image منتشرشده را ثابت نمی‌کند.
 
 ## انتشار و Packages
 

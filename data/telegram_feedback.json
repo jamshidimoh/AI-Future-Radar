@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792066538,
+  "updated_at": 1792069412,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -18013,6 +18013,67 @@
       "why_it_matters": "پذیرش رباتهای انساننما به عنوان همکاران واقعی می‌تواند تولید را بهبود بخشد، هزینه‌های نیروی کار را کاهش دهد و ایمنی را ارتقا دهد. پیشرفت در حسگری، تصمیمگیری و حرکت مستقل رباتها، کلید پذیرش گستردهٔ این فناوری در صنایع مختلف است.",
       "link": "https://www.youtube.com/watch?v=Kbs0CzTsINg",
       "posted_at": 1792066538
+    },
+    "-1004482051328:2067": {
+      "chat_id": -1004482051328,
+      "message_id": 2067,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "فاضل عادیب: حسکردن دنیای نامرئی",
+      "summary": "در این مصاحبه، مهندس و دانشمند Fadel Adib به بررسی فناوریهای نوین حسسنجی بیسیم میپردازد و نشان می‌دهد چگونه میتوان سیگنالهای نامرئی اطرافمان—از فعالیتهای رادیویی در یک اتاق تا سیگنالهای بیولوژیکی زیر پوست—را آشکار کرد. او توضیح می‌دهد این فناوریها می‌توانند در حوزههای بهداشت، تغییرات اقلیمی، خردهفروشی، تجارت، رباتیک و سایر زمینهها به کار گرفته شوند و روشهای جدیدی برای درک و تعامل با محیط فراهم آورند. با ارائه مثالهای عملی، Adib نشان می‌دهد حسسنجی بیسیم می‌تواند داده‌های زمان واقعی از محیطهای دشواردسترس را فراهم کند و به تصمیمگیریهای دقیقتر منجر شود.",
+      "description": "The world around us is filled with signals we cannot hear, see or feel, from wireless activity in a room to biological signals beneath our skin and information moving through the ocean. New forms of sensing are beginning to make this hidden world visible.\n\nWhat becomes possible when we can sense the world in entirely new ways?\n\nJoin engineer and scientist Fadel Adib for a visual journey into the emerging world of wireless sensing, exploring how new technologies can change how we understand and interact with the world, and the applications of these technologies across health, climate, retail, commerce, robotics, and more.\n \nSpeakers: Fadel Adib\n \nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n \n#AMGFL26 #wef #WorldEconomicForum",
+      "why_it_matters": "قابلیت حسسنجی بیسیم به ما امکان می‌دهد تا اطلاعاتی که پیش از این دسترسی به آنها دشوار یا غیرممکن بود، بهصورت لحظهای جمعآوری کنیم؛ این امر می‌تواند در تشخیص زودهنگام بیماریها، نظارت بر تغییرات محیطی و بهینهسازی فرآیندهای صنعتی نقش کلیدی ایفا کند. با گسترش این فناوری، صنایع مختلف می‌توانند به داده‌های دقیقتری برای پیشبینی و واکنش سریعتر دست یابند، که در نهایت به بهبود سلامت عمومی و کارایی اقتصادی منجر می‌شود. همچنین، این پیشرفتها می‌توانند مرزهای پژوهشی را در زمینههای رباتیک و تعامل انسان-ماشین گسترش دهند.",
+      "link": "https://www.youtube.com/watch?v=7JDNuXsRosQ",
+      "posted_at": 1792069356
+    },
+    "-1004482051328:2068": {
+      "chat_id": -1004482051328,
+      "message_id": 2068,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Big Technology Podcast",
+      "content_type": "interviews_podcasts",
+      "category": "tech_leaders",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "person_name": "Dario Amodei",
+      "people_lane": true,
+      "title": "رهبران هوش مصنوعی نتوانستند با هم سازش کنند. پس چگونه می‌توانند ما را ایمن نگه دارند؟",
+      "summary": "پادکست بزرگ فناوری با کیون رووس، نویسنده The AGI Chronicles، بحث می‌کند که آیا صنعت هوش مصنوعی با رقابتهای شخصی، درگیریها و عدم اعتماد می‌تواند به توسعه فناوری قدرتمندتر از انسانها اعتماد داشته باشد. رووس پس از سالها گزارش از داخل OpenAI، Anthropic و Google DeepMind، نگرانیهای بیشتری در مورد ایمنی هوش مصنوعی دارد. او معتقد است صنعت باید کندتر پیش برود و اگر سیستمهای هوش مصنوعی شروع به بهبود خود کنند چه اتفاقی میافتد. همچنین، سبک رهبری سام آلتمن، انگیزههای دارو آمدی، بازگشت سرگی برین به گوگل، اشتباهات مایکروسافت در زمینه هوش مصنوعی و درگیریهای پشت پرده در هیئت مدیره OpenAI مورد بحث قرار می‌گیرد.",
+      "why_it_matters": "این گفتگو نشان می‌دهد که چگونه رقابتهای شخصی و عدم اعتماد در صنعت هوش مصنوعی می‌تواند بر توسعه و ایمنی فناوری تأثیر بگذارد. همچنین، این بحث اهمیت ایمنی هوش مصنوعی را برجسته می‌کند و چگونه صنعت باید به سرعت پیش نرفته و به مسائل ایمنی توجه کند. همچنین، این گفتگو به درک بهتر شخصیتها، درگیریهای قدرت و پیشرفتهای فناوری در مسابقه به سوی هوش فراتر از انسان کمک می‌کند.",
+      "link": "",
+      "posted_at": 1792069407
+    },
+    "-1004482051328:2069": {
+      "chat_id": -1004482051328,
+      "message_id": 2069,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Japan Times)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Fei-Fei Li",
+      "watch_person": "Fei-Fei Li",
+      "person_name": "Fei-Fei Li",
+      "people_lane": true,
+      "title": "AMD، استارتاپ هوش مصنوعی World Labs را به قیمت ۸٫۲ میلیارد دلار خریداری می‌کند",
+      "summary": "Fei-Fei Li، بنیانگذار و مدیرعامل World Labs، اعلام کرد که شرکت AMD قصد دارد این استارتاپ هوش مصنوعی را به ارزش ۸٫۲ میلیارد دلار خریداری کند. این معامله شامل فناوریهای پیشرفته و مدلهای AI است که توسط World Labs توسعه یافتهاند. Li همچنین گفت که این خریداری به AMD کمک خواهد کرد تا در رقابت با شرکتهای بزرگتر در صنعت AI پیشتاز شود.",
+      "why_it_matters": "این معامله نشاندهنده تعهد AMD به توسعه و پیشرفت فناوریهای AI است. همچنین، این خریداری به AMD امکان می‌دهد تا از فناوریهای پیشرفته و مدلهای AI که توسط یک تیم متخصص و با تجربه توسعه یافتهاند، بهرهبرداری کند. این امر می‌تواند به بهبود عملکرد و رقابتپذیری AMD در صنعت AI کمک کند. همچنین، این معامله نشاندهنده اهمیت و ارزش فناوریهای AI در صنعت است و نشاندهنده علاقه شرکتهای بزرگ به سرمایهگذاری در این حوزه است.",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQcWx3dFFqWGM4Rk5zcS1SQjI0VHN1X1NfelJYdW4zMVYtdW5zVHJSZVhzREhiOGRvcnR1UnpkRGFPQkFkejdMVW5wYmQ3a0ZtV1ZFWENCeTE3RDdMTXQwNnYyVnYwZnlVSmQ1OV9BU2JuTTV5ZE1GekVvbURmUTI4Smg2cFdMbXJwLVE0c3ZFdEs?oc=5",
+      "posted_at": 1792069412
     }
   }
 }

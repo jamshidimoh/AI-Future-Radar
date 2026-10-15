@@ -586,7 +586,7 @@ def _claim_repair_contract_failures(candidate, source_text):
 
 
 def _repair_claim_alignment(data, item, source_text, flags):
-    """Repair unsupported claims, then allow one bounded contract-compliance retry."""
+    """Repair unsupported claims with one independent provider-family retry."""
     flag_text = ", ".join(sorted(str(flag) for flag in (flags or ()))) or "semantic_entailment_failure"
     source_excerpt = str(source_text or "")[:3500]
     try:
@@ -598,11 +598,36 @@ def _repair_claim_alignment(data, item, source_text, flags):
         )
         return None, None
 
-    candidate = None
     provider = None
     failures = []
     current_draft = data
     for attempt in (1, 2):
+        if attempt == 1:
+            attempt_providers = provider_chain
+        else:
+            # A ProductionQualityChain routes through OmniRoute/LiteLLM first.
+            # Reusing that marker on pass two can silently select the same model
+            # again. Convert to a plain list to invoke direct free-provider fallback
+            # and exclude the prior provider family when that family is identifiable.
+            excluded_family = str(provider or "").split(":", 1)[0].strip().casefold()
+            attempt_providers = [
+                (name, fn)
+                for name, fn in list(provider_chain)
+                if not excluded_family
+                or str(name).split(":", 1)[0].strip().casefold() != excluded_family
+            ]
+            if not attempt_providers:
+                print(
+                    "[Claim Alignment Recovery] no independent provider family remains after first-pass failure; rejecting candidate",
+                    flush=True,
+                )
+                return None, provider
+            print(
+                "[Claim Alignment Recovery] pass=2 using independent direct-provider fallback "
+                f"excluded_family={excluded_family or '-'}",
+                flush=True,
+            )
+
         draft = {
             key: current_draft.get(key, "")
             for key in ("title", "summary", "why_it_matters", "speakers", "key_quote", "category")
@@ -630,60 +655,85 @@ def _repair_claim_alignment(data, item, source_text, flags):
                     },
                     ensure_ascii=False,
                 ),
-                providers=provider_chain,
+                providers=attempt_providers,
             )
         except Exception as exc:
+            failures = [f"provider unavailable on repair pass {attempt}: {type(exc).__name__}"]
             print(
                 f"[Claim Alignment Recovery] provider unavailable on pass={attempt} "
-                f"({type(exc).__name__}); rejecting candidate",
+                f"({type(exc).__name__})",
                 flush=True,
             )
-            return None, provider or None
+            if attempt == 1:
+                continue
+            print("[Claim Alignment Recovery] independent fallback failed; rejecting candidate", flush=True)
+            return None, provider
         if attempt_provider:
             provider = attempt_provider
         try:
             candidate = _normalize(_extract_json(raw or ""), item)
         except (json.JSONDecodeError, TypeError, ValueError):
+            failures = [f"invalid JSON from repair pass {attempt}"]
             print(
-                f"[Claim Alignment Recovery] invalid JSON on pass={attempt}; rejecting candidate",
+                f"[Claim Alignment Recovery] invalid JSON on pass={attempt}",
+                flush=True,
+            )
+            if attempt == 1:
+                continue
+            print("[Claim Alignment Recovery] invalid JSON after independent fallback; rejecting candidate", flush=True)
+            return None, provider
+
+        contract_failures = _claim_repair_contract_failures(candidate, source_excerpt)
+        if contract_failures:
+            failures = contract_failures
+            if attempt == 1:
+                current_draft = candidate
+                print(
+                    "[Claim Alignment Recovery] contract mismatch="
+                    + ",".join(failures)
+                    + "; retrying with an independent provider family",
+                    flush=True,
+                )
+                continue
+            print(
+                "[Claim Alignment Recovery] rejected draft after independent compliance retry: "
+                + ",".join(failures),
                 flush=True,
             )
             return None, provider
 
-        failures = _claim_repair_contract_failures(candidate, source_excerpt)
-        if not failures:
-            break
-        if attempt == 1:
+        candidate = _run_shadow_claim_verification(candidate, item, source_excerpt)
+        result = candidate.get("_claim_verification") or {}
+        status = str(result.get("status") or "").upper()
+        remaining_flags = hard_publication_flags(result.get("flags") or [])
+        if status == "REJECTED" or remaining_flags:
+            failures = [
+                "source recheck failed "
+                f"status={status or 'UNKNOWN'} "
+                f"flags={','.join(sorted(remaining_flags)) or '-'}"
+            ]
+            if attempt == 1:
+                current_draft = candidate
+                print(
+                    "[Claim Alignment Recovery] source recheck failed "
+                    f"status={status or 'UNKNOWN'} flags={','.join(sorted(remaining_flags)) or '-'}; "
+                    "retrying with an independent provider family",
+                    flush=True,
+                )
+                continue
             print(
-                "[Claim Alignment Recovery] contract mismatch="
-                + ",".join(failures)
-                + "; retrying once with explicit failed checks",
+                "[Claim Alignment Recovery] rejected after independent source recheck "
+                f"status={status or 'UNKNOWN'} flags={','.join(sorted(remaining_flags)) or '-'}",
                 flush=True,
             )
+            return None, provider
 
-    if candidate is None or failures:
-        print(
-            "[Claim Alignment Recovery] rejected draft after bounded compliance retry: "
-            + (",".join(failures) if failures else "no candidate"),
-            flush=True,
-        )
-        return None, provider
+        candidate["_provider_claim_repair"] = provider
+        print(f"[Claim Alignment Recovery] accepted after source recheck provider={provider or '-'}", flush=True)
+        return candidate, provider
 
-    candidate = _run_shadow_claim_verification(candidate, item, source_excerpt)
-    result = candidate.get("_claim_verification") or {}
-    status = str(result.get("status") or "").upper()
-    remaining_flags = hard_publication_flags(result.get("flags") or [])
-    if status == "REJECTED" or remaining_flags:
-        print(
-            f"[Claim Alignment Recovery] rejected after recheck status={status or 'UNKNOWN'} "
-            f"flags={','.join(sorted(remaining_flags)) or '-'}",
-            flush=True,
-        )
-        return None, provider
-
-    candidate["_provider_claim_repair"] = provider
-    print(f"[Claim Alignment Recovery] accepted after source recheck provider={provider or '-'}", flush=True)
-    return candidate, provider
+    print("[Claim Alignment Recovery] exhausted bounded independent repair attempts; rejecting candidate", flush=True)
+    return None, provider
 
 
 def summarize_item(item):

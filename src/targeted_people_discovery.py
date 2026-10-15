@@ -32,9 +32,9 @@ def _element_text(node: ET.Element | None) -> str:
 
 def _pubdate(article: ET.Element) -> str:
     date_nodes = [
-        article.find("./PubmedData/History/PubMedPubDate"),
         article.find("./MedlineCitation/Article/ArticleDate"),
         article.find("./MedlineCitation/Article/Journal/JournalIssue/PubDate"),
+        article.find("./PubmedData/History/PubMedPubDate"),
     ]
     for node in date_nodes:
         if node is None:

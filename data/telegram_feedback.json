@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792069412,
+  "updated_at": 1792089304,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -18074,6 +18074,67 @@
       "why_it_matters": "این معامله نشاندهنده تعهد AMD به توسعه و پیشرفت فناوریهای AI است. همچنین، این خریداری به AMD امکان می‌دهد تا از فناوریهای پیشرفته و مدلهای AI که توسط یک تیم متخصص و با تجربه توسعه یافتهاند، بهرهبرداری کند. این امر می‌تواند به بهبود عملکرد و رقابتپذیری AMD در صنعت AI کمک کند. همچنین، این معامله نشاندهنده اهمیت و ارزش فناوریهای AI در صنعت است و نشاندهنده علاقه شرکتهای بزرگ به سرمایهگذاری در این حوزه است.",
       "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQcWx3dFFqWGM4Rk5zcS1SQjI0VHN1X1NfelJYdW4zMVYtdW5zVHJSZVhzREhiOGRvcnR1UnpkRGFPQkFkejdMVW5wYmQ3a0ZtV1ZFWENCeTE3RDdMTXQwNnYyVnYwZnlVSmQ1OV9BU2JuTTV5ZE1GekVvbURmUTI4Smg2cFdMbXJwLVE0c3ZFdEs?oc=5",
       "posted_at": 1792069412
+    },
+    "-1004482051328:2070": {
+      "chat_id": -1004482051328,
+      "message_id": 2070,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "شناسایی نژاد کاهو و پیش‌بینی ویژگی‌های مورفولوژیکی با استفاده از تصاویر RGB و شبکهٔ عصبی کانولوشنی",
+      "summary": "محققان با بهره‌گیری از تصاویر RGB کاهو و یک شبکهٔ عصبی کانولوشنی (CNN) توانستند نژادهای مختلف Lactuca sativa L. را شناسایی کنند. همان مدل برای پیش‌بینی طول برگ، عرض برگ و وزن کل گیاه نیز به کار رفت.",
+      "description": "artificial intelligence",
+      "why_it_matters": "توانایی شناسایی نژادها و پیش‌بینی ویژگی‌های رشد می‌تواند به پژوهشگران و کشاورزان کمک کند تا اطلاعات دقیق‌تری دربارهٔ عملکرد ژنتیکی به‌دست آورند. این اطلاعات می‌تواند در بهبود فرآیند انتخاب نژادهای مناسب و افزایش بهره‌وری محصول مؤثر باشد.",
+      "link": "https://www.nature.com/articles/s41598-026-74684-0",
+      "posted_at": 1792089252
+    },
+    "-1004482051328:2071": {
+      "chat_id": -1004482051328,
+      "message_id": 2071,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Big Technology Podcast",
+      "content_type": "interviews_podcasts",
+      "category": "tech_leaders",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "person_name": "Dario Amodei",
+      "people_lane": true,
+      "title": "راه طولانی و پیچیده به هوش مصنوعی عمومی - با کیون رووز",
+      "summary": "کیون رووز، نویسنده The AGI Chronicles، در مصاحبه با پادکست Big Technology، درباره توانایی صنعت هوش مصنوعی برای توسعه فناوریهای قدرتمندتر از انسانها صحبت می‌کند. او با تجربه گزارشگری در داخل OpenAI، Anthropic و Google DeepMind، نگرانتر از قبل در مورد ایمنی هوش مصنوعی شده و معتقد است صنعت باید کندتر پیش برود. این مصاحبه شامل بحثهای در مورد سبک رهبری Sam Altman، انگیزههای داریو آمودی، بازگشت سرگئی برین به گوگل، اشتباهات مایکروسافت در زمینه هوش مصنوعی و درام پشت صحنه در مجلس مدیران OpenAI است.",
+      "why_it_matters": "این مصاحبه به درک بهتر چالشها و درامهای پشت صحنه در صنعت هوش مصنوعی کمک می‌کند. رووز، با تجربه گزارشگری در داخل شرکتهای پیشرو این صنعت، نگرانیهای واقعی در مورد ایمنی و توسعه مسئولانه فناوریهای پیشرفته را برجسته می‌کند. این گفتگو همچنین به درک بهتر شخصیتها و قدرتهای پشت صحنه در رقابت برای رسیدن به هوش مصنوعی عمومی کمک می‌کند.",
+      "link": "",
+      "posted_at": 1792089301
+    },
+    "-1004482051328:2072": {
+      "chat_id": -1004482051328,
+      "message_id": 2072,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Vanity Fair)",
+      "content_type": "leader_signal",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن درباره ایلان ماسک، واژه «Artificial» و آیندهٔ بشریت صحبت می‌کند",
+      "summary": "در مصاحبه‌ای با Vanity Fair، سام آلتمن، مدیرعامل OpenAI، دربارهٔ ایلان ماسک و استفادهٔ او از واژهٔ «Artificial» به جای «صنعت» در زمینهٔ هوش مصنوعی صحبت کرد. او توضیح داد که این واژه می‌تواند بار منفی کلمهٔ «صنعت» را کاهش دهد و به بحث دربارهٔ آیندهٔ بشریت مرتبط شود.",
+      "why_it_matters": "تبیین انتخاب واژه‌های مرتبط با هوش مصنوعی می‌تواند در شکل‌گیری نگرش عمومی و سیاست‌گذاری‌های مرتبط تأثیرگذار باشد. همچنین گفتگوهای بین‌المللی رهبران فناوری دربارهٔ این موضوع، نشانگر اهمیت دقیق‌سازی مفاهیم در مسیر توسعهٔ هوش مصنوعی است.",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9ZbUY0aFhwVkI1bUlwTlRpUWJTQUo4UVZNX0lrY2drU29PamFtMXJEdzJ2SFhpdkdsZXFNZXpoWjlQbUhqN09lYjFxTG15dFZKaVpDNDRwZjlMOXR5RjA2bzdycjVWY3ZXVGVmdHVZUzZsd2ZJM3dLWHlB?oc=5",
+      "posted_at": 1792089304
     }
   }
 }

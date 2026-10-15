@@ -6,13 +6,15 @@
 
 بسته رسمی پروژه یک OCI container است که در GitHub Container Registry منتشر شده است.
 
-آخرین GitHub Release ثبت‌شده `V1.0.1.On.Publish` است. Workflow انتشار image را از tagهای semantic تولید می‌کند؛ برای اجرای قابل تکرار، از tag دقیق image یا digest همان artifact استفاده کنید.
+آخرین GitHub Release ثبت‌شده در تاریخچه، `v1.0.2` با تاریخ انتشار ۵ سپتامبر ۲۰۲۶ است. آن انتشار پیش از بازبینی سخت‌گیرانهٔ تولید در ۱۵ اکتبر صادر شده و برچسب «Production Complete / CLOSED» آن دیگر مدرک وضعیت جاری پروژه محسوب نمی‌شود. وضعیت فعلی فقط با شواهد سه اجرای متوالی روی نسخهٔ نهایی قابل تأیید است.
+
+Workflow انتشار container با tagهای semantic از قالب `v*.*.*` فعال می‌شود. برای اجرای قابل تکرار، tag دقیق یا digest موجود در GHCR را قبل از استقرار تأیید کنید؛ نام release GitHub لزوماً اثبات نمی‌کند که image همان tag در GHCR وجود دارد.
 
 ```text
 ghcr.io/jamshidimoh/ai-future-radar:latest
 ```
 
-در صورتی که tag semantic مربوط به Release فعلی در GHCR موجود باشد، همان tag دقیق را به‌جای `latest` استفاده کنید. GitHub Container Registry از pull عمومی بدون احراز هویت پشتیبانی می‌کند فقط وقتی Package عمومی باشد؛ Package خصوصی نیازمند احراز هویت مناسب است.
+فقط در صورتی از `latest` استفاده کنید که tag واقعاً در GHCR وجود داشته و Package عمومی باشد؛ Package خصوصی نیازمند احراز هویت مناسب است. برای استقرار حساس، به‌جای tag متحرک از digest تأییدشده استفاده کنید.
 
 ## 2. پیش‌نیازها
 

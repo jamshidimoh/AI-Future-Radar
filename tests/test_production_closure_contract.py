@@ -93,5 +93,42 @@ Posts sent: 1/2
         self.assertFalse(is_persisted_state_skip({"event": "push", "head_commit": {"message": "other"}}, {"conclusion": "skipped"}))
 
 
+
+    def test_people_bootstrap_requires_30_unique_deliveries_and_matching_baseline(self):
+        from scripts.production_closure_contract import people_bootstrap_state_complete
+
+        names = [f"Person {index:02d}" for index in range(30)]
+        state = {
+            "status": "complete",
+            "people_count": 30,
+            "delivered_count": 30,
+            "delivered_people": names,
+            "baseline": {
+                name: {
+                    "title": f"{name} reports a relevant technology development",
+                    "link": f"https://example.org/story-{index}",
+                    "published": "2026-10-01 10:00",
+                }
+                for index, name in enumerate(names)
+            },
+        }
+        self.assertTrue(people_bootstrap_state_complete(state))
+        duplicate = {**state, "delivered_people": names[:-1] + [names[0]]}
+        self.assertFalse(people_bootstrap_state_complete(duplicate))
+        self.assertFalse(people_bootstrap_state_complete({**state, "status": "in_progress"}))
+        missing_evidence = {
+            **state,
+            "baseline": {**state["baseline"], names[0]: {"title": "T", "link": "", "published": "2026-10-01"}},
+        }
+        self.assertFalse(people_bootstrap_state_complete(missing_evidence))
+
+    def test_health_snapshot_must_be_at_least_as_new_as_latest_production_start(self):
+        from scripts.production_closure_contract import health_snapshot_fresh
+
+        state = {"updated_at": 200.0, "telemetry": {"updated_at": 200.0}}
+        self.assertTrue(health_snapshot_fresh(state, "1970-01-01T00:03:19+00:00"))
+        self.assertFalse(health_snapshot_fresh(state, "1970-01-01T00:03:21+00:00"))
+        self.assertFalse(health_snapshot_fresh({}, "1970-01-01T00:03:19+00:00"))
+
 if __name__ == "__main__":
     unittest.main()

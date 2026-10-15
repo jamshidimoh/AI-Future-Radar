@@ -194,3 +194,54 @@ def test_intelligence_blocks_runtime_model_from_legacy_mixed_case_health(tmp_pat
     intelligence = FreeModelIntelligence(state, persist=True)
     ranked = intelligence.rank([_entry("openai/gpt-oss-120b", family="groq", quality=90)])
     assert ranked == []
+
+
+
+def test_provider_success_after_quota_failure_clears_provider_cooldown(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    log = tmp_path / "run.log"
+    log.write_text(
+        "2026-10-15 WARNING src.llm_router_light: Provider quota attempt failed "
+        "provider=groq model=openai/gpt-oss-20b exception=QuotaExceeded: HTTP 429 rate limit\n"
+        "[Light Router] success=Groq:openai/gpt-oss-20b\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+    assert "groq:openai/gpt-oss-20b" not in payload["models"]
+    assert "groq" not in payload["providers"]
+
+
+def test_health_snapshot_merge_never_resurrects_cleared_cooldown():
+    from scripts.llm_health_state_merge import merge_llm_health_state, snapshot_time
+
+    remote = {
+        "updated_at": 100.0,
+        "telemetry": {"updated_at": 100.0, "observed_failures": 9},
+        "models": {"groq:model-a": {"disabled_until": 9000.0}},
+        "providers": {"groq": {"disabled_until": 9000.0}},
+    }
+    local = {
+        "updated_at": 200.0,
+        "telemetry": {"updated_at": 200.0, "observed_failures": 1},
+        "models": {},
+        "providers": {},
+    }
+    merged = merge_llm_health_state(remote, local)
+    assert "groq:model-a" not in merged["models"]
+    assert "groq" not in merged["providers"]
+    assert merged["telemetry"]["observed_failures"] == 1
+    assert snapshot_time(merged) == 200.0
+
+
+def test_health_snapshot_merge_preserves_newer_remote_and_prefers_local_on_tie():
+    from scripts.llm_health_state_merge import merge_llm_health_state
+
+    remote = {"updated_at": 300.0, "models": {"remote-model": {}}}
+    older = {"updated_at": 200.0, "models": {}}
+    assert "remote-model" in merge_llm_health_state(remote, older)["models"]
+    same_time_remote = {"updated_at": 300.0, "models": {"stale-model": {}}}
+    same_time_local = {"updated_at": 300.0, "models": {}}
+    assert merge_llm_health_state(same_time_remote, same_time_local)["models"] == {}

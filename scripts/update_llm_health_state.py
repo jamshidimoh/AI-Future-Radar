@@ -201,6 +201,19 @@ def main() -> int:
                 "last_error": kind,
             }
 
+    # Clear provider-level cooldown only when the last provider-scoped event in
+    # this run is a success. Model-specific failures remain independently tracked.
+    last_provider_event: dict[str, str] = {}
+    for deployment, event_kind, failure_kind, wallet_only in events:
+        provider = family(deployment)
+        if event_kind == "success":
+            last_provider_event[provider] = "success"
+        elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
+            last_provider_event[provider] = "failure"
+    for provider, event_kind in last_provider_event.items():
+        if event_kind == "success":
+            providers.pop(provider, None)
+
     state["models"] = models
     state["providers"] = providers
     state["telemetry"] = {

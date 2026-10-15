@@ -1,11 +1,11 @@
 {
-  "run_number": 752,
+  "run_number": 753,
   "last_education_run": 732,
   "last_education_slot": "2026-10-12:evening",
-  "last_published_news_score": 62.72,
-  "last_published_normal_news_score": 62.72,
+  "last_published_news_score": 58.89,
+  "last_published_normal_news_score": 58.89,
   "people_bootstrap": {
-    "status": "in_progress",
+    "status": "complete",
     "bootstrap_at": "2026-09-22T08:30:30.824913+00:00",
     "baseline": {
       "Sam Altman": {
@@ -171,6 +171,7 @@
       "Ethan Mollick",
       "Fei-Fei Li",
       "Geoffrey Hinton",
+      "George Church",
       "Ilya Sutskever",
       "Jennifer Doudna",
       "Jensen Huang",
@@ -191,6 +192,6 @@
       "Yuval Noah Harari"
     ],
     "people_count": 30,
-    "delivered_count": 29
+    "delivered_count": 30
   }
 }

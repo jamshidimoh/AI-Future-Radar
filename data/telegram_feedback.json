@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792065463,
+  "updated_at": 1792066538,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17972,6 +17972,47 @@
       "why_it_matters": "قابلیت ترکیب پردازش گفتار، استدلال و فراخوانی ابزارها در یک رابط صوتی، دستیارهای صوتی را قادر می‌سازد تا وظایف پیچیده را بدون نیاز به ورودی متنی انجام دهند و در محیط‌های کاری و خدمات مشتری کارایی را افزایش دهند. قیمت ثابت 0.08 دلار در هر دقیقه هزینهٔ پیش‌بینی‌پذیر را برای توسعه‌دهندگان فراهم می‌کند، که پذیرش گسترده‌تر این فناوری را تسهیل می‌کند.",
       "link": "https://www.marktechpost.com/2026/10/14/meet-grok-voice-3-0-spacexai-voice-agent-model-ranks-1-on-artificial-analysis/",
       "posted_at": 1792065463
+    },
+    "-1004482051328:2065": {
+      "chat_id": -1004482051328,
+      "message_id": 2065,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Cell reports methods",
+      "content_type": "research",
+      "category": "genetics",
+      "leader": "George Church",
+      "watch_person": "George Church",
+      "person_name": "George Church",
+      "people_lane": true,
+      "title": "راهکار جدید ویرایش چندگانه ژنوم برای مهندسی سریع صفات ترکیبی",
+      "summary": "پژوهشگران در Cell Reports Methods یک خط لوله ویرایش ژنوم چندگانه (multiplex genome editing) معرفی کردند که امکان ایجاد تا ۱۱ اصلاح ژنومی همزمان در هفت ژن مختلف را در موشهای بنیانگذار زنده فراهم میآورد. این روش با بهرهگیری از سه رویکرد ویرایشی شامل حذف ژن با Cas9، ترمیم وابسته به همتا (HDR) و ویرایش باز (base editing)، کارایی بالایی در ویرایش زیگوتها و سلولهای بنیادین جنینی نشان داد. بهعنوان اثبات مفهوم، شش مدل موشی با اصلاحات در ژنهای مرتبط با رشد مو و متابولیسم چربی تولید شدند که فنوتیپهای پیشبینیشده مانند موهای فر، بافتدار و طلایی را از خود نشان دادند. این پیشرفت، فرآیند ایجاد مدلهای ژنتیکی پیچیده را تسریع کرده و کاربرد گستردهای در مطالعات ارتباط ژنوتیپ و فنوتیپ دارد.",
+      "description": "Current de-extinction efforts center on editing the genomes of extant species to express key traits that evolved in closely related extinct species. These complex projects require advances in genetic engineering pipelines coupled with animal model production as an approach to test hypotheses about genotype and phenotype associations. Here, we establish a multiplex genome engineering pipeline capable of introducing up to eleven genomic modifications across seven different genes simultaneously in viable founder mice. Our workflows achieved high editing efficiencies spanning three genome-editing modalities: Cas9 knockout, Cas9-mediated homology-dependent repair (HDR), and cytosine base editing and included editing of zygotes and embryonic stem cells. As a proof of concept, we produced six mouse models with modifications in genes involved in hair development and lipid metabolism, and the resulting mice displayed predicted hair phenotypes including curly, textured coats, and gold hair. This study advances methods of rapid establishment of complex genetic models, with a wide array of applications.",
+      "why_it_matters": "این روش با امکان ویرایش همزمان چندین ژن، موانع فنی در پروژههای پیچیده مانند بازآفرینی گونههای منقرضشده (de-extinction) را کاهش می‌دهد. سرعت و دقت بالای این خط لوله، آزمایش فرضیهها درباره ارتباط ژنوتیپ و فنوتیپ را در مدلهای حیوانی تسهیل می‌کند. تولید موفق موشهایی با صفات ظاهری مشخص، اعتبار عملی این رویکرد را در مهندسی صفات ترکیبی تأیید می‌کند و زمینه را برای کاربردهای گستردهتر در زیستشناسی تکاملی و پزشکی فراهم می‌سازد.",
+      "link": "https://pubmed.ncbi.nlm.nih.gov/42673961/",
+      "posted_at": 1792066532
+    },
+    "-1004482051328:2066": {
+      "chat_id": -1004482051328,
+      "message_id": 2066,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "رباتهای انساننما: از نمایشگاهی به همکاران واقعی",
+      "summary": "مصاحبهای که توسط World Economic Forum منتشر شده است، به بررسی مسیر تحول رباتهای انساننما از مرحلهٔ نمایشگاهی به سمت همکاران واقعی میپردازد. در این گفتگو، Madeline Gannon، رباتیکدان و طراح، به نیاز به تواناییهای حرکتی، حسگری و تصمیمگیری مستقل در کنار انسانها اشاره می‌کند. همچنین، Ambarish Mitra و Dana Alomar به نقشهای مختلف این فناوری در صنایع و چالشهای پیشرو اشاره می‌کنند. هدف نهایی، ایجاد محیطی است که رباتهای انساننما بتوانند به عنوان همکاران مؤثر در خطوط تولید و سایر حوزهها حضور داشته باشند.",
+      "description": "Humanoid robots are moving from the demo stage to the shop floor, evolving from curiosities into potential co-workers able to move, sense and decide alongside us.\n\nWhat would it take for a humanoid to become a genuine collaborator rather than simply another machine?\n\nJoin roboticist and designer Madeline Gannon for a visual journey into the emerging world of human-machine collaboration.\n\n\n \nSpeakers: Ambarish Mitra, Dana Alomar, Madeline Gannon\n \nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n \n#AMGFL26 #wef #WorldEconomicForum",
+      "why_it_matters": "پذیرش رباتهای انساننما به عنوان همکاران واقعی می‌تواند تولید را بهبود بخشد، هزینه‌های نیروی کار را کاهش دهد و ایمنی را ارتقا دهد. پیشرفت در حسگری، تصمیمگیری و حرکت مستقل رباتها، کلید پذیرش گستردهٔ این فناوری در صنایع مختلف است.",
+      "link": "https://www.youtube.com/watch?v=Kbs0CzTsINg",
+      "posted_at": 1792066538
     }
   }
 }

@@ -7,6 +7,7 @@ entries with the remote snapshot can resurrect cooldowns cleared by success.
 """
 from __future__ import annotations
 
+from contextlib import suppress
 from typing import Any
 
 
@@ -30,21 +31,17 @@ def _normalize_section(section: Any) -> dict[str, dict[str, Any]]:
 
         # Case-variant aliases may coexist in legacy snapshots. Conservatively
         # merge duplicate aliases here, but never across distinct run snapshots.
-        try:
+        with suppress(TypeError, ValueError):
             current["failures"] = max(
                 int(current.get("failures", 0) or 0),
                 int(value.get("failures", 0) or 0),
             )
-        except (TypeError, ValueError):
-            pass
         for field in ("disabled_until", "last_success"):
-            try:
+            with suppress(TypeError, ValueError):
                 current[field] = max(
                     float(current.get(field, 0) or 0),
                     float(value.get(field, 0) or 0),
                 )
-            except (TypeError, ValueError):
-                pass
         if not current.get("last_error") and value.get("last_error"):
             current["last_error"] = value["last_error"]
 

@@ -55,8 +55,9 @@ def test_pubmed_fallback_returns_confirmed_author_with_provenance(monkeypatch):
     assert item["title"].startswith("Manufacturing-aware generative models")
     assert item["person_name"] == "George Church"
     assert item["author"] == "George Church"
-    assert item["source_tier"] == 1
-    assert item["source_name"] == "PubMed / NCBI"
+    assert item["source_tier"] == 2
+    assert item["source_name"] == "Nature Biotechnology"
+    assert item["indexed_by"] == "PubMed / NCBI"
     assert item["published"] == "2026-03-17 00:00"
     assert item["canonical_url"] == "https://pubmed.ncbi.nlm.nih.gov/41844990/"
     assert calls[0][1]["params"]["term"] == "Church GM[Author]"
@@ -97,6 +98,21 @@ def test_pubmed_fallback_rejects_same_initials_without_confirmed_forename(monkey
     responses = [
         FakeResponse(payload={"esearchresult": {"idlist": ["123"]}}),
         FakeResponse(content=_pubmed_xml(author_last="Church", author_first="Gregory M", initials="GM")),
+    ]
+    monkeypatch.setattr(discovery.requests, "get", lambda *_args, **_kwargs: responses.pop(0))
+
+    assert discovery.fetch_targeted_people_items(["George Church"]) == []
+
+
+
+def test_pubmed_fallback_rejects_preprint_journals(monkeypatch):
+    payload = _pubmed_xml().replace(
+        "<Title>Nature Biotechnology</Title>",
+        "<Title>bioRxiv</Title>",
+    )
+    responses = [
+        FakeResponse(payload={"esearchresult": {"idlist": ["41844990"]}}),
+        FakeResponse(content=payload),
     ]
     monkeypatch.setattr(discovery.requests, "get", lambda *_args, **_kwargs: responses.pop(0))
 

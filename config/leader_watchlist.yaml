@@ -150,6 +150,8 @@ google_news_queries:
   - {query: "Andrew Ng LearnVector AI education agents interview", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
   - {query: "George Church AI genomics synthetic biology machine learning", watch_person: "George Church", category: bio, tier: 1, content_type: research}
   - {query: "George Church genomics future biotechnology interview", watch_person: "George Church", category: bio, tier: 1, content_type: interview}
+  - {query: "George Church Harvard genetic engineering of proteins cell-free method", watch_person: "George Church", category: bio, tier: 1, content_type: research}
+  - {query: "George Church automated prototyping genetic codes cell-free translation", watch_person: "George Church", category: bio, tier: 1, content_type: research}
   - {query: "George Church Manufacturing-aware generative models designed DNA", watch_person: "George Church", category: bio, tier: 1, content_type: research}
   - {query: "George Church Nature Biotechnology generative models DNA", watch_person: "George Church", category: bio, tier: 1, content_type: research}
   - {query: "Kate Crawford AI data labor algorithms interview", watch_person: "Kate Crawford", category: future, tier: 1, content_type: interview}

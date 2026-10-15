@@ -27,10 +27,11 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "def code_fingerprint(sha):" in text
     assert "dynamic_runtime_paths = {\"config/free_model_registry.yaml\"}" in text
-    assert "documentation_paths = {" in text
+    assert "non_runtime_paths = {" in text
     assert 'path.startswith("docs/")' in text
     assert 'path.startswith("digital_transformation_booklet/")' in text
-    assert "or is_documentation" in text
+    assert '"tests/test_production_closure_gate_integrity.py"' in text
+    assert "or is_non_runtime" in text
     assert "startsWith(" not in text
     assert "if len(distinct_fingerprints) != 1:" in text
     assert "def all_runs(pattern):" in text

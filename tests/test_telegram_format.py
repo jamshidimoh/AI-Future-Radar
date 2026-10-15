@@ -3,9 +3,9 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import src.telegram_single_delivery as telegram_single_delivery
-from src.send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
 from src.editorial_quality_policy import persian_editorial_naturalness_ok
 from src.education_editor import normalize_news_editorial_text
+from src.send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
 
 ROOT = Path(__file__).resolve().parents[1]
 

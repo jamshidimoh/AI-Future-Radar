@@ -60,10 +60,10 @@ _PERSIAN_VERB_STEMS = (
 )
 _PERSIAN_VERB_STEM_RE = "|".join(sorted(_PERSIAN_VERB_STEMS, key=len, reverse=True))
 _JOINED_PERSIAN_VERB_RE = re.compile(
-    rf"(?<![\\u0600-\\u06FF])(?P<prefix>ن?می)(?P<verb>{_PERSIAN_VERB_STEM_RE})(?![\\u0600-\\u06FF])"
+    rf"(?<!\w)(?P<prefix>ن?می)(?P<verb>{_PERSIAN_VERB_STEM_RE})(?!\w)"
 )
 _SPACED_PERSIAN_VERB_RE = re.compile(
-    rf"(?<![\\u0600-\\u06FF])(?P<prefix>ن?می)[ \\t]+(?P<verb>{_PERSIAN_VERB_STEM_RE})(?![\\u0600-\\u06FF])"
+    rf"(?<!\w)(?P<prefix>ن?می)\s+(?P<verb>{_PERSIAN_VERB_STEM_RE})(?!\w)"
 )
 
 
@@ -79,6 +79,8 @@ def normalize_news_editorial_text(text: str) -> str:
     value = _replace(value, news_emerging)
     repairs = {
         "هزینهای": "هزینه‌ای",
+        "هزینههای": "هزینه‌های",
+        "هزینه های": "هزینه‌های",
         "هزینه ای": "هزینه‌ای",
         "زمانبندی": "زمان‌بندی",
         "زمان بندی": "زمان‌بندی",
@@ -103,11 +105,11 @@ def normalize_news_editorial_text(text: str) -> str:
     # Repair only a closed list of common Persian verb stems. This is a deterministic
     # orthographic correction, not a relaxation of source/claim/editorial checks.
     value = _JOINED_PERSIAN_VERB_RE.sub(
-        lambda match: match.group("prefix") + "\\u200c" + match.group("verb"),
+        lambda match: match.group("prefix") + chr(0x200C) + match.group("verb"),
         value,
     )
     value = _SPACED_PERSIAN_VERB_RE.sub(
-        lambda match: match.group("prefix") + "\\u200c" + match.group("verb"),
+        lambda match: match.group("prefix") + chr(0x200C) + match.group("verb"),
         value,
     )
     value = re.sub(r"[ \t]{2,}", " ", value)

@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 import src.targeted_people_discovery as discovery
@@ -35,7 +33,7 @@ def _pubmed_xml(*, author_last="Church", author_first="George M", initials="GM",
       </Article>
     </MedlineCitation>
   </PubmedArticle>
-</PubmedArticleSet>""".encode("utf-8")
+</PubmedArticleSet>""".encode()
 
 
 def test_pubmed_fallback_returns_confirmed_author_with_provenance(monkeypatch):
@@ -61,7 +59,7 @@ def test_pubmed_fallback_returns_confirmed_author_with_provenance(monkeypatch):
     assert item["source_name"] == "PubMed / NCBI"
     assert item["published"] == "2026-03-17 00:00"
     assert item["canonical_url"] == "https://pubmed.ncbi.nlm.nih.gov/41844990/"
-    assert "Church GM[Author]" == calls[0][1]["params"]["term"]
+    assert calls[0][1]["params"]["term"] == "Church GM[Author]"
     assert len(calls) == 2
 
 

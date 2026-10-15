@@ -4,17 +4,17 @@ Status date: 2026-10-15
 
 ## Current status
 
-**CLOSURE PENDING — code fixes are merged; post-merge production evidence is not yet complete.**
+**CLOSURE PENDING — the strict acceptance fix is merged, and its first post-merge production attempt failed for valid unresolved coverage reasons.**
 
 The previous Production Closure Gate run #1406 closed Issue #69 on 2026-10-15 using production runs #1439–#1441. That result is historical acceptance under the previous interpretation of mission coverage, not proof that the tightened gate passes. In run #1441, only one of six selected news candidates was published; the missing mission lanes included attempted candidates that failed language/naturalness QA. The previous acceptance guard could classify failed or provider-unavailable candidates as "no eligible candidate", overstating the evidence.
 
-The hardening work is now merged to `main`:
+The mission-coverage and Persian QA hardening is merged to `main`. Follow-up work also addresses the remaining People Bootstrap false positive:
 - Merge commit: https://github.com/jamshidimoh/AI-Future-Radar/commit/6f93c82a7211af1b8bd686c9fb6466dbd629d565
 - Pull request: https://github.com/jamshidimoh/AI-Future-Radar/pull/229
 - Pre-merge Production Quality Gate: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711549214 (success)
 - Pre-merge Test Radar Quality: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711548964 (success)
 - Pre-merge Final Production Acceptance: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711549281 (success)
-- Post-merge production run: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711837970 (started; final result not yet verified)
+- Post-merge production run #1442: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711837970 (delivery succeeded, strict acceptance failed: `target=3`, `recovered=1`, `no_candidate_lanes=0`, `nonpublishable_lanes=2`). The run is not accepted as a successful production attempt.
 
 ## Fixes merged
 
@@ -23,6 +23,7 @@ The hardening work is now merged to `main`:
 - Record deterministic reasons behind Persian naturalness rejection and feed those reasons into the bounded Persian rewrite prompt.
 - Apply persistent and in-memory provider-health controls to emergency fallbacks, so known authentication failure is not retried for each candidate.
 - Preserve source evidence, claim alignment, Persian naturalness, relevance, score floors and duplicate-publication controls as fail-closed contracts.
+- PR #230 adds domain-specific relevance checks for George Church and targeted discovery queries to recover the remaining People Bootstrap slot without marking undelivered state as complete.
 
 ## Confirmed evidence from the previous version
 

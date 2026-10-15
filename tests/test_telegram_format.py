@@ -4,6 +4,8 @@ from unittest.mock import Mock, patch
 
 import src.telegram_single_delivery as telegram_single_delivery
 from src.send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
+from src.editorial_quality_policy import persian_editorial_naturalness_ok
+from src.education_editor import normalize_news_editorial_text
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -91,9 +93,6 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertIn("مدل‌های زبانی", text)
 
     def test_news_normalization_repairs_persian_orthography_before_quality_gate(self):
-        from src.education_editor import normalize_news_editorial_text
-        from src.editorial_quality_policy import persian_editorial_naturalness_ok
-
         summary = normalize_news_editorial_text(
             "این سامانه میتواند دادههای پژوهش را تحلیل کند و شبکههای جدید را بررسی میکند. "
             "همچنین تحلیلهای بعدی میتوانند تفاوتهای میان روشها را نشان دهند."

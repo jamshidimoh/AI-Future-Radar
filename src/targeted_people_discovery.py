@@ -72,7 +72,6 @@ def _confirmed_author(article: ET.Element, person: str) -> tuple[bool, str]:
         collective = _element_text(author.find("./CollectiveName"))
         surname = _element_text(author.find("./LastName"))
         forename = _element_text(author.find("./ForeName"))
-        initials = re.sub(r"[^A-Za-z]", "", _element_text(author.find("./Initials"))).upper()
         if collective:
             author_names.append(collective)
         elif surname:

@@ -90,3 +90,14 @@ def test_pubmed_fallback_does_not_query_unsupported_people(monkeypatch):
     monkeypatch.setattr(discovery.requests, "get", forbidden)
 
     assert discovery.fetch_targeted_people_items(["Andrew Ng", ""]) == []
+
+
+
+def test_pubmed_fallback_rejects_same_initials_without_confirmed_forename(monkeypatch):
+    responses = [
+        FakeResponse(payload={"esearchresult": {"idlist": ["123"]}}),
+        FakeResponse(content=_pubmed_xml(author_last="Church", author_first="Gregory M", initials="GM")),
+    ]
+    monkeypatch.setattr(discovery.requests, "get", lambda *_args, **_kwargs: responses.pop(0))
+
+    assert discovery.fetch_targeted_people_items(["George Church"]) == []

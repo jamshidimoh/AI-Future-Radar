@@ -218,7 +218,10 @@ def relevant_people_item(item: dict[str, Any], person: str) -> bool:
     domain_terms = PERSON_DOMAIN_SIGNAL_TERMS.get(person.casefold())
     if domain_terms:
         folded = text.casefold()
-        return any(term.casefold() in folded for term in domain_terms)
+        # A direct, standalone AI mention is also mission-relevant for this
+        # watched expert. Keep word boundaries so "daily" cannot trigger "ai".
+        direct_ai_signal = bool(re.search(r"(?<![a-z0-9_])ai(?![a-z0-9_])", folded))
+        return direct_ai_signal or any(term.casefold() in folded for term in domain_terms)
     # Research/news hits must contain an actual AI/future/mind/technology
     # signal in the item itself. Only direct expert formats may qualify from
     # person identity alone because the format itself is substantive evidence.

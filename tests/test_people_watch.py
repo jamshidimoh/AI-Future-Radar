@@ -354,3 +354,32 @@ def test_bootstrap_resolves_authoritative_domain_even_when_metadata_tier_is_weak
     assert selected[0]["people_bootstrap_source_tier"] == 2
     assert selected[0]["people_bootstrap_validated"] is True
 
+
+
+def test_relevant_people_item_rejects_off_mission_science_profile_for_george_church():
+    item = {
+        "watch_person": "George Church",
+        "leader": "George Church",
+        "title": "Jeffrey Epstein's tissue samples ignited a furor in the Harvard lab of George Church",
+        "summary": "A controversy-focused story about samples and a university laboratory.",
+        "content_type": "news",
+        "category": "bio",
+        "discovery_query": "George Church AI genomics synthetic biology machine learning",
+        "published": "2026-02-24 08:00",
+        "link": "https://example.com/off-mission-profile",
+    }
+    assert relevant_people_item(item, "George Church") is False
+
+
+def test_relevant_people_item_accepts_high_signal_george_church_biology_methods():
+    item = {
+        "watch_person": "George Church",
+        "leader": "George Church",
+        "title": "Researchers clear a major obstacle in genetic engineering of proteins",
+        "summary": "George Church's lab reports a cell-free method for protein engineering.",
+        "content_type": "research",
+        "category": "bio",
+        "published": "2026-09-01 10:00",
+        "link": "https://example.com/genetic-engineering-proteins",
+    }
+    assert relevant_people_item(item, "George Church") is True

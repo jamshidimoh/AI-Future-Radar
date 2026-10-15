@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792056971,
+  "updated_at": 1792058629,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -17805,6 +17805,62 @@
       "why_it_matters": "اگرچه اطلاعات دقیق در دسترس نیست، معرفی یک مدل هوش مصنوعی جدید برای رباتیک می‌تواند نشانگر پیشرفت در ترکیب یادگیری ماشین با سیستم‌های فیزیکی باشد. چنین ادغامی می‌تواند به بهبود توانایی‌های خودمختاری ربات‌ها، بهینه‌سازی تصمیم‌گیری در زمان واقعی و گسترش دامنه کاربردهای صنعتی منجر شود. اما بدون داده‌های عملکردی، ارزیابی واقعی اثرات Gemini 4 Argon محدود به انتظارهای نظری می‌ماند.",
       "link": "https://deepmind.google/blog/gemini-4-argon-for-robotics/",
       "posted_at": 1792056971
+    },
+    "-1004482051328:2056": {
+      "chat_id": -1004482051328,
+      "message_id": 2056,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Google DeepMind",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Gemini 4 Argon: پیشرفت در دفاع از سیستمها در برابر حملات سایبری",
+      "summary": "محققان امنیت Wiz، مدل Gemini 4 Argon را در آزمایشهای A/B در سیستمهای واقعی آزمایش کردند. این مدل با استفاده از تواناییهای استدلال پیشرفته و دید بلندمدت، بیش از دو برابر آسیبپذیریهای مدلهای پایه را شناسایی کرد و ریسکهای بحرانی مانند دور زدن دانلود فایل و کلید اصلی در نرمافزارهای بهداشت را کشف کرد. با انجام تحلیل و رفع تهدیدهای چندگانه و بیوقفه، Gemini 4 Argon به مدافعان مزیت حیاتی را برای پیشی گرفتن از مهاجمان و محافظت از داده‌های حساس در سریعترین زمان ممکن می‌دهد.",
+      "description": "In shadow A/B testing on real-world systems, Wiz security researchers put Gemini 4 Argon to the test against complex cyber threats. Using its advanced reasoning and long-horizon capabilities, Gemini 4 Argon found over two times more vulnerabilities than baseline models and successfully uncovered critical risks—such as identifying a file download bypass and master key in healthcare software. By handling tireless, multi-step threat analysis and remediation, Gemini 4 gives defenders the crucial advantage needed to outpace attackers and protect sensitive data faster than ever before. \n\nLearn more about Gemini 4 Argon: https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-argon/\n\n___\n\nSubscribe to our channel https://www.youtube.com/@googledeepmind \nFind us on X https://x.com/GoogleDeepMind\nFollow us on Instagram https://instagram.com/googledeepmind \nAdd us on Linkedin https://www.linkedin.com/company/deepmind/ artificial intelligence",
+      "why_it_matters": "Gemini 4 Argon با شناسایی بیش از دو برابر آسیبپذیریهای مدلهای پایه، توانایی پیشبینی و رفع تهدیدهای پیچیده را نشان داد. این پیشرفت در امنیت سایبری می‌تواند به بهبود حفاظت از داده‌های حساس و سیستمهای بحرانی کمک کند. با ارائه یک مزیت حیاتی برای مدافعان، این مدل می‌تواند به کاهش زمان واکنش و افزایش امنیت در برابر حملات سایبری کمک کند.",
+      "link": "https://www.youtube.com/watch?v=ftkic7Tdpcg",
+      "posted_at": 1792058619
+    },
+    "-1004482051328:2057": {
+      "chat_id": -1004482051328,
+      "message_id": 2057,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Latent Space",
+      "content_type": "interviews_podcasts",
+      "category": "frontier_builders_agents_ai_science",
+      "leader": "",
+      "title": "داینا-2: ربات چندمنظوره با خودمختاری ساعتی",
+      "summary": "داینا-2، رباتی چندمنظوره است که با استفاده از مدلهای عمل جهانی، قادر به انجام وظایف مختلف در محیطهای واقعی با خودمختاری ساعتی است. این ربات توسط جاسون ما، مدیر علمی شرکت داینا روباتیکس، معرفی شده است.",
+      "why_it_matters": "داینا-2 یک پیشرفت مهم در زمینه رباتیک فیزیکی است که می‌تواند در حوزههای مختلفی از جمله مراقبتهای بهداشتی، حمل و نقل و تولیدات صنعتی کاربرد داشته باشد.",
+      "link": "https://www.latent.space/p/dyna",
+      "posted_at": 1792058624
+    },
+    "-1004482051328:2058": {
+      "chat_id": -1004482051328,
+      "message_id": 2058,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "G2T: مدل جدید برای تقسیم‌بندی تصاویر پزشکی با استفاده از ترنسفورمر گیت‌گاید",
+      "summary": "مقاله‌ای در Nature - Computational Biology and Bioinformatics مدل Gate Guided Transformer (G2T) را برای تقسیم‌بندی تصاویر پزشکی معرفی می‌کند. G2T با مکانیزم گیت، جریان اطلاعات در ترنسفورمر را هدایت می‌کند و به‌صورت انتخابی ویژگی‌های مرتبط را عبور می‌دهد. ارزیابی روی مجموعه داده‌های استاندارد پزشکی نشان داد که G2T دقت تقسیم‌بندی رقابتی با روش‌های پیشین دارد و هزینه محاسباتی را کاهش می‌دهد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "دقت بالای تقسیم‌بندی تصاویر پزشکی می‌تواند تشخیص زودهنگام و برنامه‌ریزی درمان را بهبود بخشد. گیت‌گایدینگ در G2T با حذف اطلاعات غیرضروری، تعداد عملیات محاسباتی را کاهش می‌دهد و بنابراین امکان استفاده از ترنسفورمرها در محیط‌های بالینی با منابع محدود فراهم می‌شود. این به‌کارگیری کارآمدتر هوش مصنوعی می‌تواند سرعت و هزینه پردازش تصاویر پزشکی را کاهش دهد.",
+      "link": "https://www.nature.com/articles/s41598-026-71476-4",
+      "posted_at": 1792058629
     }
   }
 }

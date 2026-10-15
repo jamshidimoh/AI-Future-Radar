@@ -1,68 +1,49 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-09-06
+Status date: 2026-10-15
 
-## Purpose
+## وضعیت فعلی
 
-این سند مرز پایان پروژه را ثابت می‌کند. پروژه فقط وقتی `Production Complete` اعلام می‌شود که همه قراردادهای deterministic و همه شواهد عملیاتی لازم سبز باشند.
+**CLOSURE PENDING — پذیرش سخت‌گیرانه baseline جدید هنوز باید در محیط تولید اثبات شود.**
 
-## Current status
+گیت قبلی Production Closure Gate (#1406، run ID `38695582083`) بر اساس اجرای متوالی ربات #1439 تا #1441 موفق شد. این نتیجه برای قرارداد قبلی شواهد تاریخی معتبر است، اما بازبینی همان لاگ‌ها سه نقص را آشکار کرد که باید پیش از اعلام پایان قطعی برطرف شوند:
 
-**وضعیت فعلی: `CLOSURE PENDING`**
+1. **پوشش مأموریتی:** `failed` و `provider_unavailable` در بازیابی حوزه‌ها به‌عنوان «هیچ گزینه واجد شرایطی وجود ندارد» شمرده می‌شدند. درحالی‌که این نتایج ثابت می‌کنند گزینه وجود داشته ولی پردازش نتوانسته خروجی قابل انتشار بسازد. تنها نبود صریح گزینه یا رد شدن گزینه‌ها بر مبنای قواعد مشخص کیفیت می‌تواند این حالت را توضیح دهد.
+2. **سلامت مدل‌ها:** ادغام داده‌های remote و local با بیشینه‌کردن شمارنده‌ها و زمان cooldown می‌توانست مدل/ارائه‌دهنده‌ای را که در اجرای بعدی موفق شده و از وضعیت مسدودی خارج شده بود، دوباره غیرفعال کند. اجرای production سریالی است؛ بنابراین snapshot حاصل از اجرای فعلی باید مرجع وضعیت مدل و ارائه‌دهنده باشد و telemetry نیز نباید با شمارنده قدیمی مخلوط شود.
+3. **جریان افراد کلیدی:** وضعیت پایدار People Bootstrap هنوز `in_progress` و 29/30 تحویل‌شده است. داشتن baseline برای 30 نفر معادل ثبت تحویل موفق 30 پیام نیست.
 
-پذیرش قبلی در تاریخ 2026-09-05 با workflow run `33948969943` سبز شده بود، اما اجرای بعدی Production Closure Gate در تاریخ 2026-09-06 با workflow run `34016810047` به علت unresolved بودن evidence معیار `02_publish_and_fail_closed_zero` متوقف شد. بنابراین closure قبلی باید به‌عنوان یک پذیرش تاریخی ثبت شود، نه وضعیت جاری محصول.
+در شاخه اصلاحات، پذیرش پوشش مأموریتی سخت‌گیرانه‌تر شده، مدیریت snapshot سلامت بازطراحی شده و گیت پایانی برای 30 تحویل واقعی و مستقل افراد کلیدی شرط صریح دارد. وضعیت همچنان pending است تا شاخه merge شود، regression suite سبز باشد، جریان افراد به 30/30 تحویل تأییدشده برسد و گیت اصلاح‌شده سه اجرای متوالی را روی یک fingerprint یکسان تأیید کند.
 
-## Closure rule
+## معیارهای بسته‌شدن
 
-وضعیت نهایی فقط در صورت تحقق هم‌زمان این سه شرط `CLOSED` است:
+سبز بودن GitHub Actions به‌تنهایی به معنای پایان پروژه نیست. بستن baseline نیازمند همه موارد زیر است:
 
-1. Deterministic acceptance suite سبز باشد.
-2. Production evidence window کامل باشد.
-3. هیچ FAIL باز در invariantهای frozen وجود نداشته باشد.
+1. مجموعه رگرسیون تولید بدون تضعیف دروازه‌های کیفیت یا منبع موفق باشد.
+2. سه اجرای متوالی production روی یک fingerprint کد و با لاگ‌های قابل بازیابی وجود داشته باشد.
+3. هر بودجه انتشار غیرخالی، تحویل تأییدشده Telegram ایجاد کند یا به شکل fail-closed شکست بخورد.
+4. کنترل تکرار، پیام واحد، رتبه‌بندی محدود، جایگزینی پس از QA، eligibility رهبران و جداسازی خطای ارائه‌دهنده برقرار بمانند.
+5. حوزه مأموریتی حل‌نشده فقط با شواهد نبود گزینه واقعی یا رد شدن همه گزینه‌ها به دلیل آستانه صریح کیفیت قابل پذیرش است. خطای ارائه‌دهنده یا شکست خلاصه‌سازی/ترجمه/QA معادل نبود منبع نیست.
+6. سلامت مدل/ارائه‌دهنده از snapshot تازه اجرای جاری پیروی کند؛ موفقیت‌های واقعی بتوانند cooldown قدیمی را پاک کنند و ادغام state آن‌ها را دوباره زنده نکند.
+7. ledger پایدار People Bootstrap وضعیت complete و 30 فرد یکتا با تحویل تأییدشده و baseline حداقل 30 نفر را ثبت کند.
+8. زمان‌بندی آموزشی و تحویل مستقل محتوای آموزشی معتبر بماند.
+9. source authority، canonical identity، relevance، terminology، provenance و کنترل duplicateها fail-closed باشند. دامنه‌های `arxiv.org` و `export.arxiv.org` همچنان از discovery و ingestion مستثنا هستند.
+10. شواهد بسته‌شدن از لاگ‌ها و state واقعی تولید استخراج شوند؛ موفقیت تاریخی نمی‌تواند شکست جاری را نادیده بگیرد.
 
-تا زمانی که Closure Gate جدید هر سه شرط را تأیید نکرده است، سند نباید `CLOSED` اعلام کند.
+## شواهد تاریخی بررسی‌شده
 
-## Frozen deterministic invariants
+- Production run #1439: موفق، ID `38629119702`.
+- Production run #1440: موفق، ID `38646636071`.
+- Production run #1441: موفق، ID `38692851157`.
+- Closure Gate قبلی #1406: موفق، ID `38695582083`.
+- لاگ #1441 یک خبر عادی منتشرشده، سه حوزه مأموریتی حل‌نشده، هفت تلاش بازیابی و یک بازیابی موفق را ثبت کرده است؛ People Bootstrap در انتها 29/30 بوده است.
+- گیت قبلی شکاف پوشش را فقط ناشی از نبود گزینه تفسیر کرد؛ گیت اصلاح‌شده `failed` و `provider_unavailable` حل‌نشده را به‌عنوان «نبود گزینه» نمی‌پذیرد.
 
-- یک orchestration path اصلی برای Production وجود دارد.
-- selection از ranked selector رسمی عبور می‌کند.
-- normal publication capacity برابر 3 است و candidate window آن را افزایش نمی‌دهد.
-- `normal_period_rank` پیوسته و بدون bypass است.
-- adaptive baseline برای همه normal rankها اعمال می‌شود، از جمله `normal_rank=1`.
-- community/aggregator در normal portfolio وارد نمی‌شود.
-- source diversity و mission portfolio محدودیت‌های خود را حفظ می‌کنند.
-- leader/interview protection فقط routing priority است و quality/evidence gate را دور نمی‌زند.
-- duplicate publication و cross-language duplicate باید مسدود بمانند.
-- publication state فقط پس از confirmed delivery جلو می‌رود.
-- education stream مستقل است و failure آن نباید news orchestration را دوباره اجرا کند.
-- language, editorial quality, evidence و terminology gates برای publication الزامی‌اند.
-- provenance authority باید مستقل از discovery query tier باشد؛ ناشر ناشناخته نباید با Tier پرس‌وجو ارتقا یابد.
+## پیوندهای عملیاتی
 
-## Remediation completed before re-acceptance
+- [آخرین اجرای تاریخی تولید #1441](https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38692851157)
+- [گیت بسته‌شدن قبلی #1406](https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38695582083)
+- [Issue شماره 69 — تعریف نهایی پایان پروژه](https://github.com/jamshidimoh/AI-Future-Radar/issues/69)
 
-یک نقص provenance در Google News اصلاح شد. در ingestion، `source_tier` دیگر مستقیماً از `q["tier"]` گرفته نمی‌شود. هویت ناشر و دامنه برای تعیین Tier مؤثر بررسی می‌شود؛ ناشر ناشناخته در Google News Tier-3 باقی می‌ماند و Tier پرس‌وجو فقط به‌عنوان `discovery_query_tier` حفظ می‌شود. برای این قرارداد، regression test نیز اضافه شده است.
+## تصمیم انتشار
 
-## Historical operational evidence
-
-پنجره‌ای که در پذیرش قبلی با موفقیت بررسی شده بود:
-
-- Production workflow #329 با head `5f3775c1` — success.
-- Production workflow #328 با head `fca900b7` — success.
-- Production workflow #327 با head `9ac374ac` — success.
-
-Closure Gate قبلی هر ۱۱ معیار را `PASS` ثبت کرده بود. این شواهد همچنان به‌عنوان سابقه معتبرند، اما برای اعلام closure جاری کافی نیستند؛ چون اجرای جدید Gate در 2026-09-06 معیار 02 را حل‌نشده گزارش کرده است.
-
-## Current acceptance boundary
-
-تا تولید یک پنجره شواهد جدید و سبز:
-
-- `CLOSED` اعلام نشود.
-- Gate یا تست‌ها برای حذف blocker تضعیف نشوند.
-- provenance/authority regression حفظ شود.
-- هر انتشار جدید همچنان fail-closed و evidence-driven باقی بماند.
-
-## Next closure condition
-
-پس از merge اصلاحات، باید Acceptance دوباره اجرا شود و فقط در صورت ثبت شواهد کامل برای publish و zero-publish/fail-closed، همراه با سه اجرای متوالی موفق و بدون invariant failure، وضعیت به `CLOSED` برگردد.
-
-<!-- closure-validation-trigger: PENDING 2026-09-06 -->
+تا زمانی که baseline سخت‌گیرانه توسط سه اجرای متوالی واقعی آزموده نشده، People Bootstrap به 30/30 تحویل تأییدشده نرسیده و هیچ معیار پذیرش مسدودکننده باقی نمانده، وضعیت پروژه باید `CLOSURE PENDING` باقی بماند. برای قبولی مصنوعی، AI relevance، کیفیت تحریریه، evidence، اعتبار منبع یا کنترل duplicate نباید تضعیف شود.

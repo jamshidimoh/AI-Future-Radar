@@ -76,27 +76,42 @@ _PERSIAN_JOINED_VERBS = re.compile(
     r"ماند|مانند|سازد|سازند|گذارد|گذارند|گوید|گویند)\b"
 )
 
-def persian_editorial_naturalness_ok(title: str, summary: str, why_it_matters: str) -> bool:
-    """Bounded deterministic check for fluent Persian rather than Persian-character ratio alone."""
+def persian_editorial_naturalness_issues(title: str, summary: str, why_it_matters: str) -> list[str]:
+    """Return stable reason codes for the bounded Persian fluency contract."""
     fields = [str(title or "").strip(), str(summary or "").strip(), str(why_it_matters or "").strip()]
     body = " ".join(fields[1:])
     if not all(fields):
-        return False
+        return ["missing_editorial_field"]
+
+    issues: list[str] = []
+    translationese = [pattern for pattern in _TRANSLATIONESE_PATTERNS if pattern in body]
     if sum(body.count(pattern) for pattern in _TRANSLATIONESE_PATTERNS) >= 2:
-        return False
-    if any(form in body for form in _PERSIAN_ORTHOGRAPHIC_BAD_FORMS):
-        return False
+        issues.append("repeated_translationese:" + "|".join(translationese[:4]))
+
+    bad_forms = [form for form in _PERSIAN_ORTHOGRAPHIC_BAD_FORMS if form in body]
+    if bad_forms:
+        issues.append("orthographic_form:" + "|".join(bad_forms[:4]))
+
     # Inspect the original text here: correct ZWNJ forms such as «می‌کند» must
     # remain distinguishable from the incorrect «میکند».
-    if _PERSIAN_JOINED_VERBS.search(body):
-        return False
-    sentences = [s.strip() for s in re.split(r"(?<=[.!؟])\s+", body) if s.strip()]
+    joined_verbs = _PERSIAN_JOINED_VERBS.findall(body)
+    if joined_verbs:
+        issues.append("joined_verb_without_zwnj:" + "|".join(dict.fromkeys(joined_verbs[:4])))
+
+    sentences = [s.strip() for s in re.split(r"(?<=[.!؟])\\s+", body) if s.strip()]
     # Conjunctions such as «، اما این نتیجه» are ordinary Persian. Do not
     # reject prose based on the first letter of the following word; the
     # orthography, translationese, joined-verb and sentence-length checks above
     # are the bounded deterministic naturalness contract.
-    return not (len(sentences) >= 3 and sum(len(s) > 240 for s in sentences) >= 2)
+    long_sentences = [len(sentence) for sentence in sentences if len(sentence) > 240]
+    if len(sentences) >= 3 and len(long_sentences) >= 2:
+        issues.append(f"multiple_overlong_sentences:{len(long_sentences)}")
+    return issues
 
+
+def persian_editorial_naturalness_ok(title: str, summary: str, why_it_matters: str) -> bool:
+    """Return whether the Persian prose passes the deterministic naturalness contract."""
+    return not persian_editorial_naturalness_issues(title, summary, why_it_matters)
 
 def persian_ratio(text: str) -> float:
     letters = re.findall(r"[A-Za-z\u0600-\u06FF]", text or "")

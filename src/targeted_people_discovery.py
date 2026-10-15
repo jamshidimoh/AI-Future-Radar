@@ -22,6 +22,7 @@ TARGETED_AUTHOR_QUERIES = {
 }
 DEFAULT_TIMEOUT_SECONDS = 8.0
 MAX_RESULTS = 8
+PREPRINT_JOURNAL_MARKERS = ("biorxiv", "medrxiv", "arxiv", "research square", "ssrn", "preprints.org")
 
 
 def _element_text(node: ET.Element | None) -> str:
@@ -151,7 +152,16 @@ def fetch_targeted_people_items(
                     if _element_text(section)
                 ]
                 abstract = " ".join(abstract_parts).strip()
-                journal = _element_text(article.find("./Journal/Title")) or "PubMed-indexed journal"
+                journal = _element_text(article.find("./Journal/Title"))
+                normalized_journal = journal.casefold()
+                if not journal or any(marker in normalized_journal for marker in PREPRINT_JOURNAL_MARKERS):
+                    logger.info(
+                        "Targeted PubMed candidate rejected: non-journal or preprint record person=%s pmid=%s journal=%s",
+                        person,
+                        pmid,
+                        journal or "missing",
+                    )
+                    continue
                 published = _pubdate(record)
                 link = f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
                 content = abstract or title
@@ -166,12 +176,13 @@ def fetch_targeted_people_items(
                         "watch_person": person,
                         "leader": person,
                         "publisher": journal,
-                        "source": "PubMed / NCBI",
-                        "source_name": "PubMed / NCBI",
-                        "source_url": "https://pubmed.ncbi.nlm.nih.gov/",
-                        "source_tier": 1,
-                        "tier": 1,
+                        "source": journal,
+                        "source_name": journal,
+                        "source_url": link,
+                        "source_tier": 2,
+                        "tier": 2,
                         "official": True,
+                        "indexed_by": "PubMed / NCBI",
                         "provenance_url": link,
                         "link": link,
                         "url": link,

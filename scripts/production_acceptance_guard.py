@@ -155,13 +155,13 @@ def _mission_coverage_status(lines):
         area for area, statuses in attempts_by_lane.items()
         if statuses
         and "recovered" not in statuses
-        and all(status in {"below_score_floor", "independent_lane_not_score_gated"} for status in statuses)
+        and all(status == "below_score_floor" for status in statuses)
     }
     unresolved_processing_lanes = {
         area for area, statuses in attempts_by_lane.items()
         if statuses
         and "recovered" not in statuses
-        and any(status in {"failed", "provider_unavailable", "hard_failure"} for status in statuses)
+        and any(status in {"failed", "provider_unavailable", "hard_failure", "independent_lane_not_score_gated"} for status in statuses)
     }
     explicit_empty_lanes = explicit_no_candidate - set(attempts_by_lane)
     result["no_candidate_lanes"] = len(explicit_empty_lanes | eligible_floor_only)

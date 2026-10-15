@@ -107,8 +107,8 @@ def test_pubmed_fallback_rejects_same_initials_without_confirmed_forename(monkey
 
 def test_pubmed_fallback_rejects_preprint_journals(monkeypatch):
     payload = _pubmed_xml().replace(
-        "<Title>Nature Biotechnology</Title>",
-        "<Title>bioRxiv</Title>",
+        b"<Title>Nature Biotechnology</Title>",
+        b"<Title>bioRxiv</Title>",
     )
     responses = [
         FakeResponse(payload={"esearchresult": {"idlist": ["41844990"]}}),

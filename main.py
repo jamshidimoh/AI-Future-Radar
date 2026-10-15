@@ -32,6 +32,7 @@ from src.publication_contract import unique_candidates
 from src.rejection_telemetry import build_event, emit
 from src.send_telegram import format_post, resolve_source_image, send_to_telegram_safe
 from src.signal_engine import enrich_signal_items
+from src.targeted_people_discovery import TARGETED_AUTHOR_QUERIES, fetch_targeted_people_items
 from src.state_io import StateCorruptionError
 from src.story_gate import gate_story_candidates
 from src.summarize import summarize_item
@@ -718,6 +719,36 @@ def main(hooks=None):
     news_items = base_news + leader_news
     print(f"Google News items: {len(news_items)} | leader candidates: {len(leader_news)}")
     all_items = rss_items + youtube_items + news_items
+    # A targeted, authoritative index is the last discovery fallback for watched
+    # people still undelivered during bootstrap. These records remain ordinary
+    # candidates and cannot bypass source-evidence, Persian QA, editorial, ranking,
+    # duplicate or Telegram delivery gates.
+    if people_bootstrap_mode:
+        delivered_people = {
+            str(name).strip().casefold()
+            for name in (people_state.get("delivered_people", []) if isinstance(people_state, dict) else [])
+            if str(name).strip()
+        }
+        pending_targeted_people = [
+            name
+            for name in people_watchlist
+            if name.strip().casefold() in TARGETED_AUTHOR_QUERIES
+            and name.strip().casefold() not in delivered_people
+        ]
+        if pending_targeted_people:
+            targeted_items = fetch_targeted_people_items(pending_targeted_people)
+            existing_people_ids = {people_identity(item) for item in all_items if people_identity(item)}
+            additions = [
+                item for item in targeted_items
+                if people_identity(item) and people_identity(item) not in existing_people_ids
+            ]
+            all_items.extend(additions)
+            print(
+                f"[Targeted People Discovery] source=PubMed "
+                f"pending={len(pending_targeted_people)} fetched={len(targeted_items)} "
+                f"added={len(additions)}",
+                flush=True,
+            )
     print(f"Raw total: {len(all_items)}")
     all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities)
     seen_hashes, seen_signatures = load_seen()

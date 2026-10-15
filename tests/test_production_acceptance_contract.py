@@ -212,7 +212,7 @@ Posts sent: 3/6
     assert "mission portfolio coverage remained unmet" in reason
 
 
-def test_independent_lane_not_score_gated_can_be_classified_as_no_candidate():
+def test_independent_lane_rejections_are_not_treated_as_missing_candidates():
     log = """
 [Selection Timing] original_select candidates=5 candidate_window=6 elapsed=1.0s
 [Publication Summary Budget] input=5 protected=0 normal_window=5 output=5 normal_limit=5 replacement_buffer=3 score_floor=55.0
@@ -225,8 +225,8 @@ def test_independent_lane_not_score_gated_can_be_classified_as_no_candidate():
 Posts sent: 1/5
 """
     ok, reason = validate(log)
-    assert ok is True
-    assert "no eligible candidate" in reason
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in reason
 
 
 def test_partial_people_bootstrap_progress_is_accepted():

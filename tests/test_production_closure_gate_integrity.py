@@ -56,3 +56,12 @@ def test_closure_gate_blocks_unresolved_evidence_with_failure_status():
 def test_closure_gate_has_no_push_trigger():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert "\n  push:" not in text
+
+
+
+def test_closure_gate_requires_persisted_people_bootstrap_completion():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "def people_bootstrap_state_complete():" in text
+    assert "/contents/data/publication_state.json?ref=main" in text
+    assert '"14_people_bootstrap_complete": people_bootstrap_complete' in text
+    assert "PEOPLE_BOOTSTRAP_STATE" in text

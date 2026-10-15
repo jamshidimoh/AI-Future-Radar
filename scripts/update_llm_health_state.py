@@ -167,12 +167,25 @@ def main() -> int:
     observed_failures = [event for event in events if event[1] == "failure"]
 
     last_event: dict[str, tuple[str, str, bool]] = {}
+    last_provider_event: dict[str, str] = {}
     for deployment, event_kind, failure_kind, wallet_only in events:
         last_event[deployment] = (event_kind, failure_kind, wallet_only)
+        provider = family(deployment)
+        if event_kind == "success":
+            last_provider_event[provider] = "success"
+        elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
+            last_provider_event[provider] = "failure"
 
     for deployment, (event_kind, _, _) in last_event.items():
         if event_kind == "success":
             models.pop(deployment, None)
+
+    # A later successful call proves that the provider is reachable/authenticated
+    # in this run and clears an older provider-wide auth/quota cooldown. A later
+    # provider-wide failure still wins because events are processed in log order.
+    for provider, event_kind in last_provider_event.items():
+        if event_kind == "success":
+            providers.pop(provider, None)
 
     for deployment, (event_kind, kind, kira_wallet_only) in last_event.items():
         if event_kind != "failure":
@@ -186,6 +199,8 @@ def main() -> int:
                 "last_success": 0,
             }
         provider = family(deployment)
+        if last_provider_event.get(provider) == "success":
+            continue
         if kira_wallet_only:
             old = providers.get(provider, {})
             providers[provider] = {

@@ -3,8 +3,6 @@ name: Run AI Future Radar Bot
 # Closure evidence cycle marker: 1390.
 
 on:
-  push:
-    branches: [main]
   schedule:
     # Tehran publication windows: 05:17, 10:47, 13:47, 17:47, 20:47, 22:47 Tehran (UTC+3:30). GitHub Actions cron is UTC.
     - cron: "47 1 * * *"
@@ -13,11 +11,9 @@ on:
 
 concurrency:
   group: ai-future-radar-production
-  # A stuck production execution must not block the latest code from reaching
-  # production. State persistence already performs a remote-state merge, so the
-  # newest run can safely supersede an older execution.
-  # A scheduled run must never pre-empt a code-triggered production run; pushes may still supersede older scheduled/dispatch executions.
-  cancel-in-progress: ${{ github.event_name == 'push' }}
+  # Production runs are schedule/manual-dispatch only. Never cancel an active run:
+  # state persistence and closure evidence require serialized, complete attempts.
+  cancel-in-progress: false
 
 permissions:
   contents: write

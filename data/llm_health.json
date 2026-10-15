@@ -1,105 +1,15 @@
 {
   "models": {
-    "nararouter:auto/bynara": {
-      "failures": 56,
-      "disabled_until": 1792025674.939,
-      "last_error": "model",
-      "last_success": 0.0
-    },
-    "groq:openai/gpt-oss-120b": {
-      "failures": 13,
-      "disabled_until": 1791886957.394,
-      "last_error": "rate_limit",
-      "last_success": 0.0
-    },
-    "groq:qwen/qwen3.6-27b": {
-      "failures": 1,
-      "disabled_until": 1789448706.304,
-      "last_error": "rate_limit",
-      "last_success": 0.0
-    },
-    "openrouter:google/gemma-4-31b-it:free": {
-      "failures": 4,
-      "disabled_until": 1792021079.396,
-      "last_error": "rate_limit",
-      "last_success": 0.0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 3,
-      "disabled_until": 1792062230.812,
-      "last_error": "rate_limit",
-      "last_success": 0.0
-    },
-    "groq:openai/gpt-oss-20b": {
-      "failures": 9,
-      "disabled_until": 1791415218.983,
-      "last_error": "rate_limit",
-      "last_success": 0.0
-    },
-    "kiraai:qwen3.8-flash": {
-      "failures": 1,
-      "disabled_until": 1791964916.831,
-      "last_error": "quota",
-      "last_success": 0.0
-    },
-    "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free": {
-      "failures": 1,
-      "disabled_until": 1791469675.41,
-      "last_error": "model",
-      "last_success": 0.0
-    },
-    "kiraai:dots-3-note-preview": {
-      "failures": 1,
-      "disabled_until": 1790257420.043,
-      "last_error": "quota",
-      "last_success": 0.0
-    },
-    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
-      "failures": 4,
-      "disabled_until": 1791020905.858,
-      "last_error": "quota",
-      "last_success": 0.0
-    },
     "gemini:gemini-3.8-flash": {
-      "failures": 140,
-      "disabled_until": 1792146502.749,
+      "failures": 141,
+      "disabled_until": 1792149153.66,
       "last_error": "auth",
-      "last_success": 0.0
+      "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
       "disabled_until": 1792146502.749,
       "last_error": "auth",
-      "last_success": 0.0
-    },
-    "openrouter:z-ai/glm-5.2:free": {
-      "failures": 1,
-      "disabled_until": 1789963406.824,
-      "last_error": "quota",
-      "last_success": 0.0
-    },
-    "openrouter:inclusionai/ling-3.0-flash-fin:free": {
-      "failures": 1,
-      "disabled_until": 1789980776.521,
-      "last_error": "model",
-      "last_success": 0.0
-    },
-    "grokfree:grokfree": {
-      "failures": 1,
-      "disabled_until": 1789986298.099,
-      "last_error": "model",
-      "last_success": 0.0
-    },
-    "openrouterfreerouter:openrouterfreerouter": {
-      "failures": 1,
-      "disabled_until": 1789968298.099,
-      "last_error": "quota",
-      "last_success": 0.0
-    },
-    "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
-      "failures": 1,
-      "disabled_until": 1791781981.709,
-      "last_error": "model",
       "last_success": 0.0
     },
     "kiraai:kira-mini-1.0": {
@@ -108,17 +18,17 @@
       "last_error": "quota",
       "last_success": 0.0
     },
-    "kiraai:qwen3.8-27b-free": {
+    "gemini:Gemini": {
       "failures": 1,
-      "disabled_until": 1790973667.149,
-      "last_error": "rate_limit",
-      "last_success": 0.0
+      "disabled_until": 1792149153.66,
+      "last_error": "auth",
+      "last_success": 0
     },
-    "openrouter:stealth/space-bunny-alpha": {
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1791239261.479,
-      "last_error": "model",
-      "last_success": 0.0
+      "disabled_until": 1792066353.66,
+      "last_error": "rate_limit",
+      "last_success": 0
     }
   },
   "providers": {
@@ -128,31 +38,18 @@
       "last_error": "wallet",
       "last_success": 0.0
     },
-    "openrouter": {
-      "failures": 10,
-      "disabled_until": 1791072648.221,
-      "last_error": "quota",
-      "last_success": 0.0
-    },
     "gemini": {
-      "failures": 280,
-      "disabled_until": 1792146502.749,
-      "last_error": "auth",
-      "last_success": 0.0
-    },
-    "openrouterfreerouter": {
-      "failures": 1,
-      "disabled_until": 1789986298.099,
-      "last_error": "quota",
-      "last_success": 0.0
+      "failures": 282,
+      "disabled_until": 1792149153.66,
+      "last_error": "auth"
     }
   },
-  "updated_at": 1789352663.9123816,
+  "updated_at": 1792062753.659536,
   "version": 1,
   "telemetry": {
-    "observed_failures": 3,
-    "observed_events": 19,
-    "updated_at": 1789352663.9123816
+    "observed_failures": 12,
+    "observed_events": 25,
+    "updated_at": 1792062753.659536
   },
   "observed_failures": 0,
   "observed_events": 0

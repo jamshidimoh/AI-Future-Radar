@@ -53,6 +53,20 @@ def normalize_editorial_text(text: str) -> str:
     return value.strip()
 
 
+_PERSIAN_VERB_STEMS = (
+    "تواند", "توانند", "شود", "شوند", "کند", "کنند", "دهد", "دهند",
+    "گیرد", "گیرند", "رسد", "رسند", "رود", "روند", "ماند", "مانند",
+    "سازد", "سازند", "گذارد", "گذارند", "گوید", "گویند",
+)
+_PERSIAN_VERB_STEM_RE = "|".join(sorted(_PERSIAN_VERB_STEMS, key=len, reverse=True))
+_JOINED_PERSIAN_VERB_RE = re.compile(
+    rf"(?<![\\u0600-\\u06FF])(?P<prefix>ن?می)(?P<verb>{_PERSIAN_VERB_STEM_RE})(?![\\u0600-\\u06FF])"
+)
+_SPACED_PERSIAN_VERB_RE = re.compile(
+    rf"(?<![\\u0600-\\u06FF])(?P<prefix>ن?می)[ \\t]+(?P<verb>{_PERSIAN_VERB_STEM_RE})(?![\\u0600-\\u06FF])"
+)
+
+
 def normalize_news_editorial_text(text: str) -> str:
     """Normalize published news prose without converting ordinary Persian AI terms to English."""
     value = _replace(str(text or ""), NON_IRANIAN_NAMES_EN)
@@ -70,12 +84,32 @@ def normalize_news_editorial_text(text: str) -> str:
         "زمان بندی": "زمان‌بندی",
         "بازرسیهای": "بازرسی‌های",
         "بازرسی های": "بازرسی‌های",
+        "شبکههای": "شبکه‌های",
+        "شبکه های": "شبکه‌های",
+        "دادههای": "داده‌های",
         "داده های": "داده‌های",
+        "تحلیلهای": "تحلیل‌های",
+        "تحلیل های": "تحلیل‌های",
+        "تفاوتهای": "تفاوت‌های",
+        "تفاوت های": "تفاوت‌های",
+        "پروتئینهای": "پروتئین‌های",
+        "پروتئین های": "پروتئین‌های",
+        "سلسلهمراتب": "سلسله‌مراتب",
         "مدل های": "مدل‌های",
         "شرکت های": "شرکت‌های",
         "نسخه های": "نسخه‌های",
     }
     value = _replace(value, repairs)
+    # Repair only a closed list of common Persian verb stems. This is a deterministic
+    # orthographic correction, not a relaxation of source/claim/editorial checks.
+    value = _JOINED_PERSIAN_VERB_RE.sub(
+        lambda match: match.group("prefix") + "\\u200c" + match.group("verb"),
+        value,
+    )
+    value = _SPACED_PERSIAN_VERB_RE.sub(
+        lambda match: match.group("prefix") + "\\u200c" + match.group("verb"),
+        value,
+    )
     value = re.sub(r"[ \t]{2,}", " ", value)
     value = re.sub(r"\s+([،؛؟!٪])", r"\1", value)
     value = re.sub(r"([،؛؟!٪])(?=[^\s])", r"\1 ", value)

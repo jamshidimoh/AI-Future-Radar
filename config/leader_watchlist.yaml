@@ -150,6 +150,8 @@ google_news_queries:
   - {query: "Andrew Ng LearnVector AI education agents interview", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
   - {query: "George Church AI genomics synthetic biology machine learning", watch_person: "George Church", category: bio, tier: 1, content_type: research}
   - {query: "George Church AI biology podcast interview 2026", watch_person: "George Church", category: bio, tier: 1, content_type: podcast}
+  - {query: "site:podcasts.apple.com George Church AI Biology interview", watch_person: "George Church", category: bio, tier: 1, content_type: podcast}
+  - {query: "site:genengnews.com George Church synthetic biology interview", watch_person: "George Church", category: bio, tier: 1, content_type: interview}
   - {query: "George Church genomics future biotechnology interview", watch_person: "George Church", category: bio, tier: 1, content_type: interview}
   - {query: "George Church Manufacturing-aware generative models designed DNA", watch_person: "George Church", category: bio, tier: 1, content_type: research}
   - {query: "George Church Nature Biotechnology generative models DNA", watch_person: "George Church", category: bio, tier: 1, content_type: research}

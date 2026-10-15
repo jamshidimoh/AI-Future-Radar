@@ -516,6 +516,25 @@ jobs:
                       if not current.get("last_error") and value.get("last_error"):
                           current["last_error"] = value.get("last_error")
                   merged_health[key] = merged
+              # Reapply this run's ordered success events after max-merging state.
+              # Otherwise a successful model/provider can be re-disabled by an older
+              # cooldown copied from origin/main immediately above.
+              from scripts.update_llm_health_state import clear_successful_health_records
+
+              runtime_log = pathlib.Path("run.log")
+              if runtime_log.exists():
+                  before_models = len(merged_health.get("models", {}))
+                  before_providers = len(merged_health.get("providers", {}))
+                  merged_health = clear_successful_health_records(
+                      merged_health,
+                      runtime_log.read_text(encoding="utf-8", errors="replace").splitlines(),
+                  )
+                  removed_models = before_models - len(merged_health.get("models", {}))
+                  removed_providers = before_providers - len(merged_health.get("providers", {}))
+                  print(
+                      "[LLM Health Merge] reapplied current-run success events "
+                      f"cleared_models={removed_models} cleared_providers={removed_providers}"
+                  )
               dump(root / "data/llm_health.json", merged_health)
           PY
             git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json

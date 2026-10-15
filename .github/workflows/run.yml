@@ -45,6 +45,7 @@ jobs:
           node-version: "22"
 
       - name: Install and start ephemeral OmniRoute
+        timeout-minutes: 25
         env:
           PORT: 20128
           OMNIROUTE_SERVER_HOST: 127.0.0.1
@@ -74,7 +75,7 @@ jobs:
             echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"
             exit 0
           fi
-          omniroute --version
+          timeout 10s omniroute --version || echo "[OmniRoute] version check timed out; continuing with fallback"
           nohup omniroute > /tmp/omniroute.log 2>&1 &
           HEALTHY=0
           for attempt in $(seq 1 30); do
@@ -160,11 +161,11 @@ jobs:
             fi
           done
           echo "[OmniRoute] configured provider connections (redacted):"
-          omniroute providers list --json || true
+          timeout 15s omniroute providers list --json || echo "[OmniRoute] provider listing timed out; continuing with fallback"
           echo "[OmniRoute] validating local provider configuration without inference calls:"
-          omniroute providers validate || true
+          timeout 20s omniroute providers validate || echo "[OmniRoute] provider validation timed out; continuing with fallback"
           echo "[OmniRoute] validating post-provision model catalog"
-          curl -fsS http://127.0.0.1:20128/v1/models >/tmp/omniroute-post-models.json 2>/dev/null || true
+          curl -4 -fsS --connect-timeout 3 --max-time 10 http://127.0.0.1:20128/v1/models >/tmp/omniroute-post-models.json 2>/dev/null || true
           MODEL_COUNT=$(python - <<'PY'
           import json
           from pathlib import Path

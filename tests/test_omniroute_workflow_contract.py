@@ -42,3 +42,18 @@ def test_local_ollama_fallback_has_cold_start_timeout_for_cpu_inference():
     text = WORKFLOW.read_text(encoding="utf-8")
     assert text.count("RADAR_OLLAMA_TIMEOUT_SECONDS: 90") == 2
     assert "RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b" in text
+
+
+
+def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+    start = workflow.index("      - name: Install and start ephemeral OmniRoute")
+    end = workflow.index("      - name: Install dependencies", start)
+    step = workflow[start:end]
+    assert "timeout-minutes: 25" in step
+    assert "timeout 420s npm install" in step
+    assert "timeout 10s omniroute --version" in step
+    assert "timeout 15s omniroute providers list --json" in step
+    assert "timeout 20s omniroute providers validate" in step
+    assert "--connect-timeout 3 --max-time 10 http://127.0.0.1:20128/v1/models" in step
+    assert "continuing with fallback" in step

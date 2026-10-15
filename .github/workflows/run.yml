@@ -391,6 +391,7 @@ jobs:
           import sys
 
           from scripts.llm_health_state_merge import merge_llm_health_state
+          from scripts.update_llm_health_state import clear_successful_health_records
 
           root = pathlib.Path(".")
           local_root = pathlib.Path(sys.argv[1])
@@ -467,6 +468,22 @@ jobs:
           local_health = load(local_root / "data/llm_health.json", {})
           if isinstance(remote_health, dict) and isinstance(local_health, dict):
               merged_health = merge_llm_health_state(remote_health, local_health)
+              # Reapply ordered success evidence after max-merging state so an
+              # older cooldown cannot be resurrected after current-run success.
+              runtime_log = pathlib.Path("run.log")
+              if runtime_log.exists():
+                  before_models = len(merged_health.get("models", {}))
+                  before_providers = len(merged_health.get("providers", {}))
+                  merged_health = clear_successful_health_records(
+                      merged_health,
+                      runtime_log.read_text(encoding="utf-8", errors="replace").splitlines(),
+                  )
+                  removed_models = before_models - len(merged_health.get("models", {}))
+                  removed_providers = before_providers - len(merged_health.get("providers", {}))
+                  print(
+                      "[LLM Health Merge] reapplied current-run success events "
+                      f"cleared_models={removed_models} cleared_providers={removed_providers}"
+                  )
               dump(root / "data/llm_health.json", merged_health)
               timestamp = merged_health.get("updated_at") or (merged_health.get("telemetry") or {}).get("updated_at", 0)
               print(f"[LLM Health Merge] selected_snapshot_updated_at={timestamp}")

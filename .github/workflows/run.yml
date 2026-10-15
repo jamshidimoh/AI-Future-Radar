@@ -432,63 +432,15 @@ jobs:
                   merged_publication["people_bootstrap"] = remote_people
               dump(root / "data/publication_state.json", merged_publication)
 
-          def normalize_health_section(section):
-              normalized = {}
-              for key, value in (section or {}).items():
-                  if not isinstance(value, dict):
-                      continue
-                  marker = str(key).strip().casefold()
-                  current = normalized.get(marker)
-                  if current is None:
-                      normalized[marker] = dict(value)
-                      continue
-                  current["failures"] = max(
-                      int(current.get("failures", 0) or 0),
-                      int(value.get("failures", 0) or 0),
-                  )
-                  current["disabled_until"] = max(
-                      float(current.get("disabled_until", 0) or 0),
-                      float(value.get("disabled_until", 0) or 0),
-                  )
-                  current["last_success"] = max(
-                      float(current.get("last_success", 0) or 0),
-                      float(value.get("last_success", 0) or 0),
-                  )
-                  if not current.get("last_error") and value.get("last_error"):
-                      current["last_error"] = value.get("last_error")
-              return normalized
+          from scripts.merge_llm_health_state import merge_health_state
 
           remote_health = load(root / "data/llm_health.json", {})
           local_health = load(local_root / "data/llm_health.json", {})
           if isinstance(remote_health, dict) and isinstance(local_health, dict):
-              merged_health = dict(remote_health)
-              for key in ("observed_failures", "observed_events"):
-                  merged_health[key] = max(int(remote_health.get(key, 0) or 0), int(local_health.get(key, 0) or 0))
-              for key in ("models", "providers"):
-                  remote_section = normalize_health_section(remote_health.get(key))
-                  local_section = normalize_health_section(local_health.get(key))
-                  merged = dict(remote_section)
-                  for marker, value in local_section.items():
-                      current = merged.get(marker)
-                      if current is None:
-                          merged[marker] = value
-                          continue
-                      current["failures"] = max(
-                          int(current.get("failures", 0) or 0),
-                          int(value.get("failures", 0) or 0),
-                      )
-                      current["disabled_until"] = max(
-                          float(current.get("disabled_until", 0) or 0),
-                          float(value.get("disabled_until", 0) or 0),
-                      )
-                      current["last_success"] = max(
-                          float(current.get("last_success", 0) or 0),
-                          float(value.get("last_success", 0) or 0),
-                      )
-                      if not current.get("last_error") and value.get("last_error"):
-                          current["last_error"] = value.get("last_error")
-                  merged_health[key] = merged
+              merged_health = merge_health_state(remote_health, local_health)
               dump(root / "data/llm_health.json", merged_health)
+              print("[Production State Merge] LLM health reconciled from latest run snapshot")
+
           PY
             git add data/seen.json data/telegram_feedback.json data/education_state.json data/publication_state.json data/llm_health.json
             if git diff --cached --quiet; then

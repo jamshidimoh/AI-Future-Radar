@@ -71,3 +71,11 @@ def test_closure_gate_requires_people_bootstrap_and_fresh_llm_health():
     assert '"15_llm_health_fresh_for_latest_run": health_state_current' in text
     assert "people_bootstrap_state_complete" in text
     assert "health_snapshot_fresh" in text
+
+
+
+def test_production_runs_are_serialized_without_canceling_active_attempts():
+    run_workflow = WORKFLOW.parent / "run.yml"
+    text = run_workflow.read_text(encoding="utf-8")
+    assert "group: ai-future-radar-production" in text
+    assert "cancel-in-progress: false" in text

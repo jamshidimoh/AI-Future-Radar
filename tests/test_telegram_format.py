@@ -3,6 +3,8 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import src.telegram_single_delivery as telegram_single_delivery
+from src.editorial_quality_policy import persian_editorial_naturalness_ok
+from src.education_editor import normalize_news_editorial_text
 from src.send_telegram import _chunk_text, _gregorian_date, _source_page_image, format_post
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,6 +91,31 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertIn("هوش مصنوعی مولد", text)
         self.assertIn("یادگیری ماشین", text)
         self.assertIn("مدل‌های زبانی", text)
+
+    def test_news_normalization_repairs_persian_orthography_before_quality_gate(self):
+        summary = normalize_news_editorial_text(
+            "این سامانه میتواند دادههای پژوهش را تحلیل کند و شبکههای جدید را بررسی میکند. "
+            "همچنین تحلیلهای بعدی میتوانند تفاوتهای میان روشها را نشان دهند."
+        )
+        why = normalize_news_editorial_text(
+            "این روش می تواند هزینههای پردازش را کاهش دهد. نتیجه میتواند ارزیابی را دقیقتر کند."
+        )
+        zwnj = chr(0x200C)
+        assert f"می{zwnj}تواند" in summary
+        assert f"بررسی می{zwnj}کند" in summary
+        assert f"داده{zwnj}های" in summary
+        assert f"شبکه{zwnj}های" in summary
+        assert f"تحلیل{zwnj}های" in summary
+        assert f"تفاوت{zwnj}های" in summary
+        assert f"می{zwnj}توانند" in summary
+        assert f"می{zwnj}تواند" in why
+        assert "میتواند" not in summary
+        assert "میکند" not in summary
+        assert persian_editorial_naturalness_ok(
+            "اصلاح املای فارسی در خلاصه خبر",
+            summary,
+            why,
+        )
 
     def test_english_first_primary_lines_keep_rtl_base_and_isolate_latin_runs(self):
         text = format_post(

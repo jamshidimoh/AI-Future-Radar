@@ -194,3 +194,55 @@ def test_intelligence_blocks_runtime_model_from_legacy_mixed_case_health(tmp_pat
     intelligence = FreeModelIntelligence(state, persist=True)
     ranked = intelligence.rank([_entry("openai/gpt-oss-120b", family="groq", quality=90)])
     assert ranked == []
+
+
+def test_successful_runtime_event_clears_stale_provider_cooldown_after_remote_merge():
+    merged = {
+        "models": {
+            "gemini:gemini-3.8-flash": {
+                "failures": 137,
+                "disabled_until": 4102444800,
+                "last_error": "auth",
+                "last_success": 0,
+            },
+            "openrouter:model-a": {
+                "failures": 2,
+                "disabled_until": 4102444800,
+                "last_error": "rate_limit",
+                "last_success": 0,
+            },
+        },
+        "providers": {
+            "gemini": {"failures": 274, "disabled_until": 4102444800, "last_error": "auth"},
+            "openrouter": {"failures": 3, "disabled_until": 4102444800, "last_error": "quota"},
+        },
+    }
+
+    result = persistence.clear_successful_health_records(
+        merged,
+        ["[Light Router] success=Gemini:gemini-3.8-flash model=gemini/gemini-3.8-flash attempts=1"],
+    )
+
+    assert "gemini:gemini-3.8-flash" not in result["models"]
+    assert "gemini" not in result["providers"]
+    assert "openrouter:model-a" in result["models"]
+    assert "openrouter" in result["providers"]
+
+
+def test_later_provider_failure_wins_over_an_earlier_success_after_merge():
+    merged = {
+        "models": {},
+        "providers": {
+            "groq": {"failures": 3, "disabled_until": 4102444800, "last_error": "auth"},
+        },
+    }
+
+    result = persistence.clear_successful_health_records(
+        merged,
+        [
+            "[Light Router] success=Groq:qwen/qwen3.6-27b model=groq/qwen3.6-27b attempts=1",
+            "WARNING src.llm_router_light: Provider quota attempt failed provider=groq model=groq/qwen3.6-27b exception=QuotaExceeded: HTTP 429 rate limit",
+        ],
+    )
+
+    assert "groq" in result["providers"]

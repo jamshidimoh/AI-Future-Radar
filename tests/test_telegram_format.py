@@ -90,6 +90,33 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertIn("یادگیری ماشین", text)
         self.assertIn("مدل‌های زبانی", text)
 
+    def test_news_normalization_repairs_persian_orthography_before_quality_gate(self):
+        from src.education_editor import normalize_news_editorial_text
+        from src.editorial_quality_policy import persian_editorial_naturalness_ok
+
+        summary = normalize_news_editorial_text(
+            "این سامانه میتواند دادههای پژوهش را تحلیل کند و شبکههای جدید را بررسی میکند. "
+            "همچنین تحلیلهای بعدی میتوانند تفاوتهای میان روشها را نشان دهند."
+        )
+        why = normalize_news_editorial_text(
+            "این روش می تواند هزینههای پردازش را کاهش دهد. نتیجه میتواند ارزیابی را دقیقتر کند."
+        )
+        assert "می\\u200cتواند" in summary
+        assert "بررسی می\\u200cکند" in summary
+        assert "داده\\u200cهای" in summary
+        assert "شبکه\\u200cهای" in summary
+        assert "تحلیل\\u200cهای" in summary
+        assert "تفاوت\\u200cهای" in summary
+        assert "می\\u200cتوانند" in summary
+        assert "می\\u200cتواند" in why
+        assert "میتواند" not in summary
+        assert "میکند" not in summary
+        assert persian_editorial_naturalness_ok(
+            "اصلاح املای فارسی در خلاصه خبر",
+            summary,
+            why,
+        )
+
     def test_english_first_primary_lines_keep_rtl_base_and_isolate_latin_runs(self):
         text = format_post(
             {

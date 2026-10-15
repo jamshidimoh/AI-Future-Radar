@@ -101,14 +101,15 @@ class TelegramFormatTests(unittest.TestCase):
         why = normalize_news_editorial_text(
             "این روش می تواند هزینههای پردازش را کاهش دهد. نتیجه میتواند ارزیابی را دقیقتر کند."
         )
-        assert "می\\u200cتواند" in summary
-        assert "بررسی می\\u200cکند" in summary
-        assert "داده\\u200cهای" in summary
-        assert "شبکه\\u200cهای" in summary
-        assert "تحلیل\\u200cهای" in summary
-        assert "تفاوت\\u200cهای" in summary
-        assert "می\\u200cتوانند" in summary
-        assert "می\\u200cتواند" in why
+        zwnj = chr(0x200C)
+        assert f"می{zwnj}تواند" in summary
+        assert f"بررسی می{zwnj}کند" in summary
+        assert f"داده{zwnj}های" in summary
+        assert f"شبکه{zwnj}های" in summary
+        assert f"تحلیل{zwnj}های" in summary
+        assert f"تفاوت{zwnj}های" in summary
+        assert f"می{zwnj}توانند" in summary
+        assert f"می{zwnj}تواند" in why
         assert "میتواند" not in summary
         assert "میکند" not in summary
         assert persian_editorial_naturalness_ok(

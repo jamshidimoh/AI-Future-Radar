@@ -81,7 +81,7 @@ def _confirmed_author(article: ET.Element, person: str) -> tuple[bool, str]:
         if (
             target == "george church"
             and surname.casefold() == "church"
-            and (forename.casefold().startswith("george") or initials in {"GM", "MG"})
+            and forename.casefold().startswith("george")
         ):
             confirmed = True
     return confirmed, "; ".join(author_names)

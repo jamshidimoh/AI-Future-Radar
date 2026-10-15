@@ -245,3 +245,48 @@ def test_health_snapshot_merge_preserves_newer_remote_and_prefers_local_on_tie()
     same_time_remote = {"updated_at": 300.0, "models": {"stale-model": {}}}
     same_time_local = {"updated_at": 300.0, "models": {}}
     assert merge_llm_health_state(same_time_remote, same_time_local)["models"] == {}
+
+
+
+def test_successful_runtime_event_clears_stale_provider_cooldown_after_remote_merge():
+    merged = {
+        "models": {
+            "gemini:gemini-3.8-flash": {
+                "failures": 137, "disabled_until": 4102444800,
+                "last_error": "auth", "last_success": 0,
+            },
+            "openrouter:model-a": {
+                "failures": 2, "disabled_until": 4102444800,
+                "last_error": "rate_limit", "last_success": 0,
+            },
+        },
+        "providers": {
+            "gemini": {"failures": 274, "disabled_until": 4102444800, "last_error": "auth"},
+            "openrouter": {"failures": 3, "disabled_until": 4102444800, "last_error": "quota"},
+        },
+    }
+    result = persistence.clear_successful_health_records(
+        merged,
+        ["[Light Router] success=Gemini:gemini-3.8-flash model=gemini/gemini-3.8-flash attempts=1"],
+    )
+    assert "gemini:gemini-3.8-flash" not in result["models"]
+    assert "gemini" not in result["providers"]
+    assert "openrouter:model-a" in result["models"]
+    assert "openrouter" in result["providers"]
+
+
+def test_later_provider_auth_failure_preserves_cooldown_after_success():
+    merged = {
+        "models": {},
+        "providers": {
+            "groq": {"failures": 3, "disabled_until": 4102444800, "last_error": "auth"},
+        },
+    }
+    result = persistence.clear_successful_health_records(
+        merged,
+        [
+            "[Light Router] success=Groq:qwen/qwen3.6-27b model=groq/qwen/qwen3.6-27b attempts=1",
+            "WARNING src.llm_router_light: Provider quota attempt failed provider=groq model=qwen/qwen3.6-27b exception=QuotaExceeded: HTTP 401 unauthorized",
+        ],
+    )
+    assert "groq" in result["providers"]

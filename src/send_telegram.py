@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+import time
 from urllib.parse import parse_qs, quote, urlparse
 
 import requests
@@ -14,6 +15,8 @@ TITLE_ICON = "📡"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 TELEGRAM_TEXT_LIMIT = 4096
 PHOTO_CAPTION_LIMIT = 1024
+MAX_TELEGRAM_RATE_LIMIT_RETRIES = 2
+MAX_TELEGRAM_RETRY_AFTER_SECONDS = 30
 RLI = "\u2067"
 LRI = "\u2066"
 PDI = "\u2069"
@@ -296,6 +299,29 @@ def _result_metadata(response):
     return {"ok": True, "chat_id": (result.get("chat") or {}).get("id"), "message_id": result.get("message_id"), "date": result.get("date"), "raw": result}
 
 
+
+def _telegram_retry_after_seconds(response):
+    """Return a bounded retry delay only for an explicit Bot API 429 rejection."""
+    if getattr(response, "status_code", None) != 429:
+        return None
+    try:
+        payload = response.json()
+    except (ValueError, TypeError, AttributeError):
+        return None
+    if not isinstance(payload, dict) or payload.get("ok") is not False or payload.get("error_code") != 429:
+        return None
+    parameters = payload.get("parameters")
+    if not isinstance(parameters, dict):
+        return None
+    try:
+        retry_after = int(parameters.get("retry_after"))
+    except (TypeError, ValueError):
+        return None
+    if retry_after < 0 or retry_after > MAX_TELEGRAM_RETRY_AFTER_SECONDS:
+        return None
+    return retry_after
+
+
 def _telegram_preflight(token, channel):
     base = f"https://api.telegram.org/bot{token}"
     try:
@@ -370,36 +396,67 @@ def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
                 ensure_ascii=False,
             ),
         }
-        try:
-            response = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data=data, timeout=20)
-        except requests.RequestException as exc:
-            print(f"[ERROR] Telegram sendMessage transport failure; no retry to avoid duplicate publication: {exc}", flush=True)
-            return False
-        meta = _result_metadata(response)
-        if not meta:
-            if response.status_code in {400, 401, 403, 404}:
-                fallback = {
-                    "chat_id": channel,
-                    "text": _normalize_plain(chunk),
-                    "link_preview_options": json.dumps(
-                        _link_preview_options(preview_url, enabled=preview_enabled),
-                        ensure_ascii=False,
-                    ),
-                }
-                try:
-                    response = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data=fallback, timeout=20)
-                except requests.RequestException as exc:
-                    print(f"[ERROR] Telegram plain-text fallback transport failure: {exc}", flush=True)
-                    return False
-                meta = _result_metadata(response)
-            else:
-                print("[ERROR] Telegram sendMessage result ambiguous; no fallback retry to avoid duplicate publication", flush=True)
-        if not meta:
-            return False
-        print(f"[Telegram Published] chat_id={meta.get('chat_id')} message_id={meta.get('message_id')}", flush=True)
-        last = meta
-        if len(chunks) > 1:
-            print(f"  ✓ Telegram text chunk {i}/{len(chunks)} sent", flush=True)
+        rate_limit_retries = 0
+        while True:
+            try:
+                response = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data=data, timeout=20)
+            except requests.RequestException as exc:
+                # A transport exception can occur after Telegram accepted the message;
+                # retrying it would risk duplicate publication.
+                print(f"[ERROR] Telegram sendMessage transport failure; no retry to avoid duplicate publication: {exc}", flush=True)
+                return False
+
+            if getattr(response, "status_code", None) == 429:
+                retry_after = _telegram_retry_after_seconds(response)
+                if retry_after is not None and rate_limit_retries < MAX_TELEGRAM_RATE_LIMIT_RETRIES:
+                    rate_limit_retries += 1
+                    print(
+                        "[Telegram Rate Limit] explicit HTTP 429 rejection; "
+                        f"retry_after={retry_after}s retry={rate_limit_retries}/{MAX_TELEGRAM_RATE_LIMIT_RETRIES}",
+                        flush=True,
+                    )
+                    time.sleep(retry_after)
+                    continue
+                if retry_after is not None:
+                    print(
+                        "[ERROR] Telegram rate-limit retry budget exhausted; "
+                        "the latest message was explicitly rejected and was not delivered",
+                        flush=True,
+                    )
+                else:
+                    print(
+                        "[ERROR] Telegram returned HTTP 429 without a valid bounded retry_after; "
+                        "the message was rejected and will not be retried",
+                        flush=True,
+                    )
+                return False
+
+            meta = _result_metadata(response)
+            if not meta:
+                if response.status_code in {400, 401, 403, 404}:
+                    fallback = {
+                        "chat_id": channel,
+                        "text": _normalize_plain(chunk),
+                        "link_preview_options": json.dumps(
+                            _link_preview_options(preview_url, enabled=preview_enabled),
+                            ensure_ascii=False,
+                        ),
+                    }
+                    try:
+                        response = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data=fallback, timeout=20)
+                    except requests.RequestException as exc:
+                        print(f"[ERROR] Telegram plain-text fallback transport failure: {exc}", flush=True)
+                        return False
+                    meta = _result_metadata(response)
+                else:
+                    print("[ERROR] Telegram sendMessage result ambiguous; no fallback retry to avoid duplicate publication", flush=True)
+            if not meta:
+                return False
+            print(f"[Telegram Published] chat_id={meta.get('chat_id')} message_id={meta.get('message_id')}", flush=True)
+            last = meta
+            if len(chunks) > 1:
+                print(f"  ✓ Telegram text chunk {i}/{len(chunks)} sent", flush=True)
+            break
     return last
 
 

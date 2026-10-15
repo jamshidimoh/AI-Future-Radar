@@ -152,6 +152,39 @@ def _iter_events(lines: list[str]):
             yield deployment, "failure", classify(message), is_kira_wallet_only(deployment, message)
 
 
+
+def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
+    """Reapply ordered current-run successes after a remote/local state merge.
+
+    A max-merge can resurrect an old provider cooldown after this production run
+    successfully used that provider. Only successful events clear cooldowns;
+    a later authentication/quota/wallet failure remains authoritative.
+    """
+    last_model_event: dict[str, str] = {}
+    last_provider_event: dict[str, str] = {}
+    for deployment, event_kind, failure_kind, wallet_only in _iter_events(lines):
+        normalized = deployment.strip().casefold()
+        provider = family(deployment)
+        last_model_event[normalized] = event_kind
+        if event_kind == "success":
+            last_provider_event[provider] = "success"
+        elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
+            last_provider_event[provider] = "failure"
+
+    result = dict(state) if isinstance(state, dict) else {}
+    models = normalize_state_keys(result.get("models", {}) if isinstance(result.get("models"), dict) else {})
+    providers = normalize_state_keys(result.get("providers", {}) if isinstance(result.get("providers"), dict) else {})
+    for deployment, event_kind in last_model_event.items():
+        if event_kind == "success":
+            models.pop(deployment, None)
+    for provider, event_kind in last_provider_event.items():
+        if event_kind == "success":
+            providers.pop(provider, None)
+    result["models"] = models
+    result["providers"] = providers
+    return result
+
+
 def main() -> int:
     log_path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "run.log"
     if not log_path.exists():

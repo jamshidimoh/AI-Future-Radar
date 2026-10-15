@@ -10,3 +10,6 @@ def test_production_state_persistence_runs_after_upstream_failure():
     block = workflow[start : workflow.index("- name: Upload production diagnostics", start)]
     assert "if: always()" in block
     assert "git add data/seen.json" in block
+
+    assert "clear_successful_health_records" in block
+    assert "runtime_log.read_text" in block

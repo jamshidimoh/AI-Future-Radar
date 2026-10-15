@@ -7,7 +7,15 @@ from contextlib import suppress
 from pathlib import Path
 
 from src.claim_verification import deterministic_precheck, hard_publication_flags, semantic_verify
-from src.editorial_quality_policy import editorial_fields_ok, editorial_value_ok, length_ok, news_language_ok, persian_editorial_naturalness_ok, persian_ratio
+from src.editorial_quality_policy import (
+    editorial_fields_ok,
+    editorial_value_ok,
+    length_ok,
+    news_language_ok,
+    persian_editorial_naturalness_issues,
+    persian_editorial_naturalness_ok,
+    persian_ratio,
+)
 from src.education_editor import news_terminology_review_prompt, normalize_news_editorial_text
 from src.llm_router_light import QuotaExceeded, _disable, _ollama_local, call_llm_with_fallback, get_quality_chain
 from src.rejection_telemetry import build_event, emit
@@ -41,7 +49,7 @@ _TITLE_REPAIR_PROMPT = """عنوان زیر را برای انتشار در یک
 
 _DRAFT_REPAIR_PROMPT = """پیش‌نویس زیر برای انتشار فارسی نامعتبر است. آن را از نو و کامل بازنویسی کن؛ فقط از شواهد موجود در منبع استفاده کن و هیچ ادعای جدیدی نساز.
 تمام سه فیلد title، summary و why_it_matters باید فارسی حرفه‌ای باشند. نام رسمی افراد، شرکت‌ها، محصولات، مدل‌ها و پروژه‌ها را Latin نگه دار و آوانویسی فارسی نام خاص انجام نده.
-summary باید 3 تا 5 جمله کامل و اطلاعات مهم منبع را حفظ کند و why_it_matters باید 3 تا 4 جمله کامل و معمولاً 320 تا 500 نویسه باشد. جمله‌ها را کوتاه، روشن و با دستور طبیعی فارسی بنویس؛ بیش از یک بار از عبارت‌های ترجمه‌ای مانند «در این راستا»، «لازم به ذکر است»، «صورت می‌گیرد»، «می‌باشد» و «گزارش می‌کند که» استفاده نکن و ترجیحاً از آن‌ها کاملاً پرهیز کن. فعل‌ها را با نیم‌فاصله درست بنویس و ترکیب‌های چسبیده‌ای مانند «دادههای» یا «تحلیلهای» نساز. هر یک از summary و why_it_matters باید از نظر زبان، طول و ارزش اطلاعاتی قرارداد انتشار را رعایت کند و دو فیلد تکراری نباشند. why_it_matters باید از summary تکراری نباشد و پیامد، کاربرد، محدودیت یا اهمیت واقعی را فقط بر پایه شواهد منبع بیان کند. key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن منبع باشد و در غیر این صورت خالی. category را از مقدار فعلی حفظ کن.
+summary باید 3 تا 5 جمله کامل و اطلاعات مهم منبع را حفظ کند و why_it_matters باید 3 تا 4 جمله کامل و معمولاً 320 تا 500 نویسه باشد. جمله‌ها را کوتاه، روشن و با دستور طبیعی فارسی بنویس؛ بیش از یک بار از عبارت‌های ترجمه‌ای مانند «در این راستا»، «لازم به ذکر است»، «صورت می‌گیرد»، «می‌باشد» و «گزارش می‌کند که» استفاده نکن و ترجیحاً از آن‌ها کاملاً پرهیز کن. فعل‌ها را با نیم‌فاصله درست بنویس و ترکیب‌های چسبیده‌ای مانند «دادههای» یا «تحلیلهای» نساز. بازخورد کنترل طبیعی‌بودن در پایین را دقیقاً برطرف کن و با تغییر ظاهری واژه‌ها دور نزن. موارد شکست طبیعی‌بودن این پیش‌نویس: {naturalness_feedback}. هر یک از summary و why_it_matters باید از نظر زبان، طول و ارزش اطلاعاتی قرارداد انتشار را رعایت کند و دو فیلد تکراری نباشند. why_it_matters باید از summary تکراری نباشد و پیامد، کاربرد، محدودیت یا اهمیت واقعی را فقط بر پایه شواهد منبع بیان کند. key_quote فقط نقل‌قول لفظ‌به‌لفظ کوتاه از متن منبع باشد و در غیر این صورت خالی. category را از مقدار فعلی حفظ کن.
 خروجی دقیقاً JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 
 پیش‌نویس: {draft}
@@ -309,9 +317,16 @@ def _repair_persian_draft(data, item):
     the same quality-provider chain and validates the complete draft before it
     is allowed back into the normal publication path.
     """
+    naturalness_issues = persian_editorial_naturalness_issues(
+        str(data.get("title", "")),
+        str(data.get("summary", "")),
+        str(data.get("why_it_matters", "")),
+    )
+    naturalness_feedback = "; ".join(naturalness_issues) if naturalness_issues else "بازنویسی کامل با دستور طبیعی فارسی"
     prompt = _DRAFT_REPAIR_PROMPT.format(
         draft=json.dumps(data, ensure_ascii=False),
         source=_source_text(item),
+        naturalness_feedback=naturalness_feedback,
     )
     raw, provider = call_llm_with_fallback(
         prompt,
@@ -542,8 +557,24 @@ def _run_shadow_claim_verification(final, item, source_text):
 def _claim_repair_contract_failures(candidate, source_text):
     """Return precise editorial-contract failures before claim verification is retried."""
     failures = []
+    title = str(candidate.get("title", ""))
+    summary = str(candidate.get("summary", ""))
+    why = str(candidate.get("why_it_matters", ""))
     if not _language_ok(candidate):
-        failures.append("Persian language/naturalness/terminology")
+        details = []
+        if not news_language_ok(title, summary, why):
+            details.append(
+                f"ratios(title={persian_ratio(title):.2f},summary={persian_ratio(summary):.2f},why={persian_ratio(why):.2f})"
+            )
+        naturalness_issues = persian_editorial_naturalness_issues(title, summary, why)
+        if naturalness_issues:
+            details.append("naturalness=" + "|".join(naturalness_issues))
+        if not editorial_fields_ok(title, summary, why):
+            details.append("headline_or_terminology_safety")
+        failures.append(
+            "Persian language/naturalness/terminology"
+            + (": " + "; ".join(details) if details else ": required fields missing")
+        )
     if not _length_ok(candidate, str(source_text or "")):
         failures.append(
             f"length(summary={len(str(candidate.get('summary') or ''))},"
@@ -717,6 +748,7 @@ def summarize_item(item):
         language_checks = {
             "language": news_language_ok(str(final.get("title","")), str(final.get("summary","")), str(final.get("why_it_matters",""))),
             "naturalness": persian_editorial_naturalness_ok(str(final.get("title","")), str(final.get("summary","")), str(final.get("why_it_matters",""))),
+            "naturalness_issues": persian_editorial_naturalness_issues(str(final.get("title","")), str(final.get("summary","")), str(final.get("why_it_matters",""))),
             "fields": editorial_fields_ok(str(final.get("title","")), str(final.get("summary","")), str(final.get("why_it_matters",""))),
         }
         print(

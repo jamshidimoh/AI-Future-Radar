@@ -385,3 +385,52 @@ def test_claim_alignment_recovery_retries_once_for_contract_mismatch(monkeypatch
     assert candidate is not None
     assert candidate["summary"] == "READY"
     assert provider == "test-provider"
+
+def test_full_draft_repair_prompt_includes_specific_naturalness_feedback(monkeypatch):
+    import src.summarize as summarize
+
+    invalid = {
+        "title": "پژوهش تازه درباره یک مدل هوش مصنوعی",
+        "summary": "این سامانه میتواند داده‌ها را تحلیل کند و روش ارزیابی را با چند معیار بررسی کند. متن منبع جزئیات آزمون و دامنه پژوهش را گزارش می‌کند.",
+        "why_it_matters": "این روش می‌تواند به مقایسه مدل‌ها کمک کند و محدودیت‌های ارزیابی را روشن‌تر سازد. تصمیم‌گیری عملی همچنان به شواهد مستقل نیاز دارد.",
+        "category": "ai",
+    }
+    repaired = {
+        "title": "پژوهش تازه درباره ارزیابی یک مدل هوش مصنوعی",
+        "summary": "پژوهشگران یک مدل هوش مصنوعی را با چند معیار مشخص ارزیابی کرده‌اند. متن منبع دامنه آزمون و جزئیات روش را توضیح می‌دهد. نتایج گزارش‌شده برای فهم محدودیت‌های این ارزیابی اهمیت دارند.",
+        "why_it_matters": "این جزئیات به مقایسه دقیق‌تر روش‌های ارزیابی کمک می‌کند. برای تصمیم‌گیری عملی باید دامنه آزمون و محدودیت‌های گزارش را در نظر گرفت. نتیجه‌گیری فراتر از شواهد موجود در منبع موجه نیست.",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+    }
+    observed = {}
+    provider_sentinel = [("test-provider", lambda *_args, **_kwargs: None)]
+
+    def fake_call(prompt, user_content, providers=None):
+        observed["prompt"] = prompt
+        observed["user_content"] = user_content
+        observed["providers"] = providers
+        return json.dumps(repaired, ensure_ascii=False), "test-provider"
+
+    monkeypatch.setattr(summarize, "_language_repair_providers", lambda _item: provider_sentinel)
+    monkeypatch.setattr(summarize, "call_llm_with_fallback", fake_call)
+    source = (
+        "The source describes an artificial intelligence model and the criteria used to evaluate it. "
+        "It specifies the scope of the test, the evaluation method, and limitations of the reported results. "
+    ) * 4
+    candidate, provider = summarize._repair_persian_draft(
+        invalid,
+        {
+            "title": invalid["title"],
+            "summary": source,
+            "category": "ai",
+            "link": "https://example.invalid/ai-evaluation",
+        },
+    )
+
+    assert provider == "test-provider"
+    assert "joined_verb_without_zwnj" in observed["prompt"]
+    assert observed["providers"] is provider_sentinel
+    assert "میتواند" not in candidate["summary"]
+    assert summarize._language_ok(candidate)
+

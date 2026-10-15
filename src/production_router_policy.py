@@ -320,6 +320,23 @@ def _install_production_circuit_breaker() -> None:
             emergency_fallbacks.append(("HuggingFace", router._huggingface))
 
         for emergency_name, emergency_fn in emergency_fallbacks:
+            # Emergency fallbacks must obey the same health policy as primary
+            # deployments. Previously Gemini could bypass a persisted provider
+            # authentication cooldown and be called again for every candidate.
+            emergency_health_ids = {
+                "LocalOllamaFree": f"ollama:{(os.getenv('RADAR_OLLAMA_FREE_MODEL') or router.OLLAMA_FREE_DEFAULT_MODEL).strip()}",
+                "Gemini": f"gemini:{(os.getenv('GEMINI_MODEL') or router.GEMINI_DEFAULT_MODEL).strip()}",
+                "OpenRouterFreeRouter": "openrouter:free-router",
+                "HuggingFace": f"huggingface:{(os.getenv('HF_MODEL') or 'inference').strip()}",
+            }
+            deployment_id = emergency_health_ids.get(emergency_name)
+            family = router._provider_family(deployment_id) if deployment_id else ""
+            if family in skipped_families or family in router._DISABLED_FAMILIES:
+                print(f"[Production Circuit] skipped={deployment_id or emergency_name} reason=provider_disabled", flush=True)
+                continue
+            if deployment_id and _persistently_unavailable(deployment_id, recovery_probe=attempts > 0):
+                print(f"[Production Circuit] skipped={deployment_id} reason=persisted_health", flush=True)
+                continue
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 break

@@ -621,3 +621,49 @@ def test_omniroute_primary_requests_json_object_mode(monkeypatch):
     assert provider == "OmniRoute:auto/smart"
     assert calls["url"] == "http://127.0.0.1:20128/v1/chat/completions"
     assert calls["json"]["response_format"] == {"type": "json_object"}
+
+def test_persisted_auth_failure_skips_gemini_emergency_fallback(monkeypatch, capsys):
+    _reset(monkeypatch)
+    import src.production_router_policy as policy
+
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("GEMINI_API_KEY", "invalid-test-credential")
+    monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    health = {
+        "models": {
+            "gemini:gemini-3.8-flash": {
+                "failures": 3,
+                "disabled_until": time.time() + 3600,
+                "last_error": "auth",
+            }
+        },
+        "providers": {
+            "gemini": {
+                "failures": 3,
+                "disabled_until": time.time() + 3600,
+                "last_error": "auth",
+            }
+        },
+    }
+    monkeypatch.setattr(policy, "_load_health", lambda: health)
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: None)
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [])
+    calls = []
+    monkeypatch.setattr(
+        router,
+        "_gemini",
+        lambda *_args, **_kwargs: calls.append("gemini") or '{"title":"must-not-run"}',
+    )
+
+    apply()
+    result, provider = router._call_litellm("system", "user")
+
+    assert result is None
+    assert provider is None
+    assert calls == []
+    assert (
+        "[Production Circuit] skipped=gemini:gemini-3.8-flash reason=persisted_health"
+        in capsys.readouterr().out
+    )
+

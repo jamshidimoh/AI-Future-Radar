@@ -239,7 +239,7 @@ def test_unmet_mission_coverage_is_fail_closed():
     assert "mission portfolio coverage remained unmet" in message
 
 
-def test_unmet_mission_candidate_failure_is_not_hard_failure():
+def test_unmet_mission_provider_unavailable_does_not_count_as_no_candidate():
     log = """
 [Production Selection] total=6
 [Mission Coverage Recovery] attempt=1 area=ai title=provider unavailable status=provider_unavailable
@@ -248,8 +248,8 @@ def test_unmet_mission_candidate_failure_is_not_hard_failure():
 Posts sent: 2/6
 """
     ok, message = validate(log)
-    assert ok is True
-    assert "no eligible candidate" in message
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in message
 
 
 def test_compact_unmet_mission_coverage_is_fail_closed():
@@ -354,7 +354,7 @@ def test_production_contract_parser_reads_mind_and_tier0_after_other_lane_fields
     assert ok is True
     assert "mind_ideas_voices=2" in message
 
-def test_unmet_mission_candidate_failure_is_treated_as_no_candidate():
+def test_unresolved_summary_failure_does_not_count_as_no_candidate():
     log = """
 [Production Selection] total=6
 [Mission Coverage Recovery] attempt=1 area=mind_cognition title=quality-rejected mind story status=failed
@@ -364,8 +364,8 @@ def test_unmet_mission_candidate_failure_is_treated_as_no_candidate():
 Posts sent: 2/6
 """
     ok, message = validate(log)
-    assert ok is True
-    assert "no eligible candidate" in message
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in message
 
 
 

@@ -16,7 +16,7 @@ categories:
     label: "ژنتیک × AI"
     emoji: "🧬"
     hashtag: "#ژنتیک_و_AI"
-    keywords: ["AI drug discovery", "AI genomics", "machine learning genomics", "protein design AI", "foundation model biology", "genomics AI", "CRISPR AI"]
+    keywords: ["AI drug discovery", "AI genomics", "machine learning genomics", "protein design AI", "foundation model biology", "genomics AI", "CRISPR AI", "generative modeling", "generative models for DNA", "DNA sequence design"]
   mind:
     label: "ذهن، آگاهی و فلسفه علم × AI"
     emoji: "🧠"
@@ -28,7 +28,7 @@ categories:
     hashtag: "#آینده_AI"
     keywords: ["future of AI", "AI future", "AGI future", "AI governance", "AI policy", "AI economy", "AI jobs", "existential risk AI", "technological singularity AI", "future of intelligence AI"]
 
-ai_bridge_keywords: ["artificial intelligence", "AI", "machine learning", "deep learning", "LLM", "agent", "AGI", "foundation model", "generative AI", "reasoning model", "neural network", "computer vision", "robotics", "AI safety", "AI governance", "AI drug discovery", "machine consciousness", "quantum machine learning", "AI genomics", "protein design AI", "philosophy of science AI", "epistemology AI", "scientific method AI", "future of AI"]
+ai_bridge_keywords: ["artificial intelligence", "AI", "machine learning", "deep learning", "LLM", "agent", "AGI", "foundation model", "generative AI", "reasoning model", "neural network", "computer vision", "robotics", "AI safety", "AI governance", "AI drug discovery", "generative modeling", "generative models for DNA", "DNA sequence design", "machine consciousness", "quantum machine learning", "AI genomics", "protein design AI", "philosophy of science AI", "epistemology AI", "scientific method AI", "future of AI"]
 
 action_policy:
   ai_share_target: 0.70
@@ -62,6 +62,7 @@ rss_sources:
   - {name: "MIT Technology Review", url: "https://www.technologyreview.com/feed/", tier: 2, type: "specialist_media", content_type: "news", official: false}
   - {name: "Quanta Magazine", url: "https://www.quantamagazine.org/feed/", tier: 1, type: "science_media", content_type: "research", official: false}
   - {name: "Nature News", url: "https://www.nature.com/nature.rss", tier: 1, type: "scientific_publisher", content_type: "research", official: true}
+  - {name: "Nature Biotechnology", url: "https://www.nature.com/nbt.rss", tier: 1, type: "scientific_publisher", content_type: "research", official: true}
   - {name: "MIT News", url: "https://news.mit.edu/rss", tier: 1, type: "university", content_type: "research", official: true}
   - {name: "Harvard Gazette", url: "https://news.harvard.edu/gazette/feed/", tier: 1, type: "university", content_type: "research", official: true}
   - {name: "Science Daily - Mind & Brain", url: "https://www.sciencedaily.com/rss/mind_brain.xml", tier: 2, type: "science_media", content_type: "research", official: false}

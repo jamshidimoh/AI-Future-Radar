@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import scripts.update_llm_health_state as persistence
+from scripts.merge_llm_health_state import merge_health_state
 from src.free_model_service import FreeModelIntelligence
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -194,3 +195,43 @@ def test_intelligence_blocks_runtime_model_from_legacy_mixed_case_health(tmp_pat
     intelligence = FreeModelIntelligence(state, persist=True)
     ranked = intelligence.rank([_entry("openai/gpt-oss-120b", family="groq", quality=90)])
     assert ranked == []
+
+
+
+def test_success_after_provider_auth_failure_clears_provider_cooldown(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    log = tmp_path / "run.log"
+    log.write_text(
+        "[Light Router] failed=gemini:gemini-3.8-flash reason=auth HTTP 401 unauthorized\\n"
+        "[Light Router] success=Gemini:gemini-3.8-flash model=gemini-3.8-flash attempts=1\\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+    assert "gemini:gemini-3.8-flash" not in payload["models"]
+    assert "gemini" not in payload["providers"]
+
+
+def test_health_snapshot_merge_does_not_resurrect_recovered_failures():
+    remote = {
+        "models": {"groq:model-a": {"failures": 5, "disabled_until": 9999999999, "last_error": "auth"}},
+        "providers": {"groq": {"failures": 3, "disabled_until": 9999999999, "last_error": "auth"}},
+        "updated_at": 100,
+        "telemetry": {"observed_failures": 20, "observed_events": 30, "updated_at": 100},
+        "retained_metadata": "keep",
+    }
+    local = {
+        "models": {},
+        "providers": {},
+        "updated_at": 200,
+        "telemetry": {"observed_failures": 1, "observed_events": 4, "updated_at": 200},
+    }
+    merged = merge_health_state(remote, local)
+    assert merged["models"] == {}
+    assert merged["providers"] == {}
+    assert merged["updated_at"] == 200
+    assert merged["telemetry"]["updated_at"] == 200
+    assert merged["telemetry"]["observed_failures"] == 1
+    assert merged["retained_metadata"] == "keep"

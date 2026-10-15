@@ -98,7 +98,7 @@ def persian_editorial_naturalness_issues(title: str, summary: str, why_it_matter
     if joined_verbs:
         issues.append("joined_verb_without_zwnj:" + "|".join(dict.fromkeys(joined_verbs[:4])))
 
-    sentences = [s.strip() for s in re.split(r"(?<=[.!؟])\\s+", body) if s.strip()]
+    sentences = [s.strip() for s in re.split(r"(?<=[.!؟])\s+", body) if s.strip()]
     # Conjunctions such as «، اما این نتیجه» are ordinary Persian. Do not
     # reject prose based on the first letter of the following word; the
     # orthography, translationese, joined-verb and sentence-length checks above

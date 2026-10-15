@@ -1,14 +1,14 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 142,
-      "disabled_until": 1792150707.211,
+      "failures": 143,
+      "disabled_until": 1792151864.69,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792150707.211,
+      "disabled_until": 1792151864.69,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -27,17 +27,17 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 284,
-      "disabled_until": 1792150707.211,
+      "failures": 286,
+      "disabled_until": 1792151864.69,
       "last_error": "auth"
     }
   },
-  "updated_at": 1792064307.211424,
+  "updated_at": 1792065464.6899555,
   "version": 1,
   "telemetry": {
-    "observed_failures": 6,
-    "observed_events": 15,
-    "updated_at": 1792064307.211424
+    "observed_failures": 9,
+    "observed_events": 16,
+    "updated_at": 1792065464.6899555
   },
   "observed_failures": 0,
   "observed_events": 0

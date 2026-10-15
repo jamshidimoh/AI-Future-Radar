@@ -146,12 +146,26 @@ def _mission_coverage_status(lines):
             continue
         area, status = attempt.group(1).casefold(), attempt.group(2).casefold()
         attempts_by_lane.setdefault(area, []).append(status)
-    exhausted_nonpublishable_only = {
+
+    # A candidate that existed but failed QA or could not be processed by a
+    # provider is not evidence that discovery found no eligible candidate.
+    # Only explicit empty discovery, or candidates rejected solely by the
+    # configured eligibility floor, can account for a legitimate coverage gap.
+    eligible_floor_only = {
         area for area, statuses in attempts_by_lane.items()
-        if statuses and area not in explicit_no_candidate
-        and all(status in {"below_score_floor", "provider_unavailable", "failed", "independent_lane_not_score_gated"} for status in statuses)
+        if statuses
+        and "recovered" not in statuses
+        and all(status in {"below_score_floor", "independent_lane_not_score_gated"} for status in statuses)
     }
-    result["no_candidate_lanes"] = len(explicit_no_candidate | exhausted_nonpublishable_only)
+    unresolved_processing_lanes = {
+        area for area, statuses in attempts_by_lane.items()
+        if statuses
+        and "recovered" not in statuses
+        and any(status in {"failed", "provider_unavailable", "hard_failure"} for status in statuses)
+    }
+    explicit_empty_lanes = explicit_no_candidate - set(attempts_by_lane)
+    result["no_candidate_lanes"] = len(explicit_empty_lanes | eligible_floor_only)
+    result["nonpublishable_lanes"] = len(unresolved_processing_lanes)
     result["hard_failures"] = _mission_recovery_hard_failures(lines)
     return result
 
@@ -278,7 +292,7 @@ def validate(log_text: str) -> tuple[bool, str]:
             )
         return False, (
             "production contract violation: mission portfolio coverage remained unmet; "
-            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}, hard_failures={hard_failures}"
+            f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}, nonpublishable_lanes={mission_coverage.get('nonpublishable_lanes', 0)}, hard_failures={hard_failures}"
         )
     if mission_coverage and mission_coverage["recovered"] + mission_coverage["prepared"] < mission_coverage["target"]:
         gap = mission_coverage["target"] - (mission_coverage["recovered"] + mission_coverage["prepared"])

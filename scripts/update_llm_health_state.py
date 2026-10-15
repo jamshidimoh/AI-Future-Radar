@@ -152,6 +152,34 @@ def _iter_events(lines: list[str]):
             yield deployment, "failure", classify(message), is_kira_wallet_only(deployment, message)
 
 
+
+def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
+    """Apply this run's last success events after merging concurrent state.
+
+    A generic max-merge can resurrect model/provider cooldowns that this run
+    successfully cleared. Reapply ordered success evidence after a workflow
+    rebase so current-run success remains authoritative.
+    """
+    events = list(_iter_events(lines))
+    last_model_event: dict[str, str] = {}
+    last_provider_event: dict[str, str] = {}
+    for deployment, event_kind, _, _ in events:
+        last_model_event[deployment.strip().casefold()] = event_kind
+        last_provider_event[family(deployment)] = event_kind
+
+    result = dict(state)
+    models = normalize_state_keys(result.get("models", {}) if isinstance(result.get("models"), dict) else {})
+    providers = normalize_state_keys(result.get("providers", {}) if isinstance(result.get("providers"), dict) else {})
+    for deployment, event_kind in last_model_event.items():
+        if event_kind == "success":
+            models.pop(deployment, None)
+    for provider, event_kind in last_provider_event.items():
+        if event_kind == "success":
+            providers.pop(provider, None)
+    result["models"] = models
+    result["providers"] = providers
+    return result
+
 def main() -> int:
     log_path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "run.log"
     if not log_path.exists():
@@ -167,8 +195,10 @@ def main() -> int:
     observed_failures = [event for event in events if event[1] == "failure"]
 
     last_event: dict[str, tuple[str, str, bool]] = {}
+    last_provider_event: dict[str, str] = {}
     for deployment, event_kind, failure_kind, wallet_only in events:
         last_event[deployment] = (event_kind, failure_kind, wallet_only)
+        last_provider_event[family(deployment)] = event_kind
 
     for deployment, (event_kind, _, _) in last_event.items():
         if event_kind == "success":
@@ -200,6 +230,14 @@ def main() -> int:
                 "disabled_until": round(now + PROVIDER_COOLDOWN[kind], 3),
                 "last_error": kind,
             }
+
+    # A successful request is positive current-run evidence. Clear a stale
+    # provider cooldown when that provider's latest observed event succeeded;
+    # a later failure in the same run still wins because last_provider_event
+    # preserves log order.
+    for provider, event_kind in last_provider_event.items():
+        if event_kind == "success":
+            providers.pop(provider, None)
 
     state["models"] = models
     state["providers"] = providers

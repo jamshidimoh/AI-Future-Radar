@@ -111,15 +111,16 @@ jobs:
                   # Production application baseline. Documentation-only changes must not
                   # invalidate otherwise identical application-code evidence.
                   dynamic_runtime_paths = {"config/free_model_registry.yaml"}
-                  documentation_paths = {
+                  non_runtime_paths = {
                       "README.md",
                       "ARCHITECTURE.md",
                       "config/README.md",
                       "tests/leader_activity_routing_contract.md",
+                      "tests/test_production_closure_gate_integrity.py",
                   }
                   is_ci_workflow = path.startswith(".github/workflows/")
-                  is_documentation = (
-                      path in documentation_paths
+                  is_non_runtime = (
+                      path in non_runtime_paths
                       or path.startswith("docs/")
                       or path.startswith("digital_transformation_booklet/")
                   )
@@ -128,7 +129,7 @@ jobs:
                       or path.startswith("data/")
                       or path in dynamic_runtime_paths
                       or is_ci_workflow
-                      or is_documentation
+                      or is_non_runtime
                       or row.get("type") != "blob"
                   ):
                       continue

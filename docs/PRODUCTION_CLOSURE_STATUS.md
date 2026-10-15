@@ -4,13 +4,19 @@ Status date: 2026-10-15
 
 ## Current status
 
-**CLOSURE PENDING — the strict acceptance fix is merged, and its first post-merge production attempt failed for valid unresolved coverage reasons.**
+**CLOSURE PENDING — PR #229–#231 are merged; final-code production acceptance is not yet verified.**
 
 The previous Production Closure Gate run #1406 closed Issue #69 on 2026-10-15 using production runs #1439–#1441. That result is historical acceptance under the previous interpretation of mission coverage, not proof that the tightened gate passes. In run #1441, only one of six selected news candidates was published; the missing mission lanes included attempted candidates that failed language/naturalness QA. The previous acceptance guard could classify failed or provider-unavailable candidates as "no eligible candidate", overstating the evidence.
 
-The mission-coverage and Persian QA hardening is merged to `main`. Follow-up work also addresses the remaining People Bootstrap false positive:
+Three production-hardening changes are now merged to `main`: strict mission-coverage acceptance (PR #229), domain-specific People Bootstrap relevance (PR #230), and deterministic Persian orthography repair (PR #231).
 - Merge commit: https://github.com/jamshidimoh/AI-Future-Radar/commit/6f93c82a7211af1b8bd686c9fb6466dbd629d565
 - Pull request: https://github.com/jamshidimoh/AI-Future-Radar/pull/229
+- PR #230 merge: https://github.com/jamshidimoh/AI-Future-Radar/commit/4d2cd008c17ababdc45f057bbd5034d071ef641e
+- PR #231 merge: https://github.com/jamshidimoh/AI-Future-Radar/commit/bdbd949b3661928bc8767ff535f89be353c94483
+- PR #231 full quality/Ruff: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38714880886 (success)
+- PR #231 production quality gate: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38714880760 (success)
+- PR #231 final acceptance: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38714880868 (success)
+- Latest-code production run #1444: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38715164080 (pending at status update time).
 - Pre-merge Production Quality Gate: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711549214 (success)
 - Pre-merge Test Radar Quality: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711548964 (success)
 - Pre-merge Final Production Acceptance: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711549281 (success)
@@ -24,6 +30,7 @@ The mission-coverage and Persian QA hardening is merged to `main`. Follow-up wor
 - Apply persistent and in-memory provider-health controls to emergency fallbacks, so known authentication failure is not retried for each candidate.
 - Preserve source evidence, claim alignment, Persian naturalness, relevance, score floors and duplicate-publication controls as fail-closed contracts.
 - PR #230 adds domain-specific relevance checks for George Church and targeted discovery queries to recover the remaining People Bootstrap slot without marking undelivered state as complete.
+- PR #231 repairs the production-observed missing-ZWNJ verb and plural forms during existing news normalization; the language/naturalness, evidence and claim-alignment gates remain unchanged.
 
 ## Confirmed evidence from the previous version
 

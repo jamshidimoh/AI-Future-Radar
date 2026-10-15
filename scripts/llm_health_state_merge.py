@@ -7,7 +7,7 @@ from typing import Any
 
 
 def _epoch(value: Any) -> float:
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return float(value)
     text = str(value or "").strip()
     if not text:

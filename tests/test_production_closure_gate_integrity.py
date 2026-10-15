@@ -37,7 +37,9 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
 def test_closure_gate_uses_shared_strict_publication_evidence_contract():
     text = WORKFLOW.read_text(encoding="utf-8")
     helper = (WORKFLOW.parents[2] / "scripts" / "production_closure_contract.py").read_text(encoding="utf-8")
-    assert "from scripts.production_closure_contract import is_persisted_state_skip, publish_evidence" in text
+    assert "from scripts.production_closure_contract import (" in text
+    assert "is_persisted_state_skip," in text
+    assert "publish_evidence," in text
     assert "per_run_publish = {r[\"run_number\"]: publish_evidence(logs[r[\"run_number\"]]) for r in window}" in text
     assert "selected == 0" in helper
     assert "sent > 0" in helper

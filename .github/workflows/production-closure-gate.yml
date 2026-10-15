@@ -289,6 +289,42 @@ jobs:
           education_contract_not_due = all_runs(r"\[Production Contract\].*education=not_due")
           education_evidence = ((education_published and education_recovery_confirmed) or education_not_due_all or education_contract_not_due)
 
+          def people_bootstrap_state_complete():
+              try:
+                  payload = get_json("/contents/data/publication_state.json?ref=main")
+                  encoded = payload.get("content", "")
+                  if not encoded:
+                      raise RuntimeError("publication_state.json content is empty")
+                  persisted = json.loads(base64.b64decode(encoded).decode("utf-8", errors="replace"))
+                  bootstrap = persisted.get("people_bootstrap") or {}
+                  baseline = bootstrap.get("baseline") or {}
+                  delivered = {
+                      str(name).strip()
+                      for name in (bootstrap.get("delivered_people") or [])
+                      if str(name).strip()
+                  }
+                  try:
+                      recorded_delivered = int(bootstrap.get("delivered_count", 0) or 0)
+                  except (TypeError, ValueError):
+                      recorded_delivered = 0
+                  complete = (
+                      str(bootstrap.get("status") or "").casefold() == "complete"
+                      and len(baseline) >= 30
+                      and len(delivered) >= 30
+                      and recorded_delivered >= 30
+                  )
+                  print(
+                      f"PEOPLE_BOOTSTRAP_STATE status={bootstrap.get('status')} "
+                      f"delivered={len(delivered)} recorded_delivered={recorded_delivered} "
+                      f"baseline={len(baseline)} complete={complete}"
+                  )
+                  return complete
+              except Exception as exc:
+                  print(f"PEOPLE_BOOTSTRAP_STATE read_error={type(exc).__name__}: {exc}")
+                  return False
+
+          people_bootstrap_complete = people_bootstrap_state_complete()
+
           evidence = {
               "01_three_successful_runs": len(window) == 3,
               "02_code_pinned": len(distinct_fingerprints) == 1,
@@ -303,12 +339,14 @@ jobs:
               "11_mission_portfolio_not_generic": mission_portfolio,
               "12_tier0_quality_floor": tier0_quality_floor,
               "13_education_cadence_contract": education_evidence,
+              "14_people_bootstrap_complete": people_bootstrap_complete,
           }
           for key, value in evidence.items():
               print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
           print(f"PUBLISH_PER_RUN: {per_run_publish}")
           print(f"PROVIDER_EVIDENCE deterministic_regression={provider_isolated}")
           print(f"EDUCATION_EVIDENCE published={education_published} recovery={education_recovery_confirmed} not_due_all={education_not_due_all} contract_not_due={education_contract_not_due}")
+          print(f"PEOPLE_BOOTSTRAP_EVIDENCE complete={people_bootstrap_complete}")
           blocked = [key for key, value in evidence.items() if not value]
           if blocked:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))

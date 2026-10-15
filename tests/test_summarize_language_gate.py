@@ -404,12 +404,15 @@ def test_full_draft_repair_prompt_includes_specific_naturalness_feedback(monkeyp
         "category": "ai",
     }
     observed = {}
+    provider_sentinel = [("test-provider", lambda *_args, **_kwargs: None)]
 
     def fake_call(prompt, user_content, providers=None):
         observed["prompt"] = prompt
         observed["user_content"] = user_content
+        observed["providers"] = providers
         return json.dumps(repaired, ensure_ascii=False), "test-provider"
 
+    monkeypatch.setattr(summarize, "_language_repair_providers", lambda _item: provider_sentinel)
     monkeypatch.setattr(summarize, "call_llm_with_fallback", fake_call)
     source = (
         "The source describes an artificial intelligence model and the criteria used to evaluate it. "
@@ -427,6 +430,7 @@ def test_full_draft_repair_prompt_includes_specific_naturalness_feedback(monkeyp
 
     assert provider == "test-provider"
     assert "joined_verb_without_zwnj" in observed["prompt"]
+    assert observed["providers"] is provider_sentinel
     assert "میتواند" not in candidate["summary"]
     assert summarize._language_ok(candidate)
 

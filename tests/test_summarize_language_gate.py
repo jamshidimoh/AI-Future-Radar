@@ -335,6 +335,7 @@ def test_claim_alignment_recovery_fails_closed_when_provider_chain_unavailable(m
 
 def test_claim_alignment_recovery_retries_once_for_contract_mismatch(monkeypatch):
     import src.summarize as summarize
+    from src.llm_router_light import ProductionQualityChain
 
     initial = {
         "title": "پژوهش درباره مدل هوش مصنوعی",
@@ -353,11 +354,15 @@ def test_claim_alignment_recovery_retries_once_for_contract_mismatch(monkeypatch
         "category": "ai",
     }
     responses = [
-        (json.dumps(initial, ensure_ascii=False), "test-provider"),
-        (json.dumps(repaired, ensure_ascii=False), "test-provider"),
+        (json.dumps(initial, ensure_ascii=False), "test-provider-a"),
+        (json.dumps(repaired, ensure_ascii=False), "test-provider-b"),
     ]
     calls = []
-    monkeypatch.setattr(summarize, "get_quality_chain", lambda: [("test-provider", lambda *args, **kwargs: "")])
+    provider_chain = ProductionQualityChain([
+        ("test-provider-a:model", lambda *args, **kwargs: ""),
+        ("test-provider-b:model", lambda *args, **kwargs: ""),
+    ])
+    monkeypatch.setattr(summarize, "get_quality_chain", lambda: provider_chain)
 
     def fake_call(*args, **kwargs):
         calls.append((args, kwargs))
@@ -382,9 +387,12 @@ def test_claim_alignment_recovery_retries_once_for_contract_mismatch(monkeypatch
 
     assert len(calls) == 2
     assert "Persian language/naturalness/terminology" in calls[1][0][0]
+    assert isinstance(calls[0][1]["providers"], ProductionQualityChain)
+    assert type(calls[1][1]["providers"]) is list
+    assert [name for name, _ in calls[1][1]["providers"]] == ["test-provider-b:model"]
     assert candidate is not None
     assert candidate["summary"] == "READY"
-    assert provider == "test-provider"
+    assert provider == "test-provider-b"
 
 def test_full_draft_repair_prompt_includes_specific_naturalness_feedback(monkeypatch):
     import src.summarize as summarize
@@ -434,3 +442,67 @@ def test_full_draft_repair_prompt_includes_specific_naturalness_feedback(monkeyp
     assert "میتواند" not in candidate["summary"]
     assert summarize._language_ok(candidate)
 
+
+
+
+def test_claim_alignment_semantic_failure_retries_with_independent_provider_family(monkeypatch):
+    import src.summarize as summarize
+    from src.llm_router_light import ProductionQualityChain
+
+    first = {
+        "title": "پژوهش درباره مدل هوش مصنوعی",
+        "summary": "FIRST",
+        "why_it_matters": "FIRST",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+    }
+    repaired = {
+        "title": "ارزیابی مستند یک مدل هوش مصنوعی",
+        "summary": "READY",
+        "why_it_matters": "READY",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+    }
+    provider_chain = ProductionQualityChain([
+        ("Groq:test-model", lambda *args, **kwargs: ""),
+        ("OpenRouter:test-model", lambda *args, **kwargs: ""),
+    ])
+    responses = [
+        (json.dumps(first, ensure_ascii=False), "Groq:test-model"),
+        (json.dumps(repaired, ensure_ascii=False), "OpenRouter:test-model"),
+    ]
+    calls = []
+
+    def fake_call(*args, **kwargs):
+        calls.append((args, kwargs))
+        return responses.pop(0)
+
+    monkeypatch.setattr(summarize, "get_quality_chain", lambda: provider_chain)
+    monkeypatch.setattr(summarize, "call_llm_with_fallback", fake_call)
+    monkeypatch.setattr(summarize, "_language_ok", lambda _candidate: True)
+    monkeypatch.setattr(summarize, "_length_ok", lambda _candidate, _source: True)
+    monkeypatch.setattr(summarize, "_value_ok", lambda _candidate, _source: True)
+
+    def verified(candidate, _item, _source):
+        flags = ["unsupported_comparison"] if candidate.get("summary") == "FIRST" else []
+        candidate["_claim_verification"] = {"status": "VERIFIED", "flags": flags}
+        return candidate
+
+    monkeypatch.setattr(summarize, "_run_shadow_claim_verification", verified)
+    candidate, provider = summarize._repair_claim_alignment(
+        first,
+        {"category": "ai", "title": "AI model evaluation"},
+        "The source describes an AI model evaluation and its reported scope.",
+        {"unsupported_comparison"},
+    )
+
+    assert len(calls) == 2
+    assert isinstance(calls[0][1]["providers"], ProductionQualityChain)
+    assert type(calls[1][1]["providers"]) is list
+    assert [name for name, _ in calls[1][1]["providers"]] == ["OpenRouter:test-model"]
+    assert candidate is not None
+    assert candidate["summary"] == "READY"
+    assert candidate["_claim_verification"]["flags"] == []
+    assert provider == "OpenRouter:test-model"

@@ -1,26 +1,20 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 146,
-      "disabled_until": 1792175705.549,
+      "failures": 147,
+      "disabled_until": 1792189987.523,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792175705.549,
+      "disabled_until": 1792189987.523,
       "last_error": "auth",
       "last_success": 0.0
     },
-    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
-      "failures": 1,
-      "disabled_until": 1792092905.549,
-      "last_error": "quota",
-      "last_success": 0
-    },
     "nararouter:auto/bynara": {
-      "failures": 1,
-      "disabled_until": 1792110905.549,
+      "failures": 2,
+      "disabled_until": 1792125187.523,
       "last_error": "model",
       "last_success": 0
     }
@@ -33,8 +27,8 @@
       "last_success": 0.0
     },
     "gemini": {
-      "failures": 292,
-      "disabled_until": 1792175705.549,
+      "failures": 294,
+      "disabled_until": 1792189987.523,
       "last_error": "auth"
     },
     "openrouter": {
@@ -43,12 +37,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1792089305.5486422,
+  "updated_at": 1792103587.5227864,
   "version": 1,
   "telemetry": {
-    "observed_failures": 22,
-    "observed_events": 51,
-    "updated_at": 1792089305.5486422
+    "observed_failures": 7,
+    "observed_events": 17,
+    "updated_at": 1792103587.5227864
   },
   "observed_failures": 0,
   "observed_events": 0

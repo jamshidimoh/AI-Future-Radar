@@ -239,7 +239,7 @@ def test_unmet_mission_coverage_is_fail_closed():
     assert "mission portfolio coverage remained unmet" in message
 
 
-def test_unmet_mission_candidate_failure_is_not_hard_failure():
+def test_provider_unavailability_does_not_masquerade_as_no_candidate():
     log = """
 [Production Selection] total=6
 [Mission Coverage Recovery] attempt=1 area=ai title=provider unavailable status=provider_unavailable
@@ -248,8 +248,9 @@ def test_unmet_mission_candidate_failure_is_not_hard_failure():
 Posts sent: 2/6
 """
     ok, message = validate(log)
-    assert ok is True
-    assert "no eligible candidate" in message
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in message
+    assert "nonpublishable_lanes=1" in message
 
 
 def test_compact_unmet_mission_coverage_is_fail_closed():
@@ -354,7 +355,7 @@ def test_production_contract_parser_reads_mind_and_tier0_after_other_lane_fields
     assert ok is True
     assert "mind_ideas_voices=2" in message
 
-def test_unmet_mission_candidate_failure_is_treated_as_no_candidate():
+def test_quality_rejected_candidates_do_not_count_as_absent_candidates():
     log = """
 [Production Selection] total=6
 [Mission Coverage Recovery] attempt=1 area=mind_cognition title=quality-rejected mind story status=failed
@@ -364,8 +365,23 @@ def test_unmet_mission_candidate_failure_is_treated_as_no_candidate():
 Posts sent: 2/6
 """
     ok, message = validate(log)
-    assert ok is True
-    assert "no eligible candidate" in message
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in message
+    assert "nonpublishable_lanes=1" in message
+
+
+def test_explicit_no_candidate_marker_is_not_trusted_when_same_lane_had_attempts():
+    log = """
+[Production Selection] total=6
+[Mission Coverage Recovery] area=mind_cognition status=no_candidate
+[Mission Coverage Recovery] attempt=1 area=mind_cognition title=failed summary QA status=failed
+[Mission Coverage Recovery] missing_lanes=1 attempts=1 recovered=0 status=unmet
+[Production Contract] normal_news=2 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 2/6
+"""
+    ok, message = validate(log)
+    assert ok is False
+    assert "nonpublishable_lanes=1" in message
 
 
 

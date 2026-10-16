@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792133376,
+  "updated_at": 1792154405,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -18252,6 +18252,44 @@
       "why_it_matters": "تشخیص زودهنگام خستگی در مهندسان نگهداری هواپیما می‌تواند خطرات ناشی از خطاهای انسانی را کاهش دهد و ایمنی پرواز را ارتقا بخشد. فناوری‌های مبتنی بر هوش مصنوعی مانند PGTNet امکان پیاده‌سازی سیستم‌های نظارتی مستمر را فراهم می‌آورند و می‌توانند به تصمیم‌گیری‌های پیشگیرانه کمک کنند.",
       "link": "https://www.nature.com/articles/s41598-026-75709-4",
       "posted_at": 1792133376
+    },
+    "-1004482051328:2079": {
+      "chat_id": -1004482051328,
+      "message_id": 2079,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "شناسایی صداهای غیرطبیعی ریوی کودکان در بنگلادش با هوش مصنوعی و استثنای دیجیتال",
+      "summary": "پژوهشگران در مقالهای در Nature - Computational Biology and Bioinformatics با استفاده از استثنای دیجیتال صدای ریه کودکان مبتلا به بیماریهای تنفسی در بنگلادش را ضبط کردند. سپس یک مدل یادگیری عمیق صداهای خشکی، رال و ویسکولار را از صداهای نرمال جدا کرد. این الگوریتم توانست با دقت قابل توجهی صداهای غیرطبیعی را شناسایی کند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "تشخیص خودکار صداهای غیرطبیعی ریه به پرستاران امکان می‌دهد تا در زمان کوتاهی کودکان را بهسرعت ارزیابی کنند. این سرعت در تشخیص زودهنگام خطر پیشرفت بیماریهای ریوی را کاهش می‌دهد.",
+      "link": "https://www.nature.com/articles/s41598-026-76222-4",
+      "posted_at": 1792154356
+    },
+    "-1004482051328:2080": {
+      "chat_id": -1004482051328,
+      "message_id": 2080,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "یادگیری نمایشی برای پیش‌بینی کارآیی پروتئین با داده‌های کم",
+      "summary": "محققان در مقاله‌ای با عنوان «Representation learning for low-data protein fitness prediction using sequence–structure embeddings and graph neural networks» روش جدیدی برای پیش‌بینی کارآیی پروتئین ارائه کردند. این روش ترکیبی از توالی و ساختار سه‌بعدی پروتئین را در یک تعبیهٔ مشترک قرار می‌دهد و سپس با استفاده از یک شبکهٔ گرافی (Graph Neural Network) پیش‌بینی می‌کند. هدف اصلی این چارچوب، بهبود عملکرد پیش‌بینی در شرایطی است که داده‌های آموزشی محدود باشند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "پیش‌بینی کارآیی پروتئین با داده‌های کم می‌تواند هزینه و زمان آزمایش‌های آزمایشگاهی را کاهش دهد. استفاده از تعبیهٔ ترکیبی توالی‑ساختار اطلاعات فضایی مهم را در مدل حفظ می‌کند. این رویکرد می‌تواند به تسریع طراحی پروتئین‌های جدید در زمینه‌های داروسازی و بیوتکنولوژی کمک کند.",
+      "link": "https://www.nature.com/articles/s41598-026-67952-6",
+      "posted_at": 1792154360
     }
   }
 }

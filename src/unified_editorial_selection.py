@@ -118,7 +118,17 @@ def _keyword_match_area(item: dict[str, Any]) -> str | None:
     for area, cfg in _load_yaml(MISSION_PATH).get("areas", {}).items():
         for keyword in cfg.get("keywords", []) or []:
             key = str(keyword).strip().casefold()
-            if not key or key not in text:
+            if not key:
+                continue
+            # Match semantic keywords as words/phrases, not arbitrary substrings.
+            # In particular, "mind" must not match the brand name "DeepMind";
+            # substring matching silently routed humanoid-robotics stories into
+            # the mind/consciousness lane and corrupted mission coverage metrics.
+            if re.search(r"[a-z0-9]", key):
+                keyword_pattern = rf"(?<![a-z0-9]){re.escape(key)}(?:s|es)?(?![a-z0-9])"
+                if not re.search(keyword_pattern, text):
+                    continue
+            elif key not in text:
                 continue
             if area == "ai_core" and key in _GENERIC_AI_TERMS:
                 continue

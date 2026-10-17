@@ -83,6 +83,31 @@ def test_short_semantic_article_beats_long_related_story_outside_main(monkeypatc
     assert "future product roadmap" not in text
 
 
+def test_article_element_outranks_related_cards_inside_main(monkeypatch):
+    html = b"""
+    <html><head><title>Primary Article</title></head><body>
+    <main>
+      <article>
+        <h1>Primary Article</h1>
+        <p>The study describes a calibrated neural model, a controlled evaluation protocol, and a limitation tied to the reported benchmark.</p>
+      </article>
+      <aside class="related-content">
+        <h3>Unrelated recommended story</h3>
+        <p>This longer related story names a different company and reports unrelated experiments, separate numerical results, and a different product roadmap. It must not contaminate the primary article's evidence even though the card sits inside the main element.</p>
+      </aside>
+    </main>
+    </body></html>
+    """
+    monkeypatch.setattr(evidence.requests, "get", lambda *a, **k: _response(body=html))
+    evidence.fetch_article_text.cache_clear()
+
+    text = evidence.fetch_article_text("https://publisher.example/main-with-related-card")
+
+    assert "controlled evaluation protocol" in text
+    assert "Unrelated recommended story" not in text
+    assert "different product roadmap" not in text
+
+
 def test_extraction_falls_back_to_body_paragraphs_without_semantic_article_tags(monkeypatch):
     html = b"""
     <html><head><title>Publisher Story</title></head><body>

@@ -177,6 +177,8 @@ def _source_text(item, max_chars=3500):
     if not article_evidence and len(explicit_evidence) < 1800 and len(rss_evidence) < 900:
         try:
             article_evidence = article_text_for_item(item)
+            if article_evidence:
+                item["_source_article_text"] = article_evidence
         except Exception:
             article_evidence = ""
     parts = []

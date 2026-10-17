@@ -22,7 +22,7 @@ SUMMARY_BUDGET_PATTERN = re.compile(r"\[Publication Summary Budget\].*?output(?:
 CONTRACT_PATTERN = re.compile(r"\[Production Contract\].*")
 NORMAL_CONTRACT_PATTERN = re.compile(r"normal_news=(\d+)\s+normal_max=(\d+)")
 MIND_CONTRACT_PATTERN = re.compile(r"mind_ideas_voices=(\d+)\s+mind_max=(\d+)")
-PEOPLE_CONTRACT_PATTERN = re.compile(r"people=(\d+)\s+people_max=([^\s]+)")
+PEOPLE_CONTRACT_PATTERN = re.compile(r"people=(\d+)(?:\s+people_max=([^\s]+))?")
 TECHNICAL_TREND_CONTRACT_PATTERN = re.compile(r"technical_trend=(\d+)")
 VOICES_PERSPECTIVES_CONTRACT_PATTERN = re.compile(r"voices_perspectives=(\d+)")
 STRATEGIC_ANALYTICAL_CONTRACT_PATTERN = re.compile(r"strategic_analytical=(\d+)")
@@ -240,14 +240,32 @@ def validate(log_text: str) -> tuple[bool, str]:
     education_confirmed_preflight = bool(
         education_preflight and education_preflight.group(1).casefold() == "confirmed"
     ) or _last_match(lines, (EDUCATION_CONFIRMED_PATTERN,)) is not None
+    # Modern production emits the authoritative total and global capacity.
+    # Lane counters are not always mutually exclusive (e.g. a People/Tier-0
+    # interview can carry both labels), so never infer the true delivered total
+    # by summing role counters when final_news is available.
+    final_news_preflight = re.search(r"\bfinal_news=(\d+)", contract_line_preflight)
+    final_capacity_preflight = re.search(r"\bfinal_capacity=(\d+)", contract_line_preflight)
+    if final_news_preflight is not None and final_capacity_preflight is not None:
+        observed_final_news = int(final_news_preflight.group(1))
+        observed_capacity = int(final_capacity_preflight.group(1))
+        if observed_final_news > observed_capacity:
+            return False, (
+                "production contract violation: global publication capacity exceeded; "
+                f"published_news={observed_final_news}, final_capacity={observed_capacity}"
+            )
 
     if selected_preflight > 0 and not education_confirmed_preflight:
-        if not published_counter_values:
+        if not published_counter_values and final_news_preflight is None:
             return False, (
                 "production contract violation: selected candidates exist but final publication-lane "
                 f"counters are missing; selected={selected_preflight}"
             )
-        published_preflight = sum(published_counter_values)
+        published_preflight = (
+            int(final_news_preflight.group(1))
+            if final_news_preflight is not None
+            else sum(published_counter_values)
+        )
         if published_preflight == 0:
             return False, (
                 "production contract violation: zero news items were published from a non-empty selected set "
@@ -335,7 +353,7 @@ def validate(log_text: str) -> tuple[bool, str]:
     mind_news = int(mind_match.group(1)) if mind_match else 0
     mind_max = int(mind_match.group(2)) if mind_match else 0
     people_news = int(people_match.group(1)) if people_match else 0
-    if people_match and people_match.group(2).casefold() != "none":
+    if people_match and people_match.group(2) and people_match.group(2).casefold() != "none":
         return False, f"People lane must be uncapped; found people_max={people_match.group(2)}"
     tier0_news = int(tier0_match.group(1))
     technical_match = TECHNICAL_TREND_CONTRACT_PATTERN.search(contract_line)
@@ -370,13 +388,17 @@ def validate(log_text: str) -> tuple[bool, str]:
             return False, f"production contract violation: Mind lane exceeds configured cap: {mind_news}>{mind_max}"
 
     published_news = (
-        normal_news
-        + mind_news
-        + people_news
-        + technical_news
-        + voices_news
-        + strategic_news
-        + tier0_news
+        int(final_news_preflight.group(1))
+        if final_news_preflight is not None
+        else (
+            normal_news
+            + mind_news
+            + people_news
+            + technical_news
+            + voices_news
+            + strategic_news
+            + tier0_news
+        )
     )
     editorial_rejections = sum(1 for line in lines if EDITORIAL_SKIP_PATTERN.search(line))
     policy_rejections = sum(1 for line in lines if POLICY_REJECTION_PATTERN.search(line))

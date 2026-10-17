@@ -30,6 +30,21 @@ def test_transport_failure_does_not_write_ledger():
     assert calls == ["deliver"]
 
 
+def test_policy_transport_failure_does_not_call_transport_or_ledger():
+    calls = []
+
+    outcome = publish_story(
+        {"title": "must stop after transport failure"},
+        policy=lambda story: transport_failed("telegram_transport_unavailable", retryable=False),
+        deliver=lambda story: calls.append("deliver") or delivered({"message_id": 99}),
+        ledger=lambda story, result: calls.append("ledger"),
+    )
+
+    assert outcome.status is DeliveryStatus.DELIVERY_FAILED_PERMANENT
+    assert outcome.reason == "telegram_transport_unavailable"
+    assert calls == []
+
+
 def test_ledger_requires_confirmed_message_id():
     calls = []
 

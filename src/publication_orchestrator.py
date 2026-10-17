@@ -146,6 +146,23 @@ def publish_story(
         )
         return transport_failed("invalid_policy_outcome", retryable=False)
 
+    # A policy may stop the rest of a run after a Telegram transport failure.
+    # Any non-DELIVERED policy result must terminate this attempt before the
+    # final-story guard or transport. Previously DELIVERY_FAILED_* with no
+    # message_id slipped through and was sent anyway, which explains messages
+    # appearing after the log said publication had stopped.
+    if decision.status in {
+        DeliveryStatus.DELIVERY_FAILED_RETRYABLE,
+        DeliveryStatus.DELIVERY_FAILED_PERMANENT,
+    }:
+        _telemetry_event(
+            story,
+            decision="unavailable",
+            reason_code="policy_transport_failure",
+            details={"status": decision.status.value, "policy_reason": str(decision.reason or "")},
+        )
+        return decision
+
     allowed, reason = _final_story_guard(story)
     if not allowed:
         _telemetry_event(

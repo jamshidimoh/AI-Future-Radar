@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import threading
 import time
 from collections import Counter
 from datetime import datetime, timedelta, timezone
@@ -72,6 +73,25 @@ def _normalize_people_lane_role(item: dict[str, Any]) -> bool:
         flush=True,
     )
     return True
+
+
+def _global_news_capacity_reached(
+    render_state: dict[str, Any],
+    story: dict[str, Any],
+    capacity: int = MAX_NORMAL_NEWS_PER_PERIOD,
+) -> bool:
+    """Enforce one shared news cap across normal, People, and special lanes."""
+    if str(story.get("content_type") or "").strip().casefold() in {"education", "educational"}:
+        return False
+    try:
+        published = max(0, int(render_state.get("news_delivered_count", 0) or 0))
+    except (TypeError, ValueError):
+        published = 0
+    try:
+        final_capacity = max(0, int(capacity))
+    except (TypeError, ValueError):
+        final_capacity = MAX_NORMAL_NEWS_PER_PERIOD
+    return published >= final_capacity
 
 
 def _unified_portfolio_select(candidates, max_posts, policy, bootstrap_mode=False):
@@ -696,6 +716,11 @@ def main(*, skip_education: bool = False) -> int:
 
     original_mark = pipeline.mark_as_seen
     last_delivery = {"outcome": None, "meta": None}
+    # Publication policy and Telegram delivery must be one serialized critical
+    # section: otherwise concurrent callbacks can all pass the capacity check
+    # before any successful send updates news_delivered_count, or send after a
+    # preceding 429 exhausted its retry budget.
+    publication_lock = threading.RLock()
 
     def _ledger(story, outcome):
         meta = outcome.as_dict()
@@ -782,7 +807,7 @@ def main(*, skip_education: bool = False) -> int:
             )
             return policy_blocked("editorial_importance_gate")
         is_people = bool(story.get("people_lane"))
-        if render_state["news_delivered_count"] >= MAX_NORMAL_NEWS_PER_PERIOD and not story.get("people_bootstrap"):
+        if _global_news_capacity_reached(render_state, story):
             return policy_blocked("final_news_capacity_exhausted")
         is_mind = _is_mind_ideas_voices(story)
         is_technical = _is_technical_trend(story)
@@ -851,20 +876,24 @@ def main(*, skip_education: bool = False) -> int:
         return send(text, image_url=image_url, source_link=source_link)
 
     def delivery_and_capture(text, image_url="", source_link=""):
-        item = render_state.get("current_item") or {}
-        item["_rendered_text"] = text
-        item["_rendered_image_url"] = image_url
-        if source_link:
-            item["link"] = source_link
-        outcome = publish_production_story(item, policy=policy, transport=transport, ledger=_ledger)
-        last_delivery["outcome"] = outcome
-        last_delivery["meta"] = outcome.as_dict()
-        if outcome.status in {DeliveryStatus.DELIVERY_FAILED_RETRYABLE, DeliveryStatus.DELIVERY_FAILED_PERMANENT}:
-            render_state["delivery_transport_failed"] = True
-            print(f"[Telegram Delivery] transport failure; stopping further publication attempts reason={outcome.reason}", flush=True)
-        elif outcome.status is not DeliveryStatus.DELIVERED:
-            print(f"[Publication Contract] candidate rejected reason={outcome.reason}; continuing to next ranked candidate", flush=True)
-        return outcome
+        # The policy check, Telegram send, and successful-send ledger update are
+        # serialized together so every call observes the latest global count and
+        # any earlier transport-failure state before it can send another message.
+        with publication_lock:
+            item = render_state.get("current_item") or {}
+            item["_rendered_text"] = text
+            item["_rendered_image_url"] = image_url
+            if source_link:
+                item["link"] = source_link
+            outcome = publish_production_story(item, policy=policy, transport=transport, ledger=_ledger)
+            last_delivery["outcome"] = outcome
+            last_delivery["meta"] = outcome.as_dict()
+            if outcome.status in {DeliveryStatus.DELIVERY_FAILED_RETRYABLE, DeliveryStatus.DELIVERY_FAILED_PERMANENT}:
+                render_state["delivery_transport_failed"] = True
+                print(f"[Telegram Delivery] transport failure; stopping further publication attempts reason={outcome.reason}", flush=True)
+            elif outcome.status is not DeliveryStatus.DELIVERED:
+                print(f"[Publication Contract] candidate rejected reason={outcome.reason}; continuing to next ranked candidate", flush=True)
+            return outcome
 
     hooks = {"select_editorial": select_with_feedback, "summarize_item": summarize_with_education, "format_post": format_with_education, "mark_as_seen": mark_with_telegram, "send_to_telegram_safe": delivery_and_capture}
     try:

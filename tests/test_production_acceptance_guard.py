@@ -359,15 +359,47 @@ def test_no_candidate_mission_gap_is_acceptable_when_no_hard_recovery_failure_ex
 CURRENT_LANE_COUNTER_CONTRACT = """
 [Production Selection] total=4
 [Dual Lane Selection] normal=2 mind_ideas_voices=2 mind_cap=2 mind_score_floor=not_applied
-[Publication Summary Budget] input=4 protected=0 mind_ideas_voices=2 normal_window=2 output=4 normal_limit=6 mind_limit=2 replacement_buffer=3 normal_score_floor=55.0 mind_score_floor=not_applied
+[Publication Summary Budget] mode=unified_portfolio input=4 news=4 education=0 output_news=3 final_capacity=3 candidate_window=6 replacement_buffer=3 normal_window=6 mind_ideas_voices=2 mind_limit=2 mind_score_floor=not_applied
 [Publication Policy] PUBLISH normal_rank=1 score=62.78
-[Publication Policy] PUBLISH normal_rank=2 score=61.12
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=50.0 normal_floor=not_applied
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=50.0 normal_floor=not_applied
-[Production Contract] normal_news=2 normal_max=3 technical_trend=0 technical_max=1 mind_ideas_voices=2 mind_max=2 voices_perspectives=1 voices_max=1 tier0_news=0 tier0_quota_exempt=false strategic_analytical=0 strategic_max=1 normal_score_floor=55.0 special_lanes_score_floor=not_applied education=not_due
-Posts sent: 4/4
+[Production Contract] final_news=3 final_capacity=3 normal_news=1 normal_max=3 people=0 people_max=none technical_trend=0 technical_max=1 mind_ideas_voices=2 mind_max=2 voices_perspectives=0 voices_max=1 tier0_news=0 tier0_quota_exempt=false strategic_analytical=0 strategic_max=1 lane_quotas=selection_roles_only normal_score_floor=55.0 special_lanes_score_floor=not_applied education=not_due
+Posts sent: 3/3
 """
 
+
+
+
+def test_modern_runtime_guard_rejects_global_publication_capacity_overrun():
+    log = """
+[Production Selection] total=6
+[Publication Summary Budget] mode=unified_portfolio input=6 news=6 education=0 output_news=6 final_capacity=3 candidate_window=6 replacement_buffer=3
+[Publication Policy] PUBLISH normal_rank=1 score=62.78
+[Publication Policy] PUBLISH voices_perspectives voices_rank=1 score=100.0 normal_floor=not_applied
+[Publication Policy] PUBLISH PEOPLE person=Yann LeCun score=0.0 quota_exempt=true cap=none
+[Publication Policy] PUBLISH normal_rank=2 score=65.03
+[Production Contract] final_news=4 final_capacity=3 normal_news=2 people=1 technical_trend=0 mind_ideas_voices=0 voices_perspectives=1 tier0_news=1 strategic_analytical=0 lane_quotas=selection_roles_only normal_score_floor=55.0 education=not_due
+Posts sent: 4/11
+"""
+    ok, message = validate(log)
+    assert ok is False
+    assert "global publication capacity exceeded" in message
+    assert "published_news=4, final_capacity=3" in message
+
+
+def test_modern_runtime_guard_uses_final_news_not_overlapping_role_counters():
+    log = """
+[Production Selection] total=6
+[Publication Summary Budget] mode=unified_portfolio input=6 news=6 education=0 output_news=3 final_capacity=3 candidate_window=6 replacement_buffer=3
+[Publication Policy] PUBLISH PEOPLE person=Yann LeCun score=65.0 quota_exempt=true cap=none
+[Publication Policy] PUBLISH normal_rank=1 score=62.78
+[Publication Policy] PUBLISH TIER0 interview/quote global_rank=2 tier0_rank=1 score=65.0 quality_floor=60.0 quota_exempt=true
+[Production Contract] final_news=3 final_capacity=3 normal_news=1 people=1 technical_trend=0 mind_ideas_voices=0 voices_perspectives=0 tier0_news=1 strategic_analytical=0 lane_quotas=selection_roles_only normal_score_floor=55.0 education=not_due
+Posts sent: 3/3
+"""
+    ok, message = validate(log)
+    assert ok is True, message
+    assert "published_news=3" in message
 
 def test_production_contract_parser_reads_mind_and_tier0_after_other_lane_fields():
     ok, message = validate(CURRENT_LANE_COUNTER_CONTRACT)

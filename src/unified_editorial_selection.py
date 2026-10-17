@@ -28,6 +28,19 @@ _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
 _INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
 _COMMUNITY_MARKERS = ("reddit", "community", "aggregator", "techmeme")
 _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
+_MIND_COGNITION_EVIDENCE_TERMS = (
+    "consciousness", "machine consciousness", "ai consciousness", "sentience", "qualia",
+    "self-awareness", "cognitive science", "cognition", "cognitive", "neuroscience",
+    "computational neuroscience", "predictive processing", "active inference",
+    "global workspace", "integrated information", "philosophy of mind",
+    "philosophy of science", "philosophy of technology", "philosophy of ai",
+    "epistemology of ai", "technology and consciousness", "artificial consciousness",
+    "machine awareness", "brain-computer interface", "brain-computer", "neurotechnology",
+    "ai and the mind", "ai and mind", "mind and ai", "mind and artificial intelligence",
+    "brain", "آگاهی", "خودآگاهی", "هوشیاری", "شناخت", "علوم شناختی", "فلسفه ذهن",
+    "فلسفهٔ ذهن", "فلسفه علم", "فلسفهٔ علم", "فلسفه فناوری", "فلسفهٔ فناوری",
+    "مغز", "رابط مغز و رایانه", "علوم اعصاب", "فناوری عصبی",
+)
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -92,8 +105,50 @@ def content_type_key(item: dict[str, Any]) -> str:
     return str(item.get("content_type") or "unknown").strip().casefold() or "unknown"
 
 
+def _mind_cognition_evidence_text(item: dict[str, Any]) -> str:
+    """Return content fields only; a lane label or source/person name is not evidence."""
+    return " ".join(
+        str(item.get(key) or "")
+        for key in ("title", "summary", "description", "tags", "keywords")
+    ).casefold()
+
+
+def _has_mind_cognition_evidence(item: dict[str, Any]) -> bool:
+    text = _mind_cognition_evidence_text(item)
+    for term in _MIND_COGNITION_EVIDENCE_TERMS:
+        key = term.strip().casefold()
+        if re.search(r"[a-z0-9]", key):
+            if re.search(rf"(?<![a-z0-9]){re.escape(key)}(?![a-z0-9])", text):
+                return True
+        elif key and key in text:
+            return True
+    return False
+
+
 def mission_area(item: dict[str, Any]) -> str:
     explicit = str(item.get("mission_area") or "").strip().casefold()
+    if explicit in {"mind", "mind_cognition"}:
+        # Content-free history/state records retain their previously classified
+        # area so rotation accounting remains stable. Live candidates have text,
+        # and their Mind label must be supported by that text rather than metadata.
+        content_text = _mind_cognition_evidence_text(item).strip()
+        if not content_text:
+            item["mission_area"] = "mind_cognition"
+            return "mind_cognition"
+        # A stale label must not turn an astronomy or other unrelated story into
+        # a Mind signal; reclassify from the actual content when evidence is absent.
+        if _has_mind_cognition_evidence(item):
+            item["mission_area"] = "mind_cognition"
+            return "mind_cognition"
+        content_area = _keyword_match_area(item, content_only=True)
+        if content_area and content_area != "mind_cognition":
+            item["mission_area"] = content_area
+            return content_area
+        # Do not fall back to stale category or upstream linkage metadata here:
+        # those same labels may be the source of the original false classification.
+        item["mission_area"] = "unclassified"
+        item["_mission_area_rejected"] = "mind_cognition_without_content_evidence"
+        return "unclassified"
     if explicit in _AREA_MAP.values() or explicit in {"unclassified", "unknown"}:
         return explicit
     # Specific mission evidence must outrank the legacy broad category label.
@@ -108,12 +163,13 @@ def mission_area(item: dict[str, Any]) -> str:
         return "ai_core"
     return "unclassified"
 
+
 def _mission_text(item: dict[str, Any]) -> str:
     return " ".join(str(item.get(k) or "") for k in ("title", "summary", "description", "category", "mission_area", "content_type", "tags", "keywords")).casefold()
 
 
-def _keyword_match_area(item: dict[str, Any]) -> str | None:
-    text = _mission_text(item)
+def _keyword_match_area(item: dict[str, Any], *, content_only: bool = False) -> str | None:
+    text = _mind_cognition_evidence_text(item) if content_only else _mission_text(item)
     matches: list[tuple[int, str]] = []
     for area, cfg in _load_yaml(MISSION_PATH).get("areas", {}).items():
         for keyword in cfg.get("keywords", []) or []:
@@ -138,7 +194,22 @@ def _keyword_match_area(item: dict[str, Any]) -> str | None:
 
 def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
     """Apply mission evidence before trusting the legacy category label."""
-    explicit = str(item.get("mission_area") or "").strip().casefold()
+    if item.get("_mission_area_rejected") == "mind_cognition_without_content_evidence":
+        return False
+    raw_explicit = str(item.get("mission_area") or "").strip().casefold()
+    if raw_explicit in {"mind", "mind_cognition"}:
+        explicit = mission_area(item)
+        if explicit != "mind_cognition":
+            item["mission_area"] = explicit
+        # If an explicit Mind label was rejected from content evidence, do not let
+        # the same stale category/person/AI-link metadata re-admit it downstream.
+        if item.get("_mission_area_rejected") == "mind_cognition_without_content_evidence":
+            return False
+    else:
+        # Preserve strict-mode checks for legacy category=ai. Calling mission_area
+        # unconditionally here would convert that category to ai_core too early and
+        # bypass the requirement for concrete AI evidence in the content itself.
+        explicit = raw_explicit
     if explicit in _AREA_MAP.values():
         if explicit == "ai_core":
             text = _mission_text(item)

@@ -67,6 +67,35 @@ def test_additive_candidates_use_independent_lane_score_and_two_item_cap():
     assert all(item.get("mind_lane_selected") for item in selected)
 
 
+
+def test_explicit_mind_label_does_not_admit_unrelated_astronomy_expert_story():
+    item = {
+        "title": "Francis Halzen: How an under-ice telescope is transforming astronomy",
+        "summary": "A profile of neutrino astronomy and an Antarctic under-ice telescope.",
+        "mission_area": "mind_cognition",
+        "category": "science",
+        "content_type": "interview",
+        "person_name": "Francis Halzen",
+        "source": "Nature",
+        "source_tier": 1,
+        "source_type": "specialist",
+        "research_signal": True,
+    }
+    assert not is_mind_ideas_voices_candidate(item)
+
+
+def test_explicit_mind_label_keeps_real_consciousness_content_eligible():
+    item = {
+        "title": "Machine consciousness and self-awareness in artificial intelligence",
+        "summary": "A cognitive science analysis of consciousness and computational models of awareness.",
+        "mission_area": "mind_cognition",
+        "content_type": "research",
+        "source": "Nature",
+        "source_tier": 1,
+        "source_type": "scientific",
+    }
+    assert is_mind_ideas_voices_candidate(item)
+
 def test_mind_lane_rejects_generic_forum_interview_without_mind_signal():
     item = {
         "title": "Sustainable Development Impact Meetings 2025",

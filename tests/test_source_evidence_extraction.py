@@ -45,6 +45,27 @@ def test_never_fetches_arxiv_or_google_news_wrapper(monkeypatch):
     assert calls == []
 
 
+def test_google_news_redirect_to_arxiv_is_never_followed(monkeypatch):
+    from scripts import production_with_ranking_audit as launcher
+
+    calls = []
+    redirect = _response(
+        status=302,
+        headers={"Location": "https://arxiv.org/abs/2601.01234", "Content-Type": "text/html"},
+    )
+    monkeypatch.setattr(
+        launcher.requests,
+        "get",
+        lambda url, **kwargs: calls.append((url, kwargs)) or redirect,
+    )
+    original = "https://news.google.com/rss/articles/example"
+
+    assert launcher._resolve_google_news_url(original) == original
+    assert len(calls) == 1
+    assert calls[0][0] == original
+    assert calls[0][1]["allow_redirects"] is False
+
+
 def test_redirect_to_excluded_source_is_not_followed(monkeypatch):
     calls = []
     redirect = _response(

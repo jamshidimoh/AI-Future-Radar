@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from src.unified_editorial_selection import load_editorial_contract, select_regular_portfolio
+from src.unified_editorial_selection import load_editorial_contract, mission_area, select_regular_portfolio
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -399,3 +399,22 @@ def test_authority_repair_preserves_mission_area_with_same_area_replacement():
     assert [x["mission_area"] for x in selected] == ["ai_core", "convergence"]
     assert any(x["title"] == "Authoritative convergence result" for x in selected)
 
+
+
+def test_deepmind_robotics_does_not_match_mind_as_a_substring():
+    candidate = {
+        "title": "Google DeepMind humanoid robot learns from video",
+        "summary": "A robotics system learns manipulation from demonstrations.",
+        "category": "ai",
+        "source": "Google DeepMind",
+    }
+    assert mission_area(candidate) == "convergence"
+
+
+def test_actual_consciousness_keyword_still_maps_to_mind_cognition():
+    candidate = {
+        "title": "New evidence about machine consciousness and self-awareness",
+        "summary": "A cognitive science analysis of artificial consciousness.",
+        "category": "ai",
+    }
+    assert mission_area(candidate) == "mind_cognition"

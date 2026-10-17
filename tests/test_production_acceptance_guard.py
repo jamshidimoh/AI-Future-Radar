@@ -363,7 +363,7 @@ CURRENT_LANE_COUNTER_CONTRACT = """
 [Publication Policy] PUBLISH normal_rank=1 score=62.78
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=50.0 normal_floor=not_applied
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=50.0 normal_floor=not_applied
-[Production Contract] final_news=3 final_capacity=3 normal_news=1 people=0 technical_trend=0 mind_ideas_voices=2 voices_perspectives=0 tier0_news=0 strategic_analytical=0 lane_quotas=selection_roles_only normal_score_floor=55.0 education=not_due
+[Production Contract] final_news=3 final_capacity=3 normal_news=1 normal_max=3 people=0 people_max=none technical_trend=0 technical_max=1 mind_ideas_voices=2 mind_max=2 voices_perspectives=0 voices_max=1 tier0_news=0 tier0_quota_exempt=false strategic_analytical=0 strategic_max=1 lane_quotas=selection_roles_only normal_score_floor=55.0 special_lanes_score_floor=not_applied education=not_due
 Posts sent: 3/3
 """
 

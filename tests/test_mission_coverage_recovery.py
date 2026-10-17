@@ -169,7 +169,7 @@ def test_mission_coverage_recovery_gives_each_missing_lane_its_own_attempt_budge
     editorial_pool = [
         {"title": "AI core", "mission_area": "ai_core", "link": "https://example.invalid/ai", "source": "OpenAI", "source_tier": 1, "editorial_score": 90},
         {"title": "Convergence", "mission_area": "convergence", "link": "https://example.invalid/conv", "source": "Nature", "source_tier": 1, "editorial_score": 90},
-        {"title": "Mind", "mission_area": "mind_cognition", "link": "https://example.invalid/mind", "source": "Nature", "source_tier": 1, "editorial_score": 90},
+        {"title": "Machine consciousness and self-awareness", "mission_area": "mind_cognition", "link": "https://example.invalid/mind", "source": "Nature", "source_tier": 1, "editorial_score": 90},
     ]
 
     def select_fn(items, **_kwargs):

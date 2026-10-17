@@ -118,6 +118,11 @@ jobs:
                       "config/README.md",
                       "tests/leader_activity_routing_contract.md",
                       "tests/test_production_closure_gate_integrity.py",
+                      # These helpers/tests validate the Closure Gate itself; they
+                      # do not change the bot's production behavior and must not
+                      # make otherwise identical successful runs appear unpinned.
+                      "scripts/production_closure_contract.py",
+                      "tests/test_production_closure_contract.py",
                   }
                   is_ci_workflow = path.startswith(".github/workflows/")
                   is_non_runtime = (

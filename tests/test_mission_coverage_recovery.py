@@ -109,6 +109,51 @@ def test_mission_coverage_recovery_replaces_failed_legacy_future_candidate(monke
     assert calls["n"] == 2
 
 
+def test_mind_candidate_below_independent_floor_is_reported_as_score_floor(monkeypatch, capsys):
+    _disable_history_dedup(monkeypatch)
+    from src import unified_editorial_selection
+    from src.protected_editorial_lane import MIND_IDEAS_VOICES_SCORE_FLOOR
+
+    contract = unified_editorial_selection.load_editorial_contract()
+    contract["ai_core_target_min"] = 0
+    contract["convergence_target"] = 0
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 0
+    monkeypatch.setattr(unified_editorial_selection, "load_editorial_contract", lambda: dict(contract))
+    monkeypatch.setattr(
+        "src.mission_coverage_priority.mind_ideas_voices_score",
+        lambda _item: MIND_IDEAS_VOICES_SCORE_FLOOR - 1,
+    )
+
+    candidate = {
+        "title": "A low-scoring machine-consciousness candidate",
+        "summary": "A source-linked cognition study with explicit AI context.",
+        "mission_area": "mind_cognition",
+        "mind_lane_selected": True,
+        "mind_editorial_score": MIND_IDEAS_VOICES_SCORE_FLOOR - 1,
+        "link": "https://example.invalid/mind-floor",
+        "source": "Nature",
+        "source_tier": 1,
+    }
+    recovered = _mission_coverage_recovery(
+        [],
+        [candidate],
+        lambda items, **_kwargs: [items[0]],
+        lambda item: {"summary": f"Valid summary for {item['title']}"},
+        1,
+        1,
+        {"replacement_buffer": 1},
+        set(),
+    )
+
+    output = capsys.readouterr().out
+    assert recovered == []
+    assert "score=" in output
+    assert f"floor={MIND_IDEAS_VOICES_SCORE_FLOOR:.2f}" in output
+    assert "lane=independent_mind status=below_score_floor" in output
+    assert "independent_lane_not_score_gated" not in output
+
+
 def test_mission_coverage_recovery_gives_each_missing_lane_its_own_attempt_budget(monkeypatch):
     _disable_history_dedup(monkeypatch)
     from src import unified_editorial_selection

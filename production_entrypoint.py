@@ -51,11 +51,43 @@ STRATEGIC_ANALYTICAL_MAX_PER_PERIOD = 1
 STRATEGIC_ANALYTICAL_CATEGORIES = {"future", "future_governance", "mind", "mind_cognition"}
 
 
+def _normalize_people_lane_role(item: dict[str, Any]) -> bool:
+    """Keep non-interview leader/person news out of the interview-only People role.
+
+    Discovery marks person-associated stories with people_lane so they can be
+    watched and prioritized. That marker alone does not make them a People
+    interview. Only vetted priority interviews/leader signals and bootstrap
+    records retain the People role; other valid stories must compete as normal
+    news and pass the normal importance, language, score and rank checks.
+    """
+    if not item.get("people_lane") or item.get("people_bootstrap"):
+        return False
+    if is_substantive_priority_interview(item):
+        return False
+    item["people_lane"] = False
+    item["_people_lane_reclassified_to_normal"] = True
+    print(
+        "[People Lane Eligibility] reclassified_non_interview=true "
+        f"title={str(item.get('title') or '')[:120]}",
+        flush=True,
+    )
+    return True
+
+
 def _unified_portfolio_select(candidates, max_posts, policy, bootstrap_mode=False):
     """Arbitrate all editorial roles into one final portfolio and replacement buffer."""
     from src.dedup import load_seen, load_source_history
 
     all_candidates = unique_candidates([x for x in (candidates or []) if str(x.get("content_type") or "").strip().casefold() != "education"])
+    # A source/person watch signal is not automatically an interview. Normalize
+    # these roles before reserved-slot selection, otherwise a non-interview may
+    # consume the People slot and later be rejected by the interview-only gate.
+    reclassified_people = sum(_normalize_people_lane_role(item) for item in all_candidates)
+    if reclassified_people:
+        print(
+            f"[People Lane Eligibility] non_interview_reclassified={reclassified_people}",
+            flush=True,
+        )
     selected: list[dict[str, Any]] = []
 
     people_bootstrap = [x for x in all_candidates if x.get("people_lane") and x.get("people_bootstrap")]
@@ -75,10 +107,7 @@ def _unified_portfolio_select(candidates, max_posts, policy, bootstrap_mode=Fals
             x for x in all_candidates
             if x.get("people_lane")
             and not x.get("people_bootstrap")
-            and (
-                is_substantive_priority_interview(x)
-                or protected_score_allowed(float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0))
-            )
+            and is_substantive_priority_interview(x)
         ]
         people_pool, people_blocked = filter_people_person_cooldown(
             people_pool,
@@ -88,7 +117,6 @@ def _unified_portfolio_select(candidates, max_posts, policy, bootstrap_mode=Fals
         people_pool = [
             x for x in people_pool
             if is_substantive_priority_interview(x)
-            or protected_score_allowed(float(x.get("final_editorial_score", x.get("editorial_score", 0)) or 0))
         ]
         people_pool.sort(
             key=lambda x: (
@@ -734,6 +762,11 @@ def main(*, skip_education: bool = False) -> int:
             return transport_failed("telegram_transport_unavailable", retryable=False)
         if current_type == "education":
             return delivered({"message_id": None})
+        # Fail-safe normalization also covers candidates introduced by late
+        # refill/recovery after the initial portfolio has already been ranked.
+        # A non-interview person-associated story falls through to the normal
+        # publication gates instead of being blocked by the People interview gate.
+        _normalize_people_lane_role(story)
         # Production-only final importance gate. Ranking can identify relevant
         # candidates, but only consequential items should consume a Telegram slot.
         # The check runs after summarization so it evaluates the actual publication

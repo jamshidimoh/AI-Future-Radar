@@ -234,6 +234,7 @@ def article_text_for_item(item):
     if not _safe_http_url(url):
         return ""
     text = fetch_article_text(url)
+    item["_source_article_fetch_attempted"] = True
     if text:
         item["_source_article_text"] = text
     return text

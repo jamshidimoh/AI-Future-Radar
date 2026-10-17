@@ -113,6 +113,46 @@ def _omniroute_structured_json_ok(content: str) -> bool:
         return False
 
 
+_OMNIROUTE_PROVIDER_LABELS = {
+    "groq": "Groq",
+    "openrouter": "OpenRouter",
+    "nara": "NaraRouter",
+    "nararouter": "NaraRouter",
+    "gemini": "Gemini",
+    "mistral": "Mistral",
+    "nvidia": "NVIDIA",
+    "sambanova": "SambaNova",
+    "llm7": "LLM7",
+    "anyapi": "AnyAPI",
+    "api-airforce": "API Airforce",
+    "cloudflare-ai": "Cloudflare AI",
+    "huggingface": "HuggingFace",
+    "hf": "HuggingFace",
+    "kiraai": "KiraAI",
+}
+
+
+def _omniroute_result_provider(selected: str, decision: str) -> str:
+    """Return upstream provider family when OmniRoute exposes it in decision metadata.
+
+    A generic OmniRoute:model identity does not let recovery recognize which
+    provider family actually generated the draft, so the repair path can retry
+    that same family instead of using an independent fallback. Without explicit
+    metadata, retain the generic label rather than guessing from the model name.
+    """
+    match = re.search(
+        r"(?:^|[;,\s])provider\s*=\s*([a-z0-9_-]+)",
+        str(decision or ""),
+        re.IGNORECASE,
+    )
+    family = match.group(1).casefold() if match else ""
+    label = _OMNIROUTE_PROVIDER_LABELS.get(family)
+    model = str(selected or "").strip()
+    if label and model:
+        return f"{label}:{model}"
+    return f"OmniRoute:{model}"
+
+
 def _omniroute_call(system_prompt, user_content):
     """Try OmniRoute first when an operator exposes a live gateway endpoint.
 
@@ -167,7 +207,9 @@ def _omniroute_call(system_prompt, user_content):
             f"decision={decision[:300]}",
             flush=True,
         )
-        return content, f"OmniRoute:{selected}"
+        provider_label = _omniroute_result_provider(selected, decision)
+        print(f"[OmniRoute Primary] upstream_identity={provider_label}", flush=True)
+        return content, provider_label
     except Exception as exc:
         print(
             f"[OmniRoute Primary] success=false reason={type(exc).__name__}: {exc}; falling back to production chain",

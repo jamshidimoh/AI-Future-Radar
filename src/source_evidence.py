@@ -20,7 +20,7 @@ _REDIRECTS = {301, 302, 303, 307, 308}
 _SKIP = {"script", "style", "noscript", "svg", "canvas", "iframe", "nav", "footer", "aside", "form", "button", "select", "option", "template", "header"}
 _BLOCKS = {"p", "h1", "h2", "h3", "h4", "blockquote", "li", "dd"}
 _VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
-_GOOGLE_NEWS = {"news.google.com"}
+_GOOGLE_NEWS = {"news.google.com", "news.googleusercontent.com"}
 _NON_ARTICLE = {"youtube.com", "www.youtube.com", "youtu.be", "m.youtube.com"}
 _UA = "Mozilla/5.0 (compatible; AI-Future-Radar/1.0; +https://github.com/jamshidimoh/AI-Future-Radar)"
 
@@ -124,7 +124,7 @@ class _ArticleParser(HTMLParser):
         return "\n".join(pieces)[:MAX_EXTRACTED_CHARS]
 
 
-def _safe_http_url(value):
+def is_safe_public_http_url(value, *, allow_google_news=False):
     raw = str(value or "").strip()
     if not raw or is_excluded_source_url(raw):
         return False
@@ -135,7 +135,9 @@ def _safe_http_url(value):
             return False
         if parsed.username is not None or parsed.password is not None:
             return False
-        if host in _GOOGLE_NEWS or host in _NON_ARTICLE:
+        if host in _GOOGLE_NEWS and not allow_google_news:
+            return False
+        if host in _NON_ARTICLE:
             return False
         if host == "localhost" or host.endswith((".localhost", ".local", ".internal")):
             return False
@@ -172,7 +174,7 @@ def _read_bounded_body(response):
 def fetch_article_text(url):
     """Fetch a direct public publisher page with strict timeout, redirect and byte caps."""
     current = str(url or "").strip()
-    if not _safe_http_url(current):
+    if not is_safe_public_http_url(current):
         return ""
     for redirect_count in range(_MAX_REDIRECTS + 1):
         response = None
@@ -191,7 +193,7 @@ def fetch_article_text(url):
                 if not location or redirect_count >= _MAX_REDIRECTS:
                     return ""
                 target = urljoin(current, location)
-                if not _safe_http_url(target):
+                if not is_safe_public_http_url(target):
                     return ""
                 old_scheme = urlsplit(current).scheme.casefold()
                 new_scheme = urlsplit(target).scheme.casefold()
@@ -231,7 +233,7 @@ def article_text_for_item(item):
     if existing:
         return existing[:MAX_EXTRACTED_CHARS]
     url = str(item.get("canonical_url") or item.get("link") or item.get("url") or "").strip()
-    if not _safe_http_url(url):
+    if not is_safe_public_http_url(url):
         return ""
     text = fetch_article_text(url)
     item["_source_article_fetch_attempted"] = True

@@ -60,15 +60,15 @@ def test_voice_lane_title_only_prefilter_blocks_missing_summary_duplicate(monkey
     calls = []
     def fake_guard(text, source_link="", records=None):
         calls.append(text)
-        if "Already Published Voice" in text:
+        if "Already Published AI Voice" in text:
             return False, "semantic_story_already_published score=0.900"
         return True, "no_publication_conflict"
     monkeypatch.setattr(publication_guard, "check_before_publish", fake_guard)
-    duplicate = _voice("Already Published Voice"); duplicate.pop("summary")
+    duplicate = _voice("Already Published AI Voice"); duplicate.pop("summary")
     replacement = _voice("Fresh David Chalmers interview"); replacement["person_name"] = "David Chalmers"
     selected = choose_voices_candidate([duplicate, replacement])
     assert selected and selected[0]["title"] == "Fresh David Chalmers interview"
-    assert any("Already Published Voice" in text and "خلاصه:" in text for text in calls)
+    assert any("Already Published AI Voice" in text and "خلاصه:" in text for text in calls)
 
 
 def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priority_bias(monkeypatch):
@@ -170,6 +170,32 @@ def test_voice_lane_prefers_newer_direct_interview_over_older_higher_tier():
 
     selected = choose_voices_candidate([older, newer], max_items=1)
     assert selected and selected[0]["title"] == "Newer expert interview"
+
+
+def test_voice_lane_does_not_trust_mislabelled_mission_area_without_topical_evidence():
+    for mission_area in ("ai_core", "convergence", "mind_cognition"):
+        item = _voice("Why horses terrified the Aztecs — Si Sheppard")
+        item.update({
+            "mission_area": mission_area,
+            "category": "ai",
+            "summary": "A historical account of horses and the Aztec empire.",
+            "description": "A discussion of historical warfare and cultural change.",
+            "person_name": "Si Sheppard",
+            "content_type": "interview",
+            "source_type": "specialist",
+            "source_tier": 1,
+        })
+        assert not is_voices_candidate(item)
+
+
+def test_voice_lane_accepts_topical_cognition_and_philosophy_without_ai_acronym():
+    item = _voice("David Chalmers on philosophy of mind and consciousness")
+    item.update({
+        "mission_area": "mind_cognition",
+        "summary": "A substantive conversation about consciousness, self-awareness and cognitive science.",
+        "person_name": "David Chalmers",
+    })
+    assert is_voices_candidate(item)
 
 
 def test_voice_lane_rejects_bare_ai_category_without_ai_evidence():

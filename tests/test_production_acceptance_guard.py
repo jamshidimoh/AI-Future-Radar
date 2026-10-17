@@ -359,7 +359,7 @@ def test_no_candidate_mission_gap_is_acceptable_when_no_hard_recovery_failure_ex
 CURRENT_LANE_COUNTER_CONTRACT = """
 [Production Selection] total=4
 [Dual Lane Selection] normal=2 mind_ideas_voices=2 mind_cap=2 mind_score_floor=not_applied
-[Publication Summary Budget] mode=unified_portfolio input=4 news=4 education=0 output_news=3 final_capacity=3 candidate_window=6 replacement_buffer=3 normal_window=6
+[Publication Summary Budget] mode=unified_portfolio input=4 news=4 education=0 output_news=3 final_capacity=3 candidate_window=6 replacement_buffer=3 normal_window=6 mind_ideas_voices=2 mind_limit=2 mind_score_floor=not_applied
 [Publication Policy] PUBLISH normal_rank=1 score=62.78
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=1 score=50.0 normal_floor=not_applied
 [Publication Policy] PUBLISH mind_ideas_voices mind_rank=2 score=50.0 normal_floor=not_applied

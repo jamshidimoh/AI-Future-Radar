@@ -44,6 +44,7 @@ jobs:
 
           from scripts.production_closure_contract import (
               health_snapshot_fresh,
+              is_completed_production_attempt,
               is_persisted_state_skip,
               people_bootstrap_state_complete,
               publish_evidence,
@@ -170,7 +171,9 @@ jobs:
           runs_data = get_json("/actions/workflows/run.yml/runs?branch=main&per_page=100")
           runs = [
               r for r in runs_data.get("workflow_runs", [])
-              if r.get("name") == "Run AI Future Radar Bot" and r.get("head_branch") == "main"
+              if r.get("name") == "Run AI Future Radar Bot"
+              and r.get("head_branch") == "main"
+              and is_completed_production_attempt(r)
           ]
           attempted = []
           excluded = []

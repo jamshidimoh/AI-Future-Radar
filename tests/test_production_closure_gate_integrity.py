@@ -33,6 +33,8 @@ def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():
     assert 'path.startswith("docs/")' in text
     assert 'path.startswith("digital_transformation_booklet/")' in text
     assert '"tests/test_production_closure_gate_integrity.py"' in text
+    assert '"scripts/production_closure_contract.py"' in text
+    assert '"tests/test_production_closure_contract.py"' in text
     assert "or is_non_runtime" in text
     assert "startsWith(" not in text
     assert "if len(distinct_fingerprints) != 1:" in text

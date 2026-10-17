@@ -1,40 +1,46 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 160,
-      "disabled_until": 1792320007.942,
+      "failures": 161,
+      "disabled_until": 1792321412.302,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792320007.942,
+      "disabled_until": 1792321412.302,
       "last_error": "auth",
       "last_success": 0.0
     },
     "nararouter:auto/bynara": {
-      "failures": 9,
-      "disabled_until": 1792255207.942,
+      "failures": 10,
+      "disabled_until": 1792256612.302,
       "last_error": "model",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1792237207.942,
+      "failures": 2,
+      "disabled_until": 1792238612.302,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
-      "failures": 1,
-      "disabled_until": 1792237207.942,
+      "failures": 2,
+      "disabled_until": 1792238612.302,
       "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "failures": 1,
+      "disabled_until": 1792238612.302,
+      "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "gemini": {
-      "failures": 320,
-      "disabled_until": 1792320007.942,
+      "failures": 322,
+      "disabled_until": 1792321412.302,
       "last_error": "auth"
     },
     "kiraai": {
@@ -43,17 +49,17 @@
       "last_error": "wallet"
     },
     "openrouter": {
-      "failures": 2,
-      "disabled_until": 1792242566.966,
+      "failures": 3,
+      "disabled_until": 1792256612.302,
       "last_error": "quota"
     }
   },
-  "updated_at": 1792233607.9415932,
+  "updated_at": 1792235012.3024392,
   "version": 1,
   "telemetry": {
-    "observed_failures": 8,
-    "observed_events": 27,
-    "updated_at": 1792233607.9415932
+    "observed_failures": 29,
+    "observed_events": 37,
+    "updated_at": 1792235012.3024392
   },
   "observed_failures": 0,
   "observed_events": 0

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792215586,
+  "updated_at": 1792218813,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -18516,6 +18516,62 @@
       "why_it_matters": "افزایش استفاده از AI در پایان‌نامه‌ها می‌تواند باعث کاهش تعداد دانش‌آموختگان دکتری در حوزه‌های پژوهشی دانشگاهی شود، که به نوبهٔ خود ممکن است تنوع و نوآوری در تحقیقات بنیادی را محدود کند. این تغییر مسیر شغلی، به‌ویژه در رشته‌های ریاضی و علوم کامپیوتر، می‌تواند باعث انتقال تخصص‌های کلیدی از دانشگاه به صنعت شود و نیاز به آموزش‌های پژوهشی دقیق‌تر را برجسته سازد.",
       "link": "https://www.nature.com/articles/d41586-026-03253-2",
       "posted_at": 1792215586
+    },
+    "-1004482051328:2093": {
+      "chat_id": -1004482051328,
+      "message_id": 2093,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "مدلهای زبانی بزرگ و ontology برای نظارت بر گفتگوهای دیجیتال دارویی",
+      "summary": "مطالعه نشان می‌دهد که مدلهای زبانی بزرگ (LLM) به تنهایی برای نظارت بر گفتگوهای دیجیتال دارویی کافی نیستند؛ اما ترکیب آنها با چارچوبهای ontology، گرافهای دانش و روش retrieval-augmented-generation، توانایی تشخیص واژگان عامیانه و کدگذاریشدهٔ دارویی را بهطور قابلتوجهی افزایش می‌دهد. این رویکرد بهویژه در شناسایی اصطلاحات مربوط به ترکیبات نوظهور مانند nitazenes، kratom و ترکیبهای چنددارویی مؤثر است. بر پایهٔ داده‌های DAWN، نرخ مرگومیرهای مرتبط با دارو در ایالات متحده حدود ۲۵۰٪ نسبت به دو دهه پیش افزایش یافته و در سال ۲۰۲۴ بیش از ۸٫۴ میلیون مراجعه اضطراری غیرمرگبار ثبت شده است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "استفاده از ontology و گرافهای دانش، دانش دامنهٔ دارویی را به LLM تزریق می‌کند و بنابراین تاخیر در تشخیص واژگان جدید مخدر را کاهش می‌دهد. این کاهش تاخیر امکان واکنش سریعتر مقامات بهداشتی و پزشکان به شیوع ترکیبات خطرناک را فراهم می‌کند و می‌تواند از بروز عوارض جدی و فشار بر سیستمهای درمانی جلوگیری کند.",
+      "link": "https://www.nature.com/articles/s44482-026-00048-0",
+      "posted_at": 1792218802
+    },
+    "-1004482051328:2094": {
+      "chat_id": -1004482051328,
+      "message_id": 2094,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Perplexity کد منبع SPACE را منتشر کرد",
+      "summary": "Perplexity نسخهٔ 0.8.0 از SPACE را تحت مجوز Apache 2.0 در GitHub منتشر کرد. این پلتفرم از میکروVM Firecracker برای اجرای کد عاملها در محیطهای ایزوله بهره میبرد. در محیط تولید، زمان ایجاد میکروVM از 185 میلیثانیه به 60 میلیثانیه کاهش یافت و در 9 مدل آزمایشی هیچ نفوذی از میکروVM به میزبان رخ نداد.",
+      "why_it_matters": "این پروژه نشان می‌دهد که میتوان با استفاده از Firecracker و معماری میکروVM، عاملهای هوش مصنوعی را در محیطهای ایزوله و امن اجرا کرد. این امر برای تیمهایی که به دنبال راهحلهای خودمیزبانی برای کدنویسی یا مرور وب هستند، امکان می‌دهد تا بدون نگرانی از نفوذ یا دسترسی غیرمجاز، کدهای خود را در محیطهای کنترلشده اجرا کنند.",
+      "link": "https://www.marktechpost.com/2026/10/16/perplexity-open-sources-space-firecracker-microvm-sandbox-ai-agents/",
+      "posted_at": 1792218807
+    },
+    "-1004482051328:2095": {
+      "chat_id": -1004482051328,
+      "message_id": 2095,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (University of California, Berkeley)",
+      "content_type": "interview",
+      "category": "mind",
+      "leader": "David Chalmers",
+      "watch_person": "David Chalmers",
+      "title": "دیوید چالمرز: وقتی با هوش مصنوعی صحبت می‌کنیم، چه چیزی را می‌شنویم؟",
+      "summary": "در وب‌سایت دانشگاه کالیفرنیا برکلی، برگزاری یک گفت‌وگوی آنلاین با عنوان «When we talk to AI, what are we talking to?» اعلام شد. این برنامه در چارچوب سری Berkeley Talks برگزار می‌شود و در آن دکتر دیوید چالمرز به عنوان سخنران حضور دارد. موضوع اصلی این گفت‌وگو بررسی ماهیت تعامل انسان با هوش مصنوعی است. این نشست به‌عنوان یک فرصت برای بررسی مفاهیم فلسفی و شناختی مرتبط با تعامل انسان‑ماشین مطرح شده است.",
+      "why_it_matters": "این جلسه به‌صورت مستقیم به پرسشی اساسی دربارهٔ ماهیت گفت‌وگوی انسان با هوش مصنوعی می‌پردازد. بررسی این سؤال می‌تواند درک ما از نحوهٔ تعامل و ارتباط با سیستم‌های هوش مصنوعی را عمیق‌تر کند. این موضوع برای پژوهشگران حوزهٔ فلسفه ذهن و هوش مصنوعی اهمیت دارد.",
+      "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOeGJ1V0ZLTVFFNEEyX0RueDhyUEN5RngtM0RYYllYWDh4VTVJdzdqV2tOTmc1ZHdVMEczcDVzZ0F0S0ctakdvNGk0NjRrcnJTaDluUmxVVk0wM29ndUJPM3hTdGw0T0dldVRMSGJqN2lUWEZRSjRPR2l3MEFfM1g1SGtSVjRma0hMcmI5Z2ZXV3V6OE9hNTlqUXBn?oc=5",
+      "posted_at": 1792218813
     }
   }
 }

@@ -124,17 +124,15 @@ class _ArticleParser(HTMLParser):
         description = self.clean(self.description)
         main_size = sum(len(x) for x in self.main_blocks)
         loose_size = sum(len(x) for x in self.loose_paragraphs)
-        if main_size >= 220:
-            # The semantic publisher body is the best evidence source. Do not
-            # append global page blocks, which frequently contain unrelated
-            # recommendations, side cards, and suggested stories.
+        if self.main_blocks:
+            # Any readable semantic article/main body outranks loose paragraphs
+            # elsewhere on the page, even when the main excerpt is short. A
+            # longer related-story card must never replace the actual article.
             body_blocks = self.main_blocks
         elif loose_size >= 220:
             # Some publishers do not use <article>/<main>. In that case retain
             # long body paragraphs and block quotes, excluding list/card titles.
             body_blocks = self.loose_paragraphs
-        elif self.main_blocks:
-            body_blocks = self.main_blocks
         elif self.loose_paragraphs:
             body_blocks = self.loose_paragraphs
         else:

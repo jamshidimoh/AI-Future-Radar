@@ -92,6 +92,28 @@ def test_repeated_explicit_429_with_retry_after_margin_can_recover(monkeypatch):
     assert sleeps == [9, 9, 9]
 
 
+def test_repeated_429_retry_after_eight_seconds_recovers_with_extended_bounded_budget(monkeypatch):
+    # Telegram may continue to return the same explicit wait while other bot
+    # messages consume the shared rate-limit window. Honor the server delay
+    # for a few more bounded attempts before failing closed.
+    responses = [_rate_limited(8) for _ in range(5)] + [_success(890)]
+    calls = []
+    sleeps = []
+
+    def post(*args, **kwargs):
+        calls.append((args, kwargs))
+        return responses.pop(0)
+
+    monkeypatch.setattr(telegram.requests, "post", post)
+    monkeypatch.setattr(telegram.time, "sleep", sleeps.append)
+
+    result = telegram._send_text_full("token", "-100123", "خبر معتبر", preflight=False)
+
+    assert result["message_id"] == 890
+    assert len(calls) == 6
+    assert sleeps == [9] * 5
+
+
 def test_explicit_429_retry_budget_remains_bounded(monkeypatch):
     calls = []
     sleeps = []

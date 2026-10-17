@@ -17,7 +17,7 @@ TELEGRAM_TEXT_LIMIT = 4096
 PHOTO_CAPTION_LIMIT = 1024
 # Telegram explicitly rejects a 429 request, so retry is safe. A margin avoids
 # hitting the same boundary again when the server's clock/window is coarse.
-MAX_TELEGRAM_RATE_LIMIT_RETRIES = 4
+MAX_TELEGRAM_RATE_LIMIT_RETRIES = 6
 TELEGRAM_RETRY_AFTER_SAFETY_SECONDS = 1
 MAX_TELEGRAM_RETRY_AFTER_SECONDS = 30
 RLI = "\u2067"

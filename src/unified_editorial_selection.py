@@ -128,7 +128,13 @@ def _has_mind_cognition_evidence(item: dict[str, Any]) -> bool:
 def mission_area(item: dict[str, Any]) -> str:
     explicit = str(item.get("mission_area") or "").strip().casefold()
     if explicit in {"mind", "mind_cognition"}:
-        # Mind/cognition is a semantic topic lane, not a metadata privilege.
+        # Content-free history/state records retain their previously classified
+        # area so rotation accounting remains stable. Live candidates have text,
+        # and their Mind label must be supported by that text rather than metadata.
+        content_text = _mind_cognition_evidence_text(item).strip()
+        if not content_text:
+            item["mission_area"] = "mind_cognition"
+            return "mind_cognition"
         # A stale label must not turn an astronomy or other unrelated story into
         # a Mind signal; reclassify from the actual content when evidence is absent.
         if _has_mind_cognition_evidence(item):
@@ -189,13 +195,19 @@ def _keyword_match_area(item: dict[str, Any], *, content_only: bool = False) -> 
 def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
     """Apply mission evidence before trusting the legacy category label."""
     raw_explicit = str(item.get("mission_area") or "").strip().casefold()
-    explicit = mission_area(item)
-    if raw_explicit in {"mind", "mind_cognition"} and explicit != "mind_cognition":
-        item["mission_area"] = explicit
-    # If an explicit Mind label was rejected from content evidence, do not let
-    # the same stale category/person/AI-link metadata re-admit it downstream.
-    if item.get("_mission_area_rejected") == "mind_cognition_without_content_evidence":
-        return False
+    if raw_explicit in {"mind", "mind_cognition"}:
+        explicit = mission_area(item)
+        if explicit != "mind_cognition":
+            item["mission_area"] = explicit
+        # If an explicit Mind label was rejected from content evidence, do not let
+        # the same stale category/person/AI-link metadata re-admit it downstream.
+        if item.get("_mission_area_rejected") == "mind_cognition_without_content_evidence":
+            return False
+    else:
+        # Preserve strict-mode checks for legacy category=ai. Calling mission_area
+        # unconditionally here would convert that category to ai_core too early and
+        # bypass the requirement for concrete AI evidence in the content itself.
+        explicit = raw_explicit
     if explicit in _AREA_MAP.values():
         if explicit == "ai_core":
             text = _mission_text(item)

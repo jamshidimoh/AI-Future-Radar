@@ -21,6 +21,8 @@ def test_closure_gate_requires_three_consecutive_production_attempts():
     assert 'if run.get("conclusion") != "success" or not bot or bot.get("conclusion") != "success":' in text
     assert "Every non-state-only production invocation occupies a place in the" in text
     assert "is_persisted_state_skip(run, bot)" in text
+    assert "and is_completed_production_attempt(r)" in text
+    assert "is_completed_production_attempt," in text
 
 
 def test_closure_gate_is_code_pinned_and_window_checks_are_per_run():

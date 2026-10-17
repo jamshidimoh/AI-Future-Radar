@@ -260,8 +260,18 @@ def _failure_class(message: str) -> str:
         re.I,
     ):
         return "billing"
+    # Some provider accounts are unavailable until the user completes an external
+    # account-linking requirement. Treat this as a family-scoped auth problem,
+    # not a model-specific 403, so mission recovery does not repeat the same call.
+    if re.search(r"telegram_required|join the required telegram|relink at /settings", text, re.I):
+        return "auth"
     if "401" in text or "unauthorized" in text or "invalid api" in text or "authentication" in text:
         return "auth"
+    # The registry can legitimately contain a Hugging Face credential while no
+    # zero-price chat model is currently available. This is a per-run provider
+    # availability failure, not an individual-model quota; stop re-probing it.
+    if re.search(r"no zero-price.{0,100}(?:model|available)|no .{0,60}zero-price.{0,100}available", text, re.I):
+        return "unavailable"
     if "no deployments available" in text or "router exhausted" in text or "production llm circuit exhausted" in text:
         return "transient"
     if "429" in text or "rate limit" in text or "too many requests" in text:
@@ -275,6 +285,12 @@ def _failure_class(message: str) -> str:
 
 def _provider_quota_is_family_scoped(family: str, reason: str, message: str) -> bool:
     if reason in {"auth", "billing"}:
+        return True
+    if (
+        reason == "unavailable"
+        and family == "huggingface"
+        and re.search(r"no zero-price.{0,100}(?:model|available)|no .{0,60}zero-price.{0,100}available", message, re.I)
+    ):
         return True
     return (
         reason == "quota"

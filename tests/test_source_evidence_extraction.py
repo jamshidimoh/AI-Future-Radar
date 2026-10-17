@@ -35,6 +35,51 @@ def test_extracts_article_text_and_skips_navigation_script(monkeypatch):
     assert "secret results" not in text
 
 
+def test_extraction_prefers_article_body_over_related_story_cards(monkeypatch):
+    html = b"""
+    <html><head><title>Primary Research Article</title></head><body>
+    <main>
+      <article>
+        <h1>Primary Research Article</h1>
+        <p>The researchers report a new method for measuring model calibration under controlled conditions with independently evaluated test data.</p>
+        <p>The study describes the evaluation protocol, its results, and limitations in the tested settings.</p>
+      </article>
+    </main>
+    <div class="related-content">
+      <h3>Unrelated related story about a different company</h3>
+      <p>This recommended story describes a separate experiment, different organizations, and unrelated numerical findings that must not be treated as evidence for the main article.</p>
+    </div>
+    </body></html>
+    """
+    monkeypatch.setattr(evidence.requests, "get", lambda *a, **k: _response(body=html))
+    evidence.fetch_article_text.cache_clear()
+
+    text = evidence.fetch_article_text("https://publisher.example/primary")
+
+    assert "new method for measuring model calibration" in text
+    assert "Unrelated related story" not in text
+    assert "separate experiment" not in text
+
+
+def test_extraction_falls_back_to_body_paragraphs_without_semantic_article_tags(monkeypatch):
+    html = b"""
+    <html><head><title>Publisher Story</title></head><body>
+    <div class="story">
+      <p>The publisher describes a newly evaluated neural model and explains the controlled test design used for the experiment.</p>
+      <p>The article also notes an explicit limitation: the result applies only to the reported evaluation conditions.</p>
+    </div>
+    <div class="recommendations"><p>This is an unrelated recommendation card with a separate company and project.</p></div>
+    </body></html>
+    """
+    monkeypatch.setattr(evidence.requests, "get", lambda *a, **k: _response(body=html))
+    evidence.fetch_article_text.cache_clear()
+
+    text = evidence.fetch_article_text("https://publisher.example/story-without-main")
+
+    assert "controlled test design" in text
+    assert "reported evaluation conditions" in text
+
+
 def test_never_fetches_arxiv_or_google_news_wrapper(monkeypatch):
     calls = []
     monkeypatch.setattr(evidence.requests, "get", lambda *a, **k: calls.append(a[0]) or _response())

@@ -411,6 +411,32 @@ def test_deepmind_robotics_does_not_match_mind_as_a_substring():
     assert mission_area(candidate) == "convergence"
 
 
+
+def test_astronomy_story_with_stale_mind_label_is_reclassified_from_content():
+    candidate = {
+        "title": "Francis Halzen: How an under-ice telescope is transforming astronomy",
+        "summary": "A profile of neutrino astronomy and an Antarctic under-ice telescope.",
+        "mission_area": "mind_cognition",
+        "category": "ai",
+        "content_type": "interview",
+        "person_name": "Francis Halzen",
+        "_ai_link": True,
+        "ai_relevance": True,
+    }
+    assert mission_area(candidate) != "mind_cognition"
+    assert candidate["mission_area"] == "unclassified"
+    assert candidate["_mission_area_rejected"] == "mind_cognition_without_content_evidence"
+
+
+def test_actual_ai_and_mind_content_keeps_mind_cognition_classification():
+    candidate = {
+        "title": "AI and the mind: consciousness, self-awareness and cognitive science",
+        "summary": "A discussion of machine consciousness and the philosophy of mind.",
+        "mission_area": "mind_cognition",
+    }
+    assert mission_area(candidate) == "mind_cognition"
+
+
 def test_actual_consciousness_keyword_still_maps_to_mind_cognition():
     candidate = {
         "title": "New evidence about machine consciousness and self-awareness",

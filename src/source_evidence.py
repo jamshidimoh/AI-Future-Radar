@@ -32,11 +32,14 @@ class _ArticleParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.skip_stack = []
         self.main_depth = 0
+        self.article_depth = 0
         self.active_block = None
         self.block_parts = []
         self.blocks = []
+        self.article_blocks = []
         self.main_blocks = []
         self.loose_paragraphs = []
+        self.article_seen = set()
         self.main_seen = set()
         self.loose_seen = set()
         self.main_parts = []
@@ -63,6 +66,8 @@ class _ArticleParser(HTMLParser):
             return
         if tag in {"article", "main"}:
             self.main_depth += 1
+        if tag == "article":
+            self.article_depth += 1
         if tag == "title":
             self.in_title = True
         if tag == "meta":
@@ -86,6 +91,8 @@ class _ArticleParser(HTMLParser):
             if tag == self.skip_stack[-1]:
                 self.skip_stack.pop()
             return
+        if tag == "article" and self.article_depth:
+            self.article_depth -= 1
         if tag in {"article", "main"} and self.main_depth:
             self.main_depth -= 1
         if tag == "title":
@@ -97,10 +104,13 @@ class _ArticleParser(HTMLParser):
                 if value not in self.seen:
                     self.blocks.append(value)
                     self.seen.add(value)
-                # Prefer blocks inside the publisher's semantic article/main
-                # container. Global capture alone also ingests related-story
-                # cards that often reuse <p>, <h3>, and <blockquote> markup.
-                if self.main_depth and value not in self.main_seen:
+                # Article text is the strongest evidence. Related cards may live
+                # inside <main> but outside <article>; keep the two containers
+                # separate so card text never overrides or contaminates the story.
+                if self.article_depth and value not in self.article_seen:
+                    self.article_blocks.append(value)
+                    self.article_seen.add(value)
+                elif self.main_depth and value not in self.main_seen:
                     self.main_blocks.append(value)
                     self.main_seen.add(value)
                 elif not self.main_depth and tag in {"p", "blockquote"} and value not in self.loose_seen:
@@ -123,10 +133,12 @@ class _ArticleParser(HTMLParser):
         title = self.clean(" ".join(self.title_parts)) or self.clean(self.og_title)
         description = self.clean(self.description)
         loose_size = sum(len(x) for x in self.loose_paragraphs)
-        if self.main_blocks:
-            # Any readable semantic article/main body outranks loose paragraphs
-            # elsewhere on the page, even when the main excerpt is short. A
-            # longer related-story card must never replace the actual article.
+        if self.article_blocks:
+            # Prefer the article element over all other blocks, even those inside
+            # an encompassing <main> but outside the article itself.
+            body_blocks = self.article_blocks
+        elif self.main_blocks:
+            # Pages without an <article> element can use their semantic <main>.
             body_blocks = self.main_blocks
         elif loose_size >= 220:
             # Some publishers do not use <article>/<main>. In that case retain

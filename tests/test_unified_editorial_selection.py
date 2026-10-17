@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from src.unified_editorial_selection import load_editorial_contract, mission_area, select_regular_portfolio
+from src.unified_editorial_selection import is_mission_relevant, load_editorial_contract, mission_area, select_regular_portfolio
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -426,6 +426,7 @@ def test_astronomy_story_with_stale_mind_label_is_reclassified_from_content():
     assert mission_area(candidate) != "mind_cognition"
     assert candidate["mission_area"] == "unclassified"
     assert candidate["_mission_area_rejected"] == "mind_cognition_without_content_evidence"
+    assert not is_mission_relevant(candidate, strict=True)
 
 
 def test_actual_ai_and_mind_content_keeps_mind_cognition_classification():

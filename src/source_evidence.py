@@ -35,6 +35,10 @@ class _ArticleParser(HTMLParser):
         self.active_block = None
         self.block_parts = []
         self.blocks = []
+        self.main_blocks = []
+        self.loose_paragraphs = []
+        self.main_seen = set()
+        self.loose_seen = set()
         self.main_parts = []
         self.title_parts = []
         self.in_title = False
@@ -89,9 +93,19 @@ class _ArticleParser(HTMLParser):
         if self.active_block == tag:
             value = self.clean(" ".join(self.block_parts))
             minimum = 8 if tag.startswith("h") else (18 if tag in {"blockquote", "li", "dd"} else 35)
-            if len(value) >= minimum and value not in self.seen:
-                self.blocks.append(value)
-                self.seen.add(value)
+            if len(value) >= minimum:
+                if value not in self.seen:
+                    self.blocks.append(value)
+                    self.seen.add(value)
+                # Prefer blocks inside the publisher's semantic article/main
+                # container. Global capture alone also ingests related-story
+                # cards that often reuse <p>, <h3>, and <blockquote> markup.
+                if self.main_depth and value not in self.main_seen:
+                    self.main_blocks.append(value)
+                    self.main_seen.add(value)
+                elif not self.main_depth and tag in {"p", "blockquote"} and value not in self.loose_seen:
+                    self.loose_paragraphs.append(value)
+                    self.loose_seen.add(value)
             self.active_block = None
             self.block_parts = []
 
@@ -108,11 +122,27 @@ class _ArticleParser(HTMLParser):
     def result(self):
         title = self.clean(" ".join(self.title_parts)) or self.clean(self.og_title)
         description = self.clean(self.description)
-        body_blocks = self.blocks
-        if sum(len(x) for x in body_blocks) < 220:
-            fallback = self.clean(" ".join(self.main_parts))
-            if len(fallback) > sum(len(x) for x in body_blocks):
-                body_blocks = [fallback]
+        main_size = sum(len(x) for x in self.main_blocks)
+        loose_size = sum(len(x) for x in self.loose_paragraphs)
+        if main_size >= 220:
+            # The semantic publisher body is the best evidence source. Do not
+            # append global page blocks, which frequently contain unrelated
+            # recommendations, side cards, and suggested stories.
+            body_blocks = self.main_blocks
+        elif loose_size >= 220:
+            # Some publishers do not use <article>/<main>. In that case retain
+            # long body paragraphs and block quotes, excluding list/card titles.
+            body_blocks = self.loose_paragraphs
+        elif self.main_blocks:
+            body_blocks = self.main_blocks
+        elif self.loose_paragraphs:
+            body_blocks = self.loose_paragraphs
+        else:
+            body_blocks = self.blocks
+            if sum(len(x) for x in body_blocks) < 220:
+                fallback = self.clean(" ".join(self.main_parts))
+                if len(fallback) > sum(len(x) for x in body_blocks):
+                    body_blocks = [fallback]
         pieces = []
         if title:
             pieces.append(f"Article page title: {title}")

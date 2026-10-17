@@ -19,6 +19,7 @@ from src.editorial_quality_policy import (
 from src.education_editor import news_terminology_review_prompt, normalize_news_editorial_text
 from src.llm_router_light import QuotaExceeded, _disable, _ollama_local, call_llm_with_fallback, get_quality_chain
 from src.rejection_telemetry import build_event, emit
+from src.source_evidence import article_text_for_item
 
 _DEPTH = {
     "ai": "محتوای محوری کانال است؛ مدل، روش، عدد، قابلیت، محدودیت و پیامد فنی را دقیق حفظ کن.",
@@ -161,11 +162,36 @@ def _summary_depth(item):
 
 
 def _source_text(item, max_chars=3500):
-    """Build the strongest available evidence context without duplicating identical fields."""
+    """Build a bounded source context, preferring transcript and publisher-page evidence."""
+    # Long transcript/evidence already contains the underlying source; avoid an
+    # unnecessary web request. For short RSS snippets, try the resolved publisher
+    # page once and cache the extract on the candidate. Any fetch failure leaves
+    # the original source context untouched.
+    explicit_evidence = str(item.get("evidence_text", "") or "").strip()
+    rss_evidence = " ".join(
+        str(item.get(key, "") or "").strip()
+        for key in ("summary", "description")
+        if str(item.get(key, "") or "").strip()
+    )
+    article_evidence = str(item.get("_source_article_text", "") or "").strip()
+    if not article_evidence and len(explicit_evidence) < 1800 and len(rss_evidence) < 900:
+        try:
+            article_evidence = article_text_for_item(item)
+        except Exception:
+            article_evidence = ""
     parts = []
     seen = set()
-    for key in ("title", "source", "speakers", "speaker", "summary", "evidence_text", "description"):
-        value = str(item.get(key, "") or "").strip()
+    for value in (
+        item.get("title", ""),
+        item.get("source", ""),
+        item.get("speakers", ""),
+        item.get("speaker", ""),
+        explicit_evidence,
+        article_evidence,
+        item.get("summary", ""),
+        item.get("description", ""),
+    ):
+        value = str(value or "").strip()
         if not value or value in seen:
             continue
         seen.add(value)

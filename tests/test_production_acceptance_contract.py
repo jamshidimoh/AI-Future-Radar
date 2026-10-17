@@ -1,5 +1,7 @@
+import inspect
 from pathlib import Path
 
+import production_entrypoint
 from production_entrypoint import _bound_runtime_candidates, _global_news_capacity_reached, _is_tier0_publication_candidate
 from scripts.production_acceptance_guard import validate
 from src.editorial_quality_policy import NORMAL_SCORE_FLOOR, normal_score_allowed
@@ -271,9 +273,6 @@ def test_global_news_capacity_applies_to_people_bootstrap_and_all_editorial_lane
 
 
 def test_delivery_gate_is_serialized_with_global_capacity_check():
-    import inspect
-    import production_entrypoint
-
     source = inspect.getsource(production_entrypoint.main)
     assert "publication_lock = threading.RLock()" in source
     assert "with publication_lock:" in source

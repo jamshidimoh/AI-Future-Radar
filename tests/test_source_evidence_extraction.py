@@ -79,6 +79,7 @@ def test_redirect_is_followed_only_after_url_validation(monkeypatch):
 def test_source_text_uses_extracted_page_evidence_before_short_rss_snippet(monkeypatch):
     import src.summarize as summarize
 
+    monkeypatch.setenv("AI_RADAR_SOURCE_EVIDENCE_FETCH", "1")
     monkeypatch.setattr(
         summarize,
         "article_text_for_item",

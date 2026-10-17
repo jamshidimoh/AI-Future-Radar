@@ -503,14 +503,47 @@ def _bound_runtime_candidates(candidates, max_posts: int, policy: dict):
         if len(protected) >= protected_limit:
             break
     normals = [item for item in non_special if item.get("normal_period_rank") is not None][:normal_limit + replacement_buffer]
+    # People batches and vetted protected/Tier-0 stories keep their explicit
+    # priority. All other roles compete in the same global portfolio order.
+    # Grouping normal stories before special roles here used to silently undo
+    # period_rank, so a valid Voices/Mind/Technical candidate could be placed
+    # behind three normal posts and never reach Telegram's three-post capacity.
     bounded = []
     seen = set()
-    for item in people + protected + normals + technical + mind + voices:
+    for item in people + protected:
         key = id(item)
         if key in seen:
             continue
         seen.add(key)
         bounded.append(item)
+
+    original_order = {id(item): index for index, item in enumerate(candidates)}
+    ranked_roles = []
+    for item in normals + technical + mind + voices:
+        key = id(item)
+        if key in seen:
+            continue
+        seen.add(key)
+        ranked_roles.append(item)
+
+    def _global_portfolio_order(item):
+        index = original_order.get(id(item), len(original_order))
+        try:
+            period_rank = int(item.get("period_rank"))
+        except (TypeError, ValueError):
+            period_rank = 0
+        if period_rank > 0:
+            return (0, period_rank, index)
+        try:
+            normal_rank = int(item.get("normal_period_rank"))
+        except (TypeError, ValueError):
+            normal_rank = 0
+        if normal_rank > 0:
+            return (1, normal_rank, index)
+        return (2, index, index)
+
+    ranked_roles.sort(key=_global_portfolio_order)
+    bounded.extend(ranked_roles)
     print(
         f"[Selection Budget Guard] normal={len(normals)} protected={len(protected)} technical_trend={len(technical)} mind_ideas_voices={len(mind)} voices_perspectives={len(voices)} output={len(bounded)} normal_capacity={normal_capacity} normal_limit={normal_limit} technical_quota={MAX_TECHNICAL_TREND_PER_PERIOD} mind_quota={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_quota={MAX_VOICES_PERSPECTIVES_PER_PERIOD}",
         flush=True,

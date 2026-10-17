@@ -253,3 +253,63 @@ Posts sent: 0/10
     ok, reason = validate(log)
     assert not ok
     assert "without confirmed delivery" in reason
+
+def test_runtime_candidate_queue_interleaves_voice_by_global_period_rank():
+    candidates = [
+        {"title": "Normal one", "period_rank": 1, "normal_period_rank": 1},
+        {
+            "title": "Expert interview",
+            "period_rank": 2,
+            "normal_period_rank": None,
+            "voices_perspectives_lane_selected": True,
+            "editorial_lane": "voices_perspectives",
+            "voices_perspectives_score": 84.0,
+        },
+        {"title": "Normal two", "period_rank": 3, "normal_period_rank": 2},
+        {"title": "Normal three", "period_rank": 4, "normal_period_rank": 3},
+        {"title": "Normal replacement", "period_rank": 5, "normal_period_rank": 4},
+    ]
+
+    bounded = _bound_runtime_candidates(
+        candidates,
+        max_posts=3,
+        policy={"leader_protected_max": 1, "replacement_buffer": 2},
+    )
+
+    assert [item["title"] for item in bounded[:3]] == [
+        "Normal one",
+        "Expert interview",
+        "Normal two",
+    ]
+    assert len(bounded) == 5
+
+
+def test_runtime_candidate_queue_does_not_promote_low_rank_voice_over_better_normals():
+    candidates = [
+        {"title": "Normal one", "period_rank": 1, "normal_period_rank": 1},
+        {"title": "Normal two", "period_rank": 2, "normal_period_rank": 2},
+        {"title": "Normal three", "period_rank": 3, "normal_period_rank": 3},
+        {
+            "title": "Lower ranked expert interview",
+            "period_rank": 4,
+            "normal_period_rank": None,
+            "voices_perspectives_lane_selected": True,
+            "editorial_lane": "voices_perspectives",
+            "voices_perspectives_score": 84.0,
+        },
+        {"title": "Normal replacement", "period_rank": 5, "normal_period_rank": 4},
+    ]
+
+    bounded = _bound_runtime_candidates(
+        candidates,
+        max_posts=3,
+        policy={"leader_protected_max": 1, "replacement_buffer": 2},
+    )
+
+    assert [item["title"] for item in bounded[:3]] == [
+        "Normal one",
+        "Normal two",
+        "Normal three",
+    ]
+    assert bounded[3]["title"] == "Lower ranked expert interview"
+

@@ -119,6 +119,13 @@ _OMNIROUTE_PROVIDER_LABELS = {
     "nara": "NaraRouter",
     "nararouter": "NaraRouter",
     "gemini": "Gemini",
+    "mistral": "Mistral",
+    "nvidia": "NVIDIA",
+    "sambanova": "SambaNova",
+    "llm7": "LLM7",
+    "anyapi": "AnyAPI",
+    "api-airforce": "API Airforce",
+    "cloudflare-ai": "Cloudflare AI",
     "huggingface": "HuggingFace",
     "hf": "HuggingFace",
     "kiraai": "KiraAI",
@@ -134,7 +141,7 @@ def _omniroute_result_provider(selected: str, decision: str) -> str:
     metadata, retain the generic label rather than guessing from the model name.
     """
     match = re.search(
-        r"(?:^|[;,\\s])provider\\s*=\\s*([a-z0-9_-]+)",
+        r"(?:^|[;,\s])provider\s*=\s*([a-z0-9_-]+)",
         str(decision or ""),
         re.IGNORECASE,
     )

@@ -57,3 +57,52 @@ def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
     assert "timeout 20s omniroute providers validate" in step
     assert "--connect-timeout 3 --max-time 10 http://127.0.0.1:20128/v1/models" in step
     assert "continuing with fallback" in step
+
+
+
+def test_omniroute_result_provider_preserves_upstream_family_for_independent_retry():
+    import src.llm_router_light as router
+    from src.production_router_policy import _omniroute_result_provider
+
+    provider = _omniroute_result_provider(
+        "qwen/qwen3.8-27b",
+        "strategy=auto; provider=groq; latency_ms=809",
+    )
+
+    assert provider == "Groq:qwen/qwen3.8-27b"
+    assert router._provider_family(provider) == "groq"
+
+
+def test_omniroute_result_provider_does_not_guess_without_decision_metadata():
+    from src.production_router_policy import _omniroute_result_provider
+
+    assert _omniroute_result_provider("qwen/qwen3.8-27b", "") == "OmniRoute:qwen/qwen3.8-27b"
+
+
+def test_omniroute_call_returns_upstream_family_from_decision_header(monkeypatch):
+    import src.production_router_policy as policy
+    import src.llm_router_light as router
+
+    class FakeResponse:
+        status_code = 200
+        text = ""
+        headers = {
+            "X-OmniRoute-Decision": "strategy=auto; provider=groq; latency_ms=809",
+        }
+
+        @staticmethod
+        def json():
+            return {
+                "model": "qwen/qwen3.8-27b",
+                "choices": [{"message": {"content": '{"title":"ok"}'}}],
+            }
+
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://127.0.0.1:20128")
+    monkeypatch.setenv("OMNIROUTE_API_KEY", "")
+    monkeypatch.setattr(policy.requests, "post", lambda *args, **kwargs: FakeResponse())
+
+    content, provider = policy._omniroute_call("system", "user")
+
+    assert content == '{"title":"ok"}'
+    assert provider == "Groq:qwen/qwen3.8-27b"
+    assert router._provider_family(provider) == "groq"

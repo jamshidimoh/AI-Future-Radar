@@ -12,8 +12,11 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ai-future-radar-production
-  # Serialize all production attempts. Cancelling a run mid-publication can leave
+  # State-only persistence pushes are intentionally skipped by the run-bot job.
+  # Keep them in a separate concurrency group so their no-op workflow run cannot
+  # replace a queued, real production attempt while another attempt is persisting.
+  group: "${{ github.event_name == 'push' && startsWith(github.event.head_commit.message, 'chore: persist production state [skip ci]') && 'ai-future-radar-state-only' || 'ai-future-radar-production' }}"
+  # Serialize real production attempts. Cancelling one mid-publication can leave
   # delivery and persisted state ambiguous and invalidates closure evidence.
   cancel-in-progress: false
 

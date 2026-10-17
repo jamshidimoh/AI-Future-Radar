@@ -82,5 +82,8 @@ def test_closure_gate_requires_people_bootstrap_and_fresh_llm_health():
 def test_production_runs_are_serialized_without_canceling_active_attempts():
     run_workflow = WORKFLOW.parent / "run.yml"
     text = run_workflow.read_text(encoding="utf-8")
-    assert "group: ai-future-radar-production" in text
+    assert "ai-future-radar-state-only" in text
+    assert "ai-future-radar-production" in text
+    assert "github.event_name == 'push'" in text
+    assert "chore: persist production state [skip ci]" in text
     assert "cancel-in-progress: false" in text

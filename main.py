@@ -567,36 +567,38 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             attempts += 1
 
             if not _score_ok(candidate):
+                is_mind_candidate = _is_mind_ideas_voices(candidate)
+                score_key = "mind_editorial_score" if is_mind_candidate else "final_editorial_score"
                 try:
-                    score = float(candidate.get("final_editorial_score", candidate.get("editorial_score", 0)) or 0)
-                except Exception:
+                    score = float(candidate.get(score_key, candidate.get("editorial_score", 0)) or 0)
+                except (TypeError, ValueError):
                     score = 0.0
-                if _is_mind_ideas_voices(candidate):
-                    print(
-                        f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
-                        f"title={str(candidate.get('title',''))[:120]} "
-                        f"status=independent_lane_not_score_gated",
-                        flush=True,
-                    )
-                else:
-                    reason_code = "protected_score_floor" if candidate.get("protected_content") else "normal_score_floor"
-                    _runtime_telemetry_event(
-                        candidate,
-                        stage="selection",
-                        decision="reject",
-                        reason_code=reason_code,
-                        details={
-                            "score": score,
-                            "floor": PROTECTED_SUMMARY_SCORE_FLOOR if candidate.get("protected_content") else NORMAL_SCORE_FLOOR,
-                            "mission_area": _area(candidate),
-                        },
-                        attempt=attempts,
-                    )
-                    print(
-                        f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
-                        f"title={str(candidate.get('title',''))[:120]} status=below_score_floor",
-                        flush=True,
-                    )
+                floor = MIND_IDEAS_VOICES_SCORE_FLOOR if is_mind_candidate else (
+                    PROTECTED_SUMMARY_SCORE_FLOOR if candidate.get("protected_content") else NORMAL_SCORE_FLOOR
+                )
+                reason_code = "mind_ideas_voices_score_floor" if is_mind_candidate else (
+                    "protected_score_floor" if candidate.get("protected_content") else "normal_score_floor"
+                )
+                _runtime_telemetry_event(
+                    candidate,
+                    stage="selection",
+                    decision="reject",
+                    reason_code=reason_code,
+                    details={
+                        "score": score,
+                        "floor": floor,
+                        "score_field": score_key,
+                        "mission_area": _area(candidate),
+                    },
+                    attempt=attempts,
+                )
+                lane = "independent_mind" if is_mind_candidate else "normal_or_protected"
+                print(
+                    f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
+                    f"title={str(candidate.get('title',''))[:120]} score={score:.2f} floor={floor:.2f} "
+                    f"lane={lane} status=below_score_floor",
+                    flush=True,
+                )
                 continue
 
             summary = _safe_summarize(candidate, summarize_fn)

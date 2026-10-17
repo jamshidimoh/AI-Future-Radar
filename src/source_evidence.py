@@ -235,6 +235,10 @@ def article_text_for_item(item):
         return ""
     text = fetch_article_text(url)
     item["_source_article_fetch_attempted"] = True
+    domain = urlsplit(url).hostname or "unknown"
     if text:
         item["_source_article_text"] = text
+        print(f"[Source Evidence] extracted=true domain={domain} chars={len(text)}", flush=True)
+    else:
+        print(f"[Source Evidence] extracted=false domain={domain} fallback=rss", flush=True)
     return text

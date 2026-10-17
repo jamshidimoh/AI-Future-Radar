@@ -307,3 +307,36 @@ def test_groq_gpt_oss_retries_without_json_mode_on_validation_failure(monkeypatc
     assert len(calls) == 2
     assert calls[0]["response_format"] == {"type": "json_object"}
     assert "response_format" not in calls[1]
+
+
+
+def test_local_ollama_recovery_provider_is_credential_free_but_opt_in(monkeypatch):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.delenv("HF_TOKEN", raising=False)
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
+    assert router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")
+    assert router._provider_credential_available("ollama:qwen3:1.7b")
+
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0")
+    assert not router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")
+
+
+def test_mission_recovery_chain_can_select_local_ollama_without_api_key(monkeypatch):
+    _reset()
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    calls = []
+
+    def ollama_repair(*args, **kwargs):
+        calls.append("ollama")
+        return '{"title":"ترمیم فارسی"}'
+
+    result, provider = router.call_llm_with_fallback(
+        "system",
+        "user",
+        providers=[("OllamaLocal:qwen3:1.7b:mission-persian-repair", ollama_repair)],
+    )
+
+    assert result == '{"title":"ترمیم فارسی"}'
+    assert provider == "OllamaLocal:qwen3:1.7b:mission-persian-repair"
+    assert calls == ["ollama"]

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792238301,
+  "updated_at": 1792258360,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -18767,6 +18767,37 @@
       "why_it_matters": "این مقاله به اهمیت انتخاب مشکلی که به عنوان یک انسان مهم است، اشاره می‌کند. این امر به انسانی و اجتماعی ارتباط می‌سازد، به طوری که افراد و سازمانها از توان خود به مشکلی که به عنوان یک انسان مهم است، ارتقا می‌کنند. این امر به افزایش توانمندی انسانی، اجتماعی و اقتصادی می‌کند. این مقاله به انسانی و اجتماعی ارتباط می‌سازد، به طوری که افراد و سازمانها از توان خود به مشکلی که به عنوان یک انسان مهم است، ارتقا می‌کنند.",
       "link": "https://www.youtube.com/shorts/LbmiPYnFj48",
       "posted_at": 1792234839
+    },
+    "-1004482051328:2106": {
+      "chat_id": -1004482051328,
+      "message_id": 2106,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Y Combinator",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "حقیقت و افسانه‌های ایمنی هوش مصنوعی در YC Paper Club",
+      "summary": "در این جلسه از Paper Club یِیکامبیناتور، پروفسورهای استنفورد کلارک بارت و مایکل کوچندرفر، هممدیران Stanford Center for AI Safety، به همراه فرانسوا به بررسی علمی حوادث اخیر OpenAI و Hugging Face می‌پردازند. آن‌ها توضیح می‌دهند چگونه روش‌های تست استرس هواپیماها، که استاندارد یک شکست فاجعه‌بار در هر یک میلیارد ساعت پرواز دارد، به مدل‌های زبانی بزرگ (LLM) اعمال می‌شود و چرا ممکن است نهاد مشابه NTSB برای هوش مصنوعی مورد نیاز باشد. بارت دربارهٔ توانایی استدلال خودکار برای اثبات ریاضی عدم امکان هک کد صحبت می‌کند و کوچندرفر به روش‌های تست تطبیقی برای ارزیابی ایمنی سیستم‌ها می‌پردازد.",
+      "description": "This week’s Paper Club is all about AI safety - not the headlines, the science. AI safety has been a research field for decades, with its own conferences, methods, and a track record in systems like aircraft collision avoidance, where the standard is one catastrophic failure per billion flight hours.\n\nIn this episode we'll hear from Clark Barrett and Mykel Kochenderfer, Stanford professors and co-directors of the Stanford Center for AI Safety.  Together with Francois they'll discuss what actually happened in the OpenAI–Hugging Face incident versus what got reported, how automated reasoning can mathematically prove that code cannot be hacked, how the stress-testing methods built to validate aircraft are now being turned on language models, and why we might need an NTSB for AI.\n\nJoin us for the next Paper Club on October 21st, where we'll talk Inference: https://events.ycombinator.com/yc-paperclub-oct21\n\nChapters:\n00:00 - Science fiction vs. science fact\n04:32 - Engineering problem, or P(doom)\n06:04 - What actually happened at Hugging Face\n07:53 - Where \"10% in 10 years\" comes from\n11:21 - The real risk: open weights in the wrong hands\n17:25 - Clark Barrett: when AI met automated reasoning\n20:35 - CSLib: proving code correct in Lean\n24:32 - From English spec to verified code in one click\n27:55 - Mykel Kochenderfer: how do we know a system is safe\n32:11 - Adaptive stress testing, from aircraft to LLMs\n36:57 - Verifying neural networks\n40:30 - Runtime monitoring and BetterBench\n43:53 - Panel: reacting to the past three weeks\n45:55 - An NTSB for AI\n52:18 - Is cybersecurity solvable in five years\n55:00 - If you were CISO of Bank of America\n1:03:06 - The Swiss cheese model\n1:05:43 - Audience Q&amp;A\n\nApply to Y Combinator: https://www.ycombinator.com/apply\nWork at a startup: https://www.ycombinator.com/jobs artificial intelligence",
+      "why_it_matters": "ارزیابی علمی ایمنی هوش مصنوعی، به‌ویژه در زمینه مدل‌های زبانی بزرگ، برای جلوگیری از خطرات ناشی از انتشار وزن‌های باز به دست افراد مخرب ضروری است. به‌کارگیری تکنیک‌های اثبات خودکار و تست‌های استرس‌پذیری که در صنایع پرخطر مانند هوانوردی موفق بوده‌اند، می‌تواند عملکرد ایمن سیستم‌های AI را تضمین کند. پیشنهاد ایجاد نهاد نظارتی مشابه NTSB می‌تواند چارچوبی منسجم برای بررسی حوادث و پیشگیری از شکستهای فاجعه‌بار فراهم آورد. این رویکردها علاوه بر کاهش ریسک‌های فنی، می‌توانند اعتماد عمومی و پذیرش گسترده‌تر فناوری‌های هوش مصنوعی را تقویت کنند.",
+      "link": "https://www.youtube.com/watch?v=X7oI4Umt3DU",
+      "posted_at": 1792258225
+    },
+    "-1004482051328:2107": {
+      "chat_id": -1004482051328,
+      "message_id": 2107,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1792258360
     }
   }
 }

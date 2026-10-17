@@ -192,6 +192,10 @@ def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
     explicit = mission_area(item)
     if raw_explicit in {"mind", "mind_cognition"} and explicit != "mind_cognition":
         item["mission_area"] = explicit
+    # If an explicit Mind label was rejected from content evidence, do not let
+    # the same stale category/person/AI-link metadata re-admit it downstream.
+    if item.get("_mission_area_rejected") == "mind_cognition_without_content_evidence":
+        return False
     if explicit in _AREA_MAP.values():
         if explicit == "ai_core":
             text = _mission_text(item)

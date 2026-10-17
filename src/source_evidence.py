@@ -122,7 +122,6 @@ class _ArticleParser(HTMLParser):
     def result(self):
         title = self.clean(" ".join(self.title_parts)) or self.clean(self.og_title)
         description = self.clean(self.description)
-        main_size = sum(len(x) for x in self.main_blocks)
         loose_size = sum(len(x) for x in self.loose_paragraphs)
         if self.main_blocks:
             # Any readable semantic article/main body outranks loose paragraphs

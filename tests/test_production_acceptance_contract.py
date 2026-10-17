@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from production_entrypoint import _bound_runtime_candidates, _is_tier0_publication_candidate
+from production_entrypoint import _bound_runtime_candidates, _global_news_capacity_reached, _is_tier0_publication_candidate
 from scripts.production_acceptance_guard import validate
 from src.editorial_quality_policy import NORMAL_SCORE_FLOOR, normal_score_allowed
 
@@ -253,6 +253,32 @@ Posts sent: 0/10
     ok, reason = validate(log)
     assert not ok
     assert "without confirmed delivery" in reason
+
+
+def test_global_news_capacity_applies_to_people_bootstrap_and_all_editorial_lanes():
+    full_state = {"news_delivered_count": 3}
+    stories = [
+        {"people_lane": True, "people_bootstrap": True},
+        {"people_lane": True},
+        {"mind_lane_selected": True},
+        {"voices_perspectives_lane_selected": True},
+        {"technical_trend_lane_selected": True},
+        {},
+    ]
+    assert all(_global_news_capacity_reached(full_state, story, capacity=3) for story in stories)
+    assert not _global_news_capacity_reached({"news_delivered_count": 2}, {"people_bootstrap": True}, capacity=3)
+    assert not _global_news_capacity_reached(full_state, {"content_type": "education"}, capacity=3)
+
+
+def test_delivery_gate_is_serialized_with_global_capacity_check():
+    import inspect
+    import production_entrypoint
+
+    source = inspect.getsource(production_entrypoint.main)
+    assert "publication_lock = threading.RLock()" in source
+    assert "with publication_lock:" in source
+    assert "_global_news_capacity_reached(render_state, story)" in source
+
 
 def test_runtime_candidate_queue_interleaves_voice_by_global_period_rank():
     candidates = [

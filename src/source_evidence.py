@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import ipaddress
 import re
+from contextlib import suppress
 from functools import lru_cache
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlsplit
@@ -217,10 +218,8 @@ def fetch_article_text(url):
             return ""
         finally:
             if response is not None:
-                try:
+                with suppress(Exception):
                     response.close()
-                except Exception:
-                    pass
     return ""
 
 

@@ -60,15 +60,15 @@ def test_voice_lane_title_only_prefilter_blocks_missing_summary_duplicate(monkey
     calls = []
     def fake_guard(text, source_link="", records=None):
         calls.append(text)
-        if "Already Published Voice" in text:
+        if "Already Published AI Voice" in text:
             return False, "semantic_story_already_published score=0.900"
         return True, "no_publication_conflict"
     monkeypatch.setattr(publication_guard, "check_before_publish", fake_guard)
-    duplicate = _voice("Already Published Voice"); duplicate.pop("summary")
+    duplicate = _voice("Already Published AI Voice"); duplicate.pop("summary")
     replacement = _voice("Fresh David Chalmers interview"); replacement["person_name"] = "David Chalmers"
     selected = choose_voices_candidate([duplicate, replacement])
     assert selected and selected[0]["title"] == "Fresh David Chalmers interview"
-    assert any("Already Published Voice" in text and "خلاصه:" in text for text in calls)
+    assert any("Already Published AI Voice" in text and "خلاصه:" in text for text in calls)
 
 
 def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priority_bias(monkeypatch):

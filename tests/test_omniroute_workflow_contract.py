@@ -73,6 +73,15 @@ def test_omniroute_result_provider_preserves_upstream_family_for_independent_ret
     assert router._provider_family(provider) == "groq"
 
 
+def test_omniroute_result_provider_handles_mistral_and_whitespace_in_decision_metadata():
+    from src.production_router_policy import _omniroute_result_provider
+
+    assert _omniroute_result_provider(
+        "codestral-2508",
+        "strategy=auto; provider = mistral; latency_ms=2773",
+    ) == "Mistral:codestral-2508"
+
+
 def test_omniroute_result_provider_does_not_guess_without_decision_metadata():
     from src.production_router_policy import _omniroute_result_provider
 

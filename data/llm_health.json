@@ -1,65 +1,65 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 164,
-      "disabled_until": 1792344760.505,
+      "failures": 165,
+      "disabled_until": 1792352953.891,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792344760.505,
+      "disabled_until": 1792352953.891,
       "last_error": "auth",
       "last_success": 0.0
     },
     "nararouter:auto/bynara": {
-      "failures": 13,
-      "disabled_until": 1792279960.505,
+      "failures": 14,
+      "disabled_until": 1792288153.891,
       "last_error": "model",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "failures": 1,
+      "disabled_until": 1792270153.891,
+      "last_error": "quota",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1792261960.505,
+      "disabled_until": 1792270153.891,
       "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "kiraai:qwen3.8-flash": {
-      "failures": 1,
-      "disabled_until": 1792261960.505,
-      "last_error": "quota",
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 1,
-      "disabled_until": 1792261960.505,
+      "disabled_until": 1792270153.891,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "gemini": {
-      "failures": 328,
-      "disabled_until": 1792344760.505,
+      "failures": 330,
+      "disabled_until": 1792352953.891,
       "last_error": "auth"
-    },
-    "openrouter": {
-      "failures": 5,
-      "disabled_until": 1792259902.138,
-      "last_error": "quota"
     },
     "kiraai": {
       "failures": 1,
       "disabled_until": 1792344760.505,
       "last_error": "wallet"
+    },
+    "openrouter": {
+      "failures": 1,
+      "disabled_until": 1792288153.891,
+      "last_error": "quota"
     }
   },
-  "updated_at": 1792258360.505409,
+  "updated_at": 1792266553.8907716,
   "version": 1,
   "telemetry": {
-    "observed_failures": 21,
-    "observed_events": 52,
-    "updated_at": 1792258360.505409
+    "observed_failures": 42,
+    "observed_events": 50,
+    "updated_at": 1792266553.8907716
   },
   "observed_failures": 0,
   "observed_events": 0

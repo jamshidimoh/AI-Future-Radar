@@ -1,5 +1,7 @@
 """Editorial orchestration and leader/interview policy."""
 
+import re
+
 from src.editorial_core import (
     classify_editorial_item as _classify_editorial_item,
 )
@@ -64,9 +66,25 @@ def _contains_any(text, terms):
     return any(str(term).casefold() in text for term in terms)
 
 
+def _contains_bounded_topic_term(text, term):
+    """Match English topic terms as words/phrases, not as substrings in brand names."""
+    normalized = str(term).casefold().strip()
+    if not normalized:
+        return False
+    if re.search(r"[a-z0-9]", normalized):
+        return re.search(
+            rf"(?<![a-z0-9]){re.escape(normalized)}(?![a-z0-9])",
+            str(text or "").casefold(),
+        ) is not None
+    # Persian terms don't have the ASCII token boundary issue that caused
+    # 'mind' to match inside 'DeepMind'; retain Persian substring matching.
+    return normalized in str(text or "").casefold()
+
+
 def _mind_lane_candidate(item, combined):
     metadata = " ".join(str(item.get(k) or "") for k in ("category", "mission_area", "content_type", "tags", "keywords")).casefold()
-    mind_signal = _contains_any(f"{combined} {metadata}", _MIND_TERMS)
+    mind_text = f"{combined} {metadata}"
+    mind_signal = any(_contains_bounded_topic_term(mind_text, term) for term in _MIND_TERMS)
     ai_bridge = _contains_any(combined, _MIND_AI_BRIDGE_TERMS)
     return mind_signal and ai_bridge
 

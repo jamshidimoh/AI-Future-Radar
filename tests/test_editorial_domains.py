@@ -26,6 +26,26 @@ class DomainRegressionTests(unittest.TestCase):
     def test_consciousness_without_tech_rejected(self):
         self.assertEqual(self.check("Philosophy of consciousness","A discussion of qualia only.","philosophy"),[])
 
+    def test_deepmind_robotics_does_not_trigger_mind_lane_by_substring(self):
+        x = self.check(
+            "Google DeepMind humanoid robot learns from video",
+            "An artificial intelligence robotics system learns manipulation from demonstrations.",
+            "ai",
+        )[0]
+        self.assertNotEqual(x.get("mission_area"), "mind_cognition")
+        self.assertFalse(x.get("protected_mission_lane", False))
+        self.assertNotEqual(x.get("topic_family"), "consciousness_cognition")
+
+    def test_actual_machine_consciousness_keeps_mind_lane_protection(self):
+        x = self.check(
+            "Machine consciousness and AI",
+            "Computational models connect consciousness with artificial intelligence.",
+            "consciousness",
+        )[0]
+        self.assertEqual(x.get("mission_area"), "mind_cognition")
+        self.assertTrue(x.get("protected_mission_lane", False))
+        self.assertEqual(x.get("topic_family"), "consciousness_cognition")
+
     def test_future_ai_kept(self):
         x=self.check("The future of AI","Forecasts for AGI, robotics and long-term technology.","future")[0]
         self.assertEqual(x["topic_family"],"future_technology")

@@ -48,7 +48,7 @@ def test_explicit_telegram_429_retries_after_server_delay(monkeypatch):
 
     assert result["message_id"] == 123
     assert len(calls) == 2
-    assert sleeps == [2]
+    assert sleeps == [3]
 
 
 def test_telegram_429_retries_are_bounded(monkeypatch):
@@ -67,7 +67,47 @@ def test_telegram_429_retries_are_bounded(monkeypatch):
 
     assert result["message_id"] == 456
     assert len(calls) == 3
-    assert sleeps == [1, 2]
+    assert sleeps == [2, 3]
+
+
+def test_repeated_explicit_429_with_retry_after_margin_can_recover(monkeypatch):
+    # Production previously saw three consecutive retry_after=8 rejections.
+    # Wait one extra second beyond the server delay to avoid retrying at the
+    # exact reset boundary, while still using a bounded retry budget.
+    responses = [_rate_limited(8), _rate_limited(8), _rate_limited(8), _success(789)]
+    calls = []
+    sleeps = []
+
+    def post(*args, **kwargs):
+        calls.append((args, kwargs))
+        return responses.pop(0)
+
+    monkeypatch.setattr(telegram.requests, "post", post)
+    monkeypatch.setattr(telegram.time, "sleep", sleeps.append)
+
+    result = telegram._send_text_full("token", "-100123", "خبر معتبر", preflight=False)
+
+    assert result["message_id"] == 789
+    assert len(calls) == 4
+    assert sleeps == [9, 9, 9]
+
+
+def test_explicit_429_retry_budget_remains_bounded(monkeypatch):
+    calls = []
+    sleeps = []
+
+    def post(*args, **kwargs):
+        calls.append((args, kwargs))
+        return _rate_limited(1)
+
+    monkeypatch.setattr(telegram.requests, "post", post)
+    monkeypatch.setattr(telegram.time, "sleep", sleeps.append)
+
+    result = telegram._send_text_full("token", "-100123", "خبر معتبر", preflight=False)
+
+    assert result is False
+    assert len(calls) == telegram.MAX_TELEGRAM_RATE_LIMIT_RETRIES + 1
+    assert sleeps == [2] * telegram.MAX_TELEGRAM_RATE_LIMIT_RETRIES
 
 
 def test_ambiguous_server_error_is_not_retried(monkeypatch):

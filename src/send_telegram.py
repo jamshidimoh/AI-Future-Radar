@@ -15,7 +15,10 @@ TITLE_ICON = "📡"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 TELEGRAM_TEXT_LIMIT = 4096
 PHOTO_CAPTION_LIMIT = 1024
-MAX_TELEGRAM_RATE_LIMIT_RETRIES = 2
+# Telegram explicitly rejects a 429 request, so retry is safe. A margin avoids
+# hitting the same boundary again when the server's clock/window is coarse.
+MAX_TELEGRAM_RATE_LIMIT_RETRIES = 4
+TELEGRAM_RETRY_AFTER_SAFETY_SECONDS = 1
 MAX_TELEGRAM_RETRY_AFTER_SECONDS = 30
 RLI = "\u2067"
 LRI = "\u2066"
@@ -415,7 +418,7 @@ def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
                         f"retry_after={retry_after}s retry={rate_limit_retries}/{MAX_TELEGRAM_RATE_LIMIT_RETRIES}",
                         flush=True,
                     )
-                    time.sleep(retry_after)
+                    time.sleep(retry_after + TELEGRAM_RETRY_AFTER_SAFETY_SECONDS)
                     continue
                 if retry_after is not None:
                     print(

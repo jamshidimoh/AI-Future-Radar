@@ -121,6 +121,64 @@ def test_recovery_reset_clears_only_retryable_model_cooldowns(monkeypatch):
 
 
 
+
+def test_wallet_exhaustion_is_family_scoped_and_survives_recovery_reset():
+    _reset()
+    message = (
+        "KiraAI model: HTTP 402 Insufficient VND wallet balance "
+        "(0 VND remaining), code=vnd_balance_exhausted"
+    )
+    assert router._failure_class(message) == "billing"
+    assert router._provider_quota_is_family_scoped("kiraai", "billing", message)
+
+    router._disable("KiraAI:model-wallet-empty", "billing")
+    router._DISABLED_FAMILIES.add("kiraai")
+    cleared = router.reset_recoverable_cooldowns()
+
+    assert cleared == 0
+    assert "KiraAI:model-wallet-empty" in router._DISABLED
+    assert router._MODEL_DISABLED_REASON["KiraAI:model-wallet-empty"] == "billing"
+    assert "kiraai" in router._DISABLED_FAMILIES
+
+
+def test_wallet_exhaustion_skips_sibling_models_but_keeps_other_provider_fallback(monkeypatch):
+    _reset()
+    monkeypatch.setenv("KIRAAI_API_KEY", "test-kiraai")
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    calls = []
+
+    def wallet_empty(*args, **kwargs):
+        calls.append("kiraai-first")
+        raise router.QuotaExceeded(
+            "KiraAI model: HTTP 402 Insufficient VND wallet balance (0 VND remaining); "
+            "code=vnd_balance_exhausted"
+        )
+
+    def kiraai_sibling(*args, **kwargs):
+        calls.append("kiraai-sibling")
+        return '{"title":"should not be used"}'
+
+    def groq_fallback(*args, **kwargs):
+        calls.append("groq-fallback")
+        return '{"title":"ok"}'
+
+    result, provider = router.call_llm_with_fallback(
+        "system",
+        "user",
+        providers=[
+            ("KiraAI:model-a", wallet_empty),
+            ("KiraAI:model-b", kiraai_sibling),
+            ("Groq:qwen/qwen3.6-27b", groq_fallback),
+        ],
+    )
+
+    assert result == '{"title":"ok"}'
+    assert provider == "Groq:qwen/qwen3.6-27b"
+    assert calls == ["kiraai-first", "groq-fallback"]
+    assert "kiraai" in router._DISABLED_FAMILIES
+
+
+
 def test_groq_gpt_oss_retries_without_json_mode_on_validation_failure(monkeypatch):
     calls = []
 

@@ -248,18 +248,39 @@ def _call_direct_deployment(litellm_router,deployment,system_prompt,user_content
             return litellm_router.completion(**kwargs)
         raise
 
-def _failure_class(message:str)->str:
-    text=str(message or "").lower()
-    if "401" in text or "unauthorized" in text or "invalid api" in text or "authentication" in text: return "auth"
-    if "no deployments available" in text or "router exhausted" in text or "production llm circuit exhausted" in text: return "transient"
-    if "429" in text or "rate limit" in text or "too many requests" in text: return "quota"
-    if "timeout" in text or "timed out" in text: return "transient"
-    if "403" in text or "404" in text or "not found" in text: return "model"
+def _failure_class(message: str) -> str:
+    text = str(message or "").lower()
+    # Billing/wallet failures are not transient rate limits. Keep the entire
+    # provider family disabled for the remainder of this run instead of retrying
+    # sibling models or reopening them during mission-coverage recovery.
+    if re.search(
+        r"\b402\b|vnd_balance_exhausted|insufficient.{0,40}(wallet|balance|quota)|"
+        r"(?:wallet|balance).{0,40}(?:zero|empty|exhausted|insufficient)",
+        text,
+        re.I,
+    ):
+        return "billing"
+    if "401" in text or "unauthorized" in text or "invalid api" in text or "authentication" in text:
+        return "auth"
+    if "no deployments available" in text or "router exhausted" in text or "production llm circuit exhausted" in text:
+        return "transient"
+    if "429" in text or "rate limit" in text or "too many requests" in text:
+        return "quota"
+    if "timeout" in text or "timed out" in text:
+        return "transient"
+    if "403" in text or "404" in text or "not found" in text:
+        return "model"
     return "other"
 
-def _provider_quota_is_family_scoped(family:str,reason:str,message:str)->bool:
-    if reason=="auth": return True
-    return reason=="quota" and family in {"openrouter","nararouter","kiraai"} and re.search(r"\b402\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd",message,re.I) is not None
+
+def _provider_quota_is_family_scoped(family: str, reason: str, message: str) -> bool:
+    if reason in {"auth", "billing"}:
+        return True
+    return (
+        reason == "quota"
+        and family in {"openrouter", "nararouter", "kiraai"}
+        and re.search(r"\b402\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd", message, re.I) is not None
+    )
 
 def _model_is_disabled(name:str)->bool:
     with _STATE_LOCK: until=_MODEL_DISABLED_UNTIL.get(name,0.0)

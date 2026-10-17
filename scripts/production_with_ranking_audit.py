@@ -6,7 +6,8 @@ import os
 import re
 import sys
 from pathlib import Path
-from urllib.parse import urlsplit
+from contextlib import suppress
+from urllib.parse import urljoin, urlsplit
 
 import requests
 
@@ -24,6 +25,7 @@ from src.publication_quality_gate import ensure_publication_quality
 from src.ranking_audit import audit_selection
 from src.rtl_contract import force_rtl_blocks
 from src.source_authority import resolve_source_tier
+from src.source_evidence import is_safe_public_http_url
 from src.story_gate import _technology_relevant
 from src.youtube_parallel_discovery import fetch_youtube_items_parallel
 
@@ -109,41 +111,64 @@ def _protect_critical_incidents(items):
 
 
 def _resolve_google_news_url(value):
-    """Resolve a Google News wrapper only when the HTTP result leaves Google News."""
+    """Resolve Google News wrappers one hop at a time, validating each destination."""
     raw = str(value or "").strip()
     if not raw:
         return ""
     try:
-        host = urlsplit(raw).netloc.lower().split(":", 1)[0]
-    except (ValueError, AttributeError):
+        parsed = urlsplit(raw)
+        host = (parsed.hostname or "").casefold().rstrip(".")
+        scheme = parsed.scheme.casefold()
+    except (ValueError, AttributeError, TypeError):
         return raw
     if host not in _GOOGLE_NEWS_HOSTS:
         return raw
-    try:
-        response = requests.get(
-            raw,
-            allow_redirects=True,
-            timeout=_CANONICAL_RESOLVE_TIMEOUT_SECONDS,
-            stream=True,
-            headers={
-                "User-Agent": "Mozilla/5.0 (compatible; AI-Future-Radar/1.0; +https://github.com/jamshidimoh/AI-Future-Radar)",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            },
-        )
-        resolved = str(response.url or raw).strip()
-        response.close()
-        try:
-            resolved_host = urlsplit(resolved).netloc.lower().split(":", 1)[0]
-        except (ValueError, AttributeError):
-            resolved_host = ""
-        if not resolved or resolved_host in _GOOGLE_NEWS_HOSTS:
-            return raw
-        return resolved
-    except (requests.RequestException, ValueError, AttributeError, TypeError) as exc:
-        print(f"[Canonical Source Resolution] fallback=google_news_wrapper reason={type(exc).__name__}", flush=True)
-        logger.warning("Google News wrapper resolution failed: %s", exc, exc_info=True)
+    if scheme not in {"http", "https"} or not is_safe_public_http_url(raw, allow_google_news=True):
         return raw
 
+    current = raw
+    for redirect_count in range(4):
+        response = None
+        try:
+            response = requests.get(
+                current,
+                allow_redirects=False,
+                timeout=_CANONICAL_RESOLVE_TIMEOUT_SECONDS,
+                stream=True,
+                headers={
+                    "User-Agent": "Mozilla/5.0 (compatible; AI-Future-Radar/1.0; +https://github.com/jamshidimoh/AI-Future-Radar)",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                },
+            )
+            status = int(response.status_code)
+            if status in {301, 302, 303, 307, 308}:
+                location = str(response.headers.get("Location") or "").strip()
+                if not location or redirect_count >= 3:
+                    return raw
+                target = urljoin(current, location)
+                if not is_safe_public_http_url(target):
+                    print("[Canonical Source Resolution] blocked=unsafe_or_excluded_redirect fallback=google_news_wrapper", flush=True)
+                    return raw
+                old_scheme = urlsplit(current).scheme.casefold()
+                new_scheme = urlsplit(target).scheme.casefold()
+                if old_scheme == "https" and new_scheme != "https":
+                    print("[Canonical Source Resolution] blocked=https_downgrade fallback=google_news_wrapper", flush=True)
+                    return raw
+                current = target
+                continue
+            current_host = (urlsplit(current).hostname or "").casefold().rstrip(".")
+            if current_host in _GOOGLE_NEWS_HOSTS:
+                return raw
+            return current
+        except (requests.RequestException, ValueError, AttributeError, TypeError) as exc:
+            print(f"[Canonical Source Resolution] fallback=google_news_wrapper reason={type(exc).__name__}", flush=True)
+            logger.warning("Google News wrapper resolution failed: %s", exc, exc_info=True)
+            return raw
+        finally:
+            if response is not None:
+                with suppress(Exception):
+                    response.close()
+    return raw
 
 def _resolve_selected_source_urls(items):
     """Promote publisher URLs for the small set of selected candidates only."""

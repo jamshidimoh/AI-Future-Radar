@@ -1,46 +1,46 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 161,
-      "disabled_until": 1792321412.302,
+      "failures": 162,
+      "disabled_until": 1792322473.44,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792321412.302,
+      "disabled_until": 1792322473.44,
       "last_error": "auth",
       "last_success": 0.0
     },
     "nararouter:auto/bynara": {
-      "failures": 10,
-      "disabled_until": 1792256612.302,
+      "failures": 11,
+      "disabled_until": 1792257673.44,
       "last_error": "model",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
-      "failures": 2,
-      "disabled_until": 1792238612.302,
+      "failures": 3,
+      "disabled_until": 1792239673.44,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
-      "failures": 2,
-      "disabled_until": 1792238612.302,
+      "failures": 3,
+      "disabled_until": 1792239673.44,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
-      "failures": 1,
-      "disabled_until": 1792238612.302,
+      "failures": 2,
+      "disabled_until": 1792239673.44,
       "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "gemini": {
-      "failures": 322,
-      "disabled_until": 1792321412.302,
+      "failures": 324,
+      "disabled_until": 1792322473.44,
       "last_error": "auth"
     },
     "kiraai": {
@@ -49,17 +49,17 @@
       "last_error": "wallet"
     },
     "openrouter": {
-      "failures": 3,
-      "disabled_until": 1792256612.302,
+      "failures": 4,
+      "disabled_until": 1792257673.44,
       "last_error": "quota"
     }
   },
-  "updated_at": 1792235012.3024392,
+  "updated_at": 1792236073.4396157,
   "version": 1,
   "telemetry": {
-    "observed_failures": 29,
-    "observed_events": 37,
-    "updated_at": 1792235012.3024392
+    "observed_failures": 11,
+    "observed_events": 15,
+    "updated_at": 1792236073.4396157
   },
   "observed_failures": 0,
   "observed_events": 0

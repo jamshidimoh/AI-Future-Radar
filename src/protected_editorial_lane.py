@@ -105,7 +105,9 @@ def _thematic_signal(item: dict[str, Any]) -> bool:
 def _ai_relevant(item: dict[str, Any]) -> bool:
     text = _text(item)
     mission = _mission(item)
-    if mission in {"mind", "mind_cognition"}:
+    # A Mind lane label is not topical evidence. Require an actual thematic
+    # signal in the story content before allowing an explicit Mind classification.
+    if mission in {"mind", "mind_cognition"} and _thematic_signal(item):
         return True
     ai_terms = (
         "artificial intelligence", "machine learning", "llm", "foundation model",
@@ -196,15 +198,11 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
         for key in ("watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name", "author", "speaker", "guest", "interviewee", "researcher")
     )
     if mission in {"mind_cognition", "mind"}:
-        if thematic or person_identity:
-            return True
-        ctype = str(item.get("content_type") or "").strip().casefold()
-        if item.get("research_signal") and ctype in {"research", "paper", "study", "experiment"}:
-            try:
-                tier = int(item.get("source_tier", 3) or 3)
-            except (TypeError, ValueError):
-                tier = 3
-            return tier <= 2
+        # A notable expert, high-tier source, or research label cannot turn
+        # unrelated astronomy/physics into a cognition story. Those signals may
+        # rank a relevant article, but the article must first contain a real
+        # consciousness, cognition, neuroscience, philosophy-of-mind, or related
+        # thematic anchor.
         return False
     # Generic expert interviews belong to the dedicated Voices lane.
     # The Mind lane accepts an interview only when its content is substantively

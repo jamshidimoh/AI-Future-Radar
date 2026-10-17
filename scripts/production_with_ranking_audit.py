@@ -5,8 +5,8 @@ import logging
 import os
 import re
 import sys
-from pathlib import Path
 from contextlib import suppress
+from pathlib import Path
 from urllib.parse import urljoin, urlsplit
 
 import requests

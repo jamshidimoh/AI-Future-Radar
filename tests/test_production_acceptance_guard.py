@@ -239,6 +239,25 @@ def test_unmet_mission_coverage_is_fail_closed():
     assert "mission portfolio coverage remained unmet" in message
 
 
+def test_mind_score_floor_only_attempt_is_a_legitimate_no_candidate_gap():
+    from scripts.production_acceptance_guard import _mission_coverage_status
+
+    log = """
+[Production Selection] total=6
+[Mission Coverage Recovery] attempt=1 area=mind_cognition title=low-scoring Mind story score=49.00 floor=50.00 lane=independent_mind status=below_score_floor
+[Mission Coverage Recovery] missing_lanes=1 attempts=1 recovered=0 status=unmet
+[Production Contract] normal_news=2 normal_max=3 tier0_news=0 tier0_quota_exempt=true education=not_due
+Posts sent: 2/6
+"""
+    status = _mission_coverage_status(log.splitlines())
+    assert status["no_candidate_lanes"] == 1
+    assert status["nonpublishable_lanes"] == 0
+
+    ok, message = validate(log)
+    assert ok is True, message
+    assert "no eligible candidate" in message
+
+
 def test_provider_unavailability_does_not_masquerade_as_no_candidate():
     log = """
 [Production Selection] total=6

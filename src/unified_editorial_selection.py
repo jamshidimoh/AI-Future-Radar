@@ -36,6 +36,7 @@ _MIND_COGNITION_EVIDENCE_TERMS = (
     "philosophy of science", "philosophy of technology", "philosophy of ai",
     "epistemology of ai", "technology and consciousness", "artificial consciousness",
     "machine awareness", "brain-computer interface", "brain-computer", "neurotechnology",
+    "ai and the mind", "ai and mind", "mind and ai", "mind and artificial intelligence",
     "brain", "آگاهی", "خودآگاهی", "هوشیاری", "شناخت", "علوم شناختی", "فلسفه ذهن",
     "فلسفهٔ ذهن", "فلسفه علم", "فلسفهٔ علم", "فلسفه فناوری", "فلسفهٔ فناوری",
     "مغز", "رابط مغز و رایانه", "علوم اعصاب", "فناوری عصبی",
@@ -137,14 +138,8 @@ def mission_area(item: dict[str, Any]) -> str:
         if content_area and content_area != "mind_cognition":
             item["mission_area"] = content_area
             return content_area
-        category = str(item.get("category") or "").strip().casefold()
-        category_area = _AREA_MAP.get(category)
-        if category_area and category_area != "mind_cognition":
-            item["mission_area"] = category_area
-            return category_area
-        if item.get("_ai_link") is True or item.get("ai_relevance") is True:
-            item["mission_area"] = "ai_core"
-            return "ai_core"
+        # Do not fall back to stale category or upstream linkage metadata here:
+        # those same labels may be the source of the original false classification.
         item["mission_area"] = "unclassified"
         item["_mission_area_rejected"] = "mind_cognition_without_content_evidence"
         return "unclassified"

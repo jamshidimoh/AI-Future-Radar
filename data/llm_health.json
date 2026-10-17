@@ -1,20 +1,20 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 158,
-      "disabled_until": 1792314460.143,
+      "failures": 159,
+      "disabled_until": 1792315764.444,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792314460.143,
+      "disabled_until": 1792315764.444,
       "last_error": "auth",
       "last_success": 0.0
     },
     "nararouter:auto/bynara": {
-      "failures": 7,
-      "disabled_until": 1792249660.143,
+      "failures": 8,
+      "disabled_until": 1792250964.444,
       "last_error": "model",
       "last_success": 0
     },
@@ -27,8 +27,8 @@
   },
   "providers": {
     "gemini": {
-      "failures": 316,
-      "disabled_until": 1792314460.143,
+      "failures": 318,
+      "disabled_until": 1792315764.444,
       "last_error": "auth"
     },
     "kiraai": {
@@ -42,12 +42,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1792228060.1426532,
+  "updated_at": 1792229364.444219,
   "version": 1,
   "telemetry": {
-    "observed_failures": 13,
-    "observed_events": 33,
-    "updated_at": 1792228060.1426532
+    "observed_failures": 5,
+    "observed_events": 22,
+    "updated_at": 1792229364.444219
   },
   "observed_failures": 0,
   "observed_events": 0

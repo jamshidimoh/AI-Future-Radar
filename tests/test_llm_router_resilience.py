@@ -179,6 +179,105 @@ def test_wallet_exhaustion_skips_sibling_models_but_keeps_other_provider_fallbac
 
 
 
+def test_no_zero_price_huggingface_is_family_scoped_and_survives_recovery_reset():
+    _reset()
+    message = "No zero-price Hugging Face chat model is currently available"
+    assert router._failure_class(message) == "unavailable"
+    assert router._provider_quota_is_family_scoped("huggingface", "unavailable", message)
+
+    router._disable("HuggingFace", "unavailable")
+    router._DISABLED_FAMILIES.add("huggingface")
+    assert router.reset_recoverable_cooldowns() == 0
+    assert "HuggingFace" in router._DISABLED
+    assert "huggingface" in router._DISABLED_FAMILIES
+
+
+def test_unavailable_huggingface_skips_provider_retries_but_keeps_other_fallback(monkeypatch):
+    _reset()
+    monkeypatch.setenv("HF_TOKEN", "test-hf")
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    calls = []
+
+    def hf_unavailable(*args, **kwargs):
+        calls.append("hf-first")
+        raise router.QuotaExceeded("No zero-price Hugging Face chat model is currently available")
+
+    def hf_sibling(*args, **kwargs):
+        calls.append("hf-sibling")
+        return '{"title":"should not be used"}'
+
+    def groq_fallback(*args, **kwargs):
+        calls.append("groq-fallback")
+        return '{"title":"ok"}'
+
+    result, provider = router.call_llm_with_fallback(
+        "system",
+        "user",
+        providers=[
+            ("HuggingFace:model-a", hf_unavailable),
+            ("HuggingFace:model-b", hf_sibling),
+            ("Groq:openai/gpt-oss-20b", groq_fallback),
+        ],
+    )
+
+    assert result == '{"title":"ok"}'
+    assert provider == "Groq:openai/gpt-oss-20b"
+    assert calls == ["hf-first", "groq-fallback"]
+    assert "huggingface" in router._DISABLED_FAMILIES
+
+
+def test_nar_router_telegram_link_requirement_is_family_scoped_auth():
+    _reset()
+    message = (
+        'NaraRouter auto/bynara: HTTP 403 {"error":{"type":"forbidden",'
+        '"message":"telegram_required: Join the required Telegram group/channel '
+        'and relink at /settings to continue."}}'
+    )
+    assert router._failure_class(message) == "auth"
+    assert router._provider_quota_is_family_scoped("nararouter", "auth", message)
+
+    router._disable("NaraRouter:auto/bynara", "auth")
+    router._DISABLED_FAMILIES.add("nararouter")
+    assert router.reset_recoverable_cooldowns() == 0
+    assert "nararouter" in router._DISABLED_FAMILIES
+
+
+def test_nara_router_telegram_link_requirement_skips_siblings_but_keeps_other_fallback(monkeypatch):
+    _reset()
+    monkeypatch.setenv("NARAROUTER_API_KEY", "test-nara")
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    calls = []
+
+    def nara_requires_link(*args, **kwargs):
+        calls.append("nara-first")
+        raise router.QuotaExceeded(
+            "NaraRouter auto/bynara: HTTP 403 telegram_required: Join the required Telegram group/channel and relink at /settings to continue"
+        )
+
+    def nara_sibling(*args, **kwargs):
+        calls.append("nara-sibling")
+        return '{"title":"should not be used"}'
+
+    def groq_fallback(*args, **kwargs):
+        calls.append("groq-fallback")
+        return '{"title":"ok"}'
+
+    result, provider = router.call_llm_with_fallback(
+        "system",
+        "user",
+        providers=[
+            ("NaraRouter:auto/bynara", nara_requires_link),
+            ("NaraRouter:model-b", nara_sibling),
+            ("Groq:openai/gpt-oss-20b", groq_fallback),
+        ],
+    )
+
+    assert result == '{"title":"ok"}'
+    assert provider == "Groq:openai/gpt-oss-20b"
+    assert calls == ["nara-first", "groq-fallback"]
+    assert "nararouter" in router._DISABLED_FAMILIES
+
+
 def test_groq_gpt_oss_retries_without_json_mode_on_validation_failure(monkeypatch):
     calls = []
 

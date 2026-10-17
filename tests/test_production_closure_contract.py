@@ -9,6 +9,22 @@ from scripts.production_closure_contract import (
 
 
 class TestProductionClosureContract(unittest.TestCase):
+    def test_only_completed_runs_count_as_closure_attempts(self):
+        from scripts.production_closure_contract import is_completed_production_attempt
+
+        for status in ("queued", "in_progress", "requested", ""):
+            self.assertFalse(is_completed_production_attempt({"status": status}))
+        self.assertFalse(is_completed_production_attempt({}))
+        self.assertFalse(is_completed_production_attempt(None))
+
+        # Terminal failures and cancellations still occupy the evidence window.
+        for conclusion in ("success", "failure", "cancelled", "timed_out"):
+            self.assertTrue(
+                is_completed_production_attempt(
+                    {"status": "completed", "conclusion": conclusion}
+                )
+            )
+
     def test_post_budget_zero_candidates_can_pass_with_explicit_acceptance(self):
         log = """
 [Production Selection] total=0

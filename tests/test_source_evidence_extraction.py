@@ -76,6 +76,24 @@ def test_redirect_is_followed_only_after_url_validation(monkeypatch):
     assert calls[0][1]["timeout"] == (2.5, 3.5)
 
 
+def test_source_text_does_not_fetch_outside_production_by_default(monkeypatch):
+    import src.summarize as summarize
+
+    monkeypatch.delenv("AI_RADAR_SOURCE_EVIDENCE_FETCH", raising=False)
+    monkeypatch.delenv("RADAR_PRODUCTION_MODE", raising=False)
+    def forbidden_fetch(item):
+        raise AssertionError("web fetch should be disabled")
+    monkeypatch.setattr(summarize, "article_text_for_item", forbidden_fetch)
+    item = {
+        "title": "A source-backed summary",
+        "summary": "A short RSS snippet.",
+        "link": "https://publisher.example/story",
+    }
+
+    assert "A short RSS snippet." in summarize._source_text(item)
+    assert "_source_article_fetch_attempted" not in item
+
+
 def test_source_text_uses_extracted_page_evidence_before_short_rss_snippet(monkeypatch):
     import src.summarize as summarize
 

@@ -172,6 +172,32 @@ def test_voice_lane_prefers_newer_direct_interview_over_older_higher_tier():
     assert selected and selected[0]["title"] == "Newer expert interview"
 
 
+def test_voice_lane_does_not_trust_mislabelled_mission_area_without_topical_evidence():
+    for mission_area in ("ai_core", "convergence", "mind_cognition"):
+        item = _voice("Why horses terrified the Aztecs — Si Sheppard")
+        item.update({
+            "mission_area": mission_area,
+            "category": "ai",
+            "summary": "A historical account of horses and the Aztec empire.",
+            "description": "A discussion of historical warfare and cultural change.",
+            "person_name": "Si Sheppard",
+            "content_type": "interview",
+            "source_type": "specialist",
+            "source_tier": 1,
+        })
+        assert not is_voices_candidate(item)
+
+
+def test_voice_lane_accepts_topical_cognition_and_philosophy_without_ai_acronym():
+    item = _voice("David Chalmers on philosophy of mind and consciousness")
+    item.update({
+        "mission_area": "mind_cognition",
+        "summary": "A substantive conversation about consciousness, self-awareness and cognitive science.",
+        "person_name": "David Chalmers",
+    })
+    assert is_voices_candidate(item)
+
+
 def test_voice_lane_rejects_bare_ai_category_without_ai_evidence():
     item = _voice("Why are wildfires increasing?")
     item.pop("mission_area")

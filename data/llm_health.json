@@ -1,14 +1,14 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 152,
-      "disabled_until": 1792299067.809,
+      "failures": 153,
+      "disabled_until": 1792300642.403,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792299067.809,
+      "disabled_until": 1792300642.403,
       "last_error": "auth",
       "last_success": 0.0
     },
@@ -25,8 +25,8 @@
       "last_success": 0
     },
     "nararouter:auto/bynara": {
-      "failures": 1,
-      "disabled_until": 1792234267.809,
+      "failures": 2,
+      "disabled_until": 1792235842.403,
       "last_error": "model",
       "last_success": 0
     },
@@ -39,8 +39,8 @@
   },
   "providers": {
     "gemini": {
-      "failures": 304,
-      "disabled_until": 1792299067.809,
+      "failures": 306,
+      "disabled_until": 1792300642.403,
       "last_error": "auth"
     },
     "kiraai": {
@@ -49,12 +49,12 @@
       "last_error": "wallet"
     }
   },
-  "updated_at": 1792212667.8089557,
+  "updated_at": 1792214242.4026206,
   "version": 1,
   "telemetry": {
-    "observed_failures": 49,
-    "observed_events": 77,
-    "updated_at": 1792212667.8089557
+    "observed_failures": 29,
+    "observed_events": 74,
+    "updated_at": 1792214242.4026206
   },
   "observed_failures": 0,
   "observed_events": 0

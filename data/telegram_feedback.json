@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792212666,
+  "updated_at": 1792214241,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -18423,6 +18423,43 @@
       "why_it_matters": "این گفتگو نشان می‌دهد که هوش مصنوعی در حال پیشرفت سریع است و می‌تواند در حوزههای مختلف علم نقش مهمی ایفا کند. همچنین به ما یادآوری می‌کند که فناوریها و محصولات روزانه ما نیز در حال تغییر هستند.",
       "link": "https://shows.acast.com/theintelligencepodcast/episodes/schrodingers-chat-can-ai-and-scientists-co-exist",
       "posted_at": 1792212666
+    },
+    "-1004482051328:2088": {
+      "chat_id": -1004482051328,
+      "message_id": 2088,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Quanta Magazine",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "هاردت: معیارهای ارزیابی هوش مصنوعی باید علمی باشند",
+      "summary": "موریتز هاردت، نویسنده کتابی درباره بنچمارک‌ها، می‌گوید تست‌های استاندارد برای هوش مصنوعی به‌صورت اساسی معیوب هستند اما قابل اصلاحند. او در مقاله‌ای در Quanta Magazine این نکته را مطرح می‌کند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "ارزیابی علمی هوش مصنوعی می‌تواند به مقایسهٔ منصفانهٔ مدل‌ها و پیشرفت‌های واقعی منجر شود. بدون معیارهای واضح، خطر پیشرفت‌های نادرست یا گمراه‌کننده در این حوزه افزایش می‌یابد. بهبود بنچمارک‌ها می‌تواند به توسعهٔ فناوری‌های قابل اعتماد و ایمن‌تر کمک کند.",
+      "link": "https://www.quantamagazine.org/he-wants-ai-benchmarking-to-be-a-science-not-a-dark-art-20261016/",
+      "posted_at": 1792214214
+    },
+    "-1004482051328:2089": {
+      "chat_id": -1004482051328,
+      "message_id": 2089,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "مدل d1-ultra از Liquid AI با امتیاز 65 در شاخص تصمیمگیری مصنوعی منتشر شد",
+      "summary": "شرکت Liquid AI مدل تصمیمگیری چندحسی d1-ultra را منتشر کرد. این مدل قادر به پردازش همزمان متن و تصویر و ارائه احتمالات تقویتی در یک گذر به جلو است. مدل در شاخص تصمیمگیری مصنوعی (AA Decision Index) امتیاز 65 کسب کرده و هزینه پردازش هر میلیون توکن ورودی 0.042 دلار است.",
+      "why_it_matters": "مدل d1-ultra امکان پردازش همزمان متن و تصویر را فراهم می‌کند که می‌تواند در حوزههای مختلفی از تصمیمگیریهای خودکار تا تحلیل داده‌های چندحسی مفید باشد. این مدل با ارائه احتمالات تقویتی در یک گذر به جلو، سرعت و کارایی را افزایش می‌دهد. با این حال، هزینه پردازش هر میلیون توکن ورودی 0.042 دلار ممکن است برای برخی کاربردها پرهزینه باشد.",
+      "link": "https://www.marktechpost.com/2026/10/15/liquid-ai-d1-ultra-decision-model/",
+      "posted_at": 1792214241
     }
   }
 }

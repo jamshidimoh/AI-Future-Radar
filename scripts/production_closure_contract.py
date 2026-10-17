@@ -78,6 +78,17 @@ def publish_evidence(log_text: str) -> bool:
     return zero_candidate_run
 
 
+def is_completed_production_attempt(run: Any) -> bool:
+    """Only completed workflow attempts belong in the closure evidence window.
+
+    Queued and in-progress runs have no final conclusion or completed run-bot job.
+    Counting them lets an unrelated newer queued run invalidate the completed run
+    that triggered closure evaluation. Completed failures and cancellations remain
+    evidence and must still block closure.
+    """
+    return isinstance(run, dict) and str(run.get("status") or "").casefold() == "completed"
+
+
 def is_persisted_state_skip(run: dict[str, Any], bot_job: dict[str, Any] | None) -> bool:
     """Ignore only the workflow job intentionally skipped for state-only commits."""
     if not isinstance(bot_job, dict) or str(bot_job.get("conclusion") or "").lower() != "skipped":

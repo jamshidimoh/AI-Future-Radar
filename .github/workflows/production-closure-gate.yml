@@ -7,7 +7,7 @@ on:
 
 permissions:
   actions: read
-  contents: read
+  contents: write
   issues: write
 
 jobs:
@@ -39,6 +39,8 @@ jobs:
           import re
           from pathlib import Path
           import sys
+          from datetime import datetime, timezone
+          import textwrap
           import urllib.error
           import urllib.request
 
@@ -70,6 +72,18 @@ jobs:
                   data=json.dumps(payload).encode("utf-8"),
                   headers=patch_headers,
                   method="PATCH",
+              )
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          def put_json(path, payload):
+              put_headers = dict(headers)
+              put_headers["Content-Type"] = "application/json"
+              req = urllib.request.Request(
+                  base + path,
+                  data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+                  headers=put_headers,
+                  method="PUT",
               )
               with urllib.request.urlopen(req, timeout=30) as response:
                   return json.load(response)
@@ -367,6 +381,70 @@ jobs:
           closed_issue = patch_json("/issues/69", {"state": "closed", "state_reason": "completed"})
           if closed_issue.get("state") != "closed":
               raise RuntimeError("closure evidence passed but issue #69 did not confirm closed state")
+          # Persist an audit-ready closure record only after every acceptance gate passes.
+          # The report and closure-workflow tests are excluded from the application fingerprint.
+          run_records = "\n".join(
+              f"- Run #{r.get('run_number')} — SHA {r.get('head_sha')} — workflow {r.get('conclusion')} — fingerprint {fingerprints.get(r.get('run_number'))}"
+              for r in window
+          )
+          evidence_records = "\n".join(
+              f"- {key}: {'PASS' if value else 'BLOCKED'}"
+              for key, value in evidence.items()
+          )
+          status_date = datetime.now(timezone.utc).date().isoformat()
+          status_doc = textwrap.dedent(f"""# AI Future Radar — Production Closure Status
+
+          Status date: {status_date}
+
+          ## وضعیت نهایی
+
+          **وضعیت: CLOSED / PRODUCTION BASELINE**
+
+          این وضعیت فقط پس از سه اجرای متوالی موفق روی اثرانگشت یکسان کد برنامه، شواهد انتشار واقعی، کنترل عدم انتشار تکراری و عبور همه معیارهای پذیرش ثبت شده است.
+
+          ## پنجره شواهد نهایی
+
+          {run_records}
+
+          ## معیارهای پذیرش
+
+          {evidence_records}
+
+          ## شواهد انتشار
+
+          PUBLISH_PER_RUN: {per_run_publish}
+
+          PROVIDER_EVIDENCE: deterministic regression {provider_isolated}
+
+          EDUCATION_EVIDENCE: published {education_published}, recovery {education_recovery_confirmed}, not due all {education_not_due_all}, contract not due {education_contract_not_due}
+
+          ## مرز پذیرش
+
+          - اجرای تولید روی یک baseline ثابت تأیید شده است.
+          - اجرای ناموفق یا شواهد ناقص به‌عنوان پذیرش موفق محسوب نشده است.
+          - کیفیت فارسی، اعتبار منبع، جلوگیری از تکرار، رتبه‌بندی و قرارداد تحویل همچنان الزامی‌اند.
+          - این گواهی جایگزین پایش اجرای‌های بعدی نیست.
+
+          ثبت نهایی خودکار توسط Production Closure Gate انجام شده است.
+          """).lstrip()
+          status_current = get_json("/contents/docs/PRODUCTION_CLOSURE_STATUS.md?ref=main")
+          status_sha = status_current.get("sha")
+          if not status_sha:
+              raise RuntimeError("closure-status document is missing its current blob SHA")
+          try:
+              updated_status = put_json(
+                  "/contents/docs/PRODUCTION_CLOSURE_STATUS.md",
+                  {
+                      "message": "chore: persist production state [skip ci] - record verified closure",
+                      "content": base64.b64encode(status_doc.encode("utf-8")).decode("ascii"),
+                      "sha": status_sha,
+                      "branch": "main",
+                  },
+              )
+          except Exception:
+              patch_json("/issues/69", {"state": "open", "state_reason": "reopened"})
+              raise
           print("CLOSURE: CLOSED — deterministic, code-pinned production evidence checks passed.")
           print(f"FINAL_ISSUE: #{closed_issue.get('number')} state={closed_issue.get('state')} url={closed_issue.get('html_url')}")
+          print(f"FINAL_STATUS_DOC: {updated_status.get('content', {}).get('html_url') or updated_status.get('commit', {}).get('html_url')}")
           PY

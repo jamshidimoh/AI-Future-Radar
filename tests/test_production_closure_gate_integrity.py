@@ -87,3 +87,22 @@ def test_production_runs_are_serialized_without_canceling_active_attempts():
     assert "github.event_name == 'push'" in text
     assert "chore: persist production state [skip ci]" in text
     assert "cancel-in-progress: false" in text
+
+
+def test_closure_gate_persists_final_status_only_after_strict_evidence_passes():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "contents: write" in text
+    assert "def put_json(path, payload):" in text
+    assert '"/contents/docs/PRODUCTION_CLOSURE_STATUS.md?ref=main"' in text
+    assert '"/contents/docs/PRODUCTION_CLOSURE_STATUS.md"' in text
+    assert "CLOSED / PRODUCTION BASELINE" in text
+    assert "FINAL_STATUS_DOC:" in text
+    assert "health_snapshot_fresh" in text
+    assert "people_bootstrap_state_complete" in text
+    assert '"14_people_bootstrap_30_deliveries": people_bootstrap_complete' in text
+    assert '"15_llm_health_fresh_for_latest_run": health_state_current' in text
+    blocked = text.index('print("CLOSURE: BLOCKED — unresolved evidence:"')
+    close = text.index('closed_issue = patch_json("/issues/69"')
+    persist = text.index('updated_status = put_json(')
+    assert blocked < close < persist
+    assert 'patch_json("/issues/69", {"state": "open", "state_reason": "reopened"})' in text

@@ -22,7 +22,18 @@ VOICE_SIGNALS = (r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfire
 PERSON_KEYS = ("watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name", "author", "speaker", "guest", "interviewee", "researcher")
 MISSION_AREAS = {"ai", "ai_core", "convergence", "mind", "mind_cognition", "future", "future_governance"}
 EXCLUDED_SOURCE_MARKERS = ("reddit", "community", "aggregator", "arxiv.org", "arxiv")
-AI_ANCHORS = ("artificial intelligence", "machine learning", "llm", "foundation model", "agent", "agentic", "reasoning", "robotics", "neuroscience", "consciousness", "bci", "quantum", "genomics", "synthetic biology", "هوش مصنوعی", "یادگیری ماشین")
+AI_ANCHORS = (
+    "artificial intelligence", "machine learning", "llm", "foundation model",
+    "agent", "agentic", "reasoning", "robotics", "neuroscience", "consciousness",
+    "self-awareness", "sentience", "qualia", "cognitive science", "cognition",
+    "philosophy of mind", "philosophy of science", "philosophy of technology",
+    "neurotechnology", "brain-computer interface", "bci", "quantum computing",
+    "quantum", "genomics", "genetics", "gene editing", "synthetic biology",
+    "future studies", "futurology", "foresight", "ai", "هوش مصنوعی",
+    "یادگیری ماشین", "خودآگاهی", "آگاهی", "شناخت", "علوم شناختی", "فلسفه ذهن",
+    "فلسفه علم", "فلسفه فناوری", "علوم اعصاب", "فناوری عصبی", "ویرایش ژن",
+    "ژنومیک", "زیست شناسی مصنوعی", "محاسبات کوانتومی",
+)
 
 
 def _text(item: dict[str, Any]) -> str:
@@ -85,17 +96,19 @@ def _priority_person_signal(item: dict[str, Any]) -> bool:
 
 
 def _ai_relevant(item: dict[str, Any]) -> bool:
-    # A legacy category=ai label is not evidence of actual AI relevance. Prefer
-    # explicit upstream linkage; otherwise require concrete AI/convergence anchors.
+    # Explicit source-to-AI linkage is reliable evidence. A mission/category label
+    # alone is not: recovery once promoted an unrelated Aztec-horse history item
+    # into the Voices lane because its metadata said it belonged to a target area.
     if item.get("_ai_link") is True or item.get("ai_relevance") is True:
         return True
-    explicit_mission = str(item.get("mission_area") or "").strip().casefold()
-    if explicit_mission in {"ai", "ai_core", "convergence"}:
-        return True
-    if explicit_mission in {"mind_cognition", "mind"}:
-        return True
-    text = _text(item)
-    return any(re.search(rf"(?<![a-z]){re.escape(a)}(?![a-z])", text) for a in AI_ANCHORS)
+    topical_text = " ".join(
+        str(item.get(key) or "")
+        for key in ("title", "summary", "description", "tags", "keywords")
+    ).casefold()
+    return any(
+        re.search(rf"(?<![a-z]){re.escape(anchor)}(?![a-z])", topical_text)
+        for anchor in AI_ANCHORS
+    )
 
 
 def _voice_source_excluded(item: dict[str, Any]) -> bool:

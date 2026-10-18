@@ -1,47 +1,71 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 169,
-      "disabled_until": 1792412353.045,
+      "failures": 170,
+      "disabled_until": 1792431705.883,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792412353.045,
+      "disabled_until": 1792431705.883,
       "last_error": "auth",
       "last_success": 0.0
     },
     "nararouter:auto/bynara": {
-      "failures": 4,
-      "disabled_until": 1792347553.045,
+      "failures": 5,
+      "disabled_until": 1792366905.883,
       "last_error": "model",
+      "last_success": 0
+    },
+    "groq:openai/gpt-oss-120b": {
+      "failures": 1,
+      "disabled_until": 1792348905.883,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "failures": 1,
+      "disabled_until": 1792348905.883,
+      "last_error": "quota",
+      "last_success": 0
+    },
+    "groq:openai/gpt-oss-20b": {
+      "failures": 1,
+      "disabled_until": 1792348905.883,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "kiraai:qwen3.8-flash": {
+      "failures": 1,
+      "disabled_until": 1792348905.883,
+      "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "gemini": {
-      "failures": 338,
-      "disabled_until": 1792412353.045,
+      "failures": 340,
+      "disabled_until": 1792431705.883,
       "last_error": "auth"
-    },
-    "kiraai": {
-      "failures": 1,
-      "disabled_until": 1792344760.505,
-      "last_error": "wallet"
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1792329823.246,
+      "disabled_until": 1792366905.883,
       "last_error": "quota"
+    },
+    "kiraai": {
+      "failures": 1,
+      "disabled_until": 1792431705.883,
+      "last_error": "wallet"
     }
   },
-  "updated_at": 1792325953.0449443,
+  "updated_at": 1792345305.8825521,
   "version": 1,
   "telemetry": {
-    "observed_failures": 6,
-    "observed_events": 29,
-    "updated_at": 1792325953.0449443
+    "observed_failures": 65,
+    "observed_events": 82,
+    "updated_at": 1792345305.8825521
   },
   "observed_failures": 0,
   "observed_events": 0

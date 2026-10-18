@@ -15,7 +15,7 @@ def _item(title, source, score, *, category, content_type="news", tier=1, interv
     }
 
 
-def test_normal_portfolio_keeps_ai_convergence_and_mind_distinct():
+def test_normal_portfolio_prioritizes_ai_and_mind_over_convergence():
     candidates = [
         _item("Frontier AI model capability", "OpenAI", 100, category="ai"),
         _item("Second frontier AI model", "Anthropic", 99, category="ai"),
@@ -35,9 +35,9 @@ def test_normal_portfolio_keeps_ai_convergence_and_mind_distinct():
         strict_relevance=True,
     )
     areas = [x["mission_area"] for x in selected]
-    assert "ai_core" in areas
-    assert "convergence" in areas
+    assert areas.count("ai_core") == 2
     assert "mind_cognition" in areas
+    assert "convergence" not in areas
     assert len(set(areas)) == len(areas)
 
 

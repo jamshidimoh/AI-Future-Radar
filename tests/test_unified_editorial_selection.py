@@ -42,7 +42,7 @@ def test_mission_diversity_is_explicit_and_canonical():
 def test_mission_coverage_targets_are_explicit_opportunities():
     contract = load_editorial_contract()
     assert contract["max_posts"] == 3
-    assert contract["ai_core_target_min"] == 1
+    assert contract["ai_core_target_min"] == 2
     assert contract["ai_core_target_max"] == 2
     assert contract["convergence_target"] == 1
     assert contract["mind_cognition_target"] == 1

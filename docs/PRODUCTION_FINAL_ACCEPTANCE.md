@@ -26,6 +26,12 @@ This document is the release boundary for declaring the repository production-co
 - [x] `tests/test_unified_editorial_selection.py` directly exercises source diversity, adaptive backfill, mission coverage, community exclusion and hard caps.
 - [x] A real publication baseline is present in `data/publication_state.json`.
 
+## Editorial balance contract
+
+The three-item normal portfolio is AI-first: target two AI-core stories when qualified candidates exist. Prefer a verified AI leader's interview, podcast, substantive opinion or attributable statement for one AI-core slot when it remains within the configured mission quality floor. Prioritize Mind/Cognition and AI Futures before Convergence for the remaining slot. Cap genetics-led stories at one per normal portfolio and prevent generic genomics/biotechnology stories from entering the Mind/Ideas/Voices lane without a genuine consciousness, cognition, philosophy, neuroscience or AI-futures bridge. Specialist research dominated by niche experimental jargon receives a bounded selection penalty; these controls do not bypass source evidence, freshness, Persian-language, deduplication or publication-quality gates.
+
+Regression coverage must demonstrate: (a) two AI-core stories plus a qualifying Mind/Futures story when available; (b) leader-voice preference only when a candidate clears the configured quality floor; (c) at most one genetics-led item in the regular portfolio; (d) exclusion of generic genetics from the Mind/Ideas/Voices lane; and (e) specialist experimental titles ranking below broadly useful stories of comparable underlying score.
+
 ## Real-production evidence required before final release declaration
 
 The following evidence cannot be honestly proven by static CI alone and must be observed from real production runs:

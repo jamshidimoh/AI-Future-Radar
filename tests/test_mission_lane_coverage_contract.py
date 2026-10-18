@@ -25,14 +25,14 @@ def _item(title, source, score, category, content_type="research"):
 def test_production_contract_requires_core_mission_lanes_when_candidates_exist():
     mission = yaml.safe_load((ROOT / "config/mission_policy.yaml").read_text(encoding="utf-8"))["mission"]
     selection = load_editorial_contract()
-    assert mission["ai_core_target_min"] >= 1
+    assert mission["ai_core_target_min"] >= 2
     assert mission["convergence_target"] >= 1
     assert mission["mind_future_target"] >= 1
     assert selection["max_same_mission_area"] <= 2
     assert selection["max_items_per_content_type"] >= 2
 
 
-def test_three_slot_portfolio_prefers_ai_convergence_and_mind_over_ai_only():
+def test_three_slot_portfolio_prioritizes_ai_then_mind_over_convergence():
     candidates = [
         _item("Frontier AI capability", "OpenAI", 100, "ai"),
         _item("Second frontier AI capability", "Anthropic", 99, "ai"),
@@ -53,7 +53,7 @@ def test_three_slot_portfolio_prefers_ai_convergence_and_mind_over_ai_only():
         strict_relevance=True,
     )
     areas = [item["mission_area"] for item in selected]
-    assert "ai_core" in areas
-    assert "convergence" in areas
+    assert areas.count("ai_core") == 2
     assert "mind_cognition" in areas
+    assert "convergence" not in areas
     assert len(selected) == 3

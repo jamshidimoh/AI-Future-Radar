@@ -74,7 +74,7 @@ def test_mission_diversity_is_explicit_and_canonical():
     assert contract["community_max"] == mission["community_max"]
     assert contract["ai_core_target"] == [
         mission["ai_core_target_min"], mission["ai_core_target_max"]
-    ] == [1, 2]
+    ] == [2, 2]
     assert contract["convergence_target"] == mission["convergence_target"] == 1
     assert contract["mind_future_target"] == mission["mind_future_target"] == 1
     assert contract["research_target"] == mission["research_target"] == 0

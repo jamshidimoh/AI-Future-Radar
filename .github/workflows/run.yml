@@ -302,13 +302,14 @@ jobs:
           AI_RADAR_EDITORIAL_REVIEW: 1
           RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK: ${{ steps.ollama_fallback.outputs.ready == 'true' && '1' || '0' }}
           RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b
-          RADAR_OLLAMA_TIMEOUT_SECONDS: 90
+          RADAR_OLLAMA_TIMEOUT_SECONDS: 35
+          RADAR_OLLAMA_MAX_TOKENS: 384
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
           RADAR_ENABLE_GEMINI_FALLBACK: 1
           RADAR_ENABLE_HF_FALLBACK: 1
           RADAR_MAX_LLM_ATTEMPTS: 10
           RADAR_LLM_MAX_TOKENS: 700
-          RADAR_ROUTER_BUDGET_SECONDS: 24
+          RADAR_ROUTER_BUDGET_SECONDS: 60
           OMNIROUTE_BASE_URL: http://127.0.0.1:20128
           OMNIROUTE_API_KEY: ""
           OMNIROUTE_MODEL: auto/smart
@@ -347,7 +348,8 @@ jobs:
           HF_POLICY: free-first
           RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK: ${{ steps.ollama_fallback.outputs.ready == 'true' && '1' || '0' }}
           RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b
-          RADAR_OLLAMA_TIMEOUT_SECONDS: 90
+          RADAR_OLLAMA_TIMEOUT_SECONDS: 35
+          RADAR_OLLAMA_MAX_TOKENS: 384
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
           FORCE_EDUCATION_PUBLICATION: false
         run: |

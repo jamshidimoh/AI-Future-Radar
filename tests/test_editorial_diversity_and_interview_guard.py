@@ -38,7 +38,7 @@ def test_normal_portfolio_prioritizes_ai_and_mind_over_convergence():
     assert areas.count("ai_core") == 2
     assert "mind_cognition" in areas
     assert "convergence" not in areas
-    assert len(set(areas)) == len(areas)
+    assert len(areas) == 3
 
 
 def test_verified_leader_interview_enters_protected_pool():

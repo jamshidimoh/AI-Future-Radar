@@ -32,7 +32,7 @@ def test_three_item_portfolio_is_ai_first_with_a_mind_or_future_slot():
     candidates = [
         _item("Frontier AI model release", "OpenAI", 96, "ai"),
         _item(
-            "Sam Altman interview on the future of AI agents",
+            "Sam Altman interview about AI agents and model capabilities",
             "AI Podcast",
             82,
             "ai",
@@ -106,6 +106,24 @@ def test_specialist_research_receives_a_real_selection_penalty():
     )
     assert candidate_score(broad) > candidate_score(specialist)
     assert candidate_score(specialist) <= 80
+
+
+def test_ai_future_is_preferred_over_general_convergence_when_mind_candidates_are_absent():
+    candidates = [
+        _item("Frontier AI model release", "OpenAI", 96, "ai"),
+        _item("AI reasoning capability from Anthropic", "Anthropic", 95, "ai"),
+        _item("AI future of work and next decade's labor market", "MIT Technology Review", 80, "future"),
+        _item("Robotics breakthrough in autonomous systems", "MIT CSAIL", 92, "robotics", content_type="research"),
+    ]
+    selected = select_regular_portfolio(
+        candidates, max_posts=3, max_per_source=1, max_per_type=2,
+        recent_source_counts={}, contract=load_editorial_contract(),
+        mission_aware=True, strict_relevance=True,
+    )
+    areas = [mission_area(item) for item in selected]
+    assert areas.count("ai_core") == 2
+    assert "future_governance" in areas
+    assert "convergence" not in areas
 
 
 def test_genetics_watchlist_is_not_overweighted_by_repeated_named_queries():

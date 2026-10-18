@@ -61,7 +61,7 @@ def test_named_leader_voice_is_preferred_when_within_quality_floor():
     candidates = [
         _item("Frontier AI reasoning system", "OpenAI", 100, "ai"),
         _item(
-            "Yann LeCun podcast on AI world models", "Research Podcast", 81, "ai",
+            "Yann LeCun podcast on AI world models", "Research Podcast", 83, "ai",
             content_type="podcast", interview_signal=True, leader="Yann LeCun",
         ),
         _item("Second AI model capability", "Anthropic", 98, "ai"),

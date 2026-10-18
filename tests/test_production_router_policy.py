@@ -3,8 +3,10 @@ import time
 from pathlib import Path
 
 import pytest
+import requests
 
 import src.llm_router_light as router
+import src.production_router_policy as policy
 from src.production_router_policy import apply
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,7 +19,6 @@ def _reset(monkeypatch):
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
-    import src.production_router_policy as policy
     policy._OMNIROUTE_CIRCUIT_OPEN = False
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
@@ -584,9 +585,6 @@ def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
 
 
 def test_omniroute_transport_timeout_opens_run_scoped_circuit(monkeypatch, capsys):
-    import requests
-    import src.production_router_policy as policy
-
     _reset(monkeypatch)
     monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
     calls = []

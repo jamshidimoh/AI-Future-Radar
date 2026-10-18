@@ -21,7 +21,7 @@ HEALTH_PATH = ROOT / "data" / "llm_health.json"
 # OmniRoute can stall on an unhealthy upstream. Open a process-local circuit after
 # transport timeouts so every subsequent candidate does not pay the same timeout.
 _OMNIROUTE_CIRCUIT_OPEN = False
-_PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|insufficient.*(?:credit|balance))", re.IGNORECASE)
+_PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|\\bTPD\\b|tokens?\\s+per\\s+day|requests?\\s+per\\s+day|insufficient.*(?:credit|balance))", re.IGNORECASE)
 # NaraRouter's telegram_required response is an account-level access block,
 # not a model-specific 403. Classify this exact marker as provider-wide auth so
 # production failover stops retrying NaraRouter for every candidate in the run.
@@ -397,10 +397,27 @@ def _install_production_circuit_breaker() -> None:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 break
+            if emergency_name == "LocalOllamaFree":
+                try:
+                    local_timeout = max(1.0, float(os.getenv("RADAR_OLLAMA_TIMEOUT_SECONDS", "20") or 20))
+                except (TypeError, ValueError):
+                    local_timeout = 20.0
+                emergency_limit = local_timeout + 1.0
+                # Do not start a local HTTP call unless its own timeout can fire
+                # before the production deadline; otherwise the worker future
+                # would outlive this request and accumulate in the background.
+                if remaining <= emergency_limit:
+                    print(
+                        f"[Production Circuit] skipped=ollama reason=insufficient_deadline "
+                        f"remaining={remaining:.1f}s required={emergency_limit:.1f}s",
+                        flush=True,
+                    )
+                    continue
+            else:
+                emergency_limit = 6.0
             try:
                 print(f"[Production Circuit] {emergency_name.lower()}_emergency_attempt=1", flush=True)
                 future = router._CALL_EXECUTOR.submit(emergency_fn, system_prompt, user_content)
-                emergency_limit = 18.0 if emergency_name == "LocalOllamaFree" else 6.0
                 content = future.result(timeout=max(0.5, min(emergency_limit, remaining)))
                 if content:
                     print(f"[Production Circuit] success={emergency_name} emergency=1", flush=True)

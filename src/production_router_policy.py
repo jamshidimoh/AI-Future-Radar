@@ -18,6 +18,9 @@ logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[1]
 HEALTH_PATH = ROOT / "data" / "llm_health.json"
+# OmniRoute can stall on an unhealthy upstream. Open a process-local circuit after
+# transport timeouts so every subsequent candidate does not pay the same timeout.
+_OMNIROUTE_CIRCUIT_OPEN = False
 _PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|insufficient.*(?:credit|balance))", re.IGNORECASE)
 # NaraRouter's telegram_required response is an account-level access block,
 # not a model-specific 403. Classify this exact marker as provider-wide auth so
@@ -154,15 +157,18 @@ def _omniroute_result_provider(selected: str, decision: str) -> str:
 
 
 def _omniroute_call(system_prompt, user_content):
-    """Try OmniRoute first when an operator exposes a live gateway endpoint.
+    """Try OmniRoute first, then bypass a transport-unhealthy gateway for this run.
 
-    OmniRoute is deliberately an optional primary router: if the endpoint is not
-    configured or fails, the existing registry/circuit-breaker chain remains the
-    authoritative fallback. The radar therefore never becomes dependent on a
-    single routing gateway.
+    OmniRoute is the primary selector when healthy. A transport failure opens a
+    process-local circuit so later candidates use the independent provider chain
+    rather than repeatedly waiting for a gateway that has already timed out.
     """
+    global _OMNIROUTE_CIRCUIT_OPEN
     base_url = os.getenv("OMNIROUTE_BASE_URL", "").strip().rstrip("/")
     if not base_url:
+        return None, None
+    if _OMNIROUTE_CIRCUIT_OPEN:
+        print("[OmniRoute Circuit] skipped=1 reason=prior_transport_failure; using hard fallback", flush=True)
         return None, None
     api_key = os.getenv("OMNIROUTE_API_KEY", "").strip()
     model = os.getenv("OMNIROUTE_MODEL", "auto/smart").strip() or "auto/smart"
@@ -211,6 +217,15 @@ def _omniroute_call(system_prompt, user_content):
         print(f"[OmniRoute Primary] upstream_identity={provider_label}", flush=True)
         return content, provider_label
     except Exception as exc:
+        transport_failure = isinstance(exc, (requests.Timeout, requests.ConnectionError)) or bool(
+            re.search(r"\bHTTP (?:502|503|504)\b", str(exc), re.IGNORECASE)
+        )
+        if transport_failure:
+            _OMNIROUTE_CIRCUIT_OPEN = True
+            print(
+                f"[OmniRoute Circuit] opened=1 reason={type(exc).__name__}; subsequent calls bypass gateway",
+                flush=True,
+            )
         print(
             f"[OmniRoute Primary] success=false reason={type(exc).__name__}: {exc}; falling back to production chain",
             flush=True,

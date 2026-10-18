@@ -196,7 +196,7 @@ def test_groq_tpd_quota_disables_all_sibling_models(monkeypatch):
             return type(
                 "Response",
                 (),
-                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\\"title\\":\\"ok\\"}'})()})()]},
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{"title":"ok"}'})()})()]},
             )()
 
     deployments = [

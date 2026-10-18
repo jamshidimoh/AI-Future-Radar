@@ -278,6 +278,26 @@ def test_compact_unmet_mission_coverage_is_fail_closed():
     assert "mission portfolio coverage remained unmet" in message
 
 
+def test_duplicate_recoveries_in_one_lane_do_not_satisfy_other_lane_targets():
+    from scripts.production_acceptance_guard import _mission_coverage_status
+
+    log = """
+[Production Selection] total=9
+[Mission Coverage Recovery] attempt=1 area=ai_core title=first ai-core story status=recovered
+[Mission Coverage Recovery] attempt=2 area=ai_core title=second ai-core story status=recovered
+[Mission Coverage Recovery] area=convergence status=no_candidate
+[Mission Coverage Recovery] missing_lanes=3 attempts=2 recovered=2 status=unmet
+[Production Contract] final_news=3 final_capacity=3 normal_news=3 tier0_news=0 education=not_due
+Posts sent: 3/9
+"""
+    status = _mission_coverage_status(log.splitlines())
+    assert status["recovered"] == 2
+    assert status["recovered_lane_count"] == 1
+    ok, message = validate(log)
+    assert ok is False
+    assert "mission portfolio coverage remained unmet" in message
+
+
 def test_unresolved_processing_lanes_cannot_be_masked_by_duplicate_recoveries_and_one_empty_lane():
     # Mirrors the failure shape seen in production run #1486: two successful
     # attempts were both in ai_core, while convergence and mind_cognition still

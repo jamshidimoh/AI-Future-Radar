@@ -1,33 +1,21 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 167,
-      "disabled_until": 1792394623.246,
+      "failures": 168,
+      "disabled_until": 1792395921.664,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792394623.246,
+      "disabled_until": 1792395921.664,
       "last_error": "auth",
       "last_success": 0.0
     },
     "nararouter:auto/bynara": {
-      "failures": 2,
-      "disabled_until": 1792329823.246,
+      "failures": 3,
+      "disabled_until": 1792331121.664,
       "last_error": "model",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-31b-it:free": {
-      "failures": 1,
-      "disabled_until": 1792309347.336,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1792309347.336,
-      "last_error": "rate_limit",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
@@ -45,8 +33,8 @@
   },
   "providers": {
     "gemini": {
-      "failures": 334,
-      "disabled_until": 1792394623.246,
+      "failures": 336,
+      "disabled_until": 1792395921.664,
       "last_error": "auth"
     },
     "kiraai": {
@@ -60,12 +48,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1792308223.2459798,
+  "updated_at": 1792309521.6642559,
   "version": 1,
   "telemetry": {
-    "observed_failures": 74,
-    "observed_events": 131,
-    "updated_at": 1792308223.2459798
+    "observed_failures": 5,
+    "observed_events": 23,
+    "updated_at": 1792309521.6642559
   },
   "observed_failures": 0,
   "observed_events": 0

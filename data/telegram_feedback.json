@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792309520,
+  "updated_at": 1792325952,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -18908,6 +18908,27 @@
       "why_it_matters": "نمرهٔ 77.0 در آزمون DeepSWE نشان می‌دهد که مدل بهبود قابل توجهی در دقت دارد. سرعت بالاتر و خروجی‌های کوتاه‌تر می‌توانند در برنامه‌های کاربردی واقعی مزیت رقابتی ایجاد کنند. معرفی API جستجو امکان ادغام سریع‌تر مدل با سرویس‌های جستجوی اطلاعاتی را فراهم می‌کند.",
       "link": "https://www.marktechpost.com/2026/10/17/deepseek-just-released-v4-1-flash-1017-scores-77-0-on-deepswe-opens-search-api/",
       "posted_at": 1792309402
+    },
+    "-1004482051328:2114": {
+      "chat_id": -1004482051328,
+      "message_id": 2114,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (TechRadar)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "Jensen Huang: OpenClaw کلید آینده رباتیک است، اما نیازمند کنترلهای ایمنی",
+      "summary": "Jensen Huang، مدیرعامل Nvidia، در گفتوگو با TechRadar، OpenClaw را بهعنوان عاملی کلیدی برای شکلگیری آینده رباتیک معرفی کرد. او تأکید کرد که برای بهرهمندی از این فناوری، وجود کنترلهای ایمنی ضروری است. Huang معتقد است این کنترلها امکان تحقق پتانسیلهای عظیم فناوریهایی را که Nvidia در حال ساخت آنهاست، فراهم می‌کنند. بدون این محدودیتها، مسیر پیشرفت رباتیک با چالشهای جدی مواجه خواهد شد.",
+      "why_it_matters": "این موضعگیری نشان می‌دهد که توسعه رباتیک پیشرفته بدون چارچوبهای ایمنی، ریسکهای عملیاتی و اخلاقی بالایی دارد. سازوکار اصلی این است که کنترلهای سختافزاری یا نرمافزاری، مرزهای ایمنی را تعیین می‌کنند تا از خروج رباتها از محدودههای مجاز جلوگیری شود. این رویکرد برای اعتمادسازی در بازار و پذیرش صنعتی رباتهای هوشمند حیاتی است. همچنین، این دیدگاه از سوی یک بازیگر کلیدی مانند Nvidia، می‌تواند جهتگیریهای آینده استانداردهای ایمنی در حوزه رباتیک را تحت تأثیر قرار دهد.",
+      "link": "https://news.google.com/rss/articles/CBMitwJBVV95cUxPS1V1WDRkVThLellQOG9DMXdXT1RvdXFaUnNleDBsdmh6NkV4U3lHUS1vcGRkdnBmWHlwZU1QTDlHSG51YzhuY1ZjQzhkQVBjcER1WDEzekNsY0djNjdPRVdOSVVITzA1RVZKVjBFbVpGbVhpa3NjUFhZYnFzZDNmRTF2ODRvZzJqTGdwWXdmOWEwbVFLaXRETkVxdkctcS0ycTJmM2NhODFNcW45S2w5NEZMMHprcjFFVF9EMmxpLUZvUkgzNzlBdVJNUThxTnBXUS14d2VGT3daTkVfTmlPdmRrcWlzNVdsaXJrNDlFc1pscmhuSzFRZ2ZGMEVOUFdOdnI5ZzgwdmRGdXk0UDFPVUx1TlpuX3RxYkxHcWdudENQYnhKd3dKM2JibXl6TUFVX0F1R1dwQQ?oc=5",
+      "posted_at": 1792325824
     }
   }
 }

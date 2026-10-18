@@ -123,6 +123,16 @@ def test_production_auth_failure_remains_family_scoped(monkeypatch):
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
+def test_groq_daily_tpd_quota_skips_siblings_but_model_429_does_not(monkeypatch):
+    _reset(monkeypatch)
+    assert router._provider_quota_is_family_scoped(
+        "groq", "quota", "Rate limit reached on tokens per day (TPD): Limit 200000"
+    )
+    assert not router._provider_quota_is_family_scoped(
+        "groq", "quota", "HTTP 429 model rate limit"
+    )
+
+
 def test_quota_state_from_one_request_does_not_starve_sibling_in_next_request(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")

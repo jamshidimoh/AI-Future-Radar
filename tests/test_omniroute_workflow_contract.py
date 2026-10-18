@@ -40,8 +40,10 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
 
 def test_local_ollama_fallback_has_cold_start_timeout_for_cpu_inference():
     text = WORKFLOW.read_text(encoding="utf-8")
-    assert text.count("RADAR_OLLAMA_TIMEOUT_SECONDS: 90") == 2
+    assert text.count("RADAR_OLLAMA_TIMEOUT_SECONDS: 35") == 2
+    assert text.count("RADAR_OLLAMA_MAX_TOKENS: 384") == 2
     assert "RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b" in text
+    assert "RADAR_ROUTER_BUDGET_SECONDS: 60" in text
 
 
 

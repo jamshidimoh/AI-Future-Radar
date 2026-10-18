@@ -11,6 +11,7 @@ from typing import Any
 
 import yaml
 
+from src.future_significance import is_low_future_value
 from src.information_gain import (
     editorial_novelty_score,
     information_gain_score,
@@ -577,6 +578,10 @@ def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[st
     for raw in list(candidates or []):
         item = dict(raw)
         if _is_community(item) and contract["community_max"] <= 0:
+            continue
+        # Explicit utility/tutorial content must not bypass future-value screening
+        # merely because an AI-core coverage target is still unfilled.
+        if is_low_future_value(item):
             continue
         if not is_mission_relevant(item, strict=strict_relevance):
             continue

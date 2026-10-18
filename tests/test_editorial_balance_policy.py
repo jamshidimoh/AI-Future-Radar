@@ -1,3 +1,7 @@
+from pathlib import Path
+
+import yaml
+
 from src.protected_editorial_lane import is_mind_ideas_voices_candidate
 from src.unified_editorial_selection import (
     _Portfolio,
@@ -105,9 +109,6 @@ def test_specialist_research_receives_a_real_selection_penalty():
 
 
 def test_genetics_watchlist_is_not_overweighted_by_repeated_named_queries():
-    import yaml
-    from pathlib import Path
-
     watchlist = yaml.safe_load((Path(__file__).resolve().parents[1] / "config/leader_watchlist.yaml").read_text(encoding="utf-8"))
     church_queries = [item for item in watchlist.get("google_news_queries", []) if "George Church" in str(item.get("query") or "")]
     assert len(church_queries) <= 2

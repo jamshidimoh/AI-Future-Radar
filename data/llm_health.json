@@ -1,65 +1,54 @@
 {
   "models": {
     "gemini:gemini-3.8-flash": {
-      "failures": 165,
-      "disabled_until": 1792352953.891,
+      "failures": 166,
+      "disabled_until": 1792392147.336,
       "last_error": "auth",
       "last_success": 0
     },
     "gemini:gemini": {
       "failures": 1,
-      "disabled_until": 1792352953.891,
+      "disabled_until": 1792392147.336,
       "last_error": "auth",
       "last_success": 0.0
     },
     "nararouter:auto/bynara": {
-      "failures": 14,
-      "disabled_until": 1792288153.891,
+      "failures": 1,
+      "disabled_until": 1792327347.336,
       "last_error": "model",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1792270153.891,
-      "last_error": "quota",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1792270153.891,
+      "disabled_until": 1792309347.336,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "groq:openai/gpt-oss-20b": {
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1792270153.891,
+      "disabled_until": 1792309347.336,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "gemini": {
-      "failures": 330,
-      "disabled_until": 1792352953.891,
+      "failures": 332,
+      "disabled_until": 1792392147.336,
       "last_error": "auth"
     },
     "kiraai": {
       "failures": 1,
       "disabled_until": 1792344760.505,
       "last_error": "wallet"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1792288153.891,
-      "last_error": "quota"
     }
   },
-  "updated_at": 1792266553.8907716,
+  "updated_at": 1792305747.3357668,
   "version": 1,
   "telemetry": {
-    "observed_failures": 42,
-    "observed_events": 50,
-    "updated_at": 1792266553.8907716
+    "observed_failures": 15,
+    "observed_events": 39,
+    "updated_at": 1792305747.3357668
   },
   "observed_failures": 0,
   "observed_events": 0

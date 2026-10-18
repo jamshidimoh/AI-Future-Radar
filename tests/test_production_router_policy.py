@@ -17,6 +17,8 @@ def _reset(monkeypatch):
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
+    import src.production_router_policy as policy
+    policy._OMNIROUTE_CIRCUIT_OPEN = False
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -448,6 +450,7 @@ def test_local_ollama_free_uses_no_credentials_and_json_mode(monkeypatch):
     assert payload["model"] == "qwen3:1.7b"
     assert payload["think"] is False
     assert payload["format"] == "json"
+    assert payload["options"]["num_predict"] == 384
     assert "Authorization" not in calls[0][1]["headers"]
 
 
@@ -484,7 +487,7 @@ def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
-    monkeypatch.setenv("RADAR_ROUTER_BUDGET_SECONDS", "24")
+    monkeypatch.setenv("RADAR_ROUTER_BUDGET_SECONDS", "48")
     apply()
 
     class Future:
@@ -504,7 +507,7 @@ def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"local"}'
     assert provider == "LocalOllamaFree"
-    assert observed and observed[0] <= 18.0
+    assert observed and observed[0] <= 36.0
     assert observed[0] >= 6.0
 
 
@@ -578,6 +581,26 @@ def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
 
     assert result == '{"title":"fallback"}'
     assert provider == "groq:model-a"
+
+
+def test_omniroute_transport_timeout_opens_run_scoped_circuit(monkeypatch, capsys):
+    import requests
+    import src.production_router_policy as policy
+
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
+    calls = []
+
+    def timeout_post(*_args, **_kwargs):
+        calls.append(True)
+        raise requests.Timeout("read timed out")
+
+    monkeypatch.setattr(policy.requests, "post", timeout_post)
+
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert len(calls) == 1
+    assert "subsequent calls bypass gateway" in capsys.readouterr().out
 
 
 def test_omniroute_is_inert_when_not_configured(monkeypatch):

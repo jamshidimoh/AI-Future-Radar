@@ -662,6 +662,58 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             break
         p.add(candidate, "mission_target:ai_core")
 
+    # A second AI-core item is preferred when it remains competitive with the best
+    # Mind, Future or Convergence alternative. This keeps AI central without forcing
+    # a weak model announcement/tutorial into the portfolio or sacrificing quality.
+    ai_target_max = min(max(0, int(p.contract.get("ai_core_target_max", 1))), p.limit)
+    while len(p.selected) < p.limit and p.area_counts.get("ai_core", 0) < ai_target_max:
+        candidates = [
+            item for item in ordered
+            if mission_area(item) == "ai_core"
+            and id(item) not in p.selected_ids
+            and p.admissible(item, repeat_source=False)
+        ]
+        if not candidates:
+            candidates = [
+                item for item in ordered
+                if mission_area(item) == "ai_core"
+                and id(item) not in p.selected_ids
+                and p.admissible(item, repeat_source=False, ignore_type_cap=True)
+            ]
+        if not candidates:
+            candidates = [
+                item for item in ordered
+                if mission_area(item) == "ai_core"
+                and id(item) not in p.selected_ids
+                and p.admissible(item, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)
+            ]
+        candidate = _best_ai_target_candidate(candidates, p.contract)
+        if candidate is None:
+            break
+        alternatives = [
+            item for item in ordered
+            if mission_area(item) in {"mind_cognition", "future_governance", "convergence"}
+            and id(item) not in p.selected_ids
+            and p.admissible(item, repeat_source=False)
+            and candidate_score(item) > 0.0
+        ]
+        if not alternatives:
+            alternatives = [
+                item for item in ordered
+                if mission_area(item) in {"mind_cognition", "future_governance", "convergence"}
+                and id(item) not in p.selected_ids
+                and p.admissible(item, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)
+                and candidate_score(item) > 0.0
+            ]
+        best_alternative = max((candidate_score(item) for item in alternatives), default=0.0)
+        floor = max(
+            0.0,
+            min(1.0, float(p.contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82)),
+        )
+        if best_alternative > 0.0 and candidate_score(candidate) < best_alternative * floor:
+            break
+        p.add(candidate, "mission_target:ai_core_secondary")
+
     if p.contract.get("mind_cognition_target", 0) > 0:
         # Mission priority: Mind/Cognition first, then AI Futures, and only then Convergence.
         targets = (

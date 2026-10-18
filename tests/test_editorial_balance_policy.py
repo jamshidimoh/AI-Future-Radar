@@ -54,9 +54,9 @@ def test_three_item_portfolio_is_ai_first_with_a_mind_or_future_slot():
     )
     areas = [mission_area(item) for item in selected]
     assert len(selected) == 3
-    assert areas.count("ai_core") == 1
+    assert areas.count("ai_core") == 2
     assert "mind_cognition" in areas
-    assert "future_governance" in areas
+    assert "future_governance" not in areas
     assert "convergence" not in areas
     assert any(item.get("leader") == "Sam Altman" for item in selected)
 

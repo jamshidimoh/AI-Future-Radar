@@ -164,8 +164,17 @@ def _mission_coverage_status(lines):
         and any(status in {"failed", "provider_unavailable", "hard_failure", "independent_lane_not_score_gated"} for status in statuses)
     }
     explicit_empty_lanes = explicit_no_candidate - set(attempts_by_lane)
+    recovered_lanes = {
+        area for area, statuses in attempts_by_lane.items()
+        if "recovered" in statuses
+    }
     result["no_candidate_lanes"] = len(explicit_empty_lanes | eligible_floor_only)
     result["nonpublishable_lanes"] = len(unresolved_processing_lanes)
+    # The compact summary's recovered field counts successful attempts, not
+    # distinct lanes. When the log has per-attempt lane evidence, coverage math
+    # must use distinct recovered lanes so duplicate candidates in ai_core cannot
+    # compensate for a missing convergence or mind/cognition lane.
+    result["recovered_lane_count"] = len(recovered_lanes) if attempts_by_lane else result["recovered"]
     result["hard_failures"] = _mission_recovery_hard_failures(lines)
     return result
 
@@ -293,7 +302,8 @@ def validate(log_text: str) -> tuple[bool, str]:
 
     
     if mission_coverage and mission_coverage["status"] == "unmet":
-        accounted = mission_coverage["recovered"] + mission_coverage["prepared"]
+        recovered_for_coverage = mission_coverage.get("recovered_lane_count", mission_coverage["recovered"])
+        accounted = recovered_for_coverage + mission_coverage["prepared"]
         gap = max(0, mission_coverage["target"] - accounted)
         no_candidate = mission_coverage.get("no_candidate_lanes", 0)
         hard_failures = mission_coverage.get("hard_failures", 0)
@@ -322,8 +332,12 @@ def validate(log_text: str) -> tuple[bool, str]:
             "production contract violation: mission portfolio coverage remained unmet; "
             f"target={mission_coverage['target']}, prepared={mission_coverage['prepared']}, attempts={mission_coverage['attempts']}, recovered={mission_coverage['recovered']}, no_candidate_lanes={no_candidate}, nonpublishable_lanes={mission_coverage.get('nonpublishable_lanes', 0)}, hard_failures={hard_failures}"
         )
-    if mission_coverage and mission_coverage["recovered"] + mission_coverage["prepared"] < mission_coverage["target"]:
-        gap = mission_coverage["target"] - (mission_coverage["recovered"] + mission_coverage["prepared"])
+    recovered_for_coverage = (
+        mission_coverage.get("recovered_lane_count", mission_coverage["recovered"])
+        if mission_coverage else 0
+    )
+    if mission_coverage and recovered_for_coverage + mission_coverage["prepared"] < mission_coverage["target"]:
+        gap = mission_coverage["target"] - (recovered_for_coverage + mission_coverage["prepared"])
         no_candidate = mission_coverage.get("no_candidate_lanes", 0)
         nonpublishable_lanes = mission_coverage.get("nonpublishable_lanes", 0)
         hard_failures = mission_coverage.get("hard_failures", 0)

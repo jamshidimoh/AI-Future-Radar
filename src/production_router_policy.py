@@ -21,7 +21,7 @@ HEALTH_PATH = ROOT / "data" / "llm_health.json"
 # OmniRoute can stall on an unhealthy upstream. Open a process-local circuit after
 # transport timeouts so every subsequent candidate does not pay the same timeout.
 _OMNIROUTE_CIRCUIT_OPEN = False
-_PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|\\bTPD\\b|tokens?\\s+per\\s+day|requests?\\s+per\\s+day|insufficient.*(?:credit|balance))", re.IGNORECASE)
+_PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|insufficient.*(?:credit|balance))", re.IGNORECASE)
 # NaraRouter's telegram_required response is an account-level access block,
 # not a model-specific 403. Classify this exact marker as provider-wide auth so
 # production failover stops retrying NaraRouter for every candidate in the run.

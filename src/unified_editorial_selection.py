@@ -68,6 +68,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),
         "max_genetics_per_run": max(0, int(selection_cfg.get("max_genetics_per_run", 1))),
+        "genetics_diversity_penalty": max(0.0, min(30.0, float(selection_cfg.get("genetics_diversity_penalty", 15.0) or 15.0))),
         "preferred_max_same_source": int(mission.get("max_same_source", 1) or 1),
         "hard_max_same_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "min_unique_sources": int(mission.get("min_unique_sources", 3) or 3),
@@ -287,7 +288,7 @@ _SPECIALIST_RESEARCH_MARKERS = (
     "differential expression", "variant calling", "spatial transcriptomics",
     "intracellular", "in silico", "gene expression", "pharmacokinetic",
 )
-_GENETICS_CATEGORY_LABELS = {"bio", "genetics", "genetic", "genomics", "genomic"}
+_GENETICS_CATEGORY_LABELS = {"genetics", "genetic", "genomics", "genomic"}
 _GENETICS_TITLE_RE = re.compile(
     r"\b(?:genetic|genetics|genomic|genomics|genome|genomes|crispr|gene editing|synthetic biology|protein engineering)\b",
     re.IGNORECASE,
@@ -335,6 +336,15 @@ def _is_genetics_heavy(item: dict[str, Any]) -> bool:
         return True
     text = " ".join(str(item.get(key) or "") for key in ("title", "summary", "description", "tags", "keywords"))
     return len(set(match.casefold() for match in _GENETICS_EVIDENCE_RE.findall(text))) >= 2
+
+
+@lru_cache(maxsize=1)
+def _genetics_diversity_penalty_cap() -> float:
+    selection_cfg = _load_yaml(SELECTION_PATH).get("selection", {}) or {}
+    try:
+        return max(0.0, min(30.0, float(selection_cfg.get("genetics_diversity_penalty", 15.0) or 15.0)))
+    except (TypeError, ValueError):
+        return 15.0
 
 
 def _is_verified_leader_voice(item: dict[str, Any]) -> bool:
@@ -385,7 +395,8 @@ def candidate_score(item: dict[str, Any]) -> float:
             break
     if not score:
         return 0.0
-    return round(score - _technical_depth_penalty(item), 2)
+    genetics_penalty = _genetics_diversity_penalty_cap() if _is_genetics_heavy(item) else 0.0
+    return round(score - _technical_depth_penalty(item) - genetics_penalty, 2)
 
 
 def _published_age_hours(item: dict[str, Any]) -> float | None:
@@ -726,6 +737,22 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             )
             if top_global > 0.0 and candidate_score(candidate) < top_global * floor:
                 break
+
+            # A weak AI-futures commentary should not displace a materially stronger
+            # convergence story. Conversely, strong future signals are preferred
+            # over ordinary Convergence when they clear the same quality ratio.
+            if target_key == "mind_future_target" and mission_area(candidate) == "future_governance":
+                convergence_scores = [
+                    candidate_score(item)
+                    for item in ordered
+                    if mission_area(item) == "convergence"
+                    and id(item) not in p.selected_ids
+                    and p.admissible(item, repeat_source=False)
+                    and candidate_score(item) > 0.0
+                ]
+                best_convergence = max(convergence_scores, default=0.0)
+                if best_convergence > 0.0 and candidate_score(candidate) < best_convergence * floor:
+                    break
 
             candidate_area = mission_area(candidate)
             if candidate_area == "mind_cognition":

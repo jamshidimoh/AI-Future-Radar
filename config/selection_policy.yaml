@@ -4,6 +4,7 @@ selection:
   candidate_window: 6
   # Genetics is useful as a convergence signal, but cannot dominate three-slot output.
   max_genetics_per_run: 1
+  genetics_diversity_penalty: 15
   max_items_per_source: 2
   max_items_per_content_type: 2
   story_similarity_threshold: 0.45

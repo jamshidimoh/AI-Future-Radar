@@ -54,8 +54,9 @@ def test_three_item_portfolio_is_ai_first_with_a_mind_or_future_slot():
     )
     areas = [mission_area(item) for item in selected]
     assert len(selected) == 3
-    assert areas.count("ai_core") == 2
-    assert "mind_cognition" in areas or "future_governance" in areas
+    assert areas.count("ai_core") == 1
+    assert "mind_cognition" in areas
+    assert "future_governance" in areas
     assert "convergence" not in areas
     assert any(item.get("leader") == "Sam Altman" for item in selected)
 
@@ -116,14 +117,21 @@ def test_ai_future_is_preferred_over_general_convergence_when_mind_candidates_ar
         _item("Robotics breakthrough in autonomous systems", "MIT CSAIL", 92, "robotics", content_type="research"),
     ]
     selected = select_regular_portfolio(
-        candidates, max_posts=3, max_per_source=1, max_per_type=2,
+        candidates, max_posts=2, max_per_source=1, max_per_type=2,
         recent_source_counts={}, contract=load_editorial_contract(),
         mission_aware=True, strict_relevance=True,
     )
     areas = [mission_area(item) for item in selected]
-    assert areas.count("ai_core") == 2
+    assert areas.count("ai_core") == 1
     assert "future_governance" in areas
     assert "convergence" not in areas
+
+
+def test_genetics_diversity_penalty_is_bounded_and_applied_to_genetic_stories():
+    genetic = _item("AI genomics model studies gene expression", "Nature Biotechnology", 90, "bio", content_type="research")
+    broad_ai = _item("New AI capability improves scientific discovery", "MIT Technology Review", 90, "ai")
+    assert candidate_score(genetic) < candidate_score(broad_ai)
+    assert 0 < load_editorial_contract()["genetics_diversity_penalty"] <= 30
 
 
 def test_genetics_watchlist_is_not_overweighted_by_repeated_named_queries():

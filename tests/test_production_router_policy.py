@@ -3,8 +3,10 @@ import time
 from pathlib import Path
 
 import pytest
+import requests
 
 import src.llm_router_light as router
+import src.production_router_policy as policy
 from src.production_router_policy import apply
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,6 +19,7 @@ def _reset(monkeypatch):
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
+    policy._OMNIROUTE_CIRCUIT_OPEN = False
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -120,6 +123,16 @@ def test_production_auth_failure_remains_family_scoped(monkeypatch):
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
+def test_groq_daily_tpd_quota_skips_siblings_but_model_429_does_not(monkeypatch):
+    _reset(monkeypatch)
+    assert router._provider_quota_is_family_scoped(
+        "groq", "quota", "Rate limit reached on tokens per day (TPD): Limit 200000"
+    )
+    assert not router._provider_quota_is_family_scoped(
+        "groq", "quota", "HTTP 429 model rate limit"
+    )
+
+
 def test_quota_state_from_one_request_does_not_starve_sibling_in_next_request(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
@@ -172,6 +185,44 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
     assert provider == "groq:model-c"
     assert calls == ["radar-production-1", "radar-production-3"]
     assert "openrouter" in router._DISABLED_FAMILIES
+
+
+def test_groq_tpd_quota_disables_all_sibling_models(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
+    apply()
+    calls = []
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            calls.append(model)
+            if model == "radar-production-1":
+                raise RuntimeError(
+                    "Groq RateLimitError: Rate limit reached on tokens per day (TPD): "
+                    "Limit 200000, Used 199542, Requested 1980"
+                )
+            return type(
+                "Response",
+                (),
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{"title":"ok"}'})()})()]},
+            )()
+
+    deployments = [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "groq:model-b"}},
+        {"model_name": "radar-production-3", "model_info": {"id": "openrouter:model-c"}},
+    ]
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+
+    result, provider = router._call_litellm("system", "user")
+
+    assert result == '{"title":"ok"}'
+    assert provider == "openrouter:model-c"
+    assert calls == ["radar-production-1", "radar-production-3"]
+    assert "groq" in router._DISABLED_FAMILIES
 
 
 def test_production_model_429_does_not_disable_provider(monkeypatch):
@@ -448,6 +499,7 @@ def test_local_ollama_free_uses_no_credentials_and_json_mode(monkeypatch):
     assert payload["model"] == "qwen3:1.7b"
     assert payload["think"] is False
     assert payload["format"] == "json"
+    assert payload["options"]["num_predict"] == 384
     assert "Authorization" not in calls[0][1]["headers"]
 
 
@@ -484,7 +536,7 @@ def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
-    monkeypatch.setenv("RADAR_ROUTER_BUDGET_SECONDS", "24")
+    monkeypatch.setenv("RADAR_ROUTER_BUDGET_SECONDS", "48")
     apply()
 
     class Future:
@@ -504,7 +556,7 @@ def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"local"}'
     assert provider == "LocalOllamaFree"
-    assert observed and observed[0] <= 18.0
+    assert observed and observed[0] <= 36.0
     assert observed[0] >= 6.0
 
 
@@ -578,6 +630,23 @@ def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
 
     assert result == '{"title":"fallback"}'
     assert provider == "groq:model-a"
+
+
+def test_omniroute_transport_timeout_opens_run_scoped_circuit(monkeypatch, capsys):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
+    calls = []
+
+    def timeout_post(*_args, **_kwargs):
+        calls.append(True)
+        raise requests.Timeout("read timed out")
+
+    monkeypatch.setattr(policy.requests, "post", timeout_post)
+
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert len(calls) == 1
+    assert "subsequent calls bypass gateway" in capsys.readouterr().out
 
 
 def test_omniroute_is_inert_when_not_configured(monkeypatch):

@@ -5,6 +5,7 @@ import logging
 import re
 from collections.abc import Iterable
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -25,7 +26,10 @@ MISSION_PATH = ROOT / "config" / "mission_policy.yaml"
 SELECTION_PATH = ROOT / "config" / "selection_policy.yaml"
 _AREA_MAP = {"ai": "ai_core", "ai_core": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "future": "future_governance", "future_governance": "future_governance", "mind": "mind_cognition", "mind_cognition": "mind_cognition", "convergence": "convergence"}
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
-_INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
+_INTERVIEW_TYPES = {
+    "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a",
+    "opinion", "statement", "remarks", "direct_quote", "quote", "keynote",
+}
 _COMMUNITY_MARKERS = ("reddit", "community", "aggregator", "techmeme")
 _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
 _MIND_COGNITION_EVIDENCE_TERMS = (
@@ -62,6 +66,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "replacement_buffer": int(selection_cfg.get("replacement_buffer", 2) or 2),
         "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),
+        "max_genetics_per_run": max(0, int(selection_cfg.get("max_genetics_per_run", 1))),
         "preferred_max_same_source": int(mission.get("max_same_source", 1) or 1),
         "hard_max_same_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "min_unique_sources": int(mission.get("min_unique_sources", 3) or 3),
@@ -273,18 +278,113 @@ def _is_community(item: dict[str, Any]) -> bool:
     return any(m in value for m in _COMMUNITY_MARKERS)
 
 
+_SPECIALIST_RESEARCH_MARKERS = (
+    "intramural", "epicardial", "optical mapping", "cell-free translation",
+    "gene representation learning", "ontology for gene", "single-cell", "single cell",
+    "transcriptomic", "epigenomic", "proteomic", "multi-omics", "allele-specific",
+    "heteroscedastic", "finite element", "molecular dynamics", "electrophysiology",
+    "differential expression", "variant calling", "spatial transcriptomics",
+    "intracellular", "in silico", "gene expression", "pharmacokinetic",
+)
+_GENETICS_CATEGORY_LABELS = {"bio", "genetics", "genetic", "genomics", "genomic"}
+_GENETICS_TITLE_RE = re.compile(
+    r"\b(?:genetic|genetics|genomic|genomics|genome|genomes|crispr|gene editing|synthetic biology|protein engineering)\b",
+    re.IGNORECASE,
+)
+_GENETICS_EVIDENCE_RE = re.compile(
+    r"\b(?:genetic|genetics|genomic|genomics|genome|genomes|crispr|gene editing|gene expression|"
+    r"synthetic biology|protein engineering|dna|rna|transcriptomic|epigenetic|multi-omics)\b",
+    re.IGNORECASE,
+)
+
+
+@lru_cache(maxsize=1)
+def _technical_depth_penalty_cap() -> float:
+    editorial = _load_yaml(SELECTION_PATH).get("editorial", {}) or {}
+    try:
+        return max(0.0, min(15.0, float(editorial.get("technical_depth_penalty", 10.0) or 10.0)))
+    except (TypeError, ValueError):
+        return 10.0
+
+
+def _technical_depth_penalty(item: dict[str, Any]) -> float:
+    """Down-rank research dominated by niche experimental jargon, not broad AI explainers."""
+    if content_type_key(item) not in _RESEARCH_TYPES and not item.get("research_signal"):
+        return 0.0
+    title = str(item.get("title") or "").casefold()
+    text = " ".join(str(item.get(key) or "") for key in ("title", "summary", "description")).casefold()
+    hits = sum(1 for marker in _SPECIALIST_RESEARCH_MARKERS if marker in text)
+    if hits == 0:
+        return 0.0
+    penalty = hits * 3.0
+    if len(title) >= 95:
+        penalty += 2.0
+    if len(title) >= 125:
+        penalty += 2.0
+    return min(_technical_depth_penalty_cap(), penalty)
+
+
+def _is_genetics_heavy(item: dict[str, Any]) -> bool:
+    """Identify genetics-led output without treating every cross-domain AI story as genetic."""
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _GENETICS_CATEGORY_LABELS:
+        return True
+    title = str(item.get("title") or "")
+    if _GENETICS_TITLE_RE.search(title):
+        return True
+    text = " ".join(str(item.get(key) or "") for key in ("title", "summary", "description", "tags", "keywords"))
+    return len(set(match.casefold() for match in _GENETICS_EVIDENCE_RE.findall(text))) >= 2
+
+
+def _is_verified_leader_voice(item: dict[str, Any]) -> bool:
+    """Recognize a named expert's interview, podcast, opinion, or attributable statement."""
+    voice_format = (
+        content_type_key(item) in _INTERVIEW_TYPES
+        or bool(item.get("interview_signal"))
+        or bool(item.get("leader_statement_signal"))
+        or bool(item.get("direct_quote"))
+        or bool(item.get("quote_signal"))
+        or bool(item.get("opinion_signal"))
+    )
+    if not voice_format:
+        return False
+    named_voice = any(
+        str(item.get(key) or "").strip()
+        for key in ("leader", "watch_person", "speaker", "guest", "interviewee", "expert_name", "person_name")
+    )
+    return named_voice or any(
+        bool(item.get(key))
+        for key in ("priority_person_interview", "priority_person_signal", "is_leader_watch", "leader_watch_protected")
+    )
+
+
+def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[str, Any]) -> dict[str, Any] | None:
+    if not candidates:
+        return None
+    top_score = max(candidate_score(item) for item in candidates)
+    floor = max(0.0, min(1.0, float(contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82)))
+    leader_voices = [
+        item for item in candidates
+        if _is_verified_leader_voice(item) and candidate_score(item) >= top_score * floor
+    ]
+    pool = leader_voices or candidates
+    return max(pool, key=lambda item: (candidate_score(item), _safe_float(item, "evidence_strength")), default=None)
+
+
 def candidate_score(item: dict[str, Any]) -> float:
-    # Special editorial lanes supply a common arbitration score explicitly.
-    # Prefer it whenever present so lane scoring cannot be accidentally replaced
-    # by a stale normal-news score.
+    """Selection-only score. Stored/source scores are not mutated by editorial balancing."""
+    score = 0.0
     for key in ("_portfolio_selection_score", "final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
         except (TypeError, ValueError):
             value = 0.0
         if value:
-            return value
-    return 0.0
+            score = value
+            break
+    if not score:
+        return 0.0
+    return round(score - _technical_depth_penalty(item), 2)
 
 
 def _published_age_hours(item: dict[str, Any]) -> float | None:
@@ -395,6 +495,11 @@ class _Portfolio:
 
     def admissible(self, item: dict[str, Any], *, repeat_source: bool, ignore_type_cap: bool = False, ignore_window_cap: bool = False) -> bool:
         source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
+        if _is_genetics_heavy(item):
+            genetics_limit = max(0, int(self.contract.get("max_genetics_per_run", 1)))
+            genetics_selected = sum(1 for selected_item in self.selected if _is_genetics_heavy(selected_item))
+            if genetics_selected >= genetics_limit:
+                return False
         if not ignore_type_cap and self.type_counts.get(ctype, 0) >= self.type_cap:
             return False
         if self.mission_aware and _is_interview(item) and self.interview_count >= self.contract["interview_target_max"] > 0:
@@ -534,24 +639,26 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         if not candidates:
             candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
         if not candidates:
-            # ai_core is normally the deepest candidate pool; only reach past the
-            # rotation window cap here if nothing else qualifies at all.
+            # Relax the rolling-window cap only as a last resort.
             candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)]
-        candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+        candidate = _best_ai_target_candidate(candidates, p.contract)
         if candidate is None:
             break
         p.add(candidate, "mission_target:ai_core")
 
     if p.contract.get("mind_cognition_target", 0) > 0:
+        # Mission priority: Mind/Cognition first, then AI Futures, and only then Convergence.
         targets = (
-            ("convergence_target", lambda x: mission_area(x) == "convergence"),
             ("mind_cognition_target", lambda x: mission_area(x) == "mind_cognition"),
+            ("mind_future_target", lambda x: mission_area(x) == "future_governance"),
+            ("convergence_target", lambda x: mission_area(x) == "convergence"),
             ("research_target", _is_research),
         )
     else:
+        # Compatibility path when the distinct Mind target is disabled.
         targets = (
-            ("convergence_target", lambda x: mission_area(x) == "convergence"),
             ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
+            ("convergence_target", lambda x: mission_area(x) == "convergence"),
             ("research_target", _is_research),
         )
 

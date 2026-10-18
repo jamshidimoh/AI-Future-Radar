@@ -1,6 +1,44 @@
 import json
 
-from src.summarize import _language_ok, _repair_persian_draft, _repair_persian_fields
+from src.summarize import _language_ok, _normalize, _repair_persian_draft, _repair_persian_fields
+
+
+def test_normalize_discards_untrusted_metadata_from_llm_payload():
+    source_item = {
+        "title": "مواد جدید برای محاسبات کوانتومی",
+        "category": "quantum",
+        "mission_area": "convergence",
+        "source": "MIT News",
+        "link": "https://news.mit.edu/example",
+    }
+    model_payload = {
+        "title": "مواد جدید برای محاسبات کوانتومی",
+        "summary": "پژوهشگران روش تازه‌ای برای کنترل حالت‌های کوانتومی بررسی کرده‌اند.",
+        "why_it_matters": "این نتیجه می‌تواند توسعه سخت‌افزارهای کوانتومی را پشتیبانی کند.",
+        "speakers": "",
+        "key_quote": "",
+        "category": "ai",
+        "mission_area": "ai_core",
+        "source": "Untrusted source",
+        "link": "https://attacker.invalid/replacement",
+        "editorial_score": 100.0,
+        "_publication_blocked": False,
+    }
+
+    normalized = _normalize(model_payload, source_item)
+
+    assert set(normalized) == {
+        "title",
+        "summary",
+        "why_it_matters",
+        "speakers",
+        "key_quote",
+        "category",
+    }
+    assert normalized["category"] == "quantum"
+    assert source_item["mission_area"] == "convergence"
+    assert source_item["source"] == "MIT News"
+    assert source_item["link"] == "https://news.mit.edu/example"
 
 
 def test_language_gate_allows_persian_title_with_official_latin_name():

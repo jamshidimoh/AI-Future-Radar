@@ -177,6 +177,44 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
+def test_groq_tpd_quota_disables_all_sibling_models(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
+    apply()
+    calls = []
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            calls.append(model)
+            if model == "radar-production-1":
+                raise RuntimeError(
+                    "Groq RateLimitError: Rate limit reached on tokens per day (TPD): "
+                    "Limit 200000, Used 199542, Requested 1980"
+                )
+            return type(
+                "Response",
+                (),
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\\"title\\":\\"ok\\"}'})()})()]},
+            )()
+
+    deployments = [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "groq:model-b"}},
+        {"model_name": "radar-production-3", "model_info": {"id": "openrouter:model-c"}},
+    ]
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+
+    result, provider = router._call_litellm("system", "user")
+
+    assert result == '{"title":"ok"}'
+    assert provider == "openrouter:model-c"
+    assert calls == ["radar-production-1", "radar-production-3"]
+    assert "groq" in router._DISABLED_FAMILIES
+
+
 def test_production_model_429_does_not_disable_provider(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")

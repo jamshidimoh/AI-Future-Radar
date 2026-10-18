@@ -116,9 +116,12 @@ def test_ai_future_is_preferred_over_general_convergence_when_mind_candidates_ar
         _item("AI future of work and next decade's labor market", "MIT Technology Review", 80, "future"),
         _item("Robotics breakthrough in autonomous systems", "MIT CSAIL", 92, "robotics", content_type="research"),
     ]
+    contract = load_editorial_contract()
+    # Isolate the secondary-lane arbitration: the second AI slot is disabled in this test.
+    contract["ai_core_target_max"] = 1
     selected = select_regular_portfolio(
         candidates, max_posts=2, max_per_source=1, max_per_type=2,
-        recent_source_counts={}, contract=load_editorial_contract(),
+        recent_source_counts={}, contract=contract,
         mission_aware=True, strict_relevance=True,
     )
     areas = [mission_area(item) for item in selected]

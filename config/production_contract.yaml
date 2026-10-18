@@ -31,7 +31,7 @@ mission:
   max_same_mission_area_per_run: 2
   min_authoritative_items: 2
   community_max: 0
-  ai_core_target: [1, 2]
+  ai_core_target: [2, 2]
   convergence_target: 1
   mind_cognition_target: 1
   mind_future_target: 1
@@ -47,6 +47,12 @@ selection:
   special_lanes_are_candidate_roles: true
   protected_leader_consumes_final_slot: true
   historical_source_usage_is_hard_exclusion: false
+  editorial_balance:
+    ai_core_target: 2
+    max_genetics_per_run: 1
+    prefer_verified_ai_leader_voice: true
+    secondary_area_priority: [mind_cognition, future_governance, convergence]
+    technical_depth_penalty: 10
 
 quality:
   language_gate: src/editorial_quality_policy.py

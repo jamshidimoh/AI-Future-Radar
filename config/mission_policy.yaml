@@ -1,6 +1,8 @@
 # AI Future Radar — mission-driven editorial portfolio
 # The channel is a radar, not a generic AI news feed.
 # Every run should maximize: frontier relevance + evidence + strategic importance + diversity.
+# Editorial balance: target two AI-core stories in the three-item normal portfolio.
+# The remaining slot prioritizes Mind/Cognition and AI Futures; Convergence is a fallback.
 # Cross-cutting runtime invariants are declared in config/production_contract.yaml.
 
 mission:
@@ -11,7 +13,7 @@ mission:
   max_same_mission_area: 2
   min_authoritative_items: 2
   stale_hours: 72
-  ai_core_target_min: 1
+  ai_core_target_min: 2
   ai_core_target_max: 2
   convergence_target: 1
   mind_cognition_target: 1

@@ -304,9 +304,18 @@ def _provider_quota_is_family_scoped(family: str, reason: str, message: str) -> 
         and re.search(r"no zero-price.{0,100}(?:model|available)|no .{0,60}zero-price.{0,100}available", message, re.I)
     ):
         return True
+    if reason != "quota":
+        return False
+    # Groq's daily token cap is shared by sibling models even when the API
+    # reports it as HTTP 429. Keep ordinary per-model 429s model-scoped.
+    if family == "groq":
+        return re.search(
+            r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|daily.{0,20}(?:quota|limit)|quota.{0,20}(?:daily|per day)",
+            message,
+            re.I,
+        ) is not None
     return (
-        reason == "quota"
-        and family in {"openrouter", "nararouter", "kiraai"}
+        family in {"openrouter", "nararouter", "kiraai"}
         and re.search(r"\b402\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd", message, re.I) is not None
     )
 

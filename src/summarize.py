@@ -216,9 +216,16 @@ def _source_text(item, max_chars=3500):
     return "\n\n".join(parts)[:max_chars]
 
 
+_SUMMARY_OUTPUT_FIELDS = ("title", "summary", "why_it_matters", "speakers", "key_quote", "category")
+
+
 def _normalize(data, item):
     if not isinstance(data, dict):
         raise TypeError("summary must be an object")
+    # LLM output is untrusted. Keep only editorial payload fields so unexpected
+    # keys (e.g. mission_area, source, URL, score, or lane flags) cannot mutate
+    # the original discovery record when callers merge the summary into it.
+    data = {key: data.get(key, "") for key in _SUMMARY_OUTPUT_FIELDS}
     data["category"] = item.get("category", "ai")
     data["title"] = normalize_news_editorial_text(str(data.get("title", item.get("title", "")))[:160].strip())
     data["summary"] = normalize_news_editorial_text(str(data.get("summary", "")).strip())

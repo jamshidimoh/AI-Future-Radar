@@ -108,6 +108,11 @@ def _ollama_local(system_prompt, user_content):
     model = (os.getenv("RADAR_OLLAMA_FREE_MODEL") or OLLAMA_FREE_DEFAULT_MODEL).strip()
     if model not in OLLAMA_FREE_MODELS:
         raise QuotaExceeded(f"OllamaLocal rejected non-audited model={model}")
+    try:
+        max_tokens = int(os.getenv("RADAR_OLLAMA_MAX_TOKENS", "384") or 384)
+    except (TypeError, ValueError):
+        max_tokens = 384
+    max_tokens = max(128, min(600, max_tokens))
     payload = {
         "model": model,
         "messages": [
@@ -117,7 +122,9 @@ def _ollama_local(system_prompt, user_content):
         "stream": False,
         "think": False,
         "format": "json",
-        "options": {"temperature": 0.10},
+        # Keep the emergency local model concise enough to finish within the
+        # bounded production fallback deadline while returning the JSON contract.
+        "options": {"temperature": 0.10, "num_predict": max_tokens},
     }
     try:
         response = requests.post(

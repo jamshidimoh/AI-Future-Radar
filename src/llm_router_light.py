@@ -46,7 +46,12 @@ def _provider_family(name: str) -> str:
     return str(name or "").split(":", 1)[0].strip().casefold()
 
 def _provider_credential_available(name: str) -> bool:
-    env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","gemini":"GEMINI_API_KEY","huggingface":"HF_TOKEN"}.get(_provider_family(name))
+    family = _provider_family(name)
+    # Local Ollama is an explicitly opt-in, zero-credential fallback. Treating
+    # it like a hosted API provider silently skipped mission-recovery attempts.
+    if family in {"ollama", "ollamalocal", "localollama"}:
+        return os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}
+    env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","gemini":"GEMINI_API_KEY","huggingface":"HF_TOKEN"}.get(family)
     return bool(os.getenv(env)) if env else False
 
 def _extract_message(payload: dict):

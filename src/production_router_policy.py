@@ -217,7 +217,7 @@ def _omniroute_call(system_prompt, user_content):
         print(f"[OmniRoute Primary] upstream_identity={provider_label}", flush=True)
         return content, provider_label
     except Exception as exc:
-        transport_failure = isinstance(exc, (requests.Timeout, requests.ConnectionError)) or bool(
+        transport_failure = isinstance(exc, requests.Timeout | requests.ConnectionError) or bool(
             re.search(r"\bHTTP (?:502|503|504)\b", str(exc), re.IGNORECASE)
         )
         if transport_failure:

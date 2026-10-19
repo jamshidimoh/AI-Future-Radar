@@ -84,7 +84,7 @@ jobs:
             echo "[OmniRoute] source checkout failed; production router will use its hard fallback"
           elif ! (cd "$OMNIROUTE_DIR" && test "$(git rev-parse HEAD)" = "$OMNIROUTE_COMMIT"); then
             echo "[OmniRoute] source revision did not match the pinned release commit; production router will use its hard fallback"
-          elif ! (cd "$OMNIROUTE_DIR" && HUSKY=0 timeout 420s npm ci --no-audit --no-fund --prefer-offline --no-progress); then
+          elif ! (cd "$OMNIROUTE_DIR" && HUSKY=0 timeout 420s npm ci --include=dev --no-audit --no-fund --prefer-offline --no-progress); then
             echo "[OmniRoute] lockfile installation timed out or failed; production router will use its hard fallback"
           else
             mkdir -p "$OMNIROUTE_BIN_DIR"

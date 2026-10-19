@@ -411,13 +411,13 @@ def _secondary_ai_competition_key(item: dict[str, Any], p: _Portfolio) -> tuple:
     )
 
 
-def _has_pending_non_ai_target(
+def _pending_non_ai_target_lane(
     p: _Portfolio,
     ordered: list[dict[str, Any]],
     *,
     after_candidate: dict[str, Any] | None = None,
-) -> bool:
-    """Whether a mission target remains selectable before/after an optional AI slot."""
+) -> str | None:
+    """Return the highest-priority mission lane that still has a viable target."""
     candidate_source = source_key(after_candidate) if after_candidate is not None else None
     candidate_exhausts_interview_slot = bool(
         after_candidate is not None
@@ -443,25 +443,34 @@ def _has_pending_non_ai_target(
             for item in ordered
         )
 
-    mind_enabled = int(p.contract.get("mind_cognition_target", 0) or 0) > 0
-    if mind_enabled:
-        if p.area_counts.get("mind_cognition", 0) < int(p.contract.get("mind_cognition_target", 0) or 0) and available(lambda x: mission_area(x) == "mind_cognition"):
-            return True
-        if p.area_counts.get("future_governance", 0) < int(p.contract.get("mind_future_target", 0) or 0) and available(lambda x: mission_area(x) == "future_governance"):
-            return True
+    mind_target = int(p.contract.get("mind_cognition_target", 0) or 0)
+    future_target = int(p.contract.get("mind_future_target", 0) or 0)
+    convergence_target = int(p.contract.get("convergence_target", 0) or 0)
+    research_target = int(p.contract.get("research_target", 0) or 0)
+
+    # Return the first still-fillable lane in the same order used by mission
+    # target filling. An optional AI slot must not consume its only source and
+    # silently force a lower-priority lane to substitute for it.
+    if mind_target > 0:
+        if p.area_counts.get("mind_cognition", 0) < mind_target and available(lambda x: mission_area(x) == "mind_cognition"):
+            return "mind_cognition"
+        if p.area_counts.get("future_governance", 0) < future_target and available(lambda x: mission_area(x) == "future_governance"):
+            return "future_governance"
     else:
         mind_future_count = p.area_counts.get("mind_cognition", 0) + p.area_counts.get("future_governance", 0)
-        if mind_future_count < int(p.contract.get("mind_future_target", 0) or 0) and available(lambda x: mission_area(x) in {"mind_cognition", "future_governance"}):
-            return True
+        if mind_future_count < future_target:
+            if available(lambda x: mission_area(x) == "mind_cognition"):
+                return "mind_cognition"
+            if available(lambda x: mission_area(x) == "future_governance"):
+                return "future_governance"
 
-    if p.area_counts.get("convergence", 0) < int(p.contract.get("convergence_target", 0) or 0) and available(lambda x: mission_area(x) == "convergence"):
-        return True
+    if p.area_counts.get("convergence", 0) < convergence_target and available(lambda x: mission_area(x) == "convergence"):
+        return "convergence"
 
     selected_research = sum(1 for item in p.selected if _is_research(item))
-    return selected_research < int(p.contract.get("research_target", 0) or 0) and available(
-        lambda x: mission_area(x) != "ai_core" and _is_research(x)
-    )
-
+    if selected_research < research_target and available(lambda x: mission_area(x) != "ai_core" and _is_research(x)):
+        return "research"
+    return None
 
 def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[str, Any]) -> dict[str, Any] | None:
     if not candidates:
@@ -791,12 +800,13 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         if candidate is None:
             break
 
-        reserve_slot = _has_pending_non_ai_target(p, ordered)
+        target_lane_before = _pending_non_ai_target_lane(p, ordered)
+        reserve_slot = target_lane_before is not None
         # Do not use the optional AI slot to consume the only source (or the last
-        # interview quota) needed by a higher-priority Mind/Futures/Convergence
-        # target. This is essential when one leader/source produces both an AI
-        # story and the only viable cognition interview.
-        if reserve_slot and not _has_pending_non_ai_target(p, ordered, after_candidate=candidate):
+        # interview quota) needed by the highest-priority outstanding lane. This
+        # avoids replacing Mind/Cognition with Convergence merely because both
+        # were available before the second AI story consumed a shared source.
+        if reserve_slot and _pending_non_ai_target_lane(p, ordered, after_candidate=candidate) != target_lane_before:
             break
         slots_after_this = p.limit - len(p.selected) - 1
         if reserve_slot and slots_after_this < 1:

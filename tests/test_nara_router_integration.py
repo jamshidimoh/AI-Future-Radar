@@ -46,7 +46,6 @@ def test_json_generation_failure_does_not_disable_provider():
     assert not _is_provider_quota(message)
 
 
-
 def test_nara_telegram_required_is_provider_level_auth_failure():
     message = (
         "NaraRouter auto/bynara: HTTP 403 "
@@ -57,7 +56,7 @@ def test_nara_telegram_required_is_provider_level_auth_failure():
 
 
 def test_nara_telegram_required_is_persisted_as_provider_auth_not_model_error():
-    from scripts.update_llm_health_state import _iter_events, classify as classify_persisted_health
+    from scripts.update_llm_health_state import classify as classify_persisted_health, _iter_events
 
     # This is the real production log shape from the HTTP 403 failure. The
     # health-state parser must prioritize the account-linking marker over 403.

@@ -9,7 +9,7 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     text = WORKFLOW.read_text(encoding='utf-8')
 
     assert 'omniroute@3.8.50' in text
-    assert 'add_provider gemini GEMINI_API_KEY' in text
+    assert 'add_provider gemini GEMINI_API_KEY' not in text
     assert 'add_provider google GEMINI_API_KEY' not in text
 
     for provider, credential in (
@@ -38,13 +38,12 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
 
 
 
-def test_local_ollama_fallback_has_cold_start_timeout_for_cpu_inference():
+def test_ollama_and_gemini_are_not_configured_as_providers():
     text = WORKFLOW.read_text(encoding="utf-8")
-    assert text.count("RADAR_OLLAMA_TIMEOUT_SECONDS: 35") == 2
-    assert text.count("RADAR_OLLAMA_MAX_TOKENS: 384") == 2
-    assert "RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b" in text
-    assert "RADAR_ROUTER_BUDGET_SECONDS: 60" in text
-
+    assert "ollama.com/install.sh" not in text
+    assert "RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK" not in text
+    assert "RADAR_ENABLE_GEMINI_FALLBACK" not in text
+    assert "GEMINI_API_KEY" not in text
 
 
 def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():

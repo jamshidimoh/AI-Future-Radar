@@ -28,15 +28,13 @@ _CHAIN_CACHE_KEY = None
 _PRODUCTION_POLICY_APPLIED = False
 _PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
 _PRODUCTION_CIRCUIT_OPEN = False
-_OLLAMA_CIRCUIT_OPEN = False
 _LITELLM_ROUTER = None
 _LITELLM_ROUTER_KEY = None
-_PROVIDER_TIMEOUTS = {"Groq:": 8.0, "NaraRouter:": 8.0, "OpenRouter:": 7.0, "KiraAI:": 8.0, "Gemini": 8.0, "HuggingFace": 5.0}
+_PROVIDER_TIMEOUTS = {"Groq:": 8.0, "NaraRouter:": 8.0, "OpenRouter:": 7.0, "KiraAI:": 8.0, "HuggingFace": 5.0}
 _REQUEST_TIMEOUT = 10
 _ROUTER_BUDGET_SECONDS = float(os.getenv("RADAR_ROUTER_BUDGET_SECONDS", "10") or 10)
 _MAX_TRANSIENT_RETRIES = 1
 _MODEL_COOLDOWN_SECONDS = {"quota": 12.0, "model": 45.0, "transient": 10.0, "other": 15.0}
-GEMINI_DEFAULT_MODEL = "gemini-3.8-flash"
 NARA_DEFAULT_MODEL = "auto/bynara"
 
 class ProductionQualityChain(list):
@@ -47,14 +45,7 @@ def _provider_family(name: str) -> str:
 
 def _provider_credential_available(name: str) -> bool:
     family = _provider_family(name)
-    # Local Ollama is an explicitly opt-in, zero-credential fallback. Treating
-    # it like a hosted API provider silently skipped mission-recovery attempts.
-    if family in {"ollama", "ollamalocal", "localollama"}:
-        enabled = os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}
-        # Once a local inference times out, its circuit is open for this run.
-        # Do not re-queue the same dead endpoint during every candidate repair.
-        return enabled and not _OLLAMA_CIRCUIT_OPEN
-    env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","gemini":"GEMINI_API_KEY","huggingface":"HF_TOKEN"}.get(family)
+    env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","huggingface":"HF_TOKEN"}.get(family)
     return bool(os.getenv(env)) if env else False
 
 def _extract_message(payload: dict):
@@ -100,71 +91,6 @@ def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     if r.status_code == 402: raise QuotaExceeded(f"OpenRouter {model}: HTTP 402 account_limit {r.text[:800]}")
     r.raise_for_status(); return _extract_message(r.json())
 
-OLLAMA_FREE_DEFAULT_MODEL = "qwen3:1.7b"
-OLLAMA_FREE_MODELS = {"qwen3:1.7b"}
-
-def _ollama_local(system_prompt, user_content):
-    """Zero-cost local emergency provider using Ollama; no API key or billing dependency."""
-    global _OLLAMA_CIRCUIT_OPEN
-    if _OLLAMA_CIRCUIT_OPEN:
-        raise QuotaExceeded("OllamaLocal circuit open for current production run")
-    model = (os.getenv("RADAR_OLLAMA_FREE_MODEL") or OLLAMA_FREE_DEFAULT_MODEL).strip()
-    if model not in OLLAMA_FREE_MODELS:
-        raise QuotaExceeded(f"OllamaLocal rejected non-audited model={model}")
-    try:
-        max_tokens = int(os.getenv("RADAR_OLLAMA_MAX_TOKENS", "384") or 384)
-    except (TypeError, ValueError):
-        max_tokens = 384
-    max_tokens = max(128, min(600, max_tokens))
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ],
-        "stream": False,
-        "think": False,
-        "format": "json",
-        # Keep the emergency local model concise enough to finish within the
-        # bounded production fallback deadline while returning the JSON contract.
-        "options": {"temperature": 0.10, "num_predict": max_tokens},
-    }
-    try:
-        response = requests.post(
-            "http://127.0.0.1:11434/api/chat",
-            headers={"Content-Type": "application/json"},
-            json=payload,
-            timeout=float(os.getenv("RADAR_OLLAMA_TIMEOUT_SECONDS", "20")),
-        )
-        if response.status_code in (404, 429, 500, 503):
-            raise QuotaExceeded(
-                f"OllamaLocal {model}: HTTP {response.status_code} {response.text[:800]}"
-            )
-        response.raise_for_status()
-        data = response.json()
-        content = (data.get("message") or {}).get("content")
-        if not content:
-            raise QuotaExceeded(f"OllamaLocal {model}: response has no content")
-        return content
-    except QuotaExceeded:
-        raise
-    except (requests.RequestException, ValueError) as exc:
-        raise QuotaExceeded(f"OllamaLocal {model}: {type(exc).__name__}: {exc}") from exc
-
-def _gemini(system_prompt, user_content):
-    key = os.getenv("GEMINI_API_KEY")
-    if not key: return None
-    from google import genai
-    from google.genai import types
-    model = (os.getenv("GEMINI_MODEL") or GEMINI_DEFAULT_MODEL).strip()
-    client = genai.Client(api_key=key,http_options={"timeout":8000})
-    try:
-        response = client.models.generate_content(model=model,contents=user_content,config=types.GenerateContentConfig(system_instruction=system_prompt,response_mime_type="application/json",max_output_tokens=850))
-        return response.text
-    except Exception as exc:
-        logger.warning("Gemini provider attempt failed provider=gemini model=%s exception=%s: %s", model, type(exc).__name__, exc, exc_info=True)
-        raise QuotaExceeded(f"Gemini {model}: {exc}") from exc
-
 def _hf_price_is_free(item):
     if item.get("free") is True: return True
     p=item.get("pricing") or {}
@@ -199,7 +125,7 @@ def _huggingface(system_prompt,user_content):
     return response.choices[0].message.content
 
 def _chain_key():
-    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","GEMINI_API_KEY","HF_TOKEN")) + (os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK","0"),os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_GEMINI_FALLBACK","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_OLLAMA_FREE_MODEL",OLLAMA_FREE_DEFAULT_MODEL),os.getenv("GEMINI_MODEL",GEMINI_DEFAULT_MODEL),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
+    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","HF_TOKEN")) + (os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
 
 def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY
@@ -412,30 +338,16 @@ def _call_litellm(system_prompt,user_content):
     return None,None
 
 def call_llm_with_fallback(system_prompt,user_content,providers=None):
-    global _PRODUCTION_CIRCUIT_OPEN, _OLLAMA_CIRCUIT_OPEN
+    global _PRODUCTION_CIRCUIT_OPEN
     canonical_chain = providers is None or isinstance(providers,ProductionQualityChain)
     production_mode = os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}
-    if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED and _PRODUCTION_CIRCUIT_OPEN and _OLLAMA_CIRCUIT_OPEN:
-        raise QuotaExceeded("Production LLM circuit open: remote providers and local fallback exhausted")
+    if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED and _PRODUCTION_CIRCUIT_OPEN:
+        raise QuotaExceeded("Production LLM circuit open: provider routing exhausted")
     if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED:
         result, provider = _call_litellm(system_prompt, user_content)
         if result:
             print(f"[Production Router Bridge] success={provider}", flush=True)
             return result, provider
-        # The local Ollama runner is installed and smoke-tested by the production
-        # workflow, but historically it was only available to the non-LiteLLM
-        # path. That left the production circuit without a zero-cost emergency
-        # provider exactly when the remote providers were exhausted.
-        if os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and not _OLLAMA_CIRCUIT_OPEN:
-            try:
-                local_result = _ollama_local(system_prompt, user_content)
-                if local_result:
-                    print("[Production Router Bridge] success=OllamaLocal:qwen3:1.7b emergency_fallback=true", flush=True)
-                    return local_result, "OllamaLocal:qwen3:1.7b"
-            except Exception as exc:
-                _OLLAMA_CIRCUIT_OPEN = True
-                logger.warning("Local Ollama emergency fallback failed: %s", exc, exc_info=True)
-                print(f"[Production Router Bridge] OllamaLocal failed={type(exc).__name__}: {exc}; circuit_open=true", flush=True)
         raise QuotaExceeded("Production LLM circuit exhausted without usable provider response")
     if canonical_chain:
         providers=get_quality_chain()

@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "config" / "free_model_registry.yaml"
 RUNTIME_REGISTRY_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 
-_PROVIDER_ORDER = {"groq": 0, "nararouter": 1, "openrouter": 2, "kiraai": 3, "gemini": 4, "huggingface": 5}
+_PROVIDER_ORDER = {"groq": 0, "nararouter": 1, "openrouter": 2, "kiraai": 3, "huggingface": 4}
 _BLOCKED_OPENROUTER_IDS = {
     "openrouter/free",
     "openrouter/auto",
@@ -135,7 +135,7 @@ def canonical_entries() -> list[dict]:
         score = _quality_score(candidate)
         if score < 50:
             continue
-        env_name = {"openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY", "huggingface": "HF_TOKEN"}.get(family)
+        env_name = {"openrouter": "OPENROUTER_API_KEY", "kiraai": "KIRAAI_API_KEY", "groq": "GROQ_API_KEY", "huggingface": "HF_TOKEN"}.get(family)
         if not _credential_available(env_name):
             continue
         row = dict(candidate)
@@ -214,8 +214,6 @@ def _litellm_model_name(entry: dict) -> str:
         return f"groq/{model_id}"
     if family == "kiraai":
         return f"openai/{model_id}"
-    if family == "gemini":
-        return f"gemini/{model_id}"
     raise ValueError(f"Unsupported LiteLLM provider family: {family}")
 
 
@@ -284,8 +282,6 @@ def build_production_chain(router):
         insert_at = next((i for i, (name, _) in enumerate(chain) if not name.startswith("Groq:")), len(chain))
         chain.insert(insert_at, (f"NaraRouter:{nara_model}", lambda sp, uc, m=nara_model: router._nara(sp, uc, m)))
 
-    if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("GEMINI_API_KEY"):
-        chain.append(("Gemini", router._gemini))
     if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and _credential_available("HF_TOKEN"):
         chain.append(("HuggingFace", router._huggingface))
     if not chain:

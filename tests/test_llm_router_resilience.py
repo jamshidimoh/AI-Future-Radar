@@ -12,7 +12,6 @@ def _reset():
     router._MODEL_DISABLED_REASON.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
-    router._OLLAMA_CIRCUIT_OPEN = False
     router._PRODUCTION_CIRCUIT_OPEN = False
 
 
@@ -70,12 +69,11 @@ def test_current_default_chain_uses_current_supported_policy(monkeypatch):
     _reset()
     monkeypatch.setenv("GROQ_API_KEY", "x")
     monkeypatch.setenv("GEMINI_API_KEY", "x")
+    monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
     monkeypatch.setenv("OPENROUTER_API_KEY", "x")
-    monkeypatch.delenv("RADAR_ENABLE_GEMINI_FALLBACK", raising=False)
     chain = router.get_quality_chain()
     names = [name for name, _ in chain]
     assert "Gemini" not in names
-    assert router.GEMINI_DEFAULT_MODEL == "gemini-3.8-flash"
     assert "Groq:qwen/qwen3.6-27b" in names
     assert "OpenRouter:openai/gpt-oss-120b:free" in names
 
@@ -312,37 +310,15 @@ def test_groq_gpt_oss_retries_without_json_mode_on_validation_failure(monkeypatc
 
 
 
-def test_local_ollama_recovery_provider_is_credential_free_but_opt_in(monkeypatch):
-    monkeypatch.delenv("GROQ_API_KEY", raising=False)
-    monkeypatch.delenv("HF_TOKEN", raising=False)
-    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
-    assert router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")
-    assert router._provider_credential_available("ollama:qwen3:1.7b")
-
-    router._OLLAMA_CIRCUIT_OPEN = True
-    assert not router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")
-    router._OLLAMA_CIRCUIT_OPEN = False
-
-    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0")
-    assert not router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")
-
-
-def test_mission_recovery_chain_can_select_local_ollama_without_api_key(monkeypatch):
+def test_removed_gemini_and_ollama_providers_are_never_credentialed(monkeypatch):
     _reset()
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
     monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
-    monkeypatch.delenv("GROQ_API_KEY", raising=False)
-    calls = []
 
-    def ollama_repair(*args, **kwargs):
-        calls.append("ollama")
-        return '{"title":"ترمیم فارسی"}'
-
-    result, provider = router.call_llm_with_fallback(
-        "system",
-        "user",
-        providers=[("OllamaLocal:qwen3:1.7b:mission-persian-repair", ollama_repair)],
-    )
-
-    assert result == '{"title":"ترمیم فارسی"}'
-    assert provider == "OllamaLocal:qwen3:1.7b:mission-persian-repair"
-    assert calls == ["ollama"]
+    assert not router._provider_credential_available("Gemini")
+    assert not router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")
+    names = [name for name, _ in router.get_quality_chain()]
+    assert "Gemini" not in names
+    assert not any(name.casefold().startswith(("ollama", "localollama")) for name in names)

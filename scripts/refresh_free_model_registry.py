@@ -159,26 +159,6 @@ def _kira_models(token: str | None) -> tuple[bool, dict[str, dict], str]:
     return True, {str(row.get("id")): row for row in rows if isinstance(row, dict) and row.get("id")}, "catalog ok"
 
 
-def _gemini_models(token: str | None) -> tuple[bool, dict[str, dict], str]:
-    if not token:
-        return False, {}, "missing credential"
-    status, payload = _get_json("https://generativelanguage.googleapis.com/v1beta/models", token=token, query={"key": token})
-    if status in (400, 401, 403):
-        return False, {}, f"authentication failed HTTP {status}"
-    if status >= 400:
-        return False, {}, f"model catalog failed HTTP {status}"
-    rows = payload.get("models") or []
-    catalog: dict[str, dict] = {}
-    for row in rows:
-        if not isinstance(row, dict):
-            continue
-        model_id = str(row.get("baseModelId") or row.get("name", "").replace("models/", ""))
-        actions = {str(x) for x in (row.get("supportedGenerationMethods") or [])}
-        if model_id and "generateContent" in actions:
-            catalog[model_id] = row
-    return True, catalog, "catalog ok"
-
-
 def _is_zero_price(model: dict) -> bool:
     pricing = model.get("pricing") or {}
     try:
@@ -231,7 +211,6 @@ def refresh() -> dict:
     token_or = os.getenv("OPENROUTER_API_KEY")
     token_groq = os.getenv("GROQ_API_KEY")
     token_kira = os.getenv("KIRAAI_API_KEY")
-    token_gemini = os.getenv("GEMINI_API_KEY")
     token_flr = os.getenv("FREE_LLM_ROUTER_API_KEY")
     generated_at = datetime.now(timezone.utc).isoformat()
 
@@ -241,7 +220,6 @@ def refresh() -> dict:
     or_task_usage = _openrouter_task_evidence(token_or)
     groq_ok, groq_models, groq_reason = _groq_models(token_groq)
     kira_ok, kira_models, kira_reason = _kira_models(token_kira)
-    gemini_ok, gemini_models, gemini_reason = _gemini_models(token_gemini)
     flr_ok, flr_ids, flr_reason = _free_llm_router_ids(token_flr)
     discovery: list[dict] = []
 
@@ -259,10 +237,6 @@ def refresh() -> dict:
             provider["credential_valid"] = kira_ok
             provider["validation"] = kira_reason
             catalog = kira_models
-        elif family == "gemini":
-            provider["credential_valid"] = gemini_ok
-            provider["validation"] = gemini_reason
-            catalog = gemini_models
         else:
             env_name = str(provider.get("credential_env") or "").strip()
             provider["credential_valid"] = bool(env_name and os.getenv(env_name))
@@ -298,14 +272,6 @@ def refresh() -> dict:
                     if not model["free"]:
                         model["enabled"] = False
                         model["runtime_reason"] = "not_free"
-            elif family == "gemini":
-                if not live or not provider["credential_valid"]:
-                    model["enabled"] = False
-                    model["runtime_reason"] = "provider_unavailable"
-                else:
-                    model["context_length"] = int(live.get("inputTokenLimit") or 0)
-                    model["response_format"] = True
-                    model["free"] = True
 
             if model.get("enabled"):
                 _apply_evidence(model, or_benchmarks.get(model_id.lower().removesuffix(":free")), or_task_usage, generated_at)
@@ -368,7 +334,6 @@ def refresh() -> dict:
                 "openrouter": {"valid": or_auth_ok, "reason": f"{or_auth_reason}; {or_catalog_reason}; {or_benchmark_reason}"},
                 "groq": {"valid": groq_ok, "reason": groq_reason},
                 "kiraai": {"valid": kira_ok, "reason": kira_reason},
-                "gemini": {"valid": gemini_ok, "reason": gemini_reason},
                 "free_llm_router": {"valid": flr_ok, "reason": flr_reason},
             },
             "evidence": {
@@ -392,7 +357,7 @@ def main() -> int:
     args = parser.parse_args()
     runtime = refresh()
     validation = runtime["runtime"]["provider_validation"]
-    if args.strict and not any(validation[name]["valid"] for name in ("groq", "openrouter", "kiraai", "gemini")):
+    if args.strict and not any(validation[name]["valid"] for name in ("groq", "openrouter", "kiraai")):
         raise SystemExit("No core production provider credential validated")
     return 0
 

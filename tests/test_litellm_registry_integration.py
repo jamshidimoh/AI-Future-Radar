@@ -10,7 +10,6 @@ def test_litellm_deployments_are_registry_driven(monkeypatch):
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
     monkeypatch.delenv("KIRAAI_API_KEY", raising=False)
-    monkeypatch.delenv("RADAR_ENABLE_GEMINI_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
     router._CHAIN_CACHE = None
     registry.build_production_chain(router)

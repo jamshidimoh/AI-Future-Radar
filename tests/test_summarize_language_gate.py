@@ -160,11 +160,10 @@ def test_length_gate_attempts_bounded_editorial_repair_before_reject(monkeypatch
     assert calls["n"] >= 2
 
 
-def test_mission_language_repair_chain_prioritizes_omniroute_and_audited_ollama(monkeypatch):
+def test_mission_language_repair_chain_keeps_omniroute_first_without_local_provider(monkeypatch):
     import src.summarize as summarize
 
     monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://127.0.0.1:9999")
-    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
     monkeypatch.setattr(
         summarize,
         "get_quality_chain",
@@ -172,10 +171,7 @@ def test_mission_language_repair_chain_prioritizes_omniroute_and_audited_ollama(
     )
 
     chain = summarize._language_repair_providers({"_mission_recovery_attempt": True})
-    assert [name for name, _ in chain[:2]] == [
-        "OmniRoute:mission-persian-repair",
-        "OllamaLocal:qwen3:1.7b:mission-persian-repair",
-    ]
+    assert [name for name, _ in chain] == ["OmniRoute:mission-persian-repair", "test-provider"]
 
 
 def test_normal_language_repair_keeps_canonical_chain(monkeypatch):
@@ -546,7 +542,7 @@ def test_claim_alignment_semantic_failure_retries_with_independent_provider_fami
     assert provider == "OpenRouter:test-model"
 
 
-def test_claim_alignment_recovery_can_use_opted_in_local_ollama_after_mistral(monkeypatch):
+def test_claim_alignment_recovery_does_not_inject_removed_local_provider(monkeypatch):
     import src.summarize as summarize
     from src.llm_router_light import ProductionQualityChain
 
@@ -558,28 +554,15 @@ def test_claim_alignment_recovery_can_use_opted_in_local_ollama_after_mistral(mo
         "key_quote": "",
         "category": "ai",
     }
-    repaired = {
-        "title": "ارزیابی مستند یک مدل هوش مصنوعی",
-        "summary": "READY",
-        "why_it_matters": "READY",
-        "speakers": "",
-        "key_quote": "",
-        "category": "ai",
-    }
     provider_chain = ProductionQualityChain([
         ("Mistral:codestral-2508", lambda *_args, **_kwargs: ""),
     ])
-    responses = [
-        (json.dumps(initial, ensure_ascii=False), "Mistral:codestral-2508"),
-        (json.dumps(repaired, ensure_ascii=False), "OllamaLocal:qwen3:1.7b:claim-repair"),
-    ]
     calls = []
-    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
     monkeypatch.setattr(summarize, "get_quality_chain", lambda: provider_chain)
 
     def fake_call(*args, **kwargs):
         calls.append((args, kwargs))
-        return responses.pop(0)
+        return json.dumps(initial, ensure_ascii=False), "Mistral:codestral-2508"
 
     monkeypatch.setattr(summarize, "call_llm_with_fallback", fake_call)
     monkeypatch.setattr(summarize, "_language_ok", lambda candidate: candidate.get("summary") == "READY")
@@ -598,14 +581,10 @@ def test_claim_alignment_recovery_can_use_opted_in_local_ollama_after_mistral(mo
         {"unsupported_comparison"},
     )
 
-    assert len(calls) == 2
-    assert isinstance(calls[0][1]["providers"], ProductionQualityChain)
-    assert [name for name, _ in calls[1][1]["providers"]] == [
-        "OllamaLocal:qwen3:1.7b:claim-repair"
-    ]
-    assert candidate is not None
-    assert candidate["summary"] == "READY"
-    assert candidate["_claim_verification"]["flags"] == []
-    assert provider == "OllamaLocal:qwen3:1.7b:claim-repair"
-
-
+    assert len(calls) == 1
+    assert candidate is None
+    assert provider == "Mistral:codestral-2508"
+    assert not any(
+        str(name).casefold().startswith(("ollama", "localollama"))
+        for name, _ in calls[0][1]["providers"]
+    )

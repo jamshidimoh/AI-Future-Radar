@@ -2,7 +2,6 @@ import sys
 import time
 from pathlib import Path
 
-import pytest
 import requests
 
 import src.llm_router_light as router
@@ -20,14 +19,12 @@ def _reset(monkeypatch):
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
     router._PRODUCTION_CIRCUIT_OPEN = False
-    router._OLLAMA_CIRCUIT_OPEN = False
     policy._OMNIROUTE_CIRCUIT_OPEN = False
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER", raising=False)
     monkeypatch.delenv("RADAR_GROK_FREE_MODEL", raising=False)
-    monkeypatch.delenv("RADAR_ENABLE_GEMINI_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_MAX_LLM_ATTEMPTS", raising=False)
     monkeypatch.delenv("RADAR_ROUTER_BUDGET_SECONDS", raising=False)
@@ -51,7 +48,6 @@ def test_production_uses_canonical_router_module_and_trust_order(monkeypatch):
     import src.summarize as summarize
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
-    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     apply()
     summarize_names = [name for name, _ in summarize.get_quality_chain()]
     router_names = [name for name, _ in router.get_quality_chain()]
@@ -463,188 +459,24 @@ def test_rate_limit_retry_respects_provider_delay(monkeypatch):
     assert sleeps == [4.2]
 
 
-def test_gemini_is_available_as_explicit_production_emergency_fallback(monkeypatch):
+def test_removed_gemini_and_ollama_cannot_be_emergency_fallbacks(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
     apply()
     monkeypatch.setattr(router, "_get_litellm_router", lambda: None)
     monkeypatch.setattr(router, "_litellm_model_list", lambda: [])
-    monkeypatch.setattr(router, "_gemini", lambda *_args, **_kwargs: '{"title":"gemini"}')
-    result, provider = router._call_litellm("system", "user")
-    assert result == '{"title":"gemini"}'
-    assert provider == "Gemini"
-
-def test_local_ollama_free_uses_no_credentials_and_json_mode(monkeypatch):
-    _reset(monkeypatch)
-    calls = []
-
-    class FakeResponse:
-        status_code = 200
-        text = ""
-        def raise_for_status(self):
-            return None
-        def json(self):
-            return {"message": {"content": '{"title":"ok"}'}}
-
-    def fake_post(url, **kwargs):
-        calls.append((url, kwargs))
-        return FakeResponse()
-
-    monkeypatch.setattr(router.requests, "post", fake_post)
-    result = router._ollama_local("system", "user")
-
-    assert result == '{"title":"ok"}'
-    assert calls[0][0] == "http://127.0.0.1:11434/api/chat"
-    payload = calls[0][1]["json"]
-    assert payload["model"] == "qwen3:1.7b"
-    assert payload["think"] is False
-    assert payload["format"] == "json"
-    assert payload["options"]["num_predict"] == 384
-    assert "Authorization" not in calls[0][1]["headers"]
-
-
-def test_local_ollama_rejects_non_qwen_free_override(monkeypatch):
-    _reset(monkeypatch)
-    monkeypatch.setenv("RADAR_OLLAMA_FREE_MODEL", "x-ai/grok-4.3")
-    # Only audited local model IDs are accepted by the local free lane.
-    with pytest.raises(router.QuotaExceeded):
-        router._ollama_local("system", "user")
-
-
-def test_local_ollama_is_available_as_final_free_emergency_fallback(monkeypatch):
-    _reset(monkeypatch)
-    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
-    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
-    apply()
-
-    class FakeRouter:
-        def completion(self, **_kwargs):
-            raise RuntimeError("HTTP 503 temporary")
-
-    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
-    monkeypatch.setattr(router, "_litellm_model_list", lambda: [
-        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}
-    ])
-    monkeypatch.setattr(router, "_ollama_local", lambda *_args, **_kwargs: '{"title":"local"}')
-
-    result, provider = router._call_litellm("system", "user")
-    assert result == '{"title":"local"}'
-    assert provider == "LocalOllamaFree"
-
-def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
-    _reset(monkeypatch)
-    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
-    monkeypatch.setenv("RADAR_ROUTER_BUDGET_SECONDS", "48")
-    apply()
-
-    class Future:
-        def result(self, timeout):
-            observed.append(timeout)
-            return '{"title":"local"}'
-
-    class FakeExecutor:
-        def submit(self, *_args, **_kwargs):
-            return Future()
-
-    observed = []
-    monkeypatch.setattr(router, "_CALL_EXECUTOR", FakeExecutor())
-    monkeypatch.setattr(router, "_get_litellm_router", lambda: None)
-    monkeypatch.setattr(router, "_litellm_model_list", lambda: [])
-
-    result, provider = router._call_litellm("system", "user")
-    assert result == '{"title":"local"}'
-    assert provider == "LocalOllamaFree"
-    assert observed and observed[0] <= 36.0
-    assert observed[0] >= 6.0
-
-
-def test_local_ollama_emergency_is_skipped_after_circuit_opens(monkeypatch):
-    _reset(monkeypatch)
-    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
-    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
-    apply()
-    router._OLLAMA_CIRCUIT_OPEN = True
-    remote_calls = []
-    local_calls = []
-
-    class FakeRouter:
-        def completion(self, *, model, **_kwargs):
-            remote_calls.append(model)
-            raise RuntimeError("HTTP 503 temporary")
-
-    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
-    monkeypatch.setattr(
-        router,
-        "_litellm_model_list",
-        lambda: [{"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}],
-    )
-    monkeypatch.setattr(
-        router,
-        "_ollama_local",
-        lambda *_args, **_kwargs: local_calls.append("called") or '{"title":"local"}',
-    )
 
     result, provider = router._call_litellm("system", "user")
 
     assert result is None
     assert provider is None
-    assert remote_calls == ["radar-production-1"]
-    assert local_calls == []
-
-
-def test_local_ollama_emergency_failure_opens_run_circuit(monkeypatch):
-    _reset(monkeypatch)
-    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
-    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
-    monkeypatch.setattr(policy, "_load_health", lambda: {"models": {}, "providers": {}})
-    apply()
-
-    remote_calls = []
-    local_calls = []
-
-    class FakeRouter:
-        def completion(self, *, model, **_kwargs):
-            remote_calls.append(model)
-            raise RuntimeError("HTTP 503 temporary")
-
-    class FailedFuture:
-        def result(self, timeout):
-            raise router.QuotaExceeded("OllamaLocal qwen3:1.7b: ReadTimeout")
-
-    class FakeExecutor:
-        def submit(self, fn, *_args, **_kwargs):
-            if fn is router._ollama_local:
-                local_calls.append("ollama")
-            return FailedFuture()
-
-    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
-    monkeypatch.setattr(
-        router,
-        "_litellm_model_list",
-        lambda: [{"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}],
-    )
-    monkeypatch.setattr(router, "_CALL_EXECUTOR", FakeExecutor())
-
-    first_result, _ = router._call_litellm("system", "user")
-    assert first_result is None
-    assert router._OLLAMA_CIRCUIT_OPEN is True
-    assert local_calls == ["ollama"]
-
-    # Isolate the local circuit from the primary-chain circuit: even if the
-    # remote path gets another chance, the timed-out local fallback must not.
-    router._PRODUCTION_CIRCUIT_OPEN = False
-    second_result, _ = router._call_litellm("system", "user")
-    assert second_result is None
-    assert local_calls == ["ollama"]
-    # The primary provider may itself be circuit-disabled after its first 503;
-    # the invariant under test is that timed-out local inference is never retried.
-    assert remote_calls and remote_calls[0] == "radar-production-1"
+    assert not hasattr(router, "_gemini")
+    assert not hasattr(router, "_ollama_local")
+    assert not router._provider_credential_available("Gemini")
+    assert not router._provider_credential_available("OllamaLocal:qwen3:1.7b")
 
 
 def test_omniroute_is_primary_model_selection_layer_when_configured(monkeypatch):
@@ -777,49 +609,4 @@ def test_omniroute_primary_requests_json_object_mode(monkeypatch):
     assert provider == "OmniRoute:auto/smart"
     assert calls["url"] == "http://127.0.0.1:20128/v1/chat/completions"
     assert calls["json"]["response_format"] == {"type": "json_object"}
-
-def test_persisted_auth_failure_skips_gemini_emergency_fallback(monkeypatch, capsys):
-    _reset(monkeypatch)
-    import src.production_router_policy as policy
-
-    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
-    monkeypatch.setenv("GEMINI_API_KEY", "invalid-test-credential")
-    monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
-    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
-    health = {
-        "models": {
-            "gemini:gemini-3.8-flash": {
-                "failures": 3,
-                "disabled_until": time.time() + 3600,
-                "last_error": "auth",
-            }
-        },
-        "providers": {
-            "gemini": {
-                "failures": 3,
-                "disabled_until": time.time() + 3600,
-                "last_error": "auth",
-            }
-        },
-    }
-    monkeypatch.setattr(policy, "_load_health", lambda: health)
-    monkeypatch.setattr(router, "_get_litellm_router", lambda: None)
-    monkeypatch.setattr(router, "_litellm_model_list", lambda: [])
-    calls = []
-    monkeypatch.setattr(
-        router,
-        "_gemini",
-        lambda *_args, **_kwargs: calls.append("gemini") or '{"title":"must-not-run"}',
-    )
-
-    apply()
-    result, provider = router._call_litellm("system", "user")
-
-    assert result is None
-    assert provider is None
-    assert calls == []
-    assert (
-        "[Production Circuit] skipped=gemini:gemini-3.8-flash reason=persisted_health"
-        in capsys.readouterr().out
-    )
 

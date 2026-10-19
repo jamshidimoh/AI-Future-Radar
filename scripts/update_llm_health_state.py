@@ -51,7 +51,6 @@ _PROVIDER_CANONICAL = {
     "nararouter": "NaraRouter",
     "openrouter": "OpenRouter",
     "kiraai": "KiraAI",
-    "gemini": "Gemini",
     "huggingface": "HuggingFace",
 }
 

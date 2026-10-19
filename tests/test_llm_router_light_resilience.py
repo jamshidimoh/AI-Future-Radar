@@ -20,7 +20,8 @@ def test_transient_non_provider_error_is_not_permanently_disabled():
 def test_provider_timeout_is_bounded_by_provider_class_and_remaining_budget():
     assert _provider_timeout("Groq:qwen/qwen3.6-27b", 20) == 8.0
     assert _provider_timeout("OpenRouter:test:free", 20) == 7.0
-    assert _provider_timeout("Gemini", 20) == 8.0
+    assert _provider_timeout("Gemini", 20) == 4.0
+    assert _provider_timeout("OllamaLocal:qwen3:1.7b:mission-persian-repair", 40) == 4.0
     assert _provider_timeout("Groq:qwen/qwen3.6-27b", 3) == 3.0
 
 

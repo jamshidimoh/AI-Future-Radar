@@ -369,6 +369,79 @@ def _is_verified_leader_voice(item: dict[str, Any]) -> bool:
     )
 
 
+def _secondary_ai_competition_key(item: dict[str, Any], p: _Portfolio) -> tuple:
+    """Compare an optional second AI story with a viable non-AI alternative.
+
+    Freshness and marginal portfolio value matter after the hard quality floor;
+    a small raw-score advantage must not automatically defeat a fresher or more
+    diverse Mind/Convergence/Futures story.
+    """
+    freshness = freshness_score(
+        item, float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0)
+    )
+    value = portfolio_value_with_history(
+        item,
+        p.selected,
+        p.history_signatures,
+        diversity_weight=p.contract["diversity_weight"],
+        similarity_penalty=p.contract["similarity_penalty"],
+        entity_repeat_penalty=p.contract["entity_repeat_penalty"],
+        leader_repeat_penalty=p.contract["leader_repeat_penalty"],
+        history_topic_penalty=p.contract["history_topic_penalty"],
+        history_entity_penalty=p.contract["history_entity_penalty"],
+    )
+    # portfolio_value_with_history uses the raw editorial score as its base;
+    # apply the bounded technical/genetics selection penalties used by ranking.
+    raw_score = 0.0
+    for key in ("_portfolio_selection_score", "final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
+        try:
+            raw_score = float(item.get(key, 0) or 0)
+        except (TypeError, ValueError):
+            raw_score = 0.0
+        if raw_score:
+            break
+    value += candidate_score(item) - raw_score
+    freshness_weight = float(p.contract.get("freshness_weight", 10.0) or 10.0)
+    return (
+        freshness,
+        round(value, 4),
+        candidate_score(item) + freshness * freshness_weight,
+        _safe_float(item, "evidence_strength"),
+        str(item.get("published") or item.get("published_at") or ""),
+    )
+
+
+def _has_pending_non_ai_target(p: _Portfolio, ordered: list[dict[str, Any]]) -> bool:
+    """Whether a configured non-AI target has a viable candidate worth reserving a slot for."""
+    def available(predicate) -> bool:
+        return any(
+            predicate(item)
+            and id(item) not in p.selected_ids
+            and candidate_score(item) > 0.0
+            and p.admissible(item, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)
+            for item in ordered
+        )
+
+    mind_enabled = int(p.contract.get("mind_cognition_target", 0) or 0) > 0
+    if mind_enabled:
+        if p.area_counts.get("mind_cognition", 0) < int(p.contract.get("mind_cognition_target", 0) or 0) and available(lambda x: mission_area(x) == "mind_cognition"):
+            return True
+        if p.area_counts.get("future_governance", 0) < int(p.contract.get("mind_future_target", 0) or 0) and available(lambda x: mission_area(x) == "future_governance"):
+            return True
+    else:
+        mind_future_count = p.area_counts.get("mind_cognition", 0) + p.area_counts.get("future_governance", 0)
+        if mind_future_count < int(p.contract.get("mind_future_target", 0) or 0) and available(lambda x: mission_area(x) in {"mind_cognition", "future_governance"}):
+            return True
+
+    if p.area_counts.get("convergence", 0) < int(p.contract.get("convergence_target", 0) or 0) and available(lambda x: mission_area(x) == "convergence"):
+        return True
+
+    selected_research = sum(1 for item in p.selected if _is_research(item))
+    if selected_research < int(p.contract.get("research_target", 0) or 0) and available(lambda x: mission_area(x) != "ai_core" and _is_research(x)):
+        return True
+    return False
+
+
 def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[str, Any]) -> dict[str, Any] | None:
     if not candidates:
         return None
@@ -518,16 +591,14 @@ class _Portfolio:
             return False
         if self.mission_aware and self.area_counts.get(area, 0) >= self.contract["max_same_mission_area"]:
             return False
-        if not ignore_window_cap:
-            # Cross-run rotation cap: a single source/area must not keep dominating
-            # the feed across the last `window_runs` runs, independent of how well
-            # it scores within a single run. This is a hard cap with a bypass
-            # fallback (see _fill_by_portfolio_value / _backfill_repeat_sources)
-            # so a starved candidate pool never blocks publication entirely.
-            if self.window_source_counts.get(source, 0) >= int(self.contract.get("max_same_source_in_window", 2) or 2):
-                return False
-            if self.mission_aware and self.window_area_counts.get(area, 0) >= int(self.contract.get("max_same_area_in_window", 3) or 3):
-                return False
+        # Source rotation may be relaxed as a last resort when it is the only
+        # reason a slot would be empty. Area rotation is deliberately stricter:
+        # repeatedly publishing an already-saturated area defeats the mission
+        # diversity contract, so ignore_window_cap never bypasses this area cap.
+        if not ignore_window_cap and self.window_source_counts.get(source, 0) >= int(self.contract.get("max_same_source_in_window", 2) or 2):
+            return False
+        if self.mission_aware and self.window_area_counts.get(area, 0) >= int(self.contract.get("max_same_area_in_window", 3) or 3):
+            return False
         current_source = self.source_counts.get(source, 0)
         return current_source < self.source_cap if repeat_source else current_source == 0
 
@@ -662,9 +733,10 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             break
         p.add(candidate, "mission_target:ai_core")
 
-    # A second AI-core item is preferred when it remains competitive with the best
-    # Mind, Future or Convergence alternative. This keeps AI central without forcing
-    # a weak model announcement/tutorial into the portfolio or sacrificing quality.
+    # A second AI-core item is optional, not an unconditional quota. Preserve
+    # at least one slot for an available configured non-AI mission target, and
+    # compare the AI candidate with that alternative using freshness, current-
+    # portfolio novelty and entity/leader repetition penalties.
     ai_target_max = min(max(0, int(p.contract.get("ai_core_target_max", 1))), p.limit)
     while len(p.selected) < p.limit and p.area_counts.get("ai_core", 0) < ai_target_max:
         candidates = [
@@ -680,38 +752,43 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
                 and id(item) not in p.selected_ids
                 and p.admissible(item, repeat_source=False, ignore_type_cap=True)
             ]
+        # Do not bypass the rolling area cap to force an optional second AI slot.
         if not candidates:
-            candidates = [
-                item for item in ordered
-                if mission_area(item) == "ai_core"
-                and id(item) not in p.selected_ids
-                and p.admissible(item, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)
-            ]
+            break
         candidate = _best_ai_target_candidate(candidates, p.contract)
         if candidate is None:
             break
-        alternatives = [
-            item for item in ordered
-            if mission_area(item) in {"mind_cognition", "future_governance", "convergence"}
-            and id(item) not in p.selected_ids
-            and p.admissible(item, repeat_source=False)
-            and candidate_score(item) > 0.0
-        ]
-        if not alternatives:
-            alternatives = [
-                item for item in ordered
-                if mission_area(item) in {"mind_cognition", "future_governance", "convergence"}
-                and id(item) not in p.selected_ids
-                and p.admissible(item, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)
-                and candidate_score(item) > 0.0
-            ]
-        best_alternative = max((candidate_score(item) for item in alternatives), default=0.0)
+
+        reserve_slot = _has_pending_non_ai_target(p, ordered)
+        slots_after_this = p.limit - len(p.selected) - 1
+        if reserve_slot and slots_after_this < 1:
+            break
+
         floor = max(
             0.0,
             min(1.0, float(p.contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82)),
         )
-        if best_alternative > 0.0 and candidate_score(candidate) < best_alternative * floor:
-            break
+        alternatives = [
+            item for item in ordered
+            if mission_area(item) != "ai_core"
+            and id(item) not in p.selected_ids
+            and candidate_score(item) > 0.0
+            and candidate_score(item) >= candidate_score(candidate) * floor
+            and p.admissible(item, repeat_source=False)
+        ]
+        if not alternatives:
+            alternatives = [
+                item for item in ordered
+                if mission_area(item) != "ai_core"
+                and id(item) not in p.selected_ids
+                and candidate_score(item) > 0.0
+                and candidate_score(item) >= candidate_score(candidate) * floor
+                and p.admissible(item, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)
+            ]
+        if alternatives:
+            best_alternative = max(alternatives, key=lambda x: _secondary_ai_competition_key(x, p))
+            if _secondary_ai_competition_key(best_alternative, p) > _secondary_ai_competition_key(candidate, p):
+                break
         p.add(candidate, "mission_target:ai_core_secondary")
 
     if p.contract.get("mind_cognition_target", 0) > 0:

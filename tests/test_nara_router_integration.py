@@ -1,7 +1,5 @@
 from pathlib import Path
 
-from scripts.update_llm_health_state import _iter_events, classify as classify_persisted_health
-
 import src.free_model_registry as registry
 import src.llm_router_light as router
 from src.production_router_policy import _is_provider_auth, _is_provider_quota
@@ -59,6 +57,8 @@ def test_nara_telegram_required_is_provider_level_auth_failure():
 
 
 def test_nara_telegram_required_is_persisted_as_provider_auth_not_model_error():
+    from scripts.update_llm_health_state import _iter_events, classify as classify_persisted_health
+
     # This is the real production log shape from the HTTP 403 failure. The
     # health-state parser must prioritize the account-linking marker over 403.
     line = (

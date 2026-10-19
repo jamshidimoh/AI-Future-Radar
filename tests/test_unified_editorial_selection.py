@@ -73,6 +73,9 @@ def test_optional_second_ai_preserves_the_only_source_for_mind_target():
         item for item in eligible
         if mission_area(item) == "mind_cognition"
         and id(item) not in portfolio.selected_ids
+        and candidate_score(item) >= min(candidate_score(selected) for selected in portfolio.selected) * float(
+            contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82
+        )
         and candidate_score(item) > 0
         and portfolio.admissible(
             item,

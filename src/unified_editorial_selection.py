@@ -499,6 +499,21 @@ def _second_ai_consumes_reserved_mission_source(
 
     candidate_source = source_key(candidate)
     selected_research = sum(1 for item in p.selected if _is_research(item))
+    selected_scores = [candidate_score(item) for item in p.selected if candidate_score(item) > 0.0]
+    quality_ratio = max(
+        0.0,
+        min(
+            1.0,
+            float(
+                p.contract.get(
+                    "mission_target_quality_floor_ratio",
+                    p.contract.get("diversity_quality_floor_ratio", 0.80),
+                )
+                or 0.80
+            ),
+        ),
+    )
+    minimum_target_score = min(selected_scores) * quality_ratio if selected_scores else 0.0
     for lane, predicate in targets:
         if lane == "mind_cognition" and p.area_counts.get("mind_cognition", 0) >= mind_target:
             continue
@@ -516,6 +531,7 @@ def _second_ai_consumes_reserved_mission_source(
             item for item in ordered
             if predicate(item)
             and id(item) not in p.selected_ids
+            and candidate_score(item) >= minimum_target_score
             and candidate_score(item) > 0.0
             and p.admissible(
                 item,

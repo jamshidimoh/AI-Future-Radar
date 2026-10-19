@@ -2,19 +2,34 @@
 
 Status date: 2026-10-19
 
-## Revalidation after AI-first editorial fix — 2026-10-19
+## Current verification snapshot — 2026-10-19 (checked through 07:56 UTC)
 
-- PR #262 (AI-first editorial selection, reduced genetics dominance, freshness/source-diversity arbitration, unique-mission-source protection, and bounded local Ollama retry behavior) merged to `main`: https://github.com/jamshidimoh/AI-Future-Radar/pull/262
-- Merge commit: https://github.com/jamshidimoh/AI-Future-Radar/commit/fcfa893dc3e3947a498f877a01d5ba92932fb8ee
-- Full pre-merge quality contract suite: 998 passed; production regression suite: 998 passed; final acceptance supplements: 6 and 24 passed.
-- P1 Audit, TypeSafe, Graphify, Signal Engine CI, Production Quality Gate, Test Radar Quality, and Final Production Acceptance all passed on the PR head.
-- Local Ollama Free smoke test #296 passed using `qwen3:1.7b`; the model returned valid JSON (`{"ok": true}`). This verifies local model readiness only, not Telegram delivery or mission-coverage acceptance.
-- Post-merge production run #1494 is the first live observation for the merged code: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39205914693. At this document update it is still running; no live publication/acceptance outcome is claimed.
-- Issue #69 remains open. The repository must not be declared production-complete until the closure gate verifies three consecutive successful production runs on the same application-code fingerprint with complete delivery, coverage, and no-duplicate evidence.
+### Changes merged to main
+- PR #262 made editorial selection AI-first and reduced genetics dominance: https://github.com/jamshidimoh/AI-Future-Radar/pull/262
+- PR #263 removed Gemini and Ollama as runtime inference providers, including adapters, provider-registry entries, dependencies and workflow setup: https://github.com/jamshidimoh/AI-Future-Radar/pull/263
+- PR #264 added bounded progressive backoff for explicit Telegram HTTP 429 rejections: https://github.com/jamshidimoh/AI-Future-Radar/pull/264
+- PR #265 added state pruning so removed Gemini/Ollama provider-health records cannot be resurrected by local/remote snapshot merging: https://github.com/jamshidimoh/AI-Future-Radar/pull/265
+
+### Deterministic validation
+- PR #264: Test Radar Quality passed with 990 tests; Production Quality Gate, Final Production Acceptance, Signal Engine CI, TypeSafe, Graphify and P1 audit passed.
+- PR #265: Test Radar Quality, Production Quality Gate, Final Production Acceptance, Signal Engine CI, TypeSafe, Graphify and P1 audit passed.
+- The current runtime router and registry have no active Gemini/Ollama inference-provider configuration. Remaining Gemini references in discovery/editorial code refer to AI products or news subjects; tests may mention removed names to assert that they stay disabled.
+
+### Live production evidence
+- Production run #1494 ended unsuccessfully; it is no longer running: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39205914693
+- Production run #1496 failed: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39212696237
+- Production run #1497 failed: Telegram returned repeated explicit HTTP 429 responses with retry_after=8s. The old six-retry budget was exhausted; selected candidates were non-empty but no news message was confirmed delivered (`Posts sent: 0/10`, `published_news=0`). The strict acceptance gate correctly rejected the run: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39213454612
+- Production run #1498 was still in its bot execution step at this snapshot, on commit `b8967fb8a0383bf20361aadb474bc4ba8531dba8`. Its final delivery and acceptance outcome is not yet claimed: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39218286098
+- The latest main commit at this snapshot includes PR #265 (`426cd10188d5895edbe7d8cfde0b18868f897933`). Any queued production execution must be checked in Actions for its actual current status and commit.
+
+### Persistent provider health state
+At the time of this snapshot, `data/llm_health.json` still held historical Gemini records. PR #265 now removes removed-provider families in both direct health updates and local/remote merging; do not claim persisted-state cleanup until the updated file is read after a production state-persistence step completes.
 
 ## Current status
 
-**CLOSURE PENDING — the historical failure below is retained for audit; PR #262 has now passed its full checks and merged, but live production acceptance is still being revalidated.**
+**CLOSURE PENDING.** Issue #69 remains open. Passing deterministic tests or merging code does not establish production completion. Closure requires three consecutive successful live production runs on the same application-code fingerprint, with confirmed Telegram delivery, valid mission coverage, no duplicate publication, and no provider/translation/QA failure misclassified as an empty discovery lane.
+
+The historical audit below is retained for context. It does not override current production evidence.
 
 The previous Production Closure Gate run #1406 closed Issue #69 on 2026-10-15 using production runs #1439–#1441. That result is historical acceptance under the previous interpretation of mission coverage, not proof that the tightened gate passes. In run #1441, only one of six selected news candidates was published; the missing mission lanes included attempted candidates that failed language/naturalness QA. The previous acceptance guard could classify failed or provider-unavailable candidates as "no eligible candidate", overstating the evidence.
 

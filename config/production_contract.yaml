@@ -31,7 +31,7 @@ mission:
   max_same_mission_area_per_run: 2
   min_authoritative_items: 2
   community_max: 0
-  ai_core_target: [1, 2]
+  ai_core_target: [2, 2]
   convergence_target: 1
   mind_cognition_target: 1
   mind_future_target: 1
@@ -48,7 +48,7 @@ selection:
   protected_leader_consumes_final_slot: true
   historical_source_usage_is_hard_exclusion: false
   editorial_balance:
-    ai_core_target_min: 1
+    ai_core_target_min: 2
     ai_core_target_max: 2
     max_genetics_per_run: 1
     genetics_diversity_penalty: 15

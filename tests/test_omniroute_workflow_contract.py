@@ -17,11 +17,12 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     assert 'framer-motion@14.3.1' in text
     assert 'add_provider gemini GEMINI_API_KEY' not in text
     assert 'add_provider google GEMINI_API_KEY' not in text
+    assert 'add_provider nara NARAROUTER_API_KEY' not in text
+    assert 'nara: deferred from auto-pool until the account Telegram gate is resolved' in text
 
     for provider, credential in (
         ('groq', 'GROQ_API_KEY'),
         ('huggingface', 'HF_TOKEN'),
-        ('nara', 'NARAROUTER_API_KEY'),
         ('mistral', 'MISTRAL_API_KEY'),
         ('llm7', 'LLM7_API_KEY'),
         ('nvidia', 'NVIDIA_API_KEY'),

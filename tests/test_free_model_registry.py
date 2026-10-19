@@ -18,7 +18,7 @@ def _reset(monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
     monkeypatch.delenv("KIRAAI_API_KEY", raising=False)
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
-    monkeypatch.delenv("RADAR_ENABLE_GEMINI_FALLBACK", raising=False)
+    monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
 
 
@@ -152,14 +152,15 @@ def test_quota_is_model_scoped_and_openrouter_daily_limit_is_family_scoped(monke
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
-def test_optional_gemini_and_hf_are_disabled_by_default(monkeypatch):
+def test_removed_gemini_provider_cannot_be_reenabled_by_legacy_env(monkeypatch):
     _reset(monkeypatch)
-    names = [name for name, _ in registry.build_production_chain(router)]
-    assert "Gemini" not in names
-    assert "HuggingFace" not in names
+    monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
     names = [name for name, _ in registry.build_production_chain(router)]
-    assert names[-1] == "Gemini"
+    assert "Gemini" not in names
+    assert not any(name.casefold().startswith(("ollama", "localollama")) for name in names)
+    assert "HuggingFace" not in names
+
 
 
 def test_discovered_media_models_are_not_promoted_to_production_json_chain(monkeypatch):

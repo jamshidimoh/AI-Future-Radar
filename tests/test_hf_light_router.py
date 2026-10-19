@@ -35,14 +35,14 @@ class HuggingFaceLightRouterTests(unittest.TestCase):
         self.assertNotIn("HuggingFace", names)
 
     def test_missing_credentials_are_skipped_without_provider_calls(self):
-        env = {"GROQ_API_KEY": "", "GEMINI_API_KEY": "", "OPENROUTER_API_KEY": "", "HF_TOKEN": ""}
+        env = {"GROQ_API_KEY": "", "OPENROUTER_API_KEY": "", "HF_TOKEN": ""}
         calls = []
 
         def provider(*_args):
             calls.append(True)
             return "unexpected"
 
-        providers = [("Groq:qwen/qwen3.6-27b", provider), ("Gemini", provider), ("OpenRouter:openai/gpt-oss-120b:free", provider), ("HuggingFace", provider)]
+        providers = [("Groq:qwen/qwen3.6-27b", provider), ("UnsupportedProvider", provider), ("OpenRouter:openai/gpt-oss-120b:free", provider), ("HuggingFace", provider)]
         with patch.dict(os.environ, env, clear=False):
             result, provider_name = call_llm_with_fallback("system", "user", providers=providers)
         self.assertIsNone(result)

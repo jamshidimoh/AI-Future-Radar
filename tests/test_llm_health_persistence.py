@@ -248,6 +248,70 @@ def test_health_snapshot_merge_preserves_newer_remote_and_prefers_local_on_tie()
 
 
 
+def test_health_snapshot_merge_prunes_removed_inference_provider_records():
+    from scripts.llm_health_state_merge import merge_llm_health_state
+
+    remote = {
+        "updated_at": 400.0,
+        "models": {
+            "gemini:gemini-3.8-flash": {"disabled_until": 4102444800},
+            "OllamaLocal:qwen3:1.7b": {"disabled_until": 4102444800},
+            "openrouter:model-a": {"disabled_until": 4102444800},
+        },
+        "providers": {
+            "Gemini": {"disabled_until": 4102444800},
+            "ollama": {"disabled_until": 4102444800},
+            "openrouter": {"disabled_until": 4102444800},
+        },
+    }
+    older_local = {
+        "updated_at": 300.0,
+        "models": {"groq:model-b": {"disabled_until": 4102444800}},
+        "providers": {"groq": {"disabled_until": 4102444800}},
+    }
+
+    merged = merge_llm_health_state(remote, older_local)
+
+    assert set(merged["models"]) == {"openrouter:model-a"}
+    assert set(merged["providers"]) == {"openrouter"}
+
+
+def test_state_persistence_prunes_removed_provider_records_without_success_events(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    state.write_text(json.dumps({
+        "updated_at": 100.0,
+        "models": {
+            "gemini:gemini-3.8-flash": {
+                "failures": 137, "disabled_until": 4102444800,
+                "last_error": "auth", "last_success": 0,
+            },
+            "OllamaLocal:qwen3:1.7b": {
+                "failures": 3, "disabled_until": 4102444800,
+                "last_error": "model", "last_success": 0,
+            },
+            "openrouter:model-a": {
+                "failures": 2, "disabled_until": 4102444800,
+                "last_error": "rate_limit", "last_success": 0,
+            },
+        },
+        "providers": {
+            "Gemini": {"failures": 274, "disabled_until": 4102444800, "last_error": "auth"},
+            "ollama": {"failures": 3, "disabled_until": 4102444800, "last_error": "model"},
+            "openrouter": {"failures": 3, "disabled_until": 4102444800, "last_error": "quota"},
+        },
+    }), encoding="utf-8")
+    log = tmp_path / "run.log"
+    log.write_text("[Light Router] success=Groq:model-b model=groq/model-b attempts=1\\n", encoding="utf-8")
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+
+    assert set(payload["models"]) == {"openrouter:model-a"}
+    assert set(payload["providers"]) == {"openrouter"}
+
+
 def test_successful_runtime_event_clears_stale_provider_cooldown_after_remote_merge():
     merged = {
         "models": {

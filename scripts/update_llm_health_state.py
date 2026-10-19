@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.llm_health_state_merge import prune_removed_provider_health_records
 from src.state_io import load_json_state
 
 STATE_PATH = ROOT / "data" / "llm_health.json"
@@ -181,7 +182,7 @@ def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
             providers.pop(provider, None)
     result["models"] = models
     result["providers"] = providers
-    return result
+    return prune_removed_provider_health_records(result)
 
 
 def main() -> int:
@@ -190,7 +191,7 @@ def main() -> int:
         print(f"[LLM Health Persistence] no_log=1 path={log_path}")
         return 0
 
-    state = load()
+    state = prune_removed_provider_health_records(load())
     now = time.time()
     models = normalize_state_keys(prune(state.get("models", {}) if isinstance(state.get("models"), dict) else {}, now))
     providers = normalize_state_keys(prune(state.get("providers", {}) if isinstance(state.get("providers"), dict) else {}, now))

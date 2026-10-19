@@ -70,12 +70,40 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
-          if ! timeout 420s npm install -g omniroute@3.8.50 --registry=https://registry.npmjs.org/ --no-audit --no-fund --prefer-offline --no-progress; then
-            echo "[OmniRoute] npm installation timed out or failed; production router will use its hard fallback"
+          OMNIROUTE_VERSION=3.8.50
+          OMNIROUTE_DIR="$RUNNER_TEMP/OmniRoute"
+          OMNIROUTE_BIN_DIR="$RUNNER_TEMP/omniroute-bin"
+          OMNIROUTE_READY_LOCAL=0
+
+          # Install the audited release from its source tag using the committed lockfile.
+          # The published global npm package currently resolves a nonexistent
+          # framer-motion@14.3.1 transitively (ETARGET), so do not resolve dependencies
+          # afresh from a mutable package manifest in production CI.
+          if ! timeout 60s git clone --depth 1 --branch "v${OMNIROUTE_VERSION}" https://github.com/diegosouzapw/OmniRoute.git "$OMNIROUTE_DIR"; then
+            echo "[OmniRoute] source checkout failed; production router will use its hard fallback"
+          elif ! (cd "$OMNIROUTE_DIR" && timeout 420s npm ci --omit=dev --no-audit --no-fund --prefer-offline --no-progress); then
+            echo "[OmniRoute] lockfile installation timed out or failed; production router will use its hard fallback"
+          else
+            mkdir -p "$OMNIROUTE_BIN_DIR"
+            cat > "$OMNIROUTE_BIN_DIR/omniroute" <<EOF
+          #!/usr/bin/env bash
+          exec node "$OMNIROUTE_DIR/bin/omniroute.mjs" "\$@"
+          EOF
+            chmod +x "$OMNIROUTE_BIN_DIR/omniroute"
+            export PATH="$OMNIROUTE_BIN_DIR:$PATH"
+            echo "$OMNIROUTE_BIN_DIR" >> "$GITHUB_PATH"
+            OMNIROUTE_READY_LOCAL=1
+          fi
+
+          if [ "$OMNIROUTE_READY_LOCAL" -ne 1 ]; then
             echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"
             exit 0
           fi
-          timeout 10s omniroute --version || echo "[OmniRoute] version check timed out; continuing with fallback"
+          if ! timeout 10s omniroute --version; then
+            echo "[OmniRoute] version check failed; production router will use its hard fallback"
+            echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"
+            exit 0
+          fi
           nohup omniroute > /tmp/omniroute.log 2>&1 &
           HEALTHY=0
           for attempt in $(seq 1 30); do

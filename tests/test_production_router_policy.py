@@ -636,6 +636,9 @@ def test_local_ollama_emergency_failure_opens_run_circuit(monkeypatch):
     assert router._OLLAMA_CIRCUIT_OPEN is True
     assert local_calls == ["ollama"]
 
+    # Isolate the local circuit from the primary-chain circuit: even if the
+    # remote path gets another chance, the timed-out local fallback must not.
+    router._PRODUCTION_CIRCUIT_OPEN = False
     second_result, _ = router._call_litellm("system", "user")
     assert second_result is None
     assert local_calls == ["ollama"]

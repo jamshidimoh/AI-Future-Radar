@@ -846,7 +846,7 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             # freshness/novelty to break near-ties so a repeated OpenAI headline
             # cannot automatically displace a genuinely diverse cross-domain item.
             if (
-                relative_ai_advantage < 0.05
+                relative_ai_advantage < 0.075
                 and _secondary_ai_competition_key(best_alternative, p)
                 > _secondary_ai_competition_key(candidate, p)
             ):

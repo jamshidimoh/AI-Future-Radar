@@ -75,7 +75,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "min_authoritative_items": int(mission.get("min_authoritative_items", 2) or 2),
         "community_max": int(mission.get("community_max", 0) or 0),
         "max_same_mission_area": int(mission.get("max_same_mission_area", 2) or 2),
-        "ai_core_target_min": int(mission.get("ai_core_target_min", 2) or 0),
+        "ai_core_target_min": int(mission.get("ai_core_target_min", 1) or 0),
         "ai_core_target_max": int(mission.get("ai_core_target_max", 2) or 99),
         "convergence_target": int(mission.get("convergence_target", 0) or 0),
         "mind_cognition_target": int(mission.get("mind_cognition_target", 0) or 0),
@@ -852,10 +852,10 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             break
         p.add(candidate, "mission_target:ai_core")
 
-    # AI-core items above the configured minimum are optional, not an unconditional
-    # quota. The production contract sets min=max=2, so two qualified AI-core items
-    # are selected before filling the highest-priority available Mind/Futures slot.
-    # Any additional AI item must still compete with non-AI coverage and quality.
+    # A second AI-core item is a preferred target, not an unconditional quota.
+    # It must compete with eligible Mind/Futures/Convergence candidates using
+    # quality, freshness, novelty and mission-coverage arbitration. This avoids
+    # forcing a weak AI item to displace a materially stronger cross-domain story.
     ai_target_max = min(max(0, int(p.contract.get("ai_core_target_max", 1))), p.limit)
     while len(p.selected) < p.limit and p.area_counts.get("ai_core", 0) < ai_target_max:
         candidates = [

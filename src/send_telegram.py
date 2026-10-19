@@ -15,10 +15,13 @@ TITLE_ICON = "📡"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 TELEGRAM_TEXT_LIMIT = 4096
 PHOTO_CAPTION_LIMIT = 1024
-# Telegram explicitly rejects a 429 request, so retry is safe. A margin avoids
-# hitting the same boundary again when the server's clock/window is coarse.
-MAX_TELEGRAM_RATE_LIMIT_RETRIES = 6
+# Telegram explicitly rejects a 429 request, so retry is safe. Repeated 429s
+# can reflect shared bot/channel traffic: keep retries bounded while increasing
+# the post-retry margin instead of hammering the same rate-limit boundary.
+MAX_TELEGRAM_RATE_LIMIT_RETRIES = 8
 TELEGRAM_RETRY_AFTER_SAFETY_SECONDS = 1
+TELEGRAM_REPEATED_429_BACKOFF_INCREMENT_SECONDS = 2
+TELEGRAM_REPEATED_429_BACKOFF_MAX_SECONDS = 12
 MAX_TELEGRAM_RETRY_AFTER_SECONDS = 30
 RLI = "\u2067"
 LRI = "\u2066"
@@ -413,12 +416,22 @@ def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
                 retry_after = _telegram_retry_after_seconds(response)
                 if retry_after is not None and rate_limit_retries < MAX_TELEGRAM_RATE_LIMIT_RETRIES:
                     rate_limit_retries += 1
+                    repeated_429_backoff = min(
+                        (rate_limit_retries - 1) * TELEGRAM_REPEATED_429_BACKOFF_INCREMENT_SECONDS,
+                        TELEGRAM_REPEATED_429_BACKOFF_MAX_SECONDS,
+                    )
+                    wait_seconds = (
+                        retry_after
+                        + TELEGRAM_RETRY_AFTER_SAFETY_SECONDS
+                        + repeated_429_backoff
+                    )
                     print(
                         "[Telegram Rate Limit] explicit HTTP 429 rejection; "
-                        f"retry_after={retry_after}s retry={rate_limit_retries}/{MAX_TELEGRAM_RATE_LIMIT_RETRIES}",
+                        f"retry_after={retry_after}s wait={wait_seconds}s "
+                        f"retry={rate_limit_retries}/{MAX_TELEGRAM_RATE_LIMIT_RETRIES}",
                         flush=True,
                     )
-                    time.sleep(retry_after + TELEGRAM_RETRY_AFTER_SAFETY_SECONDS)
+                    time.sleep(wait_seconds)
                     continue
                 if retry_after is not None:
                     print(

@@ -6,10 +6,12 @@ from src.unified_editorial_selection import (
     _eligible_candidates,
     _Portfolio,
     _second_ai_consumes_reserved_mission_source,
+    candidate_score,
     is_mission_relevant,
     load_editorial_contract,
     mission_area,
     select_regular_portfolio,
+    source_key,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,6 +58,31 @@ def test_optional_second_ai_preserves_the_only_source_for_mind_target():
     )
     portfolio.add(ai_first, "test:ai_first")
 
+    assert mission_area(mind_target) == "mind_cognition"
+    assert candidate_score(mind_target) > 0
+    assert source_key(ai_second) == source_key(mind_target)
+    assert portfolio.interview_count == 0
+    assert portfolio.admissible(
+        mind_target,
+        repeat_source=False,
+        ignore_type_cap=True,
+        ignore_window_cap=True,
+        ignore_area_window_cap=True,
+    )
+    mind_pool = [
+        item for item in eligible
+        if mission_area(item) == "mind_cognition"
+        and id(item) not in portfolio.selected_ids
+        and candidate_score(item) > 0
+        and portfolio.admissible(
+            item,
+            repeat_source=False,
+            ignore_type_cap=True,
+            ignore_window_cap=True,
+            ignore_area_window_cap=True,
+        )
+    ]
+    assert mind_pool == [mind_target]
     assert _second_ai_consumes_reserved_mission_source(portfolio, eligible, ai_second)
 
 

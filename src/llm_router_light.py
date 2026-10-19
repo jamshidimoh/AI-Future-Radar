@@ -31,7 +31,7 @@ _PRODUCTION_CIRCUIT_OPEN = False
 _OLLAMA_CIRCUIT_OPEN = False
 _LITELLM_ROUTER = None
 _LITELLM_ROUTER_KEY = None
-_PROVIDER_TIMEOUTS = {"Groq:": 8.0, "NaraRouter:": 8.0, "OpenRouter:": 7.0, "KiraAI:": 8.0, "Gemini": 8.0, "HuggingFace": 5.0}
+_PROVIDER_TIMEOUTS = {"OllamaLocal:": 34.0, "ollama:": 34.0, "Groq:": 8.0, "NaraRouter:": 8.0, "OpenRouter:": 7.0, "KiraAI:": 8.0, "Gemini": 8.0, "HuggingFace": 5.0}
 _REQUEST_TIMEOUT = 10
 _ROUTER_BUDGET_SECONDS = float(os.getenv("RADAR_ROUTER_BUDGET_SECONDS", "10") or 10)
 _MAX_TRANSIENT_RETRIES = 1
@@ -451,6 +451,12 @@ def call_llm_with_fallback(system_prompt,user_content,providers=None):
             if result: print(f"[Light Router] success={name}",flush=True); return result,name
         except concurrent.futures.TimeoutError:
             last_error=TimeoutError(f"{name}: provider timeout"); local_models.add(name); _disable(name,"transient")
+            if family in {"ollama", "ollamalocal", "localollama"}:
+                # Ollama is a single local CPU-bound endpoint. Once a real repair
+                # request times out, do not enqueue it again for every remaining
+                # candidate during this production run.
+                _OLLAMA_CIRCUIT_OPEN = True
+                print("[Production Circuit] opened=ollama reason=provider_timeout; subsequent local calls bypassed", flush=True)
             logger.warning(
                 "Provider attempt timed out provider=%s model=%s exception=TimeoutError",
                 family,

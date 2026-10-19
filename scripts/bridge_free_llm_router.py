@@ -50,6 +50,13 @@ def _text_capable(model: dict) -> bool:
     return "text" in inputs and "text" in outputs
 
 
+def _json_chat_capable(model: dict) -> bool:
+    """Dynamic discovery needs explicit provider support for structured JSON."""
+    return _text_capable(model) and "response_format" in {
+        str(value).strip() for value in (model.get("supported_parameters") or [])
+    }
+
+
 def _load() -> dict:
     if not RUNTIME_PATH.exists():
         raise RuntimeError(f"Runtime registry not found: {RUNTIME_PATH}")
@@ -133,6 +140,10 @@ def bridge() -> dict:
             reasons.append("not_free_now")
         if live and not _text_capable(live):
             reasons.append("not_text_io")
+        elif live and not _json_chat_capable(live):
+            # These dynamic entries have no independent per-model JSON evidence.
+            # Do not count candidates that canonical_entries will later reject.
+            reasons.append("no_json_capability")
 
         if reasons:
             rejected += 1

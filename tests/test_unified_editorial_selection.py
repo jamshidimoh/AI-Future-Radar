@@ -2,7 +2,15 @@ from pathlib import Path
 
 import yaml
 
-from src.unified_editorial_selection import is_mission_relevant, load_editorial_contract, mission_area, select_regular_portfolio
+from src.unified_editorial_selection import (
+    _Portfolio,
+    _eligible_candidates,
+    _second_ai_consumes_reserved_mission_source,
+    is_mission_relevant,
+    load_editorial_contract,
+    mission_area,
+    select_regular_portfolio,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -24,6 +32,31 @@ def item(title, source, score, area="ai", tier=1, content_type="news", research_
         "_ai_link": True,
         "ai_relevance": True,
     }
+
+
+def test_optional_second_ai_preserves_the_only_source_for_mind_target():
+    fixture = yaml.safe_load((ROOT / "tests/characterization/select_regular_portfolio.json").read_text(encoding="utf-8"))
+    contract = dict(fixture["contract"])
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 0
+    eligible = _eligible_candidates(fixture["candidates"], contract, strict_relevance=False)
+    by_title = {candidate["title"]: candidate for candidate in eligible}
+    ai_first = by_title["Ai Core candidate 0 machine learning"]
+    ai_second = by_title["Ai Core candidate 1 machine learning"]
+    mind_target = by_title["Mind Cognition candidate 8 machine learning"]
+
+    assert ai_second["source"] == mind_target["source"]
+    portfolio = _Portfolio(
+        contract=contract,
+        limit=3,
+        source_cap=1,
+        type_cap=1,
+        recent={},
+        mission_aware=True,
+    )
+    portfolio.add(ai_first, "test:ai_first")
+
+    assert _second_ai_consumes_reserved_mission_source(portfolio, eligible, ai_second)
 
 
 def test_mission_diversity_is_explicit_and_canonical():

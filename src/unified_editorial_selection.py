@@ -852,10 +852,10 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             break
         p.add(candidate, "mission_target:ai_core")
 
-    # A second AI-core item is optional, not an unconditional quota. Preserve
-    # at least one slot for an available configured non-AI mission target, and
-    # compare the AI candidate with that alternative using freshness, current-
-    # portfolio novelty and entity/leader repetition penalties.
+    # AI-core items above the configured minimum are optional, not an unconditional
+    # quota. The production contract sets min=max=2, so two qualified AI-core items
+    # are selected before filling the highest-priority available Mind/Futures slot.
+    # Any additional AI item must still compete with non-AI coverage and quality.
     ai_target_max = min(max(0, int(p.contract.get("ai_core_target_max", 1))), p.limit)
     while len(p.selected) < p.limit and p.area_counts.get("ai_core", 0) < ai_target_max:
         candidates = [

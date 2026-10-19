@@ -54,7 +54,6 @@ jobs:
           NODE_ENV: production
           DATA_DIR: /tmp/omniroute-data
           # Recurring/free provider credentials used by OmniRoute auto-routing. Verified published pin: 3.8.50.
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
           NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
@@ -138,7 +137,6 @@ jobs:
             fi
           }
           # Core recurring/free pool.
-          add_provider gemini GEMINI_API_KEY
           add_provider groq GROQ_API_KEY
           add_provider huggingface HF_TOKEN
           add_provider nara NARAROUTER_API_KEY
@@ -154,7 +152,7 @@ jobs:
           # One-time/signup-credit provider remains outside automatic routing.
           echo "[OmniRoute] one-time credit provider retained by Radar, not OmniRoute auto-pool: deepseek"
           echo "[OmniRoute] credential presence inventory (names only):"
-          for credential in GEMINI_API_KEY GROQ_API_KEY HF_TOKEN NARAROUTER_API_KEY MISTRAL_API_KEY LLM7_API_KEY NVIDIA_API_KEY ANYAPI_API_KEY API_AIRFORCE_API_KEY CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID DEEPSEEK_API_KEY SAMBANOVA_API_KEY TYPESAFE_API_KEY; do
+          for credential in GROQ_API_KEY HF_TOKEN NARAROUTER_API_KEY MISTRAL_API_KEY LLM7_API_KEY NVIDIA_API_KEY ANYAPI_API_KEY API_AIRFORCE_API_KEY CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID DEEPSEEK_API_KEY SAMBANOVA_API_KEY TYPESAFE_API_KEY; do
             if [ -n "${!credential:-}" ]; then
               echo "[OmniRoute] ${credential}=present"
             else
@@ -216,7 +214,6 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
         run: |
@@ -245,71 +242,6 @@ jobs:
           fi
           exit 0
 
-      - name: Install local Ollama fallback
-        id: ollama_fallback
-        timeout-minutes: 10
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Ollama is optional. A slow installer or model pull must not block the
-          # Telegram production path for the job's 120-minute outer timeout.
-          if ! timeout 180s bash -o pipefail -c 'curl -fsSL https://ollama.com/install.sh | sh'; then
-            echo "[Ollama fallback] installer failed or exceeded 180s; continuing without local fallback"
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          if ! command -v ollama >/dev/null 2>&1; then
-            echo "[Ollama fallback] executable missing after install; continuing without local fallback"
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          nohup ollama serve > /tmp/ollama.log 2>&1 &
-          ready=false
-          for attempt in $(seq 1 20); do
-            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then
-              ready=true
-              break
-            fi
-            sleep 1
-          done
-          if [[ "$ready" != true ]]; then
-            echo "[Ollama fallback] local service failed readiness; continuing without local fallback"
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if ! timeout 360s ollama pull qwen3:1.7b; then
-            echo "[Ollama fallback] model pull failed or exceeded 360s; continuing without local fallback"
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          # Warm the pulled model before it is used by production. On a cold
-          # hosted runner the first inference may otherwise exceed the per-call
-          # timeout and permanently open the local fallback circuit for this run.
-          cat > /tmp/ollama-warmup.json <<'JSON'
-          {
-            "model": "qwen3:1.7b",
-            "messages": [{"role": "user", "content": "Return a JSON object with one boolean field named ok set to true."}],
-            "stream": false,
-            "think": false,
-            "format": "json",
-            "keep_alive": "30m",
-            "options": {"temperature": 0, "num_predict": 12}
-          }
-          JSON
-          if timeout 65s curl --connect-timeout 5 --max-time 60 -fsS \
-              http://127.0.0.1:11434/api/chat \
-              -H "Content-Type: application/json" \
-              --data-binary @/tmp/ollama-warmup.json \
-              > /tmp/ollama-warmup-response.json; then
-            echo "[Ollama fallback] model warm-up completed"
-          else
-            echo "[Ollama fallback] warm-up did not complete within budget; retaining bounded fallback"
-          fi
-          echo "ready=true" >> "$GITHUB_OUTPUT"
-          echo "[Ollama fallback] qwen3:1.7b ready"
-
       - name: Telegram production preflight
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -323,12 +255,7 @@ jobs:
           RADAR_WATCHDOG_MINUTES: 90
           RADAR_SUMMARY_WORKERS: 1
           AI_RADAR_EDITORIAL_REVIEW: 1
-          RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK: ${{ steps.ollama_fallback.outputs.ready == 'true' && '1' || '0' }}
-          RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b
-          RADAR_OLLAMA_TIMEOUT_SECONDS: 35
-          RADAR_OLLAMA_MAX_TOKENS: 384
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
-          RADAR_ENABLE_GEMINI_FALLBACK: 1
           RADAR_ENABLE_HF_FALLBACK: 1
           RADAR_MAX_LLM_ATTEMPTS: 10
           RADAR_LLM_MAX_TOKENS: 700
@@ -339,7 +266,6 @@ jobs:
           OMNIROUTE_TIMEOUT_SECONDS: 8
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
@@ -360,7 +286,6 @@ jobs:
           PYTHONUNBUFFERED: 1
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
@@ -369,10 +294,6 @@ jobs:
           HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
-          RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK: ${{ steps.ollama_fallback.outputs.ready == 'true' && '1' || '0' }}
-          RADAR_OLLAMA_FREE_MODEL: qwen3:1.7b
-          RADAR_OLLAMA_TIMEOUT_SECONDS: 35
-          RADAR_OLLAMA_MAX_TOKENS: 384
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
           FORCE_EDUCATION_PUBLICATION: false
         run: |

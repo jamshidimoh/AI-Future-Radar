@@ -48,7 +48,6 @@ docker image inspect ghcr.io/jamshidimoh/ai-future-radar:latest
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHANNEL=
 TELEGRAM_CHANNEL_USERNAME=
-GEMINI_API_KEY=
 GROQ_API_KEY=
 OPENROUTER_API_KEY=
 HF_TOKEN=

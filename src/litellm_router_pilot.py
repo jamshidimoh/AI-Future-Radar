@@ -38,7 +38,7 @@ def build_model_list() -> list[dict[str, Any]]:
         ):
             _append(rows, order, model, ident, "GROQ_API_KEY")
     _append(rows, 5, "openai/minimax-m3-free", "kiraai-minimax-m3-free", "KIRAAI_API_KEY", api_base="https://kiraai.vn/api/v1")
-    _append(rows, 7, "cerebras/glm-4.7", "cerebras-glm-4.7", "CEREBRAS_API_KEY")
+    _append(rows, 6, "cerebras/glm-4.7", "cerebras-glm-4.7", "CEREBRAS_API_KEY")
     return rows
 
 

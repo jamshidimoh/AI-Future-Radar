@@ -1,17 +1,5 @@
 {
   "models": {
-    "gemini:gemini-3.8-flash": {
-      "failures": 173,
-      "disabled_until": 1792476752.366,
-      "last_error": "auth",
-      "last_success": 0
-    },
-    "gemini:gemini": {
-      "failures": 1,
-      "disabled_until": 1792476752.366,
-      "last_error": "auth",
-      "last_success": 0.0
-    },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
       "disabled_until": 1792393185.684,
@@ -32,11 +20,6 @@
     }
   },
   "providers": {
-    "gemini": {
-      "failures": 346,
-      "disabled_until": 1792476752.366,
-      "last_error": "auth"
-    },
     "kiraai": {
       "failures": 1,
       "disabled_until": 1792431705.883,

@@ -2,8 +2,8 @@
   "models": {
     "nararouter:auto/bynara": {
       "failures": 7,
-      "disabled_until": 1792430585.486,
-      "last_error": "model",
+      "disabled_until": 1792495968.635,
+      "last_error": "auth",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
@@ -29,9 +29,14 @@
       "failures": 4,
       "disabled_until": 1792421014.345,
       "last_error": "quota"
+    },
+    "nararouter": {
+      "failures": 7,
+      "disabled_until": 1792495968.635,
+      "last_error": "auth"
     }
   },
-  "updated_at": 1792408985.485969,
+  "updated_at": 1792409568.635,
   "version": 1,
   "telemetry": {
     "observed_failures": 25,

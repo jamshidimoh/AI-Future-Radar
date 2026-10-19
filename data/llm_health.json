@@ -1,47 +1,59 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 10,
-      "disabled_until": 1792508422.177,
+      "failures": 11,
+      "disabled_until": 1792533040.616,
       "last_error": "auth",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1792425622.177,
+      "disabled_until": 1792450240.616,
       "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
+      "failures": 1,
+      "disabled_until": 1792450240.616,
+      "last_error": "quota",
+      "last_success": 0
+    },
+    "kiraai:kira-mini-1.0": {
+      "failures": 1,
+      "disabled_until": 1792450240.616,
+      "last_error": "quota",
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 1,
-      "disabled_until": 1792425622.177,
+      "disabled_until": 1792450240.616,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
-    "kiraai": {
-      "failures": 1,
-      "disabled_until": 1792431705.883,
-      "last_error": "wallet"
+    "nararouter": {
+      "failures": 4,
+      "disabled_until": 1792533040.616,
+      "last_error": "auth"
     },
     "openrouter": {
-      "failures": 6,
-      "disabled_until": 1792432096.018,
+      "failures": 1,
+      "disabled_until": 1792468240.616,
       "last_error": "quota"
     },
-    "nararouter": {
-      "failures": 3,
-      "disabled_until": 1792508422.177,
-      "last_error": "auth"
+    "kiraai": {
+      "failures": 1,
+      "disabled_until": 1792533040.616,
+      "last_error": "wallet"
     }
   },
-  "updated_at": 1792422022.176935,
+  "updated_at": 1792446640.6157868,
   "version": 1,
   "telemetry": {
-    "observed_failures": 37,
-    "observed_events": 55,
-    "updated_at": 1792422022.176935
+    "observed_failures": 38,
+    "observed_events": 56,
+    "updated_at": 1792446640.6157868
   },
   "observed_failures": 0,
   "observed_events": 0

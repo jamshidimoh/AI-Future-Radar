@@ -1,17 +1,5 @@
 {
   "models": {
-    "gemini:gemini-3.8-flash": {
-      "failures": 174,
-      "disabled_until": 1792480637.747,
-      "last_error": "auth",
-      "last_success": 0
-    },
-    "gemini:gemini": {
-      "failures": 1,
-      "disabled_until": 1792480637.747,
-      "last_error": "auth",
-      "last_success": 0.0
-    },
     "nararouter:auto/bynara": {
       "failures": 2,
       "disabled_until": 1792417142.756,
@@ -38,11 +26,6 @@
     }
   },
   "providers": {
-    "gemini": {
-      "failures": 348,
-      "disabled_until": 1792480637.747,
-      "last_error": "auth"
-    },
     "kiraai": {
       "failures": 1,
       "disabled_until": 1792431705.883,

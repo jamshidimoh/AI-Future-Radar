@@ -3,8 +3,8 @@ from pathlib import Path
 import yaml
 
 from src.unified_editorial_selection import (
-    _Portfolio,
     _eligible_candidates,
+    _Portfolio,
     _second_ai_consumes_reserved_mission_source,
     is_mission_relevant,
     load_editorial_contract,

@@ -312,6 +312,7 @@ def test_groq_gpt_oss_retries_without_json_mode_on_validation_failure(monkeypatc
 
 def test_removed_gemini_and_ollama_providers_are_never_credentialed(monkeypatch):
     _reset()
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("GEMINI_API_KEY", "test-key")
     monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
     monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")

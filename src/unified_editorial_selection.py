@@ -411,13 +411,28 @@ def _secondary_ai_competition_key(item: dict[str, Any], p: _Portfolio) -> tuple:
     )
 
 
-def _has_pending_non_ai_target(p: _Portfolio, ordered: list[dict[str, Any]]) -> bool:
-    """Whether a configured non-AI target has a viable candidate worth reserving a slot for."""
+def _has_pending_non_ai_target(
+    p: _Portfolio,
+    ordered: list[dict[str, Any]],
+    *,
+    after_candidate: dict[str, Any] | None = None,
+) -> bool:
+    """Whether a mission target remains selectable before/after an optional AI slot."""
+    candidate_source = source_key(after_candidate) if after_candidate is not None else None
+    candidate_exhausts_interview_slot = bool(
+        after_candidate is not None
+        and _is_interview(after_candidate)
+        and int(p.contract.get("interview_target_max", 0) or 0) > 0
+        and p.interview_count + 1 >= int(p.contract.get("interview_target_max", 0) or 0)
+    )
+
     def available(predicate) -> bool:
         return any(
             predicate(item)
             and id(item) not in p.selected_ids
             and candidate_score(item) > 0.0
+            and (candidate_source is None or source_key(item) != candidate_source)
+            and not (candidate_exhausts_interview_slot and _is_interview(item))
             and p.admissible(
                 item,
                 repeat_source=False,
@@ -777,6 +792,12 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             break
 
         reserve_slot = _has_pending_non_ai_target(p, ordered)
+        # Do not use the optional AI slot to consume the only source (or the last
+        # interview quota) needed by a higher-priority Mind/Futures/Convergence
+        # target. This is essential when one leader/source produces both an AI
+        # story and the only viable cognition interview.
+        if reserve_slot and not _has_pending_non_ai_target(p, ordered, after_candidate=candidate):
+            break
         slots_after_this = p.limit - len(p.selected) - 1
         if reserve_slot and slots_after_this < 1:
             break

@@ -1,8 +1,9 @@
 from pathlib import Path
 
+from scripts.update_llm_health_state import _iter_events, classify as classify_persisted_health
+
 import src.free_model_registry as registry
 import src.llm_router_light as router
-from scripts.update_llm_health_state import _iter_events, classify as classify_persisted_health
 from src.production_router_policy import _is_provider_auth, _is_provider_quota
 
 ROOT = Path(__file__).resolve().parents[1]

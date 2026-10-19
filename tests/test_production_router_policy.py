@@ -19,6 +19,8 @@ def _reset(monkeypatch):
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
+    router._PRODUCTION_CIRCUIT_OPEN = False
+    router._OLLAMA_CIRCUIT_OPEN = False
     policy._OMNIROUTE_CIRCUIT_OPEN = False
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
@@ -558,6 +560,41 @@ def test_local_ollama_emergency_gets_longer_timeout(monkeypatch):
     assert provider == "LocalOllamaFree"
     assert observed and observed[0] <= 36.0
     assert observed[0] >= 6.0
+
+
+def test_local_ollama_emergency_is_skipped_after_circuit_opens(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
+    apply()
+    router._OLLAMA_CIRCUIT_OPEN = True
+    remote_calls = []
+    local_calls = []
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            remote_calls.append(model)
+            raise RuntimeError("HTTP 503 temporary")
+
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(
+        router,
+        "_litellm_model_list",
+        lambda: [{"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}],
+    )
+    monkeypatch.setattr(
+        router,
+        "_ollama_local",
+        lambda *_args, **_kwargs: local_calls.append("called") or '{"title":"local"}',
+    )
+
+    result, provider = router._call_litellm("system", "user")
+
+    assert result is None
+    assert provider is None
+    assert remote_calls == ["radar-production-1"]
+    assert local_calls == []
 
 
 def test_omniroute_is_primary_model_selection_layer_when_configured(monkeypatch):

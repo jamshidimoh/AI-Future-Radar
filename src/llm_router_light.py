@@ -50,7 +50,10 @@ def _provider_credential_available(name: str) -> bool:
     # Local Ollama is an explicitly opt-in, zero-credential fallback. Treating
     # it like a hosted API provider silently skipped mission-recovery attempts.
     if family in {"ollama", "ollamalocal", "localollama"}:
-        return os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}
+        enabled = os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}
+        # Once a local inference times out, its circuit is open for this run.
+        # Do not re-queue the same dead endpoint during every candidate repair.
+        return enabled and not _OLLAMA_CIRCUIT_OPEN
     env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","gemini":"GEMINI_API_KEY","huggingface":"HF_TOKEN"}.get(family)
     return bool(os.getenv(env)) if env else False
 

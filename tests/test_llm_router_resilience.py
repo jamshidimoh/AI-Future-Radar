@@ -12,6 +12,8 @@ def _reset():
     router._MODEL_DISABLED_REASON.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
+    router._OLLAMA_CIRCUIT_OPEN = False
+    router._PRODUCTION_CIRCUIT_OPEN = False
 
 
 def test_model_specific_quota_keeps_provider_sibling_available(monkeypatch):
@@ -316,6 +318,10 @@ def test_local_ollama_recovery_provider_is_credential_free_but_opt_in(monkeypatc
     monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
     assert router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")
     assert router._provider_credential_available("ollama:qwen3:1.7b")
+
+    router._OLLAMA_CIRCUIT_OPEN = True
+    assert not router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")
+    router._OLLAMA_CIRCUIT_OPEN = False
 
     monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0")
     assert not router._provider_credential_available("OllamaLocal:qwen3:1.7b:mission-persian-repair")

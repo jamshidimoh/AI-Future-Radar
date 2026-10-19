@@ -17,7 +17,7 @@ from src.editorial_quality_policy import (
     persian_ratio,
 )
 from src.education_editor import news_terminology_review_prompt, normalize_news_editorial_text
-from src.llm_router_light import QuotaExceeded, _disable, _ollama_local, call_llm_with_fallback, get_quality_chain
+from src.llm_router_light import QuotaExceeded, _disable, call_llm_with_fallback, get_quality_chain
 from src.rejection_telemetry import build_event, emit
 from src.source_evidence import article_text_for_item
 
@@ -352,9 +352,6 @@ def _language_repair_providers(item):
 
         providers.append(("OmniRoute:mission-persian-repair", _omni_repair))
 
-    if os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}:
-        providers.append(("OllamaLocal:qwen3:1.7b:mission-persian-repair", _ollama_local))
-
     providers.extend(get_quality_chain())
     return providers
 
@@ -666,18 +663,6 @@ def _repair_claim_alignment(data, item, source_text, flags):
                 if not excluded_family
                 or str(name).split(":", 1)[0].strip().casefold() != excluded_family
             ]
-            # When enabled, the local zero-credential model is a last independent
-            # repair option. Its result is still required to pass every language,
-            # source-evidence and semantic claim check below.
-            local_fallback_enabled = os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}
-            local_provider_name = "OllamaLocal:qwen3:1.7b:claim-repair"
-            local_family = local_provider_name.split(":", 1)[0].strip().casefold()
-            if (
-                local_fallback_enabled
-                and local_family != excluded_family
-                and all(str(name).split(":", 1)[0].strip().casefold() != local_family for name, _fn in attempt_providers)
-            ):
-                attempt_providers.append((local_provider_name, _ollama_local))
             if not attempt_providers:
                 print(
                     "[Claim Alignment Recovery] no independent provider family remains after first-pass failure; rejecting candidate",

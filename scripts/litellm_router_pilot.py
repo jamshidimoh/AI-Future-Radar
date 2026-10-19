@@ -99,7 +99,6 @@ def _probe_providers() -> None:
     _probe_provider("openrouter", "openrouter/nvidia/nemotron-3-super-120b-a12b:free", "OPENROUTER_API_KEY")
     _probe_provider("groq", "groq/openai/gpt-oss-120b", "GROQ_API_KEY")
     _probe_provider("kiraai", "openai/minimax-m3-free", "KIRAAI_API_KEY", api_base="https://kiraai.vn/api/v1")
-    _probe_provider("gemini", "gemini/gemini-3-flash-preview", "GEMINI_API_KEY")
     _probe_provider("cerebras", "cerebras/glm-4.7", "CEREBRAS_API_KEY")
 
 

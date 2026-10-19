@@ -255,39 +255,6 @@ registry:
       base_quality: 72
       task_fit: 82
       quality_evidence: independent
-  - family: gemini
-    credential_env: GEMINI_API_KEY
-    pricing_mode: free-tier
-    dynamic_catalog: true
-    catalog_endpoint: https://generativelanguage.googleapis.com/v1beta/models
-    models:
-    - priority: 1
-      id: gemini-3.8-flash
-      free: true
-      chat_capable: true
-      json_capable: true
-      response_format: true
-      base_quality: 96
-      task_fit: 98
-      quality_evidence: provider_official
-    - priority: 2
-      id: gemini-3.7-flash
-      free: true
-      chat_capable: true
-      json_capable: true
-      response_format: true
-      base_quality: 94
-      task_fit: 97
-      quality_evidence: provider_official
-    - priority: 3
-      id: gemini-3.6-flash
-      free: true
-      chat_capable: true
-      json_capable: true
-      response_format: true
-      base_quality: 91
-      task_fit: 95
-      quality_evidence: provider_official
   - family: huggingface
     credential_env: HF_TOKEN
     pricing_mode: monthly-credit-only

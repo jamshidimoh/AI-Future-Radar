@@ -121,7 +121,6 @@ _OMNIROUTE_PROVIDER_LABELS = {
     "openrouter": "OpenRouter",
     "nara": "NaraRouter",
     "nararouter": "NaraRouter",
-    "gemini": "Gemini",
     "mistral": "Mistral",
     "nvidia": "NVIDIA",
     "sambanova": "SambaNova",
@@ -367,25 +366,14 @@ def _install_production_circuit_breaker() -> None:
                 break
 
         emergency_fallbacks = []
-        if os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}:
-            if getattr(router, "_OLLAMA_CIRCUIT_OPEN", False):
-                print("[Production Circuit] skipped=ollama reason=circuit_open", flush=True)
-            else:
-                emergency_fallbacks.append(("LocalOllamaFree", router._ollama_local))
-        if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("GEMINI_API_KEY"):
-            emergency_fallbacks.append(("Gemini", router._gemini))
         if os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("OPENROUTER_API_KEY"):
             emergency_fallbacks.append(("OpenRouterFreeRouter", router._openrouter_free_router))
         if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("HF_TOKEN"):
             emergency_fallbacks.append(("HuggingFace", router._huggingface))
 
         for emergency_name, emergency_fn in emergency_fallbacks:
-            # Emergency fallbacks must obey the same health policy as primary
-            # deployments. Previously Gemini could bypass a persisted provider
-            # authentication cooldown and be called again for every candidate.
+            # Emergency fallbacks obey the same health policy as primary deployments.
             emergency_health_ids = {
-                "LocalOllamaFree": f"ollama:{(os.getenv('RADAR_OLLAMA_FREE_MODEL') or router.OLLAMA_FREE_DEFAULT_MODEL).strip()}",
-                "Gemini": f"gemini:{(os.getenv('GEMINI_MODEL') or router.GEMINI_DEFAULT_MODEL).strip()}",
                 "OpenRouterFreeRouter": "openrouter:free-router",
                 "HuggingFace": f"huggingface:{(os.getenv('HF_MODEL') or 'inference').strip()}",
             }
@@ -400,24 +388,7 @@ def _install_production_circuit_breaker() -> None:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 break
-            if emergency_name == "LocalOllamaFree":
-                try:
-                    local_timeout = max(1.0, float(os.getenv("RADAR_OLLAMA_TIMEOUT_SECONDS", "20") or 20))
-                except (TypeError, ValueError):
-                    local_timeout = 20.0
-                emergency_limit = local_timeout + 1.0
-                # Do not start a local HTTP call unless its own timeout can fire
-                # before the production deadline; otherwise the worker future
-                # would outlive this request and accumulate in the background.
-                if remaining <= emergency_limit:
-                    print(
-                        f"[Production Circuit] skipped=ollama reason=insufficient_deadline "
-                        f"remaining={remaining:.1f}s required={emergency_limit:.1f}s",
-                        flush=True,
-                    )
-                    continue
-            else:
-                emergency_limit = 6.0
+            emergency_limit = 6.0
             try:
                 print(f"[Production Circuit] {emergency_name.lower()}_emergency_attempt=1", flush=True)
                 future = router._CALL_EXECUTOR.submit(emergency_fn, system_prompt, user_content)
@@ -427,11 +398,6 @@ def _install_production_circuit_breaker() -> None:
                     return content, emergency_name
             except Exception as exc:
                 last_error = exc
-                if emergency_name == "LocalOllamaFree":
-                    # A local timeout is run-scoped: avoid paying its timeout
-                    # cost again for every later candidate in this production run.
-                    router._OLLAMA_CIRCUIT_OPEN = True
-                    print("[Production Circuit] opened=ollama reason=emergency_failure", flush=True)
                 logger.warning(
                     "Production provider attempt failed provider=%s model=%s exception=%s: %s",
                     emergency_name.lower(),

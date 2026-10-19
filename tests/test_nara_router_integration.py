@@ -56,7 +56,7 @@ def test_nara_telegram_required_is_provider_level_auth_failure():
 
 
 def test_nara_telegram_required_is_persisted_as_provider_auth_not_model_error():
-    from scripts.update_llm_health_state import classify as classify_persisted_health, _iter_events
+    import scripts.update_llm_health_state as health_state
 
     # This is the real production log shape from the HTTP 403 failure. The
     # health-state parser must prioritize the account-linking marker over 403.
@@ -67,8 +67,8 @@ def test_nara_telegram_required_is_persisted_as_provider_auth_not_model_error():
         '{"error":{"type":"forbidden","message":"telegram_required: Join the required '
         'Telegram group/channel and relink at /settings to continue."}}'
     )
-    assert classify_persisted_health(line) == "auth"
-    events = list(_iter_events([line]))
+    assert health_state.classify(line) == "auth"
+    events = list(health_state._iter_events([line]))
     assert events == [("nararouter:auto/bynara", "failure", "auth", False)]
 
 

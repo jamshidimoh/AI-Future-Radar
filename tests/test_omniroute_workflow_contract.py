@@ -8,7 +8,11 @@ WORKFLOW = pathlib.Path(__file__).resolve().parents[1] / '.github' / 'workflows'
 def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     text = WORKFLOW.read_text(encoding='utf-8')
 
-    assert 'omniroute@3.8.50' in text
+    assert 'OMNIROUTE_VERSION=3.8.50' in text
+    assert 'git clone --depth 1 --branch "v${OMNIROUTE_VERSION}" https://github.com/diegosouzapw/OmniRoute.git' in text
+    assert 'npm ci --omit=dev' in text
+    assert 'npm install -g omniroute@' not in text
+    assert 'framer-motion@14.3.1' in text
     assert 'add_provider gemini GEMINI_API_KEY' not in text
     assert 'add_provider google GEMINI_API_KEY' not in text
 
@@ -32,7 +36,7 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     assert '[OmniRoute] running minimal auto/smart inference smoke-test' in text
     assert '\"model\":\"auto/smart\"' in text
 
-# Production validation trigger: OmniRoute 3.8.50 contract.
+# Production validation trigger: pinned OmniRoute source tag and lockfile contract.
 
 # Final production validation: secrets + OmniRoute + TypeSafe.
 
@@ -52,7 +56,10 @@ def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
     end = workflow.index("      - name: Install dependencies", start)
     step = workflow[start:end]
     assert "timeout-minutes: 25" in step
-    assert "timeout 420s npm install" in step
+    assert 'timeout 60s git clone --depth 1 --branch "v${OMNIROUTE_VERSION}"' in step
+    assert "timeout 420s npm ci --omit=dev" in step
+    assert "OMNIROUTE_READY=0" in step
+    assert "OMNIROUTE_READY_LOCAL=1" in step
     assert "timeout 10s omniroute --version" in step
     assert "timeout 15s omniroute providers list --json" in step
     assert "timeout 20s omniroute providers validate" in step

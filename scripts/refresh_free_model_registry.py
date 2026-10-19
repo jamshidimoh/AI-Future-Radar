@@ -172,6 +172,28 @@ def _supports_response_format(model: dict) -> bool:
     return "response_format" in {str(x).strip() for x in supported}
 
 
+def _supports_text_chat(model: dict) -> bool:
+    """Use the live catalog to rule out media-only models."""
+    architecture = model.get("architecture") or {}
+    inputs = architecture.get("input_modalities") or ["text"]
+    outputs = architecture.get("output_modalities") or ["text"]
+    return "text" in inputs and "text" in outputs
+
+
+def _apply_live_capabilities(model: dict, live: dict) -> None:
+    """Refresh capabilities from the live catalog without discarding curated JSON evidence.
+
+    Several trusted registry rows predate OpenRouter's modality fields. A live,
+    free model can therefore be correctly validated but silently filtered from
+    production because chat_capable/json_capable were absent in the canonical row.
+    Live text I/O establishes chat capability; JSON capability requires either
+    trusted curated evidence or advertised response_format support.
+    """
+    model["chat_capable"] = _supports_text_chat(live)
+    model["json_capable"] = bool(model.get("json_capable")) or _supports_response_format(live)
+    model["response_format"] = _supports_response_format(live) or bool(model.get("response_format"))
+
+
 def _fallback_quality(model_id: str) -> tuple[float, float, str]:
     """Conservative priors for trusted models when benchmark evidence is absent."""
     overrides = {
@@ -254,10 +276,16 @@ def refresh() -> dict:
                 else:
                     model["free"] = _is_zero_price(live)
                     model["context_length"] = int(live.get("context_length") or 0)
-                    model["response_format"] = _supports_response_format(live) or bool(model.get("response_format"))
+                    _apply_live_capabilities(model, live)
                     if not model["free"]:
                         model["enabled"] = False
                         model["runtime_reason"] = "not_free"
+                    elif not model["chat_capable"]:
+                        model["enabled"] = False
+                        model["runtime_reason"] = "not_text_chat_capable"
+                    elif not model["json_capable"]:
+                        model["enabled"] = False
+                        model["runtime_reason"] = "not_json_capable"
             elif family == "groq" and not live:
                 model["enabled"] = False
                 model["runtime_reason"] = "not_listed"

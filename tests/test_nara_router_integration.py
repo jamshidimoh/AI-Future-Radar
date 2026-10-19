@@ -59,3 +59,20 @@ def test_nara_telegram_required_is_provider_level_auth_failure():
 def test_nara_model_permission_403_is_not_misclassified_as_provider_auth():
     message = "Groq qwen/qwen3.6-27b: HTTP 403 model_permission_blocked_project"
     assert not _is_provider_auth(message)
+
+def test_nara_telegram_required_is_persisted_as_provider_auth_not_model_error():
+    import scripts.update_llm_health_state as health_state
+
+    # Exercise the production log shape; this must be treated as an account-level
+    # authentication failure before generic HTTP 403/model-error classification.
+    line = (
+        '[Production Circuit] failed=nararouter:auto/bynara reason=auth scope=provider: '
+        'exception=QuotaExceeded provider=nararouter model=nararouter:auto/bynara '
+        'NaraRouter auto/bynara: HTTP 403 '
+        '{"error":{"type":"forbidden","message":"telegram_required: Join the required '
+        'Telegram group/channel and relink at /settings to continue."}}'
+    )
+    assert health_state.classify(line) == "auth"
+    events = list(health_state._iter_events([line]))
+    assert events == [("nararouter:auto/bynara", "failure", "auth", False)]
+

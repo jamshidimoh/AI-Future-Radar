@@ -101,13 +101,13 @@ def classify(message: str) -> str:
     # model error and sibling Nara deployments are retried in later runs.
     if re.search(r"telegram_required|join the required telegram|relink at /settings", text):
         return "auth"
-    if re.search(r"\\b401\\b|unauthorized|unauthenticated|invalid.*(?:api|credential|key|token)|authentication", text):
+    if re.search(r"\b401\b|unauthorized|unauthenticated|invalid.*(?:api|credential|key|token)|authentication", text):
         return "auth"
-    if re.search(r"\\b402\\b|account_limit|payment required|account.*(?:limit|quota)|monthly.*(?:credit|quota)|daily.*(?:limit|quota)|depleted|insufficient.*(?:credit|balance)", text):
+    if re.search(r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|monthly.*(?:credit|quota)|daily.*(?:limit|quota)|depleted|insufficient.*(?:credit|balance)", text):
         return "quota"
-    if re.search(r"\\b429\\b|rate.?limit|too many requests|resource_exhausted|upstream_provider_shared_pool", text):
+    if re.search(r"\b429\b|rate.?limit|too many requests|resource_exhausted|upstream_provider_shared_pool", text):
         return "rate_limit"
-    if re.search(r"\\b(?:403|404)\\b|model.*(?:blocked|disabled|not found|unavailable)|not found|permission", text):
+    if re.search(r"\b(?:403|404)\b|model.*(?:blocked|disabled|not found|unavailable)|not found|permission", text):
         return "model"
     return "transient"
 

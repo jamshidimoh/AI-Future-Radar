@@ -1,10 +1,20 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-10-15
+Status date: 2026-10-19
+
+## Revalidation after AI-first editorial fix — 2026-10-19
+
+- PR #262 (AI-first editorial selection, reduced genetics dominance, freshness/source-diversity arbitration, unique-mission-source protection, and bounded local Ollama retry behavior) merged to `main`: https://github.com/jamshidimoh/AI-Future-Radar/pull/262
+- Merge commit: https://github.com/jamshidimoh/AI-Future-Radar/commit/fcfa893dc3e3947a498f877a01d5ba92932fb8ee
+- Full pre-merge quality contract suite: 998 passed; production regression suite: 998 passed; final acceptance supplements: 6 and 24 passed.
+- P1 Audit, TypeSafe, Graphify, Signal Engine CI, Production Quality Gate, Test Radar Quality, and Final Production Acceptance all passed on the PR head.
+- Local Ollama Free smoke test #296 passed using `qwen3:1.7b`; the model returned valid JSON (`{"ok": true}`). This verifies local model readiness only, not Telegram delivery or mission-coverage acceptance.
+- Post-merge production run #1494 is the first live observation for the merged code: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39205914693. At this document update it is still running; no live publication/acceptance outcome is claimed.
+- Issue #69 remains open. The repository must not be declared production-complete until the closure gate verifies three consecutive successful production runs on the same application-code fingerprint with complete delivery, coverage, and no-duplicate evidence.
 
 ## Current status
 
-**CLOSURE PENDING — the strict acceptance fix is merged, and its first post-merge production attempt failed for valid unresolved coverage reasons.**
+**CLOSURE PENDING — the historical failure below is retained for audit; PR #262 has now passed its full checks and merged, but live production acceptance is still being revalidated.**
 
 The previous Production Closure Gate run #1406 closed Issue #69 on 2026-10-15 using production runs #1439–#1441. That result is historical acceptance under the previous interpretation of mission coverage, not proof that the tightened gate passes. In run #1441, only one of six selected news candidates was published; the missing mission lanes included attempted candidates that failed language/naturalness QA. The previous acceptance guard could classify failed or provider-unavailable candidates as "no eligible candidate", overstating the evidence.
 

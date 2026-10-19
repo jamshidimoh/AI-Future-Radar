@@ -472,6 +472,68 @@ def _pending_non_ai_target_lane(
         return "research"
     return None
 
+def _second_ai_consumes_reserved_mission_source(
+    p: _Portfolio,
+    ordered: list[dict[str, Any]],
+    candidate: dict[str, Any],
+) -> bool:
+    """Protect the only usable source for the highest-priority pending mission lane."""
+    mind_target = int(p.contract.get("mind_cognition_target", 0) or 0)
+    future_target = int(p.contract.get("mind_future_target", 0) or 0)
+    convergence_target = int(p.contract.get("convergence_target", 0) or 0)
+    research_target = int(p.contract.get("research_target", 0) or 0)
+
+    if mind_target > 0:
+        targets: tuple[tuple[str, Callable[[dict[str, Any]], bool]], ...] = (
+            ("mind_cognition", lambda x: mission_area(x) == "mind_cognition"),
+            ("future_governance", lambda x: mission_area(x) == "future_governance"),
+            ("convergence", lambda x: mission_area(x) == "convergence"),
+            ("research", lambda x: mission_area(x) != "ai_core" and _is_research(x)),
+        )
+    else:
+        targets = (
+            ("mind_future", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
+            ("convergence", lambda x: mission_area(x) == "convergence"),
+            ("research", lambda x: mission_area(x) != "ai_core" and _is_research(x)),
+        )
+
+    candidate_source = source_key(candidate)
+    selected_research = sum(1 for item in p.selected if _is_research(item))
+    for lane, predicate in targets:
+        if lane == "mind_cognition" and p.area_counts.get("mind_cognition", 0) >= mind_target:
+            continue
+        if lane == "future_governance" and p.area_counts.get("future_governance", 0) >= future_target:
+            continue
+        if lane == "mind_future":
+            mind_future_count = p.area_counts.get("mind_cognition", 0) + p.area_counts.get("future_governance", 0)
+            if mind_future_count >= future_target:
+                continue
+        if lane == "convergence" and p.area_counts.get("convergence", 0) >= convergence_target:
+            continue
+        if lane == "research" and selected_research >= research_target:
+            continue
+        pool = [
+            item for item in ordered
+            if predicate(item)
+            and id(item) not in p.selected_ids
+            and candidate_score(item) > 0.0
+            and p.admissible(
+                item,
+                repeat_source=False,
+                ignore_type_cap=True,
+                ignore_window_cap=True,
+                ignore_area_window_cap=True,
+            )
+        ]
+        if not pool:
+            continue
+        # If every currently usable item for this lane uses the same source as
+        # the optional AI story, publishing it would make the target impossible
+        # to fill. Preserve the mission target; do not substitute a lower lane.
+        return all(source_key(item) == candidate_source for item in pool)
+    return False
+
+
 def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[str, Any]) -> dict[str, Any] | None:
     if not candidates:
         return None
@@ -800,6 +862,8 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         if candidate is None:
             break
 
+        if _second_ai_consumes_reserved_mission_source(p, ordered, candidate):
+            break
         target_lane_before = _pending_non_ai_target_lane(p, ordered)
         reserve_slot = target_lane_before is not None
         # Do not use the optional AI slot to consume the only source (or the last

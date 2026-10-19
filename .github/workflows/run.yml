@@ -291,7 +291,7 @@ jobs:
           RADAR_MAX_LLM_ATTEMPTS: 10
           RADAR_LLM_MAX_TOKENS: 700
           RADAR_ROUTER_BUDGET_SECONDS: 60
-          OMNIROUTE_BASE_URL: ${{ env.OMNIROUTE_READY == '1' && 'http://127.0.0.1:20128' || '' }}
+
           OMNIROUTE_API_KEY: ""
           OMNIROUTE_MODEL: auto/smart
           OMNIROUTE_TIMEOUT_SECONDS: 8
@@ -309,7 +309,15 @@ jobs:
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE || secrets.TYPESAFE_API_KEY }}
           AI_RADAR_TYPESAFE_RERANK_MODE: active
           AI_RADAR_TYPESAFE_RERANK_WEIGHT: 0.20
-        run: bash -o pipefail -c 'python -u scripts/production_with_protected_lane.py 2>&1 | tee run.log'
+        run: |
+          set -euo pipefail
+          if [ "${OMNIROUTE_READY:-0}" = "1" ]; then
+            export OMNIROUTE_BASE_URL="http://127.0.0.1:20128"
+          else
+            unset OMNIROUTE_BASE_URL || true
+            echo "[OmniRoute] unavailable; bypassing primary router and using hard fallback"
+          fi
+          python -u scripts/production_with_protected_lane.py 2>&1 | tee run.log
 
       - name: Recover required Education publication
         if: always()

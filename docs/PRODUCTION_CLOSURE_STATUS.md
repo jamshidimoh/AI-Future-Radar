@@ -2,32 +2,37 @@
 
 Status date: 2026-10-19
 
-## Current verification snapshot — 2026-10-19 (checked through 07:56 UTC)
+## Current verification snapshot — 2026-10-19 (checked through the current persisted repository state)
 
 ### Changes merged to main
-- PR #262 made editorial selection AI-first and reduced genetics dominance: https://github.com/jamshidimoh/AI-Future-Radar/pull/262
-- PR #263 removed Gemini and Ollama as runtime inference providers, including adapters, provider-registry entries, dependencies and workflow setup: https://github.com/jamshidimoh/AI-Future-Radar/pull/263
-- PR #264 added bounded progressive backoff for explicit Telegram HTTP 429 rejections: https://github.com/jamshidimoh/AI-Future-Radar/pull/264
-- PR #265 added state pruning so removed Gemini/Ollama provider-health records cannot be resurrected by local/remote snapshot merging: https://github.com/jamshidimoh/AI-Future-Radar/pull/265
+- PR #262: AI-first editorial ranking and genetics-dominance controls.
+- PR #263: removed Gemini and Ollama inference-provider integrations, registry entries and runtime setup.
+- PR #264: bounded progressive backoff for Telegram HTTP 429 responses.
+- PR #265: prevents removed-provider health records from reappearing through state merges.
+- PR #269: pins OmniRoute v3.8.50 source to an audited commit and fixes install-time failure by retaining the required prepare-script dependencies with `HUSKY=0`; safe fallback and bounded readiness checks remain in place.
+- PR #271: classifies NaraRouter's `telegram_required` marker as provider-level authentication failure. NaraRouter is excluded from OmniRoute's automatic provider pool by default; it may be re-enabled with `OMNIROUTE_ENABLE_NARA=1` only after account access is repaired.
+- PR #272: clarifies and regression-tests quality-aware AI-first portfolio selection; a second AI-core item is strongly preferred when it competes well with eligible Mind/Cognition, AI Futures and Convergence candidates, but is not forced through quality gates.
 
 ### Deterministic validation
-- PR #264: Test Radar Quality passed with 990 tests; Production Quality Gate, Final Production Acceptance, Signal Engine CI, TypeSafe, Graphify and P1 audit passed.
-- PR #265: Test Radar Quality, Production Quality Gate, Final Production Acceptance, Signal Engine CI, TypeSafe, Graphify and P1 audit passed.
-- The current runtime router and registry have no active Gemini/Ollama inference-provider configuration. Remaining Gemini references in discovery/editorial code refer to AI products or news subjects; tests may mention removed names to assert that they stay disabled.
+- PR #272 head `3c1919b4a201b21f82b023efc339d8e7953778fa`: Test Radar Quality passed with **997 tests**.
+- On that same PR revision, Production Quality Gate, Final Production Acceptance, Signal Engine CI, TypeSafe Audit Smoke Test, Graphify Architecture Analysis and P1 Audit Measurement also passed.
+- PR #272 was merged to main at `75c7ad2aac13801ff9af39085fb7143f9861825e`.
+- The current persisted publication snapshot shows `run_number=789`, `last_published_news_score=56.14`, and People Bootstrap `30/30`.
+- The persisted LLM-health record has NaraRouter classified as `auth` at both model and provider scope, with a bounded cooldown. No Gemini or Ollama health entries are present in the current snapshot.
 
 ### Live production evidence
-- Production run #1494 ended unsuccessfully; it is no longer running: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39205914693
-- Production run #1496 failed: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39212696237
-- Production run #1497 failed: Telegram returned repeated explicit HTTP 429 responses with retry_after=8s. The old six-retry budget was exhausted; selected candidates were non-empty but no news message was confirmed delivered (`Posts sent: 0/10`, `published_news=0`). The strict acceptance gate correctly rejected the run: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39213454612
-- Production run #1498 was still in its bot execution step at this snapshot, on commit `b8967fb8a0383bf20361aadb474bc4ba8531dba8`. Its final delivery and acceptance outcome is not yet claimed: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/39218286098
-- The latest main commit at this snapshot includes PR #265 (`426cd10188d5895edbe7d8cfde0b18868f897933`). Any queued production execution must be checked in Actions for its actual current status and commit.
+- Earlier runs #1494 and #1496 failed; run #1497 failed after Telegram returned repeated HTTP 429 responses and no news message was confirmed delivered. These historical failures remain part of the reliability evidence.
+- A fresh post-merge run with the latest application code must be confirmed independently from its workflow log/state. The current persisted publication snapshot does **not** yet prove three consecutive successful production runs on the latest application-code fingerprint.
+- The OmniRoute installation failure path is corrected in workflow code, but a successful live OmniRoute smoke test and confirmed Telegram delivery after that correction must not be inferred solely from deterministic CI.
 
-### Persistent provider health state
-At the time of this snapshot, `data/llm_health.json` still held historical Gemini records. PR #265 now removes removed-provider families in both direct health updates and local/remote merging; do not claim persisted-state cleanup until the updated file is read after a production state-persistence step completes.
+### External account prerequisite
+NaraRouter returned `telegram_required`, asking for membership in its required Telegram group/channel and account relinking through its settings. The code cannot perform that account action. Until the owner completes it, automatic OmniRoute selection defers NaraRouter and persisted health prevents futile repeated attempts. This is a provider-account prerequisite, not a software workaround.
 
 ## Current status
 
-**CLOSURE PENDING.** Issue #69 remains open. Passing deterministic tests or merging code does not establish production completion. Closure requires three consecutive successful live production runs on the same application-code fingerprint, with confirmed Telegram delivery, valid mission coverage, no duplicate publication, and no provider/translation/QA failure misclassified as an empty discovery lane.
+**CLOSURE PENDING.** Issue #69 remains open.
+
+Closure requires three consecutive successful live production runs on the same application-code fingerprint, with confirmed Telegram delivery, valid mission coverage, no duplicate publication, and no provider/translation/QA failure misclassified as an empty discovery lane. A green CI suite or a successful merge is not production closure.
 
 The historical audit below is retained for context. It does not override current production evidence.
 

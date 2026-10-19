@@ -4,20 +4,21 @@
 
 ## وضعیت محصول
 
-**مرحله فعلی: اعتبارسنجی تولید پس از ادغام اصلاحات — ۲۰۲۶-۱۰-۱۵**
+**وضعیت: اصلاحات کد ادغام شده‌اند؛ بسته‌شدن تولیدی همچنان در انتظار شواهد زنده است — ۲۰۲۶-۱۰-۱۹.** وضعیت رسمی: `CLOSURE PENDING`.
 
-اصلاحات پذیرش تولید در [PR شمارهٔ ۲۲۹](https://github.com/jamshidimoh/AI-Future-Radar/pull/229) با موفقیت بررسی و در شاخهٔ `main` ادغام شده‌اند. commit ادغام: [`6f93c82a7211`](https://github.com/jamshidimoh/AI-Future-Radar/commit/6f93c82a7211af1b8bd686c9fb6466dbd629d565).
+اصلاحات اخیر:
+- [PR #269](https://github.com/jamshidimoh/AI-Future-Radar/pull/269): نصب OmniRoute از commit ثابت‌شده، نصب وابستگی‌های لازم برای اسکریپت `prepare` و حفظ مسیر بازگشت محدودشده در صورت شکست.
+- [PR #271](https://github.com/jamshidimoh/AI-Future-Radar/pull/271): تشخیص `telegram_required` در NaraRouter به‌عنوان خطای احراز هویت در سطح ارائه‌دهنده؛ NaraRouter به‌صورت پیش‌فرض از auto-pool در OmniRoute کنار گذاشته شده و فقط پس از رفع مانع حساب، با `OMNIROUTE_ENABLE_NARA=1` قابل فعال‌سازی است.
+- [PR #272](https://github.com/jamshidimoh/AI-Future-Radar/pull/272): تثبیت قرارداد و تست‌ها برای سبد AI-first با هدف ترجیحی دو خبر AI؛ خبر دوم سهمیهٔ اجباری نیست و همچنان با کیفیت و پوشش Mind/Cognition، آینده‌پژوهی و همگرایی رقابت می‌کند.
+- [PR #262](https://github.com/jamshidimoh/AI-Future-Radar/pull/262) توازن AI و محدودیت حداکثر یک خبر ژنتیک‌محور را اعمال کرد؛ [PR #263](https://github.com/jamshidimoh/AI-Future-Radar/pull/263) Gemini و Ollama را از ارائه‌دهندگان runtime حذف کرد.
 
-گیت‌های پیش از ادغام روی نسخهٔ اصلاح‌شده سبز شدند: [Test Radar Quality](https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711548964)، [Production Quality Gate](https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711549214)، [Final Production Acceptance](https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711549281)، به‌علاوهٔ Signal Engine، TypeSafe، P1 Audit و Graphify.
+نسخهٔ PR #272 با **۹۹۷ تست موفق** و هر هفت گیت قطعی (Test Radar Quality، Production Quality Gate، Final Production Acceptance، Signal Engine CI، TypeSafe، Graphify و P1 Audit) بررسی شد؛ سپس در [commit `75c7ad2`](https://github.com/jamshidimoh/AI-Future-Radar/commit/75c7ad2aac13801ff9af39085fb7143f9861825e) ادغام شد.
 
-اصلاحات اعمال‌شده:
-- پذیرش پوشش مأموریتی بین «نبود سیگنال پس از کشف» و «وجود گزینه‌ای که در پردازش، ترجمه، کنترل کیفیت یا دسترسی به مدل شکست خورده» تمایز می‌گذارد. شکست پردازش دیگر به‌عنوان نبود گزینه پذیرفته نمی‌شود.
-- کنترل طبیعی‌بودن فارسی علت ردشدن را گزارش می‌کند و آن را به تلاش محدود بازنویسی می‌دهد؛ کنترل شواهد، هم‌ترازی ادعاها، ارتباط موضوعی و حد کیفیت تضعیف نشده‌اند.
-- مسیرهای اضطراری مدل هم سلامت پایدارشدهٔ ارائه‌دهنده و مدارشکن حافظه‌ای را رعایت می‌کنند تا خطاهای احراز هویت بارها برای گزینه‌های بعدی تکرار نشوند.
+آخرین وضعیت انتشار ذخیره‌شده در `data/publication_state.json` هنوز `run_number=789` و امتیاز خبر منتشرشدهٔ `56.14` را نشان می‌دهد؛ بنابراین این snapshot به‌تنهایی تأیید نمی‌کند که نسخهٔ پس از اصلاحات، سه اجرای زندهٔ متوالی با تحویل تأییدشده داشته است. People Bootstrap در ledger فعلی `30/30` است. مسیر نصب OmniRoute در کد اصلاح شده، اما تأیید اجرای زنده، تحویل Telegram و پذیرش کامل هنوز معیار نهایی است.
 
-اجرای تولید پس از ادغام اصلاحات، [شمارهٔ ۱۴۴۲](https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711837970)، یک پیام را با موفقیت به تلگرام تحویل داد اما در «پذیرش تولید» شکست خورد: از سه حوزهٔ مورد انتظار، فقط یک حوزه بازیابی شد و دو حوزه دارای گزینه‌های ناموفق در ترجمه/کنترل کیفیت باقی ماندند (`nonpublishable_lanes=2`). این شکست درست است و نباید با تضعیف گیت برطرف شود. جریان People Bootstrap نیز هنوز ۲۹ از ۳۰ شخصیت را تحویل داده است. PR شمارهٔ ۲۳۰ برای فیلتر دامنه‌ای جرج چرچ و پرس‌وجوهای کشف دقیق‌تر اضافه شده است. **وضعیت پروژه همچنان `CLOSURE PENDING` است** تا پس از آخرین اصلاح کد، سه اجرای متوالی با اثرانگشت یکسان شواهد کامل و موفق ارائه کنند. Issue نهایی [شمارهٔ ۶۹](https://github.com/jamshidimoh/AI-Future-Radar/issues/69) باز می‌ماند.
+مانع بیرونی NaraRouter نیز روشن است: پاسخ `telegram_required` مستلزم عضویت در گروه/کانال اعلام‌شده و اتصال مجدد حساب در تنظیمات NaraRouter است. کد نمی‌تواند این اقدام حسابی را به‌جای مالک حساب انجام دهد؛ تا آن زمان سرویس از auto-pool کنار گذاشته می‌شود. وضعیت سلامت ذخیره‌شده اکنون این مشکل را به‌عنوان `auth` در سطح ارائه‌دهنده ثبت می‌کند.
 
-جزئیات قواعد و شواهد در `docs/PRODUCTION_CLOSURE_STATUS.md` و `docs/PRODUCTION_FINAL_ACCEPTANCE.md` ثبت شده‌اند. سبز بودن یک اجرای CI یا بسته‌شدن دستی Issue به‌تنهایی به‌معنای پایان واقعی پروژه نیست.
+**بسته‌شدن رسمی انجام نشده است.** [Issue #69](https://github.com/jamshidimoh/AI-Future-Radar/issues/69) باز می‌ماند تا سه اجرای تولیدی متوالی روی یک اثرانگشت کد، تحویل Telegram و پوشش مأموریت را اثبات کنند؛ سبز بودن CI یا صرف ادغام PR برای اعلام Production-ready کافی نیست.
 
 ## استفاده دیگران
 

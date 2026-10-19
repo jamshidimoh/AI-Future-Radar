@@ -96,6 +96,10 @@ def is_kira_wallet_only(deployment: str, message: str) -> bool:
 
 def classify(message: str) -> str:
     text = str(message or "").lower()
+    # NaraRouter's telegram_required response is an account-linking gate.
+    # Classify it before generic HTTP 403 handling to avoid model-only cooldowns.
+    if re.search(r"telegram_required|join the required telegram|relink at /settings", text):
+        return "auth"
     if re.search(r"\b401\b|unauthorized|unauthenticated|invalid.*(?:api|credential|key|token)|authentication", text):
         return "auth"
     if re.search(r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|monthly.*(?:credit|quota)|daily.*(?:limit|quota)|depleted|insufficient.*(?:credit|balance)", text):

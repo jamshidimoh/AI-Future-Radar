@@ -130,6 +130,9 @@ def test_mind_future_target_selects_an_eligible_mind_or_future_item():
     selected = select_regular_portfolio(candidates, max_posts=3, max_per_source=1, max_per_type=3, recent_source_counts={}, contract=contract, mission_aware=True, strict_relevance=True)
     titles = [x["title"] for x in selected]
     assert "Strong consciousness research linked to AI" in titles
+    assert "Exceptional AI capability" in titles
+    assert "Second exceptional AI capability" in titles
+    assert sum(1 for x in selected if x["mission_area"] == "ai_core") == 2
     assert any(x["mission_selection_reason"] == "mission_target:mind_cognition" for x in selected)
 
 

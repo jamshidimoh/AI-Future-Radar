@@ -427,6 +427,11 @@ def _install_production_circuit_breaker() -> None:
                     return content, emergency_name
             except Exception as exc:
                 last_error = exc
+                if emergency_name == "LocalOllamaFree":
+                    # A local timeout is run-scoped: avoid paying its timeout
+                    # cost again for every later candidate in this production run.
+                    router._OLLAMA_CIRCUIT_OPEN = True
+                    print("[Production Circuit] opened=ollama reason=emergency_failure", flush=True)
                 logger.warning(
                     "Production provider attempt failed provider=%s model=%s exception=%s: %s",
                     emergency_name.lower(),

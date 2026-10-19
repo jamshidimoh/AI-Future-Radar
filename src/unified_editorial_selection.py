@@ -418,7 +418,13 @@ def _has_pending_non_ai_target(p: _Portfolio, ordered: list[dict[str, Any]]) -> 
             predicate(item)
             and id(item) not in p.selected_ids
             and candidate_score(item) > 0.0
-            and p.admissible(item, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)
+            and p.admissible(
+                item,
+                repeat_source=False,
+                ignore_type_cap=True,
+                ignore_window_cap=True,
+                ignore_area_window_cap=True,
+            )
             for item in ordered
         )
 
@@ -578,7 +584,15 @@ class _Portfolio:
         self.window_source_counts = window_source_counts or {}
         self.window_area_counts = window_area_counts or {}
 
-    def admissible(self, item: dict[str, Any], *, repeat_source: bool, ignore_type_cap: bool = False, ignore_window_cap: bool = False) -> bool:
+    def admissible(
+        self,
+        item: dict[str, Any],
+        *,
+        repeat_source: bool,
+        ignore_type_cap: bool = False,
+        ignore_window_cap: bool = False,
+        ignore_area_window_cap: bool = False,
+    ) -> bool:
         source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
         if _is_genetics_heavy(item):
             genetics_limit = max(0, int(self.contract.get("max_genetics_per_run", 1)))
@@ -592,12 +606,15 @@ class _Portfolio:
         if self.mission_aware and self.area_counts.get(area, 0) >= self.contract["max_same_mission_area"]:
             return False
         # Source rotation may be relaxed as a last resort when it is the only
-        # reason a slot would be empty. Area rotation is deliberately stricter:
-        # repeatedly publishing an already-saturated area defeats the mission
-        # diversity contract, so ignore_window_cap never bypasses this area cap.
+        # reason a slot would be empty. The rolling area cap is stricter and can
+        # be bypassed only by the explicit mission-target recovery path.
         if not ignore_window_cap and self.window_source_counts.get(source, 0) >= int(self.contract.get("max_same_source_in_window", 2) or 2):
             return False
-        if self.mission_aware and self.window_area_counts.get(area, 0) >= int(self.contract.get("max_same_area_in_window", 3) or 3):
+        if (
+            self.mission_aware
+            and not ignore_area_window_cap
+            and self.window_area_counts.get(area, 0) >= int(self.contract.get("max_same_area_in_window", 3) or 3)
+        ):
             return False
         current_source = self.source_counts.get(source, 0)
         return current_source < self.source_cap if repeat_source else current_source == 0
@@ -798,7 +815,7 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             # freshness/novelty to break near-ties so a repeated OpenAI headline
             # cannot automatically displace a genuinely diverse cross-domain item.
             if (
-                relative_ai_advantage < 0.10
+                relative_ai_advantage < 0.05
                 and _secondary_ai_competition_key(best_alternative, p)
                 > _secondary_ai_competition_key(candidate, p)
             ):
@@ -832,7 +849,18 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
                 # are already the scarcest candidate pools. The rotation window cap exists
                 # to stop a dominant source from crowding out other sources, not to make an
                 # already-rare lane even harder to fill — so it is relaxed here as a last resort.
-                pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)]
+                pool = [
+                    x for x in ordered
+                    if area_predicate(x)
+                    and id(x) not in p.selected_ids
+                    and p.admissible(
+                        x,
+                        repeat_source=False,
+                        ignore_type_cap=True,
+                        ignore_window_cap=True,
+                        ignore_area_window_cap=True,
+                    )
+                ]
             if not pool:
                 break
             # Explicit mission targets are coverage controls, not opportunistic

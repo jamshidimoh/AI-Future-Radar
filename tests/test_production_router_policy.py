@@ -597,6 +597,51 @@ def test_local_ollama_emergency_is_skipped_after_circuit_opens(monkeypatch):
     assert local_calls == []
 
 
+def test_local_ollama_emergency_failure_opens_run_circuit(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
+    monkeypatch.setattr(policy, "_load_health", lambda: {"models": {}, "providers": {}})
+    apply()
+
+    remote_calls = []
+    local_calls = []
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            remote_calls.append(model)
+            raise RuntimeError("HTTP 503 temporary")
+
+    class FailedFuture:
+        def result(self, timeout):
+            raise router.QuotaExceeded("OllamaLocal qwen3:1.7b: ReadTimeout")
+
+    class FakeExecutor:
+        def submit(self, fn, *_args, **_kwargs):
+            if fn is router._ollama_local:
+                local_calls.append("ollama")
+            return FailedFuture()
+
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(
+        router,
+        "_litellm_model_list",
+        lambda: [{"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}],
+    )
+    monkeypatch.setattr(router, "_CALL_EXECUTOR", FakeExecutor())
+
+    first_result, _ = router._call_litellm("system", "user")
+    assert first_result is None
+    assert router._OLLAMA_CIRCUIT_OPEN is True
+    assert local_calls == ["ollama"]
+
+    second_result, _ = router._call_litellm("system", "user")
+    assert second_result is None
+    assert local_calls == ["ollama"]
+    assert remote_calls == ["radar-production-1", "radar-production-1"]
+
+
 def test_omniroute_is_primary_model_selection_layer_when_configured(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")

@@ -437,9 +437,9 @@ def _has_pending_non_ai_target(p: _Portfolio, ordered: list[dict[str, Any]]) -> 
         return True
 
     selected_research = sum(1 for item in p.selected if _is_research(item))
-    if selected_research < int(p.contract.get("research_target", 0) or 0) and available(lambda x: mission_area(x) != "ai_core" and _is_research(x)):
-        return True
-    return False
+    return selected_research < int(p.contract.get("research_target", 0) or 0) and available(
+        lambda x: mission_area(x) != "ai_core" and _is_research(x)
+    )
 
 
 def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[str, Any]) -> dict[str, Any] | None:

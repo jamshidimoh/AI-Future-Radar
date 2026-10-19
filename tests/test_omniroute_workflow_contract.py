@@ -50,7 +50,9 @@ def test_ollama_and_gemini_are_not_configured_as_providers():
     assert "RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK" not in text
     assert "RADAR_ENABLE_GEMINI_FALLBACK" not in text
     assert "GEMINI_API_KEY" not in text
-    assert "OMNIROUTE_BASE_URL: ${{ env.OMNIROUTE_READY == '1' && 'http://127.0.0.1:20128' || '' }}" in text
+    assert 'if [ "${OMNIROUTE_READY:-0}" = "1" ]; then' in text
+    assert 'export OMNIROUTE_BASE_URL="http://127.0.0.1:20128"' in text
+    assert "unset OMNIROUTE_BASE_URL" in text
 
 
 def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():

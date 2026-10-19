@@ -3,6 +3,7 @@ from pathlib import Path
 import src.free_model_registry as registry
 import src.llm_router_light as router
 from src.production_router_policy import _is_provider_auth, _is_provider_quota
+from scripts.update_llm_health_state import _iter_events, classify as classify_persisted_health
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -54,6 +55,21 @@ def test_nara_telegram_required_is_provider_level_auth_failure():
         "Telegram group/channel and relink at /settings to continue.'}"
     )
     assert _is_provider_auth(message)
+
+
+def test_nara_telegram_required_is_persisted_as_provider_auth_not_model_error():
+    # This is the real production log shape from the HTTP 403 failure. The
+    # health-state parser must prioritize the account-linking marker over 403.
+    line = (
+        '[Production Circuit] failed=nararouter:auto/bynara reason=auth scope=provider: '
+        'exception=QuotaExceeded provider=nararouter model=nararouter:auto/bynara '
+        'NaraRouter auto/bynara: HTTP 403 '
+        '{"error":{"type":"forbidden","message":"telegram_required: Join the required '
+        'Telegram group/channel and relink at /settings to continue."}}'
+    )
+    assert classify_persisted_health(line) == "auth"
+    events = list(_iter_events([line]))
+    assert events == [("nararouter:auto/bynara", "failure", "auth", False)]
 
 
 def test_nara_model_permission_403_is_not_misclassified_as_provider_auth():

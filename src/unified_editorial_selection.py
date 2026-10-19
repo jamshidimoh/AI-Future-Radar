@@ -75,7 +75,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "min_authoritative_items": int(mission.get("min_authoritative_items", 2) or 2),
         "community_max": int(mission.get("community_max", 0) or 0),
         "max_same_mission_area": int(mission.get("max_same_mission_area", 2) or 2),
-        "ai_core_target_min": int(mission.get("ai_core_target_min", 1) or 0),
+        "ai_core_target_min": int(mission.get("ai_core_target_min", 2) or 0),
         "ai_core_target_max": int(mission.get("ai_core_target_max", 2) or 99),
         "convergence_target": int(mission.get("convergence_target", 0) or 0),
         "mind_cognition_target": int(mission.get("mind_cognition_target", 0) or 0),

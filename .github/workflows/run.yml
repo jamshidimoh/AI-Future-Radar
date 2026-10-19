@@ -290,7 +290,7 @@ jobs:
           cat > /tmp/ollama-warmup.json <<'JSON'
           {
             "model": "qwen3:1.7b",
-            "messages": [{"role": "user", "content": "Return JSON only: {\\"ok\\":true}"}],
+            "messages": [{"role": "user", "content": "Return a JSON object with one boolean field named ok set to true."}],
             "stream": false,
             "think": false,
             "format": "json",

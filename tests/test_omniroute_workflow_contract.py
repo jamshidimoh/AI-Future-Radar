@@ -9,8 +9,10 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     text = WORKFLOW.read_text(encoding='utf-8')
 
     assert 'OMNIROUTE_VERSION=3.8.50' in text
+    assert 'OMNIROUTE_COMMIT=5458026c216f77a3da68ea49152dc33470cfe2cb' in text
     assert 'git clone --depth 1 --branch "v${OMNIROUTE_VERSION}" https://github.com/diegosouzapw/OmniRoute.git' in text
-    assert 'npm ci --omit=dev' in text
+    assert 'HUSKY=0 timeout 420s npm ci --include=dev --no-audit' in text
+    assert 'npm ci --omit=dev' not in text
     assert 'npm install -g omniroute@' not in text
     assert 'framer-motion@14.3.1' in text
     assert 'add_provider gemini GEMINI_API_KEY' not in text
@@ -48,6 +50,9 @@ def test_ollama_and_gemini_are_not_configured_as_providers():
     assert "RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK" not in text
     assert "RADAR_ENABLE_GEMINI_FALLBACK" not in text
     assert "GEMINI_API_KEY" not in text
+    assert 'if [ "${OMNIROUTE_READY:-0}" = "1" ]; then' in text
+    assert 'export OMNIROUTE_BASE_URL="http://127.0.0.1:20128"' in text
+    assert "unset OMNIROUTE_BASE_URL" in text
 
 
 def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
@@ -57,7 +62,8 @@ def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
     step = workflow[start:end]
     assert "timeout-minutes: 25" in step
     assert 'timeout 60s git clone --depth 1 --branch "v${OMNIROUTE_VERSION}"' in step
-    assert "timeout 420s npm ci --omit=dev" in step
+    assert "HUSKY=0 timeout 420s npm ci --include=dev --no-audit" in step
+    assert 'test "$(git rev-parse HEAD)" = "$OMNIROUTE_COMMIT"' in step
     assert "OMNIROUTE_READY=0" in step
     assert "OMNIROUTE_READY_LOCAL=1" in step
     assert "timeout 10s omniroute --version" in step

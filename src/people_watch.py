@@ -308,10 +308,13 @@ def bootstrap_candidates(
             # Preserve an upstream-resolved Tier-1/2 classification when the URL
             # cannot independently identify the publisher. A recognized publisher
             # domain still overrides weaker metadata deterministically.
-            try:
-                configured_value = int(configured_tier)
-            except (TypeError, ValueError):
+            if configured_tier is None or configured_tier == "":
                 configured_value = 3
+            else:
+                try:
+                    configured_value = int(configured_tier)
+                except (TypeError, ValueError):
+                    configured_value = 3
             if tier > 2 and configured_value <= 2:
                 tier = configured_value
             item["source_tier"] = tier

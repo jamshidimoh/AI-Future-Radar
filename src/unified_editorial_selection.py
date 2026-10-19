@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 import re
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
@@ -787,10 +787,25 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             ]
         if alternatives:
             best_alternative = max(alternatives, key=lambda x: _secondary_ai_competition_key(x, p))
-            if _secondary_ai_competition_key(best_alternative, p) > _secondary_ai_competition_key(candidate, p):
+            best_alternative_score = candidate_score(best_alternative)
+            quality_floor = max(0.0, min(1.0, float(p.contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82)))
+            if candidate_score(candidate) < best_alternative_score * quality_floor:
+                break
+            relative_ai_advantage = (
+                candidate_score(candidate) - best_alternative_score
+            ) / max(abs(candidate_score(candidate)), 1.0)
+            # Keep two AI stories when the second is materially stronger. Use
+            # freshness/novelty to break near-ties so a repeated OpenAI headline
+            # cannot automatically displace a genuinely diverse cross-domain item.
+            if (
+                relative_ai_advantage < 0.10
+                and _secondary_ai_competition_key(best_alternative, p)
+                > _secondary_ai_competition_key(candidate, p)
+            ):
                 break
         p.add(candidate, "mission_target:ai_core_secondary")
 
+    targets: tuple[tuple[str, Callable[[dict[str, Any]], bool]], ...]
     if p.contract.get("mind_cognition_target", 0) > 0:
         # Mission priority: Mind/Cognition first, then AI Futures, and only then Convergence.
         targets = (

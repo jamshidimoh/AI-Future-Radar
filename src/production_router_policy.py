@@ -368,7 +368,10 @@ def _install_production_circuit_breaker() -> None:
 
         emergency_fallbacks = []
         if os.getenv("RADAR_ENABLE_LOCAL_OLLAMA_FALLBACK", "0").strip().lower() in {"1", "true", "yes"}:
-            emergency_fallbacks.append(("LocalOllamaFree", router._ollama_local))
+            if getattr(router, "_OLLAMA_CIRCUIT_OPEN", False):
+                print("[Production Circuit] skipped=ollama reason=circuit_open", flush=True)
+            else:
+                emergency_fallbacks.append(("LocalOllamaFree", router._ollama_local))
         if os.getenv("RADAR_ENABLE_GEMINI_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("GEMINI_API_KEY"):
             emergency_fallbacks.append(("Gemini", router._gemini))
         if os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("OPENROUTER_API_KEY"):
@@ -424,6 +427,11 @@ def _install_production_circuit_breaker() -> None:
                     return content, emergency_name
             except Exception as exc:
                 last_error = exc
+                if emergency_name == "LocalOllamaFree":
+                    # A local timeout is run-scoped: avoid paying its timeout
+                    # cost again for every later candidate in this production run.
+                    router._OLLAMA_CIRCUIT_OPEN = True
+                    print("[Production Circuit] opened=ollama reason=emergency_failure", flush=True)
                 logger.warning(
                     "Production provider attempt failed provider=%s model=%s exception=%s: %s",
                     emergency_name.lower(),

@@ -16,15 +16,21 @@ def test_registry_person_candidate_detects_influential_thinker():
     assert is_mind_ideas_voices_candidate(item)
 
 
-def test_neuroscience_genetics_and_future_signals_are_eligible():
+def test_neuroscience_and_future_signals_are_eligible_but_generic_genomics_is_not():
     for title in (
         "AI, predictive processing and neuroscience",
-        "Genomics and AI-driven biology",
         "Scientific foresight on AI and civilization",
         "Technology and society in the age of AI",
     ):
         item = {"title": title, "mission_area": "convergence", "content_type": "article"}
         assert is_mind_ideas_voices_candidate(item)
+
+    generic_genomics = {
+        "title": "Genomics and AI-driven biology",
+        "mission_area": "convergence",
+        "content_type": "article",
+    }
+    assert not is_mind_ideas_voices_candidate(generic_genomics)
 
 
 def test_community_source_is_excluded():

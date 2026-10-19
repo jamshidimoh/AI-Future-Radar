@@ -16,10 +16,10 @@ def _item(title, source, score, category, content_type="news"):
     }
 
 
-def test_weak_future_opportunity_does_not_displace_strong_convergence():
+def test_weak_second_ai_and_future_do_not_displace_mind_and_convergence():
     candidates = [
         _item("Frontier AI capability", "OpenAI", 100, "ai"),
-        _item("Second frontier AI capability", "Anthropic", 99, "ai"),
+        _item("Second frontier AI capability", "Anthropic", 70, "ai"),
         _item("Robotics breakthrough", "MIT CSAIL", 90, "robotics", "research"),
         _item("Consciousness research", "Nature", 84, "mind", "research"),
         _item("Weak future governance commentary", "NIST", 70, "future"),
@@ -37,7 +37,7 @@ def test_weak_future_opportunity_does_not_displace_strong_convergence():
         strict_relevance=True,
     )
     areas = [item["mission_area"] for item in selected]
-    assert "ai_core" in areas
-    assert "convergence" in areas
+    assert areas.count("ai_core") == 1
     assert "mind_cognition" in areas
+    assert "convergence" in areas
     assert "future_governance" not in areas

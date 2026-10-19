@@ -33,7 +33,6 @@ SPECIAL_SIGNAL_PATTERNS = (
     r"\bphilosophy of mind\b", r"\bphilosophy of science\b", r"\bphilosophy of technology\b",
     r"\bphilosophy of ai\b", r"\bepistemology of ai\b", r"\bawareness\b", r"\bcognition\b",
     r"\bneuroscience\b", r"\bneurotechnology\b", r"\bbrain-computer interface\b", r"\bbrain-computer\b",
-    r"\bgenomics\b", r"\bgenetic\b", r"\bgene editing\b", r"\bsynthetic biology\b",
     r"\bfuturology\b", r"\bfutures? research\b", r"\bforesight\b", r"\bfuture studies\b",
     r"\bsociology\b", r"\bsocial science\b", r"\banthropology\b", r"\bsociety and technology\b", r"\btechnology and society\b",
     r"\bai\s+and\s+(?:the\s+)?mind\b",
@@ -100,6 +99,24 @@ def _mission(item: dict[str, Any]) -> str:
 
 def _thematic_signal(item: dict[str, Any]) -> bool:
     return any(re.search(pattern, _text(item)) for pattern in SPECIAL_SIGNAL_PATTERNS)
+
+
+def _genetics_primary_without_mind_bridge(item: dict[str, Any]) -> bool:
+    """Keep broad genomics/biotech stories out of the Mind lane unless genuinely bridged."""
+    content = " ".join(str(item.get(key) or "") for key in ("title", "summary", "description")).casefold()
+    genetics = re.search(
+        r"\b(?:genetic|genetics|genomic|genomics|genome|crispr|gene editing|gene expression|synthetic biology|protein engineering)\b",
+        content,
+    )
+    if not genetics:
+        return False
+    bridge = re.search(
+        r"\b(?:consciousness|self-awareness|sentience|cognition|cognitive science|neuroscience|brain-computer|"
+        r"philosophy of mind|philosophy of science|philosophy of ai|machine awareness|future of ai|future of intelligence|"
+        r"human-ai convergence|futures research|foresight|organoid intelligence)\b",
+        content,
+    )
+    return not bool(bridge)
 
 
 def _ai_relevant(item: dict[str, Any]) -> bool:
@@ -176,6 +193,8 @@ def is_mind_ideas_voices_candidate(item: dict[str, Any]) -> bool:
     if not _trusted_source(item):
         return False
     if item.get("protected_slot") or item.get("_rank_is_tier0"):
+        return False
+    if _genetics_primary_without_mind_bridge(item):
         return False
     mission = _mission(item)
     thematic = _thematic_signal(item)

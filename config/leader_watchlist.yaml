@@ -39,13 +39,16 @@ people:
       - Anil Seth
       - David Chalmers
       - Stanislas Dehaene
-  bio_quantum_education:
+  bio_quantum:
     priority: 10
     names:
       - George Church
       - Jennifer Doudna
       - John Preskill
       - Scott Aaronson
+  ai_education_and_practice:
+    priority: 10
+    names:
       - Ethan Mollick
       - Sal Khan
 
@@ -148,12 +151,12 @@ google_news_queries:
   - {query: "Fei-Fei Li AI future interview", watch_person: "Fei-Fei Li", category: ai, tier: 1, content_type: interview}
   - {query: "Andrew Ng AI interview latest", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
   - {query: "Andrew Ng LearnVector AI education agents interview", watch_person: "Andrew Ng", category: ai, tier: 1, content_type: interview}
-  - {query: "George Church AI genomics synthetic biology machine learning", watch_person: "George Church", category: bio, tier: 1, content_type: research}
-  - {query: "George Church genomics future biotechnology interview", watch_person: "George Church", category: bio, tier: 1, content_type: interview}
-  - {query: "George Church Harvard genetic engineering of proteins cell-free method", watch_person: "George Church", category: bio, tier: 1, content_type: research}
-  - {query: "George Church automated prototyping genetic codes cell-free translation", watch_person: "George Church", category: bio, tier: 1, content_type: research}
-  - {query: "George Church Manufacturing-aware generative models designed DNA", watch_person: "George Church", category: bio, tier: 1, content_type: research}
-  - {query: "George Church Nature Biotechnology generative models DNA", watch_person: "George Church", category: bio, tier: 1, content_type: research}
+  # Keep genetics discovery selective; prioritize broad AI implications over narrow lab methods.
+  - {query: "AI applications in genomics and synthetic biology strategic implications", category: bio, tier: 1, content_type: research}
+  - {query: "George Church interview AI and the future of biotechnology", watch_person: "George Church", category: bio, tier: 1, content_type: interview}
+  - {query: "Andrej Karpathy AI agents and the future of AI long-form interview", watch_person: "Andrej Karpathy", category: ai, tier: 1, content_type: interview}
+  - {query: "Ethan Mollick AI at work and education future podcast", watch_person: "Ethan Mollick", category: ai, tier: 1, content_type: podcast}
+  - {query: "Sal Khan AI education and learning future interview", watch_person: "Sal Khan", category: ai, tier: 1, content_type: interview}
   - {query: "Kate Crawford AI data labor algorithms interview", watch_person: "Kate Crawford", category: future, tier: 1, content_type: interview}
   - {query: "Kate Crawford artificial intelligence society technology interview", watch_person: "Kate Crawford", category: future, tier: 1, content_type: interview}
   - {query: "Kate Crawford Dartmouth AI summer Science 2026", watch_person: "Kate Crawford", category: future, tier: 1, content_type: research}

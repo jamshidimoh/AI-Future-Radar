@@ -2,7 +2,17 @@ from pathlib import Path
 
 import yaml
 
-from src.unified_editorial_selection import is_mission_relevant, load_editorial_contract, mission_area, select_regular_portfolio
+from src.unified_editorial_selection import (
+    _eligible_candidates,
+    _Portfolio,
+    _second_ai_consumes_reserved_mission_source,
+    candidate_score,
+    is_mission_relevant,
+    load_editorial_contract,
+    mission_area,
+    select_regular_portfolio,
+    source_key,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -24,6 +34,59 @@ def item(title, source, score, area="ai", tier=1, content_type="news", research_
         "_ai_link": True,
         "ai_relevance": True,
     }
+
+
+def test_optional_second_ai_preserves_the_only_source_for_mind_target():
+    fixture = yaml.safe_load((ROOT / "tests/characterization/select_regular_portfolio.json").read_text(encoding="utf-8"))
+    contract = dict(fixture["contract"])
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 0
+    eligible = _eligible_candidates(fixture["candidates"], contract, strict_relevance=False)
+    by_title = {candidate["title"]: candidate for candidate in eligible}
+    ai_first = by_title["Ai Core candidate 0 machine learning"]
+    ai_second = by_title["Ai Core candidate 1 machine learning"]
+    mind_target = by_title["Mind Cognition candidate 8 machine learning"]
+
+    assert ai_second["source"] == mind_target["source"]
+    portfolio = _Portfolio(
+        contract=contract,
+        limit=3,
+        source_cap=1,
+        type_cap=1,
+        recent={},
+        mission_aware=True,
+    )
+    portfolio.add(ai_first, "test:ai_first")
+
+    assert mission_area(mind_target) == "mind_cognition"
+    assert candidate_score(mind_target) > 0
+    assert source_key(ai_second) == source_key(mind_target)
+    assert portfolio.interview_count == 0
+    assert portfolio.admissible(
+        mind_target,
+        repeat_source=False,
+        ignore_type_cap=True,
+        ignore_window_cap=True,
+        ignore_area_window_cap=True,
+    )
+    mind_pool = [
+        item for item in eligible
+        if mission_area(item) == "mind_cognition"
+        and id(item) not in portfolio.selected_ids
+        and candidate_score(item) >= min(candidate_score(selected) for selected in portfolio.selected) * float(
+            contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82
+        )
+        and candidate_score(item) > 0
+        and portfolio.admissible(
+            item,
+            repeat_source=False,
+            ignore_type_cap=True,
+            ignore_window_cap=True,
+            ignore_area_window_cap=True,
+        )
+    ]
+    assert mind_pool == [mind_target]
+    assert _second_ai_consumes_reserved_mission_source(portfolio, eligible, ai_second)
 
 
 def test_mission_diversity_is_explicit_and_canonical():

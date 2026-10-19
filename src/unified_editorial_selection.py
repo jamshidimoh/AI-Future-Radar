@@ -3,13 +3,15 @@ from __future__ import annotations
 
 import logging
 import re
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+from src.future_significance import is_low_future_value
 from src.information_gain import (
     editorial_novelty_score,
     information_gain_score,
@@ -25,7 +27,10 @@ MISSION_PATH = ROOT / "config" / "mission_policy.yaml"
 SELECTION_PATH = ROOT / "config" / "selection_policy.yaml"
 _AREA_MAP = {"ai": "ai_core", "ai_core": "ai_core", "quantum": "convergence", "genetics": "convergence", "robotics": "convergence", "humanoid": "convergence", "bio": "convergence", "bci": "convergence", "future": "future_governance", "future_governance": "future_governance", "mind": "mind_cognition", "mind_cognition": "mind_cognition", "convergence": "convergence"}
 _RESEARCH_TYPES = {"research", "paper", "study", "preprint"}
-_INTERVIEW_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
+_INTERVIEW_TYPES = {
+    "interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a",
+    "opinion", "statement", "remarks", "direct_quote", "quote", "keynote",
+}
 _COMMUNITY_MARKERS = ("reddit", "community", "aggregator", "techmeme")
 _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
 _MIND_COGNITION_EVIDENCE_TERMS = (
@@ -62,6 +67,8 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "replacement_buffer": int(selection_cfg.get("replacement_buffer", 2) or 2),
         "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),
+        "max_genetics_per_run": max(0, int(selection_cfg.get("max_genetics_per_run", 1))),
+        "genetics_diversity_penalty": max(0.0, min(30.0, float(selection_cfg.get("genetics_diversity_penalty", 15.0) or 15.0))),
         "preferred_max_same_source": int(mission.get("max_same_source", 1) or 1),
         "hard_max_same_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "min_unique_sources": int(mission.get("min_unique_sources", 3) or 3),
@@ -273,18 +280,304 @@ def _is_community(item: dict[str, Any]) -> bool:
     return any(m in value for m in _COMMUNITY_MARKERS)
 
 
+_SPECIALIST_RESEARCH_MARKERS = (
+    "intramural", "epicardial", "optical mapping", "cell-free translation",
+    "gene representation learning", "ontology for gene", "single-cell", "single cell",
+    "transcriptomic", "epigenomic", "proteomic", "multi-omics", "allele-specific",
+    "heteroscedastic", "finite element", "molecular dynamics", "electrophysiology",
+    "differential expression", "variant calling", "spatial transcriptomics",
+    "intracellular", "in silico", "gene expression", "pharmacokinetic",
+)
+_GENETICS_CATEGORY_LABELS = {"genetics", "genetic", "genomics", "genomic"}
+_GENETICS_TITLE_RE = re.compile(
+    r"\b(?:genetic|genetics|genomic|genomics|genome|genomes|crispr|gene editing|synthetic biology|protein engineering)\b",
+    re.IGNORECASE,
+)
+_GENETICS_EVIDENCE_RE = re.compile(
+    r"\b(?:genetic|genetics|genomic|genomics|genome|genomes|crispr|gene editing|gene expression|"
+    r"synthetic biology|protein engineering|dna|rna|transcriptomic|epigenetic|multi-omics)\b",
+    re.IGNORECASE,
+)
+
+
+@lru_cache(maxsize=1)
+def _technical_depth_penalty_cap() -> float:
+    editorial = _load_yaml(SELECTION_PATH).get("editorial", {}) or {}
+    try:
+        return max(0.0, min(15.0, float(editorial.get("technical_depth_penalty", 10.0) or 10.0)))
+    except (TypeError, ValueError):
+        return 10.0
+
+
+def _technical_depth_penalty(item: dict[str, Any]) -> float:
+    """Down-rank research dominated by niche experimental jargon, not broad AI explainers."""
+    if content_type_key(item) not in _RESEARCH_TYPES and not item.get("research_signal"):
+        return 0.0
+    title = str(item.get("title") or "").casefold()
+    text = " ".join(str(item.get(key) or "") for key in ("title", "summary", "description")).casefold()
+    hits = sum(1 for marker in _SPECIALIST_RESEARCH_MARKERS if marker in text)
+    if hits == 0:
+        return 0.0
+    penalty = hits * 3.0
+    if len(title) >= 95:
+        penalty += 2.0
+    if len(title) >= 125:
+        penalty += 2.0
+    return min(_technical_depth_penalty_cap(), penalty)
+
+
+def _is_genetics_heavy(item: dict[str, Any]) -> bool:
+    """Identify genetics-led output without treating every cross-domain AI story as genetic."""
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _GENETICS_CATEGORY_LABELS:
+        return True
+    title = str(item.get("title") or "")
+    if _GENETICS_TITLE_RE.search(title):
+        return True
+    text = " ".join(str(item.get(key) or "") for key in ("title", "summary", "description", "tags", "keywords"))
+    return len(set(match.casefold() for match in _GENETICS_EVIDENCE_RE.findall(text))) >= 2
+
+
+@lru_cache(maxsize=1)
+def _genetics_diversity_penalty_cap() -> float:
+    selection_cfg = _load_yaml(SELECTION_PATH).get("selection", {}) or {}
+    try:
+        return max(0.0, min(30.0, float(selection_cfg.get("genetics_diversity_penalty", 15.0) or 15.0)))
+    except (TypeError, ValueError):
+        return 15.0
+
+
+def _is_verified_leader_voice(item: dict[str, Any]) -> bool:
+    """Recognize a named expert's interview, podcast, opinion, or attributable statement."""
+    voice_format = (
+        content_type_key(item) in _INTERVIEW_TYPES
+        or bool(item.get("interview_signal"))
+        or bool(item.get("leader_statement_signal"))
+        or bool(item.get("direct_quote"))
+        or bool(item.get("quote_signal"))
+        or bool(item.get("opinion_signal"))
+    )
+    if not voice_format:
+        return False
+    named_voice = any(
+        str(item.get(key) or "").strip()
+        for key in ("leader", "watch_person", "speaker", "guest", "interviewee", "expert_name", "person_name")
+    )
+    return named_voice or any(
+        bool(item.get(key))
+        for key in ("priority_person_interview", "priority_person_signal", "is_leader_watch", "leader_watch_protected")
+    )
+
+
+def _secondary_ai_competition_key(item: dict[str, Any], p: _Portfolio) -> tuple:
+    """Compare an optional second AI story with a viable non-AI alternative.
+
+    Freshness and marginal portfolio value matter after the hard quality floor;
+    a small raw-score advantage must not automatically defeat a fresher or more
+    diverse Mind/Convergence/Futures story.
+    """
+    freshness = freshness_score(
+        item, float(p.contract.get("freshness_half_life_hours", 24.0) or 24.0)
+    )
+    value = portfolio_value_with_history(
+        item,
+        p.selected,
+        p.history_signatures,
+        diversity_weight=p.contract["diversity_weight"],
+        similarity_penalty=p.contract["similarity_penalty"],
+        entity_repeat_penalty=p.contract["entity_repeat_penalty"],
+        leader_repeat_penalty=p.contract["leader_repeat_penalty"],
+        history_topic_penalty=p.contract["history_topic_penalty"],
+        history_entity_penalty=p.contract["history_entity_penalty"],
+    )
+    # portfolio_value_with_history uses the raw editorial score as its base;
+    # apply the bounded technical/genetics selection penalties used by ranking.
+    raw_score = 0.0
+    for key in ("_portfolio_selection_score", "final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
+        try:
+            raw_score = float(item.get(key, 0) or 0)
+        except (TypeError, ValueError):
+            raw_score = 0.0
+        if raw_score:
+            break
+    value += candidate_score(item) - raw_score
+    freshness_weight = float(p.contract.get("freshness_weight", 10.0) or 10.0)
+    return (
+        freshness,
+        round(value, 4),
+        candidate_score(item) + freshness * freshness_weight,
+        _safe_float(item, "evidence_strength"),
+        str(item.get("published") or item.get("published_at") or ""),
+    )
+
+
+def _pending_non_ai_target_lane(
+    p: _Portfolio,
+    ordered: list[dict[str, Any]],
+    *,
+    after_candidate: dict[str, Any] | None = None,
+) -> str | None:
+    """Return the highest-priority mission lane that still has a viable target."""
+    candidate_source = source_key(after_candidate) if after_candidate is not None else None
+    candidate_exhausts_interview_slot = bool(
+        after_candidate is not None
+        and _is_interview(after_candidate)
+        and int(p.contract.get("interview_target_max", 0) or 0) > 0
+        and p.interview_count + 1 >= int(p.contract.get("interview_target_max", 0) or 0)
+    )
+
+    def available(predicate) -> bool:
+        return any(
+            predicate(item)
+            and id(item) not in p.selected_ids
+            and candidate_score(item) > 0.0
+            and (candidate_source is None or source_key(item) != candidate_source)
+            and not (candidate_exhausts_interview_slot and _is_interview(item))
+            and p.admissible(
+                item,
+                repeat_source=False,
+                ignore_type_cap=True,
+                ignore_window_cap=True,
+                ignore_area_window_cap=True,
+            )
+            for item in ordered
+        )
+
+    mind_target = int(p.contract.get("mind_cognition_target", 0) or 0)
+    future_target = int(p.contract.get("mind_future_target", 0) or 0)
+    convergence_target = int(p.contract.get("convergence_target", 0) or 0)
+    research_target = int(p.contract.get("research_target", 0) or 0)
+
+    # Return the first still-fillable lane in the same order used by mission
+    # target filling. An optional AI slot must not consume its only source and
+    # silently force a lower-priority lane to substitute for it.
+    if mind_target > 0:
+        if p.area_counts.get("mind_cognition", 0) < mind_target and available(lambda x: mission_area(x) == "mind_cognition"):
+            return "mind_cognition"
+        if p.area_counts.get("future_governance", 0) < future_target and available(lambda x: mission_area(x) == "future_governance"):
+            return "future_governance"
+    else:
+        mind_future_count = p.area_counts.get("mind_cognition", 0) + p.area_counts.get("future_governance", 0)
+        if mind_future_count < future_target:
+            if available(lambda x: mission_area(x) == "mind_cognition"):
+                return "mind_cognition"
+            if available(lambda x: mission_area(x) == "future_governance"):
+                return "future_governance"
+
+    if p.area_counts.get("convergence", 0) < convergence_target and available(lambda x: mission_area(x) == "convergence"):
+        return "convergence"
+
+    selected_research = sum(1 for item in p.selected if _is_research(item))
+    if selected_research < research_target and available(lambda x: mission_area(x) != "ai_core" and _is_research(x)):
+        return "research"
+    return None
+
+def _second_ai_consumes_reserved_mission_source(
+    p: _Portfolio,
+    ordered: list[dict[str, Any]],
+    candidate: dict[str, Any],
+) -> bool:
+    """Protect the only usable source for the highest-priority pending mission lane."""
+    mind_target = int(p.contract.get("mind_cognition_target", 0) or 0)
+    future_target = int(p.contract.get("mind_future_target", 0) or 0)
+    convergence_target = int(p.contract.get("convergence_target", 0) or 0)
+    research_target = int(p.contract.get("research_target", 0) or 0)
+
+    if mind_target > 0:
+        targets: tuple[tuple[str, Callable[[dict[str, Any]], bool]], ...] = (
+            ("mind_cognition", lambda x: mission_area(x) == "mind_cognition"),
+            ("future_governance", lambda x: mission_area(x) == "future_governance"),
+            ("convergence", lambda x: mission_area(x) == "convergence"),
+            ("research", lambda x: mission_area(x) != "ai_core" and _is_research(x)),
+        )
+    else:
+        targets = (
+            ("mind_future", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
+            ("convergence", lambda x: mission_area(x) == "convergence"),
+            ("research", lambda x: mission_area(x) != "ai_core" and _is_research(x)),
+        )
+
+    candidate_source = source_key(candidate)
+    selected_research = sum(1 for item in p.selected if _is_research(item))
+    selected_scores = [candidate_score(item) for item in p.selected if candidate_score(item) > 0.0]
+    quality_ratio = max(
+        0.0,
+        min(
+            1.0,
+            float(
+                p.contract.get(
+                    "mission_target_quality_floor_ratio",
+                    p.contract.get("diversity_quality_floor_ratio", 0.80),
+                )
+                or 0.80
+            ),
+        ),
+    )
+    minimum_target_score = min(selected_scores) * quality_ratio if selected_scores else 0.0
+    for lane, predicate in targets:
+        if lane == "mind_cognition" and p.area_counts.get("mind_cognition", 0) >= mind_target:
+            continue
+        if lane == "future_governance" and p.area_counts.get("future_governance", 0) >= future_target:
+            continue
+        if lane == "mind_future":
+            mind_future_count = p.area_counts.get("mind_cognition", 0) + p.area_counts.get("future_governance", 0)
+            if mind_future_count >= future_target:
+                continue
+        if lane == "convergence" and p.area_counts.get("convergence", 0) >= convergence_target:
+            continue
+        if lane == "research" and selected_research >= research_target:
+            continue
+        pool = [
+            item for item in ordered
+            if predicate(item)
+            and id(item) not in p.selected_ids
+            and candidate_score(item) >= minimum_target_score
+            and candidate_score(item) > 0.0
+            and p.admissible(
+                item,
+                repeat_source=False,
+                ignore_type_cap=True,
+                ignore_window_cap=True,
+                ignore_area_window_cap=True,
+            )
+        ]
+        if not pool:
+            continue
+        # If every currently usable item for this lane uses the same source as
+        # the optional AI story, publishing it would make the target impossible
+        # to fill. Preserve the mission target; do not substitute a lower lane.
+        return all(source_key(item) == candidate_source for item in pool)
+    return False
+
+
+def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[str, Any]) -> dict[str, Any] | None:
+    if not candidates:
+        return None
+    top_score = max(candidate_score(item) for item in candidates)
+    floor = max(0.0, min(1.0, float(contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82)))
+    leader_voices = [
+        item for item in candidates
+        if _is_verified_leader_voice(item) and candidate_score(item) >= top_score * floor
+    ]
+    pool = leader_voices or candidates
+    return max(pool, key=lambda item: (candidate_score(item), _safe_float(item, "evidence_strength")), default=None)
+
+
 def candidate_score(item: dict[str, Any]) -> float:
-    # Special editorial lanes supply a common arbitration score explicitly.
-    # Prefer it whenever present so lane scoring cannot be accidentally replaced
-    # by a stale normal-news score.
+    """Selection-only score. Stored/source scores are not mutated by editorial balancing."""
+    score = 0.0
     for key in ("_portfolio_selection_score", "final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
         try:
             value = float(item.get(key, 0) or 0)
         except (TypeError, ValueError):
             value = 0.0
         if value:
-            return value
-    return 0.0
+            score = value
+            break
+    if not score:
+        return 0.0
+    genetics_penalty = _genetics_diversity_penalty_cap() if _is_genetics_heavy(item) else 0.0
+    return round(score - _technical_depth_penalty(item) - genetics_penalty, 2)
 
 
 def _published_age_hours(item: dict[str, Any]) -> float | None:
@@ -393,24 +686,38 @@ class _Portfolio:
         self.window_source_counts = window_source_counts or {}
         self.window_area_counts = window_area_counts or {}
 
-    def admissible(self, item: dict[str, Any], *, repeat_source: bool, ignore_type_cap: bool = False, ignore_window_cap: bool = False) -> bool:
+    def admissible(
+        self,
+        item: dict[str, Any],
+        *,
+        repeat_source: bool,
+        ignore_type_cap: bool = False,
+        ignore_window_cap: bool = False,
+        ignore_area_window_cap: bool = False,
+    ) -> bool:
         source, ctype, area = source_key(item), content_type_key(item), mission_area(item)
+        if _is_genetics_heavy(item):
+            genetics_limit = max(0, int(self.contract.get("max_genetics_per_run", 1)))
+            genetics_selected = sum(1 for selected_item in self.selected if _is_genetics_heavy(selected_item))
+            if genetics_selected >= genetics_limit:
+                return False
         if not ignore_type_cap and self.type_counts.get(ctype, 0) >= self.type_cap:
             return False
         if self.mission_aware and _is_interview(item) and self.interview_count >= self.contract["interview_target_max"] > 0:
             return False
         if self.mission_aware and self.area_counts.get(area, 0) >= self.contract["max_same_mission_area"]:
             return False
-        if not ignore_window_cap:
-            # Cross-run rotation cap: a single source/area must not keep dominating
-            # the feed across the last `window_runs` runs, independent of how well
-            # it scores within a single run. This is a hard cap with a bypass
-            # fallback (see _fill_by_portfolio_value / _backfill_repeat_sources)
-            # so a starved candidate pool never blocks publication entirely.
-            if self.window_source_counts.get(source, 0) >= int(self.contract.get("max_same_source_in_window", 2) or 2):
-                return False
-            if self.mission_aware and self.window_area_counts.get(area, 0) >= int(self.contract.get("max_same_area_in_window", 3) or 3):
-                return False
+        # Source rotation may be relaxed as a last resort when it is the only
+        # reason a slot would be empty. The rolling area cap is stricter and can
+        # be bypassed only by the explicit mission-target recovery path.
+        if not ignore_window_cap and self.window_source_counts.get(source, 0) >= int(self.contract.get("max_same_source_in_window", 2) or 2):
+            return False
+        if (
+            self.mission_aware
+            and not ignore_area_window_cap
+            and self.window_area_counts.get(area, 0) >= int(self.contract.get("max_same_area_in_window", 3) or 3)
+        ):
+            return False
         current_source = self.source_counts.get(source, 0)
         return current_source < self.source_cap if repeat_source else current_source == 0
 
@@ -473,6 +780,10 @@ def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[st
         item = dict(raw)
         if _is_community(item) and contract["community_max"] <= 0:
             continue
+        # Explicit utility/tutorial content must not bypass future-value screening
+        # merely because an AI-core coverage target is still unfilled.
+        if is_low_future_value(item):
+            continue
         if not is_mission_relevant(item, strict=strict_relevance):
             continue
         item["mission_area"] = mission_area(item)
@@ -534,24 +845,108 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
         if not candidates:
             candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True)]
         if not candidates:
-            # ai_core is normally the deepest candidate pool; only reach past the
-            # rotation window cap here if nothing else qualifies at all.
+            # Relax the rolling-window cap only as a last resort.
             candidates = [x for x in ordered if mission_area(x) == "ai_core" and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)]
-        candidate = max(candidates, key=lambda x: (candidate_score(x), _safe_float(x, "evidence_strength")), default=None)
+        candidate = _best_ai_target_candidate(candidates, p.contract)
         if candidate is None:
             break
         p.add(candidate, "mission_target:ai_core")
 
+    # A second AI-core item is optional, not an unconditional quota. Preserve
+    # at least one slot for an available configured non-AI mission target, and
+    # compare the AI candidate with that alternative using freshness, current-
+    # portfolio novelty and entity/leader repetition penalties.
+    ai_target_max = min(max(0, int(p.contract.get("ai_core_target_max", 1))), p.limit)
+    while len(p.selected) < p.limit and p.area_counts.get("ai_core", 0) < ai_target_max:
+        candidates = [
+            item for item in ordered
+            if mission_area(item) == "ai_core"
+            and id(item) not in p.selected_ids
+            and p.admissible(item, repeat_source=False)
+        ]
+        if not candidates:
+            candidates = [
+                item for item in ordered
+                if mission_area(item) == "ai_core"
+                and id(item) not in p.selected_ids
+                and p.admissible(item, repeat_source=False, ignore_type_cap=True)
+            ]
+        # Do not bypass the rolling area cap to force an optional second AI slot.
+        if not candidates:
+            break
+        candidate = _best_ai_target_candidate(candidates, p.contract)
+        if candidate is None:
+            break
+
+        if _second_ai_consumes_reserved_mission_source(p, ordered, candidate):
+            break
+        target_lane_before = _pending_non_ai_target_lane(p, ordered)
+        reserve_slot = target_lane_before is not None
+        # Do not use the optional AI slot to consume the only source (or the last
+        # interview quota) needed by the highest-priority outstanding lane. This
+        # avoids replacing Mind/Cognition with Convergence merely because both
+        # were available before the second AI story consumed a shared source.
+        if reserve_slot and _pending_non_ai_target_lane(p, ordered, after_candidate=candidate) != target_lane_before:
+            break
+        slots_after_this = p.limit - len(p.selected) - 1
+        if reserve_slot and slots_after_this < 1:
+            break
+
+        floor = max(
+            0.0,
+            min(1.0, float(p.contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82)),
+        )
+        alternatives = [
+            item for item in ordered
+            if mission_area(item) != "ai_core"
+            and id(item) not in p.selected_ids
+            and candidate_score(item) > 0.0
+            and candidate_score(item) >= candidate_score(candidate) * floor
+            and p.admissible(item, repeat_source=False)
+        ]
+        if not alternatives:
+            alternatives = [
+                item for item in ordered
+                if mission_area(item) != "ai_core"
+                and id(item) not in p.selected_ids
+                and candidate_score(item) > 0.0
+                and candidate_score(item) >= candidate_score(candidate) * floor
+                and p.admissible(item, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)
+            ]
+        if alternatives:
+            best_alternative = max(alternatives, key=lambda x: _secondary_ai_competition_key(x, p))
+            best_alternative_score = candidate_score(best_alternative)
+            quality_floor = max(0.0, min(1.0, float(p.contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82)))
+            if candidate_score(candidate) < best_alternative_score * quality_floor:
+                break
+            relative_ai_advantage = (
+                candidate_score(candidate) - best_alternative_score
+            ) / max(abs(candidate_score(candidate)), 1.0)
+            # Keep two AI stories when the second is materially stronger. Use
+            # freshness/novelty to break near-ties so a repeated OpenAI headline
+            # cannot automatically displace a genuinely diverse cross-domain item.
+            if (
+                relative_ai_advantage < 0.075
+                and _secondary_ai_competition_key(best_alternative, p)
+                > _secondary_ai_competition_key(candidate, p)
+            ):
+                break
+        p.add(candidate, "mission_target:ai_core_secondary")
+
+    targets: tuple[tuple[str, Callable[[dict[str, Any]], bool]], ...]
     if p.contract.get("mind_cognition_target", 0) > 0:
+        # Mission priority: Mind/Cognition first, then AI Futures, and only then Convergence.
         targets = (
-            ("convergence_target", lambda x: mission_area(x) == "convergence"),
             ("mind_cognition_target", lambda x: mission_area(x) == "mind_cognition"),
+            ("mind_future_target", lambda x: mission_area(x) == "future_governance"),
+            ("convergence_target", lambda x: mission_area(x) == "convergence"),
             ("research_target", _is_research),
         )
     else:
+        # Compatibility path when the distinct Mind target is disabled.
         targets = (
-            ("convergence_target", lambda x: mission_area(x) == "convergence"),
             ("mind_future_target", lambda x: mission_area(x) in {"mind_cognition", "future_governance"}),
+            ("convergence_target", lambda x: mission_area(x) == "convergence"),
             ("research_target", _is_research),
         )
 
@@ -565,7 +960,18 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
                 # are already the scarcest candidate pools. The rotation window cap exists
                 # to stop a dominant source from crowding out other sources, not to make an
                 # already-rare lane even harder to fill — so it is relaxed here as a last resort.
-                pool = [x for x in ordered if area_predicate(x) and id(x) not in p.selected_ids and p.admissible(x, repeat_source=False, ignore_type_cap=True, ignore_window_cap=True)]
+                pool = [
+                    x for x in ordered
+                    if area_predicate(x)
+                    and id(x) not in p.selected_ids
+                    and p.admissible(
+                        x,
+                        repeat_source=False,
+                        ignore_type_cap=True,
+                        ignore_window_cap=True,
+                        ignore_area_window_cap=True,
+                    )
+                ]
             if not pool:
                 break
             # Explicit mission targets are coverage controls, not opportunistic
@@ -614,6 +1020,22 @@ def _fill_mission_targets(p: _Portfolio, ordered: list[dict[str, Any]]) -> None:
             )
             if top_global > 0.0 and candidate_score(candidate) < top_global * floor:
                 break
+
+            # A weak AI-futures commentary should not displace a materially stronger
+            # convergence story. Conversely, strong future signals are preferred
+            # over ordinary Convergence when they clear the same quality ratio.
+            if target_key == "mind_future_target" and mission_area(candidate) == "future_governance":
+                convergence_scores = [
+                    candidate_score(item)
+                    for item in ordered
+                    if mission_area(item) == "convergence"
+                    and id(item) not in p.selected_ids
+                    and p.admissible(item, repeat_source=False)
+                    and candidate_score(item) > 0.0
+                ]
+                best_convergence = max(convergence_scores, default=0.0)
+                if best_convergence > 0.0 and candidate_score(candidate) < best_convergence * floor:
+                    break
 
             candidate_area = mission_area(candidate)
             if candidate_area == "mind_cognition":

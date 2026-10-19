@@ -45,7 +45,7 @@ def test_mind_candidates_below_fifty_keep_original_score_and_get_bounded_bypass(
     assert item["final_editorial_score"] >= 55.0
 
 
-def test_three_slot_portfolio_prefers_ai_convergence_and_mind_cognition():
+def test_three_slot_portfolio_prefers_ai_mind_and_qualified_future_over_convergence():
     candidates = [
         _item("Frontier AI capability", "OpenAI", 100, "ai"),
         _item("Quantum computing breakthrough for AI", "Nature", 91, "quantum"),
@@ -63,4 +63,4 @@ def test_three_slot_portfolio_prefers_ai_convergence_and_mind_cognition():
         mission_aware=True,
         strict_relevance=True,
     )
-    assert [item["mission_area"] for item in selected] == ["ai_core", "convergence", "mind_cognition"]
+    assert [item["mission_area"] for item in selected] == ["ai_core", "mind_cognition", "future_governance"]

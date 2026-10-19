@@ -32,7 +32,7 @@ def test_production_contract_requires_core_mission_lanes_when_candidates_exist()
     assert selection["max_items_per_content_type"] >= 2
 
 
-def test_three_slot_portfolio_prefers_ai_convergence_and_mind_over_ai_only():
+def test_three_slot_portfolio_prefers_second_ai_and_mind_over_weaker_future_or_convergence():
     candidates = [
         _item("Frontier AI capability", "OpenAI", 100, "ai"),
         _item("Second frontier AI capability", "Anthropic", 99, "ai"),
@@ -53,7 +53,8 @@ def test_three_slot_portfolio_prefers_ai_convergence_and_mind_over_ai_only():
         strict_relevance=True,
     )
     areas = [item["mission_area"] for item in selected]
-    assert "ai_core" in areas
-    assert "convergence" in areas
+    assert areas.count("ai_core") == 2
     assert "mind_cognition" in areas
+    assert "convergence" not in areas
+    assert "future_governance" not in areas
     assert len(selected) == 3

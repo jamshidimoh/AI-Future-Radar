@@ -170,7 +170,7 @@ jobs:
           # Core recurring/free pool.
           add_provider groq GROQ_API_KEY
           add_provider huggingface HF_TOKEN
-          add_provider nara NARAROUTER_API_KEY
+          echo "[OmniRoute] nara: deferred from auto-pool until the account Telegram gate is resolved; direct fallback observes persisted provider health"
           add_provider mistral MISTRAL_API_KEY
           add_provider llm7 LLM7_API_KEY
           add_provider nvidia NVIDIA_API_KEY

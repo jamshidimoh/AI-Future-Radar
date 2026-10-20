@@ -492,12 +492,16 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             score = 0.0
         return score >= NORMAL_SCORE_FLOOR and not item.get("_publication_blocked")
 
+    # Recovery is a replacement path, not permission to exceed the three-item
+    # publication portfolio. Check the higher-priority Mind lane before the
+    # lower-priority Convergence lane; legacy configurations may use Mind/Futures
+    # as a combined fallback when the dedicated Mind target is disabled.
     specs = [
         ("ai_core", int(contract.get("ai_core_target_min", 0) or 0)),
-        ("convergence", int(contract.get("convergence_target", 0) or 0)),
     ]
     mind_target = int(contract.get("mind_cognition_target", 0) or 0)
     specs.append(("mind_cognition", mind_target) if mind_target > 0 else ("legacy_mind_future", int(contract.get("mind_future_target", 0) or 0)))
+    specs.append(("convergence", int(contract.get("convergence_target", 0) or 0)))
 
     missing = []
     for area, count in specs:
@@ -511,12 +515,49 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
         print("[Mission Coverage Recovery] no exact mission lane missing; recovery=0", flush=True)
         return []
 
+    # Only candidates that survived summary/score gates occupy a final news slot.
+    # If the portfolio is already full, recovering another mission lane would
+    # create an unpublishable fourth item whose "recovered" log could falsely
+    # satisfy production acceptance without an actual Telegram delivery.
+    final_capacity = max(0, int(contract.get("max_posts", 3) or 3))
+    publishable_selected = sum(1 for item in selected if _score_ok(item))
+    available_recovery_slots = max(0, final_capacity - publishable_selected)
+    if available_recovery_slots == 0:
+        print(
+            "[Mission Coverage Recovery] skipped=1 reason=final_capacity_satisfied "
+            f"valid_selected={publishable_selected} final_capacity={final_capacity} "
+            f"requested_missing={len(missing)}; accepted portfolio left unchanged",
+            flush=True,
+        )
+        return []
+
+    # Treat free slots as the number of recoveries that can still be delivered.
+    # Continue down the lane priority order when a higher-priority lane has no
+    # eligible candidate, but never add more recovered items than vacant slots.
+    target_recovery_slots = min(len(missing), available_recovery_slots)
+    if target_recovery_slots < len(missing):
+        print(
+            "[Mission Coverage Recovery] deferred=1 reason=final_capacity_priority "
+            f"deferred_targets={len(missing) - target_recovery_slots} "
+            f"available_slots={available_recovery_slots}",
+            flush=True,
+        )
+
     pool = [x for x in editorial_pool if _publication_identity(x) not in selected_ids and not x.get("_publication_blocked")]
     recovered, attempts = [], 0
+    unresolved_processing_failure = False
     lane_attempt_limit = max(1, int(policy.get("replacement_buffer", 3) or 3))
 
     for allowed_areas in missing:
+        if len(recovered) >= target_recovery_slots:
+            print(
+                "[Mission Coverage Recovery] deferred=1 reason=final_capacity_filled "
+                f"recovered={len(recovered)} remaining_targets={len(missing) - len(recovered)}",
+                flush=True,
+            )
+            break
         lane_recovered = False
+        lane_processing_failure = False
         lane_attempts = 0
         while lane_attempts < lane_attempt_limit:
             area_pool = [
@@ -603,6 +644,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
 
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
+                lane_processing_failure = True
                 provider_unavailable = bool(candidate.get("_summary_provider_failure"))
                 reason_code = "mission_recovery_provider_unavailable" if provider_unavailable else "mission_recovery_candidate_failure"
                 _runtime_telemetry_event(
@@ -637,13 +679,19 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             break
 
         if not lane_recovered:
+            if lane_processing_failure:
+                unresolved_processing_failure = True
             print(
                 f"[Mission Coverage Recovery] lane={','.join(sorted(allowed_areas))} "
                 f"status=unmet",
                 flush=True,
             )
 
-    recovery_status = "ok" if len(recovered) >= len(missing) else "unmet"
+    recovery_status = (
+        "ok"
+        if len(recovered) >= target_recovery_slots and not unresolved_processing_failure
+        else "unmet"
+    )
     if recovery_status == "unmet":
         _runtime_telemetry_event(
             {"title": "mission-coverage-recovery", "mission_area": "recovery", "source": "runtime"},
@@ -651,13 +699,14 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             decision="unmet",
             reason_code="mission_coverage_unmet",
             details={
-                "missing_lanes": len(missing),
+                "missing_lanes": target_recovery_slots,
+                "deferred_lanes": max(0, len(missing) - target_recovery_slots),
                 "attempts": attempts,
                 "recovered": len(recovered),
             },
         )
     print(
-        f"[Mission Coverage Recovery] missing_lanes={len(missing)} attempts={attempts} "
+        f"[Mission Coverage Recovery] missing_lanes={target_recovery_slots} attempts={attempts} "
         f"recovered={len(recovered)} status={recovery_status}",
         flush=True,
     )

@@ -191,3 +191,110 @@ def test_mission_coverage_recovery_gives_each_missing_lane_its_own_attempt_budge
         "convergence",
         "mind_cognition",
     }
+
+def test_full_ai_first_portfolio_does_not_append_unpublishable_fourth_candidate(monkeypatch, capsys):
+    _disable_history_dedup(monkeypatch)
+    from src import unified_editorial_selection
+
+    contract = unified_editorial_selection.load_editorial_contract()
+    contract["max_posts"] = 3
+    contract["ai_core_target_min"] = 1
+    contract["convergence_target"] = 1
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 1
+    monkeypatch.setattr(unified_editorial_selection, "load_editorial_contract", lambda: dict(contract))
+
+    selected = [
+        {"title": "Frontier AI model", "mission_area": "ai_core", "link": "https://example.invalid/ai-1", "editorial_score": 90},
+        {"title": "Second AI capability", "mission_area": "ai_core", "link": "https://example.invalid/ai-2", "editorial_score": 88},
+        {
+            "title": "AI and machine consciousness",
+            "mission_area": "mind_cognition",
+            "mind_lane_selected": True,
+            "mind_editorial_score": 75,
+            "link": "https://example.invalid/mind",
+        },
+    ]
+    convergence = {
+        "title": "Quantum infrastructure",
+        "mission_area": "convergence",
+        "link": "https://example.invalid/convergence",
+        "source": "Nature",
+        "source_tier": 1,
+        "editorial_score": 95,
+    }
+    summarize_calls = []
+
+    recovered = _mission_coverage_recovery(
+        selected,
+        selected + [convergence],
+        lambda *_args, **_kwargs: [],
+        lambda item: summarize_calls.append(item) or {"summary": "Should not be called"},
+        2,
+        2,
+        {},
+        set(),
+    )
+
+    output = capsys.readouterr().out
+    assert recovered == []
+    assert summarize_calls == []
+    assert "reason=final_capacity_satisfied" in output
+    assert len(selected) == 3
+
+
+def test_mission_recovery_uses_one_vacant_slot_for_higher_priority_mind_before_convergence(monkeypatch):
+    _disable_history_dedup(monkeypatch)
+    from src import unified_editorial_selection
+
+    contract = unified_editorial_selection.load_editorial_contract()
+    contract["max_posts"] = 3
+    contract["ai_core_target_min"] = 1
+    contract["convergence_target"] = 1
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 1
+    monkeypatch.setattr(unified_editorial_selection, "load_editorial_contract", lambda: dict(contract))
+
+    ai_one = {"title": "AI system one", "mission_area": "ai_core", "link": "https://example.invalid/ai-one", "editorial_score": 90}
+    ai_two = {"title": "AI system two", "mission_area": "ai_core", "link": "https://example.invalid/ai-two", "editorial_score": 89}
+    failed_mind = {
+        "title": "Failed consciousness summary",
+        "mission_area": "mind_cognition",
+        "mind_lane_selected": True,
+        "mind_editorial_score": 70,
+        "link": "https://example.invalid/failed-mind",
+        "_publication_blocked": True,
+    }
+    replacement_mind = {
+        "title": "AI and cognitive science",
+        "mission_area": "mind_cognition",
+        "mind_lane_selected": True,
+        "mind_editorial_score": 72,
+        "link": "https://example.invalid/replacement-mind",
+        "source": "Nature",
+        "source_tier": 1,
+    }
+    convergence = {
+        "title": "AI and quantum computing",
+        "mission_area": "convergence",
+        "link": "https://example.invalid/replacement-convergence",
+        "source": "MIT",
+        "source_tier": 1,
+        "editorial_score": 99,
+    }
+
+    recovered = _mission_coverage_recovery(
+        [ai_one, ai_two, failed_mind],
+        [ai_one, ai_two, failed_mind, replacement_mind, convergence],
+        lambda items, **_kwargs: [items[0]],
+        lambda item: {"summary": f"Valid summary for {item['title']}"},
+        2,
+        2,
+        {"replacement_buffer": 2},
+        set(),
+    )
+
+    assert len(recovered) == 1
+    assert recovered[0][0]["mission_area"] == "mind_cognition"
+    assert recovered[0][0]["title"] == "AI and cognitive science"
+

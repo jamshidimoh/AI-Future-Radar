@@ -93,7 +93,7 @@ def _query_rescue_family(text: str) -> str | None:
     """
     if _has(text, Q):
         return "quantum_ai"
-    if _has(text, M):
+    if _has(text, M - {"memory", "attention"}):
         return "consciousness_cognition"
     genetics = {
         "genomics", "genome", "genetic", "genetics", "gene editing", "gene expression",

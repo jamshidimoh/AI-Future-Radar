@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792488556,
+  "updated_at": 1792500834,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19109,6 +19109,25 @@
       "why_it_matters": "منبع باز شدن Run:ai امکان بررسی، فورک و میزبانی خودپلتفرم را بدون اشتراک پولی برای تیم‌های توسعه فراهم می‌کند، که هزینه‌های مالکیت را کاهش می‌دهد. ماژولار بودن چهار مؤلفه به سازمان‌ها اجازه می‌دهد تنها بخش‌های مورد نیاز خود را ادغام کنند و به‌راحتی در زیرساخت‌های Kubernetes موجود جایگذاری شوند. قابلیت شبیه‌سازی GPU در محیط‌های محلی، توسعه و تست را بدون دسترسی به سخت‌افزار گران‌قیمت تسهیل می‌کند، در حالی که نیاز به منابع قابل‌توجه (16 GB RAM، 100 GB دیسک) برای ساخت کامل سرویس‌ها وجود دارد. عدم وجود پشتیبانی تجاری NVIDIA برای نسخهٔ جامعه می‌تواند برای کاربران سازمانی محدودیت ایجاد کند.",
       "link": "https://www.marktechpost.com/2026/10/18/nvidia-runai-open-source-gpu-orchestration-kubernetes/",
       "posted_at": 1792479601
+    },
+    "-1004482051328:2125": {
+      "chat_id": -1004482051328,
+      "message_id": 2125,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "احمد جوده: رقص، صدای مردم بی‌وطن سوریه",
+      "summary": "در مصاحبه‌ای با World Economic Forum در دبی، رقصنده باله و طراح رقص احمد جوده گفت رقص برای او فراتر از اجراست و به‌عنوان صدای مردم بی‌وطن‌اش در سوریه عمل می‌کند. او که به‌عنوان پناهنده بی‌دولت در سوریه بزرگ شد، رقص را به‌صورت خودآموز برای بقا به‌کار گرفت؛ مستند ۲۰۱۸ «Dance or Die» به پشتکار او برای ادامهٔ هنر اشاره دارد. جوده هدف خود را برای الهام‌بخشی به هنرمندان در زمان‌های دشوار بیان کرد.",
+      "description": "“I used dance as a voice for my people.”\n\nFor ballet dancer and choreographer @ahmadjoudehofficial, #dance has always been about more than performance. Growing up as a stateless refugee in Syria, the self-taught dancer has used it to stay alive. \n\nDespite war, displacement and prejudice, Ahmad never gave up on his craft. Dance or Die, a 2018 documentary, shed light on his determination to pursue his art.\n\nJoining us in Dubai, UAE for #AMGFL26, he shared his mission to inspire all artists to believe in themselves in times of adversity.\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef #IdeasOnTheMove",
+      "why_it_matters": "بیان جوده از رقص به‌عنوان ابزار مقاومت نشان می‌دهد که هنر می‌تواند در بحران‌های انسانی نقش مهمی در حفظ هویت و همبستگی جمعی داشته باشد. این پیام برای سیاست‌گذاران و نهادهای فرهنگی مهم است تا حمایت‌های لازم برای هنرمندان پناهنده و تحت فشار را تقویت کنند.",
+      "link": "https://www.youtube.com/shorts/1nXYK-yIcEM",
+      "posted_at": 1792500834
     }
   }
 }

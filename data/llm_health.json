@@ -1,59 +1,53 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 11,
-      "disabled_until": 1792533040.616,
+      "failures": 12,
+      "disabled_until": 1792566458.33,
       "last_error": "auth",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1792450240.616,
+      "disabled_until": 1792483658.33,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
+    "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1792450240.616,
+      "disabled_until": 1792483658.33,
       "last_error": "quota",
       "last_success": 0
     },
-    "kiraai:kira-mini-1.0": {
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1792450240.616,
-      "last_error": "quota",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-20b": {
-      "failures": 1,
-      "disabled_until": 1792450240.616,
+      "disabled_until": 1792483658.33,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 4,
-      "disabled_until": 1792533040.616,
+      "failures": 5,
+      "disabled_until": 1792566458.33,
       "last_error": "auth"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1792468240.616,
-      "last_error": "quota"
     },
     "kiraai": {
       "failures": 1,
       "disabled_until": 1792533040.616,
       "last_error": "wallet"
+    },
+    "openrouter": {
+      "failures": 1,
+      "disabled_until": 1792501658.33,
+      "last_error": "quota"
     }
   },
-  "updated_at": 1792446640.6157868,
+  "updated_at": 1792480058.3299525,
   "version": 1,
   "telemetry": {
-    "observed_failures": 38,
-    "observed_events": 56,
-    "updated_at": 1792446640.6157868
+    "observed_failures": 159,
+    "observed_events": 228,
+    "updated_at": 1792480058.3299525
   },
   "observed_failures": 0,
   "observed_events": 0

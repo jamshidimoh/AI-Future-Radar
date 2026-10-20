@@ -63,9 +63,13 @@ def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
     start = workflow.index("      - name: Install and start ephemeral OmniRoute")
     end = workflow.index("      - name: Install dependencies", start)
     step = workflow[start:end]
-    assert "timeout-minutes: 25" in step
+    assert "timeout-minutes: 40" in step
     assert 'timeout 60s git clone --depth 1 --branch "v${OMNIROUTE_VERSION}"' in step
     assert "HUSKY=0 timeout 420s npm ci --include=dev --no-audit" in step
+    assert "timeout 1500s npm run build" in step
+    assert "source production build timed out or failed" in step
+    assert "nohup npm run start > /tmp/omniroute.log 2>&1 &" in step
+    assert "nohup omniroute > /tmp/omniroute.log" not in step
     assert 'test "$(git rev-parse HEAD)" = "$OMNIROUTE_COMMIT"' in step
     assert "OMNIROUTE_READY=0" in step
     assert "OMNIROUTE_READY_LOCAL=1" in step

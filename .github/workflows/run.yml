@@ -46,7 +46,7 @@ jobs:
           node-version: "22"
 
       - name: Install and start ephemeral OmniRoute
-        timeout-minutes: 25
+        timeout-minutes: 40
         env:
           PORT: 20128
           OMNIROUTE_SERVER_HOST: 127.0.0.1
@@ -87,6 +87,11 @@ jobs:
             echo "[OmniRoute] source revision did not match the pinned release commit; production router will use its hard fallback"
           elif ! (cd "$OMNIROUTE_DIR" && HUSKY=0 timeout 420s npm ci --include=dev --no-audit --no-fund --prefer-offline --no-progress); then
             echo "[OmniRoute] lockfile installation timed out or failed; production router will use its hard fallback"
+          # A source checkout is not the published npm artifact: bin/omniroute.mjs
+          # expects app/server.js, which is absent until the release packaging step.
+          # Build the source tree and run its supported Next.js production entrypoint.
+          elif ! (cd "$OMNIROUTE_DIR" && timeout 1500s npm run build); then
+            echo "[OmniRoute] source production build timed out or failed; production router will use its hard fallback"
           else
             mkdir -p "$OMNIROUTE_BIN_DIR"
             cat > "$OMNIROUTE_BIN_DIR/omniroute" <<EOF
@@ -108,7 +113,12 @@ jobs:
             echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"
             exit 0
           fi
-          nohup omniroute > /tmp/omniroute.log 2>&1 &
+          # Use the source checkout's supported production runner; the published
+          # CLI server launcher is for the packaged artifact and expects app/server.js.
+          (
+            cd "$OMNIROUTE_DIR"
+            nohup npm run start > /tmp/omniroute.log 2>&1 &
+          )
           HEALTHY=0
           for attempt in $(seq 1 30); do
             if curl -4 -fsS --max-time 5 http://127.0.0.1:20128/healthz >/tmp/omniroute-healthz.json 2>/dev/null; then

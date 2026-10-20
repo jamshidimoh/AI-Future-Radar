@@ -96,14 +96,20 @@ def _priority_person_signal(item: dict[str, Any]) -> bool:
 
 
 def _ai_relevant(item: dict[str, Any]) -> bool:
-    # Explicit source-to-AI linkage is reliable evidence. A mission/category label
-    # alone is not: recovery once promoted an unrelated Aztec-horse history item
-    # into the Voices lane because its metadata said it belonged to a target area.
-    if item.get("_ai_link") is True or item.get("ai_relevance") is True:
-        return True
+    # Leader discovery deliberately marks every watched person's result as
+    # _ai_link=True so the item can reach the protected-leader review path.
+    # That routing flag is not proof that this particular story is about AI,
+    # cognition, future technology, or another Radar mission. In the past it
+    # let unrelated history content from an expert's feed bypass this lane's
+    # topical gate and receive a perfect Voices score.
+    #
+    # Require a concrete anchor in the item's own editorial content. Include
+    # source-provided evidence text when available, but never count mission_area,
+    # category, discovery_query, source name, person identity, or the booleans
+    # themselves as topical proof.
     topical_text = " ".join(
         str(item.get(key) or "")
-        for key in ("title", "summary", "description", "tags", "keywords")
+        for key in ("title", "summary", "description", "tags", "keywords", "evidence_text")
     ).casefold()
     return any(
         re.search(rf"(?<![a-z]){re.escape(anchor)}(?![a-z])", topical_text)

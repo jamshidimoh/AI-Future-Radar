@@ -43,7 +43,7 @@ jobs:
       - name: Set up ephemeral OmniRoute
         uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
 
       - name: Install and start ephemeral OmniRoute
         timeout-minutes: 40
@@ -87,11 +87,11 @@ jobs:
             echo "[OmniRoute] source revision did not match the pinned release commit; production router will use its hard fallback"
           elif ! (cd "$OMNIROUTE_DIR" && HUSKY=0 timeout 420s npm ci --include=dev --no-audit --no-fund --prefer-offline --no-progress); then
             echo "[OmniRoute] lockfile installation timed out or failed; production router will use its hard fallback"
-          # A source checkout is not the published npm artifact: bin/omniroute.mjs
-          # expects app/server.js, which is absent until the release packaging step.
-          # Build the source tree and run its supported Next.js production entrypoint.
-          elif ! (cd "$OMNIROUTE_DIR" && timeout 1500s npm run build); then
-            echo "[OmniRoute] source production build timed out or failed; production router will use its hard fallback"
+          # Radar consumes the HTTP inference API only. OmniRoute's supported
+          # backend-only build keeps every route.ts handler and stubs the dashboard
+          # UI, avoiding the expensive static page-generation phase on hosted runners.
+          elif ! (cd "$OMNIROUTE_DIR" && timeout 720s npm run build:backend); then
+            echo "[OmniRoute] backend-only production build timed out or failed; production router will use its hard fallback"
           else
             mkdir -p "$OMNIROUTE_BIN_DIR"
             cat > "$OMNIROUTE_BIN_DIR/omniroute" <<EOF

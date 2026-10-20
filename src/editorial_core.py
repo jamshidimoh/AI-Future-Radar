@@ -84,6 +84,38 @@ def _topic(t,extra=None):
     if _has(t,COMP): return ("computing_infrastructure",_hits(t,COMP)[:6]) if _has(t,AI|AI_BRIDGE|{"inference","training","accelerator"}) else ("out_of_scope",[])
     return ("ai_core",_hits(t,AI|AI_BRIDGE|e)[:6]) if _has(t,AI|AI_BRIDGE|e) else ("out_of_scope",[])
 
+def _query_rescue_family(text: str) -> str | None:
+    """Only let an AI-bearing search query rescue content with real domain evidence.
+
+    A discovery query can explain why a domain story was found; it must not turn
+    an unrelated article returned by Google News into an AI story. Use evidence
+    from the article itself to preserve the cross-domain family.
+    """
+    if _has(text, Q):
+        return "quantum_ai"
+    if _has(text, M):
+        return "consciousness_cognition"
+    genetics = {
+        "genomics", "genome", "genetic", "genetics", "gene editing", "gene expression",
+        "crispr", "synthetic biology", "protein design", "protein engineering",
+        "biotechnology", "biotech", "dna", "rna", "transcriptomics",
+    }
+    if _has(text, genetics | BIO):
+        return "bio_ai"
+    if _has(text, BCI):
+        return "bci_neuro_ai"
+    robotics = {"robotics", "humanoid robot", "robot foundation model", "autonomous robot", "robot learning", "physical ai", "embodied intelligence"}
+    if _has(text, robotics):
+        return "robotics_embodied"
+    if _has(text, COMP):
+        return "computing_infrastructure"
+    if _has(text, F) and _has(text, {"foresight", "future studies", "future of technology", "future of intelligence", "technology forecasting", "technological singularity", "existential risk", "transhumanism", "longtermism", "civilization futures"}):
+        return "future_technology"
+    if _has(text, AI | AI_BRIDGE):
+        return "ai_core"
+    return None
+
+
 def filter_ai_relevance(items,ai_keywords=None):
     out=[];drop=0;reason={"ai_core":"ai_evidence","quantum_ai":"quantum_ai_bridge","consciousness_cognition":"mind_technology_bridge","future_technology":"future_technology_bridge","bio_ai":"bio_ai_bridge","bci_neuro_ai":"bci_ai_bridge","robotics_embodied":"robotics_ai_bridge","computing_infrastructure":"computing_ai_bridge"}
     category_to_family={"ai":"ai_core","quantum":"quantum_ai","genetics":"bio_ai","mind":"consciousness_cognition","future":"future_technology"}
@@ -102,8 +134,13 @@ def filter_ai_relevance(items,ai_keywords=None):
             and _has(discovery,AI|AI_BRIDGE)
         )
         if fam=="out_of_scope" and query_ai_bridge:
-            fam=category_to_family[category]
-            ev=["curated_discovery_query"]
+            # Never trust the query/category alone. The candidate itself must
+            # demonstrate which Radar topic it belongs to, and the rescue keeps
+            # that family instead of flattening a domain story to the query's label.
+            rescued_family = _query_rescue_family(t)
+            if rescued_family:
+                fam = rescued_family
+                ev = ["curated_discovery_query", "article_domain_evidence"]
         if fam=="out_of_scope":drop+=1;continue
         confidence=0.55 if query_ai_bridge and not _has(t,AI|AI_BRIDGE) else 0.95 if str(x.get("evidence_text") or "").strip() else 0.85
         x.update(_ai_link=True,relevance_reason=reason[fam],relevance_evidence=ev,topic_family=fam,evidence_level="A",ai_relevance_confidence=confidence,evidence_strength=max(float(x.get("evidence_strength",0) or 0),confidence*10.0))

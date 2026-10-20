@@ -207,3 +207,48 @@ def test_voice_lane_rejects_bare_ai_category_without_ai_evidence():
     item["source_name"] = "World Economic Forum"
     item["person_name"] = "Natalie Çilem"
     assert not is_voices_candidate(item)
+
+def test_voice_lane_rejects_unrelated_leader_video_even_when_routing_flags_claim_ai():
+    item = _voice("Why Russian Tsars lost control: an episode with Dwarkesh Patel")
+    item.update({
+        "summary": "A historical explanation of the Russian monarchy, political control, and imperial collapse.",
+        "description": "Discussion of early modern Russian history, court politics, and war.",
+        "evidence_text": "The episode analyzes the historical loss of control by Russian Tsars.",
+        "mission_area": "ai_core",
+        "category": "ai",
+        "content_type": "interview",
+        "source": "YouTube - Dwarkesh Patel",
+        "source_name": "Dwarkesh Patel",
+        "source_type": "podcast",
+        "source_tier": 1,
+        "watch_person": "Dwarkesh Patel",
+        "leader": "Dwarkesh Patel",
+        "person_name": "Dwarkesh Patel",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "protected_content": True,
+        "_ai_link": True,
+        "ai_relevance": True,
+    })
+    assert not is_voices_candidate(item)
+
+
+def test_voice_lane_accepts_interview_when_source_evidence_contains_topic_anchor():
+    item = _voice("Long-form interview with Sam Altman")
+    item.update({
+        "summary": "A long-form conversation about recent research directions.",
+        "description": "",
+        "evidence_text": "The speaker discusses frontier AI agents, model reasoning, and alignment.",
+        "mission_area": "ai_core",
+        "content_type": "interview",
+        "source_type": "specialist",
+        "source_tier": 1,
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "person_name": "Sam Altman",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "_ai_link": True,
+    })
+    assert is_voices_candidate(item)
+

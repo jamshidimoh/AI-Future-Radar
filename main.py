@@ -531,23 +531,33 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
         )
         return []
 
-    # The selection policy has one final portfolio capacity. Do not mark extra
-    # targets as recovered when there is no remaining slot for their delivery.
-    required_recovery = missing[:available_recovery_slots]
-    if len(required_recovery) < len(missing):
+    # Treat free slots as the number of recoveries that can still be delivered.
+    # Continue down the lane priority order when a higher-priority lane has no
+    # eligible candidate, but never add more recovered items than vacant slots.
+    target_recovery_slots = min(len(missing), available_recovery_slots)
+    if target_recovery_slots < len(missing):
         print(
             "[Mission Coverage Recovery] deferred=1 reason=final_capacity_priority "
-            f"deferred_targets={len(missing) - len(required_recovery)} "
+            f"deferred_targets={len(missing) - target_recovery_slots} "
             f"available_slots={available_recovery_slots}",
             flush=True,
         )
 
     pool = [x for x in editorial_pool if _publication_identity(x) not in selected_ids and not x.get("_publication_blocked")]
     recovered, attempts = [], 0
+    unresolved_processing_failure = False
     lane_attempt_limit = max(1, int(policy.get("replacement_buffer", 3) or 3))
 
-    for allowed_areas in required_recovery:
+    for allowed_areas in missing:
+        if len(recovered) >= target_recovery_slots:
+            print(
+                "[Mission Coverage Recovery] deferred=1 reason=final_capacity_filled "
+                f"recovered={len(recovered)} remaining_targets={len(missing) - len(recovered)}",
+                flush=True,
+            )
+            break
         lane_recovered = False
+        lane_processing_failure = False
         lane_attempts = 0
         while lane_attempts < lane_attempt_limit:
             area_pool = [
@@ -634,6 +644,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
 
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
+                lane_processing_failure = True
                 provider_unavailable = bool(candidate.get("_summary_provider_failure"))
                 reason_code = "mission_recovery_provider_unavailable" if provider_unavailable else "mission_recovery_candidate_failure"
                 _runtime_telemetry_event(
@@ -668,13 +679,19 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             break
 
         if not lane_recovered:
+            if lane_processing_failure:
+                unresolved_processing_failure = True
             print(
                 f"[Mission Coverage Recovery] lane={','.join(sorted(allowed_areas))} "
                 f"status=unmet",
                 flush=True,
             )
 
-    recovery_status = "ok" if len(recovered) >= len(required_recovery) else "unmet"
+    recovery_status = (
+        "ok"
+        if len(recovered) >= target_recovery_slots and not unresolved_processing_failure
+        else "unmet"
+    )
     if recovery_status == "unmet":
         _runtime_telemetry_event(
             {"title": "mission-coverage-recovery", "mission_area": "recovery", "source": "runtime"},
@@ -682,13 +699,14 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             decision="unmet",
             reason_code="mission_coverage_unmet",
             details={
-                "missing_lanes": len(missing),
+                "missing_lanes": target_recovery_slots,
+                "deferred_lanes": max(0, len(missing) - target_recovery_slots),
                 "attempts": attempts,
                 "recovered": len(recovered),
             },
         )
     print(
-        f"[Mission Coverage Recovery] missing_lanes={len(required_recovery)} attempts={attempts} "
+        f"[Mission Coverage Recovery] missing_lanes={target_recovery_slots} attempts={attempts} "
         f"recovered={len(recovered)} status={recovery_status}",
         flush=True,
     )

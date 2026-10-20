@@ -66,7 +66,7 @@ def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
     assert "timeout-minutes: 40" in step
     assert 'timeout 60s git clone --depth 1 --branch "v${OMNIROUTE_VERSION}"' in step
     assert "HUSKY=0 timeout 420s npm ci --include=dev --no-audit" in step
-    assert 'node-version: "24"' in text
+    assert 'node-version: "24"' in workflow
     assert "timeout 720s npm run build:backend" in step
     assert "backend-only production build timed out or failed" in step
     assert "nohup npm run start > /tmp/omniroute.log 2>&1 &" in step

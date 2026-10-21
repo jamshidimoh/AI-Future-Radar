@@ -2,7 +2,12 @@ import inspect
 from pathlib import Path
 
 import production_entrypoint
-from production_entrypoint import _bound_runtime_candidates, _global_news_capacity_reached, _is_tier0_publication_candidate
+from production_entrypoint import (
+    _bound_runtime_candidates,
+    _global_news_capacity_reached,
+    _is_tier0_publication_candidate,
+    _portfolio_diversity_block_reason,
+)
 from scripts.production_acceptance_guard import validate
 from src.editorial_quality_policy import NORMAL_SCORE_FLOOR, normal_score_allowed
 
@@ -255,6 +260,45 @@ Posts sent: 0/10
     ok, reason = validate(log)
     assert not ok
     assert "without confirmed delivery" in reason
+
+
+def test_global_diversity_gate_blocks_second_medical_or_genetic_story_after_confirmed_delivery():
+    medical = {
+        "title": "Machine learning diagnosis for endometriosis",
+        "summary": "AI-assisted clinical diagnosis.",
+        "category": "ai",
+        "content_type": "research",
+    }
+    genetics = {
+        "title": "AI models for gene expression and genomics",
+        "summary": "A gene expression genomics study.",
+        "category": "genetics",
+        "content_type": "research",
+    }
+    broad_ai = {
+        "title": "Frontier AI agents improve tool use",
+        "summary": "New artificial intelligence capabilities.",
+        "category": "ai",
+        "content_type": "news",
+    }
+
+    state = {"medical_health_delivered_count": 1, "genetics_delivered_count": 0}
+    assert _portfolio_diversity_block_reason(state, medical) == "health_medical_portfolio_cap"
+    assert _portfolio_diversity_block_reason(state, genetics) is None
+    assert _portfolio_diversity_block_reason(state, broad_ai) is None
+
+    state = {"medical_health_delivered_count": 0, "genetics_delivered_count": 1}
+    assert _portfolio_diversity_block_reason(state, genetics) == "genetics_portfolio_cap"
+
+
+def test_global_diversity_gate_does_not_count_educational_content():
+    story = {
+        "title": "Clinical education lesson on health",
+        "category": "medical",
+        "content_type": "education",
+    }
+    state = {"medical_health_delivered_count": 3, "genetics_delivered_count": 3}
+    assert _portfolio_diversity_block_reason(state, story) is None
 
 
 def test_global_news_capacity_applies_to_people_bootstrap_and_all_editorial_lanes():

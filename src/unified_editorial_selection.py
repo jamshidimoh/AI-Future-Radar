@@ -315,7 +315,7 @@ _SPECIALIST_RESEARCH_MARKERS = (
 )
 _MEDICAL_CATEGORY_LABELS = {"medical", "medicine", "clinical", "health", "healthcare", "pharma", "pharmaceutical", "biomedical"}
 _MEDICAL_TITLE_RE = re.compile(
-    r"\\b(?:clinical trial|clinical|diagnosis|diagnostic|disease|alzheimer(?:'s)?|parkinson(?:'s)?|"
+    r"\b(?:clinical trial|clinical|diagnosis|diagnostic|disease|alzheimer(?:'s)?|parkinson(?:'s)?|"
     r"cancer|endometriosis|tremor|patient|hospital|medical imaging|medical|medicine|healthcare|"
     r"drug discovery|therapeutic|therapy|treatment|preclinical)\\b",
     re.IGNORECASE,

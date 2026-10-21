@@ -243,6 +243,46 @@ def test_low_signal_chatgpt_tutorial_is_rejected_even_with_ai_category():
     assert is_mission_relevant(candidate, strict=True) is False
 
 
+def test_explicit_ai_core_label_requires_content_evidence():
+    candidate = {
+        "title": "Plato Matters More Than Ever",
+        "summary": "A general philosophy discussion with no AI connection.",
+        "source": "Big Think",
+        "category": "ai",
+        "mission_area": "ai_core",
+        "content_type": "podcast",
+        "watch_person": "Angie Hobbs",
+    }
+
+    assert not is_mission_relevant(candidate, strict=True)
+    assert candidate["mission_area"] == "unclassified"
+    assert candidate["_mission_area_rejected"] == "ai_core_without_content_evidence"
+
+
+def test_explicit_ai_core_label_accepts_concrete_ai_evidence():
+    candidate = {
+        "title": "How frontier AI models are changing scientific discovery",
+        "summary": "Researchers use large language models to speed up discovery.",
+        "source": "MIT Technology Review",
+        "mission_area": "ai_core",
+    }
+
+    assert is_mission_relevant(candidate, strict=True)
+    assert candidate["mission_area"] == "ai_core"
+
+
+def test_explicit_ai_core_label_is_reclassified_when_content_is_another_mission_area():
+    candidate = {
+        "title": "A new quantum computing architecture reaches a milestone",
+        "summary": "The team reports a quantum computing advance.",
+        "source": "Nature",
+        "mission_area": "ai_core",
+    }
+
+    assert is_mission_relevant(candidate, strict=True)
+    assert candidate["mission_area"] == "convergence"
+
+
 def test_low_signal_chatgpt_tutorial_is_rejected_with_explicit_ai_core_area():
     candidate = item(
         "How to use ChatGPT for productivity",

@@ -7,12 +7,15 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to publish (for example v1.0.0)"
+        description: "Release tag to publish (for example v1.0.2)"
         required: true
         type: string
+  workflow_run:
+    workflows: ["Production Closure Gate"]
+    types: [completed]
 
 permissions:
-  contents: read
+  contents: write
   packages: write
   attestations: write
   id-token: write
@@ -27,6 +30,7 @@ env:
 
 jobs:
   validate:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -34,8 +38,23 @@ jobs:
       - name: Checkout release source
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
           fetch-depth: 1
+
+      - name: Reserve v1.1.0 for a successful closure only
+        if: ${{ github.event_name == 'workflow_run' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view v1.1.0 >/dev/null 2>&1; then
+            echo "Release v1.1.0 already exists; refusing to overwrite an immutable release."
+            exit 1
+          fi
+          if git ls-remote --exit-code origin refs/tags/v1.1.0 >/dev/null 2>&1; then
+            echo "Tag v1.1.0 already exists; refusing to retarget it."
+            exit 1
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -63,7 +82,7 @@ jobs:
           load: true
           tags: ai-future-radar:release-check
           build-args: |
-            VERSION=${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+            VERSION=${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event_name == 'workflow_run' && 'v1.1.0' || github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -72,12 +91,18 @@ jobs:
 
   publish:
     needs: validate
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      attestations: write
+      id-token: write
     steps:
       - name: Checkout release source
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
           fetch-depth: 1
 
       - name: Set up Docker Buildx
@@ -97,7 +122,8 @@ jobs:
           images: ${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=tag
-            type=raw,value=latest,enable=${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=v1.1.0,enable=${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
+            type=raw,value=latest,enable=${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
             type=raw,value=${{ inputs.tag }},enable=${{ github.event_name == 'workflow_dispatch' }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
@@ -112,8 +138,20 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+            VERSION=${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event_name == 'workflow_run' && 'v1.1.0' || github.ref_name }}
           provenance: mode=max
           sbom: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Create stable GitHub Release after closure acceptance
+        if: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          gh release create v1.1.0 \
+            --target "$RELEASE_SHA" \
+            --title "AI Future Radar v1.1.0" \
+            --notes-file docs/releases/v1.1.0.md

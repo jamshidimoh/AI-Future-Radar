@@ -1,6 +1,7 @@
 import inspect
 from pathlib import Path
 
+import main as radar_main
 import production_entrypoint
 from production_entrypoint import (
     _bound_runtime_candidates,
@@ -299,6 +300,30 @@ def test_global_diversity_gate_does_not_count_educational_content():
     }
     state = {"medical_health_delivered_count": 3, "genetics_delivered_count": 3}
     assert _portfolio_diversity_block_reason(state, story) is None
+
+
+def test_voice_lane_recovery_returns_cleanly_when_no_candidate_exists(monkeypatch):
+    called = []
+    monkeypatch.setattr(radar_main, "choose_voices_candidate", lambda *args, **kwargs: [])
+    recovered = radar_main._voice_lane_recovery([], [], lambda item: called.append(item))
+    assert recovered == []
+    assert called == []
+
+
+def test_voice_lane_recovery_can_recover_two_candidates_after_summary_qa(monkeypatch):
+    first = {"title": "First expert interview", "voices_perspectives_score": 84}
+    second = {"title": "Second expert podcast", "voices_perspectives_score": 82}
+    monkeypatch.setattr(
+        radar_main, "choose_voices_candidate",
+        lambda *args, **kwargs: [first, second],
+    )
+    recovered = radar_main._voice_lane_recovery(
+        [], [first, second],
+        lambda item: {"summary": f"خلاصهٔ مستند دربارهٔ {item['title']}", "why_it_matters": "این دیدگاه برای فهم مسیر توسعهٔ هوش مصنوعی اهمیت دارد."},
+    )
+    assert len(recovered) == 2
+    assert {item[0]["title"] for item in recovered} == {"First expert interview", "Second expert podcast"}
+    assert all(item[0]["_voice_lane_recovery"] for item in recovered)
 
 
 def test_global_news_capacity_applies_to_people_bootstrap_and_all_editorial_lanes():

@@ -111,6 +111,18 @@ def test_at_most_one_medical_led_item_is_admissible_per_portfolio():
     assert not portfolio.admissible(second, repeat_source=False)
 
 
+def test_candidate_score_uses_voice_lane_score_when_generic_scores_are_missing():
+    candidate = {
+        "title": "Yann LeCun podcast on AI world models",
+        "summary": "A substantive interview about frontier artificial intelligence research.",
+        "category": "ai",
+        "mission_area": "ai_core",
+        "content_type": "podcast",
+        "voices_perspectives_score": 84,
+    }
+    assert candidate_score(candidate) == 84
+
+
 def test_medical_led_research_receives_a_diversity_penalty_against_broad_ai():
     medical = _item(
         "Machine learning diagnosis for endometriosis",

@@ -105,12 +105,16 @@ def _portfolio_diversity_block_reason(
     render_state: dict[str, Any],
     story: dict[str, Any],
     *,
-    max_genetics: int = 1,
-    max_medical: int = 1,
+    max_genetics: int | None = None,
+    max_medical: int | None = None,
 ) -> str | None:
     """Enforce medical/genetics diversity against confirmed delivery, across all lanes."""
     if str(story.get("content_type") or "").strip().casefold() in {"education", "educational"}:
         return None
+    if max_genetics is None:
+        max_genetics = int(EDITORIAL_CONTRACT.get("max_genetics_per_run", 1))
+    if max_medical is None:
+        max_medical = int(EDITORIAL_CONTRACT.get("max_health_medical_per_run", 1))
     if _is_health_medical_heavy(story):
         try:
             delivered = max(0, int(render_state.get("medical_health_delivered_count", 0) or 0))

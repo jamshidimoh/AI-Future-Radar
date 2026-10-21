@@ -297,18 +297,34 @@ def _expand_leader_signal_queries(queries):
                 str(q.get("query") or "").casefold(),
             )
         )
-        primary = next(
-            (q for q in bucket if str(q.get("leader_format") or "").casefold() == "voice"
-             or str(q.get("content_type") or "").strip().casefold() in voice_types),
-            bucket[0],
+        voice_source = next(
+            (q for q in bucket if str(q.get("leader_format") or "").casefold() == "voice"),
+            None,
         )
-        social = next(
+        if voice_source is None:
+            voice_source = next(
+                (q for q in bucket if str(q.get("content_type") or "").strip().casefold() in voice_types),
+                bucket[0],
+            )
+        person = str(voice_source.get("watch_person") or "").strip()
+        primary = dict(voice_source)
+        if str(voice_source.get("leader_format") or "").casefold() != "voice":
+            # A narrow legacy "interview" query is not sufficient by itself.
+            # Broaden it to cover podcasts, keynotes, talks, lectures, and transcripts.
+            primary["query"] = (
+                f'"{person}" (interview OR podcast OR keynote OR speech OR lecture OR '
+                f'"in conversation" OR transcript OR fireside OR "Q&A") '
+                f'(AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR consciousness OR cognition)'
+            )
+            primary["content_type"] = "interview"
+            primary["leader_format"] = "voice"
+
+        social_source = next(
             (q for q in bucket if str(q.get("leader_format") or "").casefold() == "social_post"
              or str(q.get("content_type") or "").strip().casefold() in social_types),
             None,
         )
-        person = str(primary.get("watch_person") or "").strip()
-        if social is None:
+        if social_source is None:
             signal_terms = " OR ".join(_LEADER_SOCIAL_SIGNAL_TERMS)
             social = dict(primary)
             social["query"] = (
@@ -317,11 +333,14 @@ def _expand_leader_signal_queries(queries):
             )
             social["content_type"] = "social_post"
             social["leader_format"] = "social_post"
-        activity = next(
+        else:
+            social = dict(social_source)
+
+        activity_source = next(
             (q for q in bucket if str(q.get("leader_format") or "").casefold() == "activity"),
             None,
         )
-        if activity is None:
+        if activity_source is None:
             activity = dict(primary)
             activity["query"] = (
                 f'"{person}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future) '
@@ -329,13 +348,16 @@ def _expand_leader_signal_queries(queries):
             )
             activity["content_type"] = "leader_signal"
             activity["leader_format"] = "activity"
-        primary = dict(primary)
-        social = dict(social)
-        activity = dict(activity)
+        else:
+            activity = dict(activity_source)
         primary["leader_discovery"] = social["leader_discovery"] = activity["leader_discovery"] = True
         primary["curated_discovery"] = social["curated_discovery"] = activity["curated_discovery"] = True
         ordered.extend((primary, social, activity))
-        used_ids = {id(primary), id(social), id(activity)}
+        used_ids = {id(voice_source)}
+        if social_source is not None:
+            used_ids.add(id(social_source))
+        if activity_source is not None:
+            used_ids.add(id(activity_source))
         used_queries = {
             str(primary.get("query") or "").strip().casefold(),
             str(social.get("query") or "").strip().casefold(),

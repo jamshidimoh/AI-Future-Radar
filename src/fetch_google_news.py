@@ -74,7 +74,7 @@ _LEADER_SIGNAL_CONTEXT_TERMS = (
 )
 # Keep a bounded safety cap, but large enough to cover the current watchlist without
 # silently dropping later people from generic companion discovery.
-_MAX_LEADER_SIGNAL_QUERIES = 128
+_MAX_LEADER_SIGNAL_QUERIES = 160
 
 
 def _contains_any_phrase(text: str, terms: tuple[str, ...]) -> bool:
@@ -201,6 +201,11 @@ def _load_watchlist_people_queries():
                     f'thread OR opinion OR essay OR predicts OR argues) '
                     f'(AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR consciousness OR cognition)'
                 )
+                activity_query = (
+                    f'"{name}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future) '
+                    f'(launch OR announces OR announced OR acquisition OR research OR policy OR regulation OR '
+                    f'forecast OR prediction OR investment OR product OR model OR platform OR partnership)'
+                )
                 common = {
                     "watch_person": name,
                     "category": category,
@@ -221,6 +226,12 @@ def _load_watchlist_people_queries():
                     "query": social_query,
                     "content_type": "social_post",
                     "leader_format": "social_post",
+                })
+                rows.append({
+                    **common,
+                    "query": activity_query,
+                    "content_type": "leader_signal",
+                    "leader_format": "activity",
                 })
     return rows
 
@@ -271,6 +282,7 @@ def _expand_leader_signal_queries(queries):
 
     voice_types = {"interview", "podcast", "talk", "conversation", "lecture", "keynote"}
     social_types = {"social_post", "direct_statement", "tweet", "thread"}
+    activity_types = {"leader_signal", "product_news", "research", "news"}
     ordered: list[dict] = []
     secondary: list[dict] = []
     for person_key in sorted(people):
@@ -306,15 +318,29 @@ def _expand_leader_signal_queries(queries):
             )
             social["content_type"] = "social_post"
             social["leader_format"] = "social_post"
+        activity = next(
+            (q for q in bucket if str(q.get("leader_format") or "").casefold() == "activity"),
+            None,
+        )
+        if activity is None:
+            activity = dict(primary)
+            activity["query"] = (
+                f'"{person}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future) '
+                f'(launch OR announces OR acquisition OR research OR policy OR forecast OR investment OR product OR model)'
+            )
+            activity["content_type"] = "leader_signal"
+            activity["leader_format"] = "activity"
         primary = dict(primary)
         social = dict(social)
-        primary["leader_discovery"] = social["leader_discovery"] = True
-        primary["curated_discovery"] = social["curated_discovery"] = True
-        ordered.extend((primary, social))
-        used_ids = {id(primary), id(social)}
+        activity = dict(activity)
+        primary["leader_discovery"] = social["leader_discovery"] = activity["leader_discovery"] = True
+        primary["curated_discovery"] = social["curated_discovery"] = activity["curated_discovery"] = True
+        ordered.extend((primary, social, activity))
+        used_ids = {id(primary), id(social), id(activity)}
         used_queries = {
             str(primary.get("query") or "").strip().casefold(),
             str(social.get("query") or "").strip().casefold(),
+            str(activity.get("query") or "").strip().casefold(),
         }
         secondary.extend(
             q for q in bucket
@@ -403,7 +429,7 @@ def _collect_query(q, cutoff):
         if is_excluded_source_url(link) or is_excluded_source_text(source_title) or is_excluded_source_text(title): continue
         effective_tier = resolve_google_news_tier(source_title, source_href or link)
         watch_person = str(q.get("watch_person", "") or "").strip(); is_leader_watch = bool(watch_person)
-        classification = classify_leader_signal(title, summary, watch_person, query_context=query_text, content_type=q.get("leader_format") or q.get("content_type", "news")) if q.get("leader_discovery") else None
+        classification = classify_leader_signal(title, summary, watch_person, query_context=query_text, content_type=q.get("content_type", "news")) if q.get("leader_discovery") else None
         if q.get("leader_discovery") and not classification["accepted"]:
             print(f"[Leader Discovery Filter] dropped weak signal title={str(title)[:100]}", flush=True); continue
         results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "source_name": source_title, "source_domain": source_href, "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": effective_tier, "discovery_query_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "leader_format": str(q.get("leader_format") or ""), "leader_activity_signal": bool(classification and classification.get("accepted") and (classification.get("activity") or classification.get("interview") or classification.get("direct_post") or classification.get("analytical"))), "_ai_link": True if is_leader_watch else None})

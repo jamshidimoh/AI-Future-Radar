@@ -1,6 +1,39 @@
 # People & Ideas Radar
 # شخصیت‌های کلیدی و ایده‌های کلیدی مرتبط با AI/AGI، ذهن، آگاهی و آینده فناوری.
 # This registry is discovery/priority metadata; publication still requires evidence + editorial gates.
+# Bootstrap remains the original 30-person baseline; the full 51-person people
+# registry is used for ongoing expert discovery across every configured domain.
+bootstrap_names:
+  - Sam Altman
+  - Dario Amodei
+  - Demis Hassabis
+  - Elon Musk
+  - Jensen Huang
+  - Mustafa Suleyman
+  - Eric Schmidt
+  - Andrew Ng
+  - Geoffrey Hinton
+  - Yann LeCun
+  - Yoshua Bengio
+  - Ilya Sutskever
+  - Fei-Fei Li
+  - Andrej Karpathy
+  - Judea Pearl
+  - Stuart Russell
+  - Nick Bostrom
+  - Max Tegmark
+  - Yuval Noah Harari
+  - Ray Kurzweil
+  - Kate Crawford
+  - Anil Seth
+  - David Chalmers
+  - Stanislas Dehaene
+  - George Church
+  - Jennifer Doudna
+  - John Preskill
+  - Scott Aaronson
+  - Ethan Mollick
+  - Sal Khan
 
 people:
   ai_frontier_builders:

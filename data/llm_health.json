@@ -1,28 +1,22 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 22,
-      "disabled_until": 1792674958.912,
+      "failures": 23,
+      "disabled_until": 1792695406.384,
       "last_error": "auth",
-      "last_success": 0
-    },
-    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
-      "failures": 1,
-      "disabled_until": 1792592158.912,
-      "last_error": "quota",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1792592158.912,
+      "disabled_until": 1792612606.384,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 15,
-      "disabled_until": 1792674958.912,
+      "failures": 16,
+      "disabled_until": 1792695406.384,
       "last_error": "auth"
     },
     "kiraai": {
@@ -36,12 +30,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1792588558.9115062,
+  "updated_at": 1792609006.3838432,
   "version": 1,
   "telemetry": {
-    "observed_failures": 4,
-    "observed_events": 14,
-    "updated_at": 1792588558.9115062
+    "observed_failures": 41,
+    "observed_events": 55,
+    "updated_at": 1792609006.3838432
   },
   "observed_failures": 0,
   "observed_events": 0

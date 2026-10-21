@@ -17,7 +17,7 @@ from src.priority_people import matched_priority_people
 MAX_VOICES_PER_PERIOD = 1
 VOICES_RANK_WINDOW = 12
 
-VOICE_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a", "debate", "opinion", "essay", "commentary"}
+VOICE_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a", "debate", "opinion", "essay", "commentary", "tweet", "tweets", "social_post", "direct_statement", "statement", "thread", "post"}
 VOICE_SIGNALS = (r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfireside\b", r"\bq&a\b", r"\bdiscussion\b", r"\bdebate\b", r"\btalk\b", r"\blecture\b", r"\bkeynote\b", r"\bexpert view\b", r"\bopinion\b", r"\bcommentary\b", r"\bquote\b", r"\bsays\b", r"\bargues\b", r"مصاحبه", r"گفتگو", r"گفت‌وگو", r"سخنرانی", r"دیدگاه", r"نظر", r"نقل قول")
 PERSON_KEYS = ("watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name", "author", "speaker", "guest", "interviewee", "researcher")
 MISSION_AREAS = {"ai", "ai_core", "convergence", "mind", "mind_cognition", "future", "future_governance"}
@@ -153,7 +153,11 @@ def is_voices_candidate(item: dict[str, Any]):
     except (TypeError, ValueError):
         source_tier = 3
     source_type = str(item.get("source_type") or item.get("type") or "").strip().casefold()
-    source_is_authoritative = source_tier <= 2 or source_type in {"official", "university", "scientific", "specialist", "expert_interviews", "research_lab"}
+    source_is_authoritative = (
+        source_tier <= 2
+        or source_type in {"official", "university", "scientific", "specialist", "expert_interviews", "research_lab"}
+        or _is_direct_social_source(item)
+    )
     classification = item.get("leader_signal_classification") or {}
     classified_interview = bool(isinstance(classification, dict) and classification.get("accepted") and classification.get("interview"))
     direct_interview = _direct_interview_signal(item)
@@ -248,6 +252,18 @@ def _publication_guard_conflict(item: dict[str, Any], *, title_only: bool = Fals
         return check_before_publish(text, str(item.get("link") or item.get("url") or ""))
     except Exception:
         return True, "preselection_guard_unavailable"
+
+
+def _is_direct_social_source(item: dict[str, Any]) -> bool:
+    """Treat a direct X/Twitter post as primary evidence of what its account said."""
+    ctype = str(item.get("content_type") or "").strip().casefold()
+    if ctype not in {"social_post", "tweet", "tweets", "thread", "direct_statement", "statement", "post"}:
+        return False
+    source_domain = " ".join(
+        str(item.get(key) or "")
+        for key in ("source_domain", "source_href", "publisher_url")
+    ).casefold()
+    return any(host in source_domain for host in ("x.com", "twitter.com"))
 
 
 def _already_published_conflict(item: dict[str, Any]) -> bool:

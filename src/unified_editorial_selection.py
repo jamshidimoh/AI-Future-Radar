@@ -219,9 +219,32 @@ def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
         explicit = raw_explicit
     if explicit in _AREA_MAP.values():
         if explicit == "ai_core":
-            text = _mission_text(item)
+            # A lane label is routing metadata, not proof that the article is
+            # actually about AI. Use content fields only; never let a watched
+            # person, source category, or stale upstream label certify relevance.
+            content_text = _mind_cognition_evidence_text(item)
             low_signal = _load_yaml(MISSION_PATH).get("low_signal_terms", []) or []
-            if any(str(term).strip().casefold() in text for term in low_signal):
+            if any(str(term).strip().casefold() in content_text for term in low_signal):
+                return False
+
+            content_area = _keyword_match_area(item, content_only=True)
+            explicit_ai_signal = bool(
+                re.search(
+                    r"(?<![a-z0-9])(?:ai|artificial intelligence|machine learning|"
+                    r"large language models?|llms?|foundation models?|generative ai|"
+                    r"ai safety|ai agents?|frontier ai|agi)(?![a-z0-9])",
+                    content_text,
+                    re.IGNORECASE,
+                )
+            )
+            if content_area and content_area != "ai_core":
+                # Correct stale AI labels when the content belongs to another
+                # radar mission area such as mind/cognition or convergence.
+                item["mission_area"] = content_area
+                return True
+            if content_area != "ai_core" and not explicit_ai_signal:
+                item["mission_area"] = "unclassified"
+                item["_mission_area_rejected"] = "ai_core_without_content_evidence"
                 return False
         return True
     matched_area = _keyword_match_area(item)

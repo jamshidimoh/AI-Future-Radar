@@ -615,7 +615,7 @@ def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[s
 def candidate_score(item: dict[str, Any]) -> float:
     """Selection-only score. Stored/source scores are not mutated by editorial balancing."""
     score = 0.0
-    for key in ("_portfolio_selection_score", "final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score"):
+    for key in ("_portfolio_selection_score", "final_editorial_score", "radar_composite_score", "editorial_score", "mission_score", "signal_score", "score", "leader_story_score", "voices_perspectives_score", "mind_editorial_score", "technical_trend_score"):
         try:
             value = float(item.get(key, 0) or 0)
         except (TypeError, ValueError):

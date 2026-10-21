@@ -69,6 +69,8 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),
         "max_genetics_per_run": max(0, int(selection_cfg.get("max_genetics_per_run", 1))),
         "genetics_diversity_penalty": max(0.0, min(30.0, float(selection_cfg.get("genetics_diversity_penalty", 15.0) or 15.0))),
+        "max_health_medical_per_run": max(0, int(selection_cfg.get("max_health_medical_per_run", 1))),
+        "health_medical_diversity_penalty": max(0.0, min(30.0, float(selection_cfg.get("health_medical_diversity_penalty", 12.0) or 12.0))),
         "preferred_max_same_source": int(mission.get("max_same_source", 1) or 1),
         "hard_max_same_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "min_unique_sources": int(mission.get("min_unique_sources", 3) or 3),
@@ -311,6 +313,13 @@ _SPECIALIST_RESEARCH_MARKERS = (
     "differential expression", "variant calling", "spatial transcriptomics",
     "intracellular", "in silico", "gene expression", "pharmacokinetic",
 )
+_MEDICAL_CATEGORY_LABELS = {"medical", "medicine", "clinical", "health", "healthcare", "pharma", "pharmaceutical", "biomedical"}
+_MEDICAL_TITLE_RE = re.compile(
+    r"\\b(?:clinical trial|clinical|diagnosis|diagnostic|disease|alzheimer(?:'s)?|parkinson(?:'s)?|"
+    r"cancer|endometriosis|tremor|patient|hospital|medical imaging|medical|medicine|healthcare|"
+    r"drug discovery|therapeutic|therapy|treatment|preclinical)\\b",
+    re.IGNORECASE,
+)
 _GENETICS_CATEGORY_LABELS = {"genetics", "genetic", "genomics", "genomic"}
 _GENETICS_TITLE_RE = re.compile(
     r"\b(?:genetic|genetics|genomic|genomics|genome|genomes|crispr|gene editing|synthetic biology|protein engineering)\b",
@@ -361,6 +370,14 @@ def _is_genetics_heavy(item: dict[str, Any]) -> bool:
     return len(set(match.casefold() for match in _GENETICS_EVIDENCE_RE.findall(text))) >= 2
 
 
+def _is_health_medical_heavy(item: dict[str, Any]) -> bool:
+    """Identify medical-led stories without penalizing ordinary AI research mentions."""
+    category = str(item.get("category") or "").strip().casefold()
+    if category in _MEDICAL_CATEGORY_LABELS:
+        return True
+    return bool(_MEDICAL_TITLE_RE.search(str(item.get("title") or "")))
+
+
 @lru_cache(maxsize=1)
 def _genetics_diversity_penalty_cap() -> float:
     selection_cfg = _load_yaml(SELECTION_PATH).get("selection", {}) or {}
@@ -368,6 +385,15 @@ def _genetics_diversity_penalty_cap() -> float:
         return max(0.0, min(30.0, float(selection_cfg.get("genetics_diversity_penalty", 15.0) or 15.0)))
     except (TypeError, ValueError):
         return 15.0
+
+
+@lru_cache(maxsize=1)
+def _health_medical_diversity_penalty_cap() -> float:
+    selection_cfg = _load_yaml(SELECTION_PATH).get("selection", {}) or {}
+    try:
+        return max(0.0, min(30.0, float(selection_cfg.get("health_medical_diversity_penalty", 12.0) or 12.0)))
+    except (TypeError, ValueError):
+        return 12.0
 
 
 def _is_verified_leader_voice(item: dict[str, Any]) -> bool:
@@ -600,7 +626,8 @@ def candidate_score(item: dict[str, Any]) -> float:
     if not score:
         return 0.0
     genetics_penalty = _genetics_diversity_penalty_cap() if _is_genetics_heavy(item) else 0.0
-    return round(score - _technical_depth_penalty(item) - genetics_penalty, 2)
+    medical_penalty = _health_medical_diversity_penalty_cap() if _is_health_medical_heavy(item) else 0.0
+    return round(score - _technical_depth_penalty(item) - genetics_penalty - medical_penalty, 2)
 
 
 def _published_age_hours(item: dict[str, Any]) -> float | None:
@@ -723,6 +750,11 @@ class _Portfolio:
             genetics_limit = max(0, int(self.contract.get("max_genetics_per_run", 1)))
             genetics_selected = sum(1 for selected_item in self.selected if _is_genetics_heavy(selected_item))
             if genetics_selected >= genetics_limit:
+                return False
+        if _is_health_medical_heavy(item):
+            medical_limit = max(0, int(self.contract.get("max_health_medical_per_run", 1)))
+            medical_selected = sum(1 for selected_item in self.selected if _is_health_medical_heavy(selected_item))
+            if medical_selected >= medical_limit:
                 return False
         if not ignore_type_cap and self.type_counts.get(ctype, 0) >= self.type_cap:
             return False

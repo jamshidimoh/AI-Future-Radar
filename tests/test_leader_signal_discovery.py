@@ -9,7 +9,7 @@ def test_leader_signal_expansion_is_person_agnostic():
     ]
     expanded = _expand_leader_signal_queries(queries)
     companions = [q for q in expanded if q.get("content_type") == "social_post"]
-    assert len(expanded) == len(queries) + 3
+    assert len(expanded) == len(queries) * 3
     assert {q["watch_person"] for q in companions} == {"Elon Musk", "Yuval Noah Harari", "David Chalmers"}
     assert all(q.get("leader_discovery") is True for q in companions)
     assert all(q.get("curated_discovery") is True for q in companions)
@@ -35,12 +35,12 @@ def test_every_watchlist_person_gets_voice_and_social_discovery():
     people = {q["watch_person"] for q in generated}
     expanded = _expand_leader_signal_queries(generated)
     assert len(people) >= 40
-    assert len(expanded) <= 128
+    assert len(expanded) <= 160
     per_person = {}
     for query in expanded:
         per_person.setdefault(query["watch_person"], set()).add(query["content_type"])
     assert people.issubset(per_person)
-    assert all({"interview", "social_post"}.issubset(per_person[name]) for name in people)
+    assert all({"interview", "social_post", "leader_signal"}.issubset(per_person[name]) for name in people)
 
 
 def test_named_social_post_query_recovers_attributed_expert_post():

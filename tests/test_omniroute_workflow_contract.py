@@ -11,10 +11,12 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     assert 'OMNIROUTE_VERSION=3.8.50' in text
     assert 'OMNIROUTE_COMMIT=5458026c216f77a3da68ea49152dc33470cfe2cb' in text
     assert 'git clone --depth 1 --branch "v${OMNIROUTE_VERSION}" https://github.com/diegosouzapw/OmniRoute.git' in text
+    assert 'HUSKY=0 timeout 180s npm install --package-lock-only --ignore-scripts --include=dev --no-audit --no-fund --prefer-offline --no-progress' in text
     assert 'HUSKY=0 timeout 420s npm ci --include=dev --no-audit' in text
+    assert text.index('npm install --package-lock-only --ignore-scripts --include=dev') < text.index('npm ci --include=dev')
     assert 'npm ci --omit=dev' not in text
     assert 'npm install -g omniroute@' not in text
-    assert 'framer-motion@14.3.1' in text
+    assert 'brace-expansion@1.1.21' in text
     assert 'add_provider gemini GEMINI_API_KEY' not in text
     assert 'add_provider google GEMINI_API_KEY' not in text
     assert 'OMNIROUTE_ENABLE_NARA: ${{ vars.OMNIROUTE_ENABLE_NARA || \'0\' }}' in text
@@ -65,7 +67,9 @@ def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
     step = workflow[start:end]
     assert "timeout-minutes: 40" in step
     assert 'timeout 60s git clone --depth 1 --branch "v${OMNIROUTE_VERSION}"' in step
+    assert "HUSKY=0 timeout 180s npm install --package-lock-only --ignore-scripts --include=dev --no-audit --no-fund --prefer-offline --no-progress" in step
     assert "HUSKY=0 timeout 420s npm ci --include=dev --no-audit" in step
+    assert step.index("npm install --package-lock-only --ignore-scripts --include=dev") < step.index("npm ci --include=dev")
     assert 'node-version: "24"' in workflow
     assert "timeout 720s npm run build:backend" in step
     assert "backend-only production build timed out or failed" in step

@@ -33,6 +33,27 @@ _INTERVIEW_TYPES = {
 }
 _COMMUNITY_MARKERS = ("reddit", "community", "aggregator", "techmeme")
 _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligence"}
+# The Radar excludes gaming/entertainment coverage even if an upstream source
+# labels it AI. Keep "game theory" available as a scientific topic.
+_GAMING_CONTENT_PATTERN = re.compile(
+    r"(?<![a-z0-9])(?:gaming|gameplay|esports?|video\\s+games?|"
+    r"(?:real[-\\s]+time\\s+strategy|strategy|mobile|console|browser|casual)\\s+games?|"
+    r"games?\\s+(?:development|engine|studio|publisher|publishing|release|trailer))"
+    r"(?![a-z0-9])|"
+    r"بازی(?:‌|\\s)*(?:استراتژی|ویدئویی|رایانه‌ای|کامپیوتری|موبایلی|آنلاین|زمان\\s+واقعی)|"
+    r"صنعت(?:‌|\\s)*بازی",
+    re.IGNORECASE,
+)
+
+
+def _is_gaming_content(item: dict[str, Any]) -> bool:
+    content_text = " ".join(
+        str(item.get(key) or "")
+        for key in ("title", "summary", "description", "tags", "keywords", "content_type")
+    )
+    return bool(_GAMING_CONTENT_PATTERN.search(content_text))
+
+
 _MIND_COGNITION_EVIDENCE_TERMS = (
     "consciousness", "machine consciousness", "ai consciousness", "sentience", "qualia",
     "self-awareness", "cognitive science", "cognition", "cognitive", "neuroscience",
@@ -133,6 +154,10 @@ def _has_mind_cognition_evidence(item: dict[str, Any]) -> bool:
 
 
 def mission_area(item: dict[str, Any]) -> str:
+    if item.get("_mission_area_rejected") == "gaming_content" or _is_gaming_content(item):
+        item["mission_area"] = "excluded_gaming"
+        item["_mission_area_rejected"] = "gaming_content"
+        return "excluded_gaming"
     explicit = str(item.get("mission_area") or "").strip().casefold()
     if explicit in {"mind", "mind_cognition"}:
         # Content-free history/state records retain their previously classified
@@ -201,6 +226,10 @@ def _keyword_match_area(item: dict[str, Any], *, content_only: bool = False) -> 
 
 def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
     """Apply mission evidence before trusting the legacy category label."""
+    if item.get("_mission_area_rejected") == "gaming_content" or _is_gaming_content(item):
+        item["mission_area"] = "excluded_gaming"
+        item["_mission_area_rejected"] = "gaming_content"
+        return False
     if item.get("_mission_area_rejected") == "mind_cognition_without_content_evidence":
         return False
     raw_explicit = str(item.get("mission_area") or "").strip().casefold()

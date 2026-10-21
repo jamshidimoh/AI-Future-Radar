@@ -1,6 +1,8 @@
 # ruff: noqa: I001
 from pathlib import Path
 
+import yaml
+
 from src.people_watch import bootstrap_candidates, build_bootstrap_state, deduplicate_people_signals, filter_people_person_cooldown, load_people_watchlist, post_bootstrap_candidates, reconcile_people_bootstrap_state, relevant_people_item
 
 

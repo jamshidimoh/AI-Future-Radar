@@ -329,7 +329,7 @@ jobs:
 
           OMNIROUTE_API_KEY: ""
           OMNIROUTE_MODEL: auto/smart
-          OMNIROUTE_TIMEOUT_SECONDS: 8
+          OMNIROUTE_TIMEOUT_SECONDS: 12
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

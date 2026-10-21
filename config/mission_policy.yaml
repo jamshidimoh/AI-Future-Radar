@@ -21,7 +21,7 @@ mission:
   future_governance_target: 0
   deep_ideas_target: 0
   research_target: 0
-  interview_target_max: 1
+  interview_target_max: 2
   community_max: 0
 
 areas:

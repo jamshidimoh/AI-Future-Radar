@@ -14,7 +14,7 @@ from typing import Any
 from src.expert_registry import apply_expert_features
 from src.priority_people import matched_priority_people
 
-MAX_VOICES_PER_PERIOD = 1
+MAX_VOICES_PER_PERIOD = 2
 VOICES_RANK_WINDOW = 12
 
 VOICE_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a", "debate", "opinion", "essay", "commentary", "tweet", "tweets", "social_post", "direct_statement", "statement", "thread", "post"}
@@ -309,7 +309,29 @@ def choose_voices_candidate(candidates: Iterable[dict[str, Any]], *, existing_id
         ),
         reverse=True,
     )
-    selected = ranking_pool[:max(0, int(max_items))]
+    # Cover distinct experts first: the two publication slots must not be
+    # consumed by multiple posts from one person when another eligible expert
+    # is available. Additional independent items from a person remain eligible
+    # for subsequent runs and may fill a spare slot.
+    selected = []
+    selected_ids = set()
+    covered_people = set()
+    limit = max(0, int(max_items))
+    for item in ranking_pool:
+        if len(selected) >= limit:
+            break
+        people, _, _ = _expert_identity(item)
+        identity = next(iter(people), "") if people else str(
+            item.get("watch_person") or item.get("person_name") or item.get("leader") or ""
+        ).strip().casefold()
+        if identity and identity in covered_people:
+            continue
+        selected.append(item)
+        selected_ids.add(id(item))
+        if identity:
+            covered_people.add(identity)
+    if len(selected) < limit:
+        selected.extend(item for item in ranking_pool if id(item) not in selected_ids and len(selected) < limit)
     for rank, item in enumerate(selected, 1):
         item["voices_perspectives_lane_selected"] = True
         item["editorial_lane"] = "voices_perspectives"

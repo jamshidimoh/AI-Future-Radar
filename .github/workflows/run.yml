@@ -225,15 +225,33 @@ jobs:
           PY
           )
           echo "[OmniRoute] post_provision_models=${MODEL_COUNT}"
-          echo "[OmniRoute] running minimal auto/smart inference smoke-test"
+          echo "[OmniRoute] running structured auto/smart inference smoke-test"
           READY=0
           for attempt in $(seq 1 6); do
-            if curl -4 -fsS --max-time 15 http://127.0.0.1:20128/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"auto/smart","messages":[{"role":"user","content":"Reply with OK only."}],"max_tokens":5,"temperature":0}' >/tmp/omniroute-smoke.json 2>/tmp/omniroute-smoke.err; then
-              READY=1
-              echo "[OmniRoute] inference_smoke=healthy attempt=${attempt}"
-              break
+            if curl -4 -fsS --max-time 20 http://127.0.0.1:20128/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"auto/smart","messages":[{"role":"user","content":"Return a JSON object with exactly one key, ok, set to true."}],"response_format":{"type":"json_object"},"max_tokens":32,"temperature":0}' >/tmp/omniroute-smoke.json 2>/tmp/omniroute-smoke.err; then
+              if python - <<'PY'
+          import json
+          from pathlib import Path
+
+          try:
+              payload = json.loads(Path("/tmp/omniroute-smoke.json").read_text(encoding="utf-8"))
+              choices = payload.get("choices") or []
+              content = (choices[0].get("message") or {}).get("content") if choices else None
+              result = json.loads(str(content or ""))
+              healthy = isinstance(result, dict) and result.get("ok") is True
+          except (OSError, ValueError, TypeError, AttributeError):
+              healthy = False
+
+          if not healthy:
+              raise SystemExit(1)
+          PY
+              then
+                READY=1
+                echo "[OmniRoute] structured_json_inference_smoke=healthy attempt=${attempt}"
+                break
+              fi
             fi
-            echo "[OmniRoute] inference_smoke attempt=${attempt} failed"
+            echo "[OmniRoute] structured_json_inference_smoke attempt=${attempt} failed"
             tail -n 20 /tmp/omniroute-smoke.err || true
             sleep 3
           done

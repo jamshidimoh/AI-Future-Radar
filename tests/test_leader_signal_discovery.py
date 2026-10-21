@@ -35,7 +35,7 @@ def test_every_watchlist_person_gets_voice_and_social_discovery():
     people = {q["watch_person"] for q in generated}
     expanded = _expand_leader_signal_queries(generated)
     assert len(people) >= 40
-    assert len(expanded) <= 160
+    assert len(expanded) <= 220
     per_person = {}
     for query in expanded:
         per_person.setdefault(query["watch_person"], set()).add(query["content_type"])

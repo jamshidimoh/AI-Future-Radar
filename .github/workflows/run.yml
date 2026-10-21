@@ -77,16 +77,18 @@ jobs:
           OMNIROUTE_BIN_DIR="$RUNNER_TEMP/omniroute-bin"
           OMNIROUTE_READY_LOCAL=0
 
-          # Install the audited release from its source tag using the committed lockfile.
-          # The published global npm package currently resolves a nonexistent
-          # framer-motion@14.3.1 transitively (ETARGET), so do not resolve dependencies
-          # afresh from a mutable package manifest in production CI.
+          # Install from an immutable, audited source tag rather than a mutable global package.
+          # This upstream tag has a stale lockfile (npm ci reports missing
+          # brace-expansion@1.1.21), so reconcile only the ephemeral checkout's lockfile
+          # from the pinned package.json with lifecycle scripts disabled, then clean-install.
           if ! timeout 60s git clone --depth 1 --branch "v${OMNIROUTE_VERSION}" https://github.com/diegosouzapw/OmniRoute.git "$OMNIROUTE_DIR"; then
             echo "[OmniRoute] source checkout failed; production router will use its hard fallback"
           elif ! (cd "$OMNIROUTE_DIR" && test "$(git rev-parse HEAD)" = "$OMNIROUTE_COMMIT"); then
             echo "[OmniRoute] source revision did not match the pinned release commit; production router will use its hard fallback"
+          elif ! (cd "$OMNIROUTE_DIR" && HUSKY=0 timeout 180s npm install --package-lock-only --ignore-scripts --include=dev --no-audit --no-fund --prefer-offline --no-progress); then
+            echo "[OmniRoute] pinned-source lockfile reconciliation timed out or failed; production router will use its hard fallback"
           elif ! (cd "$OMNIROUTE_DIR" && HUSKY=0 timeout 420s npm ci --include=dev --no-audit --no-fund --prefer-offline --no-progress); then
-            echo "[OmniRoute] lockfile installation timed out or failed; production router will use its hard fallback"
+            echo "[OmniRoute] clean dependency installation timed out or failed after lockfile reconciliation; production router will use its hard fallback"
           # Radar consumes the HTTP inference API only. OmniRoute's supported
           # backend-only build keeps every route.ts handler and stubs the dashboard
           # UI, avoiding the expensive static page-generation phase on hosted runners.

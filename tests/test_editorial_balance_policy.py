@@ -94,6 +94,7 @@ def test_at_most_one_genetics_led_item_is_admissible_per_portfolio():
 def test_at_most_one_medical_led_item_is_admissible_per_portfolio():
     contract = load_editorial_contract()
     assert contract["max_health_medical_per_run"] == 1
+    assert contract["interview_target_max"] == 2
     portfolio = _Portfolio(
         contract=contract, limit=3, source_cap=2, type_cap=2,
         recent={}, mission_aware=True,

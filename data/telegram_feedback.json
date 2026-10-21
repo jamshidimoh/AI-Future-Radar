@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792609005,
+  "updated_at": 1792622895,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19334,6 +19334,27 @@
       "why_it_matters": "نگرانیهای راسل در مورد آینده AI نشاندهنده اهمیت اخلاق و مسئولیتپذیری در توسعه فناوری است. این نگرانیها می‌تواند منجر به ایجاد قوانین و مقرراتی برای کنترل و مدیریت AI شود.",
       "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxONnVLUzhPUmJ1dHVhdTVXY3dsZm5PV0hQY3BNTHcyYnRLbDRONVdzX2hIV3BVLUMwbjA1eWJGMk03MDNuRVAyTkJyWDBfTU9zc0RZb0JVWldfek0tcHVZVXFEQUdFam5lcjFJa1czU1k0eDNUS1EwVzdXWlNvemE4SEFuREEyX2VUYXo4OXY3b1I5MDh4S2tiUWUwb3VvckhINmxtSXFIZw?oc=5",
       "posted_at": 1792588354
+    },
+    "-1004482051328:2137": {
+      "chat_id": -1004482051328,
+      "message_id": 2137,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Crypto Briefing)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "Jensen Huang از معماری سهتایی رایانه برای هوش مصنوعی فیزیکی صحبت می‌کند",
+      "summary": "Jensen Huang، مدیرعامل Nvidia، در مصاحبه با Crypto Briefing، معماری سهتایی رایانه برای هوش مصنوعی فیزیکی را توضیح داد. این معماری شامل یک رایانه برای پردازش دادهها، یک رایانه برای آموزش مدلها و یک رایانه برای اجرای مدلها است. Huang گفت که این معماری به بهبود کارایی و مقیاسپذیری هوش مصنوعی کمک می‌کند. او همچنین گفت که Nvidia در حال توسعه فناوریهای جدید برای پشتیبانی از این معماری است.",
+      "why_it_matters": "معماری سهتایی رایانه برای هوش مصنوعی فیزیکی می‌تواند به بهبود کارایی و مقیاسپذیری هوش مصنوعی کمک کند. این معماری می‌تواند به کاهش هزینهها و افزایش سرعت پردازش دادهها کمک کند. همچنین، این معماری می‌تواند به توسعه فناوریهای جدید برای هوش مصنوعی فیزیکی کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE9XQ1A3eWlsOWdxcjY2aDlLdmhjUnAyV2lsQjgxVzJfNURjeXkzdmQtcUZoZ200YTNlM01VMU9hLXJpUmR5UlNjSTFDN0hNTjZwbzI2NzdpbU1lQWhBejNZZEdyc2NwMGcxSHNsbGF5cGxzclp2a1FNQjhXTVRTR2c?oc=5",
+      "posted_at": 1792622692
     }
   }
 }

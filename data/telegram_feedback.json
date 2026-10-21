@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792565761,
+  "updated_at": 1792583247,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19296,6 +19296,25 @@
       "why_it_matters": "پایش خودکار گونهها بهصورت گستردهتر و دقیقتر امکانپذیر شد؛ زیرا مدلهای پیشآموزش مخصوص تنوع زیستی، فاصلهی دامنهی آموزش و استقرار را بهطور قابل توجهی کاهش دادند. استفاده از تنظیمات پارامترهای کم، امکان پیادهسازی مدل در دستگاههای کمهزینه را فراهم کرد، در حالی که افزایشی داده، مقاومت مدل در برابر تغییرات محیطی را بالا برد. این ترکیب، راهکار عملی برای کاهش خلاء بین تصاویر جمعآوریشده توسط جامعه و تصاویر واقعی در محیطهای پایش میباشد.",
       "link": "https://www.nature.com/articles/s41598-026-75760-1",
       "posted_at": 1792565558
+    },
+    "-1004482051328:2135": {
+      "chat_id": -1004482051328,
+      "message_id": 2135,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "اینترنت آیا زمان توجه ما را کوتاهتر کرده است؟",
+      "summary": "Cory Doctorow، Mary Harrington و Jimmy Wales در مورد تأثیر اینترنت بر ادبیات بحث کردند. آنها به این سؤال پاسخ دادند که آیا رسانههای دیجیتال ما را باهوشتر یا باهوشتر می‌کنند. با توجه به داده‌های OECD، ادبیات در حال کاهش است و زمان توجه ما کوتاهتر می‌شود. این ممکن است منجر به یک معکوسسازی از عصر روشنگری شود.",
+      "description": "Cory Doctorow, Mary Harrington and Jimmy Wales discuss the impact of the internet on literacy.\n\nIs digital media making us dumber?\n\nWith a free trial, you can watch the full debate NOW at https://iai.tv/video/gutenberg-vs-zuckerberg2?utm_source=YouTube&amp;utm_medium=description\n\nGutenberg’s printing press transformed the world. The surge in literacy and the democratisation of knowledge helped ignite the Enlightenment. 500 years later, the internet is initiating a new transformation. Zuckerberg claims his digital networks have connected billions and made information more accessible than ever before. But critics claim that beneath this triumph of access lies a crisis of thought. Reading is in free-fall:  fewer young people enjoy reading today than at any point in the past twenty years, and OECD data show literacy stagnating across the developed world. Some argue we are witnessing a reversal of the Enlightenment itself, with shorter attention spans and less ability to handle complex ideas.\n\nIf the literate mind shaped the modern world, what kind of world will the post-literate mind create? Are the rise of digital media and the decline of literacy dangerous trends that threaten our politics, culture, and thought itself? Or should we celebrate the internet as a new and radical extension of Gutenberg's dream of democratising the production and distribution of knowledge?\n\n#technology  #bigtech  #socialmedia #reading #literature \n\nJimmy Wales is the founder of Wikipedia, the world’s largest collaborative encyclopedia, which is run by the non-profit Wikimedia Foundation.\n\nCory Doctorow is a Canadian-British author and digital rights activist who has served as European Director of the Electronic Frontier Foundation. He is the author of several books including Enshiffication.\n\nMary Harrington is an author and contributor editor for UnHerd and runs her own weekly Substack, Reactionary Feminist, a term she coined.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=gutenberg-vs-zuckerberg\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "این بحث نشان می‌دهد که اینترنت ممکن است تأثیر عمیقی بر ادبیات و تفکر ما داشته باشد. اگر ادبیات در حال کاهش است، چه نوع جهان پس از عصر ادبیات ایجاد خواهد شد؟ این بحث اهمیت این موضوع را در سیاست، فرهنگ و تفکر ما برجسته می‌کند.",
+      "link": "https://www.youtube.com/watch?v=x-R0Gngda2Q",
+      "posted_at": 1792583042
     }
   }
 }

@@ -317,7 +317,7 @@ _MEDICAL_CATEGORY_LABELS = {"medical", "medicine", "clinical", "health", "health
 _MEDICAL_TITLE_RE = re.compile(
     r"\b(?:clinical trial|clinical|diagnosis|diagnostic|disease|alzheimer(?:'s)?|parkinson(?:'s)?|"
     r"cancer|endometriosis|tremor|patient|hospital|medical imaging|medical|medicine|healthcare|"
-    r"drug discovery|therapeutic|therapy|treatment|preclinical)\b",
+    r"drug discovery|therapeutic|therapy|treatment|preclinical|پزشکی|پزشک|بیماری|درمانی|تشخیص|دارو|بالینی|سلامت|سرطان|آلزایمر|پارکینسون)\b",
     re.IGNORECASE,
 )
 _GENETICS_CATEGORY_LABELS = {"genetics", "genetic", "genomics", "genomic"}

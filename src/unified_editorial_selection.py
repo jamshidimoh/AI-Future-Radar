@@ -36,20 +36,23 @@ _GENERIC_AI_TERMS = {"model", "agent", "reasoning", "ai", "artificial intelligen
 # The Radar excludes gaming/entertainment coverage even if an upstream source
 # labels it AI. Keep "game theory" available as a scientific topic.
 _GAMING_CONTENT_PATTERN = re.compile(
-    r"(?<![a-z0-9])(?:gaming|gameplay|esports?|video\\s+games?|"
-    r"(?:real[-\\s]+time\\s+strategy|strategy|mobile|console|browser|casual)\\s+games?|"
-    r"games?\\s+(?:development|engine|studio|publisher|publishing|release|trailer))"
+    r"(?<![a-z0-9])(?:gaming|gameplay|esports?|video\s+games?|"
+    r"(?:real[-\s]+time\s+strategy|strategy|mobile|console|browser|casual)\s+games?|"
+    r"games?\s+(?:development|engine|studio|publisher|publishing|release|trailer))"
     r"(?![a-z0-9])|"
-    r"بازی(?:‌|\\s)*(?:استراتژی|ویدئویی|رایانه‌ای|کامپیوتری|موبایلی|آنلاین|زمان\\s+واقعی)|"
-    r"صنعت(?:‌|\\s)*بازی",
+    r"بازی(?:‌|\s)*(?:استراتژی|ویدئویی|رایانه‌ای|کامپیوتری|موبایلی|آنلاین|زمان\s+واقعی)|"
+    r"صنعت(?:‌|\s)*بازی",
     re.IGNORECASE,
 )
 
 
 def _is_gaming_content(item: dict[str, Any]) -> bool:
+    content_type = str(item.get("content_type") or "").strip().casefold().replace("_", " ").replace("-", " ")
+    if content_type in {"game", "video game", "gaming", "gameplay", "esports"}:
+        return True
     content_text = " ".join(
         str(item.get(key) or "")
-        for key in ("title", "summary", "description", "tags", "keywords", "content_type")
+        for key in ("title", "summary", "description", "tags", "keywords")
     )
     return bool(_GAMING_CONTENT_PATTERN.search(content_text))
 

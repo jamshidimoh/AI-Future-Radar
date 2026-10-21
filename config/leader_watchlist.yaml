@@ -13,6 +13,11 @@ people:
       - Jensen Huang
       - Mustafa Suleyman
       - Eric Schmidt
+      - Mark Zuckerberg
+      - Satya Nadella
+      - Lisa Su
+      - Bill Gates
+      - Noam Shazeer
   ai_research_and_foundations:
     priority: 10
     names:
@@ -25,6 +30,9 @@ people:
       - Andrej Karpathy
       - Judea Pearl
       - Stuart Russell
+      - Chris Olah
+      - Joelle Pineau
+      - François Chollet
   future_philosophy_society:
     priority: 10
     names:
@@ -33,12 +41,25 @@ people:
       - Yuval Noah Harari
       - Ray Kurzweil
       - Kate Crawford
+      - Robin Hanson
+      - Toby Ord
+      - Kevin Kelly
+      - Tristan Harris
+      - Timnit Gebru
+      - Shoshana Zuboff
   mind_cognition:
     priority: 10
     names:
       - Anil Seth
       - David Chalmers
       - Stanislas Dehaene
+      - Christof Koch
+      - Giulio Tononi
+      - Michael Graziano
+      - Susan Schneider
+      - Thomas Metzinger
+      - Karl Friston
+      - Michael Levin
   bio_quantum:
     priority: 10
     names:
@@ -123,7 +144,9 @@ ideas_and_theories:
       - human-AI convergence
       - future of consciousness
 
-# Discovery queries for the high-value people/ideas lane. These do not bypass quality gates.
+# Source of truth for watched people. For every listed person, the collector
+# generates separate voice-format and direct-post/statement discovery queries.
+# Discovery does not bypass evidence, duplication, or publication-quality gates.
 google_news_queries:
   - {query: "David Chalmers AI consciousness interview", watch_person: "David Chalmers", category: mind, tier: 1, content_type: interview}
   - {query: "David Chalmers philosophy of mind AI consciousness", watch_person: "David Chalmers", category: mind, tier: 1, content_type: research}

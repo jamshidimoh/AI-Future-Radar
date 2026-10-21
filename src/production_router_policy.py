@@ -18,9 +18,11 @@ logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[1]
 HEALTH_PATH = ROOT / "data" / "llm_health.json"
-# OmniRoute can stall on an unhealthy upstream. Open a process-local circuit after
-# transport timeouts so every subsequent candidate does not pay the same timeout.
+# Keep one slow upstream response from disabling the primary selector for the
+# rest of a run. The request timeout stays bounded; two consecutive read timeouts
+# or a connection/gateway failure open the process-local circuit.
 _OMNIROUTE_CIRCUIT_OPEN = False
+_OMNIROUTE_READ_TIMEOUT_STREAK = 0
 _PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|insufficient.*(?:credit|balance))", re.IGNORECASE)
 # NaraRouter's telegram_required response is an account-level access block,
 # not a model-specific 403. Classify this exact marker as provider-wide auth so
@@ -162,7 +164,7 @@ def _omniroute_call(system_prompt, user_content):
     process-local circuit so later candidates use the independent provider chain
     rather than repeatedly waiting for a gateway that has already timed out.
     """
-    global _OMNIROUTE_CIRCUIT_OPEN
+    global _OMNIROUTE_CIRCUIT_OPEN, _OMNIROUTE_READ_TIMEOUT_STREAK
     base_url = os.getenv("OMNIROUTE_BASE_URL", "").strip().rstrip("/")
     if not base_url:
         return None, None
@@ -190,7 +192,7 @@ def _omniroute_call(system_prompt, user_content):
     headers = {"Content-Type": "application/json"}
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
-    timeout = max(0.5, min(8.0, float(os.getenv("OMNIROUTE_TIMEOUT_SECONDS", "8") or 8)))
+    timeout = max(0.5, min(12.0, float(os.getenv("OMNIROUTE_TIMEOUT_SECONDS", "12") or 12)))
     try:
         response = requests.post(url, headers=headers, json=payload, timeout=timeout)
         if response.status_code >= 400:
@@ -205,6 +207,7 @@ def _omniroute_call(system_prompt, user_content):
             raise RuntimeError("OmniRoute response has no content")
         if not _omniroute_structured_json_ok(content):
             raise RuntimeError("OmniRoute returned invalid structured JSON; response rejected before editorial pipeline")
+        _OMNIROUTE_READ_TIMEOUT_STREAK = 0
         decision = response.headers.get("X-OmniRoute-Decision", "")
         selected = str(data.get("model") or decision or model)
         print(
@@ -216,9 +219,22 @@ def _omniroute_call(system_prompt, user_content):
         print(f"[OmniRoute Primary] upstream_identity={provider_label}", flush=True)
         return content, provider_label
     except Exception as exc:
-        transport_failure = isinstance(exc, requests.Timeout | requests.ConnectionError) or bool(
-            re.search(r"\bHTTP (?:502|503|504)\b", str(exc), re.IGNORECASE)
-        )
+        if isinstance(exc, requests.ReadTimeout):
+            _OMNIROUTE_READ_TIMEOUT_STREAK += 1
+            transport_failure = _OMNIROUTE_READ_TIMEOUT_STREAK >= 2
+            if not transport_failure:
+                print(
+                    "[OmniRoute Circuit] read_timeout_streak=1/2; keep gateway available for one bounded retry",
+                    flush=True,
+                )
+        else:
+            # Only consecutive read timeouts count as a potentially transient slow
+            # upstream. Connection failures and gateway 5xx responses still trip
+            # the circuit immediately; non-transport failures reset the streak.
+            _OMNIROUTE_READ_TIMEOUT_STREAK = 0
+            transport_failure = isinstance(exc, requests.Timeout | requests.ConnectionError) or bool(
+                re.search(r"\bHTTP (?:502|503|504)\b", str(exc), re.IGNORECASE)
+            )
         if transport_failure:
             _OMNIROUTE_CIRCUIT_OPEN = True
             print(

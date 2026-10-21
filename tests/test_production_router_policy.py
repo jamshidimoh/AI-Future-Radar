@@ -20,6 +20,7 @@ def _reset(monkeypatch):
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
     router._PRODUCTION_CIRCUIT_OPEN = False
     policy._OMNIROUTE_CIRCUIT_OPEN = False
+    policy._OMNIROUTE_READ_TIMEOUT_STREAK = 0
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -566,6 +567,54 @@ def test_omniroute_transport_timeout_opens_run_scoped_circuit(monkeypatch, capsy
     assert policy._omniroute_call("system", "user") == (None, None)
     assert len(calls) == 1
     assert "subsequent calls bypass gateway" in capsys.readouterr().out
+
+
+def test_omniroute_read_timeout_is_retried_once_before_opening_circuit(monkeypatch, capsys):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
+    calls = []
+
+    def timeout_post(*_args, **kwargs):
+        calls.append(kwargs["timeout"])
+        raise requests.ReadTimeout("upstream response was slow")
+
+    monkeypatch.setattr(policy.requests, "post", timeout_post)
+
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert policy._OMNIROUTE_CIRCUIT_OPEN is False
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert policy._OMNIROUTE_CIRCUIT_OPEN is True
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert calls == [12.0, 12.0]
+    output = capsys.readouterr().out
+    assert "read_timeout_streak=1/2" in output
+    assert "subsequent calls bypass gateway" in output
+
+
+def test_omniroute_success_resets_read_timeout_streak(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
+    policy._OMNIROUTE_READ_TIMEOUT_STREAK = 1
+
+    class Response:
+        status_code = 200
+        headers = {"X-OmniRoute-Decision": "strategy=auto; provider=mistral"}
+        text = ""
+
+        @staticmethod
+        def json():
+            return {"model": "codestral-2508", "choices": [{"message": {"content": '{"ok": true}'}}]}
+
+    observed = {}
+    def success_post(*_args, **kwargs):
+        observed["timeout"] = kwargs["timeout"]
+        return Response()
+
+    monkeypatch.setattr(policy.requests, "post", success_post)
+
+    assert policy._omniroute_call("system", "user") == ('{"ok": true}', "Mistral:codestral-2508")
+    assert policy._OMNIROUTE_READ_TIMEOUT_STREAK == 0
+    assert observed["timeout"] == 12.0
 
 
 def test_omniroute_is_inert_when_not_configured(monkeypatch):

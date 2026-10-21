@@ -1,8 +1,8 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 17,
-      "disabled_until": 1792645625.742,
+      "failures": 18,
+      "disabled_until": 1792646869.235,
       "last_error": "auth",
       "last_success": 0
     },
@@ -33,8 +33,8 @@
   },
   "providers": {
     "nararouter": {
-      "failures": 10,
-      "disabled_until": 1792645625.742,
+      "failures": 11,
+      "disabled_until": 1792646869.235,
       "last_error": "auth"
     },
     "kiraai": {
@@ -43,12 +43,12 @@
       "last_error": "wallet"
     }
   },
-  "updated_at": 1792559225.7423475,
+  "updated_at": 1792560469.2351146,
   "version": 1,
   "telemetry": {
-    "observed_failures": 66,
-    "observed_events": 96,
-    "updated_at": 1792559225.7423475
+    "observed_failures": 7,
+    "observed_events": 31,
+    "updated_at": 1792560469.2351146
   },
   "observed_failures": 0,
   "observed_events": 0

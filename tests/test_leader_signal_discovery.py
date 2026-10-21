@@ -1,4 +1,4 @@
-from src.fetch_google_news import _expand_leader_signal_queries, _has_leader_signal_evidence, classify_leader_signal
+from src.fetch_google_news import _expand_leader_signal_queries, _has_leader_signal_evidence, _load_watchlist_people_queries, classify_leader_signal
 
 
 def test_leader_signal_expansion_is_person_agnostic():
@@ -8,15 +8,15 @@ def test_leader_signal_expansion_is_person_agnostic():
         {"query": "David Chalmers AI consciousness interview", "watch_person": "David Chalmers", "category": "mind", "tier": 1, "content_type": "interview"},
     ]
     expanded = _expand_leader_signal_queries(queries)
-    companions = [q for q in expanded if q.get("content_type") == "leader_signal"]
+    companions = [q for q in expanded if q.get("content_type") == "social_post"]
     assert len(expanded) == len(queries) + 3
     assert {q["watch_person"] for q in companions} == {"Elon Musk", "Yuval Noah Harari", "David Chalmers"}
     assert all(q.get("leader_discovery") is True for q in companions)
     assert all(q.get("curated_discovery") is True for q in companions)
-    assert all("interview" in q["query"] for q in companions)
-    assert all("podcast" in q["query"] for q in companions)
-    assert all("analysis" in q["query"] for q in companions)
-    assert all("forecast" in q["query"] for q in companions)
+    assert all("tweet" in q["query"] or "statement" in q["query"] for q in companions)
+    voice_queries = [q for q in expanded if q.get("content_type") == "interview"]
+    assert all("podcast" in q["query"] for q in voice_queries)
+    assert all("artificial intelligence" in q["query"] or "AI" in q["query"] for q in voice_queries)
 
 
 def test_leader_query_order_does_not_use_numeric_person_priority():
@@ -27,6 +27,33 @@ def test_leader_query_order_does_not_use_numeric_person_priority():
     expanded = _expand_leader_signal_queries(queries)
     assert [q["watch_person"] for q in expanded[:2]] == ["Elon Musk", "Elon Musk"]
     assert [q["watch_person"] for q in expanded[2:4]] == ["Sam Altman", "Sam Altman"]
+
+
+
+def test_every_watchlist_person_gets_voice_and_social_discovery():
+    generated = _load_watchlist_people_queries()
+    people = {q["watch_person"] for q in generated}
+    expanded = _expand_leader_signal_queries(generated)
+    assert len(people) >= 40
+    assert len(expanded) <= 128
+    per_person = {}
+    for query in expanded:
+        per_person.setdefault(query["watch_person"], set()).add(query["content_type"])
+    assert people.issubset(per_person)
+    assert all({"interview", "social_post"}.issubset(per_person[name]) for name in people)
+
+
+def test_named_social_post_query_recovers_attributed_expert_post():
+    result = classify_leader_signal(
+        "A new post outlines the future of AI",
+        "The post discusses frontier AI systems and their implications for society.",
+        "Yann LeCun",
+        query_context='"Yann LeCun" (tweet OR post OR statement) (AI OR AGI OR technology OR future)',
+        content_type="social_post",
+    )
+    assert result["accepted"] is True
+    assert result["direct_post"] is True
+    assert result["query_person_signal"] is True
 
 
 def test_base_queries_without_leaders_are_unchanged():
@@ -98,9 +125,10 @@ def test_named_watch_query_recovers_sparse_google_news_snippet():
         "A long-form discussion covers frontier AI systems and their future implications.",
         "Sam Altman",
         query_context='"Sam Altman" (interview OR podcast OR future OR artificial intelligence)',
-        content_type="interview",
+        content_type="social_post",
     )
     assert result["accepted"] is True
+    assert result["direct_post"] is True
     assert result["person_signal"] is False
     assert result["query_person_signal"] is True
 

@@ -232,6 +232,38 @@ def test_window_area_cap_prefers_an_underrepresented_area():
     assert len(titles) <= 2
 
 
+def test_gaming_content_is_rejected_even_when_labeled_ai_core():
+    candidate = {
+        "title": "Battle Drones: بازی استراتژی زمان واقعی با همگام‌سازی صوتی",
+        "summary": "A real-time strategy video game with AI-powered matchmaking.",
+        "category": "ai",
+        "mission_area": "ai_core",
+        "content_type": "video game",
+        "tags": ["artificial intelligence"],
+    }
+
+    from src.unified_editorial_selection import is_mission_relevant
+
+    assert not is_mission_relevant(candidate, strict=True)
+    assert candidate["mission_area"] == "excluded_gaming"
+    assert candidate["_mission_area_rejected"] == "gaming_content"
+
+
+def test_game_theory_for_ai_alignment_is_not_gaming_content():
+    from src.unified_editorial_selection import _is_gaming_content, is_mission_relevant
+
+    candidate = {
+        "title": "Game theory provides a framework for AI alignment research",
+        "summary": "Researchers apply game-theoretic models to alignment and strategic cooperation.",
+        "category": "ai",
+        "mission_area": "ai_core",
+        "content_type": "research",
+    }
+
+    assert not _is_gaming_content(candidate)
+    assert is_mission_relevant(candidate, strict=True)
+
+
 def test_low_signal_chatgpt_tutorial_is_rejected_even_with_ai_category():
     candidate = item(
         "How to use ChatGPT to identify scam messages",

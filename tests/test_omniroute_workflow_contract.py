@@ -43,7 +43,7 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     assert '[OmniRoute] running structured auto/smart inference smoke-test' in text
     assert '[OmniRoute] structured_json_inference_smoke=healthy' in text
     assert '"response_format":{"type":"json_object"}' in text
-    assert '"max_tokens":32' in text
+    assert '"max_tokens":128' in text
     assert 'result.get("ok") is True' in text
     assert '\"model\":\"auto/smart\"' in text
 
@@ -89,7 +89,7 @@ def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
     assert "continuing with fallback" in step
     assert '[OmniRoute] structured_json_inference_smoke=healthy' in step
     assert '"response_format":{"type":"json_object"}' in step
-    assert '"max_tokens":32' in step
+    assert '"max_tokens":128' in step
 
 
 

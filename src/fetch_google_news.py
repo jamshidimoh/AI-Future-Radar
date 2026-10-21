@@ -74,7 +74,7 @@ _LEADER_SIGNAL_CONTEXT_TERMS = (
 )
 # Keep a bounded safety cap, but large enough to cover the current watchlist without
 # silently dropping later people from generic companion discovery.
-_MAX_LEADER_SIGNAL_QUERIES = 160
+_MAX_LEADER_SIGNAL_QUERIES = 220
 
 
 def _contains_any_phrase(text: str, terms: tuple[str, ...]) -> bool:
@@ -282,7 +282,6 @@ def _expand_leader_signal_queries(queries):
 
     voice_types = {"interview", "podcast", "talk", "conversation", "lecture", "keynote"}
     social_types = {"social_post", "direct_statement", "tweet", "thread"}
-    activity_types = {"leader_signal", "product_news", "research", "news"}
     ordered: list[dict] = []
     secondary: list[dict] = []
     for person_key in sorted(people):

@@ -252,3 +252,46 @@ def test_voice_lane_accepts_interview_when_source_evidence_contains_topic_anchor
     })
     assert is_voices_candidate(item)
 
+def test_voice_lane_accepts_direct_social_post_from_x_as_primary_attribution():
+    item = {
+        "title": "Sam Altman on X: frontier AI needs stronger evaluation",
+        "summary": "The post discusses artificial intelligence evaluation and deployment risks.",
+        "mission_area": "ai_core",
+        "category": "ai",
+        "content_type": "social_post",
+        "source": "Google News (X)",
+        "source_domain": "https://x.com/",
+        "source_type": "news_aggregator",
+        "source_tier": 3,
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "person_name": "Sam Altman",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "leader_signal_classification": {"accepted": True, "direct_post": True, "context": True},
+    }
+    assert is_voices_candidate(item)
+    selected = choose_voices_candidate([item])
+    assert selected and selected[0]["content_type"] == "social_post"
+
+
+def test_voice_lane_does_not_treat_unverified_social_scrape_as_primary_source():
+    item = {
+        "title": "Sam Altman on X: frontier AI needs stronger evaluation",
+        "summary": "The post discusses artificial intelligence evaluation and deployment risks.",
+        "mission_area": "ai_core",
+        "category": "ai",
+        "content_type": "social_post",
+        "source": "Unknown social scrape",
+        "source_domain": "https://example.invalid/",
+        "source_type": "news_aggregator",
+        "source_tier": 3,
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "person_name": "Sam Altman",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "leader_signal_classification": {"accepted": True, "direct_post": True, "context": True},
+    }
+    assert not is_voices_candidate(item)
+

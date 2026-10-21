@@ -246,7 +246,7 @@ def test_low_signal_chatgpt_tutorial_is_rejected_even_with_ai_category():
 def test_explicit_ai_core_label_requires_content_evidence():
     candidate = {
         "title": "Plato Matters More Than Ever",
-        "summary": "A general philosophy discussion with no AI connection.",
+        "summary": "A general discussion of Plato's relevance to classical ethics and political thought.",
         "source": "Big Think",
         "category": "ai",
         "mission_area": "ai_core",

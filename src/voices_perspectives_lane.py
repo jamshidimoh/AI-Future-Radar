@@ -313,9 +313,9 @@ def choose_voices_candidate(candidates: Iterable[dict[str, Any]], *, existing_id
     # consumed by multiple posts from one person when another eligible expert
     # is available. Additional independent items from a person remain eligible
     # for subsequent runs and may fill a spare slot.
-    selected = []
-    selected_ids = set()
-    covered_people = set()
+    selected: list[dict[str, Any]] = []
+    selected_ids: set[int] = set()
+    covered_people: set[str] = set()
     limit = max(0, int(max_items))
     for item in ranking_pool:
         if len(selected) >= limit:

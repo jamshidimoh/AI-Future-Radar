@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792583247,
+  "updated_at": 1792588558,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19315,6 +19315,25 @@
       "why_it_matters": "این بحث نشان می‌دهد که اینترنت ممکن است تأثیر عمیقی بر ادبیات و تفکر ما داشته باشد. اگر ادبیات در حال کاهش است، چه نوع جهان پس از عصر ادبیات ایجاد خواهد شد؟ این بحث اهمیت این موضوع را در سیاست، فرهنگ و تفکر ما برجسته می‌کند.",
       "link": "https://www.youtube.com/watch?v=x-R0Gngda2Q",
       "posted_at": 1792583042
+    },
+    "-1004482051328:2136": {
+      "chat_id": -1004482051328,
+      "message_id": 2136,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Forbes)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Stuart Russell",
+      "watch_person": "Stuart Russell",
+      "title": "استوارت راسل: AI ممکن است تهدیدی بزرگ برای ما باشد",
+      "summary": "استاد علوم کامپیوتر دانشگاه برکلی در مصاحبه با فوربز، نگرانیهای خود در مورد آینده هوش مصنوعی (AI) را ابراز کرد. او معتقد است که بیطرفی و بیطرفی در تصمیمگیریهای AI ممکن است به یک تهدید بزرگ تبدیل شود.",
+      "why_it_matters": "نگرانیهای راسل در مورد آینده AI نشاندهنده اهمیت اخلاق و مسئولیتپذیری در توسعه فناوری است. این نگرانیها می‌تواند منجر به ایجاد قوانین و مقرراتی برای کنترل و مدیریت AI شود.",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxONnVLUzhPUmJ1dHVhdTVXY3dsZm5PV0hQY3BNTHcyYnRLbDRONVdzX2hIV3BVLUMwbjA1eWJGMk03MDNuRVAyTkJyWDBfTU9zc0RZb0JVWldfek0tcHVZVXFEQUdFam5lcjFJa1czU1k0eDNUS1EwVzdXWlNvemE4SEFuREEyX2VUYXo4OXY3b1I5MDh4S2tiUWUwb3VvckhINmxtSXFIZw?oc=5",
+      "posted_at": 1792588354
     }
   }
 }

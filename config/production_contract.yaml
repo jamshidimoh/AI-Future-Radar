@@ -52,6 +52,8 @@ selection:
     ai_core_target_max: 2
     max_genetics_per_run: 1
     genetics_diversity_penalty: 15
+    max_health_medical_per_run: 1
+    health_medical_diversity_penalty: 12
     prefer_verified_ai_leader_voice: true
     secondary_area_priority: [mind_cognition, future_governance, convergence]
     technical_depth_penalty: 10

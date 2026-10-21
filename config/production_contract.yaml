@@ -14,7 +14,7 @@ protected:
   people:
     source: config/leader_watchlist.yaml
     distinct_per_run: true
-    max_slots: 2
+    max_slots: 1
     interviews_and_activity_use_distinct_reasons: true
   sources:
     - name: "MIT CSAIL - Building 32"

@@ -431,26 +431,30 @@ def _voice_lane_recovery(selected, editorial_pool, summarize_fn):
         if _publication_identity(item) not in selected_ids
         and not item.get("_publication_blocked")
     ]
-    candidate = (choose_voices_candidate(pool, existing_ids=set(), max_items=1) or [None])[0]
-    if candidate is None:
-        print("[Voice Lane Recovery] no independent expert candidate available", flush=True)
+    candidate = (choose_voices_candidate(pool, existing_ids=set(), max_items=2) or [None])[:2]
+    candidates = candidate
+    if not candidates:
+        print("[Voice Lane Recovery] no independent expert candidates available", flush=True)
         return []
-    summary = _safe_summarize(candidate, summarize_fn)
-    if not summary:
+    recovered = []
+    for item in candidates:
+        summary = _safe_summarize(item, summarize_fn)
+        if not summary:
+            print(
+                f"[Voice Lane Recovery] replacement failed title={str(item.get('title',''))[:120]}",
+                flush=True,
+            )
+            continue
+        item.update(summary)
+        item["_voice_lane_recovery"] = True
         print(
-            f"[Voice Lane Recovery] replacement failed title={str(candidate.get('title',''))[:120]}",
+            f"[Voice Lane Recovery] recovered rank={item.get('voices_period_rank')} "
+            f"score={item.get('voices_perspectives_score')} "
+            f"title={str(item.get('title',''))[:120]}",
             flush=True,
         )
-        return []
-    candidate.update(summary)
-    candidate["_voice_lane_recovery"] = True
-    print(
-        f"[Voice Lane Recovery] recovered rank={candidate.get('voices_period_rank')} "
-        f"score={candidate.get('voices_perspectives_score')} "
-        f"title={str(candidate.get('title',''))[:120]}",
-        flush=True,
-    )
-    return [(candidate, summary)]
+        recovered.append((item, summary))
+    return recovered
 
 
 def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):

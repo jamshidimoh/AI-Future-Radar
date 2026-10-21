@@ -40,7 +40,11 @@ def test_omniroute_workflow_uses_audited_release_and_provider_ids():
     assert 'CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}' in text
     assert 'OMNIROUTE_READY' in text
     assert 'providers test-all' not in text
-    assert '[OmniRoute] running minimal auto/smart inference smoke-test' in text
+    assert '[OmniRoute] running structured auto/smart inference smoke-test' in text
+    assert '[OmniRoute] structured_json_inference_smoke=healthy' in text
+    assert '"response_format":{"type":"json_object"}' in text
+    assert '"max_tokens":128' in text
+    assert 'result.get("ok") is True' in text
     assert '\"model\":\"auto/smart\"' in text
 
 # Production validation trigger: pinned OmniRoute source tag and lockfile contract.
@@ -83,6 +87,9 @@ def test_omniroute_bootstrap_has_hard_timeouts_and_fallback_safe_probes():
     assert "timeout 20s omniroute providers validate" in step
     assert "--connect-timeout 3 --max-time 10 http://127.0.0.1:20128/v1/models" in step
     assert "continuing with fallback" in step
+    assert '[OmniRoute] structured_json_inference_smoke=healthy' in step
+    assert '"response_format":{"type":"json_object"}' in step
+    assert '"max_tokens":128' in step
 
 
 

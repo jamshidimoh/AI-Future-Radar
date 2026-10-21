@@ -431,8 +431,7 @@ def _voice_lane_recovery(selected, editorial_pool, summarize_fn):
         if _publication_identity(item) not in selected_ids
         and not item.get("_publication_blocked")
     ]
-    candidate = (choose_voices_candidate(pool, existing_ids=set(), max_items=2) or [None])[:2]
-    candidates = candidate
+    candidates = choose_voices_candidate(pool, existing_ids=set(), max_items=2)
     if not candidates:
         print("[Voice Lane Recovery] no independent expert candidates available", flush=True)
         return []

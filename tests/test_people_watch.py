@@ -21,10 +21,20 @@ def _item(person, published, suffix, *, title_suffix="") -> dict:
     }
 
 
-def test_watchlist_has_exactly_30_people():
+def test_bootstrap_baseline_has_exactly_30_people_while_full_roster_is_broader():
     people = load_people_watchlist(WATCHLIST)
     assert len(people) == 30
     assert len(set(people)) == 30
+    config = yaml.safe_load(WATCHLIST.read_text(encoding="utf-8"))
+    full_roster = [
+        name
+        for group in config["people"].values()
+        for name in group.get("names", [])
+    ]
+    assert len(full_roster) >= 45
+    assert len(set(full_roster)) == len(full_roster)
+    assert set(people).issubset(set(full_roster))
+    assert len(config["bootstrap_names"]) == 30
     assert "Andrew Ng" in people
     assert "Yuval Noah Harari" in people
     assert "Eric Schmidt" in people

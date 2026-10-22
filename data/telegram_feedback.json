@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792675968,
+  "updated_at": 1792695500,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19411,6 +19411,67 @@
       "why_it_matters": "این نتایج نشان می‌دهد که زبان طبیعی می‌تواند واسطی سطح بالا برای تولید کاندیدهای پروتئینی باشد و نیاز به تعریف صریح محدودیت‌های ساختاری یا توالی را کاهش می‌دهد. حذف بهینه‌سازی تجربی مکرر می‌تواند سرعت توسعهٔ پروتئین‌های کاربردی در مهندسی مولکولی را افزایش دهد. بهبود ۱٫۷ برابری در تولید محصول در مسیر تثبیت CO₂، پتانسیل این رویکرد را برای بهبود فرآیندهای زیست‑تکنولوژیک برجسته می‌کند.",
       "link": "https://www.nature.com/articles/s41586-026-11205-z",
       "posted_at": 1792652630
+    },
+    "-1004482051328:2141": {
+      "chat_id": -1004482051328,
+      "message_id": 2141,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Unisba Media)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "Huang از آینده NVIDIA صحبت می‌کند",
+      "summary": "Jensen Huang، مدیرعامل NVIDIA، در مصاحبه با Dylan O'brien از Unisba Media، به آینده شرکت خود و فناوریهای پیشرفته اشاره کرد. Huang گفت که NVIDIA در حال توسعه فناوریهای جدیدی است که به بهبود عملکرد و کارایی پردازشهای پیچیده کمک می‌کنند. او همچنین از اهمیت همکاری با شرکتهای دیگر و سرمایهگذاری در تحقیقات و توسعه برای پیشرفت آینده شرکت صحبت کرد. Huang همچنین به چالشهای پیش رو در صنعت فناوری اشاره کرد و از اهمیت حل این چالشها برای پیشرفت صنعت صحبت کرد.",
+      "why_it_matters": "دیدگاه Huang نشاندهنده تعهد NVIDIA به نوآوری و پیشرفت فناوری است. این شرکت با سرمایهگذاری در تحقیقات و توسعه و همکاری با شرکتهای دیگر، در حال تلاش برای پیشرفت صنعت فناوری و بهبود عملکرد پردازشهای پیچیده است. همچنین، Huang به چالشهای پیش رو در صنعت فناوری اشاره کرد که نشاندهنده اهمیت حل این چالشها برای پیشرفت صنعت است.",
+      "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE4xMmhHS2FQVkp2NmJmRnNPMmNiQkNoWXlnT3M1TER0Y3hHTGVMazY1STMxX0xWVmE1VF9EdTZuek9rb2NJRnF5LVdBS0Fmc0FNNFlaNlFIcFJMVm5WZ3RYSlF2UmVLc1hLMEFjZ1JR?oc=5",
+      "posted_at": 1792695488
+    },
+    "-1004482051328:2142": {
+      "chat_id": -1004482051328,
+      "message_id": 2142,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Economic Times)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Andrew Ng",
+      "watch_person": "Andrew Ng",
+      "person_name": "Andrew Ng",
+      "people_lane": true,
+      "title": "ترس از هوش مصنوعی به شرکتها قدرت نشان می‌دهد و کمک می‌کند سرمایه جمعآوری کنند",
+      "summary": "استاد دانشگاه استنفورد Andrew Ng در مصاحبه با The Economic Times گفت که ترس از هوش مصنوعی (AI) به شرکتها کمک می‌کند تا به نظر قدرتمندتر به نظر برسند و سرمایه جمعآوری کنند. او این ترس را یک محرک برای به روز شدن سریع شرکتها و حفظ رقابت در بازار دانست.",
+      "why_it_matters": "ترس از هوش مصنوعی می‌تواند به عنوان یک محرک برای شرکتها عمل کند تا به سرعت به روز شوند و رقابت را در بازار حفظ کنند. این ترس همچنین می‌تواند به شرکتها کمک کند تا به نظر قدرتمندتر به نظر برسند و سرمایه جمعآوری کنند. این پیامدها نشان می‌دهد که ترس از فناوریهای نوظهور می‌تواند به عنوان یک محرک برای نوآوری و رشد در بازار عمل کند.",
+      "link": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxNWndPOEEyM0JGQ25IQktqWVllLTMtYkhnVk9UdmRXUGpuYldOeVRpVktmWXJQYmZEbTZ4TjA0N0Ixc01VMTZPWlNEMXFfOFcxQU0tandSVUxhRUplZmpFaFJ6dTNPdzFRdk01Ylhlc1NJaEp1d18zZUhLaTdQRXpTVVlOZ1ZRdXZmQWdLNkx6QUkwSEJUTFI1dVVMaFFEQmYtQ1NGdWNOU3JSWi1RSFRTeDZ1Z2IzQWxHMUIzRldyTDY4RWZfNXJNaWh6eEp6MFVkVmhXUHF4NF9XbjjSAeABQVVfeXFMT1VNUHVTbEFESDh1czd4c09aS180ejAzZnFaRjM5VUx3REpYelc3cFg1S05IRUZMTVROdmZocEgwU25aRmNBdGRBbnVzZ2dUZ1ZYOHVzN3hsOHA0bFJVYW5XQ1lRRU55MHBJRk50WHoxeE9rVXZjUWx4bDVWMlJSb3hCQkJpeXFGa0NrWExHUEFETDh0YUVUS0tWYUVmVFJIOWVGWTFNVDIyVFYzNW5DU05CUmI5VkdENnRWSGhmcXBuSTJWYW0taEtOWGE2OXh5VEFxRVJGMWJ0Nld3ZUFhQ3U?oc=5",
+      "posted_at": 1792695494
+    },
+    "-1004482051328:2143": {
+      "chat_id": -1004482051328,
+      "message_id": 2143,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "title": "سام آلتمن: پیش‌بینی پیشی‌گرفتن هوش مصنوعی از هوش انسانی تا ۲۰۳۰",
+      "summary": "در مقاله Business Insider، سام آلتمن، مدیرعامل OpenAI، پیش‌بینی کرده است که هوش مصنوعی تا سال ۲۰۳۰ توانایی‌های هوش انسانی را پشت سر خواهد گذاشت. این پیش‌بینی بر پایهٔ اظهارات او در مصاحبه‌ای است که در خبر منتشر شده است.",
+      "why_it_matters": "اگر هوش مصنوعی بتواند تا سال ۲۰۳۰ به سطحی برسد که از هوش انسانی پیشی بگیرد، می‌تواند تأثیرات گسترده‌ای بر بازار کار، نوآوری‌های فناوری و تصمیم‌گیری‌های استراتژیک داشته باشد. درک این پیش‌بینی به سیاست‌گذاران و کسب‌وکارها کمک می‌کند تا برنامه‌ریزی‌های بلندمدت خود را با توجه به تغییرات احتمالی تنظیم کنند.",
+      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxPV29MV3RFOVJSbEZSSlZjUHdwdDIwQXRyY2MtZGpLd29pc0VBT0pDckpUTHJZNkJaNHdwaF9rUE9yTTc0TXhGd0NpNlRTc1cwLS0yS1ZHamo2SXFFT0pPVUFET2pjWHJMMDRVbW1YRTNoYkN6ZGtpczQ3SjJKTjlNWTlZWnVwLVUxYXZoX1NnMnBrQVFKWHdBUFNiVHdSUQ?oc=5",
+      "posted_at": 1792695500
     }
   }
 }

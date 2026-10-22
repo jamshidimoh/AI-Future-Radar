@@ -1,46 +1,41 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 24,
-      "disabled_until": 1792709296.429,
+      "failures": 25,
+      "disabled_until": 1792739031.958,
       "last_error": "auth",
       "last_success": 0
     },
-    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
+    "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
       "failures": 1,
-      "disabled_until": 1792626496.429,
-      "last_error": "quota",
+      "disabled_until": 1792674231.958,
+      "last_error": "model",
       "last_success": 0
     },
-    "groq:openai/gpt-oss-20b": {
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1792626496.429,
+      "disabled_until": 1792656231.958,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "groq:openai/gpt-oss-120b": {
+    "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1792626496.429,
+      "disabled_until": 1792656231.958,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "kiraai:qwen3.8-flash": {
+    "openrouter:recursive/flint-v1.0:free": {
       "failures": 1,
-      "disabled_until": 1792626496.429,
-      "last_error": "quota",
+      "disabled_until": 1792674231.958,
+      "last_error": "model",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 17,
-      "disabled_until": 1792709296.429,
+      "failures": 18,
+      "disabled_until": 1792739031.958,
       "last_error": "auth"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1792644496.429,
-      "last_error": "quota"
     },
     "kiraai": {
       "failures": 1,
@@ -48,12 +43,12 @@
       "last_error": "wallet"
     }
   },
-  "updated_at": 1792622896.4292686,
+  "updated_at": 1792652631.9584572,
   "version": 1,
   "telemetry": {
-    "observed_failures": 8,
-    "observed_events": 25,
-    "updated_at": 1792622896.4292686
+    "observed_failures": 25,
+    "observed_events": 51,
+    "updated_at": 1792652631.9584572
   },
   "observed_failures": 0,
   "observed_events": 0

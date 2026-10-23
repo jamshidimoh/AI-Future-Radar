@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProxyBridge</title>
+<style>
+body{font-family:Segoe UI,Tahoma,sans-serif;max-width:980px;margin:40px auto;padding:0 20px;background:#f6f7f9;color:#202124}
+button{padding:10px 15px;margin:5px;border:0;border-radius:8px;cursor:pointer}
+textarea{width:100%;height:420px;font-family:Consolas,monospace;direction:ltr}
+section{background:#fff;padding:20px;border-radius:12px;margin:16px 0;box-shadow:0 2px 10px #0001}
+pre{direction:ltr;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<h1>ProxyBridge</h1>
+<p>مدیریت PAC برای Chrome و Windows و اجرای اختیاری sing-box برای TUN.</p>
+<section>
+<h2>وضعیت</h2><pre id="status">در حال خواندن...</pre>
+<button onclick="systemOn()">فعال‌سازی Proxy سیستم</button>
+<button onclick="systemOff()">بازگردانی Proxy سیستم</button>
+</section>
+<section>
+<h2>VPN / TUN</h2>
+<p>برای VPN واقعی باید یک کانفیگ معتبر sing-box با upstream مناسب وارد کنید. HTTP/HTTPS proxy به‌تنهایی VPN کامل نیست.</p>
+<label>مسیر فایل کانفیگ sing-box:</label>
+<input id="tunConfig" style="width:100%;padding:10px;margin:8px 0" placeholder="C:\ProxyBridge\config.json">
+<button onclick="saveTunConfig()">ذخیره مسیر</button>
+<button onclick="tunStart()">شروع TUN</button>
+<button onclick="tunStop()">توقف TUN</button>
+<pre id="tun"></pre>
+</section>
+<section>
+<h2>PAC مشترک</h2>
+<p>PAC فعلی را اینجا قرار دهید. Chrome و Windows از همان endpoint محلی استفاده خواهند کرد.</p>
+<textarea id="pac"></textarea><br>
+<button onclick="savePAC()">ذخیره PAC</button>
+<a href="/proxy.pac" target="_blank">مشاهده PAC</a>
+</section>
+<script>
+async function refresh(){const r=await fetch('/api/status');document.querySelector('#status').textContent=JSON.stringify(await r.json(),null,2);const p=await fetch('/api/pac');document.querySelector('#pac').value=await p.text();}
+async function savePAC(){const r=await fetch('/api/pac',{method:'PUT',body:document.querySelector('#pac').value});alert(r.ok?'ذخیره شد':await r.text());await refresh();}
+async function systemOn(){const r=await fetch('/api/system/on',{method:'POST'});alert(r.ok?'فعال شد':await r.text());await refresh();}
+async function systemOff(){const r=await fetch('/api/system/off',{method:'POST'});alert(r.ok?'بازگردانی شد':await r.text());await refresh();}
+async function tunStart(){const r=await fetch('/api/tun/start',{method:'POST'});alert(r.ok?'TUN شروع شد':await r.text());await tunStatus();}
+async function tunStop(){const r=await fetch('/api/tun/stop',{method:'POST'});alert(r.ok?'TUN متوقف شد':await r.text());await tunStatus();}
+async function tunStatus(){const r=await fetch('/api/tun/status');const d=await r.json();document.querySelector('#tun').textContent=JSON.stringify(d,null,2);document.querySelector('#tunConfig').value=d.config||'';}
+async function saveTunConfig(){const v=document.querySelector('#tunConfig').value.trim();const r=await fetch('/api/tun/config',{method:'PUT',body:v});alert(r.ok?'مسیر ذخیره شد':await r.text());await tunStatus();}
+refresh();tunStatus();
+</script>
+</body>
+</html>

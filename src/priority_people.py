@@ -24,8 +24,11 @@ _INTERVIEW_TERM_RE=re.compile("|".join(re.escape(term) for term in INTERVIEW_TER
 _WORD_TERM_RE_CACHE: dict[str, re.Pattern[str]] = {}
 _UNSAFE_IDEA_TERMS = {"phi", "iit", "bci"}
 _MIND_CATEGORIES = {"mind_consciousness", "philosophy_of_mind", "cognitive_science"}
-_AI_PERSON_GROUPS = {"featured_ai_leaders", "ai_builders", "technology_strategists_and_industry_thinkers"}
-_MIND_PERSON_GROUPS = {"consciousness_and_mind_ai"}
+_AI_PERSON_GROUPS = {
+    "featured_ai_leaders", "ai_builders", "technology_strategists_and_industry_thinkers",
+    "ai_frontier_builders", "ai_research_and_foundations", "ai_education_and_practice",
+}
+_MIND_PERSON_GROUPS = {"consciousness_and_mind_ai", "mind_cognition"}
 _IDEA_SUBLANE_BY_NAME = {
     "consciousness": "ai_consciousness",
     "predictive_processing": "human_mind",
@@ -126,8 +129,17 @@ def _load_watchlist_people() -> list[dict[str, object]]:
         for group, cfg in people.items():
             if not isinstance(cfg, dict):
                 continue
+            group_name = str(group).strip().casefold()
+            # Keep editorial classification stable when the watchlist uses its
+            # current concise group names as well as historical aliases.
+            normalized_group = (
+                "ai_frontier_builders" if group_name == "ai_frontier_builders" else
+                "ai_research_and_foundations" if group_name == "ai_research_and_foundations" else
+                "mind_cognition" if group_name == "mind_cognition" else
+                group_name
+            )
             for name in cfg.get("names", []) or []:
-                rows.append({"name": str(name), "group": str(group), "priority": cfg.get("priority", 0)})
+                rows.append({"name": str(name), "group": normalized_group, "priority": cfg.get("priority", 0)})
     return rows
 
 def _term_pattern(term: str) -> re.Pattern[str]:

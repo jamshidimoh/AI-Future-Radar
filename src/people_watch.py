@@ -62,9 +62,15 @@ PERSON_DOMAIN_SIGNAL_TERMS = {
 
 def load_people_watchlist(path: str | Path) -> list[str]:
     payload = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
-    people = payload.get("people", {}) if isinstance(payload, dict) else {}
     names: list[str] = []
-    if isinstance(people, dict):
+    bootstrap_names = payload.get("bootstrap_names") if isinstance(payload, dict) else None
+    if isinstance(bootstrap_names, list):
+        for raw in bootstrap_names:
+            name = str(raw).strip()
+            if name and name not in names:
+                names.append(name)
+    people = payload.get("people", {}) if isinstance(payload, dict) else {}
+    if not names and isinstance(people, dict):
         for cfg in people.values():
             if not isinstance(cfg, dict):
                 continue

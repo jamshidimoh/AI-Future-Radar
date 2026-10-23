@@ -26,9 +26,11 @@ Selection: independent relevance/value logic and protected diversity. Generic sc
 ## Lane 4 — Voices / Perspectives
 Question: What are credible, influential people in these fields saying about the direction and implications of these changes?
 
-Focus: substantive interviews, talks, lectures, podcasts, debates, expert views, researcher/founder perspectives and high-value quotations. A person is not enough: the content must contain a substantive, mission-relevant idea or interpretation.
+Focus: substantive interviews, podcasts, talks, lectures, speeches, debates, attributed expert opinions, posts/threads, public statements and high-value quotations from researchers, founders and influential thinkers.
 
-Selection: independent Voices score based on substantive voice signal, person relevance, source authority, analytical value and recency. Excludes Reddit/community/aggregator/arXiv paths. The lane must not inherit the Normal News score floor.
+Discovery: the 51-person registry in `config/leader_watchlist.yaml` receives separate long-form voice, direct public-post/statement, and substantive activity/news query families. The 30-person `bootstrap_names` list is only the initial People baseline; it does not limit ongoing expert discovery. The query budget is bounded, but every watched person is given the three primary query paths before secondary variants.
+
+Selection: independent Voices score based on substantive content, person relevance, source authority, analytical value and recency. Up to two eligible distinct experts can be selected in a period, preferring two different people when both have valid evidence. Original X/Twitter posts can be considered direct attribution only when the source domain is actually X/Twitter; an unverified scrape does not become an authoritative source. Views are not excluded for disagreement: candidates are rejected only for irrelevance, weak attribution, duplication, unsupported claims, or failed editorial/language quality gates. The lane does not inherit the Normal News score floor. Reddit/community/arXiv routes remain excluded.
 
 ## Cross-lane rules
 
@@ -40,6 +42,8 @@ Selection: independent Voices score based on substantive voice signal, person re
 6. Tier-0 critical/priority protections remain orthogonal to the four editorial lanes.
 7. Normal News must not absorb or suppress a valid Technical Trend, Mind/Science/Future or Voices signal merely because its Normal score is below the Normal floor.
 8. Diversity is enforced within and across lanes so the radar does not become four copies of the same story.
+9. The delivered portfolio is capped at one genetics-led item and one medical/clinical-led item; a single story may count against both caps.
+10. Direct expert opinions and public statements are first-class discoverable formats, but attribution and evidence requirements are not relaxed.
 
 ## Editorial objective
 

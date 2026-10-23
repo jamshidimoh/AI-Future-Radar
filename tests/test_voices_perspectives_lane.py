@@ -100,12 +100,25 @@ def test_voice_lane_freshness_selects_newer_watched_expert_without_person_priori
 def test_voice_lane_is_independent_and_capped_at_one():
     items = [_voice("Interview A"), _voice("Interview B")]
     selected = choose_voices_candidate(items)
-    assert len(selected) == MAX_VOICES_PER_PERIOD == 1
+    assert len(selected) == MAX_VOICES_PER_PERIOD == 2
     assert selected[0]["editorial_lane"] == "voices_perspectives"
     assert selected[0]["normal_period_rank"] is None
     assert selected[0]["mind_period_rank"] is None
 
     
+
+def test_voice_lane_fills_two_slots_with_distinct_experts_before_second_post_from_same_person(monkeypatch):
+    monkeypatch.setattr(publication_guard, "check_before_publish", lambda *args, **kwargs: (True, "no_publication_conflict"))
+    a_new = _voice("New Sam Altman interview")
+    a_new.update({"watch_person": "Sam Altman", "leader": "Sam Altman", "person_name": "Sam Altman", "published": "2026-10-20T10:00:00+00:00"})
+    a_old = _voice("Older Sam Altman podcast")
+    a_old.update({"watch_person": "Sam Altman", "leader": "Sam Altman", "person_name": "Sam Altman", "published": "2026-10-19T10:00:00+00:00"})
+    b_new = _voice("Yann LeCun interview on AI world models")
+    b_new.update({"watch_person": "Yann LeCun", "leader": "Yann LeCun", "person_name": "Yann LeCun", "published": "2026-10-18T10:00:00+00:00"})
+    selected = choose_voices_candidate([a_old, a_new, b_new], max_items=2)
+    assert len(selected) == 2
+    assert {item["watch_person"] for item in selected} == {"Sam Altman", "Yann LeCun"}
+
 
 def test_voice_lane_uses_expert_registry_for_registered_podcast():
     item = {
@@ -251,4 +264,47 @@ def test_voice_lane_accepts_interview_when_source_evidence_contains_topic_anchor
         "_ai_link": True,
     })
     assert is_voices_candidate(item)
+
+def test_voice_lane_accepts_direct_social_post_from_x_as_primary_attribution():
+    item = {
+        "title": "Sam Altman on X: frontier AI needs stronger evaluation",
+        "summary": "The post discusses artificial intelligence evaluation and deployment risks.",
+        "mission_area": "ai_core",
+        "category": "ai",
+        "content_type": "social_post",
+        "source": "Google News (X)",
+        "source_domain": "https://x.com/",
+        "source_type": "news_aggregator",
+        "source_tier": 3,
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "person_name": "Sam Altman",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "leader_signal_classification": {"accepted": True, "direct_post": True, "context": True},
+    }
+    assert is_voices_candidate(item)
+    selected = choose_voices_candidate([item])
+    assert selected and selected[0]["content_type"] == "social_post"
+
+
+def test_voice_lane_does_not_treat_unverified_social_scrape_as_primary_source():
+    item = {
+        "title": "Sam Altman on X: frontier AI needs stronger evaluation",
+        "summary": "The post discusses artificial intelligence evaluation and deployment risks.",
+        "mission_area": "ai_core",
+        "category": "ai",
+        "content_type": "social_post",
+        "source": "Unknown social scrape",
+        "source_domain": "https://example.invalid/",
+        "source_type": "news_aggregator",
+        "source_tier": 3,
+        "watch_person": "Sam Altman",
+        "leader": "Sam Altman",
+        "person_name": "Sam Altman",
+        "is_leader_watch": True,
+        "leader_watch_protected": True,
+        "leader_signal_classification": {"accepted": True, "direct_post": True, "context": True},
+    }
+    assert not is_voices_candidate(item)
 

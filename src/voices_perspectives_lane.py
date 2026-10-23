@@ -14,10 +14,10 @@ from typing import Any
 from src.expert_registry import apply_expert_features
 from src.priority_people import matched_priority_people
 
-MAX_VOICES_PER_PERIOD = 1
+MAX_VOICES_PER_PERIOD = 2
 VOICES_RANK_WINDOW = 12
 
-VOICE_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a", "debate", "opinion", "essay", "commentary"}
+VOICE_TYPES = {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a", "debate", "opinion", "essay", "commentary", "tweet", "tweets", "social_post", "direct_statement", "statement", "thread", "post"}
 VOICE_SIGNALS = (r"\binterview\b", r"\bpodcast\b", r"\bconversation\b", r"\bfireside\b", r"\bq&a\b", r"\bdiscussion\b", r"\bdebate\b", r"\btalk\b", r"\blecture\b", r"\bkeynote\b", r"\bexpert view\b", r"\bopinion\b", r"\bcommentary\b", r"\bquote\b", r"\bsays\b", r"\bargues\b", r"مصاحبه", r"گفتگو", r"گفت‌وگو", r"سخنرانی", r"دیدگاه", r"نظر", r"نقل قول")
 PERSON_KEYS = ("watch_person", "person", "person_name", "leader", "leader_name", "expert", "expert_name", "author", "speaker", "guest", "interviewee", "researcher")
 MISSION_AREAS = {"ai", "ai_core", "convergence", "mind", "mind_cognition", "future", "future_governance"}
@@ -153,7 +153,11 @@ def is_voices_candidate(item: dict[str, Any]):
     except (TypeError, ValueError):
         source_tier = 3
     source_type = str(item.get("source_type") or item.get("type") or "").strip().casefold()
-    source_is_authoritative = source_tier <= 2 or source_type in {"official", "university", "scientific", "specialist", "expert_interviews", "research_lab"}
+    source_is_authoritative = (
+        source_tier <= 2
+        or source_type in {"official", "university", "scientific", "specialist", "expert_interviews", "research_lab"}
+        or _is_direct_social_source(item)
+    )
     classification = item.get("leader_signal_classification") or {}
     classified_interview = bool(isinstance(classification, dict) and classification.get("accepted") and classification.get("interview"))
     direct_interview = _direct_interview_signal(item)
@@ -250,6 +254,18 @@ def _publication_guard_conflict(item: dict[str, Any], *, title_only: bool = Fals
         return True, "preselection_guard_unavailable"
 
 
+def _is_direct_social_source(item: dict[str, Any]) -> bool:
+    """Treat a direct X/Twitter post as primary evidence of what its account said."""
+    ctype = str(item.get("content_type") or "").strip().casefold()
+    if ctype not in {"social_post", "tweet", "tweets", "thread", "direct_statement", "statement", "post"}:
+        return False
+    source_domain = " ".join(
+        str(item.get(key) or "")
+        for key in ("source_domain", "source_href", "publisher_url")
+    ).casefold()
+    return any(host in source_domain for host in ("x.com", "twitter.com"))
+
+
 def _already_published_conflict(item: dict[str, Any]) -> bool:
     allowed, reason = _publication_guard_conflict(item, title_only=False)
     if not allowed:
@@ -293,7 +309,29 @@ def choose_voices_candidate(candidates: Iterable[dict[str, Any]], *, existing_id
         ),
         reverse=True,
     )
-    selected = ranking_pool[:max(0, int(max_items))]
+    # Cover distinct experts first: the two publication slots must not be
+    # consumed by multiple posts from one person when another eligible expert
+    # is available. Additional independent items from a person remain eligible
+    # for subsequent runs and may fill a spare slot.
+    selected: list[dict[str, Any]] = []
+    selected_ids: set[int] = set()
+    covered_people: set[str] = set()
+    limit = max(0, int(max_items))
+    for item in ranking_pool:
+        if len(selected) >= limit:
+            break
+        people, _, _ = _expert_identity(item)
+        identity = next(iter(people), "") if people else str(
+            item.get("watch_person") or item.get("person_name") or item.get("leader") or ""
+        ).strip().casefold()
+        if identity and identity in covered_people:
+            continue
+        selected.append(item)
+        selected_ids.add(id(item))
+        if identity:
+            covered_people.add(identity)
+    if len(selected) < limit:
+        selected.extend(item for item in ranking_pool if id(item) not in selected_ids and len(selected) < limit)
     for rank, item in enumerate(selected, 1):
         item["voices_perspectives_lane_selected"] = True
         item["editorial_lane"] = "voices_perspectives"

@@ -4,13 +4,15 @@
 
 ## وضعیت محصول
 
-**وضعیت: اصلاحات کد ادغام شده‌اند؛ بسته‌شدن تولیدی همچنان در انتظار شواهد زنده است — ۲۰۲۶-۱۰-۱۹.** وضعیت رسمی: `CLOSURE PENDING`.
+**وضعیت: بسته‌شدن تولیدی در انتظار شواهد زنده است — ۲۰۲۶-۱۰-۲۱.** وضعیت رسمی: `CLOSURE PENDING`. انتشار پایدار بعدی تنها پس از موفقیت گیت تولیدی سه‌اجرایی فعال می‌شود.
 
 اصلاحات اخیر:
 - [PR #269](https://github.com/jamshidimoh/AI-Future-Radar/pull/269): نصب OmniRoute از commit ثابت‌شده، نصب وابستگی‌های لازم برای اسکریپت `prepare` و حفظ مسیر بازگشت محدودشده در صورت شکست.
 - [PR #271](https://github.com/jamshidimoh/AI-Future-Radar/pull/271): تشخیص `telegram_required` در NaraRouter به‌عنوان خطای احراز هویت در سطح ارائه‌دهنده؛ NaraRouter به‌صورت پیش‌فرض از auto-pool در OmniRoute کنار گذاشته شده و فقط پس از رفع مانع حساب، با `OMNIROUTE_ENABLE_NARA=1` قابل فعال‌سازی است.
 - [PR #272](https://github.com/jamshidimoh/AI-Future-Radar/pull/272): تثبیت قرارداد و تست‌ها برای سبد AI-first با هدف ترجیحی دو خبر AI؛ خبر دوم سهمیهٔ اجباری نیست و همچنان با کیفیت و پوشش Mind/Cognition، آینده‌پژوهی و همگرایی رقابت می‌کند.
-- [PR #262](https://github.com/jamshidimoh/AI-Future-Radar/pull/262) توازن AI و محدودیت حداکثر یک خبر ژنتیک‌محور را اعمال کرد؛ [PR #263](https://github.com/jamshidimoh/AI-Future-Radar/pull/263) Gemini و Ollama را از ارائه‌دهندگان runtime حذف کرد.
+- [PR #262](https://github.com/jamshidimoh/AI-Future-Radar/pull/262) توازن AI و سقف محتوای ژنتیک‌محور را اضافه کرد؛ [PR #263](https://github.com/jamshidimoh/AI-Future-Radar/pull/263) Gemini و Ollama را از runtime حذف کرد.
+- [PR #279–#282](https://github.com/jamshidimoh/AI-Future-Radar/pulls?q=is%3Apr+is%3Amerged) مسیر نصب OmniRoute، smoke test مبتنی بر JSON و بازیابی timeout را تقویت کردند؛ [PR #283](https://github.com/jamshidimoh/AI-Future-Radar/pull/283) محتوای سرگرمی بازی را از مأموریت رادار خارج کرد.
+- [PR #284](https://github.com/jamshidimoh/AI-Future-Radar/pull/284) فهرست کشف ۵۱ متخصص را از baseline بوت‌استرپ ۳۰ نفره جدا می‌کند، برای هر متخصص سه خانوادهٔ جست‌وجو می‌سازد، تا دو صدای خبره از افراد متمایز را انتخاب می‌کند و سقف یک خبر ژنتیک‌محور و یک خبر پزشکی‌محور را در مرز تحویل اعمال می‌کند.
 
 نسخهٔ PR #272 با **۹۹۷ تست موفق** و هر هفت گیت قطعی (Test Radar Quality، Production Quality Gate، Final Production Acceptance، Signal Engine CI، TypeSafe، Graphify و P1 Audit) بررسی شد؛ سپس در [commit `75c7ad2`](https://github.com/jamshidimoh/AI-Future-Radar/commit/75c7ad2aac13801ff9af39085fb7143f9861825e) ادغام شد.
 
@@ -24,10 +26,10 @@
 
 راهنمای کامل اجرای نسخه منتشرشده، تنظیم environment، اجرای Docker، نگهداری state، اتصال Telegram، ارتقا و rollback در `docs/USER_GUIDE.md` قرار دارد.
 
-برای شروع سریع، release مرجع ثبت‌شده فعلی `V1.0.1.On.Publish` است:
+برای شروع سریع، آخرین release ثبت‌شده `v1.0.2` است. نسخهٔ `v1.1.0` تا زمان موفقیت گیت بسته‌شدن تولیدی منتشرشده محسوب نمی‌شود:
 
 ```bash
-docker pull ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish
+docker pull ghcr.io/jamshidimoh/ai-future-radar:v1.0.2
 ```
 
 سپس container را با یک فایل `.env` و یک دایرکتوری persistent برای `/app/data` اجرا کنید. در صورت عمومی بودن Package، pull از GHCR بدون authentication امکان‌پذیر است.
@@ -38,6 +40,6 @@ docker pull ghcr.io/jamshidimoh/ai-future-radar:V1.0.1.On.Publish
 
 `ghcr.io/jamshidimoh/ai-future-radar`
 
-آخرین GitHub Release ثبت‌شده `V1.0.1.On.Publish` است. Workflow انتشار در `.github/workflows/publish-container.yml` قرار دارد و tagهای semantic را build، validate و publish می‌کند. Image دارای OCI source metadata، SBOM و provenance است.
+آخرین GitHub Release ثبت‌شده `v1.0.2` است. Workflow انتشار در `.github/workflows/publish-container.yml` برای ایجاد `v1.1.0` و `latest` تنها پس از موفقیت `Production Closure Gate` تنظیم شده است. Image دارای OCI source metadata، SBOM و provenance است.
 
 راهنمای انتشار در `docs/RELEASE.md` قرار دارد. قالب متغیرهای محیطی نمونه نیز در `.env.example` موجود است.

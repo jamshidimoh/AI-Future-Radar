@@ -1,53 +1,54 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 27,
-      "disabled_until": 1792795567.63,
+      "failures": 28,
+      "disabled_until": 1792824995.174,
       "last_error": "auth",
       "last_success": 0
     },
-    "openrouter:google/gemma-4-31b-it:free": {
+    "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
       "failures": 1,
-      "disabled_until": 1792712767.63,
+      "disabled_until": 1792760195.174,
+      "last_error": "model",
+      "last_success": 0
+    },
+    "kiraai:qwen3.8-flash": {
+      "failures": 1,
+      "disabled_until": 1792742195.174,
       "last_error": "quota",
       "last_success": 0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1792712767.63,
+      "disabled_until": 1792742195.174,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
+    "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1792730767.63,
-      "last_error": "model",
+      "disabled_until": 1792742195.174,
+      "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 20,
-      "disabled_until": 1792795567.63,
+      "failures": 21,
+      "disabled_until": 1792824995.174,
       "last_error": "auth"
     },
     "kiraai": {
       "failures": 1,
-      "disabled_until": 1792709296.429,
+      "disabled_until": 1792824995.174,
       "last_error": "wallet"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1792730767.63,
-      "last_error": "quota"
     }
   },
-  "updated_at": 1792709167.6297107,
+  "updated_at": 1792738595.1743894,
   "version": 1,
   "telemetry": {
-    "observed_failures": 19,
-    "observed_events": 38,
-    "updated_at": 1792709167.6297107
+    "observed_failures": 63,
+    "observed_events": 99,
+    "updated_at": 1792738595.1743894
   },
   "observed_failures": 0,
   "observed_events": 0

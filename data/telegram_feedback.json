@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792760790,
+  "updated_at": 1792781106,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19547,6 +19547,45 @@
       "why_it_matters": "اگر هوش مصنوعی بتواند به سطحی از آگاهی برسد، پیشگیری از تهدیدهای ممکن برای انسانها ممکن است. این موضوع ممکن است توجه سیاستگذاران، پژوهشگران و عموم مردم را به ضرورت تدوین چارچوبهای نظارتی و تحقیقاتی برای جلوگیری از خطرات احتمالی به عنوان «AI consciousness debate» عنوان داده شده است.",
       "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1fbjk1LXgtZ0ZkVTduNHR4QlM3bHlLaEF4YThQenRpWFJydVl4MFJ1UGVjWXZzWnp2WjRzT2M1WUstNlluQjlidVNMWWdqTk9JalhpaWxwZHNkUWNWN2U3MDNSVnVPa3NfaEdfbDdEQ2lweXRhQzE5SQ?oc=5",
       "posted_at": 1792760248
+    },
+    "-1004482051328:2148": {
+      "chat_id": -1004482051328,
+      "message_id": 2148,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The News International)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Geoffrey Hinton",
+      "watch_person": "Geoffrey Hinton",
+      "person_name": "Geoffrey Hinton",
+      "people_lane": true,
+      "title": "هینتون می‌گوید اگر به هوش مصنوعی اهمیت ندهیم، در خطر هستیم",
+      "summary": "Geoffrey Hinton در مصاحبه‌ای با The News International بیان کرد که اگر انسان‌ها به هوش مصنوعی توجه نکنند، ممکن است به‌سرعت به مشکلات جدی برسند. او تأکید کرد که مشارکت فعال انسان‌ها در توسعه و نظارت بر سیستم‌های هوش مصنوعی ضروری است تا از بروز خطرات جلوگیری شود.",
+      "why_it_matters": "عدم توجه به هوش مصنوعی می‌تواند منجر به ایجاد سیستم‌های خودکار بدون کنترل مناسب شود که خطرات جدی برای جامعه به‌وجود می‌آورند. حضور انسان در طراحی و نظارت بر این فناوری‌ها می‌تواند از تصمیم‌گیری‌های ناخواسته و پیامدهای منفی جلوگیری کند. بنابراین، آگاهی و مشارکت عمومی در حوزه هوش مصنوعی برای حفظ امنیت و مسئولیت‌پذیری فناوری حیاتی است.",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPdzdDTFNNRWkwY003WlRRSlRGckdIcnR5dEpQMTJRVjVVeDNRUHJ6ckFPbUM1Vkdndm1KWVB4UG9FRGpfYkRZcTdRMXlTU0RmYmFqOVh2aEtmejZSbUk5VVJiZXlFYTM1UEJpTlpIaHExb1k0UVFKWFFkOHlYZmplbnNCUW9YMVRiU2FOS2FkajJOeGswRTJ3UWttN1VjT3h5c1ZwSXZSbnVXWGc3WjZ3NUtjN1nSAbABQVVfeXFMUG1oZzNKT05CNGRJZmJKOGpJSGRSZW1tTDd1Wmg3Q2pjNlU2eEx6ZzVfNVY0TEZ0aHJIaEQ5ejd6QmxKZGhaWndIVlF5bmp1bE1ldlE4SjczSk14SldhY3ZFX1JHMDBnUGlyWkFIWVJBc0dVZHNXM0dqLWFVamRiYkZua2lGR0tIdmFRem1vYUlPY1hheGxyU0ZXdEZ3eWdrSzJZN2R5VTYxRERtamYxeGU?oc=5",
+      "posted_at": 1792780699
+    },
+    "-1004482051328:2149": {
+      "chat_id": -1004482051328,
+      "message_id": 2149,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "مصاحبه با رهبری اینتل درباره تقاضا برای چیپ‌های هوش مصنوعی و چالش‌های تولید",
+      "summary": "در مصاحبه‌ای که توسط Dwarkesh Patel انجام شد، مدیر ارشد فناوری Pushkar Ranade درباره تقاضای روزافزون برای چیپ‌های هوش مصنوعی و درس‌های به‌دست‌آمده از فرایند 10 نانو متر صحبت کرد. او اشاره کرد که Intel در تلاش است تا با بهره‌گیری از فناوری Terafab و بهبود خطوط تولید، به سرعتی مشابه TSMC برسد. Patel گزارش داد که بازدید از پیشرفته‌ترین کارخانه Intel، نشان داد که شرکت در مسیر بهبود کارایی و کاهش هزینه‌های تولید است.",
+      "why_it_matters": "اطلاعاتی که در این مصاحبه به اشتراک گذاشته شد، نشان می‌دهد که Intel در حال نزدیک شدن به رقابت با TSMC در زمینه تولید چیپ‌های AI است؛ این امر می‌تواند به کاهش وابستگی بازار به تولیدکنندگان خارجی و افزایش امنیت تأمین فناوری منجر شود. بهبود کارایی خطوط 10 نانو و استفاده از Terafab می‌تواند هزینه‌های تولید را تا 20٪ کاهش دهد، که برای شرکت‌های تولیدکننده چیپ و سرمایه‌گذاران فرصت‌های جدیدی ایجاد می‌کند. در نهایت، این پیشرفت‌ها می‌توانند سرعت توسعه محصولات هوش مصنوعی را در بازارهای مختلف تسریع کنند.",
+      "link": "https://www.techmeme.com/261023/p8#a261023p8",
+      "posted_at": 1792780841
     }
   }
 }

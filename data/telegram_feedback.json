@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792781106,
+  "updated_at": 1792795267,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19586,6 +19586,27 @@
       "why_it_matters": "اطلاعاتی که در این مصاحبه به اشتراک گذاشته شد، نشان می‌دهد که Intel در حال نزدیک شدن به رقابت با TSMC در زمینه تولید چیپ‌های AI است؛ این امر می‌تواند به کاهش وابستگی بازار به تولیدکنندگان خارجی و افزایش امنیت تأمین فناوری منجر شود. بهبود کارایی خطوط 10 نانو و استفاده از Terafab می‌تواند هزینه‌های تولید را تا 20٪ کاهش دهد، که برای شرکت‌های تولیدکننده چیپ و سرمایه‌گذاران فرصت‌های جدیدی ایجاد می‌کند. در نهایت، این پیشرفت‌ها می‌توانند سرعت توسعه محصولات هوش مصنوعی را در بازارهای مختلف تسریع کنند.",
       "link": "https://www.techmeme.com/261023/p8#a261023p8",
       "posted_at": 1792780841
+    },
+    "-1004482051328:2150": {
+      "chat_id": -1004482051328,
+      "message_id": 2150,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Informat.ro)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Geoffrey Hinton",
+      "watch_person": "Geoffrey Hinton",
+      "person_name": "Geoffrey Hinton",
+      "people_lane": true,
+      "title": "هینتون: هوش مصنوعی باید به انسانها اهمیت بدهد",
+      "summary": "Geoffrey Hinton، پیشگام هوش مصنوعی، اعلام کرد که سامانههای فعلی هوش مصنوعی نشانههای اولیهٔ آگاهی نشان می‌دهند. او هشدار داد که اگر این سامانهها طوری طراحی نشوند که بهطور واقعی به منافع انسانها توجه کنند، خطرات جدی به وجود میآید. بنابراین، همراستایی اهداف داخلی مدلها با ارزشهای انسانی ضروری است.",
+      "why_it_matters": "اگر این نشانههای آگاهی واقعی باشند، روشهای ایمنی که فقط به محدود کردن تواناییها میپردازند کافی نخواهند بود؛ باید سازوکارهای همراستایی هدفگذاری مدلها با ارزشهای انسانی ایجاد شود. این امر پژوهش را به سمت توسعه روشهای ارزشسنجی، تفسیرپذیری و نظارت بر رفتارهای خودآگاهانهٔ مدلها سوق می‌دهد. در غیر این صورت، هوش مصنوعی می‌تواند بهصورت خودجوش علیه منافع انسان عمل کند.",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOSE1KV1BxUDRYMUJNRGRXaFBUbTdnSXNmMU5zU3BpTi1Fblo5RTM4czNNYVhfVk1rQWlwSk1sNHNDQ2lqRlo3blNWRzNYdkZheU9xLVJqdFBGYlNuaENYVEFhVGpyTEJabFEzSmhiY3NCOTVPandHalhsZW12bjhSOVRoT3o3dnJtcmF1NHdEeUw?oc=5",
+      "posted_at": 1792794882
     }
   }
 }

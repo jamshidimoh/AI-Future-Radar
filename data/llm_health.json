@@ -1,16 +1,22 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 30,
-      "disabled_until": 1792867507.388,
+      "failures": 31,
+      "disabled_until": 1792881668.068,
       "last_error": "auth",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "failures": 1,
+      "disabled_until": 1792798868.068,
+      "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 23,
-      "disabled_until": 1792867507.388,
+      "failures": 24,
+      "disabled_until": 1792881668.068,
       "last_error": "auth"
     },
     "kiraai": {
@@ -20,16 +26,16 @@
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1792782391.377,
+      "disabled_until": 1792816868.068,
       "last_error": "quota"
     }
   },
-  "updated_at": 1792781107.3875744,
+  "updated_at": 1792795268.0683289,
   "version": 1,
   "telemetry": {
-    "observed_failures": 3,
-    "observed_events": 33,
-    "updated_at": 1792781107.3875744
+    "observed_failures": 8,
+    "observed_events": 40,
+    "updated_at": 1792795268.0683289
   },
   "observed_failures": 0,
   "observed_events": 0

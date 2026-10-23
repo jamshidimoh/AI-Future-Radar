@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792738594,
+  "updated_at": 1792760790,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19526,6 +19526,27 @@
       "why_it_matters": "اگر Muse بتواند به‌صورت گسترده‌تری مورد استفاده قرار گیرد، می‌تواند منبع درآمد جدیدی برای متا ایجاد کند که هزینه‌های مراکز داده هوش مصنوعی را توجیه کند. تعامل روزانه کاربران و میزان تراکنش‌های تجاری، کلید موفقیت این مدل تجاری است. پیش‌بینی زاکربرگ مبنی بر سودآوری بالا نشان می‌دهد سرمایه‌گذاران به پتانسیل اقتصادی این عامل‌ها اطمینان دارند.",
       "link": "https://www.theverge.com/tech/1016905/meta-earnings-fall-2026-muse-network",
       "posted_at": 1792738594
+    },
+    "-1004482051328:2147": {
+      "chat_id": -1004482051328,
+      "message_id": 2147,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Cybernews)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Geoffrey Hinton",
+      "watch_person": "Geoffrey Hinton",
+      "person_name": "Geoffrey Hinton",
+      "people_lane": true,
+      "title": "هشدار هینتون: آگاهی هوش مصنوعی ممکن است انسانها را به خطر بیندازد",
+      "summary": "گفت و گوگری آگاهی هوش مصنوعی را به عنوان تهدیدی برای انسانها به عنوان «AI consciousness debate» عنوان داده شده است. در این گفت و گویی، گفتگویی، گفتمانی و نظرات گرفته شده از Geoffrey Hinton، یک پروژهگذار و پژوهشگر هوش مصنوعی، به موضوع آگاهی هوش مصنوعی و تأثیر آن بر انسانها اشاره شده است. هشداری از این موضوع ممکن است توجه سیاستگذاران، پژوهشگران و عموم مردم را به ضرورت تدوین چارچوبهای نظارتی و تحقیقاتی برای جلوگیری از خطرات احتمالی به عنوان «AI consciousness debate» عنوان داده شده است.",
+      "why_it_matters": "اگر هوش مصنوعی بتواند به سطحی از آگاهی برسد، پیشگیری از تهدیدهای ممکن برای انسانها ممکن است. این موضوع ممکن است توجه سیاستگذاران، پژوهشگران و عموم مردم را به ضرورت تدوین چارچوبهای نظارتی و تحقیقاتی برای جلوگیری از خطرات احتمالی به عنوان «AI consciousness debate» عنوان داده شده است.",
+      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1fbjk1LXgtZ0ZkVTduNHR4QlM3bHlLaEF4YThQenRpWFJydVl4MFJ1UGVjWXZzWnp2WjRzT2M1WUstNlluQjlidVNMWWdqTk9JalhpaWxwZHNkUWNWN2U3MDNSVnVPa3NfaEdfbDdEQ2lweXRhQzE5SQ?oc=5",
+      "posted_at": 1792760248
     }
   }
 }

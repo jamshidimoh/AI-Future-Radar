@@ -1,15 +1,9 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 36,
-      "disabled_until": 1792999035.373,
+      "failures": 37,
+      "disabled_until": 1793019699.361,
       "last_error": "auth",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1792916235.373,
-      "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
@@ -18,37 +12,49 @@
       "last_error": "model",
       "last_success": 0
     },
+    "kiraai:qwen3.8-flash": {
+      "failures": 1,
+      "disabled_until": 1792936899.361,
+      "last_error": "quota",
+      "last_success": 0
+    },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1792916235.373,
+      "disabled_until": 1792936899.361,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "groq:openai/gpt-oss-20b": {
+      "failures": 1,
+      "disabled_until": 1792936899.361,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1792916235.373,
+      "disabled_until": 1792936899.361,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 29,
-      "disabled_until": 1792999035.373,
+      "failures": 30,
+      "disabled_until": 1793019699.361,
       "last_error": "auth"
     },
     "kiraai": {
       "failures": 1,
-      "disabled_until": 1792931368.998,
+      "disabled_until": 1793019699.361,
       "last_error": "wallet"
     }
   },
-  "updated_at": 1792912635.3731802,
+  "updated_at": 1792933299.3613718,
   "version": 1,
   "telemetry": {
-    "observed_failures": 13,
-    "observed_events": 28,
-    "updated_at": 1792912635.3731802
+    "observed_failures": 15,
+    "observed_events": 32,
+    "updated_at": 1792933299.3613718
   },
   "observed_failures": 0,
   "observed_events": 0

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1792966817,
+  "updated_at": 1793000030,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19675,6 +19675,27 @@
       "content_type": "education",
       "category": "ai",
       "posted_at": 1792864749
+    },
+    "-1004482051328:2155": {
+      "chat_id": -1004482051328,
+      "message_id": 2155,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Economic Times)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Andrew Ng",
+      "watch_person": "Andrew Ng",
+      "person_name": "Andrew Ng",
+      "people_lane": true,
+      "title": "مصاحبه با Andrew Ng دربارهٔ ترس از هوش مصنوعی و تأثیر آن بر جذب سرمایه",
+      "summary": "Andrew Ng در مصاحبهای با The Economic Times دربارهٔ ترس از هوش مصنوعی و اینکه آیا این ترس برای جذب سرمایه است، صحبت کرد. مصاحبه به بررسی ادعاهای مرتبط با ترس از فناوریهای نوظهور میپردازد. او در این گفتگو به موضوعی که در حوزه AI مطرح است، اشاره می‌کند.",
+      "why_it_matters": "درک اینکه آیا ترس از هوش مصنوعی برای جذب سرمایه استفاده می‌شود، برای سرمایهگذاران و سیاستگذاران مهم است. این موضوع می‌تواند بر تصمیمگیریهای اقتصادی تأثیر بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQYVFuUW1fWmZ2Vk9tYzV5MExpY1FnTDdMbWo0V21yZlAtNHpBcndjVHZaZkVvNXJMRGhyVUZCei1MOUdOZFRBTUkzUmFwYUk5eTFTbzY4SWlEaGF6VVFhSl9BT0NjVHVHRl9JY1JOODh0VkFIZlJPNS1iMk5pb3Z4cnhzaFNqVUNPTXEtUU54MkJobUVrV1VwcUI3TUloUW5lRzRGMVAwdWtvdWxPNUhlTWZTYlFlT0pBN1AtdVRBTdIBxAFBVV95cUxOM1VDQmM3LXJ4OURwSmZBbmdFS0tydkVFUTBiTjdPSFVac2ZPal9MWUFTX1p2MXpFbk53VFJ4bllOVE5nOExvTFpnbHdRRFVFcmp1U3Z4YTFKS0U2dG1DVG10NXgwNi1FQjNnOVBRN1RheHl3ano4TC05eXg0ZnBET04wbDNEQXRiQnRaX3AtR09SeWlHUXlMT3VvNm1CZmpPd09XT1JUMkprdkNYYjVoMFRFajlkeHRzVGg2NlVCa2tDSlVm?oc=5",
+      "posted_at": 1792999505
     }
   }
 }

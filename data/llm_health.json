@@ -12,21 +12,9 @@
       "last_error": "model",
       "last_success": 0
     },
-    "kiraai:glm-5.3-flash-free": {
-      "failures": 1,
-      "disabled_until": 1793029443.177,
-      "last_error": "quota",
-      "last_success": 0
-    },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1793029443.177,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-31b-it:free": {
-      "failures": 1,
-      "disabled_until": 1793029443.177,
+      "disabled_until": 1793049836.477,
       "last_error": "rate_limit",
       "last_success": 0
     }
@@ -43,12 +31,12 @@
       "last_error": "wallet"
     }
   },
-  "updated_at": 1793025843.1766322,
+  "updated_at": 1793046236.4771938,
   "version": 1,
   "telemetry": {
-    "observed_failures": 13,
-    "observed_events": 31,
-    "updated_at": 1793025843.1766322
+    "observed_failures": 4,
+    "observed_events": 13,
+    "updated_at": 1793046236.4771938
   },
   "observed_failures": 0,
   "observed_events": 0

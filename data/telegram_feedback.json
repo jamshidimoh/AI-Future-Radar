@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793025842,
+  "updated_at": 1793046235,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19696,6 +19696,27 @@
       "why_it_matters": "درک اینکه آیا ترس از هوش مصنوعی برای جذب سرمایه استفاده می‌شود، برای سرمایهگذاران و سیاستگذاران مهم است. این موضوع می‌تواند بر تصمیمگیریهای اقتصادی تأثیر بگذارد.",
       "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQYVFuUW1fWmZ2Vk9tYzV5MExpY1FnTDdMbWo0V21yZlAtNHpBcndjVHZaZkVvNXJMRGhyVUZCei1MOUdOZFRBTUkzUmFwYUk5eTFTbzY4SWlEaGF6VVFhSl9BT0NjVHVHRl9JY1JOODh0VkFIZlJPNS1iMk5pb3Z4cnhzaFNqVUNPTXEtUU54MkJobUVrV1VwcUI3TUloUW5lRzRGMVAwdWtvdWxPNUhlTWZTYlFlT0pBN1AtdVRBTdIBxAFBVV95cUxOM1VDQmM3LXJ4OURwSmZBbmdFS0tydkVFUTBiTjdPSFVac2ZPal9MWUFTX1p2MXpFbk53VFJ4bllOVE5nOExvTFpnbHdRRFVFcmp1U3Z4YTFKS0U2dG1DVG10NXgwNi1FQjNnOVBRN1RheHl3ano4TC05eXg0ZnBET04wbDNEQXRiQnRaX3AtR09SeWlHUXlMT3VvNm1CZmpPd09XT1JUMkprdkNYYjVoMFRFajlkeHRzVGg2NlVCa2tDSlVm?oc=5",
       "posted_at": 1792999505
+    },
+    "-1004482051328:2156": {
+      "chat_id": -1004482051328,
+      "message_id": 2156,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (36Kr)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "Jensen Huang: آینده متعلق به نوآورانی است که دنیای فیزیکی را با هوش مصنوعی ترکیب می‌کنند",
+      "summary": "Jensen Huang در مصاحبهای جدید با انتشار در 36Kr، آینده فناوری را متعلق به نوآورانی میداند که دنیای فیزیکی را با هوش مصنوعی یکپارچه می‌سازند. او معتقد است این رویکرد کلیدی برای تعریف عصر بعدی هوش مصنوعی است. این دیدگاه بر اهمیت پیوند عمیق بین الگوریتمهای هوشمند و محیطهای واقعی تأکید دارد.",
+      "why_it_matters": "این دیدگاه مسیر توسعه هوش مصنوعی را از فضای مجازی به سمت کاربردهای عملی در دنیای واقعی هدایت می‌کند. برای شرکتها و توسعهدهندگان، تمرکز بر یکپارچهسازی فیزیکی می‌تواند مزیت رقابتی در عصر جدید AI ایجاد کند. این رویکرد نشان می‌دهد که موفقیت آینده در گرو توانایی اتصال داده‌های دیجیتال به تعاملات فیزیکی است.",
+      "link": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE05UHJiLTZzWmNrQkR6cm5yM21RS29SWW1iS21vSVE4Y2NhVDlNTWRid3dLR2J6bzk2TURMbUxqRkVFUnR2VmxsS0RKUWJIUEx1UXdV?oc=5",
+      "posted_at": 1793046033
     }
   }
 }

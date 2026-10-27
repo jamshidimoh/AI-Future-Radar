@@ -186,23 +186,8 @@ def mission_area(item: dict[str, Any]) -> str:
         item["mission_area"] = "unclassified"
         item["_mission_area_rejected"] = "mind_cognition_without_content_evidence"
         return "unclassified"
-    if explicit in _AREA_MAP.values():
-        # A preassigned lane is metadata, not evidence. Revalidate it against
-        # title/summary/description/tags/keywords before using it to satisfy a
-        # mission target. This is especially important during recovery, where
-        # one stale lane label can falsely satisfy a required portfolio slot.
-        content_text = _mind_cognition_evidence_text(item).strip()
-        if not content_text:
-            # Content-free historical state rows keep their recorded area so
-            # rotation accounting remains stable.
-            return explicit
-        content_area = _keyword_match_area(item, content_only=True)
-        if content_area:
-            item["mission_area"] = content_area
-            return content_area
-        item["mission_area"] = "unclassified"
-        item["_mission_area_rejected"] = f"{explicit}_without_content_evidence"
-        return "unclassified"
+    if explicit in _AREA_MAP.values() or explicit in {"unclassified", "unknown"}:
+        return explicit
     if explicit in {"unclassified", "unknown"}:
         return explicit
     # Specific mission evidence must outrank the legacy broad category label.
@@ -244,6 +229,13 @@ def _keyword_match_area(item: dict[str, Any], *, content_only: bool = False) -> 
                 continue
             matches.append((len(key), area))
     return max(matches, key=lambda x: x[0])[1] if matches else None
+
+
+def mission_area_from_content(item: dict[str, Any]) -> str:
+    """Classify an item from editorial content only, ignoring lane/category metadata."""
+    if _is_gaming_content(item):
+        return "excluded_gaming"
+    return _keyword_match_area(item, content_only=True) or "unclassified"
 
 
 def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:

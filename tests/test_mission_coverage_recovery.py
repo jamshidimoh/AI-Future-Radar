@@ -298,3 +298,92 @@ def test_mission_recovery_uses_one_vacant_slot_for_higher_priority_mind_before_c
     assert recovered[0][0]["mission_area"] == "mind_cognition"
     assert recovered[0][0]["title"] == "AI and cognitive science"
 
+
+
+def test_mission_recovery_counts_distinct_areas_not_duplicate_ai_core_items(monkeypatch, capsys):
+    _disable_history_dedup(monkeypatch)
+    from src import unified_editorial_selection
+
+    contract = unified_editorial_selection.load_editorial_contract()
+    contract["max_posts"] = 3
+    # Exercise the production failure shape: a larger AI-core target must not
+    # let duplicate AI-core recoveries displace Mind/Cognition or Convergence.
+    contract["ai_core_target_min"] = 2
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 0
+    contract["convergence_target"] = 1
+    monkeypatch.setattr(unified_editorial_selection, "load_editorial_contract", lambda: dict(contract))
+
+    candidates = [
+        {"title": "AI core one", "mission_area": "ai_core", "link": "https://example.invalid/ai-1", "source": "OpenAI", "source_tier": 1, "editorial_score": 90},
+        {"title": "AI core two", "mission_area": "ai_core", "link": "https://example.invalid/ai-2", "source": "Anthropic", "source_tier": 1, "editorial_score": 89},
+        {"title": "Broken convergence summary", "mission_area": "convergence", "link": "https://example.invalid/conv-bad", "source": "Nature", "source_tier": 1, "editorial_score": 90},
+        {"title": "Valid convergence replacement", "mission_area": "convergence", "link": "https://example.invalid/conv-good", "source": "MIT", "source_tier": 1, "editorial_score": 88},
+        {"title": "Machine consciousness", "mission_area": "mind_cognition", "link": "https://example.invalid/mind", "source": "Quanta Magazine", "source_tier": 1, "editorial_score": 87},
+    ]
+
+    def summarize(item):
+        if item["title"] == "Broken convergence summary":
+            return None
+        return {"summary": f"Valid summary for {item['title']}"}
+
+    recovered = _mission_coverage_recovery(
+        [],
+        candidates,
+        lambda items, **_kwargs: [items[0]],
+        summarize,
+        2,
+        2,
+        {"replacement_buffer": 3},
+        set(),
+    )
+
+    output = capsys.readouterr().out
+    areas = [item["mission_area"] for item, _summary in recovered]
+    assert len(recovered) == 3
+    assert len(set(areas)) == 3
+    assert set(areas) == {"ai_core", "mind_cognition", "convergence"}
+    assert "title=Broken convergence summary status=failed" in output
+    assert "title=Valid convergence replacement status=recovered" in output
+    assert "missing_lanes=3" in output
+    assert "recovered=3 status=ok" in output
+
+
+def test_mission_recovery_does_not_allow_summary_to_relabel_candidate_area(monkeypatch, capsys):
+    _disable_history_dedup(monkeypatch)
+    from src import unified_editorial_selection
+
+    contract = unified_editorial_selection.load_editorial_contract()
+    contract["ai_core_target_min"] = 0
+    contract["mind_cognition_target"] = 1
+    contract["mind_future_target"] = 0
+    contract["convergence_target"] = 0
+    monkeypatch.setattr(unified_editorial_selection, "load_editorial_contract", lambda: dict(contract))
+
+    candidate = {
+        "title": "AI and consciousness",
+        "mission_area": "mind_cognition",
+        "link": "https://example.invalid/mind-classification",
+        "source": "Nature",
+        "source_tier": 1,
+        "editorial_score": 90,
+    }
+    recovered = _mission_coverage_recovery(
+        [],
+        [candidate],
+        lambda items, **_kwargs: [items[0]],
+        lambda _item: {
+            "summary": "Valid summary",
+            "mission_area": "ai_core",
+            "category": "ai",
+        },
+        1,
+        1,
+        {"replacement_buffer": 1},
+        set(),
+    )
+
+    output = capsys.readouterr().out
+    assert len(recovered) == 1
+    assert recovered[0][0]["mission_area"] == "mind_cognition"
+    assert "area=mind_cognition" in output

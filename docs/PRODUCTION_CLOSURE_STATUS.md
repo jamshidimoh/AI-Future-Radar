@@ -2,6 +2,18 @@
 
 Status date: 2026-10-19
 
+Status date: 2026-10-27
+
+## Current gate state — 2026-10-27
+
+- **Release state: CLOSURE PENDING.** No v1.1.0 release has been published; release automation remains gated on the live closure workflow.
+- PR #284 merged: expert discovery now uses the extended 51-person roster, independent voice/direct-statement queries, and medical/genetics portfolio controls.
+- PR #285 merged: mission recovery targets distinct lane groups, counts distinct recovered areas, retries an eligible replacement after QA failure, and preserves system-owned classification metadata against summary output.
+- Live production evidence before the recovery fix was not healthy: runs #1544, #1545, and #1546 failed the runtime acceptance gate for zero delivery, incomplete Tier-0 fallback accounting, and inconsistent distinct-area coverage respectively.
+- The release gate remains authoritative. Production completion requires three consecutive successful live runs on the same application-code fingerprint, confirmed publication/state evidence, and all closure-contract checks; successful CI alone does not close production.
+
+Previous verification snapshots below are historical evidence and must not be interpreted as current production closure.
+
 ## Current verification snapshot — 2026-10-19 (checked through the current persisted repository state)
 
 ### Changes merged to main

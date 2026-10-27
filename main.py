@@ -664,9 +664,9 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                 )
                 continue
 
-            # Summary/repair output is untrusted with respect to system-owned
-            # editorial classification. Preserve the pre-summary lane metadata so
-            # a model response cannot silently move a recovered item to another lane.
+            # Freeze the content-evidenced lane before summary repair. The model
+            # may improve prose but cannot change which mission target this item fills.
+            candidate_area = _area(candidate, require_content=True)
             classification_fields = (
                 "mission_area", "category", "editorial_lane",
                 "protected_editorial_lane", "lane", "mind_lane_selected",
@@ -705,7 +705,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                     candidate[key] = classification_snapshot[key]
                 else:
                     candidate.pop(key, None)
-            actual_area = _area(candidate, require_content=True)
+            actual_area = candidate_area
             if actual_area not in allowed_areas or actual_area in recovered_areas:
                 lane_processing_failure = True
                 print(

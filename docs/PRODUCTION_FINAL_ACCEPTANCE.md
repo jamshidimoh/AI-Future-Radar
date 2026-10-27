@@ -15,6 +15,7 @@ This document is the release boundary for declaring the repository production-co
 - [x] Historical source usage is a preference signal, not a hard exclusion.
 - [x] Mission coverage gives eligible convergence, mind/cognition, future/governance and research candidates explicit opportunities without fabricating missing coverage.
 - [x] Mission-recovery attempts are de-duplicated by mission-area group; distinct-area coverage counts recovered areas rather than items, and LLM summary output cannot overwrite system-owned lane classification.
+- [x] Mission-recovery candidates must match a required lane using title/summary/description/tags/keywords; stale upstream mission/category labels cannot manufacture Mind/Cognition or Convergence coverage. Normal portfolio routing remains backward-compatible.
 - [x] Community/aggregator sources are excluded from the normal portfolio according to the mission contract.
 - [x] Protected leader/interview stories are exempt only through the explicit Tier-0/protected routing contract and still pass Story Identity and publication-quality checks.
 - [x] Protected-source policy is explicit in `config/production_contract.yaml` and `config/mission_policy.yaml`; protected sources remain priority candidates rather than relevance/quality bypasses.

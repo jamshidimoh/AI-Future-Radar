@@ -166,3 +166,35 @@ def test_unbounded_retry_after_is_not_retried(monkeypatch):
 
     assert result is False
     assert len(calls) == 1
+
+
+def test_retry_after_over_previous_thirty_second_cap_is_honored(monkeypatch):
+    responses = [_rate_limited(45), _success(891)]
+    sleeps = []
+
+    monkeypatch.setattr(telegram.requests, "post", lambda *args, **kwargs: responses.pop(0))
+    monkeypatch.setattr(telegram.time, "sleep", sleeps.append)
+
+    result = telegram._send_text_full("token", "-100123", "خبر معتبر", preflight=False)
+
+    assert result["message_id"] == 891
+    assert sleeps == [46]
+
+
+def test_explicit_429_retries_never_exceed_total_wait_budget(monkeypatch):
+    calls = []
+    sleeps = []
+
+    def post(*args, **kwargs):
+        calls.append((args, kwargs))
+        return _rate_limited(120)
+
+    monkeypatch.setattr(telegram.requests, "post", post)
+    monkeypatch.setattr(telegram.time, "sleep", sleeps.append)
+
+    result = telegram._send_text_full("token", "-100123", "خبر معتبر", preflight=False)
+
+    assert result is False
+    assert sleeps == [121, 123]
+    assert sum(sleeps) <= telegram.MAX_TELEGRAM_RATE_LIMIT_WAIT_SECONDS
+    assert len(calls) == 3

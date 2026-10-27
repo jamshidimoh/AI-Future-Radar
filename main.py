@@ -667,6 +667,12 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             # Freeze the content-evidenced lane before summary repair. The model
             # may improve prose but cannot change which mission target this item fills.
             candidate_area = _area(candidate, require_content=True)
+            # The deterministic fallback can return the original pool object
+            # rather than the selector's reclassified copy. Stamp the
+            # content-evidenced lane before summary generation so both the
+            # serialized object and the acceptance telemetry agree.
+            if candidate_area in allowed_areas:
+                candidate["mission_area"] = candidate_area
             classification_fields = (
                 "mission_area", "category", "editorial_lane",
                 "protected_editorial_lane", "lane", "mind_lane_selected",

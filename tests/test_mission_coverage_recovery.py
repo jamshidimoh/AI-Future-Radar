@@ -323,7 +323,7 @@ def test_mission_recovery_counts_distinct_areas_not_duplicate_ai_core_items(monk
     ]
 
     def summarize(item):
-        if item["title"] == "Broken convergence summary":
+        if item["title"] == "Broken quantum summary":
             return None
         return {"summary": f"Valid summary for {item['title']}"}
 

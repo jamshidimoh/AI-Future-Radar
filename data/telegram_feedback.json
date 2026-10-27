@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793109685,
+  "updated_at": 1793132229,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19928,6 +19928,63 @@
       "why_it_matters": "تکرار ۹۱ بار کاروسل نشان می‌دهد که آزمون‌های مکرر می‌تواند جزئیات تجربه کاربری را به‌دقت بهینه کند. ترکیب مهارت‌های فنی (مانند شیدر علف) با طراحی، به تیم‌ها امکان می‌دهد ایده‌ها را سریعاً به محصول قابل استفاده تبدیل کنند. هشدار دربارهٔ استفادهٔ بی‌هدف از هوش مصنوعی در تصویرسازی، نشان می‌دهد که بدون ارزیابی دقیق، فناوری‌های نوین می‌توانند ارزش افزوده‌ای نداشته باشند و حتی تجربه کاربری را خراب کنند.",
       "link": "https://www.youtube.com/watch?v=eojywvxqoLc",
       "posted_at": 1793109685
+    },
+    "-1004482051328:2168": {
+      "chat_id": -1004482051328,
+      "message_id": 2168,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - 80,000 Hours",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "title": "چهار راه برای کند کردن پیشرفت هوش مصنوعی و یک راهی که قطعاً کار نمی‌کند",
+      "summary": "Luisa Rodriguez در پادکست 80,000 Hours چهار راه برای کند کردن پیشرفت هوش مصنوعی را بررسی می‌کند: ۱) ایجاد نقاط کنترل امنیتی برای مدل‌هایی که می‌توانند هک کنند، بدون نظارت کار کنند یا سلاح‌های زیستی بسازند؛ ۲) محدود کردن قدرت محاسباتی به‌عنوان حد سرعت توسعه؛ ۳) جلوگیری از استفاده هوش مصنوعی برای ساخت مدل‌های قدرتمندتر؛ ۴) توقف کامل توسعه. او اشاره می‌کند که OpenAI مدل Astra را به‌دلیل توانایی‌های هک‌کردن‌اش متوقف کرد اما در نهایت منتشر کرد، که نشان می‌دهد رقابت شرکت‌ها باعث عدم اعتماد به تصمیمات ایمنی می‌شود.",
+      "description": "Two-thirds of Americans think AI is moving too fast. So do the people building it. So why the hell isn’t anyone slowing down?\n\nWe can’t tell when models are too dangerous. We mostly don’t know how they work. We don’t know how to make them do what we want. And our two main safety checks — testing behaviour and monitoring their 'thoughts' — are breaking down.\n\nYet we’re racing to build more powerful AI anyway, faster every year. And it’s only going to accelerate as AI itself gets better and better at building the next generation of models.\n\nEarlier this year, OpenAI found its new model, Astra, was alarmingly good at hacking, and did something companies almost never do: paused its biggest training project. But it released Astra anyway, even though tests couldn't prove if it was safe.\n\nThat's the problem with leaving it up to the companies. We can't trust them to act in our best interest because the competitive pressures for them to race ahead are too strong.\n\nSo what’s the solution? Luisa Rodriguez evaluates the likely candidates:\n\n1. Safety checkpoints when new models can hack, work unsupervised, or build bioweapons\n2. Restricting computing power as a speed limit on AI development\n3. Preventing AI from being used to create more powerful AI\n4. Pausing development altogether\n\nNone of these will be easy.\n\nBut with AI hacking increasingly widespread, we’re already seeing the consequences of doing nothing — and this is just the beginning. Slowing down could give us time to understand why models are so hard to control; secure hospitals, banks, and power grids against hacks; and help society adapt.\n\nEveryone should be a part of this conversation, not just CEOs and policymakers. The rules we end up with will be shaped by what voters ask for, and could determine the future _we all_ live in.\n\n_This episode was recorded on October 21, 2026._\n\n*Links to learn more and full transcript:* https://80k.info/AI-slowdown\n\nChapters:\n• Everyone says AI is moving too fast (00:00:00)\n• What exactly would we be slowing down? (00:01:28)\n• Let the companies race ahead (00:02:13)\n• Require companies to pass safety checkpoints (00:06:03)\n• Put a speed limit on AI development (00:09:39)\n• Limit how much AI can help build AI (00:11:11)\n• Pause the development of more powerful AI altogether (00:13:04)\n• What would we actually gain from slowing down? (00:16:34)\n• Who would actually make this happen? (00:18:38)\n• Where this leaves us (00:20:16)\n\n_Our production team includes:_\n• _Video editors: Josh Alward, Dominic Armstrong, Jasper Luithlen, Milo McGuire, Luke Monsour, Simon Monsour, Ollie Bignell, and Andrés Escobar_\n• _Producers: Elizabeth Cox and Nick Stockton_\n• _Coordination and support: Katy Moore, Lou Moran, Cody Fenwick, and Joseph Isaac_\n• _Camera operator: Dominic Armstrong_\n\n_Image and footage credits: Anders Eidesvik (CC BY-SA 4.0); Dario Amodei; Import AI (Jack Clark); Truth Social (Donald J. Trump); POLITICO; OpenAI; Anthropic; NIAID (CC BY 2.0); Apollo Research; Ep artificial intelligence",
+      "why_it_matters": "با افزایش هک‌های هوش مصنوعی، تأخیر در توسعه می‌تواند زمان لازم برای درک چالش‌های کنترل مدل‌ها، امن‌سازی بیمارستان‌ها، بانک‌ها و شبکه‌های برق و سازگاری جامعه را فراهم کند. این اقدامات می‌توانند به جلوگیری از آسیب‌های بالقوه و شکل‌گیری قوانین بر اساس خواسته‌های رأی‌دهندگان کمک کنند.",
+      "link": "https://www.youtube.com/watch?v=XQQjCU7VLFo",
+      "posted_at": 1793132215
+    },
+    "-1004482051328:2169": {
+      "chat_id": -1004482051328,
+      "message_id": 2169,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "آموزش‌های حاصل از بسته شدن تنگه هرمز",
+      "summary": "آدام تووز، مدیر مؤسسهٔ اروپایی در دانشگاه کلمبیا، در گفتگویی با رابین پومروی از World Economic Forum دربارهٔ تأثیر بسته شدن تنگه هرمز و پیامدهای آن برای فناوری‌های سبز صحبت کرد. او اشاره کرد که این رویداد نشان می‌دهد چگونه اختلالات جغرافیایی می‌توانند زنجیره‌های تأمین انرژی را تحت فشار قرار دهند و نیاز به سرمایه‌گذاری در فناوری‌های پاک و توزیع‌پذیر انرژی را برجسته می‌کند.",
+      "description": "‘We've really learned about asymmetry, haven't we?’\n\nAdam Tooze, Director of the European Institute at Columbia University, discusses with the World Economic Forum’s Robin Pomeroy the impact of the Strait of Hormuz closure - and what it might mean for green technology.\n\nAdam Tooze was a guest on our #RadioDavos podcast.\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "بسته شدن تنگه هرمز به عنوان یک نقطه حساس در انتقال نفت، نشان داد که چالش‌های جغرافیایی می‌توانند تأثیرات گسترده‌ای بر بازارهای انرژی داشته باشند. این تجربه، اهمیت درک و مدیریت نابرابری‌های انرژی را در سطح جهانی برجسته می‌کند و راهکارهای پایدار را در مسیر توسعهٔ انرژی‌های تجدیدپذیر تقویت می‌کند.",
+      "link": "https://www.youtube.com/shorts/pDeAYxb_4fc",
+      "posted_at": 1793132222
+    },
+    "-1004482051328:2170": {
+      "chat_id": -1004482051328,
+      "message_id": 2170,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "ترکیب ترنسفورمر و CNN برای تشخیص تومورهای مغزی با دقت بالا",
+      "summary": "محققان چارچوب ترکیبی TransUNet و DenseNet121 را برای طبقهبندی تومورهای مغزی از تصاویر MRI ارائه کردند. این سامانه قادر به تشخیص چهار کلاس تومور (مننژیوما، گلیوم، تومور پیتویتری و بدون تومور) با دقتهای 98.54%، 98.65%، 99.45% و 99.56% بود. پیشپردازش شامل حذف جمجمه، بهبود کنتراست، نرمالسازی و افزون داده بود. با استفاده از Grad-CAM++ شفافیت مدل فراهم شد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این سامانه می‌تواند به پزشکان در تشخیص تومورهای مغزی کمک کند و خطر تشخیص نادرست را کاهش دهد. ترکیب ترنسفورمر و CNN امکان استخراج ویژگیهای محلی و سراسری را فراهم می‌کند. با این حال، اعتبارسنجی روی داده‌های بالینی متنوع و مقیاسپذیری در محیطهای واقعی هنوز مورد بررسی قرار نگرفته است.",
+      "link": "https://www.nature.com/articles/s41598-026-76162-z",
+      "posted_at": 1793132229
     }
   }
 }

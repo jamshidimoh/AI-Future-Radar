@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from src.people_bootstrap_contract import people_bootstrap_state_complete
+from src.people_bootstrap_contract import people_bootstrap_state_complete as _people_bootstrap_state_complete
 
 _SELECTED_PATTERNS = (
     re.compile(r"\[Publication Summary Budget\].*?output(?:_news)?=(\d+)", re.I),
@@ -94,6 +94,11 @@ def source_revision_matches_event(log_text: str, expected_sha: Any) -> bool:
     event_sha, checkout_sha = matches[-1]
     expected = str(expected_sha or "").strip().casefold()
     return bool(expected) and event_sha.casefold() == expected and checkout_sha.casefold() == expected
+
+
+def people_bootstrap_state_complete(state: Any) -> bool:
+    """Public closure-contract wrapper for the shared runtime state validator."""
+    return _people_bootstrap_state_complete(state)
 
 
 def is_completed_production_attempt(run: Any) -> bool:

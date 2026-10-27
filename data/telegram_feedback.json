@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793094891,
+  "updated_at": 1793097297,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19848,6 +19848,27 @@
       "why_it_matters": "این پیشرفت نشان می‌دهد که رباتیک خودران می‌تواند بهسرعت وارد بازارهای ساخت و ساز شود و بهعنوان راهحلی برای کمبود نیروی کار ماهر عمل کند. با بهرهگیری از کامیونهای خودران، پروژههای ساخت و ساز می‌توانند بهرهوری و ایمنی را بهبود بخشند، در حالی که هزینه‌های نیروی انسانی کاهش مییابد. این حرکت، امکان استفاده گستردهتر از فناوریهای خودران در صنایع مختلف را فراهم میآورد و نشان می‌دهد که سرمایهگذاران به سرعت به نوآوریهای رباتیک علاقهمند هستند. در نهایت، این روند می‌تواند به تغییر چشمگیر در شیوهٔ اجرای پروژههای عمرانی منجر شود.",
       "link": "https://techcrunch.com/2026/10/26/this-startups-self-driving-excavators-help-dig-up-600m-in-new-funding/",
       "posted_at": 1793094891
+    },
+    "-1004482051328:2164": {
+      "chat_id": -1004482051328,
+      "message_id": 2164,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Singju Post)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "مصاحبهٔ سام آلتمن دربارهٔ RSI، هوش مصنوعی و سخت‌افزار جدید اوپن‌ای‌آی",
+      "summary": "در مصاحبه‌ای با The Singju Post، سام آلتمن دربارهٔ ریسک‌های سیستمیک (RSI) در هوش مصنوعی، مسألهٔ آگاهی مصنوعی و برنامهٔ سخت‌افزاری جدید اوپن‌ای‌آی صحبت کرد. او جزئیاتی از اهداف این سخت‌افزار و چالش‌های مرتبط با توسعهٔ هوش مصنوعی ارائه داد.",
+      "why_it_matters": "این گفت‌وگو اطلاعاتی دربارهٔ نگرانی‌های امنیتی و فلسفی هوش مصنوعی فراهم می‌کند و نشان می‌دهد که اوپن‌ای‌آی در حال برنامه‌ریزی برای ارتقای زیرساخت‌های فنی خود است. درک این موضوعات می‌تواند به تصمیم‌گیرندگان و پژوهشگران کمک کند تا مسیر توسعهٔ هوش مصنوعی را با در نظر گرفتن ریسک‌ها و فرصت‌های جدید شکل دهند.",
+      "link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOSHVyZ0xhdHdGRzVtYmxSdWYyc3plbTgwcG11SERrS3JBTHFXR09ydGZPUXZpQ1ZMN0tndjN4YWJZVEpfSUU0aG1qeDFmUDQ4VWJLcllxRkltUGNkaGR0cDN1WEItQVpfdFRlV2Fyd0ZWRXQzbGJ2ZlFRaVhrZ0tnVXVDc2drU0FzRjBSbVg3bXZqZVp5?oc=5",
+      "posted_at": 1793096814
     }
   }
 }

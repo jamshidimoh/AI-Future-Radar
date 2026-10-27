@@ -59,3 +59,29 @@ def test_coverage_bonus_is_bounded_and_additive():
 def test_canonical_normal_floor_is_55():
     from src.editorial_quality_policy import NORMAL_SCORE_FLOOR
     assert NORMAL_SCORE_FLOOR == 55.0
+
+
+def test_explicit_convergence_label_cannot_turn_unrelated_profile_into_convergence():
+    item = {
+        "title": "Marvin Schwaibold: Full Stack Designer at Shopify",
+        "summary": "A career profile about a software designer and product team.",
+        "mission_area": "convergence",
+        "category": "ai",
+    }
+    assert mission_area(item) == "unclassified"
+    assert item["_mission_area_rejected"] == "convergence_without_content_evidence"
+
+
+def test_explicit_ai_core_label_is_reclassified_when_content_proves_convergence():
+    item = {
+        "title": "A new humanoid robotics system for AI agents",
+        "summary": "The system combines robotics with autonomous artificial intelligence.",
+        "mission_area": "ai_core",
+    }
+    assert mission_area(item) == "convergence"
+    assert item["mission_area"] == "convergence"
+
+
+def test_explicit_lane_is_preserved_for_content_free_historical_state():
+    item = {"mission_area": "convergence"}
+    assert mission_area(item) == "convergence"

@@ -424,3 +424,39 @@ def test_mission_recovery_rejects_candidate_with_stale_convergence_label(monkeyp
     assert recovered == []
     assert "area=convergence status=no_candidate" in output
     assert "recovered=0 status=unmet" in output
+
+
+def test_mission_recovery_fallback_persists_content_evidenced_lane(monkeypatch):
+    _disable_history_dedup(monkeypatch)
+    from src import unified_editorial_selection
+
+    contract = unified_editorial_selection.load_editorial_contract()
+    contract["ai_core_target_min"] = 0
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["convergence_target"] = 1
+    monkeypatch.setattr(unified_editorial_selection, "load_editorial_contract", lambda: dict(contract))
+
+    stale = {
+        "title": "A new quantum computing system for autonomous control",
+        "summary": "A quantum computing platform supports a new control architecture.",
+        "mission_area": "ai_core",
+        "category": "ai",
+        "link": "https://example.invalid/quantum-control",
+        "source": "Nature",
+        "source_tier": 1,
+        "editorial_score": 90,
+    }
+    recovered = _mission_coverage_recovery(
+        [],
+        [stale],
+        lambda *_args, **_kwargs: [],
+        lambda _item: {"summary": "A verified summary.", "mission_area": "ai_core"},
+        1,
+        1,
+        {"replacement_buffer": 1},
+        set(),
+    )
+
+    assert len(recovered) == 1
+    assert recovered[0][0]["mission_area"] == "convergence"

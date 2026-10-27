@@ -1,28 +1,34 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 41,
-      "disabled_until": 1793112243.177,
+      "failures": 42,
+      "disabled_until": 1793171375.085,
       "last_error": "auth",
       "last_success": 0
     },
     "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
       "failures": 1,
-      "disabled_until": 1793047443.177,
+      "disabled_until": 1793106575.085,
       "last_error": "model",
       "last_success": 0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1793049836.477,
+      "disabled_until": 1793088575.085,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "failures": 1,
+      "disabled_until": 1793088575.085,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 34,
-      "disabled_until": 1793112243.177,
+      "failures": 35,
+      "disabled_until": 1793171375.085,
       "last_error": "auth"
     },
     "kiraai": {
@@ -31,12 +37,12 @@
       "last_error": "wallet"
     }
   },
-  "updated_at": 1793046236.4771938,
+  "updated_at": 1793084975.0846424,
   "version": 1,
   "telemetry": {
-    "observed_failures": 4,
-    "observed_events": 13,
-    "updated_at": 1793046236.4771938
+    "observed_failures": 28,
+    "observed_events": 50,
+    "updated_at": 1793084975.0846424
   },
   "observed_failures": 0,
   "observed_events": 0

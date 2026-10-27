@@ -30,6 +30,7 @@ This document is the release boundary for declaring the repository production-co
 - [x] `tests/test_production_contract.py` prevents drift between the production contract, mission policy, selection policy, source registry, quality gate and architecture document.
 - [x] `tests/test_unified_editorial_selection.py` directly exercises source diversity, adaptive backfill, mission coverage, community exclusion and hard caps.
 - [x] A real publication baseline is present in `data/publication_state.json`.
+- [x] Every production run emits the People Bootstrap status only through the strict shared validator in `src/people_bootstrap_contract.py`; the closure gate can match the final log evidence to the durable 30-person state without weakening the 30/30 contract.
 
 ## Editorial balance contract
 

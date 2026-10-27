@@ -507,12 +507,21 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
     specs.append(("convergence", int(contract.get("convergence_target", 0) or 0)))
 
     missing = []
+    missing_area_keys = set()
     for area, count in specs:
         if count <= 0:
             continue
         allowed = {"mind_cognition", "future_governance"} if area == "legacy_mind_future" else {area}
         covered = sum(1 for x in selected if _area(x) in allowed and _score_ok(x))
-        missing.extend([allowed] * max(0, count - covered))
+        if covered >= count:
+            continue
+        # The live acceptance contract measures distinct mission-area coverage.
+        # Do not spend two recovery slots on duplicate items from one area: that
+        # can produce three successful summaries while leaving a required area empty.
+        area_key = tuple(sorted(allowed))
+        if area_key not in missing_area_keys:
+            missing.append(allowed)
+            missing_area_keys.add(area_key)
 
     if not missing:
         print("[Mission Coverage Recovery] no exact mission lane missing; recovery=0", flush=True)
@@ -548,6 +557,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
 
     pool = [x for x in editorial_pool if _publication_identity(x) not in selected_ids and not x.get("_publication_blocked")]
     recovered, attempts = [], 0
+    recovered_areas = set()
     unresolved_processing_failure = False
     lane_attempt_limit = max(1, int(policy.get("replacement_buffer", 3) or 3))
 
@@ -645,6 +655,16 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                 )
                 continue
 
+            # Summary/repair output is untrusted with respect to system-owned
+            # editorial classification. Preserve the pre-summary lane metadata so
+            # a model response cannot silently move a recovered item to another lane.
+            classification_fields = (
+                "mission_area", "category", "editorial_lane",
+                "protected_editorial_lane", "lane", "mind_lane_selected",
+            )
+            classification_snapshot = {
+                key: candidate[key] for key in classification_fields if key in candidate
+            }
             summary = _safe_summarize(candidate, summarize_fn)
             if not summary:
                 lane_processing_failure = True
@@ -671,11 +691,26 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                 continue
 
             candidate.update(summary)
+            for key in classification_fields:
+                if key in classification_snapshot:
+                    candidate[key] = classification_snapshot[key]
+                else:
+                    candidate.pop(key, None)
+            actual_area = _area(candidate)
+            if actual_area not in allowed_areas or actual_area in recovered_areas:
+                lane_processing_failure = True
+                print(
+                    f"[Mission Coverage Recovery] attempt={attempts} area={actual_area} "
+                    f"title={str(candidate.get('title',''))[:120]} status=failed",
+                    flush=True,
+                )
+                continue
             candidate["_mission_recovery"] = True
             recovered.append((candidate, summary))
+            recovered_areas.add(actual_area)
             lane_recovered = True
             print(
-                f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
+                f"[Mission Coverage Recovery] attempt={attempts} area={actual_area} "
                 f"title={str(candidate.get('title',''))[:120]} status=recovered",
                 flush=True,
             )
@@ -690,9 +725,11 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                 flush=True,
             )
 
+    # Count recovered mission areas, not recovered items. This mirrors the
+    # acceptance guard and prevents duplicate same-lane items from masking gaps.
     recovery_status = (
         "ok"
-        if len(recovered) >= target_recovery_slots and not unresolved_processing_failure
+        if len(recovered_areas) >= target_recovery_slots and not unresolved_processing_failure
         else "unmet"
     )
     if recovery_status == "unmet":

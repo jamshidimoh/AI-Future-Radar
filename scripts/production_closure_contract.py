@@ -78,6 +78,22 @@ def publish_evidence(log_text: str) -> bool:
     return zero_candidate_run
 
 
+_RUNTIME_SOURCE_REVISION = re.compile(
+    r"\[Production Source Revision\]\s+event_sha=([0-9a-f]{40})\s+checkout_sha=([0-9a-f]{40})",
+    re.I,
+)
+
+
+def source_revision_matches_event(log_text: str, expected_sha: Any) -> bool:
+    """Require runtime logs to prove the checked-out source equals the event SHA."""
+    matches = _RUNTIME_SOURCE_REVISION.findall(str(log_text or ""))
+    if not matches:
+        return False
+    event_sha, checkout_sha = matches[-1]
+    expected = str(expected_sha or "").strip().casefold()
+    return bool(expected) and event_sha.casefold() == expected and checkout_sha.casefold() == expected
+
+
 def is_completed_production_attempt(run: Any) -> bool:
     """Only completed workflow attempts belong in the closure evidence window.
 

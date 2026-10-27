@@ -1,6 +1,6 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-10-19
+Historical snapshot date: 2026-10-19
 
 Status date: 2026-10-27
 
@@ -9,6 +9,10 @@ Status date: 2026-10-27
 - **Release state: CLOSURE PENDING.** No v1.1.0 release has been published; release automation remains gated on the live closure workflow.
 - PR #284 merged: expert discovery now uses the extended 51-person roster, independent voice/direct-statement queries, and medical/genetics portfolio controls.
 - PR #285 merged: mission recovery targets distinct lane groups, counts distinct recovered areas, retries an eligible replacement after QA failure, and preserves system-owned classification metadata against summary output.
+- PR #287 merged: repeated Telegram HTTP 429 responses now use a larger bounded progressive cooldown (8-second increments, 60-second margin cap) while ambiguous delivery outcomes still fail closed.
+- PR #289 merged: recovery-only lane validation now uses content fields rather than trusting stale lane/category labels, and freezes the content-evidenced lane before summary repair. The normal selector remains backward-compatible.
+- Run #1547 failed acceptance with `Posts sent: 0/10` after Telegram repeatedly returned explicit HTTP 429 with `retry_after=8s`; the message was rejected and delivery stopped safely. Runs #1548–#1551 include cancelled attempts and do not count as successful closure evidence.
+- Run #1552 was triggered from the final application commit after PR #289; its runtime delivery and acceptance outcome remains pending. Release `v1.1.0` has not been published.
 - Live production evidence before the recovery fix was not healthy: runs #1544, #1545, and #1546 failed the runtime acceptance gate for zero delivery, incomplete Tier-0 fallback accounting, and inconsistent distinct-area coverage respectively.
 - The release gate remains authoritative. Production completion requires three consecutive successful live runs on the same application-code fingerprint, confirmed publication/state evidence, and all closure-contract checks; successful CI alone does not close production.
 

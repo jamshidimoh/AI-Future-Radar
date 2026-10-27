@@ -50,6 +50,7 @@ jobs:
               is_persisted_state_skip,
               people_bootstrap_state_complete,
               publish_evidence,
+              source_revision_matches_event,
           )
 
           repo = os.environ["REPO"]
@@ -256,19 +257,6 @@ jobs:
               print("CLOSURE: BLOCKED — production evidence logs are incomplete; cannot certify closure")
               print("Log errors:", log_errors)
               sys.exit(1)
-
-          def source_revision_matches_event(log_text, expected_sha):
-              """Require runtime evidence that the checked-out source is the run's event commit."""
-              matches = re.findall(
-                  r"\[Production Source Revision\]\s+event_sha=([0-9a-f]{40})\s+checkout_sha=([0-9a-f]{40})",
-                  str(log_text or ""),
-                  re.I,
-              )
-              if not matches:
-                  return False
-              event_sha, checkout_sha = matches[-1]
-              expected = str(expected_sha or "").strip().casefold()
-              return bool(expected) and event_sha.casefold() == expected and checkout_sha.casefold() == expected
 
           runtime_source_revision_pinned = all(
               source_revision_matches_event(logs[run["run_number"]], run.get("head_sha"))

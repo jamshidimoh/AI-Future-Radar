@@ -1,6 +1,39 @@
 # People & Ideas Radar
 # شخصیت‌های کلیدی و ایده‌های کلیدی مرتبط با AI/AGI، ذهن، آگاهی و آینده فناوری.
 # This registry is discovery/priority metadata; publication still requires evidence + editorial gates.
+# Bootstrap remains the original 30-person baseline; the full 51-person people
+# registry is used for ongoing expert discovery across every configured domain.
+bootstrap_names:
+  - Sam Altman
+  - Dario Amodei
+  - Demis Hassabis
+  - Elon Musk
+  - Jensen Huang
+  - Mustafa Suleyman
+  - Eric Schmidt
+  - Andrew Ng
+  - Geoffrey Hinton
+  - Yann LeCun
+  - Yoshua Bengio
+  - Ilya Sutskever
+  - Fei-Fei Li
+  - Andrej Karpathy
+  - Judea Pearl
+  - Stuart Russell
+  - Nick Bostrom
+  - Max Tegmark
+  - Yuval Noah Harari
+  - Ray Kurzweil
+  - Kate Crawford
+  - Anil Seth
+  - David Chalmers
+  - Stanislas Dehaene
+  - George Church
+  - Jennifer Doudna
+  - John Preskill
+  - Scott Aaronson
+  - Ethan Mollick
+  - Sal Khan
 
 people:
   ai_frontier_builders:
@@ -13,6 +46,11 @@ people:
       - Jensen Huang
       - Mustafa Suleyman
       - Eric Schmidt
+      - Mark Zuckerberg
+      - Satya Nadella
+      - Lisa Su
+      - Bill Gates
+      - Noam Shazeer
   ai_research_and_foundations:
     priority: 10
     names:
@@ -25,6 +63,9 @@ people:
       - Andrej Karpathy
       - Judea Pearl
       - Stuart Russell
+      - Chris Olah
+      - Joelle Pineau
+      - François Chollet
   future_philosophy_society:
     priority: 10
     names:
@@ -33,12 +74,25 @@ people:
       - Yuval Noah Harari
       - Ray Kurzweil
       - Kate Crawford
+      - Robin Hanson
+      - Toby Ord
+      - Kevin Kelly
+      - Tristan Harris
+      - Timnit Gebru
+      - Shoshana Zuboff
   mind_cognition:
     priority: 10
     names:
       - Anil Seth
       - David Chalmers
       - Stanislas Dehaene
+      - Christof Koch
+      - Giulio Tononi
+      - Michael Graziano
+      - Susan Schneider
+      - Thomas Metzinger
+      - Karl Friston
+      - Michael Levin
   bio_quantum:
     priority: 10
     names:
@@ -123,7 +177,9 @@ ideas_and_theories:
       - human-AI convergence
       - future of consciousness
 
-# Discovery queries for the high-value people/ideas lane. These do not bypass quality gates.
+# Source of truth for watched people. For every listed person, the collector
+# generates separate voice-format and direct-post/statement discovery queries.
+# Discovery does not bypass evidence, duplication, or publication-quality gates.
 google_news_queries:
   - {query: "David Chalmers AI consciousness interview", watch_person: "David Chalmers", category: mind, tier: 1, content_type: interview}
   - {query: "David Chalmers philosophy of mind AI consciousness", watch_person: "David Chalmers", category: mind, tier: 1, content_type: research}

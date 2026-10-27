@@ -24,7 +24,14 @@ from src.people_watch import filter_people_person_cooldown, item_timestamp
 from src.priority_people import is_substantive_priority_interview
 from src.publication_contract import unique_candidates
 from src.state_io import StateCorruptionError, load_json_state
-from src.unified_editorial_selection import load_editorial_contract, mission_area, select_regular_portfolio, source_key
+from src.unified_editorial_selection import (
+    _is_genetics_heavy,
+    _is_health_medical_heavy,
+    load_editorial_contract,
+    mission_area,
+    select_regular_portfolio,
+    source_key,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +43,7 @@ MAX_NORMAL_NEWS_PER_PERIOD = 3
 # Special lanes are candidate roles, not independent publication quotas.
 MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
 MAX_TECHNICAL_TREND_PER_PERIOD = 1
-MAX_VOICES_PERSPECTIVES_PER_PERIOD = 1  # candidate-role breadth only; final publication capacity remains 3
+MAX_VOICES_PERSPECTIVES_PER_PERIOD = 2  # prioritize expert voice coverage within the shared three-story cap
 # Bootstrap still establishes all 30 baselines, but publication is batched so
 # one run does not flood Telegram or suppress the independent Mind/Voices lanes.
 MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 2
@@ -92,6 +99,37 @@ def _global_news_capacity_reached(
     except (TypeError, ValueError):
         final_capacity = MAX_NORMAL_NEWS_PER_PERIOD
     return published >= final_capacity
+
+
+def _portfolio_diversity_block_reason(
+    render_state: dict[str, Any],
+    story: dict[str, Any],
+    *,
+    max_genetics: int | None = None,
+    max_medical: int | None = None,
+) -> str | None:
+    """Enforce medical/genetics diversity against confirmed delivery, across all lanes."""
+    if str(story.get("content_type") or "").strip().casefold() in {"education", "educational"}:
+        return None
+    if max_genetics is None:
+        max_genetics = int(EDITORIAL_CONTRACT.get("max_genetics_per_run", 1))
+    if max_medical is None:
+        max_medical = int(EDITORIAL_CONTRACT.get("max_health_medical_per_run", 1))
+    if _is_health_medical_heavy(story):
+        try:
+            delivered = max(0, int(render_state.get("medical_health_delivered_count", 0) or 0))
+        except (TypeError, ValueError):
+            delivered = 0
+        if delivered >= max(0, int(max_medical)):
+            return "health_medical_portfolio_cap"
+    if _is_genetics_heavy(story):
+        try:
+            delivered = max(0, int(render_state.get("genetics_delivered_count", 0) or 0))
+        except (TypeError, ValueError):
+            delivered = 0
+        if delivered >= max(0, int(max_genetics)):
+            return "genetics_portfolio_cap"
+    return None
 
 
 def _unified_portfolio_select(candidates, max_posts, policy, bootstrap_mode=False):
@@ -680,7 +718,7 @@ def main(*, skip_education: bool = False) -> int:
         return ([education_item] if education_item else []) + selected
 
     original_summarize = pipeline.summarize_item
-    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "news_delivered_count": 0, "normal_news_delivered_count": 0, "mind_ideas_voices_delivered_count": 0, "technical_trend_delivered_count": 0, "voices_perspectives_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "people_news_delivered_count": 0, "delivery_transport_failed": False}
+    render_state: dict[str, Any] = {"current_type": None, "current_item": None, "education_delivered": False, "news_delivered_count": 0, "normal_news_delivered_count": 0, "mind_ideas_voices_delivered_count": 0, "technical_trend_delivered_count": 0, "voices_perspectives_delivered_count": 0, "tier0_news_delivered_count": 0, "strategic_analytical_news_delivered_count": 0, "published_news_scores": [], "people_news_delivered_count": 0, "medical_health_delivered_count": 0, "genetics_delivered_count": 0, "delivery_transport_failed": False}
 
     def summarize_with_education(item):
         if item.get("content_type") == "education":
@@ -748,6 +786,10 @@ def main(*, skip_education: bool = False) -> int:
                 is_tier0 = _is_tier0_publication_candidate(item)
                 is_strategic = _is_strategic_analytical_signal(item)
                 render_state["news_delivered_count"] += 1
+                if _is_health_medical_heavy(item):
+                    render_state["medical_health_delivered_count"] += 1
+                if _is_genetics_heavy(item):
+                    render_state["genetics_delivered_count"] += 1
                 if is_people:
                     render_state["people_news_delivered_count"] += 1
                 elif not is_mind and not is_technical and not is_voices and not is_tier0:
@@ -787,6 +829,14 @@ def main(*, skip_education: bool = False) -> int:
             return transport_failed("telegram_transport_unavailable", retryable=False)
         if current_type == "education":
             return delivered({"message_id": None})
+        diversity_reason = _portfolio_diversity_block_reason(render_state, story)
+        if diversity_reason:
+            print(
+                f"[Editorial Balance Gate] blocked={diversity_reason} "
+                f"title={str(story.get('title', ''))[:120]}",
+                flush=True,
+            )
+            return policy_blocked(diversity_reason)
         # Fail-safe normalization also covers candidates introduced by late
         # refill/recovery after the initial portfolio has already been ranked.
         # A non-interview person-associated story falls through to the normal

@@ -111,7 +111,7 @@ def test_mission_coverage_targets_are_explicit_opportunities():
     assert contract["mind_cognition_target"] == 1
     assert contract["mind_future_target"] == 1
     assert contract["research_target"] == 0
-    assert contract["interview_target_max"] == 1
+    assert contract["interview_target_max"] == 2
     assert contract["min_authoritative_items"] == 2
     assert contract["diversity_weight"] == 11.0
     assert contract["similarity_penalty"] == 16.0

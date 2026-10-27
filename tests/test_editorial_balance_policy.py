@@ -91,6 +91,51 @@ def test_at_most_one_genetics_led_item_is_admissible_per_portfolio():
     assert not portfolio.admissible(second, repeat_source=False)
 
 
+def test_at_most_one_medical_led_item_is_admissible_per_portfolio():
+    contract = load_editorial_contract()
+    assert contract["max_health_medical_per_run"] == 1
+    assert contract["interview_target_max"] == 2
+    portfolio = _Portfolio(
+        contract=contract, limit=3, source_cap=2, type_cap=2,
+        recent={}, mission_aware=True,
+    )
+    first = _item(
+        "Machine learning diagnosis for endometriosis",
+        "Nature Medicine", 91, "ai", content_type="research",
+    )
+    second = _item(
+        "Blood transcriptomics in essential tremor correlates with clinical imaging",
+        "Clinical Journal", 90, "ai", content_type="research",
+    )
+    portfolio.add(first, "test")
+    assert not portfolio.admissible(second, repeat_source=False)
+
+
+def test_candidate_score_uses_voice_lane_score_when_generic_scores_are_missing():
+    candidate = {
+        "title": "Yann LeCun podcast on AI world models",
+        "summary": "A substantive interview about frontier artificial intelligence research.",
+        "category": "ai",
+        "mission_area": "ai_core",
+        "content_type": "podcast",
+        "voices_perspectives_score": 84,
+    }
+    assert candidate_score(candidate) == 84
+
+
+def test_medical_led_research_receives_a_diversity_penalty_against_broad_ai():
+    medical = _item(
+        "Machine learning diagnosis for endometriosis",
+        "Nature Medicine", 90, "ai", content_type="research",
+    )
+    broad_ai = _item(
+        "A new AI reasoning system improves tool use",
+        "MIT Technology Review", 90, "ai",
+    )
+    assert candidate_score(medical) < candidate_score(broad_ai)
+    assert load_editorial_contract()["health_medical_diversity_penalty"] == 12
+
+
 def test_general_genetics_research_does_not_enter_mind_ideas_voices_lane():
     item = _item(
         "AI model predicts gene expression from genomic features",

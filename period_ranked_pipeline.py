@@ -366,7 +366,7 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     voice_candidates = choose_voices_candidate(
         special_pool,
         existing_ids=used_special_ids,
-        max_items=1,
+        max_items=2,
     )
     for candidate in voice_candidates:
         used_special_ids.add(id(candidate))

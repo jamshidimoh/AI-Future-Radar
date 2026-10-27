@@ -37,8 +37,12 @@ _LEADER_SIGNAL_TERMS = (
     "research", "study", "technology", "artificial intelligence", "AI", "AGI",
 )
 _LEADER_INTERVIEW_EVIDENCE_TERMS = (
-    "interview", "podcast", "talk", "keynote", "conversation", "discussion", "fireside", "q&a",
+    "interview", "podcast", "talk", "keynote", "speech", "lecture", "conversation", "discussion", "fireside", "q&a",
     "transcript", "in conversation", "speaks with", "talks with",
+)
+_LEADER_SOCIAL_SIGNAL_TERMS = (
+    "tweet", "tweets", "post", "posts", "posted", "writes", "wrote", "statement",
+    "direct quote", "thread", "opinion", "essay", "warns", "argues", "predicts",
 )
 _LEADER_ACTIVITY_EVIDENCE_TERMS = (
     "statement", "say", "said", "says", "admits", "admitted", "admit", "criticiz", "criticis", "criticise", "criticize",
@@ -70,7 +74,7 @@ _LEADER_SIGNAL_CONTEXT_TERMS = (
 )
 # Keep a bounded safety cap, but large enough to cover the current watchlist without
 # silently dropping later people from generic companion discovery.
-_MAX_LEADER_SIGNAL_QUERIES = 64
+_MAX_LEADER_SIGNAL_QUERIES = 220
 
 
 def _contains_any_phrase(text: str, terms: tuple[str, ...]) -> bool:
@@ -136,10 +140,12 @@ def _load_pioneer_priorities() -> dict[str, int]:
 def _query_content_type_priority(q: dict) -> int:
     ctype = str(q.get("content_type") or "").strip().casefold()
     return {
-        "interview": 5,
-        "podcast": 5,
-        "talk": 4,
-        "conversation": 4,
+        "interview": 7,
+        "podcast": 7,
+        "talk": 6,
+        "conversation": 6,
+        "social_post": 5,
+        "direct_statement": 5,
         "leader_signal": 3,
         "product_news": 3,
         "research": 2,
@@ -153,11 +159,11 @@ def _is_strong_curated_query(q: dict) -> bool:
 
 
 def _load_watchlist_people_queries():
-    """Generate high-recall discovery queries with equal person coverage.
+    """Generate two independent discovery paths for every watched expert.
 
-    Query ordering matters because the production runner uses a bounded discovery
-    window. Every watched person therefore gets a first-pass opportunity before
-    lower-priority duplicate query variants consume the budget.
+    The first query targets long-form voice formats; the second targets direct
+    public statements/posts and attributed opinions. Both carry topical context
+    so a passing mention or unrelated personal story is not promoted as an AI signal.
     """
     try:
         payload = yaml.safe_load(_LEADER_WATCHLIST_PATH.read_text(encoding="utf-8")) or {}
@@ -171,24 +177,62 @@ def _load_watchlist_people_queries():
             if not isinstance(cfg, dict):
                 continue
             group_priority = int(cfg.get("priority", 0) or 0)
-            category = "mind" if str(group).strip() == "consciousness_and_mind_ai" else ("future" if "futur" in str(group).lower() else "ai")
+            group_name = str(group).strip().casefold()
+            if "mind" in group_name or "consciousness" in group_name:
+                category = "mind"
+            elif any(term in group_name for term in ("future", "philosophy", "society", "safety")):
+                category = "future"
+            elif any(term in group_name for term in ("bio", "quantum", "genetic")):
+                category = "bio"
+            else:
+                category = "ai"
             for raw_name in cfg.get("names", []) or []:
                 name = str(raw_name).strip()
                 if not name:
                     continue
-                actual_priority = 0  # person identity is not a ranking signal; freshness/quality decide later
-                rows.append({
-                    "query": f'"{name}" ({" OR ".join(_LEADER_SIGNAL_TERMS)})',
+                # Person identity is coverage metadata, never an editorial score.
+                voice_query = (
+                    f'"{name}" (interview OR podcast OR keynote OR speech OR lecture OR '
+                    f'"in conversation" OR transcript OR fireside) '
+                    f'(AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR consciousness)'
+                )
+                social_query = (
+                    f'"{name}" (tweet OR tweets OR post OR posted OR writes OR wrote OR statement OR '
+                    f'thread OR opinion OR essay OR predicts OR argues) '
+                    f'(AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR consciousness OR cognition)'
+                )
+                activity_query = (
+                    f'"{name}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future) '
+                    f'(launch OR announces OR announced OR acquisition OR research OR policy OR regulation OR '
+                    f'forecast OR prediction OR investment OR product OR model OR platform OR partnership)'
+                )
+                common = {
                     "watch_person": name,
                     "category": category,
                     "tier": 1,
-                    "content_type": "leader_signal",
                     "leader_discovery": True,
                     "curated_discovery": True,
                     "leader_priority": group_priority,
-                    "leader_query_priority": actual_priority,
+                    "leader_query_priority": 0,
+                }
+                rows.append({
+                    **common,
+                    "query": voice_query,
+                    "content_type": "interview",
+                    "leader_format": "voice",
                 })
-    rows.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("watch_person") or "").casefold()))
+                rows.append({
+                    **common,
+                    "query": social_query,
+                    "content_type": "social_post",
+                    "leader_format": "social_post",
+                })
+                rows.append({
+                    **common,
+                    "query": activity_query,
+                    "content_type": "leader_signal",
+                    "leader_format": "activity",
+                })
     return rows
 
 def _merge_queries(queries):
@@ -225,9 +269,8 @@ def _merge_queries(queries):
 
 
 def _expand_leader_signal_queries(queries):
-    """Bound leader discovery while guaranteeing a companion query for priority people."""
+    """Guarantee per-person voice and direct-post coverage before secondary variants."""
     raw = list(queries or [])
-    existing = {str(q.get("query") or "").strip().lower() for q in raw}
     people: dict[str, list[dict]] = {}
     non_people: list[dict] = []
     for q in raw:
@@ -236,36 +279,104 @@ def _expand_leader_signal_queries(queries):
             people.setdefault(person.casefold(), []).append(q)
         else:
             non_people.append(q)
-    signal_terms = " OR ".join(_LEADER_SIGNAL_TERMS)
-    ordered_people = sorted(
-        people.values(),
-        key=lambda bucket: str(bucket[0].get("watch_person") or "").casefold(),
-    )
-    expanded: list[dict] = []
-    for bucket in ordered_people:
-        bucket.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("query") or "").casefold()))
-        primary = bucket[0]
-        expanded.append(primary)
-        person = str(primary.get("watch_person") or "").strip()
-        companion_query = f'"{person}" ({signal_terms})'
-        companion_key = companion_query.casefold()
-        if companion_key not in existing:
-            companion = dict(primary)
-            companion["query"] = companion_query
-            companion["content_type"] = "leader_signal"
-            companion["leader_discovery"] = True
-            companion["curated_discovery"] = True
-            expanded.append(companion)
-            existing.add(companion_key)
-    # Add secondary variants only after every watched person has primary+companion coverage.
-    secondary = []
-    for bucket in ordered_people:
-        secondary.extend(bucket[1:])
-    secondary.sort(key=lambda q: (-_query_content_type_priority(q), str(q.get("watch_person") or "").casefold(), str(q.get("query") or "").casefold()))
-    expanded.extend(secondary)
-    expanded.extend(non_people)
-    return expanded[:_MAX_LEADER_SIGNAL_QUERIES]
 
+    voice_types = {"interview", "podcast", "talk", "conversation", "lecture", "keynote"}
+    social_types = {"social_post", "direct_statement", "tweet", "thread"}
+    ordered: list[dict] = []
+    secondary: list[dict] = []
+    for person_key in sorted(people):
+        bucket = people[person_key]
+        bucket.sort(
+            key=lambda q: (
+                0 if str(q.get("leader_format") or "").casefold() == "voice" else
+                1 if str(q.get("content_type") or "").casefold() in voice_types else
+                2 if str(q.get("leader_format") or "").casefold() == "social_post" else
+                3 if str(q.get("content_type") or "").casefold() in social_types else
+                4,
+                -_query_content_type_priority(q),
+                str(q.get("query") or "").casefold(),
+            )
+        )
+        voice_source = next(
+            (q for q in bucket if str(q.get("leader_format") or "").casefold() == "voice"),
+            None,
+        )
+        if voice_source is None:
+            voice_source = next(
+                (q for q in bucket if str(q.get("content_type") or "").strip().casefold() in voice_types),
+                bucket[0],
+            )
+        person = str(voice_source.get("watch_person") or "").strip()
+        primary = dict(voice_source)
+        if str(voice_source.get("leader_format") or "").casefold() != "voice":
+            # A narrow legacy "interview" query is not sufficient by itself.
+            # Broaden it to cover podcasts, keynotes, talks, lectures, and transcripts.
+            primary["query"] = (
+                f'"{person}" (interview OR podcast OR keynote OR speech OR lecture OR '
+                f'"in conversation" OR transcript OR fireside OR "Q&A") '
+                f'(AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR consciousness OR cognition)'
+            )
+            primary["content_type"] = "interview"
+            primary["leader_format"] = "voice"
+
+        social_source = next(
+            (q for q in bucket if str(q.get("leader_format") or "").casefold() == "social_post"
+             or str(q.get("content_type") or "").strip().casefold() in social_types),
+            None,
+        )
+        if social_source is None:
+            signal_terms = " OR ".join(_LEADER_SOCIAL_SIGNAL_TERMS)
+            social = dict(primary)
+            social["query"] = (
+                f'"{person}" ({signal_terms}) '
+                f'(AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR consciousness OR cognition)'
+            )
+            social["content_type"] = "social_post"
+            social["leader_format"] = "social_post"
+        else:
+            social = dict(social_source)
+
+        activity_source = next(
+            (q for q in bucket if str(q.get("leader_format") or "").casefold() == "activity"),
+            None,
+        )
+        if activity_source is None:
+            activity = dict(primary)
+            activity["query"] = (
+                f'"{person}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future) '
+                f'(launch OR announces OR acquisition OR research OR policy OR forecast OR investment OR product OR model)'
+            )
+            activity["content_type"] = "leader_signal"
+            activity["leader_format"] = "activity"
+        else:
+            activity = dict(activity_source)
+        primary["leader_discovery"] = social["leader_discovery"] = activity["leader_discovery"] = True
+        primary["curated_discovery"] = social["curated_discovery"] = activity["curated_discovery"] = True
+        ordered.extend((primary, social, activity))
+        used_ids = {id(voice_source)}
+        if social_source is not None:
+            used_ids.add(id(social_source))
+        if activity_source is not None:
+            used_ids.add(id(activity_source))
+        used_queries = {
+            str(primary.get("query") or "").strip().casefold(),
+            str(social.get("query") or "").strip().casefold(),
+            str(activity.get("query") or "").strip().casefold(),
+        }
+        secondary.extend(
+            q for q in bucket
+            if id(q) not in used_ids and str(q.get("query") or "").strip().casefold() not in used_queries
+        )
+
+    secondary.sort(
+        key=lambda q: (
+            -_query_content_type_priority(q),
+            str(q.get("watch_person") or "").casefold(),
+            str(q.get("query") or "").casefold(),
+        )
+    )
+    expanded = ordered + secondary + non_people
+    return expanded[:_MAX_LEADER_SIGNAL_QUERIES]
 
 def classify_leader_signal(title, summary, watch_person="", *, query_context="", content_type=""):
     """Classify leader results while preserving recall from an explicit watchlist query."""
@@ -289,7 +400,8 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
     # Query metadata is discovery intent, not evidence. Only explicit
     # interview/talk-style query types may contribute format evidence; the
     # generic leader_signal query must never self-validate a result.
-    query_format_signal = ctype in {"interview", "podcast", "talk", "keynote", "conversation"}
+    direct_post_signal = ctype in {"social_post", "direct_statement", "tweet", "thread"}
+    query_format_signal = ctype in {"interview", "podcast", "talk", "keynote", "conversation", "lecture"} or direct_post_signal
     accepted_by_watch_query = bool(
         query_person_signal
         and query_technology_context
@@ -299,6 +411,7 @@ def classify_leader_signal(title, summary, watch_person="", *, query_context="",
     return {
         "accepted": accepted,
         "interview": interview,
+        "direct_post": direct_post_signal,
         "activity": activity,
         "analytical": analytical,
         "context": context,
@@ -340,7 +453,7 @@ def _collect_query(q, cutoff):
         classification = classify_leader_signal(title, summary, watch_person, query_context=query_text, content_type=q.get("content_type", "news")) if q.get("leader_discovery") else None
         if q.get("leader_discovery") and not classification["accepted"]:
             print(f"[Leader Discovery Filter] dropped weak signal title={str(title)[:100]}", flush=True); continue
-        results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "source_name": source_title, "source_domain": source_href, "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": effective_tier, "discovery_query_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "leader_activity_signal": bool(classification and classification.get("accepted") and (classification.get("activity") or classification.get("interview") or classification.get("analytical"))), "_ai_link": True if is_leader_watch else None})
+        results.append({"title": title, "link": link, "summary": summary, "source": f"Google News ({source_title})", "source_name": source_title, "source_domain": source_href, "category": q["category"], "published": published_str, "is_trending_query": True, "source_tier": effective_tier, "discovery_query_tier": q.get("tier", 3), "source_type": "news_aggregator", "content_type": q.get("content_type", "news"), "official": False, "preferred_source": str(q.get("preferred_source") or "").strip(), "curated_discovery": _is_strong_curated_query(q), "discovery_query": query_text, "watch_person": watch_person, "leader": watch_person, "is_leader_watch": is_leader_watch, "leader_watch_protected": is_leader_watch, "leader_signal_classification": classification, "leader_format": str(q.get("leader_format") or ""), "leader_activity_signal": bool(classification and classification.get("accepted") and (classification.get("activity") or classification.get("interview") or classification.get("direct_post") or classification.get("analytical"))), "_ai_link": True if is_leader_watch else None})
     return q, results, None
 
 _SERIAL_FETCH_BUDGET_SECONDS = 90

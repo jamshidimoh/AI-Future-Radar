@@ -75,7 +75,7 @@ def test_explicit_convergence_label_cannot_turn_unrelated_profile_into_convergen
 def test_explicit_ai_core_label_is_reclassified_when_content_proves_convergence():
     item = {
         "title": "A new humanoid robotics system for AI agents",
-        "summary": "The system combines robotics with autonomous artificial intelligence.",
+        "summary": "The system combines robotics with autonomous control.",
         "mission_area": "ai_core",
     }
     assert mission_area(item) == "convergence"

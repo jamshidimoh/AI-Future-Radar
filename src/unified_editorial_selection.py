@@ -188,8 +188,6 @@ def mission_area(item: dict[str, Any]) -> str:
         return "unclassified"
     if explicit in _AREA_MAP.values() or explicit in {"unclassified", "unknown"}:
         return explicit
-    if explicit in {"unclassified", "unknown"}:
-        return explicit
     # Specific mission evidence must outrank the legacy broad category label.
     # Otherwise category=ai can incorrectly swallow convergence/mind items.
     matched_area = _keyword_match_area(item)

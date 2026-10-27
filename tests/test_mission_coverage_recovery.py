@@ -68,7 +68,7 @@ def test_mission_coverage_recovery_replaces_failed_legacy_future_candidate(monke
         "_publication_blocked": True,
     }
     rejected = {
-        "title": "Still weak",
+        "title": "Still weak future governance policy",
         "mission_area": "future_governance",
         "link": "https://example.invalid/rejected",
         "source": "Nature",
@@ -91,7 +91,7 @@ def test_mission_coverage_recovery_replaces_failed_legacy_future_candidate(monke
 
     def summarize_fn(item):
         calls["n"] += 1
-        return None if item["title"] == "Still weak" else {"summary": "Valid"}
+        return None if item["title"] == "Still weak future governance policy" else {"summary": "Valid"}
 
     recovered = _mission_coverage_recovery(
         [failed],
@@ -168,7 +168,7 @@ def test_mission_coverage_recovery_gives_each_missing_lane_its_own_attempt_budge
     selected = []
     editorial_pool = [
         {"title": "AI core", "mission_area": "ai_core", "link": "https://example.invalid/ai", "source": "OpenAI", "source_tier": 1, "editorial_score": 90},
-        {"title": "Convergence", "mission_area": "convergence", "link": "https://example.invalid/conv", "source": "Nature", "source_tier": 1, "editorial_score": 90},
+        {"title": "Quantum convergence infrastructure", "mission_area": "convergence", "link": "https://example.invalid/conv", "source": "Nature", "source_tier": 1, "editorial_score": 90},
         {"title": "Machine consciousness and self-awareness", "mission_area": "mind_cognition", "link": "https://example.invalid/mind", "source": "Nature", "source_tier": 1, "editorial_score": 90},
     ]
 
@@ -317,13 +317,13 @@ def test_mission_recovery_counts_distinct_areas_not_duplicate_ai_core_items(monk
     candidates = [
         {"title": "AI core one", "mission_area": "ai_core", "link": "https://example.invalid/ai-1", "source": "OpenAI", "source_tier": 1, "editorial_score": 90},
         {"title": "AI core two", "mission_area": "ai_core", "link": "https://example.invalid/ai-2", "source": "Anthropic", "source_tier": 1, "editorial_score": 89},
-        {"title": "Broken convergence summary", "mission_area": "convergence", "link": "https://example.invalid/conv-bad", "source": "Nature", "source_tier": 1, "editorial_score": 90},
-        {"title": "Valid convergence replacement", "mission_area": "convergence", "link": "https://example.invalid/conv-good", "source": "MIT", "source_tier": 1, "editorial_score": 88},
+        {"title": "Broken quantum summary", "mission_area": "convergence", "link": "https://example.invalid/conv-bad", "source": "Nature", "source_tier": 1, "editorial_score": 90},
+        {"title": "Valid quantum replacement", "mission_area": "convergence", "link": "https://example.invalid/conv-good", "source": "MIT", "source_tier": 1, "editorial_score": 88},
         {"title": "Machine consciousness", "mission_area": "mind_cognition", "link": "https://example.invalid/mind", "source": "Quanta Magazine", "source_tier": 1, "editorial_score": 87},
     ]
 
     def summarize(item):
-        if item["title"] == "Broken convergence summary":
+        if item["title"] == "Broken quantum summary":
             return None
         return {"summary": f"Valid summary for {item['title']}"}
 
@@ -343,8 +343,8 @@ def test_mission_recovery_counts_distinct_areas_not_duplicate_ai_core_items(monk
     assert len(recovered) == 3
     assert len(set(areas)) == 3
     assert set(areas) == {"ai_core", "mind_cognition", "convergence"}
-    assert "title=Broken convergence summary status=failed" in output
-    assert "title=Valid convergence replacement status=recovered" in output
+    assert "title=Broken quantum summary status=failed" in output
+    assert "title=Valid quantum replacement status=recovered" in output
     assert "missing_lanes=3" in output
     assert "recovered=3 status=ok" in output
 
@@ -387,3 +387,40 @@ def test_mission_recovery_does_not_allow_summary_to_relabel_candidate_area(monke
     assert len(recovered) == 1
     assert recovered[0][0]["mission_area"] == "mind_cognition"
     assert "area=mind_cognition" in output
+
+
+def test_mission_recovery_rejects_candidate_with_stale_convergence_label(monkeypatch, capsys):
+    _disable_history_dedup(monkeypatch)
+    from src import unified_editorial_selection
+
+    contract = unified_editorial_selection.load_editorial_contract()
+    contract["ai_core_target_min"] = 0
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["convergence_target"] = 1
+    monkeypatch.setattr(unified_editorial_selection, "load_editorial_contract", lambda: dict(contract))
+
+    unrelated = {
+        "title": "Marvin Schwaibold: Full Stack Designer at Shopify",
+        "summary": "A profile of a software designer and product team.",
+        "mission_area": "convergence",
+        "category": "ai",
+        "link": "https://example.invalid/shopify-profile",
+        "source": "Nature",
+        "source_tier": 1,
+        "editorial_score": 99,
+    }
+    recovered = _mission_coverage_recovery(
+        [],
+        [unrelated],
+        lambda items, **_kwargs: [items[0]],
+        lambda _item: {"summary": "Must not be called"},
+        1,
+        1,
+        {"replacement_buffer": 1},
+        set(),
+    )
+    output = capsys.readouterr().out
+    assert recovered == []
+    assert "area=convergence status=no_candidate" in output
+    assert "recovered=0 status=unmet" in output

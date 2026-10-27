@@ -1,6 +1,6 @@
 from period_ranked_pipeline import canonical_rank_score
 from src.mission_coverage_priority import annotate_recovery_candidates, historical_area_counts, mission_coverage_bonus
-from src.unified_editorial_selection import mission_area
+from src.unified_editorial_selection import mission_area, mission_area_from_content
 
 
 def test_mission_area_uses_keyword_classification_before_research_fallback():
@@ -59,3 +59,28 @@ def test_coverage_bonus_is_bounded_and_additive():
 def test_canonical_normal_floor_is_55():
     from src.editorial_quality_policy import NORMAL_SCORE_FLOOR
     assert NORMAL_SCORE_FLOOR == 55.0
+
+
+def test_content_lane_classifier_rejects_unrelated_explicit_convergence_profile():
+    item = {
+        "title": "Marvin Schwaibold: Full Stack Designer at Shopify",
+        "summary": "A career profile about a software designer and product team.",
+        "mission_area": "convergence",
+        "category": "ai",
+    }
+    assert mission_area(item) == "convergence"  # selection routing remains backward-compatible
+    assert mission_area_from_content(item) == "unclassified"
+
+
+def test_content_lane_classifier_overrides_stale_ai_core_when_specific_lane_is_proven():
+    item = {
+        "title": "A new humanoid robotics system for AI agents",
+        "summary": "The system combines robotics with autonomous control.",
+        "mission_area": "ai_core",
+    }
+    assert mission_area_from_content(item) == "convergence"
+
+
+def test_content_free_historical_state_keeps_declared_lane():
+    item = {"mission_area": "convergence"}
+    assert mission_area(item) == "convergence"

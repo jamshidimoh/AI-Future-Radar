@@ -457,7 +457,7 @@ def _voice_lane_recovery(selected, editorial_pool, summarize_fn):
 
 
 def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, summarize_fn, max_per_source, max_per_type, policy, seen_hashes):
-    from src.unified_editorial_selection import load_editorial_contract
+    from src.unified_editorial_selection import load_editorial_contract, mission_area_from_content
     contract = load_editorial_contract()
     import src.llm_router_light as llm_router
     recovery_cooldowns_reset = llm_router.reset_recoverable_cooldowns()
@@ -475,8 +475,17 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
         source_history = []
     editorial_pool = annotate_recovery_candidates(editorial_pool, source_history, contract)
 
-    def _area(item):
-        return mission_area(item)
+    def _area(item, *, require_content=False):
+        declared = mission_area(item)
+        if not require_content:
+            return declared
+        content_area = mission_area_from_content(item)
+        if content_area != "unclassified":
+            return content_area
+        # AI-core candidates have already passed the upstream content-based
+        # AI-relevance gate. Other required lanes must have their own explicit
+        # domain evidence; a stale category/mission label cannot fill them.
+        return "ai_core" if declared == "ai_core" else "unclassified"
 
     selected_ids = {_publication_identity(x) for x in selected}
 
@@ -575,7 +584,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
         while lane_attempts < lane_attempt_limit:
             area_pool = [
                 x for x in pool
-                if _area(x) in allowed_areas
+                if _area(x, require_content=True) in allowed_areas
                 and _publication_identity(x) not in selected_ids
             ]
             if not area_pool:
@@ -648,16 +657,16 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                 )
                 lane = "independent_mind" if is_mind_candidate else "normal_or_protected"
                 print(
-                    f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate)} "
+                    f"[Mission Coverage Recovery] attempt={attempts} area={_area(candidate, require_content=True)} "
                     f"title={str(candidate.get('title',''))[:120]} score={score:.2f} floor={floor:.2f} "
                     f"lane={lane} status=below_score_floor",
                     flush=True,
                 )
                 continue
 
-            # Summary/repair output is untrusted with respect to system-owned
-            # editorial classification. Preserve the pre-summary lane metadata so
-            # a model response cannot silently move a recovered item to another lane.
+            # Freeze the content-evidenced lane before summary repair. The model
+            # may improve prose but cannot change which mission target this item fills.
+            candidate_area = _area(candidate, require_content=True)
             classification_fields = (
                 "mission_area", "category", "editorial_lane",
                 "protected_editorial_lane", "lane", "mind_lane_selected",
@@ -696,7 +705,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
                     candidate[key] = classification_snapshot[key]
                 else:
                     candidate.pop(key, None)
-            actual_area = _area(candidate)
+            actual_area = candidate_area
             if actual_area not in allowed_areas or actual_area in recovered_areas:
                 lane_processing_failure = True
                 print(

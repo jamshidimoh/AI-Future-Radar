@@ -229,6 +229,13 @@ def _keyword_match_area(item: dict[str, Any], *, content_only: bool = False) -> 
     return max(matches, key=lambda x: x[0])[1] if matches else None
 
 
+def mission_area_from_content(item: dict[str, Any]) -> str:
+    """Classify an item from editorial content only, ignoring lane/category metadata."""
+    if _is_gaming_content(item):
+        return "excluded_gaming"
+    return _keyword_match_area(item, content_only=True) or "unclassified"
+
+
 def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
     """Apply mission evidence before trusting the legacy category label."""
     if item.get("_mission_area_rejected") == "gaming_content" or _is_gaming_content(item):

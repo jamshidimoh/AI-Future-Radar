@@ -20,6 +20,7 @@ from src.editorial_quality_policy import (
     protected_score_allowed,
 )
 from src.logging_setup import configure_logging
+from src.people_bootstrap_contract import people_bootstrap_state_complete
 from src.people_watch import filter_people_person_cooldown, item_timestamp
 from src.priority_people import is_substantive_priority_interview
 from src.publication_contract import unique_candidates
@@ -336,6 +337,31 @@ def _load_cadence() -> dict:
         "last_published_normal_news_score": data.get("last_published_normal_news_score", data.get("last_published_news_score")),
         "people_bootstrap": data.get("people_bootstrap", {}) if isinstance(data.get("people_bootstrap", {}), dict) else {},
     }
+
+
+def _people_bootstrap_evidence_line(state: Any) -> str:
+    """Emit closure evidence only when the persisted 30-person state is valid."""
+    value = state if isinstance(state, dict) else {}
+    baseline = value.get("baseline")
+    delivered_people = value.get("delivered_people")
+    baseline_names = {
+        str(name).strip()
+        for name in (baseline.keys() if isinstance(baseline, dict) else [])
+        if str(name).strip()
+    }
+    delivered_names = {
+        str(name).strip()
+        for name in (delivered_people if isinstance(delivered_people, list) else [])
+        if str(name).strip()
+    }
+    complete = people_bootstrap_state_complete(value)
+    status = "complete" if complete else "in_progress"
+    bootstrap_at = str(value.get("bootstrap_at") or "")
+    return (
+        f"[People Bootstrap] status={status} "
+        f"delivered={len(delivered_names)}/30 "
+        f"baseline={len(baseline_names)}/30 bootstrap_at={bootstrap_at}"
+    )
 
 
 def _save_cadence(state: dict) -> None:
@@ -956,6 +982,7 @@ def main(*, skip_education: bool = False) -> int:
     if isinstance(pipeline_people_result, dict):
         cadence["people_bootstrap"] = pipeline_people_result
     cadence["run_number"] = run_number
+    print(_people_bootstrap_evidence_line(cadence.get("people_bootstrap")), flush=True)
     _save_cadence(cadence)
     if education_due and not render_state["education_delivered"]:
         print(f"[Education Contract] deferred: educational Telegram post was not confirmed; slot={education_slot} remains due for retry", flush=True)

@@ -1,4 +1,4 @@
-from production_entrypoint import _people_bootstrap_batch, _people_bootstrap_quality_allowed
+from production_entrypoint import _people_bootstrap_batch, _people_bootstrap_evidence_line, _people_bootstrap_quality_allowed
 from scripts.production_acceptance_guard import validate
 
 
@@ -43,3 +43,40 @@ def test_people_bootstrap_batch_is_freshness_first_and_bounded():
     batch = _people_bootstrap_batch(items)
     assert len(batch) == 2
     assert [item["title"] for item in batch] == ["Person 9", "Person 8"]
+
+
+def _complete_bootstrap_state():
+    names = [f"Person {index:02d}" for index in range(30)]
+    return {
+        "status": "complete",
+        "people_count": 30,
+        "delivered_count": 30,
+        "delivered_people": names,
+        "bootstrap_at": "2026-10-01T00:00:00+00:00",
+        "baseline": {
+            name: {
+                "title": f"{name} discusses artificial intelligence",
+                "link": f"https://example.org/{index}",
+                "published": "2026-10-01 10:00",
+            }
+            for index, name in enumerate(names)
+        },
+    }
+
+
+def test_people_bootstrap_evidence_line_matches_closure_gate_for_valid_state():
+    line = _people_bootstrap_evidence_line(_complete_bootstrap_state())
+    assert line.startswith("[People Bootstrap] status=complete delivered=30/30 baseline=30/30")
+    assert "bootstrap_at=2026-10-01T00:00:00+00:00" in line
+
+
+def test_people_bootstrap_evidence_line_fails_closed_for_inconsistent_state():
+    state = _complete_bootstrap_state()
+    state["delivered_people"] = state["delivered_people"][:-1]
+    line = _people_bootstrap_evidence_line(state)
+    assert line.startswith("[People Bootstrap] status=in_progress delivered=29/30 baseline=30/30")
+
+
+def test_people_bootstrap_evidence_line_records_missing_state_without_claiming_complete():
+    line = _people_bootstrap_evidence_line(None)
+    assert line.startswith("[People Bootstrap] status=in_progress delivered=0/30 baseline=0/30")

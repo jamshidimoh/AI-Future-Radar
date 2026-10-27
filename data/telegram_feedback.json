@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793092839,
+  "updated_at": 1793094891,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19792,6 +19792,62 @@
       "why_it_matters": "این تغییر نظر نشان می‌دهد که حتی رهبران بزرگ فناوری نیز دربارهٔ پیامدهای امنیتی هوش مصنوعی نظرات خود را بازنگری می‌کنند. درک این مسأله می‌تواند به سیاست‌گذاران و توسعه‌دهندگان کمک کند تا در طراحی سیستم‌های هوش مصنوعی، ایمنی را به‌عنوان یک هدف جداگانه در نظر بگیرند.",
       "link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQdDJrWWQ2a1N1UDdJQWJzdk05WHJxQkgyYWdNbl9hc2Zmd3BRVW1feFU4LXg3WVlpN3BWT2lDNjBEUzA3TUYyWDJmMllOQ1JMc0p5dDlnM2RuaTJmOTJKaVlqOThObHpfd2RuUmRBT1JzcTN2MDVPek44TmhqR1E3QW1MTDAxdW1LTUxBdEVSdkFNbzMtZUp6V3NPcTFueFlnTTJUeWdJU3RDWFZhR3dJaEdhZ0RTb1l1cE1maE1nZHJ6aTViWDlrTWdB?oc=5",
       "posted_at": 1793092839
+    },
+    "-1004482051328:2161": {
+      "chat_id": -1004482051328,
+      "message_id": 2161,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "social_post",
+      "category": "ai",
+      "leader": "Satya Nadella",
+      "watch_person": "Satya Nadella",
+      "title": "Satya Nadella: اشتباه بودم که فکر می‌کردم هم‌تنش‌سازی هوش مصنوعی به‌صورت خودکار رخ می‌دهد",
+      "summary": "در مصاحبه‌ای با Business Insider، Satya Nadella، مدیرعامل مایکروسافت، بیان کرد که پیش‌فرض قبلی‌اش مبنی بر این‌که هم‌تنش‌سازی هوش مصنوعی به‌طور خودبه‌خود انجام می‌شود، نادرست بوده است. او تأکید کرد که این فرایند نیاز به کار مستمر و برنامه‌ریزی طولانی‌مدت دارد.",
+      "why_it_matters": "این اظهارات نشان می‌دهد که برای رسیدن به هم‌تنش‌سازی مؤثر هوش مصنوعی، سازمان‌ها باید سرمایه‌گذاری مداوم در پژوهش، نظارت و توسعه چارچوب‌های اخلاقی انجام دهند. این نکته برای تصمیم‌گیرندگان فناوری و سیاست‌گذاران مهم است تا برنامه‌های استراتژیک خود را بر پایهٔ تعهد طولانی‌مدت تنظیم کنند.",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOdDFhazFqem5YSWVQQVpoNFNLUlpDQ29JQTY2dkphVTFVbUF3dGRiR1QyMU4ycjBfSWxKejVhUVNuU2pGZXl6QklVRThvZkZYMlE5ODZ1ZF9kTVJLQW51NE1ONEdNMHpWQ2k5T3YzQWtNbVpkZzlHeEwzd0tjOThTOUFlT3lUcU5DQnNUdDFyZVYtZlRqdDJLMnNHZkVqMmJSYXAtaDUyZw?oc=5",
+      "posted_at": 1793094882
+    },
+    "-1004482051328:2162": {
+      "chat_id": -1004482051328,
+      "message_id": 2162,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "آیا علت می‌تواند پیش از اثر باشد؟ دیدگاه آوشالوم الیتزور درباره زمان و علّیت در فیزیک کوانتومی",
+      "summary": "فیزیکدان نظری و فیلسوف آوشالوم الیتزور در گفتگو خود استدلال می‌کند که فیزیک کوانتومی مفهوم سنتی زمان و علّیت را به چالش میکشد. او معتقد است که اندازهگیریها در زمان حال می‌توانند بر آینده و گذشته تأثیر بگذارند. الیتزور با اشاره به آزمایش فکری Elitzur–Vaidman، نشان می‌دهد که حضور ناظر می‌تواند نتایج را پیش از وقوع آنها شکل دهد. در گفتگو، او به ارتباط بین آگاهی و توصیف فیزیکی جهان و تأثیرات احتمالی این دیدگاه بر آینده نظریههای کوانتومی میپردازد.",
+      "description": "Avshalom Elitzur discusses quantum mechanics and the nature of reality.\n\nDo you think that cause can come before effect?\n\nWatch more content like this now at https://iai.tv/video/quantum-measurement-influences-the-past-with-avshalom-elitzur?utm_source=YouTube&amp;utm_medium=description\n\nWe think that the future follows the past; causes preceed effects. But theoretical physicist Avshalom Elitzur argues that quantum physics alters our conception of time and causation: a measurement done in the present influences not only the future, but the past. In this conversation, he explores the radical implications of quantum theory for the nature of time and consciousness, as well as what the future holds for physics.\n\n#physics #reality #quantumphysics \n\nAvshalom Elitzur is a theoretical physicist and philosopher at the Israeli Institute for Advanced Research, whose Elitzur–Vaidman thought experiment reshaped debates on the role of the observer in quantum theory.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign= https://iai.tv/video/quantum-measurement-influences-the-past-with-avshalom-elitzur\n\n00:43 - What is it about the fields of physics and philosophy that \nmake you believe that they cannot be kept separate? \n01:52 - Does consciousness have any place in the\nphysical description of the world?\n05:42 - Is science well equipped to tackle the\nhard problem of consiousness?\n07:56 - Does backwards causality indicate a fault in\nour current conception of causation?\n15:54 - How influential has Yakir Aharonov been \nin your development as a physicist?\n17:28 - Do you see any changes in people’s understanding of consciousness \nand how it relates to the physical world?\n18:55 - What does the future hold for quantum theory?\n\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "اگر ادعای الیتزور دربارهٔ تأثیر اندازهگیریهای حال بر گذشته تأیید شود، پایههای فلسفی و علمی ما دربارهٔ جهتگیری زمان و علّیت دچار بازنگری می‌شود. این می‌تواند به توسعه نظریههای جدید در فیزیک بنیادی و درک عمیقتر رابطهٔ آگاهی با ساختار فیزیکی جهان کمک کند. همچنین، بازنگری در مفهوم علّیت می‌تواند پیامدهای مهمی برای روشهای علمی و مفاهیم اخلاقی مرتبط با مسئولیتپذیری داشته باشد.",
+      "link": "https://www.youtube.com/watch?v=l8oJ878kJ64",
+      "posted_at": 1793094886
+    },
+    "-1004482051328:2163": {
+      "chat_id": -1004482051328,
+      "message_id": 2163,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "TechCrunch",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "Bedrock Robotics با سرمایهگذاری ۶۰۰ میلیون دلاری، کامیونهای خودران را به بازار ساخت و ساز معرفی کرد",
+      "summary": "شرکت Bedrock Robotics، در یک دوره سرمایهگذاری سری C، ۶۰۰ میلیون دلار جذب کرده و ارزش شرکت را به ۴.۱ میلیارد دلار رساند. این سرمایهگذاری پس از گذراندن مرحله آزمایش و شروع بهرهبرداری واقعی کامیونهای خودران در سایتهای ساخت و ساز در نیواده و تگزاس انجام شد. تیم مؤسسه، با پیشینههای از شرکتهای Waymo و Anki Robotics، به دنبال گسترش استفاده از تکنولوژی خودران در پروژههای بزرگتر است. Bedrock بر این باور است که کمبود اپراتورهای ماهر در ساخت و ساز، نیاز به ماشینآلات خودران را افزایش می‌دهد. سرمایه جدید به تسریع انتشار فناوری در سایتهای ساخت و ساز و توسعه زیرساختهای پشتیبانی کمک می‌کند.",
+      "why_it_matters": "این پیشرفت نشان می‌دهد که رباتیک خودران می‌تواند بهسرعت وارد بازارهای ساخت و ساز شود و بهعنوان راهحلی برای کمبود نیروی کار ماهر عمل کند. با بهرهگیری از کامیونهای خودران، پروژههای ساخت و ساز می‌توانند بهرهوری و ایمنی را بهبود بخشند، در حالی که هزینه‌های نیروی انسانی کاهش مییابد. این حرکت، امکان استفاده گستردهتر از فناوریهای خودران در صنایع مختلف را فراهم میآورد و نشان می‌دهد که سرمایهگذاران به سرعت به نوآوریهای رباتیک علاقهمند هستند. در نهایت، این روند می‌تواند به تغییر چشمگیر در شیوهٔ اجرای پروژههای عمرانی منجر شود.",
+      "link": "https://techcrunch.com/2026/10/26/this-startups-self-driving-excavators-help-dig-up-600m-in-new-funding/",
+      "posted_at": 1793094891
     }
   }
 }

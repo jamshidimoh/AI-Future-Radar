@@ -20,11 +20,8 @@ from src.editorial_quality_policy import (
     protected_score_allowed,
 )
 from src.logging_setup import configure_logging
-from src.people_watch import (
-    filter_people_person_cooldown,
-    item_timestamp,
-    people_bootstrap_state_complete,
-)
+from src.people_bootstrap_contract import people_bootstrap_state_complete
+from src.people_watch import filter_people_person_cooldown, item_timestamp
 from src.priority_people import is_substantive_priority_interview
 from src.publication_contract import unique_candidates
 from src.state_io import StateCorruptionError, load_json_state

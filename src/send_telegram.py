@@ -18,11 +18,12 @@ PHOTO_CAPTION_LIMIT = 1024
 # Telegram explicitly rejects a 429 request, so retry is safe. Repeated 429s
 # can reflect shared bot/channel traffic: keep retries bounded while increasing
 # the post-retry margin instead of hammering the same rate-limit boundary.
-MAX_TELEGRAM_RATE_LIMIT_RETRIES = 8
+MAX_TELEGRAM_RATE_LIMIT_RETRIES = 12
 TELEGRAM_RETRY_AFTER_SAFETY_SECONDS = 1
 TELEGRAM_REPEATED_429_BACKOFF_INCREMENT_SECONDS = 2
 TELEGRAM_REPEATED_429_BACKOFF_MAX_SECONDS = 12
-MAX_TELEGRAM_RETRY_AFTER_SECONDS = 30
+MAX_TELEGRAM_RETRY_AFTER_SECONDS = 120
+MAX_TELEGRAM_RATE_LIMIT_WAIT_SECONDS = 300
 RLI = "\u2067"
 LRI = "\u2066"
 PDI = "\u2069"
@@ -403,6 +404,7 @@ def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
             ),
         }
         rate_limit_retries = 0
+        rate_limit_wait_total = 0
         while True:
             try:
                 response = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", data=data, timeout=20)
@@ -414,10 +416,9 @@ def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
 
             if getattr(response, "status_code", None) == 429:
                 retry_after = _telegram_retry_after_seconds(response)
-                if retry_after is not None and rate_limit_retries < MAX_TELEGRAM_RATE_LIMIT_RETRIES:
-                    rate_limit_retries += 1
+                if retry_after is not None:
                     repeated_429_backoff = min(
-                        (rate_limit_retries - 1) * TELEGRAM_REPEATED_429_BACKOFF_INCREMENT_SECONDS,
+                        rate_limit_retries * TELEGRAM_REPEATED_429_BACKOFF_INCREMENT_SECONDS,
                         TELEGRAM_REPEATED_429_BACKOFF_MAX_SECONDS,
                     )
                     wait_seconds = (
@@ -425,17 +426,25 @@ def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
                         + TELEGRAM_RETRY_AFTER_SAFETY_SECONDS
                         + repeated_429_backoff
                     )
-                    print(
-                        "[Telegram Rate Limit] explicit HTTP 429 rejection; "
-                        f"retry_after={retry_after}s wait={wait_seconds}s "
-                        f"retry={rate_limit_retries}/{MAX_TELEGRAM_RATE_LIMIT_RETRIES}",
-                        flush=True,
-                    )
-                    time.sleep(wait_seconds)
-                    continue
-                if retry_after is not None:
+                    if (
+                        rate_limit_retries < MAX_TELEGRAM_RATE_LIMIT_RETRIES
+                        and rate_limit_wait_total + wait_seconds <= MAX_TELEGRAM_RATE_LIMIT_WAIT_SECONDS
+                    ):
+                        rate_limit_retries += 1
+                        rate_limit_wait_total += wait_seconds
+                        print(
+                            "[Telegram Rate Limit] explicit HTTP 429 rejection; "
+                            f"retry_after={retry_after}s wait={wait_seconds}s "
+                            f"retry={rate_limit_retries}/{MAX_TELEGRAM_RATE_LIMIT_RETRIES} "
+                            f"wait_budget={rate_limit_wait_total}/{MAX_TELEGRAM_RATE_LIMIT_WAIT_SECONDS}s",
+                            flush=True,
+                        )
+                        time.sleep(wait_seconds)
+                        continue
                     print(
                         "[ERROR] Telegram rate-limit retry budget exhausted; "
+                        f"retries={rate_limit_retries}/{MAX_TELEGRAM_RATE_LIMIT_RETRIES} "
+                        f"wait_budget={rate_limit_wait_total}/{MAX_TELEGRAM_RATE_LIMIT_WAIT_SECONDS}s "
                         "the latest message was explicitly rejected and was not delivered",
                         flush=True,
                     )

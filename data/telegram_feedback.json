@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793090055,
+  "updated_at": 1793092839,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -19773,6 +19773,25 @@
       "why_it_matters": "رد فرضیه زمان نمایی می‌تواند مسیرهای جدیدی برای طراحی الگوریتم‌های مؤثرتر در مسائل سخت محاسباتی باز کند. پیشرفت در تحلیل هارمونیک و نظریه میدان‌های کوانتومی ابزارهای ریاضی دقیق‌تری برای مدل‌سازی پدیده‌های فیزیکی فراهم می‌آورد. این دستاوردها نشان می‌دهد که همکاری هوش مصنوعی با جامعهٔ علمی می‌تواند به کشفیات بنیادی منجر شود که برای توسعه فناوری‌های آینده اهمیت دارد.",
       "link": "https://www.techmeme.com/261026/p48#a261026p48",
       "posted_at": 1793084974
+    },
+    "-1004482051328:2160": {
+      "chat_id": -1004482051328,
+      "message_id": 2160,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider Africa)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Satya Nadella",
+      "watch_person": "Satya Nadella",
+      "title": "نادلای مایکروسافت: تغییر نظر دربارهٔ ایمنی هوش مصنوعی قدرتمندتر",
+      "summary": "Satya Nadella در مصاحبه‌ای با Business Insider Africa گفت که دیگر معتقد نیست افزایش قدرت هوش مصنوعی، ایمنی آن را تضمین می‌کند. او پیش از این این باور را داشته اما اکنون نظر خود را تغییر داده است.",
+      "why_it_matters": "این تغییر نظر نشان می‌دهد که حتی رهبران بزرگ فناوری نیز دربارهٔ پیامدهای امنیتی هوش مصنوعی نظرات خود را بازنگری می‌کنند. درک این مسأله می‌تواند به سیاست‌گذاران و توسعه‌دهندگان کمک کند تا در طراحی سیستم‌های هوش مصنوعی، ایمنی را به‌عنوان یک هدف جداگانه در نظر بگیرند.",
+      "link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQdDJrWWQ2a1N1UDdJQWJzdk05WHJxQkgyYWdNbl9hc2Zmd3BRVW1feFU4LXg3WVlpN3BWT2lDNjBEUzA3TUYyWDJmMllOQ1JMc0p5dDlnM2RuaTJmOTJKaVlqOThObHpfd2RuUmRBT1JzcTN2MDVPek44TmhqR1E3QW1MTDAxdW1LTUxBdEVSdkFNbzMtZUp6V3NPcTFueFlnTTJUeWdJU3RDWFZhR3dJaEdhZ0RTb1l1cE1maE1nZHJ6aTViWDlrTWdB?oc=5",
+      "posted_at": 1793092839
     }
   }
 }

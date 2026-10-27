@@ -21,6 +21,7 @@ This document is the release boundary for declaring the repository production-co
 - [x] Protected-source policy is explicit in `config/production_contract.yaml` and `config/mission_policy.yaml`; protected sources remain priority candidates rather than relevance/quality bypasses.
 - [x] Canonical URL/title/semantic publication guards prevent duplicate publication; cross-language duplicates remain blocked.
 - [x] Telegram delivery is represented through the typed delivery contract and publication ledger; publication state advances only from confirmed delivery.
+- [x] Production source is pinned to the triggering `github.sha`; mutable runtime state and the free-model registry are refreshed separately, and the closure gate requires per-run logs proving `event_sha == checkout_sha == head_sha`.
 - [x] Education is an independent scheduled stream; education failure must not rerun or duplicate the completed news orchestration.
 - [x] Editorial language/quality gates remain authoritative for published news.
 - [x] Source quality and rotation remain bounded by the configured evidence hierarchy and diversity policy.

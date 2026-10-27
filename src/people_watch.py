@@ -11,7 +11,6 @@ from typing import Any
 import yaml
 
 from src.dedup import _hash_link
-from src.people_bootstrap_contract import people_bootstrap_state_complete
 from src.source_authority import resolve_source_tier
 from src.story_identity import deduplicate_stories
 

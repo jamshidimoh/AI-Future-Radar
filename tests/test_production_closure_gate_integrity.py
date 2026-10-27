@@ -128,7 +128,9 @@ def test_production_source_checkout_is_pinned_and_mutable_state_is_refreshed_sep
 
 def test_closure_gate_requires_runtime_checkout_sha_to_match_event_sha():
     text = WORKFLOW.read_text(encoding="utf-8")
-    assert "def source_revision_matches_event(log_text, expected_sha):" in text
-    assert r"\[Production Source Revision\]" in text
+    helper = (WORKFLOW.parents[2] / "scripts" / "production_closure_contract.py").read_text(encoding="utf-8")
+    assert "source_revision_matches_event," in text
+    assert "def source_revision_matches_event(log_text: str, expected_sha: Any) -> bool:" in helper
+    assert r"\[Production Source Revision\]" in helper
     assert '"16_runtime_source_revision_matches_event_sha": runtime_source_revision_pinned' in text
     assert "source_revision_matches_event(logs[run[\"run_number\"]], run.get(\"head_sha\"))" in text

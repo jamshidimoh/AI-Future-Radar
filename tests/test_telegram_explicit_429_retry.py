@@ -67,7 +67,7 @@ def test_telegram_429_retries_are_bounded(monkeypatch):
 
     assert result["message_id"] == 456
     assert len(calls) == 3
-    assert sleeps == [2, 5]
+    assert sleeps == [2, 11]
 
 
 def test_repeated_explicit_429_with_retry_after_margin_can_recover(monkeypatch):

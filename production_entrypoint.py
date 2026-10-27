@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, cast
 
+from scripts.production_closure_contract import people_bootstrap_state_complete
 from src.editorial_quality_policy import (
     NORMAL_SCORE_FLOOR,
     PROTECTED_SCORE_FLOOR,
@@ -23,7 +24,6 @@ from src.logging_setup import configure_logging
 from src.people_watch import filter_people_person_cooldown, item_timestamp
 from src.priority_people import is_substantive_priority_interview
 from src.publication_contract import unique_candidates
-from scripts.production_closure_contract import people_bootstrap_state_complete
 from src.state_io import StateCorruptionError, load_json_state
 from src.unified_editorial_selection import (
     _is_genetics_heavy,

@@ -50,6 +50,7 @@ jobs:
               is_persisted_state_skip,
               people_bootstrap_state_complete,
               publish_evidence,
+              source_revision_matches_event,
           )
 
           repo = os.environ["REPO"]
@@ -257,6 +258,11 @@ jobs:
               print("Log errors:", log_errors)
               sys.exit(1)
 
+          runtime_source_revision_pinned = all(
+              source_revision_matches_event(logs[run["run_number"]], run.get("head_sha"))
+              for run in window
+          )
+
           def all_runs(pattern):
               return all(has(logs[r["run_number"]], pattern) for r in window)
 
@@ -365,6 +371,7 @@ jobs:
               "13_education_cadence_contract": education_evidence,
               "14_people_bootstrap_30_deliveries": people_bootstrap_complete,
               "15_llm_health_fresh_for_latest_run": health_state_current,
+              "16_runtime_source_revision_matches_event_sha": runtime_source_revision_pinned,
           }
           for key, value in evidence.items():
               print(f"EVIDENCE {key}={'PASS' if value else 'BLOCKED'}")
@@ -373,6 +380,7 @@ jobs:
           print(f"EDUCATION_EVIDENCE published={education_published} recovery={education_recovery_confirmed} not_due_all={education_not_due_all} contract_not_due={education_contract_not_due}")
           print(f"PEOPLE_BOOTSTRAP_EVIDENCE logs_complete={people_bootstrap_logs} persisted_state_complete={people_bootstrap_state_ok}")
           print(f"LLM_HEALTH_EVIDENCE fresh_for_latest_run={health_state_current}")
+          print(f"RUNTIME_SOURCE_REVISION_EVIDENCE pinned_to_event_sha={runtime_source_revision_pinned}")
           blocked = [key for key, value in evidence.items() if not value]
           if blocked:
               print("CLOSURE: BLOCKED — unresolved evidence:", ", ".join(blocked))

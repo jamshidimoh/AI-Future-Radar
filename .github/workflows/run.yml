@@ -29,11 +29,36 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
-      - name: Checkout latest main state
+      - name: Checkout triggering production revision
         uses: actions/checkout@v6
         with:
-          ref: main
+          ref: ${{ github.sha }}
           fetch-depth: 50
+
+      - name: Refresh mutable production state from latest main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=50
+          for path in \
+            data/seen.json \
+            data/telegram_feedback.json \
+            data/education_state.json \
+            data/publication_state.json \
+            data/llm_health.json \
+            config/free_model_registry.yaml; do
+            if git cat-file -e "origin/main:${path}" 2>/dev/null; then
+              mkdir -p "$(dirname "$path")"
+              git show "origin/main:${path}" > "$path"
+            fi
+          done
+          CHECKOUT_SHA="$(git rev-parse HEAD)"
+          echo "[Production Source Revision] event_sha=${GITHUB_SHA} checkout_sha=${CHECKOUT_SHA}"
+          echo "[Production State Base] main_sha=$(git rev-parse origin/main)"
+          if [[ "$CHECKOUT_SHA" != "$GITHUB_SHA" ]]; then
+            echo "[Production Source Revision] BLOCKED: checkout does not match event SHA"
+            exit 1
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v6

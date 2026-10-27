@@ -5,10 +5,30 @@ from scripts.production_closure_contract import (
     posts_sent_counts,
     publish_evidence,
     selected_candidate_count,
+    source_revision_matches_event,
 )
 
 
 class TestProductionClosureContract(unittest.TestCase):
+
+
+    def test_runtime_source_revision_must_match_expected_event_sha(self):
+        expected = "a" * 40
+        valid = (
+            f"[Production Source Revision] event_sha={expected} "
+            f"checkout_sha={expected}"
+        )
+        self.assertTrue(source_revision_matches_event(valid, expected))
+        self.assertFalse(source_revision_matches_event(valid, "b" * 40))
+        self.assertFalse(
+            source_revision_matches_event(
+                valid.replace(f"checkout_sha={expected}", f"checkout_sha={'b' * 40}"),
+                expected,
+            )
+        )
+        self.assertFalse(source_revision_matches_event("no marker", expected))
+        self.assertFalse(source_revision_matches_event("", expected))
+
     def test_only_completed_runs_count_as_closure_attempts(self):
         from scripts.production_closure_contract import is_completed_production_attempt
 

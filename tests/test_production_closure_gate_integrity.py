@@ -106,3 +106,31 @@ def test_closure_gate_persists_final_status_only_after_strict_evidence_passes():
     persist = text.index('updated_status = put_json(')
     assert blocked < close < persist
     assert 'patch_json("/issues/69", {"state": "open", "state_reason": "reopened"})' in text
+
+
+def test_production_source_checkout_is_pinned_and_mutable_state_is_refreshed_separately():
+    run_workflow = (WORKFLOW.parent / "run.yml").read_text(encoding="utf-8")
+    assert "ref: ${{ github.sha }}" in run_workflow
+    assert "Refresh mutable production state from latest main" in run_workflow
+    assert 'git show "origin/main:${path}" > "$path"' in run_workflow
+    assert "[Production Source Revision] event_sha=${GITHUB_SHA} checkout_sha=${CHECKOUT_SHA}" in run_workflow
+    assert 'if [[ "$CHECKOUT_SHA" != "$GITHUB_SHA" ]]' in run_workflow
+    for path in (
+        "data/seen.json",
+        "data/telegram_feedback.json",
+        "data/education_state.json",
+        "data/publication_state.json",
+        "data/llm_health.json",
+        "config/free_model_registry.yaml",
+    ):
+        assert path in run_workflow
+
+
+def test_closure_gate_requires_runtime_checkout_sha_to_match_event_sha():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    helper = (WORKFLOW.parents[2] / "scripts" / "production_closure_contract.py").read_text(encoding="utf-8")
+    assert "source_revision_matches_event," in text
+    assert "def source_revision_matches_event(log_text: str, expected_sha: Any) -> bool:" in helper
+    assert r"\[Production Source Revision\]" in helper
+    assert '"16_runtime_source_revision_matches_event_sha": runtime_source_revision_pinned' in text
+    assert "source_revision_matches_event(logs[run[\"run_number\"]], run.get(\"head_sha\"))" in text

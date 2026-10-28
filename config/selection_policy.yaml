@@ -9,7 +9,7 @@ selection:
   max_health_medical_per_run: 1
   health_medical_diversity_penalty: 12
   max_items_per_source: 2
-  max_items_per_content_type: 4
+  max_items_per_content_type: 8
   story_similarity_threshold: 0.45
   diversity_mode: unified_final_portfolio
   diversity_weight: 11.0
@@ -73,7 +73,7 @@ editorial:
 #   the global target quality floor does not veto an explicit mission-coverage target.
 # - diversity_quality_floor_ratio=0.90 preserves a strong general quality floor while allowing portfolio diversity.
 # - mission_target_quality_floor_ratio=0.82 allows explicit Mind/Convergence coverage to survive when it remains within 82% of the strongest admissible alternative.
-# - max_same_mission_area=4 reduces same-domain dominance without suppressing several independently important AI product announcements.
+# - max_same_mission_area=8 reduces same-domain dominance without suppressing several independently important AI product announcements.
 # - Information gain is a bounded soft reranker; quality remains dominant.
 # - Current-portfolio entity/leader repetition receives explicit soft penalties.
 # - Recent publication history contributes topic/entity saturation penalties so

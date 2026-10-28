@@ -55,7 +55,8 @@ _ATTRIBUTION_TERMS = (
     "says", "said", "warns", "warned", "argues", "argued", "predicts", "predicted",
     "believes", "believe", "claims", "claimed", "notes", "noted", "according to",
     "calls for", "points out", "writes", "wrote", "said that", "warned that",
-    "می‌گوید", "هشدار داد", "معتقد است", "پیش‌بینی کرد", "اظهار کرد",
+    "می‌گوید", "می‌گوید که", "گفته است", "هشدار داد", "هشدار می‌دهد",
+    "هشدار می‌دهد که", "معتقد است", "پیش‌بینی کرد", "اظهار کرد", "اظهار داشت",
 )
 
 
@@ -101,7 +102,11 @@ def is_strategic_leader_statement(item: dict[str, Any]) -> bool:
     strategic_topic = _contains_any(text, _STRATEGIC_INFRASTRUCTURE)
     ai_context = _contains_any(text, _AI_CONTEXT)
     content_type = str(item.get("content_type") or "").strip().casefold()
-    attributed_headline = bool(re.search(r"\b(?:elon musk|sam altman|demis hassabis|jensen huang|andrew ng|eric schmidt)\s*[:—-]", text))
+    attributed_headline = bool(re.search(
+        r"(?:\b(?:elon musk|sam altman|demis hassabis|jensen huang|andrew ng|eric schmidt)\s*[:—-]"
+        r"|(?:ایلان ماسک|سم آلتمن|دمیس هسابیس|جنسن هوانگ|اندرو انگ|اریک اشمیت)\s*[:—-])",
+        text,
+    ))
     attribution = _contains_any(text, _ATTRIBUTION_TERMS) or attributed_headline or content_type in {
         "leader_signal", "direct_statement", "social_post", "statement", "opinion",
     }

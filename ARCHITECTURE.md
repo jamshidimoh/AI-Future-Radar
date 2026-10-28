@@ -4,7 +4,7 @@
 
 AI Future Radar is a deterministic editorial pipeline that discovers technology signals, removes duplicates, evaluates relevance and evidence, constructs a mission-aware editorial portfolio, uses an LLM only for transformation and bounded quality repair, and delivers validated content to Telegram.
 
-The current production cadence is one news publication cycle every 4 hours and one educational publication every 12 hours. Final news capacity is three items per run. Protected material may receive priority within those three slots; it does not create an additional publication quota. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
+The current production cadence is one news publication cycle every 4 hours and one educational publication every 12 hours. The normal-news count is adaptive, with an operational safety ceiling of eight items per run. Protected material may receive priority within those three slots; it does not create an additional publication quota. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
 
 The system must remain useful when any individual LLM provider, RSS feed, YouTube transport, or image source is unavailable.
 
@@ -45,9 +45,9 @@ The selector uses one final portfolio objective rather than separate publication
 2. Satisfy configured mission opportunities for AI Core, Convergence and Mind/Cognition when an eligible candidate is competitive with the current portfolio.
 3. Enforce source, content-type, mission-area, community and cross-run rotation constraints.
 4. Maximize portfolio value using editorial quality, evidence, freshness and bounded information gain.
-5. Return three primary candidates plus a bounded replacement buffer; replacements never increase publication capacity.
+5. Return qualifying candidates up to the operational safety ceiling plus a bounded downstream recovery pool; replacements never bypass quality policy.
 
-Normal publication capacity is `max_posts=3`. The canonical candidate window is `candidate_window=6` with `replacement_buffer=3` available downstream for late QA/delivery failures. Technical/Frontier, Mind/Ideas/Voices and Voices/Perspectives are candidate roles inside this portfolio, not additive publication quotas.
+`max_posts=8` is an anti-flood safety ceiling, not a fixed publication target. The selector publishes only candidates meeting the absolute quality floor and relative score-gap rule. The candidate window is `candidate_window=12` with `replacement_buffer=4` available downstream for late QA/delivery failures. Technical/Frontier, Mind/Ideas/Voices and Voices/Perspectives are candidate roles inside this portfolio, not additive publication quotas.
 
 `max_items_per_source=2` is the hard ceiling, while `mission.max_same_source=1` is the preferred same-source target. The allocator fills a new source before allowing a repeated source and never uses the replacement buffer to bypass the source cap.
 

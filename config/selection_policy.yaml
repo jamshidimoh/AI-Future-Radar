@@ -22,6 +22,8 @@ selection:
   distinct_sources_first: true
   replacement_buffer: 4
   normal_relative_score_gap: 15.0
+  publication_mode: adaptive_quality_threshold
+  fixed_three_item_quota: false
   diversity_quality_floor_ratio: 0.90
   target_quality_floor_ratio: 0.92
   mission_target_quality_floor_ratio: 0.82

@@ -129,7 +129,7 @@ google_news_queries:
   - {query: "AI economy jobs future interview", category: future, tier: 2, content_type: interview}
   - {query: "future of intelligence AI long term", category: future, tier: 1, content_type: research}
 
-max_posts_per_run: 4
+max_posts_per_run: 8
 category_weights: {ai: 0.70, quantum: 0.075, genetics: 0.075, mind: 0.075, future: 0.075}
 
 influential_people:

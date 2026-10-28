@@ -119,3 +119,80 @@ def test_window_counts_empty_history_returns_empty_counts():
     source_counts, area_counts = pipeline._window_counts([], window_items=6)
     assert source_counts == {}
     assert area_counts == {}
+
+
+def test_major_ai_product_launch_survives_the_bounded_global_ranking_window(monkeypatch):
+    # Reproduce the failure mode: the product signal would fall outside the
+    # 16-candidate window if freshness alone ordered the initial pool.
+    monkeypatch.setattr(pipeline, "_exclude_published_candidates", lambda candidates: candidates)
+    monkeypatch.setattr(
+        pipeline,
+        "freshness_score",
+        lambda item, half_life_hours=36.0: float(item.get("_test_freshness", 0.0)),
+    )
+    monkeypatch.setattr(pipeline, "rerank_candidates", lambda candidates: candidates)
+    monkeypatch.setattr(
+        pipeline,
+        "_diversify_normal_candidates",
+        lambda normal, max_posts, *args, **kwargs: normal[:max_posts],
+    )
+
+    routine_items = [
+        {
+            "title": f"Routine AI deployment status update {index}",
+            "summary": "A routine operational update about AI deployment.",
+            "source": f"independent-source-{index}",
+            "source_tier": 1,
+            "content_type": "news",
+            "_ai_link": True,
+            "editorial_score_pre_signal": 82.0,
+            "signal_score": 72.0,
+            "_test_freshness": 0.88,
+        }
+        for index in range(18)
+    ]
+    product_launch = {
+        "title": "Google DeepMind introduces Genie 4, an interactive world simulator",
+        "summary": "The new world model generates interactive environments in real time.",
+        "source": "Google DeepMind",
+        "source_tier": 1,
+        "content_type": "product_news",
+        "_ai_link": True,
+        "evidence_text": "Official product announcement",
+        "editorial_score_pre_signal": 80.0,
+        "signal_score": 70.0,
+        "_test_freshness": 0.73,
+    }
+
+    original_score = pipeline.canonical_rank_score(product_launch)
+    ranked = pipeline._global_ranked_selection(
+        routine_items + [product_launch],
+        max_posts=8,
+        max_per_source=2,
+        max_per_type=8,
+        policy={},
+    )
+
+    titles = [item["title"] for item in ranked]
+    assert product_launch["title"] in titles
+    assert ranked[0]["title"] == product_launch["title"]
+    assert ranked[0]["major_ai_product_release"] is True
+    # Priority changes only window ordering; canonical scoring remains untouched.
+    assert ranked[0]["final_editorial_score"] == original_score
+
+
+def test_bounded_discovery_priority_does_not_upgrade_generic_company_news():
+    generic = {
+        "title": "Google DeepMind announces a corporate partnership",
+        "summary": "The organizations will work together on a business initiative.",
+        "source": "Google DeepMind",
+        "source_tier": 1,
+        "content_type": "news",
+        "_ai_link": True,
+        "editorial_score_pre_signal": 80.0,
+        "signal_score": 70.0,
+    }
+    pipeline._prepare_rank_features([generic])
+    assert generic["major_ai_product_release"] is False
+    assert generic["strategic_ai_leader_statement"] is False
+    assert pipeline._bounded_discovery_priority_boost(generic) == 0.0

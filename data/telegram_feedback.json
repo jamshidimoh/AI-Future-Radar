@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793198424,
+  "updated_at": 1793218478,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -20259,6 +20259,62 @@
       "why_it_matters": "توانمندی در پردازش مواد معدنی حیاتی، تضمین تأمین مستمر قطعات کلیدی برای فناوریهای نوظهور مانند هوش مصنوعی و وسایل الکتریکی را فراهم می‌کند. بدون زیرساختهای پردازشی قوی، حتی دسترسی به منابع خام نیز نمی‌تواند بهصورت مؤثر به محصولات نهایی تبدیل شود و زنجیره تأمین در معرض خطر قطع می‌شود. تنوع جغرافیایی و مقاومسازی این زیرساختها می‌تواند ریسکهای ناشی از تنشهای ژئوپولیتیکی را کاهش دهد و به پایداری انتقال انرژی جهانی کمک کند.",
       "link": "https://www.youtube.com/shorts/RJX9u_xdVGA",
       "posted_at": 1793198400
+    },
+    "-1004482051328:2185": {
+      "chat_id": -1004482051328,
+      "message_id": 2185,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "ترانزیستوری که 34 سال برای ارسال به طول انجامید",
+      "summary": "در مصاحبه‌ای با Dwarkesh Patel، به توضیح چرخه طولانی توسعه یک ترانزیستور اشاره شد؛ این قطعه 34 سال طول کشید تا از مرحله طراحی به تولید و ارسال برسد. این مثال، زمان‌بر بودن فرآیندهای مهندسی و نیاز به فناوری‌های نوظهور را برجسته می‌کند.",
+      "description": "Full episode: https://www.youtube.com/watch?v=frYSOKvNiiE\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "مدت زمان 34 ساله نشان می‌دهد که توسعه ترانزیستورهای پیشرفته هنوز به‌صورت سریالی و زمان‌بر انجام می‌شود؛ این امر بر بازارهای الکترونیک و زمان‌بندی عرضه محصولات تأثیر می‌گذارد. تسریع این چرخه با بهره‌گیری از فناوری‌های نوظهور می‌تواند به کاهش هزینه و زمان ورود به بازار کمک کند.",
+      "link": "https://www.youtube.com/watch?v=qNvuN-TG2nQ",
+      "posted_at": 1793218470
+    },
+    "-1004482051328:2186": {
+      "chat_id": -1004482051328,
+      "message_id": 2186,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MIT News - Artificial Intelligence",
+      "content_type": "research",
+      "category": "ai_science",
+      "leader": "",
+      "title": "چرا زیرساخت‌ها در عصر جدیدی وارد می‌شوند؟",
+      "summary": "زیرساخت‌ها همواره با پیشرفت‌های فناوری تکامل یافته‌اند؛ از مهندسی نظامی در قرن هجدهم تا شبکه‌های برق، مراکز داده و زیرساخت‌های مخابراتی امروز. در این دوره، تغییرات فناوری، تغییرات اقلیمی، محدودیت‌های منابع و ناآرامی‌های ژئوپولیتیکی به‌سرعت همزمان رخ می‌دهند. این ترکیب فشارها نیازمند بازنگری در طراحی، ساخت، تأمین مالی و بهره‌برداری از زیرساخت‌هاست. علی جادبابایی، رئیس دپارتمان مهندسی عمران و محیط زیست MIT، می‌گوید پاسخ به این چالش‌ها مستلزم مشارکت گسترده ذینفعان و رویکردهای نوین است.",
+      "why_it_matters": "تغییرات سریع فناوری و اثرات تغییرات اقلیمی می‌توانند زیرساخت‌های موجود را تحت فشار قرار دهند و نیاز به راهکارهای مقاوم و پایدار را افزایش دهند. بدون بازنگری در روش‌های طراحی و مدیریت، ادامهٔ رشد اقتصادی و بهبود کیفیت زندگی در مناطق در حال توسعه دشوار می‌شود. مشارکت بین‌المللی و استفاده از فناوری‌های نوین می‌تواند به کاهش وابستگی به مدل‌های استخراج‌گرای قرن بیستم کمک کند.",
+      "link": "https://news.mit.edu/2026/3-questions-why-infrastructure-is-entering-defining-era-1028",
+      "posted_at": 1793218474
+    },
+    "-1004482051328:2187": {
+      "chat_id": -1004482051328,
+      "message_id": 2187,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "Eva Jablonka: تکامل، زیستشناسی و ژنتیک در مفهوم خوشحالی",
+      "summary": "Eva Jablonka در سخنرانی خود به بررسی ارتباط بین تکامل، زیستشناسی و ژنتیک با مفهوم خوشحالی میپردازد. او نشان می‌دهد که احساسات و آگاهی می‌توانند ریشههای تکاملی داشته باشند و این موضوع را در چارچوب نظریههای نوین زیستشناسی بررسی می‌کند.",
+      "description": "#evolution #biology #genetics  \n\nWith a free trial, you can watch the full talk NOW at \nhttps://iai.tv/video/consciousness-has-evolutionary-roots-with-eva-jablonka?stage=Stage?utm_source=YouTube&amp;utm_medium=description\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "درک ریشههای تکاملی آگاهی و احساسات می‌تواند به بازنگری در مفاهیم فلسفی و علمی دربارهٔ ذهن و خوشحالی منجر شود. این دیدگاه می‌تواند به پژوهشهای میانرشتهای در زیستشناسی، روانشناسی و فلسفه کمک کند و پرسشهای جدیدی دربارهٔ مرزهای آگاهی در موجودات زنده مطرح سازد.",
+      "link": "https://www.youtube.com/shorts/CuygR8MLbyg",
+      "posted_at": 1793218478
     }
   }
 }

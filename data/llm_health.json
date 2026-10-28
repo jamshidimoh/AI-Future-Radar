@@ -6,40 +6,10 @@
       "last_error": "auth",
       "last_success": 0
     },
-    "openrouter:openai/gpt-oss-20b:free": {
+    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
       "failures": 1,
-      "disabled_until": 1793201520.769,
-      "last_error": "model",
-      "last_success": 0
-    },
-    "openrouter:qwen/qwen3-next-80b-a3b-instruct:free": {
-      "failures": 1,
-      "disabled_until": 1793201520.769,
-      "last_error": "model",
-      "last_success": 0
-    },
-    "openrouter:openai/gpt-oss-120b:free": {
-      "failures": 1,
-      "disabled_until": 1793201520.769,
-      "last_error": "model",
-      "last_success": 0
-    },
-    "groq:qwen/qwen3.6-27b": {
-      "failures": 1,
-      "disabled_until": 1793201520.769,
-      "last_error": "model",
-      "last_success": 0
-    },
-    "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
-      "failures": 1,
-      "disabled_until": 1793201520.769,
-      "last_error": "model",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1793202024.822,
-      "last_error": "rate_limit",
+      "disabled_until": 1793222079.778,
+      "last_error": "quota",
       "last_success": 0
     }
   },
@@ -56,16 +26,16 @@
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1793201520.769,
+      "disabled_until": 1793240079.778,
       "last_error": "quota"
     }
   },
-  "updated_at": 1793198424.8216014,
+  "updated_at": 1793218479.778073,
   "version": 1,
   "telemetry": {
-    "observed_failures": 4,
+    "observed_failures": 2,
     "observed_events": 23,
-    "updated_at": 1793198424.8216014
+    "updated_at": 1793218479.778073
   },
   "observed_failures": 0,
   "observed_events": 0

@@ -147,11 +147,9 @@ def _query_content_type_priority(q: dict) -> int:
         "talk": 6,
         "conversation": 6,
         "social_post": 5,
-        "direct_statement": 5,
+        "direct_statement": 6,
         "leader_signal": 6,
         "product_news": 6,
-        "direct_statement": 6,
-        "social_post": 5,
         "research": 2,
     }.get(ctype, 1)
 

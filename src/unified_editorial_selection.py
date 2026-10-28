@@ -11,6 +11,7 @@ from typing import Any
 
 import yaml
 
+from src.editorial_score_v2 import is_major_ai_product_release, is_strategic_leader_statement
 from src.future_significance import is_low_future_value
 from src.information_gain import (
     editorial_novelty_score,
@@ -652,6 +653,22 @@ def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[s
     return max(pool, key=lambda item: (candidate_score(item), _safe_float(item, "evidence_strength")), default=None)
 
 
+def _bounded_portfolio_priority_boost(item: dict[str, Any]) -> float:
+    """Return a ranking-only nudge for consequential AI releases and leader signals.
+
+    This boost is used only after the portfolio's existing relative quality floor
+    has filtered candidates. It never changes canonical editorial scores,
+    publication floors, source/evidence checks, or QA eligibility.
+    """
+    if item.get("major_ai_product_release") or is_major_ai_product_release(item):
+        return 0.18
+    if item.get("model_release_priority"):
+        return 0.15
+    if item.get("strategic_ai_leader_statement") or is_strategic_leader_statement(item):
+        return 0.12
+    return 0.0
+
+
 def candidate_score(item: dict[str, Any]) -> float:
     """Selection-only score. Stored/source scores are not mutated by editorial balancing."""
     score = 0.0
@@ -910,13 +927,17 @@ def _quality_floor_candidate(p: _Portfolio, pool: list[dict[str, Any]]) -> dict[
             similarity_penalty=p.contract["similarity_penalty"],
         )
         if p.mission_aware:
-            # Production editorial selection is mission-aware: once a candidate
-            # clears the quality floor, freshness must outrank a small legacy
-            # score advantage so genuinely recent capability/research updates win.
+            # Production editorial selection is mission-aware. Keep true freshness
+            # visible as the second key, but allow a bounded pre-sort priority for
+            # major product/capability launches and consequential leader statements.
+            # This runs only after the unchanged relative quality floor above.
+            freshness = freshness_score(x, freshness_half_life)
+            priority_adjusted_freshness = freshness + _bounded_portfolio_priority_boost(x)
             return (
-                freshness_score(x, freshness_half_life),
+                priority_adjusted_freshness,
+                freshness,
                 value,
-                candidate_score(x) + freshness_score(x, freshness_half_life) * freshness_weight,
+                candidate_score(x) + freshness * freshness_weight,
                 _safe_float(x, "evidence_strength"),
                 str(x.get("published", "")),
             )

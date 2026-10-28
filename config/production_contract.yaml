@@ -45,6 +45,7 @@ selection:
   normal_relative_score_gap: 15.0
   publication_mode: adaptive_quality_threshold
   fixed_three_item_quota: false
+  max_items_per_content_type: 8
   diversity_mode: unified_final_portfolio
   distinct_sources_first: true
   special_lanes_are_candidate_roles: true
@@ -52,7 +53,7 @@ selection:
   historical_source_usage_is_hard_exclusion: false
   editorial_balance:
     ai_core_target_min: 1
-    ai_core_target_max: 2
+    ai_core_target_max: 8
     max_genetics_per_run: 1
     genetics_diversity_penalty: 15
     max_health_medical_per_run: 1

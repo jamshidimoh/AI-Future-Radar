@@ -8,7 +8,7 @@ This document is the release boundary for declaring the repository production-co
 - [x] Ranked selection is provided by `period_ranked_pipeline._global_ranked_selection`.
 - [x] The normal portfolio is constructed by `src/unified_editorial_selection.py` from mission and selection policy layers.
 - [x] Selected normal stories receive `period_rank` and contiguous `normal_period_rank` values.
-- [x] Normal publication capacity is `max_posts=3`; the six-item candidate window is a replacement buffer and never increases the publication quota.
+- [x] Publication count is adaptive, not a fixed quota: candidates must meet the absolute quality floor and relative score-gap threshold, and pass evidence, duplication, source diversity, language and delivery gates. `max_posts=8` is only an operational anti-flood ceiling; `candidate_window=12` and `replacement_buffer=4` provide replacement breadth.
 - [x] The replacement window is evaluated by the same language, editorial-quality, score and publication contracts as primary candidates.
 - [x] The normal-news adaptive baseline applies uniformly across the candidate window, including `normal_rank=1`; no rank is a score-policy bypass.
 - [x] Preferred same-source use is one item per source; a second item is permitted only as adaptive backfill under the hard source ceiling.

@@ -52,6 +52,20 @@ MAX_MIND_IDEAS_VOICES_PER_PERIOD = 2
 PEOPLE_BOOTSTRAP_RESULT = None
 
 
+def _merge_selected_people_candidates(selected, people_candidates, *, bootstrap_mode: bool):
+    """Force-include People items only while establishing the 30-person baseline.
+
+    After bootstrap completes, People signals already belong to the shared
+    editorial pool. Re-appending the full discovery list here would resurrect
+    candidates rejected by portfolio selection and could bypass normal ranking
+    or the interview-only People role.
+    """
+    combined = list(selected or [])
+    if bootstrap_mode:
+        combined.extend(people_candidates or [])
+    return unique_candidates(combined)
+
+
 def _is_mind_ideas_voices(item: dict) -> bool:
     return bool(
         item.get("mind_lane_selected")
@@ -944,7 +958,11 @@ def main(hooks=None):
         flush=True,
     )
     selected_regular = select_editorial_fn(editorial_pool, max_posts=max_posts, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
-    selected_regular = unique_candidates(selected_regular + people_publication_candidates)
+    selected_regular = _merge_selected_people_candidates(
+        selected_regular,
+        people_publication_candidates,
+        bootstrap_mode=people_bootstrap_mode,
+    )
     protected_candidates = [] if people_bootstrap_mode else [x for x in editorial_pool if x.get("protected_content")]
     protected_selected = (
         []

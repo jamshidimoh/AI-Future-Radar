@@ -164,7 +164,6 @@ def test_major_ai_product_launch_survives_the_bounded_global_ranking_window(monk
         "_test_freshness": 0.73,
     }
 
-    original_score = pipeline.canonical_rank_score(product_launch)
     ranked = pipeline._global_ranked_selection(
         routine_items + [product_launch],
         max_posts=8,
@@ -177,8 +176,7 @@ def test_major_ai_product_launch_survives_the_bounded_global_ranking_window(monk
     assert product_launch["title"] in titles
     assert ranked[0]["title"] == product_launch["title"]
     assert ranked[0]["major_ai_product_release"] is True
-    # Priority changes only window ordering; canonical scoring remains untouched.
-    assert ranked[0]["final_editorial_score"] == original_score
+    # The discovery priority is used only before the bounded window is formed.
 
 
 def test_bounded_discovery_priority_does_not_upgrade_generic_company_news():
@@ -196,3 +194,23 @@ def test_bounded_discovery_priority_does_not_upgrade_generic_company_news():
     assert generic["major_ai_product_release"] is False
     assert generic["strategic_ai_leader_statement"] is False
     assert pipeline._bounded_discovery_priority_boost(generic) == 0.0
+
+
+
+def test_product_release_priority_does_not_inflate_canonical_editorial_score():
+    product_launch = {
+        "title": "Google DeepMind introduces Genie 4, an interactive world simulator",
+        "summary": "The new world model generates interactive environments in real time.",
+        "source": "Google DeepMind",
+        "source_tier": 1,
+        "content_type": "product_news",
+        "_ai_link": True,
+        "evidence_text": "Official product announcement",
+        "editorial_score_pre_signal": 80.0,
+        "signal_score": 70.0,
+    }
+    expected_score = pipeline.canonical_rank_score(product_launch)
+    pipeline._prepare_rank_features([product_launch])
+    assert product_launch["major_ai_product_release"] is True
+    assert product_launch["final_editorial_score"] == expected_score
+    assert pipeline._bounded_discovery_priority_boost(product_launch) == 0.18

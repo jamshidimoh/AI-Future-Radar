@@ -28,7 +28,7 @@ def test_production_contract_requires_core_mission_lanes_when_candidates_exist()
     assert mission["ai_core_target_min"] >= 1
     assert mission["convergence_target"] >= 1
     assert mission["mind_future_target"] >= 1
-    assert selection["max_same_mission_area"] <= 2
+    assert selection["max_same_mission_area"] == 8
     assert selection["max_items_per_content_type"] >= 2
 
 

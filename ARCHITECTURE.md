@@ -21,7 +21,7 @@ Discovery
        -> mission coverage opportunities
        -> authoritative/community boundary
        -> adaptive source diversity
-       -> content-type and mission-area caps
+       -> content-type and mission-area soft diversity
        -> candidate window (12) + replacement buffer (4)
        -> unified final portfolio arbitration (up to 8 items at the operational safety ceiling)
   -> LLM transformation
@@ -39,7 +39,7 @@ Collectors are not responsible for editorial selection. LLMs are not the sole au
 
 ## Unified editorial selection
 
-The selector uses one final portfolio objective rather than separate publication quotas for each lane. It operates in this order:
+The selector uses one final portfolio objective rather than separate publication quotas for each lane. The AI-core target is a coverage opportunity rather than a two-story hard cap; source repetition and topic similarity are handled through soft diversity scoring, with the eight-item safety ceiling as the hard overall limit. It operates in this order:
 
 1. Protect at most one eligible Tier-0/leader candidate when its substantive-quality floor is met.
 2. Satisfy configured mission opportunities for AI Core, Convergence and Mind/Cognition when an eligible candidate is competitive with the current portfolio.

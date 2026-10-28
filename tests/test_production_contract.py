@@ -45,10 +45,10 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     contract = load_editorial_contract()
     selection = _load(SELECTION)["selection"]
     mission = _load(MISSION)["mission"]
-    assert contract["max_posts"] == selection["max_posts"] == 3
-    assert mission["max_posts"] == contract["max_posts"] == 3
-    assert contract["candidate_window"] == selection["candidate_window"] == 6
-    assert contract["replacement_buffer"] == 3
+    assert contract["max_posts"] == selection["max_posts"] == 8
+    assert mission["max_posts"] == contract["max_posts"] == 8
+    assert contract["candidate_window"] == selection["candidate_window"] == 12
+    assert contract["replacement_buffer"] == 4
     assert contract["preferred_max_same_source"] == mission["max_same_source"] == 1
     assert contract["hard_max_same_source"] == selection["max_items_per_source"] == 2
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
@@ -56,8 +56,8 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert contract["community_max"] == mission["community_max"]
     assert selection["diversity_mode"] == "unified_final_portfolio"
     assert selection["distinct_sources_first"] is True
-    assert selection["candidate_window"] + selection["replacement_buffer"] == 9
-    assert contract["max_posts"] == 3
+    assert selection["candidate_window"] + selection["replacement_buffer"] == 16
+    assert contract["max_posts"] == 8
 
 
 def test_mission_diversity_is_explicit_and_canonical():
@@ -69,7 +69,7 @@ def test_mission_diversity_is_explicit_and_canonical():
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
     assert contract["preferred_max_same_source_per_run"] == mission["max_same_source"]
     assert contract["hard_max_same_source_per_run"] == _load(SELECTION)["selection"]["max_items_per_source"]
-    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 2
+    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 4
     assert contract["min_authoritative_items"] == mission["min_authoritative_items"]
     assert contract["community_max"] == mission["community_max"]
     assert contract["ai_core_target"] == [

@@ -504,10 +504,10 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
             score = 0.0
         return score >= NORMAL_SCORE_FLOOR and not item.get("_publication_blocked")
 
-    # Recovery is a replacement path, not permission to exceed the three-item
-    # publication portfolio. Check the higher-priority Mind lane before the
-    # lower-priority Convergence lane; legacy configurations may use Mind/Futures
-    # as a combined fallback when the dedicated Mind target is disabled.
+    # Recovery is a replacement path, not permission to bypass the adaptive
+    # quality policy or shared operational safety ceiling. Check the higher-priority
+    # Mind lane before Convergence; legacy configurations may use Mind/Futures as
+    # a combined fallback when the dedicated Mind target is disabled.
     specs = [
         ("ai_core", int(contract.get("ai_core_target_min", 0) or 0)),
     ]

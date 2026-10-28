@@ -53,12 +53,14 @@ _LEADER_ACTIVITY_EVIDENCE_TERMS = (
     "acquisition", "investment", "invested", "funding", "founded", "appointed", "appoints", "joins", "partnership",
     "research project", "initiative", "product", "model", "platform", "steps down", "steps aside", "steps up",
     "reshuffle", "reorganize", "reorganise", "vision", "outlook", "forecast", "predicts", "prediction", "timeline",
+    "believes", "believe", "argues", "argue", "claims", "claimed", "notes", "noted", "points out", "said that",
 )
 _LEADER_ANALYTICAL_SIGNAL_TERMS = (
     "will ", "would ", "could ", "may ", "until ", "by 202", "future", "forecast", "prediction", "outlook", "timeline",
     "singularity", "existential", "consciousness", "sentience", "intimacy", "economy", "economic", "jobs", "workforce",
     "labor", "work", "society", "governance", "rules", "regulation", "risk", "safety", "business", "industry",
     "adoption", "deployment", "transformation", "impact", "implications", "reasoning", "intelligence",
+    "electricity", "power demand", "energy infrastructure", "compute capacity", "compute bottleneck", "data center power",
 )
 _LEADER_STRONG_CONTEXT_TERMS = (
     "ai", "artificial intelligence", "agi", "machine learning", "robot", "robotics", "chip", "chips", "semiconductor",
@@ -66,7 +68,7 @@ _LEADER_STRONG_CONTEXT_TERMS = (
     "deepmind", "nvidia", "meta", "google", "microsoft", "apple", "amazon", "technology", "tech", "europe", "eu",
     "european", "regulation", "regulatory", "policy", "government", "law", "legislation", "governance", "safety", "risk",
     "future", "innovation", "economy", "education", "jobs", "labor", "workforce", "health", "science", "research",
-    "infrastructure", "energy", "autonomy", "cybersecurity", "security", "consciousness", "singularity", "intimacy",
+    "infrastructure", "energy", "electricity", "electric power", "power demand", "power supply", "power grid", "grid", "data center power", "data centre power", "compute capacity", "compute bottleneck", "autonomy", "cybersecurity", "security", "consciousness", "singularity", "intimacy",
 )
 _LEADER_SIGNAL_CONTEXT_TERMS = (
     *_LEADER_STRONG_CONTEXT_TERMS,
@@ -140,14 +142,16 @@ def _load_pioneer_priorities() -> dict[str, int]:
 def _query_content_type_priority(q: dict) -> int:
     ctype = str(q.get("content_type") or "").strip().casefold()
     return {
+        # High-value product and strategy queries must survive the bounded
+        # discovery budget before redundant secondary person-query variants.
+        "product_news": 10,
+        "leader_signal": 9,
+        "direct_statement": 9,
+        "social_post": 7,
         "interview": 7,
         "podcast": 7,
         "talk": 6,
         "conversation": 6,
-        "social_post": 5,
-        "direct_statement": 5,
-        "leader_signal": 3,
-        "product_news": 3,
         "research": 2,
     }.get(ctype, 1)
 
@@ -155,7 +159,7 @@ def _query_content_type_priority(q: dict) -> int:
 def _is_strong_curated_query(q: dict) -> bool:
     preferred_source = str(q.get("preferred_source") or "").strip()
     query_text = str(q.get("query") or "").strip().lower()
-    return bool(preferred_source or query_text.startswith("site:"))
+    return bool(q.get("curated_discovery") or preferred_source or query_text.startswith("site:"))
 
 
 def _load_watchlist_people_queries():
@@ -202,9 +206,9 @@ def _load_watchlist_people_queries():
                     f'(AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR consciousness OR cognition)'
                 )
                 activity_query = (
-                    f'"{name}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future) '
+                    f'"{name}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR compute OR chips OR energy OR electricity OR power OR grid) '
                     f'(launch OR announces OR announced OR acquisition OR research OR policy OR regulation OR '
-                    f'forecast OR prediction OR investment OR product OR model OR platform OR partnership)'
+                    f'forecast OR prediction OR investment OR product OR model OR platform OR partnership OR electricity OR "power demand" OR "data center" OR infrastructure)'
                 )
                 common = {
                     "watch_person": name,
@@ -375,7 +379,19 @@ def _expand_leader_signal_queries(queries):
             str(q.get("query") or "").casefold(),
         )
     )
-    expanded = ordered + secondary + non_people
+    # Preserve high-value general discovery streams before secondary variants.
+    # Every watched person already has voice, direct-post and activity coverage;
+    # repeating person queries must not crowd out product releases or strategic
+    # compute/energy statements when the bounded network-query budget is reached.
+    non_people.sort(
+        key=lambda q: (
+            -_query_content_type_priority(q),
+            -int(bool(q.get("curated_discovery") or q.get("preferred_source") or str(q.get("query") or "").strip().casefold().startswith("site:"))),
+            -int(str(q.get("category") or "").strip().casefold() == "ai"),
+            str(q.get("query") or "").casefold(),
+        )
+    )
+    expanded = ordered + non_people + secondary
     return expanded[:_MAX_LEADER_SIGNAL_QUERIES]
 
 def classify_leader_signal(title, summary, watch_person="", *, query_context="", content_type=""):

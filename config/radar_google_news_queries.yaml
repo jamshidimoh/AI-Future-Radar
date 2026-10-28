@@ -137,3 +137,32 @@ google_news_queries:
   - {name: "AI intentionality and agency", query: "AI philosophy agency intentionality meaning cognition", category: mind, tier: 1, content_type: research}
   - {name: "Machine sentience", query: "machine sentience moral status AI cognition", category: mind, tier: 1, content_type: research}
   - {name: "AI agents and cognition", query: "AI agents human cognition cognitive science", category: mind, tier: 1, content_type: research}
+
+  # Major AI product/capability launches, including world models and interactive simulators.
+  - name: "Major AI product and capability launches"
+    query: '(AI OR "artificial intelligence" OR "Google DeepMind" OR OpenAI OR Anthropic OR NVIDIA) (launches OR unveiled OR releases OR introduced OR announced OR "now available") ("world model" OR simulator OR simulation OR agent OR "foundation model" OR multimodal OR reasoning OR robotics)'
+    category: ai
+    tier: 1
+    content_type: product_news
+    curated_discovery: true
+  - name: "Google DeepMind world models and simulators"
+    query: '"Google DeepMind" (Genie OR "world model" OR simulator OR simulation OR "interactive world") (launch OR announced OR introduced OR released OR available)'
+    category: ai
+    tier: 1
+    content_type: product_news
+    preferred_source: "Google DeepMind"
+    curated_discovery: true
+
+  # AI compute, electricity and data-centre infrastructure as strategic constraints.
+  - name: "AI electricity and compute bottlenecks"
+    query: '("AI" OR "artificial intelligence" OR "AI data center" OR "AI data centre") (electricity OR "power demand" OR "power grid" OR "energy infrastructure" OR "data center power" OR compute) (CEO OR warns OR says OR forecast OR "Elon Musk" OR "Jensen Huang" OR "Sam Altman" OR "Demis Hassabis")'
+    category: ai
+    tier: 1
+    content_type: leader_signal
+    curated_discovery: true
+  - name: "AI infrastructure strategic statements"
+    query: '("Elon Musk" OR "Jensen Huang" OR "Sam Altman" OR "Demis Hassabis" OR "Eric Schmidt" OR "Dario Amodei") (AI OR AGI OR "artificial intelligence") (electricity OR energy OR chips OR compute OR "data center" OR grid OR infrastructure) (says OR said OR warns OR warned OR argues OR predicts OR believes OR interview OR statement)'
+    category: ai
+    tier: 1
+    content_type: leader_signal
+    curated_discovery: true

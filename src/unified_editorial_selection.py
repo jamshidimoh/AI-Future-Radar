@@ -89,6 +89,7 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "max_posts": int(selection_cfg.get("max_posts", mission.get("operational_publication_capacity", 4)) or 4),
         "candidate_window": int(selection_cfg.get("candidate_window", 6) or 6),
         "replacement_buffer": int(selection_cfg.get("replacement_buffer", 2) or 2),
+        "normal_relative_score_gap": max(0.0, min(30.0, float(selection_cfg.get("normal_relative_score_gap", 15.0) or 15.0))),
         "max_items_per_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
         "max_items_per_content_type": int(selection_cfg.get("max_items_per_content_type", 2) or 2),
         "max_genetics_per_run": max(0, int(selection_cfg.get("max_genetics_per_run", 1))),

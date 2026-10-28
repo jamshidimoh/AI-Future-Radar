@@ -5,9 +5,11 @@ from typing import Any
 
 from src.priority_people import is_substantive_priority_interview
 
-MAX_NORMAL_NEWS_PER_PERIOD = 3
-MAX_EXTRA_NEWS = 2
-RANK_WINDOW = 4
+MAX_NORMAL_NEWS_PER_PERIOD = 8  # anti-flood ceiling, not expected publication volume
+MAX_EXTRA_NEWS = MAX_NORMAL_NEWS_PER_PERIOD - 1
+RANK_WINDOW = 12
+NORMAL_SCORE_FLOOR = 55.0
+NORMAL_RELATIVE_SCORE_GAP = 15.0
 
 
 def _score(item: dict[str, Any]) -> float:
@@ -48,17 +50,17 @@ def rank_period_candidates(items: Iterable[dict[str, Any]], normal_window: int =
     return ranked
 
 
-def select_news_for_period(items: Iterable[dict[str, Any]], previous_published_score: float | None) -> list[dict[str, Any]]:
-    """Select only the normal-news stream using the 1+2 policy."""
+def select_news_for_period(items: Iterable[dict[str, Any]], previous_published_score: float | None = None) -> list[dict[str, Any]]:
+    """Select every qualifying distinct story up to the safety ceiling.
+
+    The previous published score remains an accepted argument for compatibility,
+    but it is not an eligibility gate for newly discovered news.
+    """
     ranked = rank_period_candidates(items, normal_window=RANK_WINDOW)
     normal = [x for x in ranked if x.get("normal_period_rank") is not None]
     if not normal:
         return []
-    primary = normal[0]
-    selected = [primary]
-    if previous_published_score is None:
-        return selected
-    baseline = float(previous_published_score)
-    extras = [x for x in normal[1:RANK_WINDOW] if _score(x) > baseline]
-    selected.extend(extras[:MAX_EXTRA_NEWS])
-    return selected[:MAX_NORMAL_NEWS_PER_PERIOD]
+    best_score = max(_score(item) for item in normal)
+    threshold = max(NORMAL_SCORE_FLOOR, best_score - NORMAL_RELATIVE_SCORE_GAP)
+    qualified = [item for item in normal if _score(item) >= threshold]
+    return qualified[:MAX_NORMAL_NEWS_PER_PERIOD]

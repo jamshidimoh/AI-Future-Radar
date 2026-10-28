@@ -40,15 +40,18 @@ ROOT = Path(__file__).resolve().parent
 FEEDBACK_PATH = ROOT / "data" / "telegram_feedback.json"
 CADENCE_PATH = ROOT / "data" / "publication_state.json"
 EDITORIAL_CONTRACT = load_editorial_contract()
-MAX_NORMAL_NEWS_PER_PERIOD = 3
+MAX_NORMAL_NEWS_SAFETY_CAP = 8
+MAX_NORMAL_NEWS_PER_PERIOD = min(
+    MAX_NORMAL_NEWS_SAFETY_CAP,
+    max(1, int(EDITORIAL_CONTRACT.get("max_posts", MAX_NORMAL_NEWS_SAFETY_CAP) or MAX_NORMAL_NEWS_SAFETY_CAP)),
+)
 # Special lanes are candidate roles, not independent publication quotas.
-MAX_MIND_IDEAS_VOICES_PER_PERIOD = 1
-MAX_TECHNICAL_TREND_PER_PERIOD = 1
-MAX_VOICES_PERSPECTIVES_PER_PERIOD = 2  # prioritize expert voice coverage within the shared three-story cap
-# Bootstrap still establishes all 30 baselines, but publication is batched so
-# one run does not flood Telegram or suppress the independent Mind/Voices lanes.
+MAX_MIND_IDEAS_VOICES_PER_PERIOD = 2
+MAX_TECHNICAL_TREND_PER_PERIOD = 2
+MAX_VOICES_PERSPECTIVES_PER_PERIOD = 3  # bounded lane allowance within adaptive shared capacity
+# Bootstrap is deliberately batched. Other news volume is adaptive, not a fixed three-story quota.
 MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 2
-NORMAL_RELATIVE_SCORE_GAP = 8.0
+NORMAL_RELATIVE_SCORE_GAP = float(EDITORIAL_CONTRACT.get("normal_relative_score_gap", 15.0))
 RANK_WINDOW = int(EDITORIAL_CONTRACT["candidate_window"])
 PROTECTED_SUMMARY_SCORE_FLOOR = PROTECTED_SCORE_FLOOR
 EDU_FIELDS = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
@@ -56,7 +59,7 @@ NEWS_FIELDS = ("title", "summary", "why_it_matters")
 GUARD_REASON_ENV = "AI_RADAR_PUBLICATION_GUARD_REASON"
 EDUCATION_WINDOWS_TEHRAN = ((5, 7, "morning"), (20, 7, "evening"))
 TEHRAN = timezone(timedelta(hours=3, minutes=30))
-STRATEGIC_ANALYTICAL_MAX_PER_PERIOD = 1
+STRATEGIC_ANALYTICAL_MAX_PER_PERIOD = 2
 STRATEGIC_ANALYTICAL_CATEGORIES = {"future", "future_governance", "mind", "mind_cognition"}
 
 
@@ -688,7 +691,7 @@ def main(*, skip_education: bool = False) -> int:
         education_due = False
         education_slot = None
     previous_normal_score = cadence.get("last_published_normal_news_score")
-    print(f"[Cadence] run={run_number} tehran={now_tehran.isoformat()} normal_news=ranked_1_plus_2 max_normal={MAX_NORMAL_NEWS_PER_PERIOD} technical_trend=independent max_technical={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices=independent max_mind={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_perspectives=independent max_voices={MAX_VOICES_PERSPECTIVES_PER_PERIOD} education_due={education_due} education_slot={education_slot} previous_normal_score={previous_normal_score} last_any_news_score={cadence.get('last_published_news_score')}", flush=True)
+    print(f"[Cadence] run={run_number} tehran={now_tehran.isoformat()} normal_news=adaptive_quality_threshold max_normal={MAX_NORMAL_NEWS_PER_PERIOD} relative_gap={NORMAL_RELATIVE_SCORE_GAP} technical_trend=independent max_technical={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices=independent max_mind={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_perspectives=independent max_voices={MAX_VOICES_PERSPECTIVES_PER_PERIOD} education_due={education_due} education_slot={education_slot} previous_normal_score={previous_normal_score} last_any_news_score={cadence.get('last_published_news_score')}", flush=True)
 
     store = load_feedback(FEEDBACK_PATH)
     changed = ingest_from_env(FEEDBACK_PATH)

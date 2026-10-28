@@ -19,7 +19,7 @@ def _load(path):
 
 def test_production_contract_is_explicit_and_versioned():
     data = _load(CONTRACT)
-    assert data["contract"]["version"] == 4
+    assert data["contract"]["version"] == 5
     assert data["contract"]["mission_policy"] == "config/mission_policy.yaml"
     assert data["contract"]["selection_policy"] == "config/selection_policy.yaml"
     assert data["contract"]["architecture_document"] == "ARCHITECTURE.md"
@@ -45,10 +45,21 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     contract = load_editorial_contract()
     selection = _load(SELECTION)["selection"]
     mission = _load(MISSION)["mission"]
-    assert contract["max_posts"] == selection["max_posts"] == 3
-    assert mission["max_posts"] == contract["max_posts"] == 3
-    assert contract["candidate_window"] == selection["candidate_window"] == 6
-    assert contract["replacement_buffer"] == 3
+    assert contract["max_posts"] == selection["max_posts"] == 8
+    assert mission["max_posts"] == contract["max_posts"] == 8
+    assert contract["candidate_window"] == selection["candidate_window"] == 12
+    assert contract["replacement_buffer"] == 4
+    contract_selection = _load(CONTRACT)["selection"]
+    assert contract_selection["normal_relative_score_gap"] == selection["normal_relative_score_gap"] == 15.0
+    assert contract_selection["publication_mode"] == selection["publication_mode"] == "adaptive_quality_threshold"
+    assert contract_selection["fixed_three_item_quota"] is False
+    assert contract_selection["max_items_per_content_type"] == selection["max_items_per_content_type"] == 8
+    assert contract_selection["legacy_action_policy_max_items_per_content_type"] == _load(SOURCES)["action_policy"]["max_items_per_content_type"] == 8
+    assert contract_selection["legacy_source_max_posts_per_run"] == _load(SOURCES)["max_posts_per_run"] == 8
+    assert contract_selection["editorial_balance"]["ai_core_target_max"] == mission["ai_core_target_max"] == 8
+    assert _load(CONTRACT)["quality"]["final_news_capacity"] == 8
+    assert _load(CONTRACT)["quality"]["publication_mode"] == "adaptive_quality_threshold"
+    assert _load(CONTRACT)["quality"]["fixed_three_item_quota"] is False
     assert contract["preferred_max_same_source"] == mission["max_same_source"] == 1
     assert contract["hard_max_same_source"] == selection["max_items_per_source"] == 2
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
@@ -56,8 +67,8 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert contract["community_max"] == mission["community_max"]
     assert selection["diversity_mode"] == "unified_final_portfolio"
     assert selection["distinct_sources_first"] is True
-    assert selection["candidate_window"] + selection["replacement_buffer"] == 9
-    assert contract["max_posts"] == 3
+    assert selection["candidate_window"] + selection["replacement_buffer"] == 16
+    assert contract["max_posts"] == 8
 
 
 def test_mission_diversity_is_explicit_and_canonical():
@@ -69,12 +80,12 @@ def test_mission_diversity_is_explicit_and_canonical():
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
     assert contract["preferred_max_same_source_per_run"] == mission["max_same_source"]
     assert contract["hard_max_same_source_per_run"] == _load(SELECTION)["selection"]["max_items_per_source"]
-    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 2
+    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 8
     assert contract["min_authoritative_items"] == mission["min_authoritative_items"]
     assert contract["community_max"] == mission["community_max"]
     assert contract["ai_core_target"] == [
         mission["ai_core_target_min"], mission["ai_core_target_max"]
-    ] == [1, 2]
+    ] == [1, 8]
     assert contract["convergence_target"] == mission["convergence_target"] == 1
     assert contract["mind_future_target"] == mission["mind_future_target"] == 1
     assert contract["research_target"] == mission["research_target"] == 0

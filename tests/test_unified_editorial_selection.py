@@ -2,6 +2,8 @@ from pathlib import Path
 
 import yaml
 
+import src.unified_editorial_selection as selection_module
+
 from src.unified_editorial_selection import (
     _eligible_candidates,
     _Portfolio,
@@ -617,3 +619,111 @@ def test_adaptive_policy_can_select_more_than_three_distinct_high_quality_ai_sto
     assert len(titles) == 5
     assert "Google DeepMind Genie interactive world simulator launch" in titles
     assert "Meta open-source AI system release" in titles
+
+
+def test_major_ai_product_launch_wins_shared_portfolio_order_after_quality_floor(monkeypatch):
+    routine = {
+        **item("Routine AI deployment status update", "Reuters", 82.0, area="ai"),
+        "summary": "A routine operational update about an AI deployment and machine learning.",
+        "_test_freshness": 0.88,
+    }
+    product = {
+        **item(
+            "Google DeepMind introduces Genie 4, an interactive world simulator",
+            "Google DeepMind",
+            80.0,
+            area="ai",
+            content_type="product_news",
+        ),
+        "summary": "The new world model generates interactive environments in real time.",
+        "description": "An AI product announcement introduces a new world simulation capability.",
+        "_test_freshness": 0.73,
+    }
+    monkeypatch.setattr(
+        selection_module,
+        "freshness_score",
+        lambda candidate, half_life_hours=24.0: float(candidate.get("_test_freshness", 0.0)),
+    )
+    contract = load_editorial_contract()
+    contract["ai_core_target_min"] = 0
+    contract["convergence_target"] = 0
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["research_target"] = 0
+
+    selected = select_regular_portfolio(
+        [routine, product],
+        max_posts=1,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+
+    assert len(selected) == 1
+    assert selected[0]["title"] == product["title"]
+    # Priority affects only choice order; the canonical editorial score is untouched.
+    assert selected[0]["final_editorial_score"] == 80.0
+
+
+def test_product_priority_does_not_bypass_relative_quality_floor(monkeypatch):
+    routine = {
+        **item("Routine AI deployment status update", "Reuters", 82.0, area="ai"),
+        "summary": "A routine operational update about an AI deployment and machine learning.",
+        "_test_freshness": 0.88,
+    }
+    weak_product = {
+        **item(
+            "Google DeepMind introduces Genie 4, an interactive world simulator",
+            "Google DeepMind",
+            64.0,
+            area="ai",
+            content_type="product_news",
+        ),
+        "summary": "The new world model generates interactive environments in real time.",
+        "description": "An AI product announcement introduces a new world simulation capability.",
+        "_test_freshness": 0.73,
+    }
+    monkeypatch.setattr(
+        selection_module,
+        "freshness_score",
+        lambda candidate, half_life_hours=24.0: float(candidate.get("_test_freshness", 0.0)),
+    )
+    contract = load_editorial_contract()
+    contract["ai_core_target_min"] = 0
+    contract["convergence_target"] = 0
+    contract["mind_cognition_target"] = 0
+    contract["mind_future_target"] = 0
+    contract["research_target"] = 0
+    contract["diversity_quality_floor_ratio"] = 0.80
+
+    selected = select_regular_portfolio(
+        [routine, weak_product],
+        max_posts=1,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+
+    assert len(selected) == 1
+    assert selected[0]["title"] == routine["title"]
+
+
+def test_generic_partnership_does_not_receive_product_launch_priority():
+    partnership = {
+        "title": "Google DeepMind announces a corporate partnership",
+        "summary": "The organizations will work together on a business initiative.",
+        "source": "Google DeepMind",
+        "source_tier": 1,
+        "content_type": "news",
+        "category": "ai",
+        "_ai_link": True,
+        "final_editorial_score": 80.0,
+    }
+
+    assert selection_module._bounded_portfolio_priority_boost(partnership) == 0.0

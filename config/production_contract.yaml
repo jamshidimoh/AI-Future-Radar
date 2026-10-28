@@ -28,10 +28,10 @@ mission:
   min_unique_sources: 3
   preferred_max_same_source_per_run: 1
   hard_max_same_source_per_run: 2
-  max_same_mission_area_per_run: 4
+  max_same_mission_area_per_run: 8
   min_authoritative_items: 2
   community_max: 0
-  ai_core_target: [1, 2]
+  ai_core_target: [1, 8]
   convergence_target: 1
   mind_cognition_target: 1
   mind_future_target: 1

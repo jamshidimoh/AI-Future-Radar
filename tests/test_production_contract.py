@@ -55,6 +55,7 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert contract_selection["fixed_three_item_quota"] is False
     assert contract_selection["max_items_per_content_type"] == selection["max_items_per_content_type"] == 8
     assert contract_selection["legacy_action_policy_max_items_per_content_type"] == _load(SOURCES)["action_policy"]["max_items_per_content_type"] == 8
+    assert contract_selection["legacy_source_max_posts_per_run"] == _load(SOURCES)["max_posts_per_run"] == 8
     assert contract_selection["editorial_balance"]["ai_core_target_max"] == mission["ai_core_target_max"] == 8
     assert _load(CONTRACT)["quality"]["final_news_capacity"] == 8
     assert _load(CONTRACT)["quality"]["publication_mode"] == "adaptive_quality_threshold"

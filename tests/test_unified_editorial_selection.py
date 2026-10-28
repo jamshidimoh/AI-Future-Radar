@@ -493,6 +493,7 @@ def test_weak_mission_target_does_not_displace_stronger_mainstream_candidate():
     ]
     contract = load_editorial_contract()
     contract["ai_core_target_min"] = 0
+    contract["ai_core_target_max"] = 0
     contract["convergence_target"] = 0
     contract["mind_cognition_target"] = 1
     contract["mind_future_target"] = 0
@@ -726,3 +727,34 @@ def test_generic_partnership_does_not_receive_product_launch_priority():
     }
 
     assert selection_module._bounded_portfolio_priority_boost(partnership) == 0.0
+
+
+def test_ai_target_arbitration_prioritizes_product_release_within_quality_floor():
+    routine = item("Routine AI deployment status update", "Reuters", 82.0, area="ai")
+    product = item(
+        "Google DeepMind introduces Genie 4, an interactive world simulator",
+        "Google DeepMind",
+        80.0,
+        area="ai",
+        content_type="product_news",
+    )
+    product["summary"] = "The new world model generates interactive environments in real time."
+    product["description"] = "An AI product announcement introduces a new world simulation capability."
+    weak_product = item(
+        "Google DeepMind introduces a weak experimental AI product",
+        "Google DeepMind Research",
+        60.0,
+        area="ai",
+        content_type="product_news",
+    )
+    weak_product["summary"] = "An early prototype with limited capability."
+    contract = load_editorial_contract()
+    contract["mission_target_quality_floor_ratio"] = 0.82
+
+    selected = selection_module._best_ai_target_candidate(
+        [routine, product, weak_product],
+        contract,
+    )
+
+    assert selected is product
+    assert product["final_editorial_score"] == 80.0

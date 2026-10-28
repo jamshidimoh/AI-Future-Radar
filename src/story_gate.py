@@ -1,4 +1,6 @@
 """Canonical Story Gate and canonical score boundary."""
+import re
+
 from src.editorial_score_v2 import score_editorial_v2
 from src.future_significance import annotate_future_significance, is_low_future_value
 from src.story_identity import deduplicate_stories
@@ -32,7 +34,7 @@ def _technology_relevant(item):
         value = str(text or "").casefold()
         # Match the generic acronym as a token; substring matching "ai" creates
         # false positives in ordinary words and names.
-        if __import__("re").search(r"(?<![a-z0-9])ai(?![a-z0-9])", value):
+        if re.search(r"(?<![a-z0-9])ai(?![a-z0-9])", value):
             return True
         return any(
             term.casefold() != "ai" and term.casefold() in value

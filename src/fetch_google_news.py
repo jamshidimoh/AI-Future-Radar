@@ -142,14 +142,16 @@ def _load_pioneer_priorities() -> dict[str, int]:
 def _query_content_type_priority(q: dict) -> int:
     ctype = str(q.get("content_type") or "").strip().casefold()
     return {
+        # High-value product and strategy queries must survive the bounded
+        # discovery budget before redundant secondary person-query variants.
+        "product_news": 10,
+        "leader_signal": 9,
+        "direct_statement": 9,
+        "social_post": 7,
         "interview": 7,
         "podcast": 7,
         "talk": 6,
         "conversation": 6,
-        "social_post": 5,
-        "direct_statement": 6,
-        "leader_signal": 6,
-        "product_news": 6,
         "research": 2,
     }.get(ctype, 1)
 
@@ -157,7 +159,7 @@ def _query_content_type_priority(q: dict) -> int:
 def _is_strong_curated_query(q: dict) -> bool:
     preferred_source = str(q.get("preferred_source") or "").strip()
     query_text = str(q.get("query") or "").strip().lower()
-    return bool(preferred_source or query_text.startswith("site:"))
+    return bool(q.get("curated_discovery") or preferred_source or query_text.startswith("site:"))
 
 
 def _load_watchlist_people_queries():
@@ -377,7 +379,19 @@ def _expand_leader_signal_queries(queries):
             str(q.get("query") or "").casefold(),
         )
     )
-    expanded = ordered + secondary + non_people
+    # Preserve high-value general discovery streams before secondary variants.
+    # Every watched person already has voice, direct-post and activity coverage;
+    # repeating person queries must not crowd out product releases or strategic
+    # compute/energy statements when the bounded network-query budget is reached.
+    non_people.sort(
+        key=lambda q: (
+            -_query_content_type_priority(q),
+            -int(bool(q.get("curated_discovery") or q.get("preferred_source") or str(q.get("query") or "").strip().casefold().startswith("site:"))),
+            -int(str(q.get("category") or "").strip().casefold() == "ai"),
+            str(q.get("query") or "").casefold(),
+        )
+    )
+    expanded = ordered + non_people + secondary
     return expanded[:_MAX_LEADER_SIGNAL_QUERIES]
 
 def classify_leader_signal(title, summary, watch_person="", *, query_context="", content_type=""):

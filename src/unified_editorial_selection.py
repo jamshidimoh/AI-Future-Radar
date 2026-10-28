@@ -645,6 +645,20 @@ def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[s
         return None
     top_score = max(candidate_score(item) for item in candidates)
     floor = max(0.0, min(1.0, float(contract.get("mission_target_quality_floor_ratio", 0.82) or 0.82)))
+    leader_voices = [
+        item for item in candidates
+        if _is_verified_leader_voice(item) and candidate_score(item) >= top_score * floor
+    ]
+    # A verified expert voice already earns the existing leader-priority treatment.
+    # Do not let the new product boost override that role: mission balance may
+    # depend on selecting the voice first and retaining the next slot for Mind or
+    # Convergence. Product priority remains available among the other eligible items.
+    if leader_voices:
+        return max(
+            leader_voices,
+            key=lambda item: (candidate_score(item), _safe_float(item, "evidence_strength")),
+            default=None,
+        )
     viable = [
         item for item in candidates
         if candidate_score(item) > 0.0 and candidate_score(item) >= top_score * floor
@@ -660,12 +674,11 @@ def _best_ai_target_candidate(candidates: list[dict[str, Any]], contract: dict[s
             ),
             default=None,
         )
-    leader_voices = [
-        item for item in candidates
-        if _is_verified_leader_voice(item) and candidate_score(item) >= top_score * floor
-    ]
-    pool = leader_voices or candidates
-    return max(pool, key=lambda item: (candidate_score(item), _safe_float(item, "evidence_strength")), default=None)
+    return max(
+        candidates,
+        key=lambda item: (candidate_score(item), _safe_float(item, "evidence_strength")),
+        default=None,
+    )
 
 
 def _bounded_portfolio_priority_boost(item: dict[str, Any]) -> float:

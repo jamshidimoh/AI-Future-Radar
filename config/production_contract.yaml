@@ -4,7 +4,7 @@
 # validated here so the three layers cannot drift silently.
 
 contract:
-  version: 4
+  version: 5
   mission_policy: config/mission_policy.yaml
   selection_policy: config/selection_policy.yaml
   architecture_document: ARCHITECTURE.md

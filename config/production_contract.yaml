@@ -48,6 +48,7 @@ selection:
   max_items_per_content_type: 8
   diversity_mode: unified_final_portfolio
   legacy_action_policy_max_items_per_content_type: 8
+  legacy_source_max_posts_per_run: 8
   distinct_sources_first: true
   special_lanes_are_candidate_roles: true
   protected_leader_consumes_final_slot: true

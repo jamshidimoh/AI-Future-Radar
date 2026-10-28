@@ -4,7 +4,7 @@
 
 AI Future Radar is a deterministic editorial pipeline that discovers technology signals, removes duplicates, evaluates relevance and evidence, constructs a mission-aware editorial portfolio, uses an LLM only for transformation and bounded quality repair, and delivers validated content to Telegram.
 
-The current production cadence is one news publication cycle every 4 hours and one educational publication every 12 hours. The normal-news count is adaptive, with an operational safety ceiling of eight items per run. Protected material may receive priority within those three slots; it does not create an additional publication quota. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
+The current production cadence is one news publication cycle every 4 hours and one educational publication every 12 hours. The normal-news count is adaptive, with an operational safety ceiling of eight items per run. Protected material competes for the same adaptive portfolio and must pass the same quality and publication gates. Education is due every three production runs, based on persisted state rather than wall-clock assumptions.
 
 The system must remain useful when any individual LLM provider, RSS feed, YouTube transport, or image source is unavailable.
 
@@ -22,8 +22,8 @@ Discovery
        -> authoritative/community boundary
        -> adaptive source diversity
        -> content-type and mission-area caps
-       -> candidate window (6) + replacement buffer (3)
-       -> unified final portfolio arbitration (3 publication slots)
+       -> candidate window (12) + replacement buffer (4)
+       -> unified final portfolio arbitration (up to 8 items at the operational safety ceiling)
   -> LLM transformation
   -> language / schema / editorial-quality gates
   -> ranked replacement candidates when a selected item fails QA
@@ -97,7 +97,7 @@ The LLM router is provider-agnostic. A provider that reports quota exhaustion, p
 
 If all providers fail, the item is not published. Invalid LLM JSON and insufficient Persian-language output never reach Telegram.
 
-A failed transformation or editorial-quality check does not automatically fail the whole run. The candidate is blocked and a lower-ranked replacement candidate may be attempted when one exists, subject to the same final three-item publication capacity and the same publication contract. This is bounded replacement, not quality relaxation.
+A failed transformation or editorial-quality check does not automatically fail the whole run. The candidate is blocked and a lower-ranked replacement candidate may be attempted when one exists, subject to the same adaptive quality rules, shared operational safety ceiling and publication contract. This is bounded replacement, not quality relaxation.
 
 ## Telegram delivery contract
 

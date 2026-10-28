@@ -12,7 +12,7 @@ from typing import Any
 import yaml
 
 from src.editorial_score_v2 import is_major_ai_product_release, is_strategic_leader_statement
-from src.future_significance import is_low_future_value
+from src.future_significance import is_low_future_value, substantive_importance_ok
 from src.information_gain import (
     editorial_novelty_score,
     information_gain_score,
@@ -923,6 +923,16 @@ def _eligible_candidates(candidates: Iterable[dict[str, Any]], contract: dict[st
         # Explicit utility/tutorial content must not bypass future-value screening
         # merely because an AI-core coverage target is still unfilled.
         if is_low_future_value(item):
+            continue
+        # Topical relevance is necessary but not sufficient: generic AI chatter
+        # and thin trend summaries should not consume a publication slot. Keep
+        # explicit major product launches and strategic leader statements eligible
+        # for the normal quality/evidence/portfolio gates.
+        if (
+            not substantive_importance_ok(item)
+            and not is_major_ai_product_release(item)
+            and not is_strategic_leader_statement(item)
+        ):
             continue
         if not is_mission_relevant(item, strict=strict_relevance):
             continue

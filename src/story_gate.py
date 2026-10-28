@@ -1,4 +1,6 @@
 """Canonical Story Gate and canonical score boundary."""
+import re
+
 from src.editorial_score_v2 import score_editorial_v2
 from src.future_significance import annotate_future_significance, is_low_future_value
 from src.story_identity import deduplicate_stories
@@ -20,37 +22,40 @@ _TECH_SIGNAL_TERMS = (
 
 
 def _technology_relevant(item):
-    # Leader/watchlist routing metadata is not itself technology evidence.
-    if item.get("ai_relevance") is True:
-        return True
-    leader_routed = bool(item.get("leader") or item.get("watch_person") or item.get("leader_watch_protected"))
-    if item.get("_ai_link") is True and not item.get("protected_content") and not leader_routed:
-        return True
-    text = " ".join(
+    # Routing flags are discovery hints, never sufficient proof that the actual
+    # item is relevant. This prevents stale ai_relevance/_ai_link metadata from
+    # admitting unrelated stories into the production candidate pool.
+    content = " ".join(
         str(item.get(k) or "")
-        for k in ("title", "summary", "description", "category", "topic_family", "content_type")
+        for k in ("title", "summary", "description", "tags", "keywords")
     ).casefold()
-    if any(term.casefold() in text for term in _TECH_SIGNAL_TERMS):
+
+    def has_technology_evidence(text):
+        value = str(text or "").casefold()
+        # Match the generic acronym as a token; substring matching "ai" creates
+        # false positives in ordinary words and names.
+        if re.search(r"(?<![a-z0-9])ai(?![a-z0-9])", value):
+            return True
+        return any(
+            term.casefold() != "ai" and term.casefold() in value
+            for term in _TECH_SIGNAL_TERMS
+        )
+
+    if has_technology_evidence(content):
         return True
 
-    # Dedicated leader-interview discovery can have a headline such as
-    # “The full-length interview with Yuval Noah Harari” whose title omits AI,
-    # while the discovery query/context explicitly targets AI/future technology.
-    # Preserve Tier-0 format evidence when that context is independently present.
+    leader_routed = bool(item.get("leader") or item.get("watch_person") or item.get("leader_watch_protected"))
+    # A leader's name or the fact that a video is an interview is not enough.
+    # Allow title-agnostic interviews only when the discovery query itself
+    # explicitly targets a relevant technology/future topic.
     if leader_routed and str(item.get("content_type") or "").casefold() in {
         "interview", "podcast", "conversation", "discussion", "talk", "lecture", "q&a"
     }:
-        classification = item.get("leader_signal_classification") or {}
         discovery = " ".join(
             str(item.get(k) or "")
-            for k in ("discovery_query", "watch_query", "query", "keywords")
+            for k in ("discovery_query", "watch_query", "query")
         ).casefold()
-        context = bool(isinstance(classification, dict) and classification.get("context"))
-        context_terms = (
-            "artificial intelligence", "ai", "agi", "technology", "future", "consciousness",
-            "cognition", "digital", "machine", "robotics", "quantum", "brain-computer",
-        )
-        if context or any(term in discovery for term in context_terms):
+        if has_technology_evidence(discovery):
             return True
     return False
 

@@ -757,3 +757,53 @@ def test_ai_target_arbitration_prioritizes_product_release_within_quality_floor(
 
     assert selected is product
     assert product["final_editorial_score"] == 80.0
+
+
+def test_generic_ai_chatter_is_rejected_before_portfolio_selection():
+    generic = {
+        "title": "AI industry discussion and future trends",
+        "summary": "A general discussion of artificial intelligence and future technology.",
+        "source": "General Technology Magazine",
+        "source_tier": 2,
+        "category": "ai",
+        "mission_area": "ai_core",
+        "content_type": "news",
+        "final_editorial_score": 95.0,
+    }
+    selected = select_regular_portfolio(
+        [generic],
+        max_posts=1,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=load_editorial_contract(),
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    assert selected == []
+
+
+def test_major_ai_product_launch_is_not_blocked_by_significance_gate():
+    product = {
+        "title": "Google DeepMind introduces Genie 4, an interactive world simulator",
+        "summary": "The new world model generates interactive environments in real time.",
+        "description": "An AI product announcement introduces a new world simulation capability.",
+        "source": "Google DeepMind",
+        "source_tier": 1,
+        "category": "ai",
+        "mission_area": "ai_core",
+        "content_type": "product_news",
+        "final_editorial_score": 80.0,
+    }
+    selected = select_regular_portfolio(
+        [product],
+        max_posts=1,
+        max_per_source=1,
+        max_per_type=3,
+        recent_source_counts={},
+        contract=load_editorial_contract(),
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    assert len(selected) == 1
+    assert selected[0]["title"] == product["title"]

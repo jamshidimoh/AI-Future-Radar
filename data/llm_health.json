@@ -1,30 +1,89 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 48,
-      "disabled_until": 1793259667.765,
+      "failures": 49,
+      "disabled_until": 1793266320.769,
       "last_error": "auth",
+      "last_success": 0
+    },
+    "groq:openai/gpt-oss-120b": {
+      "failures": 1,
+      "disabled_until": 1793183520.769,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
+      "failures": 1,
+      "disabled_until": 1793183520.769,
+      "last_error": "quota",
+      "last_success": 0
+    },
+    "openrouter:openai/gpt-oss-20b:free": {
+      "failures": 1,
+      "disabled_until": 1793201520.769,
+      "last_error": "model",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
+      "failures": 1,
+      "disabled_until": 1793183520.769,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "failures": 1,
+      "disabled_until": 1793183520.769,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:qwen/qwen3-next-80b-a3b-instruct:free": {
+      "failures": 1,
+      "disabled_until": 1793201520.769,
+      "last_error": "model",
+      "last_success": 0
+    },
+    "openrouter:openai/gpt-oss-120b:free": {
+      "failures": 1,
+      "disabled_until": 1793201520.769,
+      "last_error": "model",
+      "last_success": 0
+    },
+    "groq:qwen/qwen3.6-27b": {
+      "failures": 1,
+      "disabled_until": 1793201520.769,
+      "last_error": "model",
+      "last_success": 0
+    },
+    "openrouter:nvidia/nemotron-3-super-120b-a12b:free": {
+      "failures": 1,
+      "disabled_until": 1793201520.769,
+      "last_error": "model",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 41,
-      "disabled_until": 1793259667.765,
+      "failures": 42,
+      "disabled_until": 1793266320.769,
       "last_error": "auth"
     },
     "kiraai": {
       "failures": 1,
       "disabled_until": 1793218630.239,
       "last_error": "wallet"
+    },
+    "openrouter": {
+      "failures": 1,
+      "disabled_until": 1793201520.769,
+      "last_error": "quota"
     }
   },
-  "updated_at": 1793176954.366741,
+  "updated_at": 1793179920.768884,
   "version": 1,
   "telemetry": {
-    "observed_failures": 8,
-    "observed_events": 50,
-    "updated_at": 1793176954.366741
+    "observed_failures": 58,
+    "observed_events": 118,
+    "updated_at": 1793179920.768884
   },
   "observed_failures": 0,
   "observed_events": 0

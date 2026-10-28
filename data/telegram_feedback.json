@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793176953,
+  "updated_at": 1793179919,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -20127,6 +20127,44 @@
       "why_it_matters": "این سخنرانی نشان می‌دهد که NVIDIA در حال پیشبرد فناوریهای پیشرفته برای هوش مصنوعی است و چالشهای مهمی در این زمینه وجود دارد. همکاری با سازمانهای بینالمللی برای ایجاد استانداردهای جهانی می‌تواند به بهبود امنیت و اخلاقیات در هوش مصنوعی کمک کند. این توسعهها می‌توانند به بهبود کارایی و کارآمدی سیستمهای هوش مصنوعی کمک کنند و به نوبه خود، به پیشبرد این فناوری در صنایع مختلف کمک کند.",
       "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQcnZ4bHZIOVJFRHR4UGFhQXduTGN4YXVrQUY5RWlINWVOTTlKenFWSXpqSXZaRldpdTlTcl9IdHg0eVF3VlBOdWZobWhIWTZZMXNWb1dJTDNkM0N5RklmT1FycjVzVm05QmQ1UjZGY3RkRms1ME80ekxOVVZKR29uZklKdjlzaXJraEswWGwxaw?oc=5",
       "posted_at": 1793176952
+    },
+    "-1004482051328:2178": {
+      "chat_id": -1004482051328,
+      "message_id": 2178,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "دستگاه‌های کافی برای ۱۰ برابر کردن تراشه‌های هوش مصنوعی وجود ندارند",
+      "summary": "در ویدئوی «There Aren’t Enough Machines to 10x AI Chips»، Dwarkesh Patel بیان می‌کند که تعداد دستگاه‌های موجود برای افزایش ده‌برابر توان پردازشی تراشه‌های هوش مصنوعی کافی نیست. او اشاره می‌کند که این کمبود می‌تواند سرعت پیشرفت مدل‌های بزرگ را محدود کند. Patel همچنین می‌گوید برای رسیدن به مقیاس ۱۰ برابر، نیاز به سرمایه‌گذاری عظیم در زیرساخت‌های تولیدی است.",
+      "description": "Full episode: https://www.youtube.com/watch?v=frYSOKvNiiE\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "چون توان محاسباتی پایه برای آموزش مدل‌های پیشرفته، عامل کلیدی در پیشرفت هوش مصنوعی است، کمبود دستگاه‌ها می‌تواند هزینه‌ها را بالا برد و زمان توسعه را طولانی کند. این محدودیت ممکن است شرکت‌ها را به سمت بهینه‌سازی نرم‌افزاری سوق دهد. رفع این گلوگاه می‌تواند رشد سریع‌تر فناوری‌های هوش مصنوعی را ممکن سازد.",
+      "link": "https://www.youtube.com/watch?v=_cr6GwaaRws",
+      "posted_at": 1793179672
+    },
+    "-1004482051328:2179": {
+      "chat_id": -1004482051328,
+      "message_id": 2179,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "هک یخچال‌های سوپرمارکت فرانسه و رقابت برای مواد معدنی بحرانی",
+      "summary": "هکرها تنظیمات دمای صدها یخچال در سوپرمارکت‌های فرانسه را تغییر دادند و دما را تا ۵۰ °C ارتقا دادند، که منجر به فاسد شدن میلیون‌ها یورو غذا شد. یون ب. چوی، مدیرعامل Korea Zinc، بیان کرد تقاضا برای هوش مصنوعی، الکتریکی‌سازی و انتقال انرژی، رقابت برای مواد معدنی بحرانی را به مرحله‌ای جدید رسانده است. جاکلین نووگراتز، بنیان‌گذار Acumen Fund، گفت راه‌حل فقر ایجاد بازارهای جدید برای افراد نیازمند است و کات دافی، پژوهشگر ارشد CFR، هشدار داد تهدیدات سایبری با پیشرفت هوش مصنوعی پیچیده‌تر می‌شوند.",
+      "description": "This week's top stories of the week include:\n\n00:14 - French supermarket fridges hacked:\nHackers overrode the temperature settings at hundreds of stores across France, heating fridges as high as 50°C and spoiling millions of euros’ worth of food. The event has laid bare how much #cyberattacks can impact everyday life, says Akshay Joshi, the Forum’s Head of Cybersecurity.\n\n03:10 - Critical minerals race enters new phase:\nThe race for critical minerals is entering a new phase as demand surges from #AI, electrification and the wider #energy transition. Here, Yun B. Choi, CEO and Executive Chairman of Korea Zinc, explains why building resilient, diversified processing capacity is becoming a strategic priority.\n\n05:07 - Can micro-enterprise beat poverty?:\nThe solution to poverty isn’t handing out aid, says this social entrepreneur - it lies in creating new markets that serve those most in need. Jacqueline Novogratz, founder of non-profit impact investment platform Acumen Fund, has spent more than two decades investing in #entrepreneurs whose work helps lift people out of poverty.\n\n08:50 - Why cybersecurity needs new a approach:\nAs #AI increases in power and scale, so do the opportunities for those who would use it as a weapon or tool for criminality.  The global response to these threats is not yet up to speed, argues Kat Duffy, Senior Fellow for Digital and Cyberspace Policy at the Council On Foreign Relations.  \n\n*******************************************************************\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "این حوادث نشان می‌دهد که حملات سایبری می‌توانند زنجیره‌های تأمین غذایی را به‌سرعت مختل کنند. افزایش تقاضا برای مواد معدنی بحرانی نیاز به توسعه ظرفیت‌های پردازشی مقاوم و متنوع دارد. ایجاد بازارهای میکرو‑کسب‌وکار می‌تواند به‌عنوان راه‌حلی پایدار برای کاهش فقر عمل کند. عدم هماهنگی جهانی در مقابله با تهدیدات سایبری هوش مصنوعی می‌تواند خطرات جدی برای زیرساخت‌های حیاتی ایجاد کند.",
+      "link": "https://www.youtube.com/watch?v=Akh8QmVCsek",
+      "posted_at": 1793179676
     }
   }
 }

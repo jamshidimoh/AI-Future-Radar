@@ -82,3 +82,17 @@ def test_major_product_launch_and_strategic_statement_outscore_generic_company_n
     strategic_score, _ = score_editorial_v2(strategic)
     assert product_score > base_score
     assert strategic_score > base_score
+
+def test_persian_attributed_statement_about_ai_electricity_is_prioritized():
+    item = {
+        "title": "ایلان ماسک: محدودیت آینده هوش مصنوعی، تراشه نیست؛ برق است",
+        "summary": "او هشدار می‌دهد که تأمین برق و زیرساخت مراکز داده می‌تواند سرعت توسعهٔ هوش مصنوعی را محدود کند.",
+        "source": "منبع خبری معتبر",
+        "source_tier": 1,
+        "content_type": "news",
+        "_ai_link": True,
+        "evidence_text": "گزارش منبع",
+        "freshness_hours": 4,
+    }
+    assert is_strategic_leader_statement(item) is True
+    assert build_features(item)["publication_value"] == 0.95

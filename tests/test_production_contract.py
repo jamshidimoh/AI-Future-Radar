@@ -54,6 +54,7 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert contract_selection["publication_mode"] == selection["publication_mode"] == "adaptive_quality_threshold"
     assert contract_selection["fixed_three_item_quota"] is False
     assert _load(CONTRACT)["quality"]["final_news_capacity"] == 8
+    assert _load(CONTRACT)["quality"]["publication_mode"] == "adaptive_quality_threshold"
     assert _load(CONTRACT)["quality"]["fixed_three_item_quota"] is False
     assert contract["preferred_max_same_source"] == mission["max_same_source"] == 1
     assert contract["hard_max_same_source"] == selection["max_items_per_source"] == 2

@@ -1,19 +1,19 @@
 from src.period_publication_contract import rank_period_candidates, select_news_for_period
 
 
-def test_rank_one_only_without_baseline():
+def test_adaptive_threshold_does_not_require_previous_score_baseline():
     items = [{"id":"a","score":90},{"id":"b","score":80}]
-    assert [x["id"] for x in select_news_for_period(items, None)] == ["a"]
+    assert [x["id"] for x in select_news_for_period(items, None)] == ["a","b"]
 
 
-def test_max_three_with_two_stronger_extras():
+def test_adaptive_threshold_keeps_all_close_high_quality_candidates():
     items = [{"id":"a","score":95},{"id":"b","score":94},{"id":"c","score":93},{"id":"d","score":92},{"id":"e","score":91}]
-    assert [x["id"] for x in select_news_for_period(items, 90)] == ["a","b","c"]
+    assert [x["id"] for x in select_news_for_period(items, 90)] == ["a","b","c","d","e"]
 
 
-def test_only_ranks_two_to_four_can_be_extras():
+def test_relative_score_gap_rejects_low_score_outliers():
     items = [{"id":"a","score":100},{"id":"b","score":70},{"id":"c","score":81},{"id":"d","score":82},{"id":"e","score":99}]
-    assert [x["id"] for x in select_news_for_period(items, 80)] == ["a","e","d"]
+    assert [x["id"] for x in select_news_for_period(items, 80)] == ["a","e"]
 
 
 def test_quality_gate_prevents_primary_publication():
@@ -38,3 +38,14 @@ def test_tier0_does_not_consume_normal_rank_window():
     assert ranked[1]["normal_period_rank"] == 1
     assert ranked[2]["normal_period_rank"] == 2
     assert [x["id"] for x in select_news_for_period(items, 90)] == ["a", "b"]
+
+def test_adaptive_threshold_can_publish_more_than_three_without_filling_with_weak_items():
+    items = [
+        {"id": "a", "score": 80},
+        {"id": "b", "score": 78},
+        {"id": "c", "score": 77},
+        {"id": "d", "score": 75},
+        {"id": "e", "score": 60},
+        {"id": "f", "score": 54},
+    ]
+    assert [x["id"] for x in select_news_for_period(items, 90)] == ["a", "b", "c", "d"]

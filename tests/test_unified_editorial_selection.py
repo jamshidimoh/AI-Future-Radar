@@ -493,7 +493,6 @@ def test_weak_mission_target_does_not_displace_stronger_mainstream_candidate():
     ]
     contract = load_editorial_contract()
     contract["ai_core_target_min"] = 0
-    contract["ai_core_target_max"] = 0
     contract["convergence_target"] = 0
     contract["mind_cognition_target"] = 1
     contract["mind_future_target"] = 0

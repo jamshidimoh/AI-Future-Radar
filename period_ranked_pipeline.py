@@ -13,6 +13,7 @@ import time
 
 import main as _pipeline
 from src.dedup import load_seen
+from src.editorial_score_v2 import is_major_ai_product_release, is_strategic_leader_statement
 from src.logging_setup import configure_logging
 from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
@@ -82,6 +83,10 @@ def _is_protected_publication_story(item):
 
 def _prepare_rank_features(items):
     for item in items:
+        # Product launches and consequential leader statements should survive the
+        # bounded ranking window without becoming protected/Tier-0 publications.
+        item["major_ai_product_release"] = bool(is_major_ai_product_release(item))
+        item["strategic_ai_leader_statement"] = bool(is_strategic_leader_statement(item))
         model_bonus = model_release_bonus(item)
         people, _person_tier0, people_bonus = priority_people_features(item)
         protected = _is_protected_publication_story(item)
@@ -100,6 +105,22 @@ def _prepare_rank_features(items):
 
 def _score(item):
     return float(item.get("final_editorial_score", 0) or 0)
+
+
+def _bounded_discovery_priority_boost(item):
+    """Bounded ordering nudge for strategically important current events.
+
+    This changes only the early ranking order used to populate the candidate window;
+    it does not alter canonical editorial scores, bypass quality gates, grant Tier-0
+    protection, or increase publication capacity.
+    """
+    if item.get("major_ai_product_release"):
+        return 0.18
+    if item.get("model_release_priority"):
+        return 0.15
+    if item.get("strategic_ai_leader_statement"):
+        return 0.12
+    return 0.0
 
 
 def _source_key(item):
@@ -386,6 +407,8 @@ def _global_ranked_selection(items, max_posts, max_per_source, max_per_type, pol
     # handling remains unchanged below this ordering layer.
     eligible.sort(key=lambda x: (
         int(bool(x.get("_rank_is_tier0"))),
+        freshness_score(x, 36.0) + _bounded_discovery_priority_boost(x),
+        # Freshness remains the next tie-breaker; priority nudges do not erase recency.
         freshness_score(x, 36.0),
         str(x.get("published", "")),
         _score(x),

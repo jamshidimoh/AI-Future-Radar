@@ -47,6 +47,9 @@ _LEADER_NAMES = (
     "elon musk", "sam altman", "demis hassabis", "jensen huang", "andrew ng",
     "eric schmidt", "dario amodei", "bill gates", "mustafa suleyman", "yann lecun",
     "geoffrey hinton", "yuval noah harari", "stuart russell", "ilya sutskever",
+    "ایلان ماسک", "سم آلتمن", "دمیس هسابیس", "جنسن هوانگ", "اندرو انگ",
+    "اریک اشمیت", "داریو آمودی", "بیل گیتس", "مصطفی سلیمان", "یان لکون",
+    "جفری هینتون", "یووال نوح هراری", "استوارت راسل", "ایلیا سوتسکیور",
 )
 _ATTRIBUTION_TERMS = (
     "says", "said", "warns", "warned", "argues", "argued", "predicts", "predicted",

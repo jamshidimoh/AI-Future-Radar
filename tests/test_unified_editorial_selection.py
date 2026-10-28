@@ -99,14 +99,14 @@ def test_mission_diversity_is_explicit_and_canonical():
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
     assert contract["preferred_max_same_source_per_run"] == mission["max_same_source"]
     assert contract["hard_max_same_source_per_run"] == selection["max_items_per_source"]
-    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 4
+    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 8
 
 
 def test_mission_coverage_targets_are_explicit_opportunities():
     contract = load_editorial_contract()
     assert contract["max_posts"] == 8
     assert contract["ai_core_target_min"] == 1
-    assert contract["ai_core_target_max"] == 2
+    assert contract["ai_core_target_max"] == 8
     assert contract["convergence_target"] == 1
     assert contract["mind_cognition_target"] == 1
     assert contract["mind_future_target"] == 1
@@ -601,19 +601,19 @@ def test_adaptive_policy_can_select_more_than_three_distinct_high_quality_ai_sto
         mind_future_target=0,
         research_target=0,
         min_authoritative_items=0,
-        max_same_mission_area=4,
+        max_same_mission_area=8,
     )
     selected = select_regular_portfolio(
         candidates,
         max_posts=8,
         max_per_source=1,
-        max_per_type=4,
+        max_per_type=8,
         recent_source_counts={},
         contract=contract,
         mission_aware=True,
         strict_relevance=True,
     )
     titles = [candidate["title"] for candidate in selected]
-    assert len(titles) == 4
+    assert len(titles) == 5
     assert "Google DeepMind Genie interactive world simulator launch" in titles
-    assert "Meta open-source AI system release" not in titles
+    assert "Meta open-source AI system release" in titles

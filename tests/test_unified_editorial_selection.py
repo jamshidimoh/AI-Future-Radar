@@ -583,3 +583,37 @@ def test_actual_consciousness_keyword_still_maps_to_mind_cognition():
         "category": "ai",
     }
     assert mission_area(candidate) == "mind_cognition"
+
+def test_adaptive_policy_can_select_more_than_three_distinct_high_quality_ai_stories():
+    candidates = [
+        item("Google DeepMind Genie interactive world simulator launch", "Google DeepMind", 91, area="ai", content_type="news"),
+        item("OpenAI coding agent capability release", "OpenAI", 89, area="ai", content_type="news"),
+        item("Anthropic computer-use model update", "Anthropic", 87, area="ai", content_type="news"),
+        item("NVIDIA physical AI platform announcement", "NVIDIA", 85, area="ai", content_type="news"),
+        item("Meta open-source AI system release", "Meta", 83, area="ai", content_type="news"),
+    ]
+    contract = load_editorial_contract()
+    contract.update(
+        ai_core_target_min=0,
+        ai_core_target_max=8,
+        convergence_target=0,
+        mind_cognition_target=0,
+        mind_future_target=0,
+        research_target=0,
+        min_authoritative_items=0,
+        max_same_mission_area=4,
+    )
+    selected = select_regular_portfolio(
+        candidates,
+        max_posts=8,
+        max_per_source=1,
+        max_per_type=4,
+        recent_source_counts={},
+        contract=contract,
+        mission_aware=True,
+        strict_relevance=True,
+    )
+    titles = [candidate["title"] for candidate in selected]
+    assert len(titles) == 4
+    assert "Google DeepMind Genie interactive world simulator launch" in titles
+    assert "Meta open-source AI system release" not in titles

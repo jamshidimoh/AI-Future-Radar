@@ -34,7 +34,7 @@ action_policy:
   ai_share_target: 0.70
   min_unique_sources: 3
   max_items_per_source: 2
-  max_items_per_content_type: 2
+  max_items_per_content_type: 8
   cross_domain_requires_ai_link: true
   story_similarity_threshold: 0.45
   source_rotation_days: 7

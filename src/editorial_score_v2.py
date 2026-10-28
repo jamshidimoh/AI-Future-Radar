@@ -6,20 +6,20 @@ Radar. Technology-signal features remain outside this score and are owned by
 """
 from __future__ import annotations
 
-from typing import Any
 import re
+from typing import Any
 
 WEIGHTS = {"mission_fit": 0.30, "source_authority": 0.20, "evidence_confidence": 0.20, "publication_value": 0.15, "freshness": 0.15}
 
 _PRODUCT_RELEASE_ACTIONS = (
-    "launch", "launches", "launched", "release", "released", "unveil", "unveils",
+    "launch", "launches", "launched", "announce", "announces", "release", "releases", "released", "unveil", "unveils",
     "unveiled", "introduce", "introduces", "introduced", "now available",
     "general availability", "public preview", "announced", "debut", "ships",
     "معرفی کرد", "عرضه شد", "منتشر شد", "در دسترس قرار گرفت",
 )
 _AI_PRODUCT_EVIDENCE = (
     "artificial intelligence", " ai ", "agi", "machine learning", "deepmind",
-    "openai", "anthropic", "nvidia", "google", "foundation model", "world model",
+    "openai", "anthropic", "nvidia", "foundation model", "world model",
     "genie", "simulator", "simulation", "reasoning model", "multimodal",
     "ai agent", "agentic", "robotics", "model", "product", "platform",
     "شبیه‌ساز", "شبیه ساز", "مدل بنیادی", "مدل هوش مصنوعی", "هوش مصنوعی",

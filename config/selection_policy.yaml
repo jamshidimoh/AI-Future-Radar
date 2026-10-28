@@ -1,15 +1,15 @@
 # Production runtime verification trigger: unified portfolio policy is intentional.
 selection:
-  max_posts: 3
-  candidate_window: 6
-  # Genetics is useful as a convergence signal, but cannot dominate three-slot output.
+  max_posts: 8 # Operational anti-flood ceiling; actual output is quality-thresholded
+  candidate_window: 12
+  # Genetics is useful as a convergence signal, but cannot dominate adaptive output.
   max_genetics_per_run: 1
   genetics_diversity_penalty: 15
   # Medical/clinical coverage remains eligible but cannot crowd out AI, ideas or expert voices.
   max_health_medical_per_run: 1
   health_medical_diversity_penalty: 12
   max_items_per_source: 2
-  max_items_per_content_type: 2
+  max_items_per_content_type: 4
   story_similarity_threshold: 0.45
   diversity_mode: unified_final_portfolio
   diversity_weight: 11.0
@@ -20,7 +20,8 @@ selection:
   history_entity_penalty: 7.0
   preferred_max_same_source: 1
   distinct_sources_first: true
-  replacement_buffer: 3
+  replacement_buffer: 4
+  normal_relative_score_gap: 15.0
   diversity_quality_floor_ratio: 0.90
   target_quality_floor_ratio: 0.92
   mission_target_quality_floor_ratio: 0.82
@@ -43,11 +44,12 @@ editorial:
   strict_relevance: true
 
 # Unified production selection contract:
-# - max_posts=3 is the normal publication capacity.
-# - candidate_window=6 is the canonical selection window; replacement_buffer=3 extends breadth only for late QA/delivery recovery.
+# - max_posts=8 is a hard operational safety ceiling, not a target or fixed editorial quota.
+# - Actual publication count is adaptive: absolute quality floor, bounded relative-score gap, freshness, evidence, source diversity and deduplication decide how many items publish.
+# - candidate_window=12 provides breadth; replacement_buffer=4 extends recovery options without raising the safety ceiling.
 # - max_items_per_source=2 remains the hard source cap. One item per source is preferred first; a second item is used only when the candidate pool would otherwise starve.
 # - Mind/Ideas/Voices, Technical/Frontier and Voices/Perspectives are selection roles,
-#   not additive publication quotas. They compete for the same final three news slots.
+#   not additive publication quotas. They compete for the same adaptive portfolio and shared operational safety ceiling.
 # - Qualifying scope includes influential technology/AI leaders and CEOs, scientists,
 #   theorists, public intellectuals, sociologists, scientifically grounded futurists,
 #   their substantive interviews/podcasts/talks/conversations, and AI-relevant work
@@ -56,10 +58,9 @@ editorial:
 #   society and technology, and related interdisciplinary AI/future domains.
 # - Special lanes annotate candidates with domain-specific evidence and scoring; the
 #   final portfolio arbitrates all roles together. No special lane may expand the
-#   three-item final news capacity.
+#   adaptive quality policy or operational safety ceiling.
 # - Community/aggregator sources remain excluded.
-# - The default three-slot mix targets two AI-core items. Mind/Cognition and AI Futures
-#   take precedence over Convergence for the remaining slot when qualified candidates exist.
+# - Mission targets are ranking opportunities, not fixed slot counts; high-value AI products and strategic statements remain eligible to compete.
 # - Prefer a verified AI leader interview/podcast/opinion/attributed statement for an AI-core
 #   slot when it remains within the mission quality floor; quality and evidence gates still apply.
 # - At most one genetics-led item and one medical/clinical-led item are allowed
@@ -70,7 +71,7 @@ editorial:
 #   the global target quality floor does not veto an explicit mission-coverage target.
 # - diversity_quality_floor_ratio=0.90 preserves a strong general quality floor while allowing portfolio diversity.
 # - mission_target_quality_floor_ratio=0.82 allows explicit Mind/Convergence coverage to survive when it remains within 82% of the strongest admissible alternative.
-# - max_same_mission_area=2 prevents an AI-only or single-domain final portfolio.
+# - max_same_mission_area=4 reduces same-domain dominance without suppressing several independently important AI product announcements.
 # - Information gain is a bounded soft reranker; quality remains dominant.
 # - Current-portfolio entity/leader repetition receives explicit soft penalties.
 # - Recent publication history contributes topic/entity saturation penalties so

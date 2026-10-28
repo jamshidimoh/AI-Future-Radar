@@ -99,12 +99,12 @@ def test_mission_diversity_is_explicit_and_canonical():
     assert contract["min_unique_sources"] == mission["min_unique_sources"]
     assert contract["preferred_max_same_source_per_run"] == mission["max_same_source"]
     assert contract["hard_max_same_source_per_run"] == selection["max_items_per_source"]
-    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 2
+    assert contract["max_same_mission_area_per_run"] == mission["max_same_mission_area"] == 4
 
 
 def test_mission_coverage_targets_are_explicit_opportunities():
     contract = load_editorial_contract()
-    assert contract["max_posts"] == 3
+    assert contract["max_posts"] == 8
     assert contract["ai_core_target_min"] == 1
     assert contract["ai_core_target_max"] == 2
     assert contract["convergence_target"] == 1

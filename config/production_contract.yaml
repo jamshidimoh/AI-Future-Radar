@@ -44,6 +44,7 @@ selection:
   replacement_buffer: 4
   normal_relative_score_gap: 15.0
   publication_mode: adaptive_quality_threshold
+  fixed_three_item_quota: false
   diversity_mode: unified_final_portfolio
   distinct_sources_first: true
   special_lanes_are_candidate_roles: true

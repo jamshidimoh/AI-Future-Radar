@@ -19,7 +19,7 @@ def _load(path):
 
 def test_production_contract_is_explicit_and_versioned():
     data = _load(CONTRACT)
-    assert data["contract"]["version"] == 4
+    assert data["contract"]["version"] == 5
     assert data["contract"]["mission_policy"] == "config/mission_policy.yaml"
     assert data["contract"]["selection_policy"] == "config/selection_policy.yaml"
     assert data["contract"]["architecture_document"] == "ARCHITECTURE.md"
@@ -49,6 +49,10 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert mission["max_posts"] == contract["max_posts"] == 8
     assert contract["candidate_window"] == selection["candidate_window"] == 12
     assert contract["replacement_buffer"] == 4
+    contract_selection = _load(CONTRACT)["selection"]
+    assert contract_selection["normal_relative_score_gap"] == selection["normal_relative_score_gap"] == 15.0
+    assert contract_selection["publication_mode"] == selection["publication_mode"] == "adaptive_quality_threshold"
+    assert contract_selection["fixed_three_item_quota"] is False
     assert contract["preferred_max_same_source"] == mission["max_same_source"] == 1
     assert contract["hard_max_same_source"] == selection["max_items_per_source"] == 2
     assert contract["min_unique_sources"] == mission["min_unique_sources"]

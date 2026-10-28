@@ -644,7 +644,7 @@ def test_major_ai_product_launch_wins_shared_portfolio_order_after_quality_floor
         "freshness_score",
         lambda candidate, half_life_hours=24.0: float(candidate.get("_test_freshness", 0.0)),
     )
-    contract = load_editorial_contract()
+    contract = dict(load_editorial_contract())
     contract["ai_core_target_min"] = 0
     contract["convergence_target"] = 0
     contract["mind_cognition_target"] = 0
@@ -691,7 +691,7 @@ def test_product_priority_does_not_bypass_relative_quality_floor(monkeypatch):
         "freshness_score",
         lambda candidate, half_life_hours=24.0: float(candidate.get("_test_freshness", 0.0)),
     )
-    contract = load_editorial_contract()
+    contract = dict(load_editorial_contract())
     contract["ai_core_target_min"] = 0
     contract["convergence_target"] = 0
     contract["mind_cognition_target"] = 0
@@ -748,7 +748,7 @@ def test_ai_target_arbitration_prioritizes_product_release_within_quality_floor(
         content_type="product_news",
     )
     weak_product["summary"] = "An early prototype with limited capability."
-    contract = load_editorial_contract()
+    contract = dict(load_editorial_contract())
     contract["mission_target_quality_floor_ratio"] = 0.82
 
     selected = selection_module._best_ai_target_candidate(

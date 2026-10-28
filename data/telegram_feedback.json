@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793173228,
+  "updated_at": 1793176953,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -20068,6 +20068,65 @@
       "why_it_matters": "عاملهای هوشمصنوعی می‌توانند به سرعت و بدون نظارت انسانی عمل کنند و این امر می‌تواند منجر به مشکلاتی در امنیت و پایداری سیستم بانکی شود. این عاملها قادر به انجام تراکنشهای پیچیده و خودکار هستند و می‌توانند از آسیبپذیریهای سیستم بانکی بهرهبردار شوند. این امر می‌تواند منجر به افزایش ریسکهای مالی و امنیت در سیستم بانکی شود.",
       "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBjSGUtVFVzSE9jdlFpaXk2SE9QUmFhckx5YnVvazVFd2J6elJ1MnBTaU9SNk1ZMjluUHFMNUI1SERKdmNhOEVVWVVoemFveGtvZ3FFcURsVWxiMUZCbS1Z?oc=5",
       "posted_at": 1793173228
+    },
+    "-1004482051328:2175": {
+      "chat_id": -1004482051328,
+      "message_id": 2175,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "ایمان عنایم: راهکارهای جدید برای گسترش محتوای علمی به زبان عربی",
+      "summary": "ایمان عنایم، ارتباطگر علمی مستقر در دبی، در مصاحبهای با World Economic Forum بیان کرد که کمتر از ۱٪ محتوای علمی و آموزشی به زبان عربی تولید می‌شود. او برای رفع این خلأ، ویدیوهای کوتاه و جذابی می‌سازد که هم برای کودکان پنجساله و هم برای بزرگسالان چهلساله قابل فهم باشد. روش او ترکیبی از دقت علمی و سادگی بیان است تا اطلاعات دقیق بهسرعت در شبکه‌های اجتماعی منتشر شود. Ennaim معتقد است این رویکرد می‌تواند دسترسی به دانش را برای جوامع عربزبان گسترش دهد و مشارکت آنها را در گفتوگوی علمی جهانی افزایش دهد.",
+      "description": "'Less than 1% of all scientific or educational content in general is made in Arabic.'\n\n@scientistimane, a science communicator based in #Dubai, aims to change that through her engaging short videos that are both accurate and shareable.\n\nHer method? Explaining an idea so it's clear to both five-year-olds and 40-year-olds.\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef #IdeasOnTheMove #AMGFL26",
+      "why_it_matters": "تولید محتوای علمی به زبان عربی می‌تواند شکاف دانش بین جوامع مختلف را کاهش دهد و افراد را به مشارکت فعال در پژوهشهای بینالمللی ترغیب کند. با استفاده از ویدیوهای کوتاه و ساده، Ennaim توانسته است مخاطبان گستردهای را جذب کند و بهخصوص در مناطق با دسترسی محدود به منابع علمی، آگاهی عمومی را ارتقا دهد. این مدل می‌تواند الگویی برای دیگر زبانهای کمنمایش باشد و بهعنوان یک ابزار مؤثر برای گسترش سواد علمی در سطح جهانی عمل کند.",
+      "link": "https://www.youtube.com/shorts/Kq1vppCVxLQ",
+      "posted_at": 1793176937
+    },
+    "-1004482051328:2176": {
+      "chat_id": -1004482051328,
+      "message_id": 2176,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Computational Biology and Bioinformatics",
+      "content_type": "research",
+      "category": "ai_biology_bioinformatics",
+      "leader": "",
+      "title": "معماری ترکیبی CNN-BiLSTM-MultiHead Transformer برای پیشبینی همزمان ساختار ثانویه پروتئین",
+      "summary": "مقالهٔ CBAT-Net یک معماری ترکیبی از شبکه‌های عصبی کانولوشنال (CNN)، شبکه‌های حافظهٔ طولانیمدت دوجهته (BiLSTM) و مکانیزمهای چندسر (Multi-Head) ترنسفورمر را معرفی می‌کند که بهصورت همزمان ساختار ثانویهٔ پروتئین را در حالتهای ۳-حالت (Q3) و ۸-حالت (Q8) پیشبینی می‌کند. این معماری با ترکیب لایههای توجه، ویژگیهای محلی و سراسری توالی پروتئین را استخراج می‌کند و با تابع هزینهٔ دو-وظیفهای بهینهسازی می‌شود. آزمایش بر روی دیتاستهای CB513، CASP12-14 و TS115 نشان می‌دهد که دقت Q3 به ۸۶٫۷۱٪ و Q8 به ۷۸٫۴۲٪ می‌رسد، که به ترتیب ۲۳٫۸٪ و ۴٫۷٪ بهتر از روشهای پیشین است. این بهبود با آزمونهای آماری (p < 0.001) تأیید شده است. مطالعات حذفتدریجی (ablation) نشان می‌دهد که ترکیب تمام اجزای معماری برای دستیابی به این عملکرد حیاتی است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "پیشبینی دقیق ساختار ثانویهٔ پروتئین، پایهای برای طراحی دارو، مهندسی پروتئین و درک مکانیزمهای بیماریهاست. CBAT-Net با ترکیب مؤثر یادگیری محلی (CNN) و سراسری (Transformer) توانسته است اطلاعات توالی را بهصورت جامعتر استخراج کند، که نشان می‌دهد معماریهای هیبریدی می‌توانند محدودیتهای روشهای تکبعدی را پشت سر بگذارند. بهعلاوه، ارائهٔ مدل ریاضی کامل برای بهینهسازی گرادیان و تابع هزینهٔ دو-وظیفهای، چارچوبی قابلتکرار برای پژوهشهای آینده در پیشبینی ساختارهای بیولوژیکی فراهم می‌کند. این پیشرفت نه تنها عملکرد را بهبود میبخشد، بلکه نشان می‌دهد هوش مصنوعی می‌تواند بهصورت مستقیم به حل چالشهای اساسی زیستشناسی مولکولی کمک کند.",
+      "link": "https://www.nature.com/articles/s41598-026-77507-4",
+      "posted_at": 1793176945
+    },
+    "-1004482051328:2177": {
+      "chat_id": -1004482051328,
+      "message_id": 2177,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Singju Post)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "جنسن هوآنگ در کنفرانس NVIDIA GTC 2026: آینده هوش مصنوعی و چالشهای فناوری",
+      "summary": "جنسن هوآنگ، مدیرعامل NVIDIA، در کنفرانس GTC 2026 در برلین، آینده هوش مصنوعی را با تمرکز بر چالشهای فناوری و نقش NVIDIA در پیشبرد این حوزه بررسی کرد. او گفت که NVIDIA در حال توسعه فناوریهای جدیدی است که امکان پردازش سریعتر و کارآمدتر دادهها را فراهم می‌کند. هوآنگ همچنین تأکید کرد که چالشهای اصلی در زمینه هوش مصنوعی، شامل امنیت دادهها، اخلاقیات و نیاز به استانداردهای جهانی است. او گفت که NVIDIA در حال همکاری با سازمانهای بینالمللی است تا استانداردهای جهانی برای هوش مصنوعی ایجاد کند.",
+      "why_it_matters": "این سخنرانی نشان می‌دهد که NVIDIA در حال پیشبرد فناوریهای پیشرفته برای هوش مصنوعی است و چالشهای مهمی در این زمینه وجود دارد. همکاری با سازمانهای بینالمللی برای ایجاد استانداردهای جهانی می‌تواند به بهبود امنیت و اخلاقیات در هوش مصنوعی کمک کند. این توسعهها می‌توانند به بهبود کارایی و کارآمدی سیستمهای هوش مصنوعی کمک کنند و به نوبه خود، به پیشبرد این فناوری در صنایع مختلف کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxQcnZ4bHZIOVJFRHR4UGFhQXduTGN4YXVrQUY5RWlINWVOTTlKenFWSXpqSXZaRldpdTlTcl9IdHg0eVF3VlBOdWZobWhIWTZZMXNWb1dJTDNkM0N5RklmT1FycjVzVm05QmQ1UjZGY3RkRms1ME80ekxOVVZKR29uZklKdjlzaXJraEswWGwxaw?oc=5",
+      "posted_at": 1793176952
     }
   }
 }

@@ -53,6 +53,8 @@ def test_mission_and_selection_layers_resolve_to_one_executable_contract():
     assert contract_selection["normal_relative_score_gap"] == selection["normal_relative_score_gap"] == 15.0
     assert contract_selection["publication_mode"] == selection["publication_mode"] == "adaptive_quality_threshold"
     assert contract_selection["fixed_three_item_quota"] is False
+    assert contract_selection["max_items_per_content_type"] == selection["max_items_per_content_type"] == 8
+    assert contract_selection["editorial_balance"]["ai_core_target_max"] == mission["ai_core_target_max"] == 8
     assert _load(CONTRACT)["quality"]["final_news_capacity"] == 8
     assert _load(CONTRACT)["quality"]["publication_mode"] == "adaptive_quality_threshold"
     assert _load(CONTRACT)["quality"]["fixed_three_item_quota"] is False

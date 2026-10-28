@@ -10,11 +10,11 @@ mission:
   operational_publication_capacity: 8
   min_unique_sources: 3
   max_same_source: 1
-  max_same_mission_area: 4
+  max_same_mission_area: 8
   min_authoritative_items: 2
   stale_hours: 72
   ai_core_target_min: 1
-  ai_core_target_max: 2
+  ai_core_target_max: 8
   convergence_target: 1
   mind_cognition_target: 1
   mind_future_target: 1

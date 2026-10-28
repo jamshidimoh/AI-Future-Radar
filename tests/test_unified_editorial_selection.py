@@ -3,7 +3,6 @@ from pathlib import Path
 import yaml
 
 import src.unified_editorial_selection as selection_module
-
 from src.unified_editorial_selection import (
     _eligible_candidates,
     _Portfolio,

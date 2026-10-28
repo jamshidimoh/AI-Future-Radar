@@ -53,12 +53,14 @@ _LEADER_ACTIVITY_EVIDENCE_TERMS = (
     "acquisition", "investment", "invested", "funding", "founded", "appointed", "appoints", "joins", "partnership",
     "research project", "initiative", "product", "model", "platform", "steps down", "steps aside", "steps up",
     "reshuffle", "reorganize", "reorganise", "vision", "outlook", "forecast", "predicts", "prediction", "timeline",
+    "believes", "believe", "argues", "argue", "claims", "claimed", "notes", "noted", "points out", "said that",
 )
 _LEADER_ANALYTICAL_SIGNAL_TERMS = (
     "will ", "would ", "could ", "may ", "until ", "by 202", "future", "forecast", "prediction", "outlook", "timeline",
     "singularity", "existential", "consciousness", "sentience", "intimacy", "economy", "economic", "jobs", "workforce",
     "labor", "work", "society", "governance", "rules", "regulation", "risk", "safety", "business", "industry",
     "adoption", "deployment", "transformation", "impact", "implications", "reasoning", "intelligence",
+    "electricity", "power demand", "energy infrastructure", "compute capacity", "compute bottleneck", "data center power",
 )
 _LEADER_STRONG_CONTEXT_TERMS = (
     "ai", "artificial intelligence", "agi", "machine learning", "robot", "robotics", "chip", "chips", "semiconductor",
@@ -66,7 +68,7 @@ _LEADER_STRONG_CONTEXT_TERMS = (
     "deepmind", "nvidia", "meta", "google", "microsoft", "apple", "amazon", "technology", "tech", "europe", "eu",
     "european", "regulation", "regulatory", "policy", "government", "law", "legislation", "governance", "safety", "risk",
     "future", "innovation", "economy", "education", "jobs", "labor", "workforce", "health", "science", "research",
-    "infrastructure", "energy", "autonomy", "cybersecurity", "security", "consciousness", "singularity", "intimacy",
+    "infrastructure", "energy", "electricity", "electric power", "power demand", "power supply", "power grid", "grid", "data center power", "data centre power", "compute capacity", "compute bottleneck", "autonomy", "cybersecurity", "security", "consciousness", "singularity", "intimacy",
 )
 _LEADER_SIGNAL_CONTEXT_TERMS = (
     *_LEADER_STRONG_CONTEXT_TERMS,
@@ -146,8 +148,10 @@ def _query_content_type_priority(q: dict) -> int:
         "conversation": 6,
         "social_post": 5,
         "direct_statement": 5,
-        "leader_signal": 3,
-        "product_news": 3,
+        "leader_signal": 6,
+        "product_news": 6,
+        "direct_statement": 6,
+        "social_post": 5,
         "research": 2,
     }.get(ctype, 1)
 
@@ -202,9 +206,9 @@ def _load_watchlist_people_queries():
                     f'(AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR consciousness OR cognition)'
                 )
                 activity_query = (
-                    f'"{name}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future) '
+                    f'"{name}" (AI OR AGI OR "artificial intelligence" OR technology OR science OR future OR compute OR chips OR energy OR electricity OR power OR grid) '
                     f'(launch OR announces OR announced OR acquisition OR research OR policy OR regulation OR '
-                    f'forecast OR prediction OR investment OR product OR model OR platform OR partnership)'
+                    f'forecast OR prediction OR investment OR product OR model OR platform OR partnership OR electricity OR "power demand" OR "data center" OR infrastructure)'
                 )
                 common = {
                     "watch_person": name,

@@ -691,7 +691,7 @@ def main(*, skip_education: bool = False) -> int:
         education_due = False
         education_slot = None
     previous_normal_score = cadence.get("last_published_normal_news_score")
-    print(f"[Cadence] run={run_number} tehran={now_tehran.isoformat()} normal_news=ranked_1_plus_2 max_normal={MAX_NORMAL_NEWS_PER_PERIOD} technical_trend=independent max_technical={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices=independent max_mind={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_perspectives=independent max_voices={MAX_VOICES_PERSPECTIVES_PER_PERIOD} education_due={education_due} education_slot={education_slot} previous_normal_score={previous_normal_score} last_any_news_score={cadence.get('last_published_news_score')}", flush=True)
+    print(f"[Cadence] run={run_number} tehran={now_tehran.isoformat()} normal_news=adaptive_quality_threshold max_normal={MAX_NORMAL_NEWS_PER_PERIOD} relative_gap={NORMAL_RELATIVE_SCORE_GAP} technical_trend=independent max_technical={MAX_TECHNICAL_TREND_PER_PERIOD} mind_ideas_voices=independent max_mind={MAX_MIND_IDEAS_VOICES_PER_PERIOD} voices_perspectives=independent max_voices={MAX_VOICES_PERSPECTIVES_PER_PERIOD} education_due={education_due} education_slot={education_slot} previous_normal_score={previous_normal_score} last_any_news_score={cadence.get('last_published_news_score')}", flush=True)
 
     store = load_feedback(FEEDBACK_PATH)
     changed = ingest_from_env(FEEDBACK_PATH)

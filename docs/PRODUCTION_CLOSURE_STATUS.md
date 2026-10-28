@@ -2,6 +2,16 @@
 
 Historical snapshot date: 2026-10-19
 
+Status date: 2026-10-28
+
+## Latest post-merge observation — 2026-10-28
+
+- PR #294 merged to `main` at commit `60a4e1da707176a510b0b8be4a512d0677513ca5`. It adds a bounded pre-window priority for major AI product launches and strategic leader statements; canonical editorial scores, publication thresholds, and Tier-0 policy remain unchanged.
+- PR validation passed all seven checks: Production Quality Gate, Test Radar Quality, Final Production Acceptance, Signal Engine CI, TypeSafe Audit, P1 Audit, and Graphify.
+- Production run #1563 started on the merged application baseline. At the latest observation, source checkout, OmniRoute startup/readiness, repository regression checks, provider-failure isolation tests, QA replacement tests, model-registry refresh, and Telegram preflight had passed; the main bot step was still in progress.
+- Production run #1559 on the pre-merge SHA `4ab1e77dac8e` failed strict runtime acceptance because required mission-coverage lanes remained nonpublishable after provider timeout/rate-limit and editorial/claim-alignment QA failures. It is not evidence of closure for the merged baseline.
+- Release `v1.1.0` remains **NOT PUBLISHED**. The closure gate still requires three consecutive successful live runs on the same application-code fingerprint, with confirmed delivery and every evidence contract satisfied. Documentation-only commits are excluded from the application fingerprint and must not be treated as production success by themselves.
+
 Status date: 2026-10-27
 
 ## Current gate state — 2026-10-27

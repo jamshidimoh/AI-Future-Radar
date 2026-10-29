@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793218478,
+  "updated_at": 1793263562,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -20315,6 +20315,44 @@
       "why_it_matters": "درک ریشههای تکاملی آگاهی و احساسات می‌تواند به بازنگری در مفاهیم فلسفی و علمی دربارهٔ ذهن و خوشحالی منجر شود. این دیدگاه می‌تواند به پژوهشهای میانرشتهای در زیستشناسی، روانشناسی و فلسفه کمک کند و پرسشهای جدیدی دربارهٔ مرزهای آگاهی در موجودات زنده مطرح سازد.",
       "link": "https://www.youtube.com/shorts/CuygR8MLbyg",
       "posted_at": 1793218478
+    },
+    "-1004482051328:2188": {
+      "chat_id": -1004482051328,
+      "message_id": 2188,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "The Cognitive Revolution",
+      "content_type": "interviews_podcasts",
+      "category": "ai_innovators_experts",
+      "leader": "",
+      "title": "آمریکا و راهکارهای هوش فراتر از انسان: آزادی عمل در عصر هوش مصنوعی",
+      "summary": "محققان RAND هفت استراتژی اصلی برای رسیدن به هوش فراتر از انسان (ASI) را بررسی کردند. این استراتژیها شامل برتری، تهدید، همتوسعه، توقف، انباشت، انباشت با انعطافپذیری و انباشت با انعطافپذیری هستند. محققان هشدار دادند که عدم قطعیت عمیق در فناوری و جغرافیایی، پیشفرض به هر استراتژی خاص را خطرناک می‌کند. برای جلوگیری از بستن گزینههای حیاتی، آنها پیشنهاد کردند که در قابلیتهای بلندمدت مانند تأیید مدل، محدودسازی، ارزیابیهای سازمان و یک معماری امنیتی انعطافپذیر سرمایهگذاری شود.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این گفتگو نشان می‌دهد که استراتژیهای آمریکا برای رسیدن به هوش فراتر از انسان (ASI) باید با در نظر گرفتن خطرات و فرصتهای بالقوه طراحی شود. این استراتژیها می‌توانند تأثیر عمیقی بر امنیت ملی، رقابت بینالمللی و آینده بشر داشته باشند. با در نظر گرفتن این نکتهها، دولتها و سازمانها می‌توانند اقدامات مناسبی را برای تضمین امنیت و پیشرفت پایدار در عصر هوش مصنوعی انجام دهند.",
+      "link": "https://www.cognitiverevolution.ai/freedom-of-action-america-s-asi-strategy-w-rand-s-joel-predd-ben-boudreaux-matt-chessen/",
+      "posted_at": 1793263555
+    },
+    "-1004482051328:2189": {
+      "chat_id": -1004482051328,
+      "message_id": 2189,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - 80,000 Hours",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "چالشهای مهندسی پشت توافقنامه ایالات متحده و چین",
+      "summary": "مقاله به چالشهای مهندسی پشت تأیید توافقنامه احتمالی ایالات متحده و چین برای توقف آموزش هوش مصنوعی پیشرو میپردازد. تام میلتون، مدیرعامل Amodo Design، توضیح می‌دهد که روشهای فعلی تأیید، خشن هستند، مانند خاموش کردن مراکز داده که همچنین سایر عملیات را متوقف می‌کند. Amodo Design در حال توسعه ابزارهایی برای بررسی آنچه که مراکز داده هوش مصنوعی انجام می‌دهند، با تمرکز بر اثر انگشتهای بار کاری در مصرف برق و ترافیک شبکه است.",
+      "description": "If the US and China agreed tomorrow to stop training frontier AI, how would either side know the other had actually stopped?\n\nRight now, says Tom Milton, the answer is crude: “I think we would probably just shut down the data centres.” That would also kill everything else those chips do, which is why any slowdown is so hard to agree to.\n\nTom is CEO of Amodo Design, a UK hardware lab building tools to check what AI data centres are really doing. His pitch is that verification makes a slowdown affordable: if you can prove a cluster is only running existing models and not training new ones, most of AI’s benefits survive the pause.\n\nThe key is that “workloads have fingerprints,” and they show up in power draw and network traffic. Amodo’s pilot reruns a cluster’s work on a separate verifier and flags any traffic the agreed model can’t explain. The AI companies are starting on this too: Anthropic recently reported in its Frontier Safety Roadmap a prototype that runs on its production inference and checks that outputs come from a specific set of model weights.\n\nBut Tom reckons only about 50 engineers worldwide work on verification, and custom hardware has long lead times. If a deal is ever struck in a hurry, it will be built on whatever tools already exist, so the work needs to scale up now — with more people and resources from AI companies, governments, and funders, so that better options are ready as soon as a deal is needed..\n\nTom and host Tom Reed also cover how an AI company could cheat, what AI can already do as a hardware engineer, and why a motivated talented engineer could be one of the world’s top five verification experts within a year.\n\n*Learn more about Amodo’s verification work:* https://ai-verification.com\n\n*Links & full transcript:* https://80k.info/tm\n\nChapters:\n00:00:00 Cold open: Can we verify a US–China AI deal?\n00:01:04 Why compute is the best place to verify an AI slowdown\n00:06:08 Can you prove a lab isn’t cheating?\n00:13:22 Live demo: how to spot a cheating GPU\n00:19:50 Could China hide a data centre?\n00:23:35 Can verification tools be hacked?\n00:29:13 Is anyone at OpenAI working on this?\n00:37:49 Chinese inspectors in US data centres??\n00:46:07 The 20-day panic deal\n00:51:27 What would a US–China AI deal look like?\n00:55:38 Why lab researchers should work on verification\n00:58:45 What if we never build this?\n01:02:06 Can verification protect against power grabs?\n01:07:20 How good is AI at hardware design?\n01:18:32 What’s holding AI back in hardware?\n01:22:44 Risks of automating hardware R&amp;D\n01:25:41 The DARPA model for AI safety\n01:32:26 What’s left for engineers after AI?\n01:40:07 Personal gadgets, designed by Fable?\n01:41:56 What if the US stops sharing its AI?\n\n_Our production team includes:_\n• _Video editors: Josh Alward, Dominic Armstrong, Jasper Luithlen, Milo McGuire, Luke Monsour, and Simon Monsour_\n• _Producers: Elizabeth Cox and Nick Stockton_\n• _Coordination and support: Katy Moore and Lou Moran_\n• _Camera operato artificial intelligence",
+      "why_it_matters": "ابزارهای تأیید ضروری هستند تا اطمینان حاصل شود که هرگونه توافق کندی هوش مصنوعی بین ایالات متحده و چین به درستی دنبال می‌شود. کار Amodo Design در بهبود تأیید را به عنوان ضروری برای آینده مقررات و همکاری هوش مصنوعی میداند.",
+      "link": "https://www.youtube.com/watch?v=yntXV1pkHuI",
+      "posted_at": 1793263562
     }
   }
 }

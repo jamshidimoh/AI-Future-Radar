@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793371968,
+  "updated_at": 1793391693,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -20739,6 +20739,67 @@
       "why_it_matters": "این دیدگاه Sam Altman اهمیت بهروزرسانی مداوم و یادگیری مستمر در صنعت فناوری را نشان می‌دهد. او تأکید می‌کند که دانشآموزان باید به سرعت با تغییرات سریع در صنعت آگاهی پیدا کنند و از چیزهایی که پنج سال پیش جذاب بود، دور شوند. این نگرانیها می‌تواند به بهبود کیفیت آموزش و توسعه مهارتهای جدید در دانشگاهها و کالجها منجر شود.",
       "link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPY2FCbnNXYU9qSVhEX2ptSVBXcXNpVGhJRGNiNFVuUzl2UVRPd0tfYTN6X05nMHlWS0RRb0J3TXYwMjg2c3plYnpKUEVYa2YzQmhiaFByQkthS000OGVVcm13dmlaTE8wR045aXV2R2lZdVpwX2pKU3NNYVpaYWwyY3FhSjBpWXZkQUhGYWZhOHlSTGFZZGNBaG43enJndUR4RHQ4VkVmTzRvTXFCTEloUmVJUWg4OWpNbG4zYlhLVlg4YWVOdF9XR1gtVUU?oc=5",
       "posted_at": 1793371945
+    },
+    "-1004482051328:2210": {
+      "chat_id": -1004482051328,
+      "message_id": 2210,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Hindu)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "چین رد کرد ادعای جاسوسی علیه Jensen Huang (مدیر عامل Nvidia)",
+      "summary": "چین ادعاهای جاسوسی علیه Jensen Huang، مدیر عامل Nvidia، را رد کرد. این اعلامیه توسط رسانهٔ The Hindu منتشر شد و به صراحت بیان می‌کند که هیچ شواهدی برای جاسوسی وجود ندارد. این گزارش به عنوان یک بیانیه رسمی از سوی چین در مورد این ادعاها مطرح می‌شود.",
+      "why_it_matters": "ردی چین می‌تواند نگرانیهای امنیتی در مورد فعالیتهای فناوری در چین را کاهش دهد. همچنین، تأیید عدم وجود جاسوسی می‌تواند به شکلگیری سیاستهای جدید در حوزهٔ امنیت سایبری و روابط تجاری بینالمللی کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNTWN0YVpmX1hBNzRKejNNWkhSMkhIR09JaVdYLU5laG9CT3JaLVlxUHpZelduOHA3al93Q2I3QktKNFVNZGFVMVB5QlZzMVJzbGFIUmRKcmdEcnVsVzlMczAyVGo0OG1Gc3o1RXEyVmVFMTNTM3FUWTNxUE5yQ0hSeWZKNDZZV1dDUTYyMUVYR1h4WU5MNUlRVWNlVEtWVkRJVUlnSm9lTnlTSknSAbIBQVVfeXFMT0JUZWtxVm9fZS01RFNCVkdlZzFRalVHcVlrVi0zbWtKTzMxT3pEaFVibk0yeFF6bnBrS0s3dEl1cmJHa1pBR3BvZzBMc3FQdzVEMElNUWw0RExieTJPQ2xwdkJMSHdSNkk1QUxKVGFpQ2x1U01NQWM1akRuMUt6d1NXSkJ2Z3FFN2FGNDhCaDVGNjcwM1RmRUMzeHduY2dfT2hQWG51SGxsMUVZcWF4MlpOUQ?oc=5",
+      "posted_at": 1793391458
+    },
+    "-1004482051328:2211": {
+      "chat_id": -1004482051328,
+      "message_id": 2211,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Y Combinator",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چه اتفاقی میافتد وقتی همه می‌توانند نرمافزار بسازند",
+      "summary": "پال کاپلستون، بنیانگذار و مدیرعامل Supabase، در این مصاحبه با Lightcone، شرکت خود را که از تابستان 2020 در Y Combinator شروع به کار کرده و اکنون 13 میلیون کاربر و بیش از 50 میلیون پایگاه داده تحت مدیریت دارد، معرفی می‌کند. Supabase در حال آمادهسازی برای آیندهای است که در آن همه می‌توانند نرمافزار خود را بنویسند، میلیاردها نفر به پایگاه داده‌های شخصی دسترسی دارند و عاملها بسیاری از تقاضا را ایجاد می‌کنند. کاپلستون از رشد 4 برابر درآمد شرکت و سه عصر مختلف Supabase صحبت می‌کند و به اهمیت پایگاه داده‌های شخصی و مالکیت داده، مقیاسپذیری به میلیاردها کاربر و پذیرش AI در Supabase میپردازد.",
+      "description": "In this episode of the Lightcone, the hosts sit down with Paul Copplestone, co-founder and CEO of Supabase. Since starting in the YC summer batch of 2020, the company has exploded to 13 million users and over 50 million databases under management. Supabase is now positioning for a future where everyone can write their own software, billions have access to personal databases and agents are driving much of the demand.  \n\nApply to Y Combinator: https://www.ycombinator.com/apply\nWork at a startup: https://www.ycombinator.com/jobs\n\nChapters:\n00:00 Intro\n01:18 Growth and 4x Revenue \n02:35 Three Eras of Supabase\n04:34 “Builders” vs. Traditional Devs\n08:42 Personalized Apps \n12:12 Personal Databases & Data Ownership\n15:56 Scaling to Billions\n17:58 AI Adoption At Supabase\n19:58 Lessons Learned Along The Way\n27:29 Building For Personal Agents, Dogfooding\n30:01 Agent-First Design and Evals\n38:42 The Future Of Coding\n42:36 Opening Up More Entrepreneurship + Outro",
+      "why_it_matters": "Supabase با تمرکز بر پایگاه داده‌های شخصی و مالکیت داده، به ایجاد آیندهای میپردازد که در آن افراد می‌توانند نرمافزارهای شخصیسازی شده را توسعه دهند و از داده‌های خود مالکیت داشته باشند. این رویکرد می‌تواند به افزایش مشارکت و کنترل افراد در دنیای دیجیتال کمک کند. همچنین، پذیرش AI در Supabase نشاندهنده اهمیت این فناوری در توسعه نرمافزارهای آینده است.",
+      "link": "https://www.youtube.com/watch?v=vl7HiMdGfjo",
+      "posted_at": 1793391465
+    },
+    "-1004482051328:2212": {
+      "chat_id": -1004482051328,
+      "message_id": 2212,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Verge)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن با ریاضیدانان همدردی می‌کند؛ تلاش‌های ریاضی OpenAI ادامه خواهد یافت",
+      "summary": "در مصاحبه‌ای با The Verge، سام آلتمن، مدیرعامل OpenAI، ابراز همدردی کرد و گفت که برنامه‌های ریاضی شرکت برای پیشبرد مدل‌های هوش مصنوعی متوقف نخواهد شد. او افزود که تیم‌های داخلی OpenAI به کار با ریاضیدانان ادامه می‌دهند و این کار بخشی از مسیر توسعه فناوری است.",
+      "why_it_matters": "بیان ادامهٔ برنامه‌های ریاضی نشان می‌دهد OpenAI به تقویت پایه‌های نظری مدل‌های خود اهمیت می‌دهد. این رویکرد می‌تواند به بهبود دقت و قابلیت اطمینان سیستم‌های هوش مصنوعی منجر شود و نقش ریاضیدانان را در پروژه‌های بزرگ فناوری برجسته کند.",
+      "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPOEVvR3N2NnpqOWROaGJScVNkamw3Nk9OZWxIMTIxTGd0b25uRnBOamFuSUlrb1lfa1F3SE9WdXdIY2lVekNuVkRtTTBjTzBNcGw4aHU4QUJobzBmYVhhZ1VOX0w3UFJSUVFmR1VFOXd1WS1pQVJ1SDYtMURweUpXRk1MNjRUcmx4enlfRWxmQXNGZUVoa2VqdEZScVk?oc=5",
+      "posted_at": 1793391572
     }
   }
 }

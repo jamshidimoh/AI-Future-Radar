@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793457714,
+  "updated_at": 1793473816,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -20918,6 +20918,66 @@
       "why_it_matters": "گسترش مقیاس Neuralink می‌تواند دسترسی به فناوریهای BCI را افزایش دهد، اما مستند شدن حملات سایبری نشان می‌دهد که امنیت این سامانهها یک چالش جدی است. در صورت عدم رفع این تهدیدها، خطر نفوذ به داده‌های عصبی و کنترل غیرمجاز دستگاهها برای کاربران و جامعه علمی بالا می‌رود. بنابراین، همزمان با پیشرفتهای فنی، نیاز به تقویت پروتکلهای امنیتی برای محافظت از اطلاعات مغزی واضح می‌شود.",
       "link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOUHhfemU5UDAyM1NkOVUwcWVseUhoNFJKQ1B0ekRBZS16SjBSV01nckt2TThDQy1lcGFpVE1KZmZoSndYcENSTUJjZURMOXhaWXNBdXJfNnRmTWx6REtFUk53MkNvV1dPQkdBd2ktYi15aS1TWTR4Z3dKeTdUdFJjYjE3NXVxM1gtZjBsOC1ZTWVEZTV4QjNxMFlFY0VVbHVhXzBFclhyZVhfcjQ5eVRvRmUtQThPZ1BpdWhfVlBwM2ZXTGxSMWxN?oc=5",
       "posted_at": 1793457613
+    },
+    "-1004482051328:2219": {
+      "chat_id": -1004482051328,
+      "message_id": 2219,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Machine Learning",
+      "content_type": "research",
+      "category": "ai_science",
+      "leader": "",
+      "title": "IDPForge: پیشبینی ساختار پروتئین‌های بینظم با یادگیری عمیق",
+      "summary": "IDPForge یک روش یادگیری ماشین است که از مدلهای زبان پروتئین با استفاده از تبدیلکنندهها بهره میبرد تا مجموعههای ساختاری پروتئین‌های بینظم و مناطق بینظم را تولید کند. این روش نیازی به آموزش خاص برای هر دنباله، تبدیلهای برگشتی از نمایشهای درشتدانه یا وزندهی به مجموعهها ندارد. مجموعههای ساختاری تولید شده با داده‌های آزمایشگاهی NMR و SAXS همخوانی خوبی دارند و امکانات برای تطبیق با محدودیتهای آزمایشگاهی وجود دارد. IDPForge به عنوان یک منبع باز در دسترس است و برای مطالعات ساختاری و یکپارچه پروتئین‌های دارای بینظمی مفید است.",
+      "why_it_matters": "پروتئین‌های بینظم و مناطق بینظم پروتئینها (IDPs/IDRs) با مجموعههای ساختاری متنوع و پویا تعریف می‌شوند که توسط الگوریتمهای پیشبینی ساختار مانند AlphaFold و RoseTTAFold با دقت پایین پیشبینی می‌شوند. IDPForge این محدودیتها را با بهرهگیری از مدلهای زبان پروتئین با استفاده از تبدیلکنندهها و تولید مجموعههای ساختاری با اتمهای کامل حل می‌کند. این روش امکانات متعددی برای تطبیق با داده‌های آزمایشگاهی و مطالعه یکپارچه پروتئین‌های دارای بینظمی را فراهم میآورد و به عنوان یک منبع باز در دسترس است.",
+      "link": "https://www.nature.com/articles/s41467-026-79191-4",
+      "posted_at": 1793473729
+    },
+    "-1004482051328:2220": {
+      "chat_id": -1004482051328,
+      "message_id": 2220,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Vietnam.vn)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "person_name": "Elon Musk",
+      "people_lane": true,
+      "title": "Elon Musk: AI می‌تواند به یک جامعه پررونق تبدیل شود که پول بیارزش می‌شود",
+      "summary": "Elon Musk در مصاحبه با Vietnam.vn اظهار داشت که هوش مصنوعی (AI) می‌تواند به یک جامعه پررونق تبدیل شود که در آن پول بیارزش می‌شود. او گفت که با پیشرفتهای اخیر در فناوری، AI می‌تواند به تولید و توزیع منابع کمک کند و به این ترتیب نیاز به پول به عنوان وسیله مبادله را کاهش دهد.",
+      "why_it_matters": "دیدگاه Musk نشاندهنده دیدگاهی است که چگونه فناوریهای پیشرفته می‌توانند به تغییر ساختار اجتماعی کمک کنند. این ادعا می‌تواند به عنوان یک الهام برای سیاستهای اجتماعی و اقتصادی در آینده تلقی شود.",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNLTgxczJQbEdfUU9jeDBCRkVlVmo5SG5JZWVDX1c2Y3dwcm0wWm1rZGlibVpWVjQwaGJjc3FXcGlKRl9JZDRtXzFJYXhoWTg3T1BpUHFRV2IzYU9ZTnZqVGh4c2ttLVB0V3ZUWDNrR0hBSzFCVWZzQlA1TWxRdEczOFd4bEpMSXBXT1U3eUl3?oc=5",
+      "posted_at": 1793473812
+    },
+    "-1004482051328:2221": {
+      "chat_id": -1004482051328,
+      "message_id": 2221,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Gizmodo)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن: کنترل کامل رم برای بهبود کارایی هوش مصنوعی",
+      "summary": "سام آلتمن، بنیانگذار و مدیرعامل OpenAI، در مصاحبه با Gizmodo اظهار داشت که همه رم (RAM) باید متعلق به او باشد تا بتواند از آن برای فروش به مردم استفاده کند. او این نظر را با اشاره به نیاز به کنترل و مدیریت منابع محاسباتی برای بهبود کارایی و کاهش هزینهها بیان کرد.",
+      "why_it_matters": "این دیدگاه نشاندهنده نگرش مدیریتی آلتمن در مورد مدیریت منابع و استفاده از فناوری است. این رویکرد می‌تواند به بهبود کارایی و کاهش هزینهها در حوزه هوش مصنوعی کمک کند. با این حال، این نظرات ممکن است با دیدگاههای دیگران در مورد مالکیت و استفاده از منابع در حوزه فناوری در تضاد باشد.",
+      "link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNMFpBdkg3eElodU52Zmp3QV9DcGlzelJFWURmMnEzX0Y1T29fMHBsWVBobVlja3BwR1Y4MHVJMGxDbGFZSW16THYtR2tkUGZEZnBhNlo5b3ZOSTU1MUpyZEpRc3RCOTEwQlFqaHNRUUFqel9iU0YwMmp2cUNsTEhEX0lEWC1McHZiSWNtT2pjd0p4X0ZKV0NSTGhGU0NiQWVJcXZvN25temRVUQ?oc=5",
+      "posted_at": 1793473816
     }
   }
 }

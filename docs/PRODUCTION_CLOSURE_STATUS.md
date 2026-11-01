@@ -1,120 +1,51 @@
 # AI Future Radar — Production Closure Status
 
-Historical snapshot date: 2026-10-19
+Status date: 2026-11-01
 
-Status date: 2026-10-28
+## وضعیت نهایی
 
-## Latest post-merge observation — 2026-10-28
+**وضعیت: CLOSED / PRODUCTION BASELINE**
 
-- PR #294 merged to `main` at commit `60a4e1da707176a510b0b8be4a512d0677513ca5`. It adds a bounded pre-window priority for major AI product launches and strategic leader statements; canonical editorial scores, publication thresholds, and Tier-0 policy remain unchanged.
-- PR validation passed all seven checks: Production Quality Gate, Test Radar Quality, Final Production Acceptance, Signal Engine CI, TypeSafe Audit, P1 Audit, and Graphify.
-- Production run #1563 started on the merged application baseline. At the latest observation, source checkout, OmniRoute startup/readiness, repository regression checks, provider-failure isolation tests, QA replacement tests, model-registry refresh, and Telegram preflight had passed; the main bot step was still in progress.
-- Production run #1559 on the pre-merge SHA `4ab1e77dac8e` failed strict runtime acceptance because required mission-coverage lanes remained nonpublishable after provider timeout/rate-limit and editorial/claim-alignment QA failures. It is not evidence of closure for the merged baseline.
-- Release `v1.1.0` remains **NOT PUBLISHED**. The closure gate still requires three consecutive successful live runs on the same application-code fingerprint, with confirmed delivery and every evidence contract satisfied. Documentation-only commits are excluded from the application fingerprint and must not be treated as production success by themselves.
+این وضعیت فقط پس از سه اجرای متوالی موفق روی اثرانگشت یکسان کد برنامه، شواهد انتشار واقعی، کنترل عدم انتشار تکراری و عبور همه معیارهای پذیرش ثبت شده است.
 
-Status date: 2026-10-27
+## پنجره شواهد نهایی
 
-## Current gate state — 2026-10-27
+- Run #1582 — SHA fe3ee73e8f993db9fc283c94a55e40cee76af5e6 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
+- Run #1581 — SHA 327dc2b85f56eb445a637eb7c69c84c761995ec8 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
+- Run #1580 — SHA 5e3b3716cc6f28eb78a09c5d54143a165d850794 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
 
-- **Release state: CLOSURE PENDING.** No v1.1.0 release has been published; release automation remains gated on the live closure workflow.
-- PR #284 merged: expert discovery now uses the extended 51-person roster, independent voice/direct-statement queries, and medical/genetics portfolio controls.
-- PR #285 merged: mission recovery targets distinct lane groups, counts distinct recovered areas, retries an eligible replacement after QA failure, and preserves system-owned classification metadata against summary output.
-- PR #287 merged: repeated Telegram HTTP 429 responses now use a larger bounded progressive cooldown (8-second increments, 60-second margin cap) while ambiguous delivery outcomes still fail closed.
-- PR #289 merged: recovery-only lane validation now uses content fields rather than trusting stale lane/category labels, and freezes the content-evidenced lane before summary repair. The normal selector remains backward-compatible.
-- PR #290 merged: the deterministic recovery fallback now writes the content-evidenced mission lane onto the candidate before summary repair; regression coverage prevents stale labels surviving on the returned object.
-- PR #291 merged: production jobs are pinned to the triggering `github.sha`, mutable state and the dynamic free-model registry are refreshed separately from `origin/main`, and the closure gate requires the runtime checkout SHA to match the triggering SHA.
-- PR #292 merged: the production entrypoint now emits the final People Bootstrap state marker required by the closure gate, using a shared strict validator in `src/`; missing/inconsistent state is logged as incomplete rather than fabricated as complete.
-- PR #290 merged: the deterministic recovery fallback now writes the content-evidenced mission lane onto the candidate before summary repair; regression coverage prevents stale labels surviving on the returned object.
-- PR #291 merged: production jobs are pinned to the triggering `github.sha`, mutable state and the dynamic free-model registry are refreshed separately from `origin/main`, and the closure gate requires the runtime checkout SHA to match the triggering SHA.
-- Run #1547 failed acceptance with `Posts sent: 0/10` after Telegram repeatedly returned explicit HTTP 429 with `retry_after=8s`; the message was rejected and delivery stopped safely. Runs #1548, #1549 and #1551 were cancelled and do not count as successful closure evidence. Run #1550 is still processing on a pre-fix revision and cannot certify the final code.
-- Run #1553 (SHA `789556ea`) was cancelled while queued behind pre-fix run #1550; closure correctly refused acceptance. Run #1554 (SHA `9b6d00c2`) was superseded when PR #292 added the missing People Bootstrap log evidence. Run #1550 has now failed acceptance on its pre-fix SHA `6399a7f9`: it delivered one message, but mission recovery ended with two unresolved nonpublishable lanes, so the production contract correctly blocked it. Run #1555 (SHA `2f8813b6`) has started on the final pinned-source revision with the content-lane recovery fixes and validated People Bootstrap evidence. This documentation-only change queues the second post-fix production observation run without changing the application-code fingerprint. The release gate still requires three consecutive accepted runs with confirmed delivery/state evidence. Release `v1.1.0` has not been published.
-- Live production evidence before the recovery fix was not healthy: runs #1544, #1545, and #1546 failed the runtime acceptance gate for zero delivery, incomplete Tier-0 fallback accounting, and inconsistent distinct-area coverage respectively.
-- The release gate remains authoritative. Production completion requires three consecutive successful live runs on the same application-code fingerprint, confirmed publication/state evidence, and all closure-contract checks; successful CI alone does not close production.
+## معیارهای پذیرش
 
-Previous verification snapshots below are historical evidence and must not be interpreted as current production closure.
+- 01_three_successful_runs: PASS
+- 02_code_pinned: PASS
+- 03_publish_and_fail_closed_per_run: PASS
+- 04_no_duplicate_publication: PASS
+- 05_image_preserves_full_text: PASS
+- 06_rank_within_window_no_bypass: PASS
+- 07_replacement_after_qa: PASS
+- 08_leader_watch_eligible: PASS
+- 09_provider_failure_isolated: PASS
+- 10_state_after_confirmed_delivery: PASS
+- 11_mission_portfolio_not_generic: PASS
+- 12_tier0_quality_floor: PASS
+- 13_education_cadence_contract: PASS
+- 14_people_bootstrap_30_deliveries: PASS
+- 15_llm_health_fresh_for_latest_run: PASS
+- 16_runtime_source_revision_matches_event_sha: PASS
 
-## Current verification snapshot — 2026-10-19 (checked through the current persisted repository state)
+## شواهد انتشار
 
-### Changes merged to main
-- PR #262: AI-first editorial ranking and genetics-dominance controls.
-- PR #263: removed Gemini and Ollama inference-provider integrations, registry entries and runtime setup.
-- PR #264: bounded progressive backoff for Telegram HTTP 429 responses.
-- PR #265: prevents removed-provider health records from reappearing through state merges.
-- PR #269: pins OmniRoute v3.8.50 source to an audited commit and fixes install-time failure by retaining the required prepare-script dependencies with `HUSKY=0`; safe fallback and bounded readiness checks remain in place.
-- PR #271: classifies NaraRouter's `telegram_required` marker as provider-level authentication failure. NaraRouter is excluded from OmniRoute's automatic provider pool by default; it may be re-enabled with `OMNIROUTE_ENABLE_NARA=1` only after account access is repaired.
-- PR #272: clarifies and regression-tests quality-aware AI-first portfolio selection; a second AI-core item is strongly preferred when it competes well with eligible Mind/Cognition, AI Futures and Convergence candidates, but is not forced through quality gates.
+PUBLISH_PER_RUN: {1582: True, 1581: True, 1580: True}
 
-### Deterministic validation
-- PR #272 head `3c1919b4a201b21f82b023efc339d8e7953778fa`: Test Radar Quality passed with **997 tests**.
-- On that same PR revision, Production Quality Gate, Final Production Acceptance, Signal Engine CI, TypeSafe Audit Smoke Test, Graphify Architecture Analysis and P1 Audit Measurement also passed.
-- PR #272 was merged to main at `75c7ad2aac13801ff9af39085fb7143f9861825e`.
-- The current persisted publication snapshot shows `run_number=789`, `last_published_news_score=56.14`, and People Bootstrap `30/30`.
-- The persisted LLM-health record has NaraRouter classified as `auth` at both model and provider scope, with a bounded cooldown. No Gemini or Ollama health entries are present in the current snapshot.
+PROVIDER_EVIDENCE: deterministic regression True
 
-### Live production evidence
-- Earlier runs #1494 and #1496 failed; run #1497 failed after Telegram returned repeated HTTP 429 responses and no news message was confirmed delivered. These historical failures remain part of the reliability evidence.
-- A fresh post-merge run with the latest application code must be confirmed independently from its workflow log/state. The current persisted publication snapshot does **not** yet prove three consecutive successful production runs on the latest application-code fingerprint.
-- The OmniRoute installation failure path is corrected in workflow code, but a successful live OmniRoute smoke test and confirmed Telegram delivery after that correction must not be inferred solely from deterministic CI.
+EDUCATION_EVIDENCE: published False, recovery False, not due all True, contract not due True
 
-### External account prerequisite
-NaraRouter returned `telegram_required`, asking for membership in its required Telegram group/channel and account relinking through its settings. The code cannot perform that account action. Until the owner completes it, automatic OmniRoute selection defers NaraRouter and persisted health prevents futile repeated attempts. This is a provider-account prerequisite, not a software workaround.
+## مرز پذیرش
 
-## Current status
+- اجرای تولید روی یک baseline ثابت تأیید شده است.
+- اجرای ناموفق یا شواهد ناقص به‌عنوان پذیرش موفق محسوب نشده است.
+- کیفیت فارسی، اعتبار منبع، جلوگیری از تکرار، رتبه‌بندی و قرارداد تحویل همچنان الزامی‌اند.
+- این گواهی جایگزین پایش اجرای‌های بعدی نیست.
 
-**CLOSURE PENDING.** Issue #69 remains open.
-
-Closure requires three consecutive successful live production runs on the same application-code fingerprint, with confirmed Telegram delivery, valid mission coverage, no duplicate publication, and no provider/translation/QA failure misclassified as an empty discovery lane. A green CI suite or a successful merge is not production closure.
-
-The historical audit below is retained for context. It does not override current production evidence.
-
-The previous Production Closure Gate run #1406 closed Issue #69 on 2026-10-15 using production runs #1439–#1441. That result is historical acceptance under the previous interpretation of mission coverage, not proof that the tightened gate passes. In run #1441, only one of six selected news candidates was published; the missing mission lanes included attempted candidates that failed language/naturalness QA. The previous acceptance guard could classify failed or provider-unavailable candidates as "no eligible candidate", overstating the evidence.
-
-The mission-coverage and Persian QA hardening is merged to `main`. Follow-up work also addresses the remaining People Bootstrap false positive:
-- Merge commit: https://github.com/jamshidimoh/AI-Future-Radar/commit/6f93c82a7211af1b8bd686c9fb6466dbd629d565
-- Pull request: https://github.com/jamshidimoh/AI-Future-Radar/pull/229
-- Pre-merge Production Quality Gate: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711549214 (success)
-- Pre-merge Test Radar Quality: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711548964 (success)
-- Pre-merge Final Production Acceptance: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711549281 (success)
-- Post-merge production run #1442: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38711837970 (delivery succeeded, strict acceptance failed: `target=3`, `recovered=1`, `no_candidate_lanes=0`, `nonpublishable_lanes=2`). The run is not accepted as a successful production attempt.
-
-## Fixes merged
-
-- Distinguish explicit empty discovery and candidates rejected solely by the configured quality floor from translation/QA failures and provider unavailability.
-- Emit a `nonpublishable_lanes` diagnostic for unresolved candidate-processing failures.
-- Record deterministic reasons behind Persian naturalness rejection and feed those reasons into the bounded Persian rewrite prompt.
-- Apply persistent and in-memory provider-health controls to emergency fallbacks, so known authentication failure is not retried for each candidate.
-- Preserve source evidence, claim alignment, Persian naturalness, relevance, score floors and duplicate-publication controls as fail-closed contracts.
-- PR #230 adds domain-specific relevance checks for George Church and targeted discovery queries to recover the remaining People Bootstrap slot without marking undelivered state as complete.
-
-## Confirmed evidence from the previous version
-
-- Production run #1441: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38692851157 — completed successfully but published one news item from six selected candidates.
-- Previous closure gate #1406: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/38695582083 — reported 13 historical checks as PASS and closed Issue #69.
-- The previous acceptance result is not reused to certify the revised logic.
-- Runtime diagnostics recorded Gemini HTTP 401 authentication failures and intermittent free-provider quota/timeouts. Provider health and editorial acceptance are separate concerns; invalid credentials must remain out of the active provider chain.
-
-## Frozen production invariants
-
-- A single canonical production orchestration path owns selection and publication.
-- The candidate window is a replacement buffer; it cannot increase the normal publication capacity of three items.
-- Normal ranks are contiguous and no score/rank bypass is allowed.
-- The unified portfolio must remain mission-aware, source-diverse and strictly relevant to AI and advanced technology.
-- Reddit/Tier-3 is not a primary decision path; arXiv remains fully excluded.
-- Protected interviews and voices receive routing priority only and never bypass evidence, Persian language/naturalness, source authority, relevance or quality floors.
-- Cross-run and cross-language duplicate publication must be blocked.
-- Telegram delivery must be confirmed before publication state advances.
-- Education cadence remains an independent stream; a not-due slot must not be confused with confirmed education delivery.
-- Missing candidates, quality rejections, provider failures and Telegram delivery failures are distinct outcomes.
-
-## Closure rule
-
-Closure is allowed only when all of the following are simultaneously true:
-
-1. Deterministic contract tests and repository quality checks pass.
-2. Three consecutive production runs execute on the same application-code fingerprint.
-3. Each run has complete delivery/publication evidence; empty output is accepted only when the final post-budget candidate set is genuinely empty.
-4. Mission-coverage gaps are explicitly empty after discovery or explained solely by configured quality-floor rejection; QA/translation/provider failures are not counted as empty discovery.
-5. No duplicate publication, rank bypass, source-policy violation, state-before-delivery mutation or quality-floor breach is observed.
-6. The closure workflow independently re-reads the exact logs and closes Issue #69 only after every criterion passes.
-
-Until then, Issue #69 stays open and the project must not be described as production-complete. Do not weaken quality gates to reach the target message count; repair discovery/provider/translation flow or document a genuine lack of eligible signals.
+ثبت نهایی خودکار توسط Production Closure Gate انجام شده است.

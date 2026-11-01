@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793544741,
+  "updated_at": 1793562252,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -21145,6 +21145,64 @@
       "why_it_matters": "ساخت ربات انساننما در زمان کوتاه نشاندهنده توان فنی متا در ترکیب هوش مصنوعی و مکانیک پیشرفته است و می‌تواند پایهای برای توسعهٔ سیستمهای تعاملی در محصولات آینده باشد. همکاری با Fourier نشان می‌دهد که شرکتهای بزرگ فناوری برای تسریع نوآوری به شرکای چینی روی میآورند. عدم برنامهٔ فروش این رباتها نشان می‌دهد که هدف اصلی متا، آزمایش و جمعآوری داده برای بهبود فناوری است نه ورود مستقیم به بازار رباتیک مصرفی. این مسیر می‌تواند تأثیرگذار باشد برای رقبا که به دنبال ترکیب هوش مصنوعی با رباتیک انسانی هستند.",
       "link": "https://www.techmeme.com/261031/p10#a261031p10",
       "posted_at": 1793544727
+    },
+    "-1004482051328:2231": {
+      "chat_id": -1004482051328,
+      "message_id": 2231,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "آیا باید به عاملهای هوش مصنوعی اعتماد کنیم؟",
+      "summary": "سه متخصص در مورد اعتماد به عاملهای هوش مصنوعی بحث کردند: عمر سلطان علوما، وزیر امور هوش مصنوعی امارات متحده عربی؛ مارک-الکساندر دومبا، وزیر اقتصاد دیجیتال و نوآوری گابن؛ و یالدا عوکر، بنیانگذار و مدیرعامل Bracket Capital. این سه نفر در مورد چالشها و فرصتهای مرتبط با هوش مصنوعی صحبت کردند و به اهمیت ایجاد چارچوبهای اخلاقی و قانونی برای استفاده از این فناوری اشاره کردند. همچنین، در مورد مشکلات اولیه در توسعه و پیادهسازی هوش مصنوعی در اقتصاد جهانی صحبت کردند.",
+      "description": "This week's top stories of the week include:\n\n00:14 - Should we trust AI agents?:\nThree experts discuss: Omar Sultan Al Olama, Minister of State for Artificial Intelligence for the United Arab Emirates; Mark-Alexandre Doumba, Minister of Digital Economy and Innovation for Gabon; and Yalda Aoukar, Co-Founder and Managing Partner of Bracket Capital.\n\n04.18 - Top 5 global economic challenges:\nThe high cost of living, rising debt levels and teething problems in AI are just some of the thorny issues facing the global economy identified in the IMF’s October 2026 World Economic Outlook. Here, we compare the findings with our own latest Chief Economists’ Outlook, which surveys leading experts to identify challenges and opportunities in the year ahead.\n\n06.23 - Turbines built for typhoons:\nWind turbines are a key part of the energy transition, but they remain vulnerable to hurricane-force winds, which can snap their blades and buckle their towers. Ming Yang Smart Energy Group has designed Ocean X, a lighter, twin-rotor model that has already withstood a once-in-a-generation typhoon.\n\n****************************************************************\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef artificial intelligence",
+      "why_it_matters": "اعتماد به عاملهای هوش مصنوعی می‌تواند به بهبود کارایی و امنیت سیستمهای اقتصادی و اجتماعی کمک کند. با این حال، چالشهای اخلاقی و قانونی در استفاده از این فناوری وجود دارد که باید به آنها توجه شود.",
+      "link": "https://www.youtube.com/watch?v=jBBh-bfciuQ",
+      "posted_at": 1793562083
+    },
+    "-1004482051328:2232": {
+      "chat_id": -1004482051328,
+      "message_id": 2232,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "social_post",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "title": "طرح‌های خیریه Anthropic و نظرات کارشناسان",
+      "summary": "Anthropic برنامه‌های خیریه‌ای برای استفاده از هوش مصنوعی در حل مشکلات اجتماعی دارد. در مقاله Business Insider، متخصصان حوزهٔ خیریه به این تلاش‌ها پرداخته و نظرات خود را دربارهٔ مسیر و اثرات احتمالی آن بیان می‌کنند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "توسعهٔ کاربردهای هوش مصنوعی در حوزهٔ عمومی می‌تواند به بهبود خدمات اجتماعی کمک کند. بررسی نظرات کارشناسان نشان می‌دهد که این نوع سرمایه‌گذاری می‌تواند الگوی جدیدی برای مسئولیت‌پذیری شرکت‌های فناوری باشد و فرصت‌های همکاری بین بخش‌های مختلف را فراهم آورد.",
+      "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxOWnB0Znp2WHdXUTk3T1p1NEY0T1lXNDhNQmFLd1AxUUJrYm9HUHhVV0x3V3pWQ25kR2U3NTdTSmpWZ2lYQ2t1MnhLZWxhdHpCSk9USUh1bTRkeEJUVE5GX2hfYUtCaW8yd2o3NTdfaUZ0TEZzMEFuU1lTMlVTamUzWWwzTzg4VV9XMW5hZ2g3RUdxbW9LQkRfV1dPdExhQlRva3Q3bHN1QzRtcXBTMno5WUc2WjlZRlRhX0NmVEhTcFoyTE0?oc=5",
+      "posted_at": 1793562196
+    },
+    "-1004482051328:2233": {
+      "chat_id": -1004482051328,
+      "message_id": 2233,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "آیا فضا‑زمان چارچوب نهایی واقعیت است؟",
+      "summary": "در این گفت‌وگو، Avshalom Elitzur، Ivette Fuentes و Jonathan Oppenheim به بررسی این سؤال می‌پردازند که آیا فضا‑زمان می‌تواند به‌عنوان چارچوب نهایی برای توصیف واقعیت عمل کند یا خیر. آن‌ها اشاره می‌کنند که در نظریه نسبیت اینشتین زمان را همانند فضا به صورت یک بلوک ثابت در نظر می‌گیرد، که منجر به عدم وجود جهت‌دار بودن زمان می‌شود. همچنین می‌گویند فضا‑زمان در مرزهای فیزیکی مانند سیاه‌چاله‌ها و بیگ‑بنک فرو می‌پاشد و تا به امروز با مکانیک کوانتومی که طبیعتی احتمالی دارد، سازگار نشده است.",
+      "description": "Avshalom Elitzur, Ivette Fuentes and Jonathan Oppenheim discuss whether spacetime can really reveal the ultimate nature of reality.\n\nIs time an illusion?\n\nWith a free trial, you can watch the full debate NOW at https://iai.tv/video/spacetime-and-the-framework-of-the-world?utm_source=YouTube&amp;utm_medium=description\n\nWe see space and time as the stage on which the world takes place. While space does not change and is given in one go, time unfolds. But, for physicists, Einstein made time like space, unchanging and given in one block. He called the combination 'spacetime'. But there is a significant and obvious problem. There is no arrow of time in spacetime. We are already dead when we are born. Moreover, spacetime breaks down at the edge of physics in black holes and the Big Bang. And despite decades of effort, spacetime has not been made compatible with quantum mechanics, which describes a probabilistic world, not a determined one.\n\nWas it a mistake to see spacetime as revealing the ultimate nature of reality, and where might we look for an alternative? Should we treat spacetime as a powerful framework, but one that is incapable of providing a final account of the world? Or must we overcome the challenges to spacetime since it is essential to our understanding?\n\n#physics  #space #science \n\nAvshalom Elitzur is an Israeli physicist and philosopher at the Israeli Institute for Advanced Research whose Elitzur–Vaidman thought experiment reshaped debates on the role of the observer in quantum theory.\nJonathan Oppenheim is a Professor of Quantum Theory at UCL, renowned for developing “post-quantum” models in which spacetime remains classical, but interacts consistently with quantum matter.\nIvette Fuentes is a Professor of Quantum Physics at the University of Southampton whose work considers fundamental quantum mechanics, quantum optics and their interplay with general relativity. Bjørn Ekeberg hosts.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=https://iai.tv/video/spacetime-and-the-framework-of-the-world\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "درک محدودیت‌های فضا‑زمان برای پیشبرد نظریه‌ای که بتواند هم گرانش و هم پدیده‌های کوانتومی را توصیف کند، ضروری است. این مسأله می‌تواند مسیرهای جدیدی برای پژوهش در زمینهٔ ترکیب نسبیت عام و مکانیک کوانتومی باز کند و به‌دنبال آن، ابزارهای نظری جدیدی برای بررسی ساختار بنیادی جهان فراهم آورد.",
+      "link": "https://www.youtube.com/watch?v=9SSYcibWtHM",
+      "posted_at": 1793562201
     }
   }
 }

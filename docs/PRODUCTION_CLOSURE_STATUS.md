@@ -10,9 +10,9 @@ Status date: 2026-11-02
 
 ## پنجره شواهد نهایی
 
+- Run #1584 — SHA a9a278d7c4af78569277c90fde3235a2c9134f49 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
 - Run #1583 — SHA e781ad3736bbc1533d06ae77af145cf4391efc59 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
 - Run #1582 — SHA fe3ee73e8f993db9fc283c94a55e40cee76af5e6 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
-- Run #1581 — SHA 327dc2b85f56eb445a637eb7c69c84c761995ec8 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
 
 ## معیارهای پذیرش
 
@@ -35,11 +35,11 @@ Status date: 2026-11-02
 
 ## شواهد انتشار
 
-PUBLISH_PER_RUN: {1583: True, 1582: True, 1581: True}
+PUBLISH_PER_RUN: {1584: True, 1583: True, 1582: True}
 
 PROVIDER_EVIDENCE: deterministic regression True
 
-EDUCATION_EVIDENCE: published False, recovery False, not due all True, contract not due True
+EDUCATION_EVIDENCE: published False, recovery False, not due all True, contract not due False
 
 ## مرز پذیرش
 

@@ -30,7 +30,7 @@ MAINTAINED_CURRENT_DOMAINS = {
     "tensorflow.org", "platform.openai.com", "openai.com",
     "anthropic.com", "alignment.anthropic.com", "docs.anthropic.com", "modelcontextprotocol.io",
     "learn.microsoft.com", "nvidia.com", "docs.nvidia.com",
-    "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu",
+    "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu", "crfm.stanford.edu", "gsb.stanford.edu",
     "nist.gov", "csrc.nist.gov", "airc.nist.gov", "oecd.org",
 }
 

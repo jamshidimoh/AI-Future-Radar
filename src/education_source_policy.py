@@ -47,7 +47,7 @@ ORG_ALIASES = {
     "sbert.net": "sentence-transformers", "pytorch.org": "pytorch", "tensorflow.org": "tensorflow",
     "learn.microsoft.com": "microsoft", "nvidia.com": "nvidia", "docs.nvidia.com": "nvidia",
     "quantum.cloud.ibm.com": "ibm", "ibm.com": "ibm",
-    "modelcontextprotocol.io": "mcp", "hai.stanford.edu": "stanford",
+    "modelcontextprotocol.io": "mcp", "hai.stanford.edu": "stanford", "crfm.stanford.edu": "stanford", "gsb.stanford.edu": "stanford",
 }
 
 PRIMARY_DOMAINS = {

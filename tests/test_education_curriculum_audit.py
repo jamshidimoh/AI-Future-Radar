@@ -76,3 +76,10 @@ def test_all_thirteen_modules_are_declared_and_used():
     assert sorted(int(x["id"]) for x in declared) == list(range(1, 14))
     used = {int(x["module_id"]) for x in base["lessons"] + modules["lessons"] + emerging["lessons"] + expansion["lessons"]}
     assert used == set(range(1, 14))
+
+def test_education_state_restarts_for_curriculum_v3():
+    state = _yaml(ROOT / "data" / "education_state.json")
+    assert state["curriculum_version"] == "3.0"
+    assert state["next_lesson"] == 1
+    assert state["completed"] == []
+    assert state["restart_generation"] >= 2

@@ -58,11 +58,11 @@ def _rtl(text: str) -> str:
     # Bidi isolates must not span physical Telegram lines. This matters for
     # bilingual term labels and any definition that contains intentional
     # paragraph breaks: every visible line has its own RTL base direction.
-    raw = str(text or "").replace("\\r\\n", "\\n").replace("\\r", "\\n")
+    raw = str(text or "").replace("\r\n", "\n").replace("\r", "\n")
     rendered = []
-    for line in raw.split("\\n"):
+    for line in raw.split("\n"):
         rendered.append(f"{RLI}{RLM}{_latin_runs(line)}{RLM}{PDI}" if line else "")
-    return "\\n".join(rendered)
+    return "\n".join(rendered)
 
 
 def _ltr(text: str) -> str:

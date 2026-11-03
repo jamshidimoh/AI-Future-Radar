@@ -2,50 +2,43 @@
 
 Status date: 2026-11-03
 
-## وضعیت نهایی
+## وضعیت جاری
 
-**وضعیت: CLOSED / PRODUCTION BASELINE**
+**وضعیت: IN PROGRESS — NOT CURRENTLY CLOSED**
 
-این وضعیت فقط پس از سه اجرای متوالی موفق روی اثرانگشت یکسان کد برنامه، شواهد انتشار واقعی، کنترل عدم انتشار تکراری و عبور همه معیارهای پذیرش ثبت شده است.
+گواهی CLOSED قبلی مربوط به پنجره اجرای #1583 تا #1585 و اثرانگشت کد همان دوره بود. پس از تغییرات جدید در خط انتشار و ادغام اصلاح کنترل داپلیکیت، آن گواهی دیگر اثبات‌کننده وضعیت نسخه جاری نیست. وضعیت پروژه باید بر اساس شواهد اجرای جدید ارزیابی شود.
 
-## پنجره شواهد نهایی
+## نسخه و شواهد جاری
 
-- Run #1585 — SHA 16735459bdf25e5c3c9e15b00b0c49688f119762 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
-- Run #1584 — SHA a9a278d7c4af78569277c90fde3235a2c9134f49 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
-- Run #1583 — SHA e781ad3736bbc1533d06ae77af145cf4391efc59 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
+- اصلاح کنترل داپلیکیت در PR #302 ادغام شده است.
+- کد اصلاح‌شده در commit `c9c69c217832dba5f18771b67c9f5f214fbe0da7` قرار دارد.
+- اجرای تولیدی #1591 در زمان ثبت این سند در حال اجرا بوده است: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41612856035
+- آزمون کیفیت کامل پس از ادغام موفق بوده است: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41612855962
+- تحلیل معماری پس از ادغام موفق بوده است: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41612855994
+- Production Closure Gate در اجرای #1553 شکست خورده است؛ علت ثبت‌شده، لغو شدن اجرای تولیدی #1589 در پنجره سه‌اجرایی بوده است: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41613246498
 
-## معیارهای پذیرش
+## وضعیت محتوای آموزشی
 
-- 01_three_successful_runs: PASS
-- 02_code_pinned: PASS
-- 03_publish_and_fail_closed_per_run: PASS
-- 04_no_duplicate_publication: PASS
-- 05_image_preserves_full_text: PASS
-- 06_rank_within_window_no_bypass: PASS
-- 07_replacement_after_qa: PASS
-- 08_leader_watch_eligible: PASS
-- 09_provider_failure_isolated: PASS
-- 10_state_after_confirmed_delivery: PASS
-- 11_mission_portfolio_not_generic: PASS
-- 12_tier0_quality_floor: PASS
-- 13_education_cadence_contract: PASS
-- 14_people_bootstrap_30_deliveries: PASS
-- 15_llm_health_fresh_for_latest_run: PASS
-- 16_runtime_source_revision_matches_event_sha: PASS
+- چرخه آموزشی در تاریخ 2026-11-03 از درس 1 بازنشانی شده است.
+- در زمان بازنشانی، تعداد درس‌های تکمیل‌شده صفر و درس بعدی شماره 1 بوده است.
+- سیاست منابع: حداقل دو منبع جاری و مستقل؛ منابع رسمی، استانداردها، دانشگاه‌ها و گزارش‌های مرجع در اولویت؛ شواهد 2026 ترجیح دارد و منابع معتبر 2025+ نیز برای موضوعات پایدار پذیرفته می‌شوند.
+- اجرای #1590 به دلیل خارج بودن از پنجره زمانی آموزشی، درس منتشر نکرده است.
+- این commit با نشانگر `[manual-education]` اجرای تولیدی بعدی را برای اعتبارسنجی اجباری درس 1 فعال می‌کند. تکمیل این مرحله فقط پس از ثبت شناسه پیام تلگرام و ذخیره وضعیت درس قابل تأیید است.
 
-## شواهد انتشار
+## شواهد اجرای قبلی
 
-PUBLISH_PER_RUN: {1585: True, 1584: True, 1583: True}
+اجرای #1590 با موفقیت فنی خاتمه یافت و دو پیام تلگرامی ثبت کرد؛ اما گزارش آن فقط یک خبر عادی و یک مورد از مسیر افراد را در خروجی نهایی نشان داد. سهم روندهای فنی، ذهن/شناخت و دیدگاه‌های رهبران در آن اجرا صفر بود. این یک مشاهده تک‌اجراست و برای اثبات پوشش پایدار مأموریت کافی نیست.
 
-PROVIDER_EVIDENCE: deterministic regression True
+گزارش همان اجرا، فهرست People Bootstrap را 30/30 تأیید کرد. همچنین چند provider جایگزین به علت محدودیت سهمیه، محدودیت دسترسی یا timeout در دسترس نبودند؛ مسیر اصلی Mistral با موفقیت پاسخ داده است.
 
-EDUCATION_EVIDENCE: published False, recovery False, not due all True, contract not due False
+## معیارهای لازم برای بستن مجدد پروژه
 
-## مرز پذیرش
+1. سه اجرای متوالی موفق روی یک اثرانگشت یکسان کد برنامه.
+2. شواهد انتشار واقعی تلگرام و کنترل عدم انتشار تکراری.
+3. عبور runtime acceptance در هر اجرای لازم.
+4. اثبات اعتبار منبع، provenance، کیفیت فارسی و رعایت رتبه‌بندی بدون bypass.
+5. پوشش مأموریت رادار، شامل محصولات و دستاوردهای مهم AI، مصاحبه و دیدگاه رهبران، ذهن و شناخت، آینده‌پژوهی و حوزه‌های فناوری پیشرفته؛ نه صرفاً موفقیت یک انتشار منفرد.
+6. حفظ وضعیت پایدار People Bootstrap در 30/30 و LLM health مبتنی بر شواهد اجرای جاری.
+7. تأیید انتشار آموزشی درس 1 با منبع‌یابی معتبر و ذخیره state پس از تحویل تلگرام.
 
-- اجرای تولید روی یک baseline ثابت تأیید شده است.
-- اجرای ناموفق یا شواهد ناقص به‌عنوان پذیرش موفق محسوب نشده است.
-- کیفیت فارسی، اعتبار منبع، جلوگیری از تکرار، رتبه‌بندی و قرارداد تحویل همچنان الزامی‌اند.
-- این گواهی جایگزین پایش اجرای‌های بعدی نیست.
-
-ثبت نهایی خودکار توسط Production Closure Gate انجام شده است.
+تا زمانی که Production Closure Gate همه این معیارها را با داده‌های اجرای جاری تأیید نکرده است، وضعیت پروژه نباید CLOSED یا Production Complete اعلام شود. نسخه رسمی جدید نیز نباید صرفاً بر اساس سبز بودن CI منتشر شود.

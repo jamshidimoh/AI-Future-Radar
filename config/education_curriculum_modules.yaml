@@ -14,55 +14,70 @@ education_curriculum_modules:
     - id: 31
       domain: "Machine learning"
       prerequisites: [2, 3, 6]
-      title: "Validation، Generalization و Distribution Shift"
+      title: "Generalization و Distribution Shift"
       status: "established"
       a: {term: "Generalization", fa: "تعمیم‌پذیری", seed: "توانایی مدل برای عملکرد مناسب روی داده‌های جدید و ندیده است، نه فقط داده‌های آموزش."}
       b: {term: "Distribution Shift", fa: "تغییر توزیع", seed: "تغییر معنادار در توزیع داده میان شرایط آموزش و استفاده از مدل که می‌تواند عملکرد مدل را کاهش دهد."}
       relation: "Validation، cross-validation و آزمون مستقل برای سنجش تعمیم‌پذیری‌اند؛ distribution shift یکی از علل مهم افت عملکرد پس از استقرار است."
+      core_question: "Generalization و Distribution Shift چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Generalization و Distribution Shift را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Generalization و Distribution Shift بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "scikit-learn Cross Validation", url: "https://scikit-learn.org/stable/modules/cross_validation.html"}
         - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 32
       domain: "Deep learning"
       prerequisites: [5, 6]
-      title: "Optimization، Regularization و Normalization"
+      title: "Optimization و Regularization"
       status: "established"
       a: {term: "Optimization", fa: "بهینه‌سازی", seed: "فرایند تنظیم پارامترهای مدل برای کمینه‌کردن تابع هدف یا خطای تعریف‌شده."}
       b: {term: "Regularization", fa: "منظم‌سازی", seed: "روش‌هایی برای محدودکردن پیچیدگی مدل یا رفتار یادگیری با هدف کاهش overfitting و بهبود تعمیم."}
       relation: "بهینه‌سازی مسیر یادگیری را تعیین می‌کند و regularization و normalization به پایداری، سرعت و تعمیم کمک می‌کنند."
+      core_question: "Optimization و Regularization چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Optimization و Regularization را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Optimization و Regularization بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "PyTorch Optimizers", url: "https://pytorch.org/docs/stable/optim.html"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 33
       domain: "Generative AI"
       prerequisites: [8, 9]
-      title: "Generative Architectures و Decoding"
+      title: "Generative Architecture و Decoding"
       status: "established"
       a: {term: "Generative Architecture", fa: "معماری مولد", seed: "معماری مدلی که برای تولید داده یا توکن‌های جدید از یک توزیع آموخته‌شده طراحی شده است."}
       b: {term: "Decoding", fa: "رمزگشایی", seed: "فرایند انتخاب خروجی از توزیع احتمالاتی مدل مولد، مانند greedy، sampling یا beam search."}
       relation: "معماری ظرفیت تولید را تعیین می‌کند و decoding نحوه تبدیل توزیع مدل به خروجی نهایی را کنترل می‌کند."
+      core_question: "Generative Architecture و Decoding چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Generative Architecture و Decoding را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Generative Architecture و Decoding بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Hugging Face Text Generation", url: "https://huggingface.co/docs/transformers/main/en/llm_tutorial"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 34
       domain: "Alignment & post-training"
       prerequisites: [10, 11]
-      title: "SFT، Preference Optimization و RLHF/DPO"
+      title: "Supervised Fine-Tuning (SFT) و Preference Optimization"
       status: "established"
       a: {term: "Supervised Fine-Tuning (SFT)", fa: "ریزتنظیم نظارت‌شده", seed: "آموزش تکمیلی مدل با نمونه‌های ورودی-خروجی باکیفیت برای یادگیری رفتار یا وظیفه مشخص."}
       b: {term: "Preference Optimization", fa: "بهینه‌سازی ترجیح", seed: "روش‌هایی برای نزدیک‌کردن رفتار مدل به ترجیحات ثبت‌شده بدون اتکا به یک روش واحد برای یادگیری از بازخورد."}
       relation: "SFT یک رفتار مطلوب را مستقیماً یاد می‌دهد؛ preference optimization رفتار را نسبت به ترجیحات مقایسه‌ای تنظیم می‌کند."
+      core_question: "Supervised Fine-Tuning (SFT) و Preference Optimization چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Supervised Fine-Tuning (SFT) و Preference Optimization را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Supervised Fine-Tuning (SFT) و Preference Optimization بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Hugging Face TRL", url: "https://huggingface.co/docs/trl/index"}
         - {name: "Anthropic Research", url: "https://www.anthropic.com/research"}
     - id: 35
       domain: "Inference & optimization"
       prerequisites: [3, 9]
-      title: "Serving، Batching و KV Cache"
+      title: "Model Serving و KV Cache"
       status: "established"
       a: {term: "Model Serving", fa: "سرویس‌دهی مدل", seed: "زیرساختی برای ارائه مدل آموزش‌دیده به‌عنوان یک سرویس قابل‌درخواست در محیط تولید."}
       b: {term: "KV Cache", fa: "کش کلید-مقدار", seed: "ذخیره نمایش‌های میانی attention برای کاهش محاسبه تکراری هنگام تولید توکن‌های متوالی."}
       relation: "Serving معماری عملیاتی را می‌سازد؛ batching و KV cache دو ابزار اصلی برای بهبود throughput و latency در inference هستند."
+      core_question: "Model Serving و KV Cache چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Model Serving و KV Cache را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Model Serving و KV Cache بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NVIDIA Triton Inference Server", url: "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/"}
         - {name: "Google Cloud Vertex AI Prediction", url: "https://cloud.google.com/vertex-ai/docs/predictions/overview"}
@@ -74,72 +89,93 @@ education_curriculum_modules:
       a: {term: "Quantization", fa: "کوانتیزه‌سازی", seed: "نمایش پارامترها یا محاسبات با دقت عددی کمتر برای کاهش حافظه و هزینه و افزایش سرعت بالقوه."}
       b: {term: "Speculative Decoding", fa: "رمزگشایی حدسی", seed: "روش تولید که در آن یک مدل یا مسیر سریع‌تر چند توکن پیشنهادی تولید و مدل اصلی آن‌ها را تأیید یا رد می‌کند."}
       relation: "هر دو برای کاهش هزینه و latency inference استفاده می‌شوند، اما یکی بر نمایش عددی و دیگری بر الگوی محاسبه تولید تمرکز دارد."
+      core_question: "Quantization و Speculative Decoding چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Quantization و Speculative Decoding را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Quantization و Speculative Decoding بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Hugging Face Quantization Documentation", url: "https://huggingface.co/docs/transformers/main/en/quantization/overview"}
         - {name: "vLLM Speculative Decoding", url: "https://docs.vllm.ai/en/latest/features/speculative_decoding/"}
     - id: 37
       domain: "Data & data engineering"
       prerequisites: [2, 4]
-      title: "Data Engineering، Quality و Lineage برای AI"
+      title: "Data Lineage و Data Quality"
       status: "established"
       a: {term: "Data Lineage", fa: "تبار داده", seed: "ثبت و ردیابی منبع، تبدیل‌ها و مسیر حرکت داده در چرخه تولید و استفاده."}
       b: {term: "Data Quality", fa: "کیفیت داده", seed: "میزان مناسب‌بودن داده از نظر صحت، کامل‌بودن، سازگاری، تازگی و تناسب با کاربرد."}
       relation: "کیفیت و lineage داده زیربنای قابلیت بازتولید، ارزیابی و حاکمیت سامانه‌های AI هستند."
+      core_question: "Data Lineage و Data Quality چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Data Lineage و Data Quality را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Data Lineage و Data Quality بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Google Machine Learning Data Quality", url: "https://developers.google.com/machine-learning/data-prep"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 38
       domain: "Data & data engineering"
       prerequisites: [37]
-      title: "Synthetic Data، Curation و Augmentation"
+      title: "Synthetic Data و Data Curation"
       status: "established"
       a: {term: "Synthetic Data", fa: "داده مصنوعی", seed: "داده‌ای تولیدشده با فرایند مصنوعی برای افزایش پوشش، آزمایش یا کاهش برخی محدودیت‌های داده واقعی."}
       b: {term: "Data Curation", fa: "پایش و گزینش داده", seed: "فرایند انتخاب، پاک‌سازی، پالایش، برچسب‌گذاری و سازمان‌دهی داده برای یک هدف مشخص."}
       relation: "Synthetic data می‌تواند ماده اولیه باشد، اما کیفیت نهایی به curation، اعتبارسنجی و سنجش خطرهای حلقه‌ای وابسته است."
+      core_question: "Synthetic Data و Data Curation چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Synthetic Data و Data Curation را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Synthetic Data و Data Curation بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"}
         - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
     - id: 39
       domain: "Retrieval & RAG"
       prerequisites: [7, 12, 13]
-      title: "RAG Pipeline، Reranking و Grounding"
+      title: "Reranking و Grounding"
       status: "established"
       a: {term: "Reranking", fa: "بازمرتب‌سازی", seed: "مرحله‌ای پس از retrieval برای امتیازدهی دقیق‌تر و مرتب‌سازی مجدد اسناد یا قطعات بازیابی‌شده."}
       b: {term: "Grounding", fa: "مستند‌سازی پاسخ با منبع", seed: "پیوند دادن پاسخ مدل به اطلاعات بیرونی قابل‌ردیابی برای کاهش خطای بی‌پایه و افزایش قابلیت بررسی."}
       relation: "RAG خوب فقط embedding نیست؛ retrieval، reranking، grounding، citation و مدیریت failure modeها همگی بخشی از pipeline هستند."
+      core_question: "Reranking و Grounding چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Reranking و Grounding را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Reranking و Grounding بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Microsoft RAG Overview", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
         - {name: "Google Cloud RAG", url: "https://cloud.google.com/vertex-ai/generative-ai/docs/rag-overview"}
     - id: 40
       domain: "Multimodal AI"
       prerequisites: [7, 8, 9]
-      title: "Vision-Language، Audio/Video و Multimodal Evaluation"
+      title: "Multimodal Model و Multimodal Evaluation"
       status: "established"
       a: {term: "Multimodal Model", fa: "مدل چندوجهی", seed: "مدلی که می‌تواند بیش از یک نوع داده مانند متن، تصویر، صدا یا ویدئو را پردازش یا تولید کند."}
       b: {term: "Multimodal Evaluation", fa: "ارزیابی چندوجهی", seed: "سنجش عملکرد مدل در وظایفی که چند modality را هم‌زمان یا در تعامل با یکدیگر به کار می‌گیرند."}
       relation: "چندوجهی‌بودن فقط افزودن ورودی جدید نیست؛ باید alignment بین modalityها و ارزیابی مستقل هر مسیر و تعامل آن‌ها را سنجید."
+      core_question: "Multimodal Model و Multimodal Evaluation چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Multimodal Model و Multimodal Evaluation را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Multimodal Model و Multimodal Evaluation بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Google Gemini Vision", url: "https://ai.google.dev/gemini-api/docs/vision"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 41
       domain: "Agents & agentic systems"
       prerequisites: [15, 16]
-      title: "Agent Architecture، Planning و State"
+      title: "Agent Architecture و Planning"
       status: "established"
       a: {term: "Agent Architecture", fa: "معماری عامل", seed: "ساختاری که مدل، وضعیت، ابزارها، حافظه، سیاست تصمیم و چرخه اجرا را در یک سامانه عامل‌محور به هم متصل می‌کند."}
       b: {term: "Planning", fa: "برنامه‌ریزی", seed: "تجزیه هدف به گام‌ها یا تصمیم‌های میانی برای رسیدن به نتیجه مورد نظر."}
       relation: "Agent معماری سامانه است و planning یکی از قابلیت‌های تصمیم‌گیری در آن معماری است."
+      core_question: "Agent Architecture و Planning چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Agent Architecture و Planning را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Agent Architecture و Planning بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Anthropic Building Effective Agents", url: "https://www.anthropic.com/research/building-effective-agents"}
         - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 42
       domain: "Tool use & protocols"
       prerequisites: [41]
-      title: "Tool Calling، MCP و Protocol Boundaries"
+      title: "Tool Calling و Model Context Protocol (MCP)"
       status: "established"
       a: {term: "Tool Calling", fa: "فراخوانی ابزار", seed: "مکانیزمی که به مدل اجازه می‌دهد یک عمل ساختاریافته را از طریق ابزار یا API درخواست کند."}
       b: {term: "Model Context Protocol (MCP)", fa: "پروتکل زمینه مدل", seed: "یک پروتکل برای اتصال مدل‌ها و agentها به ابزارها و منابع از طریق قراردادهای استاندارد."}
       relation: "Tool calling یک قابلیت تعامل مدل با ابزار است؛ پروتکل‌هایی مانند MCP قرارداد اتصال، کشف و مرزبندی را استاندارد می‌کنند."
+      core_question: "Tool Calling و Model Context Protocol (MCP) چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Tool Calling و Model Context Protocol (MCP) را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Tool Calling و Model Context Protocol (MCP) بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "MCP Specification", url: "https://modelcontextprotocol.io/specification/2025-11-25"}
         - {name: "Google Gemini Function Calling", url: "https://ai.google.dev/gemini-api/docs/function-calling"}
@@ -151,17 +187,23 @@ education_curriculum_modules:
       a: {term: "Context Engineering", fa: "مهندسی زمینه", seed: "طراحی نظام‌مند اطلاعاتی که در هر مرحله به مدل داده می‌شود، شامل انتخاب، فشرده‌سازی و بازیابی زمینه."}
       b: {term: "Agent Memory", fa: "حافظه عامل", seed: "سازوکار ذخیره و بازیابی اطلاعاتی که فراتر از یک درخواست منفرد برای تداوم رفتار عامل استفاده می‌شود."}
       relation: "Context کوتاه‌مدت اجرای جاری است؛ memory می‌تواند اطلاعات را در طول زمان نگهداری و دوباره وارد context کند."
+      core_question: "Context Engineering و Agent Memory چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Context Engineering و Agent Memory را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Context Engineering و Agent Memory بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Anthropic: Effective Context Engineering for AI Agents", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
         - {name: "LangChain Short-Term Memory Documentation", url: "https://docs.langchain.com/oss/python/langchain/short-term-memory"}
     - id: 44
       domain: "Evaluation & benchmarks"
       prerequisites: [19, 41]
-      title: "Agent Evaluation، Verification و Reliability"
+      title: "Agent Evaluation و Verification"
       status: "established"
       a: {term: "Agent Evaluation", fa: "ارزیابی عامل", seed: "سنجش رفتار یک agent در انجام وظایف چندمرحله‌ای، استفاده از ابزار و رسیدن به نتیجه تحت شرایط واقعی یا شبیه‌سازی‌شده."}
       b: {term: "Verification", fa: "راستی‌آزمایی", seed: "بررسی مستقل خروجی، مسیر اجرا یا ادعای عامل برای کشف خطا پیش از اثرگذاری نهایی."}
       relation: "در سامانه‌های agentic، ارزیابی باید هم نتیجه و هم فرایند را بسنجد و verification نقش کنترل خطا پیش از اقدام را دارد."
+      core_question: "Agent Evaluation و Verification چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Agent Evaluation و Verification را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Agent Evaluation و Verification بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "OpenAI Evals", url: "https://platform.openai.com/docs/guides/evals"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
@@ -173,105 +215,135 @@ education_curriculum_modules:
       a: {term: "Prompt Injection", fa: "تزریق پرامپت", seed: "دستکاری ورودی یا محتوای زمینه برای منحرف کردن رفتار مدل از سیاست یا هدف مورد نظر."}
       b: {term: "Tool Abuse", fa: "سوءاستفاده از ابزار", seed: "استفاده مخرب یا ناایمن از قابلیت‌های ابزاری agent برای انجام عمل غیرمجاز یا پرخطر."}
       relation: "در agentهای ابزارمحور، prompt injection می‌تواند به tool abuse منجر شود؛ بنابراین مرزبندی داده، دستور و عمل ضروری است."
+      core_question: "Prompt Injection و Tool Abuse چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Prompt Injection و Tool Abuse را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Prompt Injection و Tool Abuse بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST AI 100-2e2025", url: "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"}
         - {name: "OWASP Top 10 for LLM Applications 2025", url: "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/"}
     - id: 46
       domain: "AI security & robustness"
       prerequisites: [45]
-      title: "Poisoning، Supply Chain و Adversarial Robustness"
+      title: "Data/Model Poisoning و Adversarial Robustness"
       status: "established"
       a: {term: "Data/Model Poisoning", fa: "مسموم‌سازی داده/مدل", seed: "واردکردن تغییرات مخرب به داده، آموزش یا artifactها با هدف اثرگذاری بر رفتار مدل یا زنجیره یادگیری."}
       b: {term: "Adversarial Robustness", fa: "تاب‌آوری در برابر حمله", seed: "توانایی سیستم برای حفظ رفتار قابل‌قبول در برابر ورودی‌ها یا دستکاری‌های خصمانه."}
       relation: "Poisoning و supply-chain risk در چرخه ساخت رخ می‌دهند و robustness و verification ابزارهای کنترل پیامد آن‌ها هستند."
+      core_question: "Data/Model Poisoning و Adversarial Robustness چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Data/Model Poisoning و Adversarial Robustness را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Data/Model Poisoning و Adversarial Robustness بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST AI 100-2e2025", url: "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"}
         - {name: "OWASP Top 10 for LLM and GenAI", url: "https://genai.owasp.org/initiatives/top-10-for-llm-and-genai/"}
     - id: 47
       domain: "AI engineering & MLOps"
       prerequisites: [19, 35, 44]
-      title: "MLOps، Observability و Rollback"
+      title: "MLOps و Model Rollback"
       status: "established"
       a: {term: "MLOps", fa: "عملیات چرخه عمر ML", seed: "مجموعه فرایندها و ابزارهایی برای ساخت، تست، استقرار، پایش و نگهداری سیستم‌های یادگیری ماشین."}
       b: {term: "Model Rollback", fa: "بازگردانی مدل", seed: "برگرداندن نسخهٔ مستقر مدل یا پیکربندی به وضعیت قبلی در واکنش به خطا یا افت عملکرد."}
       relation: "MLOps چرخه کامل است و rollback یکی از کنترل‌های ضروری برای کاهش ریسک deployment است."
+      core_question: "MLOps و Model Rollback چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند MLOps و Model Rollback را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز MLOps و Model Rollback بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "MLflow Documentation", url: "https://mlflow.org/docs/latest/index.html"}
         - {name: "Microsoft Learn: Model Management and Deployment", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment?view=azureml-api-2"}
     - id: 48
       domain: "AI infrastructure & compute"
       prerequisites: [24, 35, 36]
-      title: "Accelerators، Distributed Training و AI Infrastructure"
+      title: "AI Accelerator و Distributed Training"
       status: "established"
       a: {term: "AI Accelerator", fa: "شتاب‌دهنده هوش مصنوعی", seed: "پردازنده یا سامانه‌ای تخصصی برای اجرای کارآمد عملیات رایج AI مانند tensor operations."}
       b: {term: "Distributed Training", fa: "آموزش توزیع‌شده", seed: "تقسیم فرایند آموزش بین چند پردازنده یا چند گره برای افزایش مقیاس و کاهش زمان یا افزایش ظرفیت."}
       relation: "شتاب‌دهنده ظرفیت محاسباتی را فراهم می‌کند و distributed training نحوه مقیاس‌دادن workload را تعیین می‌کند."
+      core_question: "AI Accelerator و Distributed Training چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند AI Accelerator و Distributed Training را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز AI Accelerator و Distributed Training بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NVIDIA AI Enterprise", url: "https://docs.nvidia.com/ai-enterprise/"}
         - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
     - id: 49
       domain: "AI for science & biomedicine"
       prerequisites: [25, 30]
-      title: "AI for Science، Protein Models و Biomedical Validation"
+      title: "AI for Science و Scientific Validation"
       status: "emerging"
       a: {term: "AI for Science", fa: "هوش مصنوعی برای علم", seed: "استفاده از AI برای مدل‌سازی، کشف، شبیه‌سازی، تحلیل و طراحی در علوم طبیعی و مهندسی."}
       b: {term: "Scientific Validation", fa: "اعتبارسنجی علمی", seed: "تأیید نتایج AI با معیارها، آزمایش، داده مستقل یا شواهد تجربی مناسب با حوزه علمی."}
       relation: "توان مدل کافی نیست؛ در science و biomedicine نتیجه باید با validation تجربی یا مستقل از مدل پشتیبانی شود."
+      core_question: "AI for Science و Scientific Validation چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند AI for Science و Scientific Validation را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز AI for Science و Scientific Validation بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Stanford AI Index 2026: Science", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
         - {name: "UK AI for Science Strategy", url: "https://www.gov.uk/government/publications/ai-for-science-strategy/ai-for-science-strategy"}
     - id: 50
       domain: "Human-AI interaction"
       prerequisites: [19, 28, 44]
-      title: "Human-AI Interaction، Calibration و Oversight"
+      title: "Calibration و Human Oversight"
       status: "established"
       a: {term: "Calibration", fa: "کالیبراسیون اعتماد", seed: "هم‌تراز کردن میزان اعتماد یا اتکا به خروجی AI با احتمال درست‌بودن و محدودیت واقعی آن."}
       b: {term: "Human Oversight", fa: "نظارت انسانی", seed: "طراحی نقاطی از چرخه تصمیم که انسان می‌تواند خروجی AI را بررسی، اصلاح یا متوقف کند."}
       relation: "سیستم قابل‌اعتماد باید سطح اعتماد کاربر و اختیار تصمیم را با قابلیت واقعی مدل و ریسک وظیفه هماهنگ کند."
+      core_question: "Calibration و Human Oversight چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Calibration و Human Oversight را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Calibration و Human Oversight بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
         - {name: "Stanford AI Index 2026 Responsible AI", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/responsible-ai"}
     - id: 51
       domain: "Governance & policy"
       prerequisites: [28, 50]
-      title: "AI Governance، Standards و Assurance"
+      title: "AI Governance و Assurance"
       status: "established"
       a: {term: "AI Governance", fa: "حاکمیت هوش مصنوعی", seed: "ساختارها و فرایندهایی برای تعیین مسئولیت، سیاست، کنترل و تصمیم‌گیری در چرخه عمر AI."}
       b: {term: "Assurance", fa: "اطمینان‌بخشی", seed: "شواهد و کنترل‌هایی که نشان می‌دهند یک سیستم نسبت به الزامات تعریف‌شده قابل‌اتکا و قابل‌ارزیابی است."}
       relation: "Governance چارچوب تصمیم‌گیری را می‌سازد و assurance شواهد قابل‌بررسی برای انطباق، ایمنی و کیفیت فراهم می‌کند."
+      core_question: "AI Governance و Assurance چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند AI Governance و Assurance را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز AI Governance و Assurance بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
         - {name: "Stanford AI Index 2026 Policy and Governance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/policy-and-governance"}
     - id: 52
       domain: "Open models & ecosystems"
       prerequisites: [9, 24]
-      title: "Open-Weight، Open-Source و Model Supply Chain"
+      title: "Open-Weight و Model Supply Chain"
       status: "established"
       a: {term: "Open-Weight", fa: "وزن‌باز", seed: "مدلی که وزن‌های آموزش‌دیده آن در دسترس دیگران قرار گرفته است، بدون اینکه الزاماً تمام اجزای یک پروژه open-source باشند."}
       b: {term: "Model Supply Chain", fa: "زنجیره تأمین مدل", seed: "مجموعه منابع، artifactها، داده‌ها و اجزایی که برای ساخت و استقرار مدل به یکدیگر وابسته‌اند."}
       relation: "Open-weight بودن با open-source بودن یکسان نیست و هر دو باید در کنار provenance، license و supply-chain risk تحلیل شوند."
+      core_question: "Open-Weight و Model Supply Chain چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Open-Weight و Model Supply Chain را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Open-Weight و Model Supply Chain بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Hugging Face Model Hub", url: "https://huggingface.co/docs/hub/models-the-hub"}
         - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
     - id: 53
       domain: "Robotics & embodied AI"
       prerequisites: [25, 41, 48]
-      title: "Embodied AI، Perception-Action و Simulation"
+      title: "Embodied AI و Perception-Action Loop"
       status: "emerging"
       a: {term: "Embodied AI", fa: "هوش مصنوعی تجسم‌یافته", seed: "هوشی که در چرخه ادراک، تصمیم و عمل یک سامانه فیزیکی یا محیط شبیه‌سازی‌شده عمل می‌کند."}
       b: {term: "Perception-Action Loop", fa: "حلقه ادراک-عمل", seed: "چرخه‌ای که در آن سامانه محیط را دریافت می‌کند، تصمیم می‌گیرد، عمل می‌کند و بر اساس پیامد عمل دوباره ادراک می‌کند."}
       relation: "در embodied AI، موفقیت فقط کیفیت پیش‌بینی نیست؛ تعامل فیزیکی، latency، safety و uncertainty بخشی از مسئله‌اند."
+      core_question: "Embodied AI و Perception-Action Loop چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Embodied AI و Perception-Action Loop را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Embodied AI و Perception-Action Loop بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NVIDIA Isaac", url: "https://docs.nvidia.com/isaac/"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 54
       domain: "Quantum AI"
       prerequisites: [26, 27]
-      title: "Quantum Machine Learning، Hybrid Algorithms و Evidence Limits"
+      title: "Quantum Machine Learning (QML) و Hybrid Quantum-Classical Algorithm"
       status: "emerging"
       a: {term: "Quantum Machine Learning (QML)", fa: "یادگیری ماشین کوانتومی", seed: "استفاده از محاسبات یا مدارهای کوانتومی در الگوریتم‌های یادگیری ماشین یا زیرروال‌های آن."}
       b: {term: "Hybrid Quantum-Classical Algorithm", fa: "الگوریتم ترکیبی کوانتومی-کلاسیک", seed: "روش محاسباتی که بخشی از چرخه را روی سامانه کوانتومی و بخشی را با محاسبات کلاسیک اجرا می‌کند."}
       relation: "QML یک حوزه پژوهشی است و بسیاری از روش‌های عملی امروز hybrid هستند؛ ادعاهای برتری باید با evidence و مقایسه منصفانه سنجیده شوند."
+      core_question: "Quantum Machine Learning (QML) و Hybrid Quantum-Classical Algorithm چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Quantum Machine Learning (QML) و Hybrid Quantum-Classical Algorithm را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Quantum Machine Learning (QML) و Hybrid Quantum-Classical Algorithm بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/quantum-information-science"}
         - {name: "IBM Quantum Learning", url: "https://quantum.cloud.ibm.com/learning"}
@@ -284,6 +356,9 @@ education_curriculum_modules:
       a: {term: "Data Leakage", fa: "نشت داده", seed: "ورود ناخواسته اطلاعاتی از داده آزمون، آینده یا متغیر هدف به فرایند آموزش یا انتخاب مدل؛ رخدادی که برآورد عملکرد را بیش از واقع خوش‌بینانه می‌کند."}
       b: {term: "Benchmark Contamination", fa: "آلودگی بنچمارک", seed: "حضور نمونه‌ها یا پاسخ‌های بنچمارک ارزیابی در داده آموزش یا داده‌های در دسترس مدل، به‌گونه‌ای که نتیجه آزمون دیگر سنجش مستقلی از تعمیم‌پذیری نباشد."}
       relation: "Data leakage مسئله‌ای عمومی در چرخه یادگیری و ارزیابی است؛ benchmark contamination شکل مهمی از آن در ارزیابی مدل‌های پایه و زبانی محسوب می‌شود."
+      core_question: "Data Leakage و Benchmark Contamination چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Data Leakage و Benchmark Contamination را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Data Leakage و Benchmark Contamination بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
         - {name: "How Much Can We Forget about Data Contamination? — ICML 2025", url: "https://proceedings.mlr.press/v267/bordt25a.html"}
@@ -295,6 +370,9 @@ education_curriculum_modules:
       a: {term: "Causal Inference", fa: "استنباط علّی", seed: "روش‌هایی برای برآورد اثر علّی مداخله یا عامل بر پیامد، با تکیه بر فرض‌ها و طراحی‌هایی که اثر علت را از همبستگی صرف جدا می‌کنند."}
       b: {term: "Predictive Modeling", fa: "مدل‌سازی پیش‌بینانه", seed: "ساخت مدلی برای پیش‌بینی مقدار یا طبقه یک پیامد بر اساس الگوهای داده؛ دقت پیش‌بینی به‌تنهایی اثبات‌کننده رابطه علّی نیست."}
       relation: "مدل پیش‌بینانه می‌پرسد چه چیزی محتمل است رخ دهد؛ استنباط علّی می‌پرسد یک مداخله چه تغییری در پیامد ایجاد می‌کند. همبستگی پیش‌بینانه به‌تنهایی پاسخ علّی نمی‌دهد."
+      core_question: "Causal Inference و Predictive Modeling چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Causal Inference و Predictive Modeling را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Causal Inference و Predictive Modeling بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Microsoft Learn: Causal Inference", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-causal-inference?view=azureml-api-2"}
         - {name: "Prediction-Powered Causal Inferences — NeurIPS 2025", url: "https://proceedings.neurips.cc/paper_files/paper/2025/hash/6b0a3a259d3dcb75dfe92f7269e2e05e-Abstract-Conference.html"}
@@ -306,6 +384,9 @@ education_curriculum_modules:
       a: {term: "Scaling Laws", fa: "قوانین مقیاس‌پذیری", seed: "روابط تجربی میان مقیاس محاسبات، اندازه مدل، حجم داده و عملکرد که برای تحلیل روند رشد و برنامه‌ریزی آموزش مدل‌ها به‌کار می‌روند."}
       b: {term: "Compute-Data Trade-off", fa: "موازنه محاسبه و داده", seed: "مسئله تخصیص منابع محدود میان محاسبه، تعداد پارامترها و حجم یا کیفیت داده؛ افزایش یک عامل بدون تناسب با عوامل دیگر الزاماً بهترین عملکرد را نمی‌دهد."}
       relation: "Scaling laws روندهای عملکرد را در مقیاس‌های مختلف توصیف می‌کنند؛ موازنه محاسبه و داده از این روندها برای تصمیم‌گیری درباره تخصیص منابع آموزش استفاده می‌کند."
+      core_question: "Scaling Laws و Compute-Data Trade-off چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Scaling Laws و Compute-Data Trade-off را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Scaling Laws و Compute-Data Trade-off بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Stanford AI Index 2026: Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
         - {name: "Epoch AI: Data on AI Models", url: "https://epoch.ai/data/ai-models"}

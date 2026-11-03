@@ -30,7 +30,7 @@ MAINTAINED_CURRENT_DOMAINS = {
     "tensorflow.org", "platform.openai.com", "openai.com",
     "anthropic.com", "alignment.anthropic.com", "docs.anthropic.com", "modelcontextprotocol.io",
     "learn.microsoft.com", "nvidia.com", "docs.nvidia.com",
-    "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu", "crfm.stanford.edu",
+    "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu",
     "nist.gov", "csrc.nist.gov", "airc.nist.gov", "oecd.org",
 }
 
@@ -47,7 +47,7 @@ ORG_ALIASES = {
     "sbert.net": "sentence-transformers", "pytorch.org": "pytorch", "tensorflow.org": "tensorflow",
     "learn.microsoft.com": "microsoft", "nvidia.com": "nvidia", "docs.nvidia.com": "nvidia",
     "quantum.cloud.ibm.com": "ibm", "ibm.com": "ibm",
-    "modelcontextprotocol.io": "mcp", "hai.stanford.edu": "stanford", "crfm.stanford.edu": "stanford",
+    "modelcontextprotocol.io": "mcp", "hai.stanford.edu": "stanford",
 }
 
 PRIMARY_DOMAINS = {

@@ -6,7 +6,23 @@ from urllib.parse import urlparse
 from src.source_exclusions import is_excluded_source_url
 
 MIN_CURRENT_YEAR = 2025
+PREFERRED_CURRENT_YEAR = 2026
 MIN_INDEPENDENT_CURRENT_SOURCES = 2
+
+
+def verified_source_year(source: dict) -> int:
+    """Return a year only when source metadata verified the publication/update date.
+
+    A configured or declared year on a maintained page is not evidence of a
+    2026 update, so maintained_current sources deliberately return zero.
+    """
+    if str(source.get("current_status") or "") != "dated_current":
+        return 0
+    try:
+        year = int(source.get("year") or 0)
+    except (TypeError, ValueError):
+        return 0
+    return year if year >= MIN_CURRENT_YEAR else 0
 
 MAINTAINED_CURRENT_DOMAINS = {
     "developers.google.com", "ai.google.dev", "cloud.google.com",
@@ -148,5 +164,13 @@ def validate_current_sources(sources: list[dict]) -> tuple[bool, list[dict], str
         return False, valid, "current sources are not independent by organization"
     if not any(int(x.get("authority_score", 0)) >= 80 for x in valid):
         return False, valid, "no authoritative current source"
-    valid.sort(key=lambda x: (int(x.get("authority_score", 0)), int(x.get("authority_tier", 4))), reverse=True)
+    valid.sort(
+        key=lambda x: (
+            int(x.get("authority_score", 0)),
+            int(verified_source_year(x) >= PREFERRED_CURRENT_YEAR),
+            verified_source_year(x),
+            -int(x.get("authority_tier", 4)),
+        ),
+        reverse=True,
+    )
     return True, valid, "ok"

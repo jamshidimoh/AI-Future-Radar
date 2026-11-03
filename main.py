@@ -6,7 +6,7 @@ from pathlib import Path
 
 import requests
 
-from src.dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
+from src.dedup import filter_new_items, freeze_feedback_history, load_seen, load_source_history, mark_as_seen, save_seen
 from src.editorial import enrich_items, filter_ai_relevance
 from src.editorial_quality_policy import NORMAL_SCORE_FLOOR as CANONICAL_NORMAL_SCORE_FLOOR
 from src.fetch_google_news import fetch_google_news_items
@@ -872,6 +872,7 @@ def main(hooks=None):
     print(f"Raw total: {len(all_items)}")
     all_items = _annotate_named_leader_interviews(all_items, leader_people, leader_priorities)
     seen_hashes, seen_signatures = load_seen()
+    freeze_feedback_history()
     source_history = load_source_history()
     # The completed-bootstrap branch also consumes this local list below.
     people_candidates = []

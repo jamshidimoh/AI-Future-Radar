@@ -65,8 +65,12 @@ def _event_features_cached(title, summary, description, content, event_time, pub
 def event_features(item: dict[str,Any])->dict[str,Any]: return _event_features_cached(str(item.get("title") or ""),str(item.get("summary") or ""),str(item.get("description") or ""),str(item.get("content") or ""),str(item.get("event_time") or ""),str(item.get("published") or ""),str(item.get("published_at") or ""))
 
 def _has_material_update_features(fa:dict[str,Any],fb:dict[str,Any])->bool:
-    na=set(re.findall(r"\b\d+(?:\.\d+)?\b",fa["norm"])); nb=set(re.findall(r"\b\d+(?:\.\d+)?\b",fb["norm"]))
-    if na and nb and na != nb: return True
+    na={value for value in re.findall(r"\b\d+(?:\.\d+)?\b",fa["norm"]) if not (value.isdigit() and len(value)==4 and 1900<=int(value)<=2100)}
+    nb={value for value in re.findall(r"\b\d+(?:\.\d+)?\b",fb["norm"]) if not (value.isdigit() and len(value)==4 and 1900<=int(value)<=2100)}
+    # A changed numeric value signals an update only when both stories retain
+    # at least one stable numeric anchor (e.g. GPT-6, while 1M becomes 2M).
+    # A product/version change such as GPT-5 to GPT-6 must not be auto-whitelisted.
+    if na and nb and na != nb and na & nb: return True
     return len(fa["material"] - fb["material"]) >= 2 or len(fb["material"] - fa["material"]) >= 2
 
 def has_material_update(a:dict[str,Any],b:dict[str,Any])->bool: return _has_material_update_features(event_features(a),event_features(b))

@@ -14,12 +14,14 @@ import time
 import main as _pipeline
 from src.dedup import load_seen
 from src.editorial_score_v2 import is_major_ai_product_release, is_strategic_leader_statement
+from src.event_identity import compare_events
 from src.logging_setup import configure_logging
 from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
 from src.protected_editorial_lane import choose_additive_candidate
 from src.protected_story_identity import probable_same_story
 from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
+from src.publication_index import PublicationIndex, get_publication_index
 from src.semantic_dedup import get_story_signature
 from src.story_gate import _technology_relevant
 from src.technical_trend_lane import choose_technical_trend_candidate
@@ -260,56 +262,72 @@ def _semantic_comparison_possible(candidate_title, candidate_summary, record):
 
 def _exclude_published_candidates(items):
     records = _load_records()
-    if not records or not items:
+    shared_index = get_publication_index()
+    # Production uses the shared immutable run snapshot. Tests and callers that
+    # inject their own records receive an isolated index with identical rules.
+    index = shared_index if records is shared_index.records else PublicationIndex(records)
+    if not index.record_count or not items:
         return items
-    kept, blocked = [], {"canonical_url": 0, "title": 0, "semantic": 0}
+
+    kept = []
+    blocked = {"canonical_url": 0, "title": 0, "semantic": 0}
     semantic_bypassed = protected_same_story_blocked = 0
-    semantic_prefiltered = 0
+    semantic_comparisons = 0
+
     for item in items:
         candidate_url = _canonical_url(item.get("canonical_url") or item.get("link") or item.get("url") or "")
         title = _normalized_title(item.get("title") or "")
         summary = str(item.get("summary") or item.get("description") or "")
         protected = _is_protected_publication_story(item)
+
+        if candidate_url and index.contains_url(candidate_url):
+            blocked["canonical_url"] += 1
+            continue
+        if title and index.contains_title(title):
+            blocked["title"] += 1
+            continue
+
+        comparisons = index.semantic_candidates(item, limit=10)
+        semantic_comparisons += len(comparisons)
         conflict = conflict_record = None
-        for record in records:
-            record_url = _canonical_url(record.get("link", ""))
-            if candidate_url and record_url and candidate_url == record_url:
-                conflict, conflict_record = "canonical_url", record
-                break
-            stored_title = _normalized_title(record.get("title", ""))
-            if title and stored_title and title == stored_title:
-                conflict, conflict_record = "title", record
-                break
-        if conflict is None:
-            if protected:
-                for record in records:
-                    if not str(record.get("title") or "").strip():
-                        continue
-                    if probable_same_story(item, record):
-                        conflict, conflict_record = "semantic", record
-                        protected_same_story_blocked += 1
-                        break
-                if conflict is None:
-                    semantic_bypassed += 1
-            else:
-                for record in records:
-                    if not str(record.get("title") or "").strip():
-                        continue
-                    if not _semantic_comparison_possible(title, summary, record):
-                        semantic_prefiltered += 1
-                        continue
-                    if _semantic_conflict(title, summary, record) >= REGULAR_SAME_STORY_THRESHOLD:
-                        conflict, conflict_record = "semantic", record
-                        break
+        if protected:
+            for record in comparisons:
+                if compare_events(item, record)[0] == "UPDATE":
+                    continue
+                if probable_same_story(item, record):
+                    conflict, conflict_record = "semantic", record
+                    protected_same_story_blocked += 1
+                    break
+            if conflict is None:
+                semantic_bypassed += 1
+        else:
+            for record in comparisons:
+                if _semantic_conflict(title, summary, record) >= REGULAR_SAME_STORY_THRESHOLD:
+                    conflict, conflict_record = "semantic", record
+                    break
+
         if conflict:
             blocked[conflict] += 1
             if conflict == "semantic":
-                print(f"[Pre-Ranking Publication Guard] semantic block title={str(item.get('title',''))[:90]} matched={str((conflict_record or {}).get('title',''))[:90]}", flush=True)
+                print(
+                    f"[Pre-Ranking Publication Guard] semantic block title={str(item.get('title',''))[:90]} "
+                    f"matched={str((conflict_record or {}).get('title',''))[:90]}",
+                    flush=True,
+                )
             continue
         kept.append(item)
+
     total_blocked = sum(blocked.values())
-    if total_blocked or semantic_bypassed or protected_same_story_blocked or semantic_prefiltered:
-        print(f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} semantic_prefiltered={semantic_prefiltered} protected_semantic_bypassed={semantic_bypassed} protected_same_story_blocked={protected_same_story_blocked} regular_semantic_threshold={REGULAR_SAME_STORY_THRESHOLD:.2f} remaining={len(kept)}", flush=True)
+    if total_blocked or semantic_bypassed or protected_same_story_blocked:
+        print(
+            f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} "
+            f"title={blocked['title']} semantic={blocked['semantic']} semantic_comparisons={semantic_comparisons} "
+            f"semantic_window={index.semantic_window_count} max_per_candidate=10 "
+            f"protected_semantic_bypassed={semantic_bypassed} "
+            f"protected_same_story_blocked={protected_same_story_blocked} "
+            f"regular_semantic_threshold={REGULAR_SAME_STORY_THRESHOLD:.2f} remaining={len(kept)}",
+            flush=True,
+        )
     return kept
 
 

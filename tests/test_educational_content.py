@@ -19,6 +19,10 @@ class EducationalContentTests(unittest.TestCase):
         self.assertGreaterEqual(len(lines), 10)
         rtl_blocks = sum(1 for line in lines if line.startswith(RLI))
         self.assertGreaterEqual(rtl_blocks, 8)
+        for line in lines:
+            self.assertTrue(line.startswith(RLI), line)
+            self.assertTrue(line.endswith(PDI), line)
+            self.assertEqual(line.count(RLI) + line.count(LRI), line.count(PDI), line)
         self.assertEqual(text.count(PDI), text.count(RLI) + text.count(LRI))
         self.assertGreaterEqual(text.count(LRI), 4)
         self.assertGreaterEqual(text.count(RLI), 8)
@@ -114,6 +118,24 @@ class EducationalContentTests(unittest.TestCase):
         self.assertNotIn("AI FUTURE TECH RADAR", text)
         self.assertNotIn("AI Future Tech Radar", text)
         self._assert_rtl_structure(text)
+
+    def test_educational_output_sanitizes_bidi_controls_and_wraps_each_line(self):
+        item = self._foundation_item()
+        item["education_term_a_fa"] = "هوش مصنوعي\u2066"
+        item["term_a_definition"] = "عنوان آغازین\u202e\nتوضیح فارسی درباره سازوکار مدل"
+        text = format_educational_post(item)
+        for line in text.splitlines():
+            if line and line not in DIVIDERS:
+                self.assertTrue(line.startswith(RLI), line)
+                self.assertTrue(line.endswith(PDI), line)
+                self.assertEqual(line.count(RLI) + line.count(LRI), line.count(PDI), line)
+        # RLM and the RLI/LRI/PDI isolates below are trusted renderer output.
+        # Untrusted override/embedding controls must never survive into display.
+        for control in ("\u061c", "\u200e", "\u202a", "\u202b", "\u202c", "\u202d", "\u202e", "\u2068"):
+            self.assertNotIn(control, text)
+        sanitized = normalize_education_text("متن\u200f\u2066\u202e")
+        self.assertEqual(sanitized, "متن")
+        self.assertIn("هوش مصنوعی", text)
 
     def test_rendering_emerging_keeps_canonical_term_without_branding(self):
         item = {

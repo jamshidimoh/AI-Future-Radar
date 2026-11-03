@@ -48,9 +48,10 @@ jobs:
           RADAR_LLM_MAX_TOKENS: 1100
         run: python -u scripts/education_pilot_preview.py
       - name: Upload preview artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: education-pilot-preview-${{ github.run_number }}
           path: artifacts/education_pilot_preview/
           retention-days: 14
-          if-no-files-found: error
+          if-no-files-found: warn

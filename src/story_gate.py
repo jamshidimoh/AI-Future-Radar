@@ -1,5 +1,6 @@
 """Canonical Story Gate and canonical score boundary."""
 import re
+
 from src.editorial_score_v2 import score_editorial_v2
 from src.future_significance import annotate_future_significance, is_low_future_value
 from src.story_identity import deduplicate_stories

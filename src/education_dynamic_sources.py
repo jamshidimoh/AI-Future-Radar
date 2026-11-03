@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 
 from src.source_exclusions import is_excluded_source_url
+from src.education_source_policy import PREFERRED_CURRENT_YEAR, verified_source_year
 
 # Curated, durable source pool. Availability is checked at runtime by the
 # existing _fetch_reference + education_source_policy gates.
@@ -91,6 +92,8 @@ def rank_verified_sources(sources: list[dict]) -> list[dict]:
         key=lambda x: (
             int(x.get("dynamic_relevance", 0)),
             int(x.get("authority_score", x.get("authority", 0))),
+            int(verified_source_year(x) >= PREFERRED_CURRENT_YEAR),
+            verified_source_year(x),
             -int(x.get("authority_tier", 4)),
             str(x.get("url", "")),
         ),

@@ -14,7 +14,7 @@ BANNED_TRANSLITERATIONS = {
 
 REQUIRED_FIELDS = (
     "term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple",
-    "relationship", "example", "takeaway",
+    "technical_explanation", "relationship", "common_misconception", "example", "takeaway",
 )
 
 

@@ -191,6 +191,12 @@ class TelegramFormatTests(unittest.TestCase):
             if line:
                 self.assertTrue(line.startswith("\u2067"), line)
                 self.assertTrue(line.endswith("\u2069"), line)
+                # Nested RTL/LTR isolates must be balanced on each physical line.
+                self.assertEqual(
+                    line.count("\u2067") + line.count("\u2066"),
+                    line.count("\u2069"),
+                    line,
+                )
         isolate_starts = text.count("\u2067") + text.count("\u2066")
         self.assertEqual(isolate_starts, text.count("\u2069"))
         self.assertIn("نقل‌قول کلیدی", self._plain(text))

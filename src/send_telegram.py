@@ -262,7 +262,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
     if summary_raw:
         lines.append(
             _rtl_text(
-                f"<blockquote>📌 <b>خلاصه</b>\n{_esc(summary_raw)}</blockquote>",
+                f"<blockquote>📌 <b>خلاصه</b> — {_esc(summary_raw)}</blockquote>",
                 escape=False,
             )
         )
@@ -271,7 +271,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
             [
                 "",
                 _rtl_text(
-                    f"<blockquote>💡 <b>چرا مهم است؟</b>\n{_esc(why_raw)}</blockquote>",
+                    f"<blockquote>💡 <b>چرا مهم است؟</b> — {_esc(why_raw)}</blockquote>",
                     escape=False,
                 ),
             ]
@@ -281,7 +281,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
             [
                 "",
                 _rtl_text(
-                    f"<blockquote>💬 <b>نقل‌قول کلیدی</b>\n«{_esc(quote_raw)}»</blockquote>",
+                    f"<blockquote>💬 <b>نقل‌قول کلیدی</b> — «{_esc(quote_raw)}»</blockquote>",
                     escape=False,
                 ),
             ]

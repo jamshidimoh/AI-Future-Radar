@@ -154,7 +154,7 @@ def normalize_news_editorial_text(text: str) -> str:
 
 def normalize_education_text(text: str) -> str:
     """Persian-first normalization for education; do not translate ordinary AI terms."""
-    value = _replace(str(text or ""), NON_IRANIAN_NAMES_EN)
+    value = _replace(normalize_persian_unicode(text), NON_IRANIAN_NAMES_EN)
     value = _replace(value, EDUCATION_EMERGING)
     value = re.sub(r"[ \t]{2,}", " ", value)
     return value.strip()

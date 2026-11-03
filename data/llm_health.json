@@ -1,15 +1,9 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 15,
-      "disabled_until": 1793805978.804,
+      "failures": 16,
+      "disabled_until": 1793809355.741,
       "last_error": "auth",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-20b": {
-      "failures": 1,
-      "disabled_until": 1793720048.271,
-      "last_error": "rate_limit",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
@@ -17,12 +11,18 @@
       "disabled_until": 1793723178.804,
       "last_error": "rate_limit",
       "last_success": 0
+    },
+    "groq:openai/gpt-oss-20b": {
+      "failures": 1,
+      "disabled_until": 1793726555.741,
+      "last_error": "rate_limit",
+      "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 15,
-      "disabled_until": 1793805978.804,
+      "failures": 16,
+      "disabled_until": 1793809355.741,
       "last_error": "auth"
     },
     "kiraai": {
@@ -36,12 +36,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1793719578.804053,
+  "updated_at": 1793722955.7413776,
   "version": 1,
   "telemetry": {
     "observed_failures": 3,
-    "observed_events": 8,
-    "updated_at": 1793719578.804053
+    "observed_events": 16,
+    "updated_at": 1793722955.7413776
   },
   "observed_failures": 0,
   "observed_events": 0

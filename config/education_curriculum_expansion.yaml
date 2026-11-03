@@ -159,7 +159,7 @@ education_curriculum_expansion:
       core_question: "Consciousness Theory و Functionalism چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Oxford Academic: Overcoming Essentialism in Consciousness Theory (2026)", url: "https://academic.oup.com/nc/article/2026/1/niag069/9006407"}
+        - {name: "Oxford Academic: Overcoming Essentialism in Consciousness Theory (2026)", url: "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2026.1730965/full"}
         - {name: "Nature: Consciousness, Subjectivity and Functionalism (2026)", url: "https://www.nature.com/articles/s41386-026-02321-5"}
     - id: 127
       domain: "Metacognition in AI"

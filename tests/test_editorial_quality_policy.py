@@ -2,13 +2,13 @@ from src.editorial_quality_policy import (
     BODY_PERSIAN_RATIO_MIN,
     NORMAL_SCORE_FLOOR,
     TITLE_PERSIAN_RATIO_MIN,
+    editorial_sections_redundant,
     length_ok,
     news_language_ok,
     normal_score_allowed,
     persian_editorial_naturalness_issues,
     persian_editorial_naturalness_ok,
     terminology_safety_ok,
-    editorial_sections_redundant,
 )
 
 

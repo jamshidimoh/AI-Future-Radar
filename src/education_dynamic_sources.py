@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import re
 
-from src.source_exclusions import is_excluded_source_url
 from src.education_source_policy import PREFERRED_CURRENT_YEAR, verified_source_year
+from src.source_exclusions import is_excluded_source_url
 
 # Curated, durable source pool. Availability is checked at runtime by the
 # existing _fetch_reference + education_source_policy gates.

@@ -55,6 +55,7 @@ education:
       relation: "در یادگیری نظارت‌شده، مدل رابطه میان featureها و label را یاد می‌گیرد."
       sources:
         - {name: "Google ML Glossary: Fundamentals", url: "https://developers.google.com/machine-learning/glossary/fundamentals"}
+        - {name: "scikit-learn Supervised Learning", url: "https://scikit-learn.org/stable/supervised_learning.html"}
     - id: 5
       title: "Neural Network و Deep Learning"
       a: {term: "Neural Network", fa: "شبکه عصبی", seed: "مدلی متشکل از لایه‌ها و واحدهایی که با وزن‌ها و توابع فعال‌سازی روابط غیرخطی را یاد می‌گیرد."}
@@ -70,6 +71,7 @@ education:
       relation: "پارامترها توسط آموزش یاد گرفته می‌شوند؛ ابرپارامترها برای کنترل فرایند آموزش تنظیم می‌شوند."
       sources:
         - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
     - id: 7
       title: "Token و Embedding"
       a: {term: "Token", fa: "توکن", seed: "واحدی از متن که مدل زبانی آن را به‌عنوان بخشی از ورودی یا خروجی پردازش می‌کند؛ یک کلمه همیشه الزاماً یک توکن نیست."}
@@ -85,6 +87,7 @@ education:
       relation: "Attention یک مکانیزم است؛ Transformer معماری‌ای است که از attention به‌صورت مرکزی استفاده می‌کند."
       sources:
         - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
+        - {name: "Stanford CS25: Transformers United", url: "https://web.stanford.edu/class/cs25/"}
     - id: 9
       title: "Foundation Model و LLM"
       a: {term: "Foundation Model", fa: "مدل پایه", seed: "مدل پیش‌آموزش‌دیده بزرگ و عمومی که می‌تواند مبنای چندین کاربرد و سازگارسازی بعدی باشد."}
@@ -100,6 +103,7 @@ education:
       relation: "Pre-training قابلیت عمومی می‌سازد؛ fine-tuning آن را برای هدف مشخص‌تر تنظیم می‌کند."
       sources:
         - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+        - {name: "Hugging Face Transformers Documentation", url: "https://huggingface.co/docs/transformers/main/en/index"}
     - id: 11
       title: "Prompt و In-context Learning"
       a: {term: "Prompt", fa: "پرامپت", seed: "ورودی متنی یا چندوجهی که رفتار و پاسخ مدل مولد را شرطی می‌کند."}
@@ -107,6 +111,7 @@ education:
       relation: "Prompt وسیله تعامل است؛ in-context learning یکی از توانایی‌هایی است که می‌تواند از طریق prompt و مثال در اختیار مدل قرار گیرد."
       sources:
         - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+        - {name: "Anthropic Prompt Engineering", url: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview"}
     - id: 12
       title: "Hallucination و Grounding"
       a: {term: "Hallucination", fa: "توهم‌زایی مدل", seed: "تولید خروجی نادرست یا ساختگی که ممکن است با لحن مطمئن ارائه شود."}
@@ -122,6 +127,7 @@ education:
       relation: "RAG یک معماری/الگوست؛ vector database می‌تواند یکی از اجزای بازیابی آن باشد."
       sources:
         - {name: "Google AI Embeddings", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
+        - {name: "Microsoft RAG Solution Design", url: "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/rag/rag-solution-design-and-evaluation-guide"}
     - id: 14
       title: "Multimodal AI و Vision-Language Model"
       a: {term: "Multimodal AI", fa: "هوش مصنوعی چندوجهی", seed: "سامانه‌ای که بیش از یک نوع داده یا modality مانند متن، تصویر، صدا یا ویدئو را پردازش یا به هم مرتبط می‌کند."}
@@ -129,6 +135,7 @@ education:
       relation: "VLM یک نمونه مهم از AI چندوجهی است؛ multimodal مفهوم گسترده‌تری است."
       sources:
         - {name: "Google AI Embeddings 2", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
+        - {name: "Hugging Face Multimodal Documentation", url: "https://huggingface.co/docs/transformers/tasks/image_text_to_text"}
     - id: 15
       title: "AI Agent و Tool Use"
       a: {term: "AI Agent", fa: "عامل هوش مصنوعی", seed: "سامانه‌ای که برای رسیدن به هدف، می‌تواند وضعیت را ارزیابی کند، برنامه‌ریزی کند و در محیط یا ابزارها اقدام انجام دهد."}
@@ -152,6 +159,7 @@ education:
       relation: "هر دو برای بهبود رفتار مدل استفاده می‌شوند، اما instruction tuning معمولاً با داده‌های نمونه‌ای و RLHF با سیگنال ترجیح انسانی و مرحله تقویتی شناخته می‌شود."
       sources:
         - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
     - id: 18
       title: "LoRA و Parameter-Efficient Fine-Tuning"
       a: {term: "LoRA", fa: "LoRA", seed: "روشی برای سازگار کردن مدل‌های بزرگ با افزودن پارامترهای کم‌رتبه قابل آموزش و ثابت نگه داشتن وزن‌های اصلی مدل."}
@@ -159,6 +167,7 @@ education:
       relation: "LoRA یکی از روش‌های شناخته‌شده PEFT است."
       sources:
         - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
+        - {name: "Hugging Face PEFT Documentation", url: "https://huggingface.co/docs/peft/index"}
     - id: 19
       title: "Benchmark و Evaluation"
       a: {term: "Benchmark", fa: "بنچمارک", seed: "مجموعه وظایف یا داده استاندارد برای مقایسه عملکرد مدل‌ها تحت شرایط مشخص."}

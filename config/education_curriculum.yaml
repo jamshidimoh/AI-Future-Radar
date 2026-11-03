@@ -1,8 +1,14 @@
 education:
   enabled: true
   lessons_per_run: 1
-  curriculum_version: "2.0"
+  total_lessons: 130
+  curriculum_version: "3.0"
   reviewed_at: "2026-11-03"
+  course_title: "دوره جامع هوش مصنوعی: از مبانی علمی تا سامانه‌های عامل‌محور و فناوری‌های مرزی"
+  pedagogy:
+    progression: "مفهومی به فنی، از پیش‌نیاز به کاربرد، همراه با تمرین بازیابی و ارزیابی شواهد"
+    lesson_contract: "دو مفهوم متمایز؛ تعریف علمی؛ توضیح شهودی؛ سازوکار فنی؛ رابطه و مرزبندی؛ برداشت نادرست؛ مثال؛ تمرین؛ حداقل دو منبع مستقل"
+    evidence_policy: "منابع معتبر و قابل بازیابی؛ ترجیح منابع تاریخ‌دار ۲۰۲۶ برای تحولات سریع؛ منابع مرجع برای مبانی پایدار؛ منع ادعای بی‌پشتوانه"
   source_policy:
     primary_first: true
     preferred_domains:

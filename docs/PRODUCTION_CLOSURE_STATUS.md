@@ -1,6 +1,6 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-11-02
+Status date: 2026-11-03
 
 ## وضعیت نهایی
 
@@ -10,9 +10,9 @@ Status date: 2026-11-02
 
 ## پنجره شواهد نهایی
 
+- Run #1585 — SHA 16735459bdf25e5c3c9e15b00b0c49688f119762 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
 - Run #1584 — SHA a9a278d7c4af78569277c90fde3235a2c9134f49 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
 - Run #1583 — SHA e781ad3736bbc1533d06ae77af145cf4391efc59 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
-- Run #1582 — SHA fe3ee73e8f993db9fc283c94a55e40cee76af5e6 — workflow success — fingerprint 59a2710393542529743c6585c59cb83aa0a08aaefe90cbf8ac42bc0c948a2076
 
 ## معیارهای پذیرش
 
@@ -35,7 +35,7 @@ Status date: 2026-11-02
 
 ## شواهد انتشار
 
-PUBLISH_PER_RUN: {1584: True, 1583: True, 1582: True}
+PUBLISH_PER_RUN: {1585: True, 1584: True, 1583: True}
 
 PROVIDER_EVIDENCE: deterministic regression True
 

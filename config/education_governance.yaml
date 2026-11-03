@@ -1,7 +1,8 @@
 education_governance:
-  version: "1.0"
+  version: "1.1"
   priorities:
     - scientific_authority
+    - source_claim_alignment
     - current_validity
     - topical_coverage
   source_rules:
@@ -20,6 +21,12 @@ education_governance:
       require_current_usage_evidence: true
       require_status_label: true
       never_present_as_established_standard: true
+    freshness_preferences:
+      preferred_verified_year: 2026
+      minimum_verified_year: 2025
+      prefer_2026_when_authority_and_relevance_are_comparable: true
+      declared_year_alone_never_counts_as_verified: true
+      stable_foundations_may_use_canonical_references: true
   preferred_authority_tiers:
     tier_1:
       - nist.gov
@@ -40,7 +47,7 @@ education_governance:
       - practitioner_sources
       - reputable_technical_analysis
   freshness:
-    current_state_preferred_year: 2025
+    current_state_preferred_year: 2026
     rapidly_changing_topics_preferred_year: 2026
     latest_version_required_when_source_is_versioned: true
     stale_sources_must_be_contextualized: true

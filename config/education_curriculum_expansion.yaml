@@ -9,12 +9,15 @@ education_curriculum_expansion:
   lessons:
     - id: 115
       domain: "embodied AI"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [53]
       title: "Embodied Intelligence و Sensorimotor Learning"
       a: {term: "Embodied Intelligence", fa: "هوش تجسم‌یافته", seed: "هوشی که از تعامل ادراکی-حرکتی با محیط فیزیکی یا شبیه‌سازی‌شده شکل می‌گیرد."}
       b: {term: "Sensorimotor Learning", fa: "یادگیری حسی-حرکتی", seed: "یادگیری رابطه میان ادراک، حرکت و پیامد کنش از تجربه."}
       relation: "تعامل بدن‌مند بستر است؛ یادگیری حسی-حرکتی سازوکار کسب مهارت از چرخه ادراک و حرکت است."
+      learning_outcome: "دانشجو بتواند هوش تجسم‌یافته و یادگیری حسی-حرکتی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Embodied Intelligence و Sensorimotor Learning چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -22,12 +25,15 @@ education_curriculum_expansion:
         - {name: "NSF: Understanding the Brain and Robotics", url: "https://www.nsf.gov/focus-areas/brain"}
     - id: 116
       domain: "Reinforcement learning"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [34, 56]
       title: "Reinforcement Learning from Verifiable Rewards (RLVR) و Outcome Supervision"
       a: {term: "Reinforcement Learning from Verifiable Rewards (RLVR)", fa: "یادگیری تقویتی با پاداش قابل راستی‌آزمایی", seed: "روشی که در آن پاداش از معیار یا نتیجه‌ای قابل بررسی مانند پاسخ درست، آزمون موفق یا اثبات معتبر استخراج می‌شود."}
       b: {term: "Outcome Supervision", fa: "نظارت بر نتیجه", seed: "آموزشی که کیفیت خروجی نهایی را هدف می‌گیرد، بدون الزام به ارزیابی همه مراحل استدلال."}
       relation: "RLVR نوعی سیگنال پاداش مبتنی بر راستی‌آزمایی است؛ outcome supervision می‌تواند روش‌های آموزشی متفاوتی را شامل شود."
+      learning_outcome: "دانشجو بتواند یادگیری تقویتی با پاداش قابل راستی‌آزمایی و نظارت بر نتیجه را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Reinforcement Learning from Verifiable Rewards (RLVR) و Outcome Supervision چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -35,12 +41,15 @@ education_curriculum_expansion:
         - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
     - id: 117
       domain: "Robotics and world models"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [30, 53]
       title: "Action-Conditioned World Model و Digital Twin"
       a: {term: "Action-Conditioned World Model", fa: "مدل جهان شرطی‌شده بر کنش", seed: "مدلی که وضعیت آینده محیط را با توجه به وضعیت فعلی و کنش انتخاب‌شده پیش‌بینی می‌کند."}
       b: {term: "Digital Twin", fa: "همزاد دیجیتال", seed: "بازنمایی دیجیتالی یک دارایی یا فرایند واقعی که می‌تواند با داده عملیاتی به‌روزرسانی شود."}
       relation: "مدل جهان بر پیش‌بینی پیامد کنش تمرکز دارد؛ digital twin بازنمایی دیجیتال یک نمونه یا فرایند واقعی را دنبال می‌کند."
+      learning_outcome: "دانشجو بتواند مدل جهان شرطی‌شده بر کنش و همزاد دیجیتال را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Action-Conditioned World Model و Digital Twin چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -48,12 +57,15 @@ education_curriculum_expansion:
         - {name: "UK AI for Science Strategy", url: "https://www.gov.uk/government/publications/ai-for-science-strategy/ai-for-science-strategy"}
     - id: 118
       domain: "Robotics and foundation models"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [40, 53]
       title: "Vision-Language-Action Model (VLA) و Diffusion Policy"
       a: {term: "Vision-Language-Action Model (VLA)", fa: "مدل بینایی-زبان-کنش", seed: "مدلی که ورودی دیداری و دستور زبانی را به نمایش یا دنباله کنش رباتیک نگاشت می‌کند."}
       b: {term: "Diffusion Policy", fa: "سیاست انتشار", seed: "سیاستی که دنباله کنش یا مسیر حرکتی را با فرایند تولیدی مبتنی بر diffusion می‌سازد."}
       relation: "VLA ورودی‌های دیداری و زبانی را به کنش مرتبط می‌کند؛ diffusion policy روش تولید توالی کنش است و می‌تواند در رباتیک به‌کار رود."
+      learning_outcome: "دانشجو بتواند مدل بینایی-زبان-کنش و سیاست انتشار را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Vision-Language-Action Model (VLA) و Diffusion Policy چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -61,12 +73,15 @@ education_curriculum_expansion:
         - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
     - id: 119
       domain: "AI for science"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [49, 54]
       title: "Scientific Foundation Model و Scientific Simulator"
       a: {term: "Scientific Foundation Model", fa: "مدل پایه علمی", seed: "مدلی پیش‌آموزش‌یافته روی داده یا ساختارهای یک یا چند حوزه علمی برای انتقال به وظایف پژوهشی."}
       b: {term: "Scientific Simulator", fa: "شبیه‌ساز علمی", seed: "مدلی محاسباتی که رفتار یک سامانه طبیعی یا آزمایش را طبق قوانین یا تقریب‌های علمی شبیه‌سازی می‌کند."}
       relation: "مدل پایه علمی از داده علمی بازنمایی عمومی می‌آموزد؛ شبیه‌ساز علمی رفتار سیستم را تحت فرض‌های مدل محاسبه می‌کند."
+      learning_outcome: "دانشجو بتواند مدل پایه علمی و شبیه‌ساز علمی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Scientific Foundation Model و Scientific Simulator چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -74,12 +89,15 @@ education_curriculum_expansion:
         - {name: "European AI in Science Strategy", url: "https://research-and-innovation.ec.europa.eu/strategy/strategy-research-and-innovation/our-digital-future/european-ai-science-strategy_en"}
     - id: 120
       domain: "Protein AI"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [49, 119]
       title: "Protein Structure Prediction و Protein Function Prediction"
       a: {term: "Protein Structure Prediction", fa: "پیش‌بینی ساختار پروتئین", seed: "برآورد ساختار سه‌بعدی پروتئین از توالی اسیدهای آمینه و شواهد مکمل."}
       b: {term: "Protein Function Prediction", fa: "پیش‌بینی عملکرد پروتئین", seed: "استنباط نقش زیستی یا فعالیت احتمالی پروتئین از توالی، ساختار، زمینه و داده‌های آزمایشگاهی."}
       relation: "ساختار فضایی یکی از عوامل عملکرد است اما پیش‌بینی ساختار به‌تنهایی عملکرد زیستی را اثبات نمی‌کند."
+      learning_outcome: "دانشجو بتواند پیش‌بینی ساختار پروتئین و پیش‌بینی عملکرد پروتئین را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Protein Structure Prediction و Protein Function Prediction چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -87,12 +105,15 @@ education_curriculum_expansion:
         - {name: "DeepMind AlphaFold", url: "https://deepmind.google/science/alphafold/"}
     - id: 121
       domain: "Genomics AI"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [49, 119]
       title: "Genomic Foundation Model و Regulatory Genomics"
       a: {term: "Genomic Foundation Model", fa: "مدل پایه ژنومی", seed: "مدلی آموزش‌دیده روی توالی‌های ژنومی برای یادگیری الگوهای توالی و انتقال به وظایف زیستی."}
       b: {term: "Regulatory Genomics", fa: "ژنومیک تنظیمی", seed: "مطالعه عناصر و سازوکارهایی که بر زمان، مکان و میزان بیان ژن اثر می‌گذارند."}
       relation: "مدل پایه ژنومی نمایش توالی را می‌آموزد؛ ژنومیک تنظیمی پرسش زیستی درباره کنترل بیان ژن را بررسی می‌کند."
+      learning_outcome: "دانشجو بتواند مدل پایه ژنومی و ژنومیک تنظیمی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Genomic Foundation Model و Regulatory Genomics چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -100,12 +121,15 @@ education_curriculum_expansion:
         - {name: "DeepMind AlphaGenome", url: "https://deepmind.google/science/alphagenome/"}
     - id: 122
       domain: "AI for materials"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [119]
       title: "Materials Discovery و Molecular Dynamics"
       a: {term: "Materials Discovery", fa: "کشف مواد", seed: "شناسایی یا طراحی مواد با ویژگی‌های مطلوب با ترکیب داده، مدل‌سازی و آزمایش."}
       b: {term: "Molecular Dynamics", fa: "دینامیک مولکولی", seed: "شبیه‌سازی تحول زمانی اتم‌ها و مولکول‌ها بر پایه نیروها و قوانین حرکت."}
       relation: "AI می‌تواند فضای مواد را جست‌وجو کند؛ دینامیک مولکولی رفتار اتمی را تحت مدل فیزیکی شبیه‌سازی می‌کند."
+      learning_outcome: "دانشجو بتواند کشف مواد و دینامیک مولکولی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Materials Discovery و Molecular Dynamics چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -113,12 +137,15 @@ education_curriculum_expansion:
         - {name: "European AI in Science Strategy", url: "https://research-and-innovation.ec.europa.eu/strategy/strategy-research-and-innovation/our-digital-future/european-ai-science-strategy_en"}
     - id: 123
       domain: "Quantum AI"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [26, 27]
       title: "Quantum Machine Learning و Quantum-Inspired Machine Learning"
       a: {term: "Quantum Machine Learning", fa: "یادگیری ماشین کوانتومی", seed: "روش‌های پژوهشی برای ترکیب مدل‌های یادگیری با مدارها یا منابع محاسبات کوانتومی."}
       b: {term: "Quantum-Inspired Machine Learning", fa: "یادگیری ماشین الهام‌گرفته از کوانتوم", seed: "الگوریتم‌های کلاسیکی که از ایده‌ها یا ساختارهای ریاضی کوانتومی الهام می‌گیرند، بدون اجرای محاسبه کوانتومی."}
       relation: "QML به منابع کوانتومی نیاز دارد؛ quantum-inspired ممکن است کاملاً روی سخت‌افزار کلاسیک اجرا شود و ادعای برتری هر دو نیازمند baseline منصفانه است."
+      learning_outcome: "دانشجو بتواند یادگیری ماشین کوانتومی و یادگیری ماشین الهام‌گرفته از کوانتوم را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Quantum Machine Learning و Quantum-Inspired Machine Learning چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -126,12 +153,15 @@ education_curriculum_expansion:
         - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/quantum-information-science"}
     - id: 124
       domain: "Neurotechnology"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [50, 53]
       title: "Brain-Computer Interface و Closed-Loop Neural Decoding"
       a: {term: "Brain-Computer Interface", fa: "رابط مغز-رایانه", seed: "سامانه‌ای برای تبدیل سیگنال‌های عصبی به اطلاعات یا فرمان قابل استفاده در دستگاه بیرونی."}
       b: {term: "Closed-Loop Neural Decoding", fa: "رمزگشایی عصبی حلقه‌بسته", seed: "رمزگشایی سیگنال عصبی همراه با بازخورد و مداخله پیوسته که خروجی سامانه بر وضعیت بعدی اثر می‌گذارد."}
       relation: "BCI سامانه ارتباطی انتهابه‌انتهاست؛ closed-loop decoding چرخه رمزگشایی و بازخورد را مشخص می‌کند."
+      learning_outcome: "دانشجو بتواند رابط مغز-رایانه و رمزگشایی عصبی حلقه‌بسته را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Brain-Computer Interface و Closed-Loop Neural Decoding چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -139,12 +169,15 @@ education_curriculum_expansion:
         - {name: "NIH BRAIN Initiative", url: "https://www.nih.gov/brain"}
     - id: 125
       domain: "Cognitive science"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [5, 25]
       title: "Cognitive Architecture و Neural Network"
       a: {term: "Cognitive Architecture", fa: "معماری شناختی", seed: "مدلی نظری-محاسباتی از اجزای شناخت مانند حافظه، توجه، یادگیری و تصمیم‌گیری و تعامل آن‌ها."}
       b: {term: "Neural Network", fa: "شبکه عصبی", seed: "مدلی محاسباتی از واحدهای به‌هم‌پیوسته با پارامترهای قابل‌آموزش که الگوها را از داده می‌آموزد."}
       relation: "معماری شناختی معمولاً نظریه‌ای درباره سازمان کارکردهای ذهن است؛ شبکه عصبی خانواده‌ای از مدل‌های محاسباتی است و لزوماً نظریه کامل شناخت نیست."
+      learning_outcome: "دانشجو بتواند معماری شناختی و شبکه عصبی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Cognitive Architecture و Neural Network چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -152,12 +185,15 @@ education_curriculum_expansion:
         - {name: "NIH BRAIN Initiative", url: "https://www.nih.gov/brain"}
     - id: 126
       domain: "Consciousness research"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [125]
       title: "Consciousness Theory و Functionalism"
       a: {term: "Consciousness Theory", fa: "نظریه آگاهی", seed: "چارچوبی نظری برای توضیح ویژگی‌ها و سازوکارهای تجربه آگاهانه که باید از ادعاهای تجربی و فلسفی تفکیک شود."}
       b: {term: "Functionalism", fa: "کارکردگرایی", seed: "دیدگاهی فلسفی که حالت‌های ذهنی را بر اساس نقش علّی و کارکردی آن‌ها در سامانه تعریف می‌کند."}
       relation: "نظریه‌های آگاهی درباره تبیین تجربه ذهنی‌اند؛ کارکردگرایی نظریه‌ای درباره ماهیت حالت‌های ذهنی است و به‌تنهایی آگاهی ماشین را اثبات نمی‌کند."
+      learning_outcome: "دانشجو بتواند نظریه آگاهی و کارکردگرایی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Consciousness Theory و Functionalism چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -165,12 +201,15 @@ education_curriculum_expansion:
         - {name: "Nature: Consciousness, Subjectivity and Functionalism (2026)", url: "https://www.nature.com/articles/s41386-026-02321-5"}
     - id: 127
       domain: "Metacognition in AI"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [62, 125]
       title: "Metacognition و Uncertainty Estimation"
       a: {term: "Metacognition", fa: "فراشناخت", seed: "پایش و ارزیابی فرایندهای شناختی خود، مانند دانستن، ندانستن یا راهبرد حل مسئله."}
       b: {term: "Uncertainty Estimation", fa: "برآورد عدم‌قطعیت", seed: "تخمین میزان ابهام یا ناآگاهی مدل درباره پیش‌بینی یا خروجی خود."}
       relation: "فراشناخت مفهوم شناختی گسترده‌تری است؛ برآورد عدم‌قطعیت یک قابلیت آماری یا محاسباتی است و معادل فراشناخت انسانی نیست."
+      learning_outcome: "دانشجو بتواند فراشناخت و برآورد عدم‌قطعیت را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Metacognition و Uncertainty Estimation چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -178,12 +217,15 @@ education_curriculum_expansion:
         - {name: "NSF: Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
     - id: 128
       domain: "AI alignment"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [23, 51, 90]
       title: "AI Alignment و Control Problem"
       a: {term: "AI Alignment", fa: "هم‌راستاسازی هوش مصنوعی", seed: "پژوهش و روش‌هایی برای سازگارکردن اهداف، رفتار و پیامدهای سامانه AI با ارزش‌ها و محدودیت‌های انسانی."}
       b: {term: "Control Problem", fa: "مسئله کنترل‌پذیری", seed: "مسئله حفظ توان هدایت، محدودسازی و توقف سامانه‌های قدرتمند در شرایطی که رفتارشان پیچیده یا خودمختار است."}
       relation: "alignment درباره سازگاری رفتار با اهداف و ارزش‌هاست؛ control problem بر امکان کنترل و مداخله مؤثر تمرکز دارد."
+      learning_outcome: "دانشجو بتواند هم‌راستاسازی هوش مصنوعی و مسئله کنترل‌پذیری را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "AI Alignment و Control Problem چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -191,12 +233,15 @@ education_curriculum_expansion:
         - {name: "University of Bologna Agentic AI Systems 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/543049"}
     - id: 129
       domain: "General intelligence"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [19, 91, 96]
       title: "AGI Benchmark و General Intelligence"
       a: {term: "AGI Benchmark", fa: "معیار ارزیابی هوش عمومی مصنوعی", seed: "آزمونی برای سنجش دامنه و انتقال توانایی‌ها در مجموعه‌ای از وظایف، با محدودیت‌های اعتبار و پوشش."}
       b: {term: "General Intelligence", fa: "هوش عمومی", seed: "توانایی یادگیری و به‌کارگیری دانش در طیف گسترده‌ای از مسائل و زمینه‌ها؛ تعریف عملیاتی آن محل بحث است."}
       relation: "عملکرد روی یک benchmark به‌تنهایی وجود هوش عمومی را اثبات نمی‌کند؛ تعریف و اعتبار سازه باید روشن باشد."
+      learning_outcome: "دانشجو بتواند معیار ارزیابی هوش عمومی مصنوعی و هوش عمومی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "AGI Benchmark و General Intelligence چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
@@ -204,12 +249,15 @@ education_curriculum_expansion:
         - {name: "University of Bologna Agentic AI Systems 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/543049"}
     - id: 130
       domain: "Futures studies"
+      module_id: 13
+      module_title: "مرزهای دانش و فناوری‌های همگرا"
       status: "established"
       prerequisites: [1, 23, 51]
       title: "Scenario Planning و Technology Forecasting"
       a: {term: "Scenario Planning", fa: "برنامه‌ریزی سناریو", seed: "ساخت چند آینده محتمل و سازگار برای بررسی تصمیم‌ها تحت عدم‌قطعیت عمیق."}
       b: {term: "Technology Forecasting", fa: "پیش‌بینی فناوری", seed: "روش‌های برآورد مسیر، زمان‌بندی و پیامد تحول فناوری با اتکا به شواهد و فرض‌های آشکار."}
       relation: "سناریو یک آینده قطعی را پیش‌بینی نمی‌کند؛ forecasting ادعای برآورد روند یا پیامد دارد و باید با عدم‌قطعیت همراه باشد."
+      learning_outcome: "دانشجو بتواند برنامه‌ریزی سناریو و پیش‌بینی فناوری را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "Scenario Planning و Technology Forecasting چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:

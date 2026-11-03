@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 SEMANTIC_WINDOW_DAYS = 30
 MAX_SEMANTIC_RECORDS = 200
-MAX_SEMANTIC_COMPARISONS = 10
+MAX_SEMANTIC_COMPARISONS = 30
 
 _RECORD_CACHE: dict[str, tuple[tuple[int, int] | None, list[dict[str, Any]]]] = {}
 _INDEX_CACHE: dict[tuple[Any, ...], PublicationIndex] = {}

@@ -1,4 +1,5 @@
 # ruff: noqa: I001
+import inspect
 import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -84,6 +85,23 @@ def _is_voices_perspectives(item: dict) -> bool:
 
 def _publication_identity(item: dict) -> str:
     return str(item.get("canonical_url") or item.get("link") or item.get("url") or item.get("title") or id(item))
+
+
+def _filter_new_items_with_history(items, seen_hashes, seen_signatures):
+    """Pass preloaded history when supported; preserve older two-argument hooks."""
+    try:
+        parameters = inspect.signature(filter_new_items).parameters
+    except (TypeError, ValueError):
+        return filter_new_items(items, seen_hashes, seen_signatures)
+
+    history_parameter = parameters.get("seen_signatures")
+    if history_parameter is not None:
+        if history_parameter.kind is inspect.Parameter.KEYWORD_ONLY:
+            return filter_new_items(items, seen_hashes, seen_signatures=seen_signatures)
+        return filter_new_items(items, seen_hashes, seen_signatures)
+    if any(parameter.kind is inspect.Parameter.VAR_POSITIONAL for parameter in parameters.values()):
+        return filter_new_items(items, seen_hashes, seen_signatures)
+    return filter_new_items(items, seen_hashes)
 
 
 def _runtime_telemetry_event(item: dict, *, stage: str, decision: str, reason_code: str, details=None, attempt=None) -> None:
@@ -388,11 +406,11 @@ def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_
     target = min(runtime_selection_cap, max_posts + int(policy.get("leader_protected_max", 2) or 2) + MAX_MIND_IDEAS_VOICES_PER_PERIOD)
     people_selected = [x for x in selected if x.get("people_lane")]
     non_people_selected = [x for x in selected if not x.get("people_lane")]
-    non_people_selected = filter_new_items(non_people_selected, seen_hashes, seen_signatures)
+    non_people_selected = _filter_new_items_with_history(non_people_selected, seen_hashes, seen_signatures)
     selected = people_selected + non_people_selected
     existing = {_publication_identity(x) for x in selected}
     pool = [x for x in editorial_pool if not x.get("people_lane") and not x.get("protected_content") and not x.get("protected_slot") and _publication_identity(x) not in existing]
-    pool = filter_new_items(pool, seen_hashes, seen_signatures)
+    pool = _filter_new_items_with_history(pool, seen_hashes, seen_signatures)
     while len(selected) < target and pool:
         extra = select_editorial_fn(pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
         if not extra:
@@ -926,7 +944,7 @@ def main(hooks=None):
         print(f"[People Signal] bootstrap_at={people_bootstrap_at} candidates_after_dedup={len(people_candidates)}")
     # Global seen/event dedup remains for the normal Radar lanes only. People
     # must reach its own per-person event clustering first.
-    new_items = filter_new_items(all_items, seen_hashes, seen_signatures)
+    new_items = _filter_new_items_with_history(all_items, seen_hashes, seen_signatures)
     people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
 
     normal_input_items = [x for x in new_items if people_identity(x) not in people_ids]

@@ -8,7 +8,7 @@ education_curriculum_expansion:
     - id: 115
       domain: "embodied AI"
       status: "established"
-      prerequisites: [53, 123]
+      prerequisites: [53]
       title: "Embodied Intelligence و Sensorimotor Learning"
       a: {term: "Embodied Intelligence", fa: "هوش تجسم‌یافته", seed: "هوشی که از تعامل ادراکی-حرکتی با محیط فیزیکی یا شبیه‌سازی‌شده شکل می‌گیرد."}
       b: {term: "Sensorimotor Learning", fa: "یادگیری حسی-حرکتی", seed: "یادگیری رابطه میان ادراک، حرکت و پیامد کنش از تجربه."}

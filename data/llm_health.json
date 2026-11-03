@@ -1,8 +1,8 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 10,
-      "disabled_until": 1793785339.154,
+      "failures": 11,
+      "disabled_until": 1793788642.607,
       "last_error": "auth",
       "last_success": 0
     },
@@ -12,29 +12,29 @@
       "last_error": "model",
       "last_success": 0
     },
+    "groq:openai/gpt-oss-120b": {
+      "failures": 1,
+      "disabled_until": 1793702539.154,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1793699793.804,
+      "disabled_until": 1793705842.607,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1793699793.804,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1793702539.154,
+      "disabled_until": 1793705842.607,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 10,
-      "disabled_until": 1793785339.154,
+      "failures": 11,
+      "disabled_until": 1793788642.607,
       "last_error": "auth"
     },
     "kiraai": {
@@ -43,12 +43,12 @@
       "last_error": "wallet"
     }
   },
-  "updated_at": 1793698939.1544073,
+  "updated_at": 1793702242.6068726,
   "version": 1,
   "telemetry": {
-    "observed_failures": 9,
-    "observed_events": 30,
-    "updated_at": 1793698939.1544073
+    "observed_failures": 26,
+    "observed_events": 42,
+    "updated_at": 1793702242.6068726
   },
   "observed_failures": 0,
   "observed_events": 0

@@ -35,7 +35,7 @@ def _deterministic_education_item(lesson: dict, verified_sources: list[dict]) ->
         "common_misconception": f"برداشت نادرست این است که {a['term']} و {b['term']} مترادف یا قابل جایگزینی‌اند؛ رابطه پایه درس نشان می‌دهد مرز دقیق آن‌ها باید حفظ شود.",
         "example": f"در یک سامانه مرتبط با «{lesson.get('title', '').strip() or a['term']}»، مفهوم {a['term']} می‌تواند بخش نخست مسئله را پوشش دهد و {b['term']} نقش مکمل آن را در اجرای سامانه ایفا کند؛ ترکیب این دو باید با هدف، محدودیت‌ها و شیوه ارزیابی سامانه سازگار باشد.",
         "takeaway": f"نکته کلیدی این درس این است که {a['term']} و {b['term']} دو مفهوم متمایزند اما در طراحی و اجرای سامانه‌های AI می‌توانند مکمل یکدیگر باشند؛ مرزبندی دقیق آن‌ها باعث می‌شود معماری، اجرا و ارزیابی با هم اشتباه نشوند.",
-        "education_module": lesson.get("domain", "هوش مصنوعی"),
+        "education_module": lesson.get("module_title", lesson.get("domain", "هوش مصنوعی")), "education_domain": lesson.get("domain", ""),
         "education_core_question": lesson.get("core_question", f"تفاوت {a['term']} و {b['term']} چیست؟"),
         "education_learning_outcome": lesson.get("learning_outcome", f"تعریف و تمایز {a['term']} و {b['term']} در یک مسئله واقعی."),
         "education_practice": lesson.get("practice", "یک مثال کاربردی بساز و محدودیت هر مفهوم را مشخص کن."),

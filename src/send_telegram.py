@@ -37,7 +37,7 @@ CONTENT_TYPE_LABELS = {
     "lecture": "🎤 سخنرانی",
 }
 VOICE_CONTENT_TYPES = frozenset({
-    "interview", "podcast", "talk", "lecture", "conversation",
+    "interview", "podcast", "talk", "lecture", "fireside", "conversation",
     "discussion", "q&a", "interviews_podcasts",
 })
 TITLE_ICON = "📡"

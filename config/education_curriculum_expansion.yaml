@@ -1,168 +1,215 @@
 education_curriculum_expansion:
   enabled: true
-  version: "2026.10"
-  reviewed_at: "2026-10-13"
+  version: "2026.11"
+  reviewed_at: "2026-11-03"
   policy:
-    rule: "Add new, non-repeating educational pairs as the existing curriculum is consumed. Prefer durable concepts that expand AI, agent, evaluation, infrastructure, multimodality, safety, and reliability coverage. Runtime freshness and authority gates remain mandatory."
+    rule: "Frontier lessons distinguish established evidence, active research, and philosophical hypotheses. No speculative claim may be presented as settled science."
   lessons:
     - id: 115
-      status: established
-      title: "Retrieval-Augmented Generation و Grounded Generation"
-      domain: "AI systems"
-      a: {term: "Retrieval-Augmented Generation (RAG)", fa: "تولید تقویت‌شده با بازیابی", seed: "الگویی که پیش از تولید پاسخ، اطلاعات مرتبط را از یک مجموعه منبع بازیابی می‌کند و آن اطلاعات را در اختیار مدل قرار می‌دهد تا پاسخ به شواهد بیرونی متصل شود."}
-      b: {term: "Grounded Generation", fa: "تولید متکی بر شواهد", seed: "تولید پاسخ با تکیه بر اطلاعات یا شواهدی که سامانه به‌صورت صریح در اختیار مدل قرار داده است و می‌توان مبنای پاسخ را نسبت به آن بررسی کرد."}
-      relation: "RAG یک معماری مشخص برای بازیابی و سپس تولید است؛ grounded generation مفهوم وسیع‌تری برای پیوند دادن خروجی مدل با شواهد در دسترس است."
+      domain: "embodied AI"
+      status: "established"
+      prerequisites: [53, 123]
+      title: "Embodied Intelligence و Sensorimotor Learning"
+      a: {term: "Embodied Intelligence", fa: "هوش تجسم‌یافته", seed: "هوشی که از تعامل ادراکی-حرکتی با محیط فیزیکی یا شبیه‌سازی‌شده شکل می‌گیرد."}
+      b: {term: "Sensorimotor Learning", fa: "یادگیری حسی-حرکتی", seed: "یادگیری رابطه میان ادراک، حرکت و پیامد کنش از تجربه."}
+      relation: "تعامل بدن‌مند بستر است؛ یادگیری حسی-حرکتی سازوکار کسب مهارت از چرخه ادراک و حرکت است."
+      core_question: "Embodied Intelligence و Sensorimotor Learning چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
-        - {name: "Microsoft Learn AI", url: "https://learn.microsoft.com/en-us/ai/", year: 2026}
+        - {name: "Michigan Robotics: Robot Learning & Foundational Models", url: "https://www.robotics.umich.edu/research/focus-areas/robot-learning-foundational-models/"}
+        - {name: "NSF: Foundational Research in Robotics", url: "https://www.nsf.gov/focus-areas/brain"}
     - id: 116
-      status: established
-      title: "AI Evaluation و Continuous Evaluation"
-      domain: "AI evaluation"
-      a: {term: "AI Evaluation", fa: "ارزیابی هوش مصنوعی", seed: "فرایند سنجش یک سامانه یا مدل با معیارها و آزمون‌های مشخص برای بررسی کیفیت، قابلیت اطمینان، ایمنی یا تناسب آن با هدف."}
-      b: {term: "Continuous Evaluation", fa: "ارزیابی پیوسته", seed: "اجرای ارزیابی به‌صورت تکرارشونده در طول چرخه توسعه و بهره‌برداری تا تغییرات مدل، داده یا محیط باعث افت نامشهود کیفیت نشوند."}
-      relation: "AI evaluation یک فعالیت کلی است؛ continuous evaluation همان فعالیت را به یک چرخه مستمر در طول عمر سامانه تبدیل می‌کند."
+      domain: "Reinforcement learning"
+      status: "established"
+      prerequisites: [34, 56]
+      title: "Reinforcement Learning from Verifiable Rewards (RLVR) و Outcome Supervision"
+      a: {term: "Reinforcement Learning from Verifiable Rewards (RLVR)", fa: "یادگیری تقویتی با پاداش قابل راستی‌آزمایی", seed: "روشی که در آن پاداش از معیار یا نتیجه‌ای قابل بررسی مانند پاسخ درست، آزمون موفق یا اثبات معتبر استخراج می‌شود."}
+      b: {term: "Outcome Supervision", fa: "نظارت بر نتیجه", seed: "آموزشی که کیفیت خروجی نهایی را هدف می‌گیرد، بدون الزام به ارزیابی همه مراحل استدلال."}
+      relation: "RLVR نوعی سیگنال پاداش مبتنی بر راستی‌آزمایی است؛ outcome supervision می‌تواند روش‌های آموزشی متفاوتی را شامل شود."
+      core_question: "Reinforcement Learning from Verifiable Rewards (RLVR) و Outcome Supervision چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
-        - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering", year: 2026}
+        - {name: "University of Bologna: Agentic AI Systems 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/543049"}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
     - id: 117
-      status: established
-      title: "AI Observability و AI Tracing"
-      domain: "AI reliability"
-      a: {term: "AI Observability", fa: "قابلیت مشاهده سامانه AI", seed: "توانایی فهم رفتار، خطا، کارایی و وضعیت یک سامانه AI از طریق سیگنال‌های ثبت‌شده در زمان اجرا."}
-      b: {term: "AI Tracing", fa: "ردگیری اجرای AI", seed: "ثبت مسیر گام‌به‌گام اجرای درخواست، فراخوانی ابزار، مدل، زمان‌بندی و نتیجه‌ها برای بررسی و اشکال‌زدایی رفتار سامانه."}
-      relation: "Observability دامنه وسیع‌تری از مشاهده وضعیت سامانه است؛ tracing یکی از ابزارهای کلیدی برای مشاهده مسیر دقیق اجرای یک درخواست است."
+      domain: "Robotics and world models"
+      status: "established"
+      prerequisites: [30, 53]
+      title: "Action-Conditioned World Model و Digital Twin"
+      a: {term: "Action-Conditioned World Model", fa: "مدل جهان شرطی‌شده بر کنش", seed: "مدلی که وضعیت آینده محیط را با توجه به وضعیت فعلی و کنش انتخاب‌شده پیش‌بینی می‌کند."}
+      b: {term: "Digital Twin", fa: "همزاد دیجیتال", seed: "بازنمایی دیجیتالی یک دارایی یا فرایند واقعی که می‌تواند با داده عملیاتی به‌روزرسانی شود."}
+      relation: "مدل جهان بر پیش‌بینی پیامد کنش تمرکز دارد؛ digital twin بازنمایی دیجیتال یک نمونه یا فرایند واقعی را دنبال می‌کند."
+      core_question: "Action-Conditioned World Model و Digital Twin چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
-        - {name: "OpenAI Platform Documentation", url: "https://platform.openai.com/docs/", year: 2026}
+        - {name: "Michigan Robotics: Robot Learning & Foundational Models", url: "https://www.robotics.umich.edu/research/focus-areas/robot-learning-foundational-models/"}
+        - {name: "UK AI for Science Strategy", url: "https://www.gov.uk/government/publications/ai-for-science-strategy/ai-for-science-strategy"}
     - id: 118
-      status: emerging
-      title: "Model Routing و Model Cascading"
-      domain: "AI infrastructure"
-      a: {term: "Model Routing", fa: "مسیریابی مدل", seed: "انتخاب یک مدل مناسب برای هر درخواست بر پایه ویژگی‌های کار، هزینه، کیفیت، ظرفیت یا محدودیت‌های عملیاتی."}
-      b: {term: "Model Cascading", fa: "زنجیره‌سازی مدل‌ها", seed: "فرایندی که در آن یک سامانه می‌تواند از یک مدل اولیه استفاده کند و در صورت نامناسب بودن نتیجه یا برآورده نشدن شرایط، به مدل دیگری منتقل شود."}
-      relation: "Routing بیشتر بر انتخاب مدل برای یک درخواست تمرکز دارد؛ cascading توالی تصمیم و انتقال بین مدل‌ها را نیز در بر می‌گیرد."
+      domain: "Robotics and foundation models"
+      status: "established"
+      prerequisites: [40, 53]
+      title: "Vision-Language-Action Model (VLA) و Diffusion Policy"
+      a: {term: "Vision-Language-Action Model (VLA)", fa: "مدل بینایی-زبان-کنش", seed: "مدلی که ورودی دیداری و دستور زبانی را به نمایش یا دنباله کنش رباتیک نگاشت می‌کند."}
+      b: {term: "Diffusion Policy", fa: "سیاست انتشار", seed: "سیاستی که دنباله کنش یا مسیر حرکتی را با فرایند تولیدی مبتنی بر diffusion می‌سازد."}
+      relation: "VLA ورودی‌های دیداری و زبانی را به کنش مرتبط می‌کند؛ diffusion policy روش تولید توالی کنش است و می‌تواند در رباتیک به‌کار رود."
+      core_question: "Vision-Language-Action Model (VLA) و Diffusion Policy چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
-        - {name: "OpenAI Platform Documentation", url: "https://platform.openai.com/docs/", year: 2026}
+        - {name: "Michigan Robotics: Robot Learning & Foundational Models", url: "https://www.robotics.umich.edu/research/focus-areas/robot-learning-foundational-models/"}
+        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_5_science.pdf"}
     - id: 119
-      status: established
-      title: "Structured Output و Schema-Constrained Generation"
-      domain: "LLM systems"
-      a: {term: "Structured Output", fa: "خروجی ساختاریافته", seed: "تولید پاسخ در یک ساختار قابل پیش‌بینی مانند مجموعه‌ای از فیلدها یا قالب داده‌ای که برنامه بتواند آن را مستقیماً پردازش کند."}
-      b: {term: "Schema-Constrained Generation", fa: "تولید مقید به شِمای داده", seed: "هدایت تولید مدل با یک schema مشخص تا پاسخ از نظر ساختار داده با قرارداد مورد انتظار سامانه سازگار بماند."}
-      relation: "Structured output نتیجه قابل پردازش را توصیف می‌کند؛ schema-constrained generation یکی از روش‌های کنترل تولید برای رسیدن به آن نتیجه است."
+      domain: "AI for science"
+      status: "established"
+      prerequisites: [49, 54]
+      title: "Scientific Foundation Model و Scientific Simulator"
+      a: {term: "Scientific Foundation Model", fa: "مدل پایه علمی", seed: "مدلی پیش‌آموزش‌یافته روی داده یا ساختارهای یک یا چند حوزه علمی برای انتقال به وظایف پژوهشی."}
+      b: {term: "Scientific Simulator", fa: "شبیه‌ساز علمی", seed: "مدلی محاسباتی که رفتار یک سامانه طبیعی یا آزمایش را طبق قوانین یا تقریب‌های علمی شبیه‌سازی می‌کند."}
+      relation: "مدل پایه علمی از داده علمی بازنمایی عمومی می‌آموزد؛ شبیه‌ساز علمی رفتار سیستم را تحت فرض‌های مدل محاسبه می‌کند."
+      core_question: "Scientific Foundation Model و Scientific Simulator چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "OpenAI Platform Documentation", url: "https://platform.openai.com/docs/", year: 2026}
-        - {name: "Google AI Developers", url: "https://ai.google.dev/", year: 2026}
+        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_5_science.pdf"}
+        - {name: "European AI in Science Strategy", url: "https://research-and-innovation.ec.europa.eu/strategy/strategy-research-and-innovation/our-digital-future/european-ai-science-strategy_en"}
     - id: 120
-      status: established
-      title: "Multimodal AI و Multimodal Agent"
-      domain: "multimodal AI"
-      a: {term: "Multimodal AI", fa: "هوش مصنوعی چندوجهی", seed: "سامانه‌ای که می‌تواند بیش از یک نوع داده مانند متن، تصویر، صدا یا ویدئو را دریافت، پردازش یا تولید کند."}
-      b: {term: "Multimodal Agent", fa: "عامل چندوجهی", seed: "عامل AI که در چرخه تصمیم و اقدام خود از ورودی یا خروجی‌های چندوجهی استفاده می‌کند و آن‌ها را با ابزارها و برنامه‌ریزی عامل ترکیب می‌کند."}
-      relation: "Multimodal AI یک قابلیت یا معماری پردازشی را توصیف می‌کند؛ multimodal agent این قابلیت را در یک چرخه عامل‌محور به کار می‌گیرد."
+      domain: "Protein AI"
+      status: "established"
+      prerequisites: [49, 119]
+      title: "Protein Structure Prediction و Protein Function Prediction"
+      a: {term: "Protein Structure Prediction", fa: "پیش‌بینی ساختار پروتئین", seed: "برآورد ساختار سه‌بعدی پروتئین از توالی اسیدهای آمینه و شواهد مکمل."}
+      b: {term: "Protein Function Prediction", fa: "پیش‌بینی عملکرد پروتئین", seed: "استنباط نقش زیستی یا فعالیت احتمالی پروتئین از توالی، ساختار، زمینه و داده‌های آزمایشگاهی."}
+      relation: "ساختار فضایی یکی از عوامل عملکرد است اما پیش‌بینی ساختار به‌تنهایی عملکرد زیستی را اثبات نمی‌کند."
+      core_question: "Protein Structure Prediction و Protein Function Prediction چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Google AI Developers", url: "https://ai.google.dev/", year: 2026}
-        - {name: "Microsoft Learn AI", url: "https://learn.microsoft.com/en-us/ai/", year: 2026}
+        - {name: "DFG: AI for Protein Function 2025", url: "https://www.dfg.de/de/aktuelles/neuigkeiten-themen/info-wissenschaft/2025/ifw-25-82"}
+        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_5_science.pdf"}
     - id: 121
-      status: established
-      title: "AI Safety Evaluation و Red Teaming"
-      domain: "AI safety"
-      a: {term: "AI Safety Evaluation", fa: "ارزیابی ایمنی AI", seed: "آزمون نظام‌مند رفتار یک سامانه هوش مصنوعی برای شناسایی ریسک‌ها، شکست‌ها و شرایطی که می‌توانند باعث پیامد نامطلوب شوند."}
-      b: {term: "Red Teaming", fa: "آزمون مهاجمانه", seed: "تلاش برنامه‌ریزی‌شده برای پیدا کردن راه‌های سوءاستفاده، شکست یا دور زدن کنترل‌های سامانه با قرار دادن آن در سناریوهای چالش‌برانگیز."}
-      relation: "Safety evaluation حوزه وسیع سنجش ریسک است؛ red teaming یک روش فعال و مهاجمانه برای آشکار کردن شکست‌های احتمالی است."
+      domain: "Genomics AI"
+      status: "established"
+      prerequisites: [49, 119]
+      title: "Genomic Foundation Model و Regulatory Genomics"
+      a: {term: "Genomic Foundation Model", fa: "مدل پایه ژنومی", seed: "مدلی آموزش‌دیده روی توالی‌های ژنومی برای یادگیری الگوهای توالی و انتقال به وظایف زیستی."}
+      b: {term: "Regulatory Genomics", fa: "ژنومیک تنظیمی", seed: "مطالعه عناصر و سازوکارهایی که بر زمان، مکان و میزان بیان ژن اثر می‌گذارند."}
+      relation: "مدل پایه ژنومی نمایش توالی را می‌آموزد؛ ژنومیک تنظیمی پرسش زیستی درباره کنترل بیان ژن را بررسی می‌کند."
+      core_question: "Genomic Foundation Model و Regulatory Genomics چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
-        - {name: "Anthropic Engineering", url: "https://www.anthropic.com/engineering", year: 2026}
+        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_5_science.pdf"}
+        - {name: "UCL Biosciences AI and Machine Learning", url: "https://www.ucl.ac.uk/life-sciences/biosciences/ai-and-machine-learning"}
     - id: 122
-      status: established
-      title: "AI Governance و AI Assurance"
-      domain: "AI governance"
-      a: {term: "AI Governance", fa: "حاکمیت هوش مصنوعی", seed: "مجموعه سیاست‌ها، نقش‌ها، تصمیم‌ها و سازوکارهای نظارتی برای هدایت توسعه و استفاده مسئولانه از سامانه‌های AI."}
-      b: {term: "AI Assurance", fa: "تضمین AI", seed: "فرایندهای جمع‌آوری شواهد و بررسی‌های نظام‌مند برای اطمینان از اینکه یک سامانه AI با الزامات، کنترل‌ها و معیارهای تعریف‌شده سازگار است."}
-      relation: "Governance چارچوب تصمیم‌گیری و مسئولیت را مشخص می‌کند؛ assurance شواهد و ارزیابی لازم برای اعتماد به اجرای آن چارچوب را فراهم می‌کند."
+      domain: "AI for materials"
+      status: "established"
+      prerequisites: [119]
+      title: "Materials Discovery و Molecular Dynamics"
+      a: {term: "Materials Discovery", fa: "کشف مواد", seed: "شناسایی یا طراحی مواد با ویژگی‌های مطلوب با ترکیب داده، مدل‌سازی و آزمایش."}
+      b: {term: "Molecular Dynamics", fa: "دینامیک مولکولی", seed: "شبیه‌سازی تحول زمانی اتم‌ها و مولکول‌ها بر پایه نیروها و قوانین حرکت."}
+      relation: "AI می‌تواند فضای مواد را جست‌وجو کند؛ دینامیک مولکولی رفتار اتمی را تحت مدل فیزیکی شبیه‌سازی می‌کند."
+      core_question: "Materials Discovery و Molecular Dynamics چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NIST AI Resource Center", url: "https://airc.nist.gov/", year: 2026}
-        - {name: "Microsoft Learn AI", url: "https://learn.microsoft.com/en-us/ai/", year: 2026}
-
+        - {name: "UK AI for Science Strategy", url: "https://www.gov.uk/government/publications/ai-for-science-strategy/ai-for-science-strategy"}
+        - {name: "European AI in Science Strategy", url: "https://research-and-innovation.ec.europa.eu/strategy/strategy-research-and-innovation/our-digital-future/european-ai-science-strategy_en"}
     - id: 123
-      status: established
-      title: "Agent Evaluation Task و Trial"
-      domain: "AI evaluation"
-      a: {term: "Agent Evaluation Task", fa: "وظیفه آزمون عامل", seed: "تعریف یک مسئله آزمون با ورودی مشخص، محیط و معیارهای صریح برای موفقیت یا شکست عامل."}
-      b: {term: "Trial", fa: "نوبت اجرای آزمون", seed: "یک بار اجرای وظیفه آزمون؛ چون رفتار عامل و مدل می‌تواند بین اجراها تغییر کند، یک Task ممکن است به چند Trial نیاز داشته باشد."}
-      relation: "Task مسئله و معیار موفقیت را تعریف می‌کند؛ Trial یک اجرای مشخص از آن آزمون است. تفکیک این دو برای مقایسه منصفانه، تحلیل نوسان عملکرد و بازتولید خطا ضروری است."
+      domain: "Quantum AI"
+      status: "established"
+      prerequisites: [26, 27]
+      title: "Quantum Machine Learning و Quantum-Inspired Machine Learning"
+      a: {term: "Quantum Machine Learning", fa: "یادگیری ماشین کوانتومی", seed: "روش‌های پژوهشی برای ترکیب مدل‌های یادگیری با مدارها یا منابع محاسبات کوانتومی."}
+      b: {term: "Quantum-Inspired Machine Learning", fa: "یادگیری ماشین الهام‌گرفته از کوانتوم", seed: "الگوریتم‌های کلاسیکی که از ایده‌ها یا ساختارهای ریاضی کوانتومی الهام می‌گیرند، بدون اجرای محاسبه کوانتومی."}
+      relation: "QML به منابع کوانتومی نیاز دارد؛ quantum-inspired ممکن است کاملاً روی سخت‌افزار کلاسیک اجرا شود و ادعای برتری هر دو نیازمند baseline منصفانه است."
+      core_question: "Quantum Machine Learning و Quantum-Inspired Machine Learning چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Anthropic: Demystifying evals for AI agents", url: "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents", year: 2026}
-        - {name: "OpenAI: Evaluate agent workflows", url: "https://platform.openai.com/docs/guides/agent-evals", year: 2026}
+        - {name: "IBM Quantum Learning", url: "https://learning.quantum.ibm.com/"}
+        - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/quantum-information-science"}
     - id: 124
-      status: established
-      title: "Computer Use Agent و Action Handler"
-      domain: "AI agents"
-      a: {term: "Computer Use Agent", fa: "عامل کار با رابط رایانه", seed: "عاملی که وضعیت رابط کاربری را از تصویر یا سیگنال‌های محیط دریافت می‌کند و برای پیشبرد وظیفه، اقدام‌هایی مانند کلیک، تایپ یا پیمایش پیشنهاد می‌دهد."}
-      b: {term: "Action Handler", fa: "اجراکننده اقدام", seed: "بخش برنامه که اقدام پیشنهادی مدل را دریافت می‌کند، اعتبار آن را بررسی می‌کند، در محیط اجرا می‌کند و وضعیت تازه را برای گام بعدی برمی‌گرداند."}
-      relation: "پیشنهاد مدل به‌خودی‌خود اجرای امن نیست؛ Action Handler مرز میان خروجی مدل و اثر واقعی روی مرورگر یا دسکتاپ است و باید مجوز، محدوده اقدام و نتیجه اجرا را کنترل کند."
+      domain: "Neurotechnology"
+      status: "established"
+      prerequisites: [50, 53]
+      title: "Brain-Computer Interface و Closed-Loop Neural Decoding"
+      a: {term: "Brain-Computer Interface", fa: "رابط مغز-رایانه", seed: "سامانه‌ای برای تبدیل سیگنال‌های عصبی به اطلاعات یا فرمان قابل استفاده در دستگاه بیرونی."}
+      b: {term: "Closed-Loop Neural Decoding", fa: "رمزگشایی عصبی حلقه‌بسته", seed: "رمزگشایی سیگنال عصبی همراه با بازخورد و مداخله پیوسته که خروجی سامانه بر وضعیت بعدی اثر می‌گذارد."}
+      relation: "BCI سامانه ارتباطی انتهابه‌انتهاست؛ closed-loop decoding چرخه رمزگشایی و بازخورد را مشخص می‌کند."
+      core_question: "Brain-Computer Interface و Closed-Loop Neural Decoding چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "OpenAI: Computer use", url: "https://platform.openai.com/docs/guides/tools-computer-use", year: 2026}
-        - {name: "Google AI: Computer Use", url: "https://ai.google.dev/gemini-api/docs/computer-use", year: 2026}
+        - {name: "NSF Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
+        - {name: "NIH BRAIN Initiative", url: "https://www.nih.gov/brain"}
     - id: 125
-      status: established
-      title: "Realtime Voice Agent و Turn Detection"
-      domain: "Multimodal AI"
-      a: {term: "Realtime Voice Agent", fa: "عامل صوتی بلادرنگ", seed: "عاملی که ورودی و خروجی صوتی را در یک نشست پیوسته و با تأخیر کم پردازش می‌کند و می‌تواند گفت‌وگو را با ابزار یا تصمیم‌گیری ترکیب کند."}
-      b: {term: "Turn Detection", fa: "تشخیص پایان نوبت گفتار", seed: "سازوکاری برای برآورد اینکه کاربر مکث کرده، صحبتش تمام شده یا هنوز در حال بیان درخواست است؛ این تصمیم زمان پاسخ‌گویی عامل را کنترل می‌کند."}
-      relation: "Realtime به معماری ارتباط کم‌تأخیر اشاره دارد؛ Turn Detection مرز نوبت‌های مکالمه را تعیین می‌کند. تشخیص زودهنگام یا دیرهنگام نوبت می‌تواند باعث قطع حرف کاربر یا افزایش زمان پاسخ شود."
+      domain: "Cognitive science"
+      status: "established"
+      prerequisites: [5, 25]
+      title: "Cognitive Architecture و Neural Network"
+      a: {term: "Cognitive Architecture", fa: "معماری شناختی", seed: "مدلی نظری-محاسباتی از اجزای شناخت مانند حافظه، توجه، یادگیری و تصمیم‌گیری و تعامل آن‌ها."}
+      b: {term: "Neural Network", fa: "شبکه عصبی", seed: "مدلی محاسباتی از واحدهای به‌هم‌پیوسته با پارامترهای قابل‌آموزش که الگوها را از داده می‌آموزد."}
+      relation: "معماری شناختی معمولاً نظریه‌ای درباره سازمان کارکردهای ذهن است؛ شبکه عصبی خانواده‌ای از مدل‌های محاسباتی است و لزوماً نظریه کامل شناخت نیست."
+      core_question: "Cognitive Architecture و Neural Network چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "OpenAI: Realtime API", url: "https://platform.openai.com/docs/guides/realtime", year: 2026}
-        - {name: "Google AI: Gemini Live API", url: "https://ai.google.dev/gemini-api/docs/live", year: 2026}
+        - {name: "NSF Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
+        - {name: "University of Ulm Cognitive Systems Modeling", url: "https://www.uni-ulm.de/in/neuroinformatik/lehre/lehre/winter-sem-25-26/"}
     - id: 126
-      status: established
-      title: "MCP Authorization و Tool-Level Approval"
-      domain: "AI security"
-      a: {term: "MCP Authorization", fa: "مجوزدهی در پروتکل MCP", seed: "سازوکار احراز و واگذاری دسترسی میان MCP client و سرور، با رعایت دامنه مجوزها و الزامات پروتکل."}
-      b: {term: "Tool-Level Approval", fa: "تأیید در سطح ابزار", seed: "سیاست برنامه برای تعیین اینکه کدام فراخوانی ابزار، به‌ویژه اقدام دارای اثر بیرونی، مجاز است یا پیش از اجرا به تأیید انسان نیاز دارد."}
-      relation: "مجوزدهی پروتکلی هویت و دسترسی پایه را مشخص می‌کند؛ تأیید در سطح ابزار کنترل دقیق‌تری روی عملیات، داده و پیامد آن دارد. داشتن توکن معتبر به‌تنهایی مجوز اجرای هر اقدام را ایجاد نمی‌کند."
+      domain: "Consciousness research"
+      status: "established"
+      prerequisites: [125]
+      title: "Consciousness Theory و Functionalism"
+      a: {term: "Consciousness Theory", fa: "نظریه آگاهی", seed: "چارچوبی نظری برای توضیح ویژگی‌ها و سازوکارهای تجربه آگاهانه که باید از ادعاهای تجربی و فلسفی تفکیک شود."}
+      b: {term: "Functionalism", fa: "کارکردگرایی", seed: "دیدگاهی فلسفی که حالت‌های ذهنی را بر اساس نقش علّی و کارکردی آن‌ها در سامانه تعریف می‌کند."}
+      relation: "نظریه‌های آگاهی درباره تبیین تجربه ذهنی‌اند؛ کارکردگرایی نظریه‌ای درباره ماهیت حالت‌های ذهنی است و به‌تنهایی آگاهی ماشین را اثبات نمی‌کند."
+      core_question: "Consciousness Theory و Functionalism چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Model Context Protocol: Authorization", url: "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization", year: 2025}
-        - {name: "NIST: AI Agent Standards Initiative", url: "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative", year: 2026}
+        - {name: "Stanford Encyclopedia of Philosophy: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/"}
+        - {name: "NSF Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
     - id: 127
-      status: established
-      title: "Agent Handoff و Multi-Agent Orchestration"
-      domain: "AI agents"
-      a: {term: "Agent Handoff", fa: "واگذاری کار بین عامل‌ها", seed: "انتقال کنترل یا ادامه یک کار از یک عامل به عامل دیگر، معمولاً همراه با زمینه، هدف و مسئولیت مرحله بعد."}
-      b: {term: "Multi-Agent Orchestration", fa: "هماهنگ‌سازی چندعامل", seed: "طراحی جریان کلی کار بین چند عامل؛ از جمله انتخاب مسئول، ترتیب اجرا، تقسیم وظیفه، تجمیع نتیجه و مدیریت شکست."}
-      relation: "Handoff یک رویداد مشخص انتقال کنترل است؛ Orchestration منطق جامع هماهنگی کل جریان را تعیین می‌کند. تعداد بیشتر عامل‌ها بدون تقسیم مسئولیت روشن لزوماً کیفیت را بهتر نمی‌کند."
+      domain: "Metacognition in AI"
+      status: "established"
+      prerequisites: [62, 125]
+      title: "Metacognition و Uncertainty Estimation"
+      a: {term: "Metacognition", fa: "فراشناخت", seed: "پایش و ارزیابی فرایندهای شناختی خود، مانند دانستن، ندانستن یا راهبرد حل مسئله."}
+      b: {term: "Uncertainty Estimation", fa: "برآورد عدم‌قطعیت", seed: "تخمین میزان ابهام یا ناآگاهی مدل درباره پیش‌بینی یا خروجی خود."}
+      relation: "فراشناخت مفهوم شناختی گسترده‌تری است؛ برآورد عدم‌قطعیت یک قابلیت آماری یا محاسباتی است و معادل فراشناخت انسانی نیست."
+      core_question: "Metacognition و Uncertainty Estimation چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "OpenAI: Agents guide", url: "https://platform.openai.com/docs/guides/agents", year: 2026}
-        - {name: "Anthropic: Building Effective AI Agents", url: "https://www.anthropic.com/research/building-effective-agents", year: 2026}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "NSF Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
     - id: 128
-      status: established
-      title: "Schema Conformance و Semantic Validation"
-      domain: "LLM systems"
-      a: {term: "Schema Conformance", fa: "انطباق با شِمای داده", seed: "درستی شکل پاسخ نسبت به قرارداد داده؛ مانند وجود فیلدهای لازم، نوع داده و قالب قابل پردازش."}
-      b: {term: "Semantic Validation", fa: "اعتبارسنجی معنایی", seed: "بررسی اینکه محتوای پاسخ از نظر معنا، شواهد، قیود کسب‌وکار و نتیجه مورد انتظار واقعاً درست است."}
-      relation: "پاسخ می‌تواند از نظر JSON و شِما کاملاً معتبر اما از نظر محتوا نادرست باشد. سامانه قابل‌اعتماد باید کنترل ساختار را از بررسی معنا و پشتوانه ادعا جدا کند."
+      domain: "AI alignment"
+      status: "established"
+      prerequisites: [23, 51, 90]
+      title: "AI Alignment و Control Problem"
+      a: {term: "AI Alignment", fa: "هم‌راستاسازی هوش مصنوعی", seed: "پژوهش و روش‌هایی برای سازگارکردن اهداف، رفتار و پیامدهای سامانه AI با ارزش‌ها و محدودیت‌های انسانی."}
+      b: {term: "Control Problem", fa: "مسئله کنترل‌پذیری", seed: "مسئله حفظ توان هدایت، محدودسازی و توقف سامانه‌های قدرتمند در شرایطی که رفتارشان پیچیده یا خودمختار است."}
+      relation: "alignment درباره سازگاری رفتار با اهداف و ارزش‌هاست؛ control problem بر امکان کنترل و مداخله مؤثر تمرکز دارد."
+      core_question: "AI Alignment و Control Problem چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "OpenAI: Structured model outputs", url: "https://platform.openai.com/docs/guides/structured-outputs", year: 2026}
-        - {name: "Google AI: Structured outputs", url: "https://ai.google.dev/gemini-api/docs/structured-output", year: 2026}
+        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+        - {name: "University of Bologna Agentic AI Systems 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/543049"}
     - id: 129
-      status: established
-      title: "Indirect Prompt Injection و Tool Output Isolation"
-      domain: "AI security"
-      a: {term: "Indirect Prompt Injection", fa: "تزریق غیرمستقیم دستور", seed: "حالتی که دستورهای خصمانه در محتوای بازیابی‌شده، صفحه وب، فایل یا خروجی ابزار پنهان می‌شوند و تلاش می‌کنند رفتار عامل را منحرف کنند."}
-      b: {term: "Tool Output Isolation", fa: "جداسازی خروجی ابزار", seed: "طراحی جریان اجرا به‌گونه‌ای که محتوای برگشتی ابزار به‌عنوان داده غیرقابل‌اعتماد تلقی شود، نه دستور معتبر برای تغییر سیاست یا فراخوانی ابزارهای بعدی."}
-      relation: "تزریق غیرمستقیم یک تهدید ناشی از اعتماد نابجا به داده بیرونی است؛ جداسازی خروجی ابزار، محدودسازی اختیار و کنترل اقدام‌های حساس، احتمال تبدیل آن داده به عمل ناخواسته را کاهش می‌دهد."
+      domain: "General intelligence"
+      status: "established"
+      prerequisites: [19, 91, 96]
+      title: "AGI Benchmark و General Intelligence"
+      a: {term: "AGI Benchmark", fa: "معیار ارزیابی هوش عمومی مصنوعی", seed: "آزمونی برای سنجش دامنه و انتقال توانایی‌ها در مجموعه‌ای از وظایف، با محدودیت‌های اعتبار و پوشش."}
+      b: {term: "General Intelligence", fa: "هوش عمومی", seed: "توانایی یادگیری و به‌کارگیری دانش در طیف گسترده‌ای از مسائل و زمینه‌ها؛ تعریف عملیاتی آن محل بحث است."}
+      relation: "عملکرد روی یک benchmark به‌تنهایی وجود هوش عمومی را اثبات نمی‌کند؛ تعریف و اعتبار سازه باید روشن باشد."
+      core_question: "AGI Benchmark و General Intelligence چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "OpenAI: Safety best practices", url: "https://platform.openai.com/docs/guides/safety-best-practices", year: 2026}
-        - {name: "NIST: AI Agent Standards Initiative", url: "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative", year: 2026}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "University of Bologna Agentic AI Systems 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/543049"}
     - id: 130
-      status: established
-      title: "Agent Sandbox و Least-Privilege Execution"
-      domain: "AI infrastructure"
-      a: {term: "Agent Sandbox", fa: "محیط ایزوله عامل", seed: "محیط اجرای محدودشده‌ای که دسترسی عامل به فایل‌ها، شبکه، پردازش و میزبان را از محیط اصلی جدا می‌کند تا اثر خطا یا اقدام مخرب محدود بماند."}
-      b: {term: "Least-Privilege Execution", fa: "اجرای با حداقل دسترسی", seed: "اعطای فقط همان مجوزها، ابزارها و منابعی که یک وظیفه مشخص به آن‌ها نیاز دارد و حذف دسترسی‌های غیرضروری."}
-      relation: "Sandbox مرز محیط اجرا را محدود می‌کند؛ Least Privilege دامنه اختیار عامل را. این دو مکمل‌اند و هیچ‌کدام به‌تنهایی جای کنترل خروجی ابزار، ثبت رویداد و تأیید اقدام حساس را نمی‌گیرند."
+      domain: "Futures studies"
+      status: "established"
+      prerequisites: [1, 23, 51]
+      title: "Scenario Planning و Technology Forecasting"
+      a: {term: "Scenario Planning", fa: "برنامه‌ریزی سناریو", seed: "ساخت چند آینده محتمل و سازگار برای بررسی تصمیم‌ها تحت عدم‌قطعیت عمیق."}
+      b: {term: "Technology Forecasting", fa: "پیش‌بینی فناوری", seed: "روش‌های برآورد مسیر، زمان‌بندی و پیامد تحول فناوری با اتکا به شواهد و فرض‌های آشکار."}
+      relation: "سناریو یک آینده قطعی را پیش‌بینی نمی‌کند؛ forecasting ادعای برآورد روند یا پیامد دارد و باید با عدم‌قطعیت همراه باشد."
+      core_question: "Scenario Planning و Technology Forecasting چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
+      practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "OpenAI: Agents guide and sandbox agents", url: "https://platform.openai.com/docs/guides/agents", year: 2026}
-        - {name: "NIST: AI Agent Standards Initiative", url: "https://www.nist.gov/artificial-intelligence/ai-agent-standards-initiative", year: 2026}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "OECD AI Principles", url: "https://oecd.ai/en/ai-principles"}

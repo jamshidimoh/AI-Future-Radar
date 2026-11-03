@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793689144,
+  "updated_at": 1793696124,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -21823,6 +21823,46 @@
       "why_it_matters": "فرار از هوش مصنوعی غیرممکن است و این فناوری در زندگی روزمره نفوذ کرده است. با یادگیری نحوه استفاده از AI، میتوانیم از مزایای آن بهرهمند شویم و به چالشهای آن پاسخ دهیم. این امر می‌تواند به بهبود کارایی، افزایش بهرهوری و بهبود کیفیت زندگی کمک کند.",
       "link": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNZ1cxSFIwZVhEXzdBMnR0dWdGdEtIVThlYWZiWGNjNGg0Q3NBci1heVlxdmhpcXQ4S1puNHB6bml4VkRUNWtVdkR0UlJ6azV0bWNFR1FrMzlUZ0JJdzBQN0RqTURxUEtzMk9TeFhMcEFXQTltX1ZjMnRBNG5WR3FkNURkRDc3TkMyTFhLbjZWMzVFZlBjcXlhSV9QX3M?oc=5",
       "posted_at": 1793689144
+    },
+    "-1004482051328:2267": {
+      "chat_id": -1004482051328,
+      "message_id": 2267,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Tech Buzz)",
+      "content_type": "research",
+      "category": "mind",
+      "leader": "",
+      "watch_person": "",
+      "title": "مشکلات فنی پروژه BCI نیورالینک و تعویق برنامه تجاری‌سازی",
+      "summary": "مقالهٔ The Tech Buzz گزارش می‌دهد که پروژهٔ رابط مغز‑کامپیوتر (BCI) نیورالینک با موانع فنی مواجه شده و برنامهٔ تجاری‌سازی آن به تعویق افتاده است. این تأخیر نشان می‌دهد که پیشرفت فناوری‌های مشابه هنوز با چالش‌های مهندسی و ایمنی روبه‌روست.",
+      "why_it_matters": "تاخیرهای فنی در نیورالینک می‌تواند مسیر سرمایه‌گذاری و پژوهش در حوزهٔ رابط‌های مغز‑کامپیوتر را تحت تأثیر قرار دهد. تصمیم‌گیرندگان باید بر پایهٔ واقعیت‌های فنی موجود، برنامه‌ریزی منابع و تنظیم مقررات را بازنگری کنند. این موضوع برای پژوهشگران، سرمایه‌گذاران و سیاست‌گذاران مرتبط با فناوری‌های نوین اهمیت دارد.",
+      "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOSXViemE5aWVIVzM4VGppd3ZFM1ZNeFE4bWRReXZ2N3JvMWs5UDZMVUNDc3FXZWFLdUZENWktOUJrMmdOSTJRcHliVUJ5LWc0czNzUWQxaFFUQVVTM0IxdUowZ0ZyakJzdVFJWkxVOHREbm9oM3diSlM3aXRIR2dXQ0JaSURMYm1EOHRFd1NWZU5JSDA0eE1RQmdB?oc=5",
+      "posted_at": 1793696113
+    },
+    "-1004482051328:2268": {
+      "chat_id": -1004482051328,
+      "message_id": 2268,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (finance.biggo.com)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن درباره پروژه آسترا و آینده OpenAI صحبت کرد",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در مصاحبه با Sources Podcast گفت که پروژه آسترا یک مدل زبان بزرگ است که در حال توسعه برای رسیدن به هوش مصنوعی عمومی (AGI) میباشد. او اشاره کرد که آسترا با معماری جدید و پارامترهای بیش از ۱ ترلیون، هدف دارد تا درک و تعامل انسانی را به سطحی نزدیکتر به AGI برساند. همچنین گفت که OpenAI در حال کار بر روی چندین پروژه دیگر است که به همین هدف مشترک میانجامد.",
+      "why_it_matters": "پیشرفت آسترا بهعنوان یک مدل زبان با پارامترهای ۱ ترلیون، امکان آزمایش و بهبود سریعتر الگوریتمهای AGI را فراهم می‌کند. با این پیشرفت، شرکتها می‌توانند بهسرعت از قابلیت‌های پیشرفتهتر در پردازش زبان طبیعی بهرهمند شوند. در نهایت، گسترش دسترسی به مدل‌های نزدیک به AGI می‌تواند استانداردهای اخلاقی و ایمنی در حوزه هوش مصنوعی را بهروزرسانی کند.",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE04QktoLXhhZ1hqS0hHWTdXY3dOcFFOODUtTkY4N1lsTWhJMkZqd0RzcjBidGJvRUJSVUNfR05DMU05RjFmMlVmWjU5c3VzOHBBYl9WOFVjV2hXcU04Ullr?oc=5",
+      "posted_at": 1793696124
     }
   }
 }

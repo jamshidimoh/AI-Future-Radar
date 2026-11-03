@@ -12,6 +12,8 @@ Every publication must answer three different questions:
 2. **What does the evidence say?** Preserve the method, model/version, benchmark, data, date, scale, availability status and stated limitations when present.
 3. **Why does it matter?** Explain a concrete consequence or mechanism; do not paraphrase the summary.
 
+The two-block layout is conditional, not mandatory. Keep “خلاصه” and “چرا مهم است؟” separate only when the second block adds a distinct consequence, mechanism, risk, limitation or strategic implication. When they substantially restate the same information, merge them into one concise “نکته اصلی” block; retain any genuinely new consequence sentence and remove only repeated material. Never invent an impact merely to fill the second block, and do not collapse a genuinely independent analysis into the summary.
+
 The headline should be concise, factual and specific. Avoid clickbait, empty superlatives and vague announcements. A product launch, research result, security incident, executive opinion and analytical forecast need different framing.
 
 ## Persian translation and terminology

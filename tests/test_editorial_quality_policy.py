@@ -2,6 +2,7 @@ from src.editorial_quality_policy import (
     BODY_PERSIAN_RATIO_MIN,
     NORMAL_SCORE_FLOOR,
     TITLE_PERSIAN_RATIO_MIN,
+    editorial_sections_redundant,
     length_ok,
     news_language_ok,
     normal_score_allowed,
@@ -95,3 +96,16 @@ def test_naturalness_diagnostics_identify_joined_verbs_without_weakening_gate():
     issues = persian_editorial_naturalness_issues(title, summary, why)
     assert any(issue.startswith("joined_verb_without_zwnj:") for issue in issues)
     assert not persian_editorial_naturalness_ok(title, summary, why)
+
+
+
+def test_redundant_summary_and_why_sections_are_recognized_as_one_unit():
+    summary = "شرکت مدل تازه‌ای را معرفی کرد که هزینه پردازش را کاهش می‌دهد و سرعت پاسخ‌گویی را افزایش می‌دهد."
+    why = "مدل تازه شرکت هزینه پردازش را پایین می‌آورد و سرعت پاسخ‌گویی را بیشتر می‌کند."
+    assert editorial_sections_redundant(summary, why)
+
+
+def test_distinct_impact_section_is_not_classified_as_redundant():
+    summary = "پژوهشگران معماری تازه‌ای برای آموزش مدل‌های زبانی معرفی کردند و آن را روی سه مجموعه‌داده ارزیابی کردند."
+    why = "این روش می‌تواند هزینه آموزش را کاهش دهد و دسترسی پژوهشگران دانشگاهی به مدل‌های بزرگ را گسترش دهد."
+    assert not editorial_sections_redundant(summary, why)

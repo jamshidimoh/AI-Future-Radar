@@ -19,9 +19,9 @@ def test_rejects_summary_without_concrete_information():
     )
 
 
-def test_rejects_summary_why_duplication():
+def test_allows_redundant_summary_why_for_single_block_rendering():
     text = "پژوهشگران یک مدل LLM جدید ساختند که در ارزیابی کدنویسی عملکرد بهتری دارد و هزینه استنتاج را کاهش می‌دهد."
-    assert not editorial_value_ok(
+    assert editorial_value_ok(
         "مدل جدید LLM برای کدنویسی",
         text,
         text,

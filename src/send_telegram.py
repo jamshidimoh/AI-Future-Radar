@@ -8,6 +8,7 @@ from urllib.parse import parse_qs, quote, urlparse
 
 import requests
 
+from src.editorial_quality_policy import editorial_sections_redundant
 from src.rtl_contract import force_rtl_blocks
 
 logger = logging.getLogger(__name__)
@@ -233,6 +234,40 @@ def _rtl_html_fragment(text):
     value = _isolate_latin_html(_esc(raw))
     return f"{RLM}{value}{RLM}"
 
+def _editorial_sentence_tokens(text):
+    generic = {"این", "آن", "برای", "در", "از", "به", "با", "که", "و", "یک", "است", "شود", "دارد", "همین", "موضوع", "خبر"}
+    return {
+        token.casefold()
+        for token in re.findall(r"[\u0600-\u06FF]{3,}|[A-Za-z][A-Za-z0-9.+/#-]{1,}|\d+", str(text or ""))
+        if token.casefold() not in generic
+    }
+
+
+def _merge_redundant_editorial_sections(summary, why):
+    """Keep only genuinely additive why-sentences when the two blocks overlap."""
+    summary_sentences = [x.strip() for x in re.split(r"(?<=[.!؟])\s+", str(summary or "")) if x.strip()]
+    why_sentences = [x.strip() for x in re.split(r"(?<=[.!؟])\s+", str(why or "")) if x.strip()]
+    kept = list(summary_sentences)
+    for sentence in why_sentences:
+        candidate = _editorial_sentence_tokens(sentence)
+        if not candidate:
+            continue
+        redundant = False
+        for existing in kept:
+            prior = _editorial_sentence_tokens(existing)
+            if not prior:
+                continue
+            shared = len(candidate & prior)
+            containment = shared / max(1, min(len(candidate), len(prior)))
+            jaccard = shared / max(1, len(candidate | prior))
+            if containment >= 0.62 or jaccard >= 0.48:
+                redundant = True
+                break
+        if not redundant:
+            kept.append(sentence)
+    return " ".join(kept).strip()
+
+
 def format_post(summary_data, source_name, link, is_video=False, published="", content_type="news", source_tier=3, source_type="news", leader=""):
     """Build the original boxed Persian-first Telegram card with explicit bidi isolation."""
     # Telegram messages may wrap visually, but each HTML content block must
@@ -262,23 +297,33 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
     if speaker_line:
         lines.extend([_rtl_text(speaker_line), ""])
 
-    if summary_raw:
+    sections_redundant = bool(summary_raw and why_raw and editorial_sections_redundant(summary_raw, why_raw))
+    if sections_redundant:
+        merged_editorial = _merge_redundant_editorial_sections(summary_raw, why_raw)
         lines.append(
             _rtl_text(
-                f"<blockquote>📌 <b>خلاصه</b> — {_esc(summary_raw)}</blockquote>",
+                f"<blockquote>📌 <b>نکته اصلی</b> — {_esc(merged_editorial)}</blockquote>",
                 escape=False,
             )
         )
-    if why_raw:
-        lines.extend(
-            [
-                "",
+    else:
+        if summary_raw:
+            lines.append(
                 _rtl_text(
-                    f"<blockquote>💡 <b>چرا مهم است؟</b> — {_esc(why_raw)}</blockquote>",
+                    f"<blockquote>📌 <b>خلاصه</b> — {_esc(summary_raw)}</blockquote>",
                     escape=False,
-                ),
-            ]
-        )
+                )
+            )
+        if why_raw:
+            lines.extend(
+                [
+                    "",
+                    _rtl_text(
+                        f"<blockquote>💡 <b>چرا مهم است؟</b> — {_esc(why_raw)}</blockquote>",
+                        escape=False,
+                    ),
+                ]
+            )
     if quote_raw and content_type_key in VOICE_CONTENT_TYPES:
         lines.extend(
             [

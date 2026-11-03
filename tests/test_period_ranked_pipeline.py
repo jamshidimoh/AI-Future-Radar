@@ -214,3 +214,18 @@ def test_product_release_priority_does_not_inflate_canonical_editorial_score():
     assert product_launch["major_ai_product_release"] is True
     assert product_launch["final_editorial_score"] == expected_score
     assert pipeline._bounded_discovery_priority_boost(product_launch) == 0.18
+
+
+
+def test_window_counts_track_health_and_genetics_separately_and_ignore_education():
+    history = [
+        {"title": "AI clinical diagnosis model", "source": "Nature", "content_type": "news", "category": "medical"},
+        {"title": "Machine learning for genomic variants", "source": "Science", "content_type": "research", "category": "genetics"},
+        {"title": "Quantum processor milestone", "source": "IEEE", "content_type": "news", "category": "quantum"},
+        {"title": "Education about clinical AI", "source": "NIST", "content_type": "education", "category": "medical"},
+    ]
+    source_counts, area_counts = pipeline._window_counts(history, 48)
+
+    assert source_counts == {"nature": 1, "science": 1, "ieee": 1}
+    assert area_counts["__health_medical__"] == 1
+    assert area_counts["__genetics__"] == 1

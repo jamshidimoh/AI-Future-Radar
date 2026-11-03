@@ -757,3 +757,51 @@ def test_ai_target_arbitration_prioritizes_product_release_within_quality_floor(
 
     assert selected is product
     assert product["final_editorial_score"] == 80.0
+
+
+def test_rolling_health_medical_and_genetics_caps_are_independent_of_ai_quality_floor():
+    contract = load_editorial_contract()
+    health = item("AI model for clinical prediction of patient outcomes", "Nature", 92, area="ai")
+    genetics = item("AI model analyzes genomic variants and gene expression", "Science", 91, area="ai")
+    technical = item("Quantum computing architecture improves error correction", "IEEE Spectrum", 89, area="quantum", content_type="research", research_signal=True)
+
+    health_at_cap = _Portfolio(
+        contract=contract,
+        limit=4,
+        source_cap=1,
+        type_cap=8,
+        recent={},
+        mission_aware=True,
+        window_area_counts={"__health_medical__": contract["max_health_medical_in_window"]},
+    )
+    genetics_at_cap = _Portfolio(
+        contract=contract,
+        limit=4,
+        source_cap=1,
+        type_cap=8,
+        recent={},
+        mission_aware=True,
+        window_area_counts={"__genetics__": contract["max_genetics_in_window"]},
+    )
+    technical_with_both_caps = _Portfolio(
+        contract=contract,
+        limit=4,
+        source_cap=1,
+        type_cap=8,
+        recent={},
+        mission_aware=True,
+        window_area_counts={
+            "__health_medical__": contract["max_health_medical_in_window"],
+            "__genetics__": contract["max_genetics_in_window"],
+        },
+    )
+
+    assert not health_at_cap.admissible(health, repeat_source=False)
+    assert not genetics_at_cap.admissible(genetics, repeat_source=False)
+    assert technical_with_both_caps.admissible(technical, repeat_source=False)
+
+
+def test_rolling_domain_caps_default_to_four_medical_and_six_genetics_in_48_posts():
+    contract = load_editorial_contract()
+    assert contract["max_health_medical_in_window"] == 4
+    assert contract["max_genetics_in_window"] == 6

@@ -96,6 +96,8 @@ def load_editorial_contract(selection: dict[str, Any] | None = None) -> dict[str
         "max_genetics_per_run": max(0, int(selection_cfg.get("max_genetics_per_run", 1))),
         "genetics_diversity_penalty": max(0.0, min(30.0, float(selection_cfg.get("genetics_diversity_penalty", 15.0) or 15.0))),
         "max_health_medical_per_run": max(0, int(selection_cfg.get("max_health_medical_per_run", 1))),
+        "max_health_medical_in_window": max(0, int(selection_cfg.get("max_health_medical_in_window", 4))),
+        "max_genetics_in_window": max(0, int(selection_cfg.get("max_genetics_in_window", 6))),
         "health_medical_diversity_penalty": max(0.0, min(30.0, float(selection_cfg.get("health_medical_diversity_penalty", 12.0) or 12.0))),
         "preferred_max_same_source": int(mission.get("max_same_source", 1) or 1),
         "hard_max_same_source": int(selection_cfg.get("max_items_per_source", 2) or 2),
@@ -834,12 +836,16 @@ class _Portfolio:
         if _is_genetics_heavy(item):
             genetics_limit = max(0, int(self.contract.get("max_genetics_per_run", 1)))
             genetics_selected = sum(1 for selected_item in self.selected if _is_genetics_heavy(selected_item))
-            if genetics_selected >= genetics_limit:
+            genetics_window_limit = max(0, int(self.contract.get("max_genetics_in_window", 6)))
+            genetics_window_count = max(0, int(self.window_area_counts.get("__genetics__", 0) or 0))
+            if genetics_selected >= genetics_limit or genetics_window_count >= genetics_window_limit:
                 return False
         if _is_health_medical_heavy(item):
             medical_limit = max(0, int(self.contract.get("max_health_medical_per_run", 1)))
             medical_selected = sum(1 for selected_item in self.selected if _is_health_medical_heavy(selected_item))
-            if medical_selected >= medical_limit:
+            medical_window_limit = max(0, int(self.contract.get("max_health_medical_in_window", 4)))
+            medical_window_count = max(0, int(self.window_area_counts.get("__health_medical__", 0) or 0))
+            if medical_selected >= medical_limit or medical_window_count >= medical_window_limit:
                 return False
         if not ignore_type_cap and self.type_counts.get(ctype, 0) >= self.type_cap:
             return False

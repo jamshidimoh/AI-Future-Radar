@@ -47,7 +47,7 @@ def test_semantic_history_is_limited_to_30_days_and_200_records():
     assert all(item["link"] != old["link"] for item in index.semantic_records)
 
 
-def test_detailed_semantic_candidate_list_never_exceeds_ten():
+def test_detailed_semantic_candidate_list_uses_wider_bounded_recall_window():
     now = 2_000_000_000.0
     records = [
         {
@@ -66,7 +66,7 @@ def test_detailed_semantic_candidate_list_never_exceeds_ten():
         }
     )
 
-    assert len(selected) <= 10
+    assert len(selected) <= 30
     assert index.metrics()["semantic_comparisons"] == 0
 
 

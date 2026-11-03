@@ -6,6 +6,8 @@ emerging_terminology:
     status_labels: [established, emerging, informal]
     rule: "Only introduce terminology with credible current usage. Distinguish formal specifications, established engineering concepts, emerging practice, and informal labels. Do not duplicate core definitions; this track focuses on current operational vocabulary and its boundaries."
     primary_first: true
+  modules:
+    - {id: 12, title: "واژگان نوظهور و مهندسی AI", first_lesson: 101, last_lesson: 114, objective: "شناخت اصطلاحات جدید مهندسی عامل، توسعه نرم‌افزار و پروتکل‌ها با تفکیک established، emerging و informal."}
   lessons:
     - id: 101
       status: "emerging"

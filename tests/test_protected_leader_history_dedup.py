@@ -1,8 +1,17 @@
-from pathlib import Path
+import json
+
+import pytest
 
 import src.dedup as dedup
+from src.publication_index import clear_publication_index_cache
 
-ROOT = Path(__file__).resolve().parents[1]
+
+@pytest.fixture(autouse=True)
+def isolate_publication_ledger(monkeypatch, tmp_path):
+    ledger = tmp_path / "telegram_feedback.json"
+    ledger.write_text(json.dumps({"messages": {}}, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(dedup, "FEEDBACK_FILE", str(ledger))
+    clear_publication_index_cache(ledger)
 
 
 def test_protected_leader_bypasses_historical_semantic_match(monkeypatch):

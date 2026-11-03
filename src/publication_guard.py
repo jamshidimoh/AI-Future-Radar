@@ -9,9 +9,10 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from src.event_identity import compare_events, events
+from src.publication_index import get_publication_index, load_publication_records
 from src.semantic_dedup import _similarity, get_story_signature
 from src.semantic_publication_guard import shared_anchor_count
-from src.state_io import load_json_state
+
 
 logger = logging.getLogger(__name__)
 
@@ -79,9 +80,7 @@ def _normalized_title(value: str) -> str:
 
 
 def _load_records() -> list[dict]:
-    data = load_json_state(LEDGER_PATH, {}, label="publication ledger")
-    messages = data.get("messages", {}) if isinstance(data, dict) else {}
-    return [x for x in messages.values() if isinstance(x, dict)] if isinstance(messages, dict) else []
+    return load_publication_records(LEDGER_PATH)
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
@@ -102,6 +101,10 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         return 1.0
 
     kind, event_score, evidence = compare_events(candidate, stored)
+    # A materially new development is an update, not a repeated publication.
+    # Exact URL/title identity is still blocked by the hard index below.
+    if kind == "UPDATE":
+        return 0.0
     semantic_score = _similarity(get_story_signature(candidate), get_story_signature(stored))
     anchors = shared_anchor_count(f"{candidate_title} {candidate_summary}", f"{stored_title} {stored_summary}")
     shared_events = set(evidence.get("shared_events") or [])
@@ -138,13 +141,6 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         and semantic_title_sequence >= 0.60
     ):
         return 1.0
-
-    if kind == "UPDATE":
-        if anchors >= 2 and shared_events and semantic_score >= 0.55:
-            return 1.0
-        if title_similarity >= 0.90 and context_jaccard >= 0.45:
-            return 1.0
-        return 0.0
 
     if kind == "DUPLICATE":
         # Cross-source rewrites are the primary failure mode: one source may
@@ -196,49 +192,85 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
 
 
 def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None, candidate: dict | None = None) -> tuple[bool, str]:
-    """Return (allowed, reason). Known same-story publications block delivery."""
-    stored_records = _load_records()
+    """Return (allowed, reason) using all-time exact indexes and bounded semantics."""
+    index = get_publication_index(LEDGER_PATH)
     runtime_records = [x for x in (records or []) if isinstance(x, dict)]
-    all_records = runtime_records + stored_records
     candidate_people_lane = bool((candidate or {}).get("people_lane"))
     candidate_people_bootstrap = bool((candidate or {}).get("people_bootstrap"))
-    if not all_records:
-        return True, "ledger_empty"
     candidate_title, candidate_summary = _extract_candidate(text)
     candidate_url = _canonical_url(source_link)
     title_key = _normalized_title(candidate_title)
-    candidate_person = str((candidate or {}).get("person_name") or (candidate or {}).get("watch_person") or (candidate or {}).get("leader") or "").strip()
+    candidate_person = str(
+        (candidate or {}).get("person_name")
+        or (candidate or {}).get("watch_person")
+        or (candidate or {}).get("leader")
+        or ""
+    ).strip()
+
+    if not index.record_count and not runtime_records:
+        return True, "ledger_empty"
+
     if candidate_people_bootstrap and candidate_person:
-        for record in all_records:
-            if not record.get("people_lane"):
-                continue
+        if index.has_people_person(candidate_person) or any(
+            record.get("people_lane")
+            and str(
+                record.get("person_name")
+                or record.get("watch_person")
+                or record.get("leader")
+                or ""
+            ).strip().casefold() == candidate_person.casefold()
+            for record in runtime_records
+        ):
+            return False, "people_bootstrap_person_already_published"
+        return True, "people_bootstrap_baseline"
+
+    # Exact identity is all-time and O(1); it is independent of the semantic
+    # lookback, so old publications remain blocked without scanning old records.
+    if candidate_url and (
+        index.contains_url(candidate_url)
+        or any(_canonical_url(record.get("link") or record.get("url") or "") == candidate_url for record in runtime_records)
+    ):
+        return False, "canonical_url_already_published"
+    if title_key and (
+        index.contains_title(candidate_title)
+        or any(_normalized_title(record.get("title", "")) == title_key for record in runtime_records)
+    ):
+        return False, "exact_story_title_already_published"
+
+    semantic_candidate = dict(candidate or {})
+    semantic_candidate.update({"title": candidate_title, "summary": candidate_summary})
+    comparisons = index.semantic_candidates(
+        semantic_candidate,
+        additional_records=runtime_records,
+        limit=10,
+    )
+    for record in comparisons:
+        if not str(record.get("title") or "").strip():
+            continue
+        if candidate_people_lane and record.get("people_lane"):
             stored_person = str(
                 record.get("person_name")
                 or record.get("watch_person")
                 or record.get("leader")
                 or ""
             ).strip()
-            if stored_person and stored_person.casefold() == candidate_person.casefold():
-                return False, "people_bootstrap_person_already_published"
-        return True, "people_bootstrap_baseline"
-    # People signals from different watched people are independent perspectives.
-    # Keep same-event commentary from different people from being treated as one
-    # publication, while retaining normal same-person duplicate protection.
-    for record in all_records:
-        record_url = _canonical_url(record.get("link", ""))
-        if candidate_url and record_url and candidate_url == record_url:
-            return False, "canonical_url_already_published"
-        stored_title = _normalized_title(record.get("title", ""))
-        if title_key and stored_title and title_key == stored_title:
-            return False, "exact_story_title_already_published"
-    for record in all_records:
-        if not str(record.get("title") or "").strip():
-            continue
-        if candidate_people_lane and record.get("people_lane"):
-            stored_person = str(record.get("person_name") or record.get("watch_person") or record.get("leader") or "").strip()
             if candidate_person and stored_person and candidate_person.casefold() != stored_person.casefold():
                 continue
         score = _semantic_conflict(candidate_title, candidate_summary, record)
         if score >= 0.82:
+            logger.info(
+                "[Publication Dedup] semantic_block score=%.3f comparisons=%d semantic_window=%d",
+                score,
+                len(comparisons),
+                index.semantic_window_count,
+            )
             return False, f"semantic_story_already_published score={score:.3f}"
+
+    logger.debug(
+        "[Publication Dedup] allowed semantic_comparisons=%d semantic_window=%d exact_url_keys=%d exact_title_keys=%d",
+        len(comparisons),
+        index.semantic_window_count,
+        len(index.url_keys),
+        len(index.title_keys),
+    )
     return True, "no_publication_conflict"

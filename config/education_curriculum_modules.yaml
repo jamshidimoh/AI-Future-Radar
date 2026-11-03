@@ -1,6 +1,15 @@
 education_curriculum_modules:
   version: "2.0"
   reviewed_at: "2026-11-03"
+  modules:
+    - {id: 4, title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد", first_lesson: 31, last_lesson: 40, objective: "ارزیابی تعمیم، بهینه‌سازی، معماری‌های مولد، آموزش ترجیح‌محور و مبانی سرویس‌دهی."}
+    - {id: 5, title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل", first_lesson: 41, last_lesson: 50, objective: "ترکیب ابزار، زمینه، حافظه، ارزیابی، امنیت و تعامل انسان با مدل."}
+    - {id: 6, title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا", first_lesson: 51, last_lesson: 57, objective: "پیوند حاکمیت، زنجیره تأمین مدل، رباتیک، کوانتوم، علیت و مقیاس‌پذیری."}
+    - {id: 7, title: "روش‌های پیشرفته یادگیری آماری", first_lesson: 58, last_lesson: 65, objective: "اعتبارسنجی، عدم‌توازن، استنباط علّی، بهینه‌سازی بیزی، عدم‌قطعیت و یادگیری فدرال."}
+    - {id: 8, title: "معماری‌های پیشرفته شبکه‌های عصبی", first_lesson: 66, last_lesson: 72, objective: "اتصال باقیمانده، MoE، attention کارآمد، مدل فضای حالت و ادغام چندوجهی."}
+    - {id: 9, title: "مهندسی داده و یادگیری داده‌محور", first_lesson: 73, last_lesson: 80, objective: "کیفیت، منشأ، برچسب‌گذاری، drift، داده مصنوعی و یادگیری فعال."}
+    - {id: 10, title: "مهندسی و حاکمیت عامل‌های هوشمند", first_lesson: 81, last_lesson: 90, objective: "معماری کنترل، تجزیه وظیفه، هماهنگی، حافظه، هویت و محافظ‌های زمان اجرا."}
+    - {id: 11, title: "ارزیابی، امنیت و قابلیت اعتماد", first_lesson: 91, last_lesson: 100, objective: "آزمون استواری، ارزیابی مسیر عامل، حریم خصوصی، red teaming و تبار مصنوعات."}
   lessons:
     - id: 31
       domain: "Machine learning"

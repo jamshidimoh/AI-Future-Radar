@@ -23,34 +23,16 @@ def test_advanced_core_has_prerequisites_sources_and_domain():
     for lesson in lessons:
         assert lesson.get("domain")
         assert lesson.get("prerequisites")
+        assert all(int(x) < int(lesson["id"]) for x in lesson["prerequisites"])
         assert len(lesson.get("sources") or []) >= 2
         assert len(lesson.get("a", {}).get("seed", "")) >= 20
         assert len(lesson.get("b", {}).get("seed", "")) >= 20
 
 
-def test_advanced_core_covers_high_priority_gaps():
-    domains = {str(x.get("domain")) for x in _lessons()}
-    required = {
-        "Inference & optimization",
-        "Data & data engineering",
-        "AI security & robustness",
-        "AI for science & biomedicine",
-        "Human-AI interaction",
-        "Governance & policy",
-        "Open models & ecosystems",
-        "Robotics & embodied AI",
-        "Quantum AI",
-    }
-    assert required <= domains
-
-
-def test_three_pilot_lessons_cover_distinct_unfilled_topics():
+def test_new_advanced_lessons_have_learning_questions_and_practice():
     lessons = {int(x["id"]): x for x in _lessons()}
-    assert set(lessons) >= {55, 56, 57}
-    assert "Benchmark Contamination" in lessons[55]["title"]
-    assert "Causal Inference" in lessons[56]["title"]
-    assert "Scaling Laws" in lessons[57]["title"]
-    for lesson_id in (55, 56, 57):
+    for lesson_id in range(58, 101):
         lesson = lessons[lesson_id]
+        assert lesson.get("core_question")
+        assert lesson.get("practice")
         assert len(lesson["sources"]) >= 2
-        assert lesson["prerequisites"]

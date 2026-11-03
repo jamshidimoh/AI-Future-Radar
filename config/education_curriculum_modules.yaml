@@ -740,8 +740,7 @@ education_curriculum_modules:
       core_question: "Distribution Shift Testing و Stress Testing چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "یک ماتریس آزمون برای تغییرات فصلی و بار شدید بساز."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 92
       domain: "Trustworthy AI"
       prerequisites: [91]
@@ -753,8 +752,7 @@ education_curriculum_modules:
       core_question: "Property-Based Testing و Metamorphic Testing چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای سامانه خلاصه‌سازی، یک رابطه metamorphic قابل آزمون تعریف کن."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 93
       domain: "Trustworthy AI"
       prerequisites: [46]
@@ -766,8 +764,7 @@ education_curriculum_modules:
       core_question: "Certified Robustness و Adversarial Training چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "تفاوت شواهد تجربی و تضمین رسمی در دفاع خصمانه را شرح بده."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 94
       domain: "Trustworthy AI"
       prerequisites: [46, 65]
@@ -779,8 +776,7 @@ education_curriculum_modules:
       core_question: "Model Extraction و Membership Inference چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "دو threat model و کنترل متناظر برای API مدل تعریف کن."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 95
       domain: "Trustworthy AI"
       prerequisites: [28, 51]
@@ -792,8 +788,7 @@ education_curriculum_modules:
       core_question: "Failure Mode Analysis و Risk Register چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای سامانه پاسخ‌گوی مشترکان پنج حالت شکست را ثبت کن."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 96
       domain: "Trustworthy AI"
       prerequisites: [91]
@@ -805,8 +800,7 @@ education_curriculum_modules:
       core_question: "LLM-as-a-Judge و Human Evaluation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "rubric و کنترل سوگیری برای مقایسه دو پاسخ مدل طراحی کن."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 97
       domain: "Trustworthy AI"
       prerequisites: [45, 86]
@@ -818,8 +812,7 @@ education_curriculum_modules:
       core_question: "Prompt Injection Defense و Instruction Hierarchy چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای RAG، دستور معتبر را از متن سند غیرقابل اعتماد جدا کن."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 98
       domain: "Trustworthy AI"
       prerequisites: [87, 97]
@@ -831,8 +824,7 @@ education_curriculum_modules:
       core_question: "Data Exfiltration و Tool Abuse چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای عامل دارای دسترسی ایمیل، مسیرهای exfiltration را مدل کن."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 99
       domain: "Trustworthy AI"
       prerequisites: [65, 94]
@@ -844,8 +836,7 @@ education_curriculum_modules:
       core_question: "Privacy Threat Modeling و Data Minimization چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای یک دستیار منابع انسانی، داده‌های غیرضروری را حذف کن."
       sources:
-        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 100
       domain: "AI Engineering"
       prerequisites: [47, 73]

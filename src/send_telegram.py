@@ -8,8 +8,8 @@ from urllib.parse import parse_qs, quote, urlparse
 
 import requests
 
-from src.rtl_contract import force_rtl_blocks
 from src.editorial_quality_policy import editorial_sections_redundant
+from src.rtl_contract import force_rtl_blocks
 
 logger = logging.getLogger(__name__)
 

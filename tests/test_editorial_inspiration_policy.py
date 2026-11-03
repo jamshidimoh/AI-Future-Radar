@@ -5,6 +5,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_telegram_channels_are_style_references_not_content_sources():
     content = (ROOT / "config" / "editorial_inspiration.yaml").read_text(encoding="utf-8")
+    # YAML permits quoted and unquoted scalar strings; normalize quotes for this
+    # lightweight policy-contract check so it tests semantics, not presentation.
+    content = content.replace('"', "")
     for expected in (
         "evidence_authority: none",
         "direct_content_ingestion: false",

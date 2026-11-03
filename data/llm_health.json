@@ -1,59 +1,54 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 5,
-      "disabled_until": 1793729843.402,
+      "failures": 6,
+      "disabled_until": 1793753483.427,
       "last_error": "auth",
+      "last_success": 0
+    },
+    "kiraai:qwen3.8-flash": {
+      "failures": 1,
+      "disabled_until": 1793670683.427,
+      "last_error": "quota",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
+      "failures": 1,
+      "disabled_until": 1793670683.427,
+      "last_error": "rate_limit",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1793647043.402,
+      "disabled_until": 1793670683.427,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1793647043.402,
+      "disabled_until": 1793670683.427,
       "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-20b": {
-      "failures": 1,
-      "disabled_until": 1793647043.402,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1793647043.402,
-      "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 5,
-      "disabled_until": 1793729843.402,
+      "failures": 6,
+      "disabled_until": 1793753483.427,
       "last_error": "auth"
     },
     "kiraai": {
       "failures": 1,
-      "disabled_until": 1793648653.178,
+      "disabled_until": 1793753483.427,
       "last_error": "wallet"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1793665043.402,
-      "last_error": "quota"
     }
   },
-  "updated_at": 1793643443.401661,
+  "updated_at": 1793667083.426775,
   "version": 1,
   "telemetry": {
-    "observed_failures": 203,
-    "observed_events": 278,
-    "updated_at": 1793643443.401661
+    "observed_failures": 35,
+    "observed_events": 54,
+    "updated_at": 1793667083.426775
   },
   "observed_failures": 0,
   "observed_events": 0

@@ -14,7 +14,7 @@ def _lessons():
 def test_advanced_core_has_expected_lessons_and_unique_ids():
     lessons = _lessons()
     ids = [int(x["id"]) for x in lessons]
-    assert ids == list(range(31, 58))
+    assert ids == list(range(31, 101))
     assert len(ids) == len(set(ids))
 
 

@@ -367,9 +367,20 @@ def _language_repair_providers(item):
             if not raw:
                 raise QuotaExceeded("OmniRoute unavailable during mission Persian recovery")
             try:
-                _extract_json(raw)
+                payload = _extract_json(raw)
             except (json.JSONDecodeError, TypeError, ValueError) as exc:
                 raise QuotaExceeded("OmniRoute returned invalid structured JSON during mission Persian recovery") from exc
+            # Mission summaries, full-draft recovery, field repair and editorial
+            # value repair all require both body fields. A JSON object with an
+            # empty summary/why field is not a successful provider response:
+            # reject it here so the configured fallback chain can try another
+            # model instead of letting an empty draft reach the language gate.
+            if not all(str(payload.get(field) or "").strip() for field in ("summary", "why_it_matters")):
+                print(
+                    "[Mission Persian Recovery] OmniRoute returned incomplete editorial JSON; trying provider fallback",
+                    flush=True,
+                )
+                return None
             return raw
 
         providers.append(("OmniRoute:mission-persian-repair", _omni_repair))

@@ -71,3 +71,34 @@
 ۹. اجرای آزمایشی تلگرام با تأیید پیام و ثبت state انجام شود  
 
 تا وقتی آزمون‌های منبع، کیفیت متن، اجرای تلگرام و state واقعی موفق نشده‌اند، بازطراحی ساختاری را نباید با تأیید کیفیت همه ۱۳۰ درس یا تکمیل انتشار اشتباه گرفت.
+
+## Required domain coverage (canonical English identifiers)
+- AI fundamentals
+- Machine learning
+- Deep learning
+- Generative AI
+- LLM
+- Multimodal AI
+- Retrieval & RAG
+- Agents & agentic systems
+- Tool use & protocols
+- Memory & context
+- Evaluation & benchmarks
+- Alignment & post-training
+- Inference & optimization
+- Data & data engineering
+- AI security & robustness
+- Safety & responsible AI
+- Governance & policy
+- AI infrastructure & compute
+- Robotics & embodied AI
+- AI for science & biomedicine
+- Quantum AI
+- Open models & ecosystems
+- AI engineering & MLOps
+- Human-AI interaction
+- Emerging terminology
+- Cognitive science
+
+## Source classes and currency
+A source may be classified as **canonical/historical** when it is a stable foundational reference, or **current** when its content is verified as maintained or published/updated from 2025 onward. A lesson must have at least two independent sources. For stable foundations, a canonical/historical reference may be paired with a current authoritative source; for fast-moving topics, two independent current sources are required. A declared publication year is never sufficient evidence by itself. Every source must be reachable and aligned with the claims it supports.

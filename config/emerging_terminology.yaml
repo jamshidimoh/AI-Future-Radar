@@ -13,10 +13,13 @@ emerging_terminology:
       status: "emerging"
       title: "Harness Engineering و Agent Harness"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [100]
       a: {term: "Harness Engineering", fa: "مهندسی هارنس", seed: "طراحی محیط، ابزارها، آزمون‌ها و کنترل‌هایی که رفتار عامل کدنویس یا عامل عمومی را قابل هدایت و ارزیابی می‌کند."}
       b: {term: "Agent Harness", fa: "هارنس عامل", seed: "لایه اجرایی و کنترلی پیرامون عامل که دسترسی‌ها، ابزارها، زمینه و چرخه اجرا را مدیریت می‌کند."}
       relation: "Harness engineering رویکرد طراحی است؛ agent harness پیاده‌سازی اجرایی این محیط کنترلی است."
+      learning_outcome: "دانشجو بتواند مهندسی هارنس و هارنس عامل را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Harness Engineering و Agent Harness چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -26,10 +29,13 @@ emerging_terminology:
       status: "informal"
       title: "Vibe Coding و Spec-Driven Development"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [101]
       a: {term: "Vibe Coding", fa: "کدنویسی مبتنی بر گفت‌وگو با AI", seed: "اصطلاحی غیررسمی برای تولید و اصلاح کد از طریق درخواست زبانی و اتکا به مدل، گاه با بررسی محدود کد تولیدشده."}
       b: {term: "Spec-Driven Development", fa: "توسعه مبتنی بر مشخصات", seed: "رویکردی که نیازمندی‌ها و معیارهای پذیرش صریح را پیش از تولید یا تغییر کد تعریف می‌کند."}
       relation: "Vibe coding اصطلاحی غیررسمی برای شیوه تعامل است؛ spec-driven development روش مهندسی با مشخصات و آزمون‌پذیری است."
+      learning_outcome: "دانشجو بتواند کدنویسی مبتنی بر گفت‌وگو با AI و توسعه مبتنی بر مشخصات را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Vibe Coding و Spec-Driven Development چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -39,10 +45,13 @@ emerging_terminology:
       status: "emerging"
       title: "Context Compaction و Just-in-Time Context"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [102]
       a: {term: "Context Compaction", fa: "فشرده‌سازی زمینه", seed: "کاهش یا خلاصه‌سازی تاریخچه و اطلاعات زمینه برای حفظ بخش‌های مرتبط در محدودیت پنجره زمینه."}
       b: {term: "Just-in-Time Context", fa: "زمینه در لحظه نیاز", seed: "بازیابی و ارائه اطلاعات لازم درست پیش از اجرای یک گام، به‌جای بارگذاری همه اطلاعات از ابتدا."}
       relation: "compaction اطلاعات موجود را فشرده می‌کند؛ just-in-time context اطلاعات را هنگام نیاز انتخاب و تزریق می‌کند."
+      learning_outcome: "دانشجو بتواند فشرده‌سازی زمینه و زمینه در لحظه نیاز را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Context Compaction و Just-in-Time Context چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -52,10 +61,13 @@ emerging_terminology:
       status: "emerging"
       title: "Agent Skills و Skill Registry"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [103]
       a: {term: "Agent Skills", fa: "مهارت‌های عامل", seed: "بسته‌ای از دستورالعمل‌ها، منابع یا ابزارهای تخصصی که قابلیت انجام یک نوع وظیفه را به عامل اضافه می‌کند."}
       b: {term: "Skill Registry", fa: "مخزن مهارت", seed: "فهرست نسخه‌بندی‌شده و قابل کشف از مهارت‌ها و مشخصات استفاده آن‌ها."}
       relation: "skill قابلیت قابل استفاده مجدد است؛ registry محل کشف، نسخه‌بندی و مدیریت این قابلیت‌هاست."
+      learning_outcome: "دانشجو بتواند مهارت‌های عامل و مخزن مهارت را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Agent Skills و Skill Registry چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -65,10 +77,13 @@ emerging_terminology:
       status: "established"
       title: "Sub-agent و Delegated Agent"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [104]
       a: {term: "Sub-agent", fa: "زیرعامل", seed: "عامل فرعی‌ای که برای انجام یک زیرکار محدود به عامل اصلی کمک می‌کند."}
       b: {term: "Delegated Agent", fa: "عامل واگذارشده", seed: "عاملی که مسئولیت بخشی از کار را با محدوده اختیار و خروجی مورد انتظار دریافت می‌کند."}
       relation: "sub-agent به جایگاه معماری اشاره دارد؛ delegated agent بر واگذاری مسئولیت و اختیار تأکید می‌کند."
+      learning_outcome: "دانشجو بتواند زیرعامل و عامل واگذارشده را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Sub-agent و Delegated Agent چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -78,10 +93,13 @@ emerging_terminology:
       status: "established"
       title: "Browser Agent و Computer Use"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [105]
       a: {term: "Browser Agent", fa: "عامل مرورگر", seed: "عاملی که با صفحات وب، فرم‌ها و کنترل‌های مرورگر برای انجام وظایف تعامل می‌کند."}
       b: {term: "Computer Use", fa: "تعامل با رایانه", seed: "قابلیت کنترل رابط گرافیکی رایانه از طریق مشاهده صفحه و کنش‌هایی مانند کلیک و تایپ."}
       relation: "browser agent عامل تخصصی وب است؛ computer use دامنه تعامل گرافیکی گسترده‌تری دارد."
+      learning_outcome: "دانشجو بتواند عامل مرورگر و تعامل با رایانه را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Browser Agent و Computer Use چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -91,10 +109,13 @@ emerging_terminology:
       status: "emerging"
       title: "Model Cascading و Model Routing"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [106]
       a: {term: "Model Cascading", fa: "زنجیره‌سازی مدل‌ها", seed: "الگویی که درخواست ابتدا به مدل کم‌هزینه‌تر داده می‌شود و در صورت نیاز به مدل قوی‌تر منتقل می‌شود."}
       b: {term: "Model Routing", fa: "مسیریابی مدل", seed: "انتخاب مدل مناسب برای درخواست بر پایه ویژگی وظیفه، کیفیت، هزینه، تأخیر یا سیاست."}
       relation: "cascading توالی ارجاع میان مدل‌هاست؛ routing انتخاب مقصد مناسب را انجام می‌دهد و می‌تواند cascade را نیز به‌کار گیرد."
+      learning_outcome: "دانشجو بتواند زنجیره‌سازی مدل‌ها و مسیریابی مدل را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Model Cascading و Model Routing چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -104,10 +125,13 @@ emerging_terminology:
       status: "established"
       title: "Structured Output و Constrained Decoding"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [107]
       a: {term: "Structured Output", fa: "خروجی ساختاریافته", seed: "تولید پاسخی که با قالب و schema مشخص مانند JSON و فیلدهای تعریف‌شده سازگار باشد."}
       b: {term: "Constrained Decoding", fa: "رمزگشایی مقید", seed: "محدودکردن توکن‌های مجاز هنگام تولید برای رعایت دستور زبان یا ساختار خروجی."}
       relation: "structured output هدف قالبی است؛ constrained decoding یکی از روش‌های فنی تضمین ساختار در زمان تولید است."
+      learning_outcome: "دانشجو بتواند خروجی ساختاریافته و رمزگشایی مقید را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Structured Output و Constrained Decoding چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -117,10 +141,13 @@ emerging_terminology:
       status: "emerging"
       title: "Realtime Voice Agent و Turn Detection"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [108]
       a: {term: "Realtime Voice Agent", fa: "عامل صوتی بلادرنگ", seed: "عاملی که ورودی و خروجی صوتی را با تأخیر کم و تعامل پیوسته پردازش می‌کند."}
       b: {term: "Turn Detection", fa: "تشخیص نوبت مکالمه", seed: "تشخیص زمان پایان گفتار یا تغییر نوبت برای مدیریت طبیعی مکالمه صوتی."}
       relation: "voice agent سامانه تعاملی است؛ turn detection جزء زمان‌بندی نوبت‌های گفت‌وگوست."
+      learning_outcome: "دانشجو بتواند عامل صوتی بلادرنگ و تشخیص نوبت مکالمه را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Realtime Voice Agent و Turn Detection چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -130,10 +157,13 @@ emerging_terminology:
       status: "emerging"
       title: "MCP Apps و MCP Tasks"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [109]
       a: {term: "MCP Apps", fa: "برنامه‌های MCP", seed: "الگوی ارائه رابط یا تجربه تعاملی به کلاینت‌های سازگار با پروتکل MCP."}
       b: {term: "MCP Tasks", fa: "وظایف MCP", seed: "قابلیت مدیریت کارهای طولانی‌مدت و وضعیت‌دار در تعاملات مبتنی بر MCP، مطابق نسخه و پشتیبانی پیاده‌سازی."}
       relation: "MCP Apps بر تجربه تعاملی و رابط تمرکز دارد؛ MCP Tasks بر چرخه اجرای وظایف وضعیت‌دار."
+      learning_outcome: "دانشجو بتواند برنامه‌های MCP و وظایف MCP را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی MCP Apps و MCP Tasks چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -143,10 +173,13 @@ emerging_terminology:
       status: "emerging"
       title: "Agent Identity و Delegated Authorization"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [110]
       a: {term: "Agent Identity", fa: "هویت عامل", seed: "هویت قابل انتساب برای یک عامل نرم‌افزاری که در سیاست‌های دسترسی و ثبت رویداد استفاده می‌شود."}
       b: {term: "Delegated Authorization", fa: "مجوزدهی تفویضی", seed: "اعطای مجوز محدود به عامل برای انجام عملیات از طرف کاربر یا سامانه دیگر."}
       relation: "هویت مشخص می‌کند عامل کدام مؤلفه است؛ authorization مشخص می‌کند چه عملیاتی مجاز است."
+      learning_outcome: "دانشجو بتواند هویت عامل و مجوزدهی تفویضی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Agent Identity و Delegated Authorization چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -156,10 +189,13 @@ emerging_terminology:
       status: "emerging"
       title: "Agentic Memory و Memory Consolidation"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [111]
       a: {term: "Agentic Memory", fa: "حافظه عامل‌محور", seed: "سازوکار ذخیره، بازیابی و به‌روزرسانی اطلاعاتی که عامل برای استمرار وظایف به آن نیاز دارد."}
       b: {term: "Memory Consolidation", fa: "تجمیع حافظه", seed: "فرایند تبدیل تجربه‌های پراکنده به خلاصه‌ها یا ساختارهای پایدار و قابل بازیابی."}
       relation: "agentic memory معماری حافظه عامل است؛ consolidation یکی از عملیات نگهداری و سازمان‌دهی آن است."
+      learning_outcome: "دانشجو بتواند حافظه عامل‌محور و تجمیع حافظه را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Agentic Memory و Memory Consolidation چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -169,10 +205,13 @@ emerging_terminology:
       status: "emerging"
       title: "Trajectory Scoring و Verifier"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [112]
       a: {term: "Trajectory Scoring", fa: "امتیازدهی مسیر اجرا", seed: "ارزیابی دنباله گام‌ها، تصمیم‌ها و فراخوانی ابزارهای عامل در کنار نتیجه نهایی."}
       b: {term: "Verifier", fa: "راستی‌آزما", seed: "جزء مستقلی که خروجی یا وضعیت حاصل از اجرای عامل را با معیار یا شواهد بررسی می‌کند."}
       relation: "trajectory scoring مسیر کلی را می‌سنجد؛ verifier می‌تواند در یک یا چند نقطه از مسیر صحت را بررسی کند."
+      learning_outcome: "دانشجو بتواند امتیازدهی مسیر اجرا و راستی‌آزما را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Trajectory Scoring و Verifier چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:
@@ -182,10 +221,13 @@ emerging_terminology:
       status: "emerging"
       title: "Indirect Prompt Injection و Tool Output Isolation"
       domain: "Emerging AI engineering terminology"
+      module_id: 12
+      module_title: "واژگان نوظهور و مهندسی AI"
       prerequisites: [113]
       a: {term: "Indirect Prompt Injection", fa: "تزریق غیرمستقیم دستور", seed: "حمله‌ای که دستور مخرب را در محتوای بیرونی مانند صفحه وب یا سند قرار می‌دهد تا مدل هنگام پردازش آن را اجرا کند."}
       b: {term: "Tool Output Isolation", fa: "جداسازی خروجی ابزار", seed: "مرزبندی داده بازگشتی ابزار از دستورهای معتبر و جلوگیری از ارتقای محتوای غیرقابل اعتماد به سطح دستور."}
       relation: "تزریق غیرمستقیم مسیر حمله است؛ جداسازی خروجی ابزار یک کنترل دفاعی برای محدودکردن اثر آن است."
+      learning_outcome: "دانشجو بتواند تزریق غیرمستقیم دستور و جداسازی خروجی ابزار را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
       core_question: "وضعیت تثبیت‌شدگی Indirect Prompt Injection و Tool Output Isolation چیست و مرز کاربرد آن‌ها کجاست؟"
       practice: "یک نمونه کاربرد معتبر و یک محدودیت یا خطر استفاده از این اصطلاح را مشخص کن."
       sources:

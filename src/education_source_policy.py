@@ -31,7 +31,7 @@ MAINTAINED_CURRENT_DOMAINS = {
     "mlflow.org", "robotics.umich.edu", "digital-strategy.ec.europa.eu",
     "docs.vllm.ai", "docs.langchain.com", "scipy.org", "xgboost.readthedocs.io",
     "fau.tv", "rl.uni-freiburg.de", "math.lmu.de", "algo.cs.ox.ac.uk",
-    "unibo.it", "developers.google.com",
+    "unibo.it",
     "anthropic.com", "alignment.anthropic.com", "docs.anthropic.com", "modelcontextprotocol.io",
     "learn.microsoft.com", "nvidia.com", "docs.nvidia.com",
     "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu",

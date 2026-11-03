@@ -1,0 +1,77 @@
+# Editorial inspiration only. These channels are not ingestion, citation or fact-checking sources.
+policy:
+  purpose: "editorial_style_reference_only"
+  evidence_authority: "none"
+  direct_content_ingestion: false
+  verbatim_copying: false
+  source_substitution: false
+  primary_source_revalidation_required: true
+  rule: "Use format and storytelling ideas; verify factual claims against original publishers, papers, transcripts or official statements."
+
+channels:
+  - name: "آقای هوش مصنوعی"
+    handle: "MrArtificialintelligence"
+    url: "https://t.me/MrArtificialintelligence"
+    reference_mode: "style_only"
+    useful_patterns:
+      - "Explain why a development matters beyond the immediate announcement."
+      - "Connect AI capabilities with education, work, society and human agency."
+      - "Use a clear question or tension to introduce a difficult idea."
+    guardrails:
+      - "Do not inherit claims, forecasts or statistics without independent evidence."
+
+  - name: "مغز آینده"
+    handle: "NextBrain_ir"
+    url: "https://t.me/NextBrain_ir"
+    reference_mode: "style_only"
+    useful_patterns:
+      - "Connect AI developments with long-term social and economic consequences."
+      - "Use accessible narratives to explain strategic choices and trade-offs."
+      - "Present future scenarios as scenarios, not certainties."
+    guardrails:
+      - "Retain uncertainty, assumptions and counterarguments when supported by the source."
+
+  - name: "Silicon Brain"
+    handle: "silicon_brain"
+    url: "https://t.me/silicon_brain"
+    reference_mode: "style_only"
+    useful_patterns:
+      - "Explain a technical mechanism rather than listing product features."
+      - "Preserve meaningful metrics, implementation details and practical limits."
+      - "Use compact comparisons only when their baselines are explicit."
+    guardrails:
+      - "Benchmarks and performance claims require the underlying paper, documentation or reproducible source."
+
+  - name: "دیجیاتو"
+    handle: "Digiato"
+    url: "https://t.me/Digiato"
+    reference_mode: "style_only"
+    useful_patterns:
+      - "Use direct headlines and a fast, clear opening sentence."
+      - "Separate the reported event from explanation and implications."
+      - "Make the original source easy to reach."
+    guardrails:
+      - "Do not expand the Radar into unrelated general technology or consumer-news coverage."
+
+  - name: "SharifGPT"
+    handle: "sharifgpt"
+    url: "https://t.me/sharifgpt"
+    reference_mode: "limited_style_reference"
+    useful_patterns:
+      - "Observe accessible explanatory framing and audience-oriented presentation."
+    guardrails:
+      - "Promotional, commercial or reposted material is not evidence and must not define editorial priorities."
+
+similar_editorial_patterns:
+  - "Short, information-rich headlines without clickbait."
+  - "A clear distinction between breaking news, product releases, research, expert viewpoints and analysis."
+  - "Accessible explanation of technical mechanisms with exact terms and concrete examples."
+  - "Explicit limitations, uncertainty and attribution for disputed or promotional claims."
+  - "A useful answer to: what happened, what is genuinely new, and why does it matter?"
+
+non_negotiable_radar_contract:
+  - "AI remains the core mission; cross-domain stories need a material and evidenced AI connection."
+  - "Keep mind, consciousness, cognitive science, philosophy of science, future studies, quantum, BCI, robotics and AI-biology under their existing relevance gates."
+  - "Keep arXiv excluded, Telegram channels out of the live source registry, and social posts as low-authority discovery signals."
+  - "Preserve adaptive quality-based publication, duplicate controls, source diversity, leader coverage and the operational publication ceiling."
+  - "Never copy channel posts or treat style references as primary sources."

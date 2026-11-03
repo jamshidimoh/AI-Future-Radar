@@ -24,6 +24,30 @@ def test_expert_voice_gets_dedicated_summary_depth():
     assert "Expert Voice" in _summary_depth(item)
 
 
+def test_product_release_uses_status_and_claim_attribution_guidance():
+    item = {
+        "title": "A new model launch",
+        "content_type": "product_news",
+        "mission_area": "ai_core",
+    }
+    depth = _summary_depth(item)
+    assert "معرفی محصول/مدل" in depth
+    assert "دسترسی عمومی/محدود" in depth
+    assert "ادعاهای تبلیغاتی" in depth
+
+
+def test_research_summary_preserves_method_and_publication_status():
+    item = {
+        "title": "A new AI study",
+        "content_type": "research",
+        "mission_area": "ai_core",
+    }
+    depth = _summary_depth(item)
+    assert "مقاله داوری‌شده" in depth
+    assert "روش" in depth
+    assert "همبستگی را علت" in depth
+
+
 def test_summary_evidence_context_includes_voice_identity_fields():
     item = {
         "title": "An interview",

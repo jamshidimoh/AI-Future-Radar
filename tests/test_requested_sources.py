@@ -13,6 +13,12 @@ def _sources(path):
 def test_requested_rss_sources_are_registered_without_arxiv_or_reddit():
     sources = _sources(ROOT / "config" / "radar_rss_sources.yaml")
     expected = {
+        "Microsoft Research": "https://www.microsoft.com/en-us/research/feed/",
+        "Apple Machine Learning Research": "https://machinelearning.apple.com/rss.xml",
+        "Engineering at Meta": "https://engineering.fb.com/feed/",
+        "NVIDIA Developer Blog": "https://developer.nvidia.com/blog/feed/",
+        "AWS Machine Learning Blog": "https://aws.amazon.com/blogs/machine-learning/feed/",
+        "Interconnects AI": "https://www.interconnects.ai/feed",
         "Techmeme": "https://www.techmeme.com/feed.xml",
         "TechCrunch": "https://techcrunch.com/feed/",
         "The Verge - AI": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",

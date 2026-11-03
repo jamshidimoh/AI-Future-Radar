@@ -8,9 +8,35 @@ from urllib.parse import parse_qs, quote, urlparse
 
 import requests
 
+from src.rtl_contract import force_rtl_blocks
+
 logger = logging.getLogger(__name__)
 
 CATEGORY_EMOJI = {"ai": "🤖", "quantum": "⚛️", "genetics": "🧬", "mind": "🧠", "future": "🔮"}
+CONTENT_TYPE_LABELS = {
+    "news": "📰 خبر فناوری",
+    "official": "🏢 اعلام رسمی",
+    "product_news": "🚀 معرفی محصول یا مدل",
+    "research": "🔬 یافته پژوهشی",
+    "paper": "🔬 مقاله علمی",
+    "study": "🔬 نتیجه مطالعه",
+    "preprint": "🧪 پیش‌چاپ پژوهشی",
+    "analysis": "🧭 تحلیل",
+    "opinion": "💬 دیدگاه",
+    "leader_signal": "💬 اظهارنظر چهره فناوری",
+    "security": "🛡 امنیت و ایمنی",
+    "incident": "🛡 رخداد امنیتی",
+    "interview": "🎙 گفت‌وگوی تخصصی",
+    "podcast": "🎙 گفت‌وگوی تخصصی",
+    "interviews_podcasts": "🎙 گفت‌وگوی تخصصی",
+    "conversation": "🎙 گفت‌وگو",
+    "talk": "🎤 سخنرانی",
+    "lecture": "🎤 سخنرانی",
+}
+VOICE_CONTENT_TYPES = frozenset({
+    "interview", "podcast", "talk", "lecture", "conversation",
+    "discussion", "q&a", "interviews_podcasts",
+})
 TITLE_ICON = "📡"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 TELEGRAM_TEXT_LIMIT = 4096
@@ -80,6 +106,23 @@ def _gregorian_date(value):
 
 def _model_name(summary_data):
     return str(summary_data.get("_provider") or summary_data.get("_provider_editorial") or summary_data.get("_provider_draft") or "").strip()
+
+
+def _voice_speaker_line(summary_data, leader, content_type, title, summary):
+    """Expose speaker attribution only when the names are not already visible."""
+    if content_type not in VOICE_CONTENT_TYPES:
+        return ""
+    raw = str(summary_data.get("speakers") or leader or "").strip()
+    if not raw:
+        return ""
+    names = [
+        part.strip()
+        for part in re.split(r"\s*(?:,|،|;|؛|\||&|\band\b)\s*", raw, flags=re.I)
+        if part.strip()
+    ]
+    visible = f"{title} {summary}".casefold()
+    missing = [name for name in names if name.casefold() not in visible]
+    return "🎙 مهمان: " + "، ".join(missing) if missing else ""
 
 
 def _youtube_thumbnail(url):
@@ -202,6 +245,17 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
     title_markup = f"<b>{NBSP}{TITLE_ICON}{RLM} {_esc(title_raw)}</b>"
     lines = [_rtl_text(title_markup, escape=False), ""]
 
+    content_type_key = str(content_type or "news").strip().casefold()
+    genre_label = CONTENT_TYPE_LABELS.get(content_type_key)
+    if genre_label:
+        lines.extend([_rtl_text(f"<i>{_esc(genre_label)}</i>", escape=False), ""])
+
+    speaker_line = _voice_speaker_line(
+        summary_data, leader, content_type_key, title_raw, summary_raw
+    )
+    if speaker_line:
+        lines.extend([_rtl_text(speaker_line), ""])
+
     if summary_raw:
         lines.append(
             _rtl_text(
@@ -259,7 +313,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
         lines.extend(
             ["", _rtl_text(f"<i>{'  ·  '.join(metadata_parts)}</i>", escape=False)]
         )
-    return "\n".join(lines)
+    return force_rtl_blocks("\n".join(lines))
 
 def resolve_source_image(item):
     if not isinstance(item, dict):

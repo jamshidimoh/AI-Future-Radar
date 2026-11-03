@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import Any
 
 NON_IRANIAN_NAMES_EN = {
@@ -40,6 +41,21 @@ EDUCATION_EMERGING = {
 }
 
 
+_PERSIAN_CHAR_TRANSLATION = str.maketrans({
+    "\u064a": "\u06cc",
+    "\u0649": "\u06cc",
+    "\u0643": "\u06a9",
+    "\u00a0": " ",
+    "\u0640": None,
+})
+
+
+def normalize_persian_unicode(text: str) -> str:
+    """Normalize Arabic-keyboard Yeh/Kaf variants without altering Latin identifiers."""
+    value = str(text or "").translate(_PERSIAN_CHAR_TRANSLATION)
+    return unicodedata.normalize("NFC", value)
+
+
 def _replace(value: str, mapping: dict[str, str]) -> str:
     for fa, en in sorted(mapping.items(), key=lambda x: len(x[0]), reverse=True):
         value = value.replace(fa, en)
@@ -47,7 +63,7 @@ def _replace(value: str, mapping: dict[str, str]) -> str:
 
 
 def normalize_editorial_text(text: str) -> str:
-    value = _replace(str(text or ""), NON_IRANIAN_NAMES_EN)
+    value = _replace(normalize_persian_unicode(text), NON_IRANIAN_NAMES_EN)
     value = _replace(value, TECHNICAL_CANONICAL)
     value = re.sub(r"[ \t]{2,}", " ", value)
     return value.strip()
@@ -69,7 +85,7 @@ _SPACED_PERSIAN_VERB_RE = re.compile(
 
 def normalize_news_editorial_text(text: str) -> str:
     """Normalize published news prose without converting ordinary Persian AI terms to English."""
-    value = _replace(str(text or ""), NON_IRANIAN_NAMES_EN)
+    value = _replace(normalize_persian_unicode(text), NON_IRANIAN_NAMES_EN)
     news_emerging = {
         "پلی‌کریسیس": "Polycrisis",
         "پلی کریسیس": "Polycrisis",
@@ -98,8 +114,25 @@ def normalize_news_editorial_text(text: str) -> str:
         "پروتئین های": "پروتئین‌های",
         "سلسلهمراتب": "سلسله‌مراتب",
         "مدل های": "مدل‌های",
+        "مدلهای": "مدل‌های",
+        "عامل های": "عامل‌های",
+        "عاملهای": "عامل‌های",
+        "روش های": "روش‌های",
+        "روشهای": "روش‌های",
+        "سامانه های": "سامانه‌های",
+        "سامانههای": "سامانه‌های",
+        "فناوری های": "فناوری‌های",
+        "فناوریهای": "فناوری‌های",
+        "قابلیت های": "قابلیت‌های",
+        "قابلیتهای": "قابلیت‌های",
+        "پلتفرم های": "پلتفرم‌های",
+        "پلتفرمهای": "پلتفرم‌های",
+        "پژوهش های": "پژوهش‌های",
+        "پژوهشهای": "پژوهش‌های",
         "شرکت های": "شرکت‌های",
+        "شرکتهای": "شرکت‌های",
         "نسخه های": "نسخه‌های",
+        "نسخههای": "نسخه‌های",
     }
     value = _replace(value, repairs)
     # Repair only a closed list of common Persian verb stems. This is a deterministic

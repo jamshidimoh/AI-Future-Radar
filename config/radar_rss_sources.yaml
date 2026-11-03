@@ -12,6 +12,55 @@
 # should prefer the primary source when one can be recovered.
 
 rss_sources:
+  # First-party research and engineering feeds; existing relevance and quality gates remain active.
+  - name: "Microsoft Research"
+    url: "https://www.microsoft.com/en-us/research/feed/"
+    tier: 1
+    type: "research_lab"
+    content_type: "research"
+    official: true
+    mission: "ai"
+
+  - name: "Apple Machine Learning Research"
+    url: "https://machinelearning.apple.com/rss.xml"
+    tier: 1
+    type: "research_lab"
+    content_type: "research"
+    official: true
+    mission: "ai"
+
+  - name: "Engineering at Meta"
+    url: "https://engineering.fb.com/feed/"
+    tier: 1
+    type: "technology_company"
+    content_type: "analysis"
+    official: true
+    mission: "ai"
+
+  - name: "NVIDIA Developer Blog"
+    url: "https://developer.nvidia.com/blog/feed/"
+    tier: 1
+    type: "technical_publisher"
+    content_type: "analysis"
+    official: true
+    mission: "ai"
+
+  - name: "AWS Machine Learning Blog"
+    url: "https://aws.amazon.com/blogs/machine-learning/feed/"
+    tier: 1
+    type: "cloud_ai_platform"
+    content_type: "analysis"
+    official: true
+    mission: "ai"
+
+  - name: "Interconnects AI"
+    url: "https://www.interconnects.ai/feed"
+    tier: 2
+    type: "expert_analysis"
+    content_type: "analysis"
+    official: false
+    mission: "ai"
+
   - name: "Google AI Blog"
     url: "https://blog.google/technology/ai/rss/"
     tier: 1

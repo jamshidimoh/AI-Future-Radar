@@ -121,14 +121,27 @@ def _render(item: dict[str, Any], budgets: tuple[int, int, int, int, int], inclu
     b_label = _term_label(_e(item.get("education_term_b")), _e(item.get("education_term_b_fa")))
     number = int(item.get("education_number", item.get("education_id", 0)) or 0)
     definition, simple, relation, example, takeaway = budgets
-    lines: list[str] = [_rtl(f"<b>🧠 درس {number:02d}</b>"), DIVIDER, ""]
+    lines: list[str] = [_rtl(f"<b>🧠 درس {number:02d} · {_e(item.get('education_module', 'هوش مصنوعی'))}</b>"), DIVIDER, ""]
+    if item.get("education_core_question"):
+        lines.extend(_boxed_section("❓", "پرسش راهبر", _e(_fit(item.get("education_core_question"), 180))))
+        lines.extend(["", SHORT_DIVIDER, ""])
+    if item.get("education_learning_outcome"):
+        lines.extend(_boxed_section("🎯", "هدف یادگیری", _e(_fit(item.get("education_learning_outcome"), 180))))
+        lines.extend(["", SHORT_DIVIDER, ""])
     lines.extend(_concept("۱.", a_label, _e(_fit(item.get("term_a_definition"), definition)), _e(_fit(item.get("term_a_simple"), simple))))
     lines.extend(["", SHORT_DIVIDER, ""])
     lines.extend(_concept("۲.", b_label, _e(_fit(item.get("term_b_definition"), definition)), _e(_fit(item.get("term_b_simple"), simple))))
     lines.extend(["", SHORT_DIVIDER, ""])
+    lines.extend(_boxed_section("⚙️", "سازوکار فنی", _e(_fit(item.get("technical_explanation"), 360))))
+    lines.extend(["", SHORT_DIVIDER, ""])
     lines.extend(_boxed_section("🔗", "رابطه دو مفهوم", _e(_fit(item.get("relationship"), relation))))
     lines.extend(["", SHORT_DIVIDER, ""])
-    lines.extend(_boxed_section("🧩", "مثال واقعی", _e(_fit(item.get("example"), example))))
+    lines.extend(_boxed_section("⚠️", "برداشت نادرست رایج", _e(_fit(item.get("common_misconception"), 180))))
+    lines.extend(["", SHORT_DIVIDER, ""])
+    lines.extend(_boxed_section("🧩", "مثال و کاربرد", _e(_fit(item.get("example"), example))))
+    if item.get("education_practice"):
+        lines.extend(["", SHORT_DIVIDER, ""])
+        lines.extend(_boxed_section("✍️", "تمرین بازیابی", _e(_fit(item.get("education_practice"), 200))))
     lines.extend(["", SHORT_DIVIDER, ""])
     lines.extend(_boxed_section("📌", "نکته کلیدی", _e(_fit(item.get("takeaway"), takeaway))))
     lines.extend(["", DIVIDER, ""])

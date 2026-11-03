@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793722954,
+  "updated_at": 1793726769,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -22160,6 +22160,64 @@
       "why_it_matters": "دیدگاههای ماسک در مورد آینده فناوری و مسئولیتهای آن، اهمیت همکاری بینالمللی و توسعه فناوری را برجسته می‌کند. این دیدگاهها می‌تواند به شکلدهی به سیاستهای فناوری در سطح جهانی تأثیر بگذارد و به توسعه فناوری‌های ایمن و مسئولانه کمک کند.",
       "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNYVNYTm1UNFRJNXEtZVRHTTBqX0Fid1VsSG5FdWRWQUJWODk3VW5hQnlLenVrQXlzeHZteDhWQVh4S3Z1Vzh1WGVDX2lrajV3X3otcGRPanhnOGNMRHQ1aVczbkJSdm81TllIdHVOTE1kTS1lU19FSTFVb0ZHWkEtRzVSV3BZcjBmQnc?oc=5",
       "posted_at": 1793722954
+    },
+    "-1004482051328:2284": {
+      "chat_id": -1004482051328,
+      "message_id": 2284,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (YouTube)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن؛ بنیان‌گذار و مدیرعامل OpenAI",
+      "summary": "در ویدئوی کوتاه «Who is Sam Altman?»، سام آلتمن به عنوان بنیان‌گذار و مدیرعامل OpenAI معرفی می‌شود. او به نقش رهبری خود در توسعه مدل‌های زبانی بزرگ اشاره می‌کند و تأکید می‌کند که هدف اصلی OpenAI پیشبرد هوش مصنوعی به‌صورت ایمن و مفید برای جامعه است. همچنین اشاره می‌شود که شرکت در حال تمرکز بر تحقیق‌های پیشرو و همکاری با متخصصان مختلف برای ارتقای قابلیت‌های هوش مصنوعی است.",
+      "why_it_matters": "رهبری آلتمن بر جهت‌گیری استراتژیک OpenAI تأثیر مستقیم دارد؛ تصمیمات او دربارهٔ ایمنی و دسترس‌پذیری مدل‌ها می‌تواند استانداردهای صنعتی را شکل دهد. تمرکز بر توسعه ایمن هوش مصنوعی می‌تواند خطرات ناشی از سوءاستفاده را کاهش دهد و پذیرش عمومی فناوری را تسهیل کند. این رویکرد به‌ویژه برای سیاست‌گذاران و شرکت‌های فناوری که به دنبال چارچوب‌های مسئولانه هستند، مهم است.",
+      "link": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFA5UUhSMzRLdk5pZFdhcTFjWFlveVJHNTYwRGJUdTJEZmF3OFlXSFJNQW55dVNDNUgza1FoYmZuM2pMUFFSRnlSMTBkWDdUTS0yNVp2dw?oc=5",
+      "posted_at": 1793726764
+    },
+    "-1004482051328:2285": {
+      "chat_id": -1004482051328,
+      "message_id": 2285,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "AWS Machine Learning Blog",
+      "content_type": "analysis",
+      "category": "ai",
+      "leader": "",
+      "title": "تکنولوژی گفتار با تاخیر بسیار کم در AWS",
+      "summary": "شرکت Cartesia با استفاده از مدل‌های State Space Models (SSMs) و زیرساخت AWS، توانسته است تبدیل متن به گفتار و گفتار به متن را با تاخیر زیر 100 میلیثانیه در مقیاس جهانی ارائه دهد. این فناوری به توسعهدهندگان امکان می‌دهد که تجربههای گفتاری ایجاد کنند که با گفتار انسانی قابل مقایسه هستند.",
+      "why_it_matters": "تکنولوژی SSM به دلیل توانایی پردازش دنبالههای طولانی با هزینه کم، به ویژه برای داده‌های جریاندار مانند گفتار زنده، مناسب است. این مدلها می‌توانند وابستگیهای طولانیمدت با کیفیت بالا را حفظ کنند و به توسعهدهندگان امکان می‌دهند که تجربههای گفتاری ایجاد کنند که با گفتار انسانی قابل مقایسه هستند. این فناوری به ویژه برای برنامههایی که نیاز به تاخیر بسیار کم دارند، مانند مرکزهای تماس، مشاورههای پزشکی از راه دور، بازیها و جهانهای مجازی، ابزارهای دسترسی و فروش، بسیار مفید است.",
+      "link": "https://aws.amazon.com/blogs/machine-learning/building-ultra-low-latency-voice-ai-applications-on-aws/",
+      "posted_at": 1793726766
+    },
+    "-1004482051328:2286": {
+      "chat_id": -1004482051328,
+      "message_id": 2286,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Simon Willison",
+      "content_type": "analysis",
+      "category": "ai",
+      "leader": "",
+      "title": "مدل Qwen 3.8 27B توانایی تفسیر وزنهای مدل را دارد",
+      "summary": "مدل Qwen 3.8 27B که روی لپتاپ من اجرا می‌شود، توانایی تفسیر وزنهای مدل را دارد. این مدل بهتازگی در یک مقاله تحقیقاتی به نام Sparks of Weight-Space Programming معرفی شده است. این مقاله نشان می‌دهد که مدل‌های پیشرفته مانند GPT-6 Astra قادر به تفسیر و اصلاح وزنهای مدل‌های یادگیری ماشین هستند. برای مثال، مدل GPT-6 Astra قادر به شناسایی و اصلاح یک مشکل در وزنهای مدل Qwen3.5-0.8B بوده و عملکرد آن را در آزمون MATH-500 از 7.9% به 48.1% افزایش داده است. این قابلیت به نام Weight-Space Programming شناخته می‌شود.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این یافتهها نشان می‌دهند که مدل‌های بزرگ زبان قادر به درک و اصلاح وزنهای مدل‌های دیگر هستند. این قابلیت ممکن است در آینده به بهینهسازی و بهبود مدل‌های یادگیری ماشین کمک کند. با این حال، این قابلیت هنوز در مرحله آزمایشی است و نیاز به بررسیهای بیشتر دارد. همچنین، این یافتهها نشان می‌دهند که مدل‌های بزرگ زبان قادر به انجام وظایف پیچیدهتری هستند و این قابلیتها ممکن است در آینده در حوزههای مختلفی از جمله توسعه نرمافزار و مهندسی داده کاربرد داشته باشند.",
+      "link": "https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/",
+      "posted_at": 1793726769
     }
   }
 }

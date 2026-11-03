@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,7 +32,28 @@ def main() -> int:
     results = []
     for lesson_id in PILOT_IDS:
         lesson = lessons[lesson_id]
-        generated, sources = _generate(lesson)
+        if results:
+            # Groq free-tier TPM windows are short; pace independent lessons.
+            time.sleep(20)
+        generated = None
+        sources = []
+        last_error = None
+        for attempt in range(2):
+            try:
+                generated, sources = _generate(lesson)
+                last_error = None
+                break
+            except Exception as exc:
+                last_error = exc
+                if attempt == 0:
+                    print(
+                        f"[Education Pilot] lesson={lesson_id} transient provider failure; "
+                        "retrying after 20 seconds",
+                        flush=True,
+                    )
+                    time.sleep(20)
+        if last_error is not None:
+            raise RuntimeError(f"Lesson {lesson_id} generation failed after retry: {last_error}") from last_error
         if not generated:
             raise SystemExit(
                 f"Lesson {lesson_id} failed source/LLM/editorial generation; "

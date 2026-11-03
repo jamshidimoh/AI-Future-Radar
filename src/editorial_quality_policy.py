@@ -197,6 +197,17 @@ def _source_support(summary: str, why: str, source_text: str) -> tuple[float, fl
     return lexical_summary, lexical_why
 
 
+def editorial_sections_redundant(summary: str, why_it_matters: str) -> bool:
+    """Whether the two editorial blocks mostly restate the same information."""
+    left = _content_tokens(summary)
+    right = _content_tokens(why_it_matters)
+    if not left or not right:
+        return False
+    shared = len(left & right)
+    containment = shared / max(1, min(len(left), len(right)))
+    return containment >= 0.82 or _overlap(summary, why_it_matters) >= 0.68
+
+
 def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_text: str = "") -> bool:
     """Reject fluent-but-empty News copy while requiring evidence from the supplied source."""
     summary = str(summary or "").strip()
@@ -207,30 +218,30 @@ def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_tex
         return False
     if source_len >= 350 and _sentence_count(summary) < 2:
         return False
-    if source_len >= 350 and _sentence_count(why) < 2:
+    sections_redundant = editorial_sections_redundant(summary, why)
+    if source_len >= 350 and _sentence_count(why) < 2 and not sections_redundant:
         return False
     if _specificity_score(summary) < 3:
         return False
-    if any(phrase in why for phrase in _GENERIC_WHY):
-        return False
-    if not any(marker in why for marker in _IMPACT_MARKERS):
-        return False
-    if _overlap(summary, why) >= 0.78:
-        return False
+    if not sections_redundant:
+        if any(phrase in why for phrase in _GENERIC_WHY):
+            return False
+        if not any(marker in why for marker in _IMPACT_MARKERS):
+            return False
     if len(summary) > 260 and len(summary) / max(1, source_len) < 0.06 and source_len >= 700:
         return False
     summary_support, why_support = _source_support(summary, why, source)
     if source_len >= 350:
         if persian_ratio(summary) >= BODY_PERSIAN_RATIO_MIN and persian_ratio(source) < 0.35:
-            if summary_support < 0.12 or why_support < 0.04:
+            if summary_support < 0.12 or (why_support < 0.04 and not sections_redundant):
                 return False
-        elif summary_support < 0.28 or why_support < 0.16:
+        elif summary_support < 0.28 or (why_support < 0.16 and not sections_redundant):
             return False
     elif source_len > 0:
         if persian_ratio(summary) >= BODY_PERSIAN_RATIO_MIN and persian_ratio(source) < 0.35:
-            if summary_support < 0.08 or why_support < 0.03:
+            if summary_support < 0.08 or (why_support < 0.03 and not sections_redundant):
                 return False
-        elif summary_support < 0.20 or why_support < 0.10:
+        elif summary_support < 0.20 or (why_support < 0.10 and not sections_redundant):
             return False
     return True
 

@@ -102,3 +102,4 @@
 
 ## Source classes and currency
 A source may be classified as **canonical/historical** when it is a stable foundational reference, or **current** when its content is verified as maintained or published/updated from 2025 onward. A lesson must have at least two independent sources. For stable foundations, a canonical/historical reference may be paired with a current authoritative source; for fast-moving topics, two independent current sources are required. A declared publication year is never sufficient evidence by itself. Every source must be reachable and aligned with the claims it supports.
+برای مبانی پایدار، یک منبع canonical/historical باید همراه با یک منبع جاری معتبر استفاده شود. برای فناوری‌های سریع‌التغییر، حداقل دو منبع مستقل معتبر و جاری الزامی است. برچسب وضعیت هر اصطلاح باید established، emerging یا informal باشد. دوره در نسخه ۳ شامل ۱۳۰ درس پیوسته است.

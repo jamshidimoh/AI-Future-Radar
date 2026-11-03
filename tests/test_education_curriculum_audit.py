@@ -39,6 +39,11 @@ def test_curriculum_has_complete_unique_sequence_1_to_130():
         assert len(lesson.get("sources") or []) >= 2
         assert lesson.get("a", {}).get("seed")
         assert lesson.get("b", {}).get("seed")
+        assert lesson.get("module_id")
+        assert lesson.get("module_title")
+        assert lesson.get("core_question")
+        assert lesson.get("learning_outcome")
+        assert lesson.get("practice")
         assert all(int(p) < int(lesson["id"]) for p in lesson.get("prerequisites", []))
 
 

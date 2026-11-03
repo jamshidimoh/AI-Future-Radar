@@ -15,12 +15,12 @@ STATE_PATH = ROOT / "data" / "publication_state.json"
 class FinalProductionAcceptanceTests(unittest.TestCase):
     def _normal_items(self):
         return [
-            {"title": f"AI research story {i}", "summary": "A verified development in artificial intelligence research.", "content_type": "news", "source": f"source-{i % 2}", "editorial_score": 90 - i, "published": f"2026-08-{10 + i:02d}"}
+            {"title": f"AI research story {i}", "summary": "A verified development in artificial intelligence research.", "content_type": "news", "source": f"source-{i % 2}", "editorial_score": 90 - i, "research_signal": True, "published": f"2026-08-{10 + i:02d}"}
             for i in range(5)
         ]
 
     def _rank_item(self, title, source, score):
-        return {"title": title, "summary": "A verified development in artificial intelligence research.", "content_type": "news", "source": source, "editorial_score": score, "published": "2026-08-22"}
+        return {"title": title, "summary": "A verified development in artificial intelligence research.", "content_type": "news", "source": source, "editorial_score": score, "research_signal": True, "published": "2026-08-22"}
 
     def test_ranked_selection_assigns_normal_rank_to_every_selected_normal_story(self):
         with patch.object(ranking, "_load_records", return_value=[]):

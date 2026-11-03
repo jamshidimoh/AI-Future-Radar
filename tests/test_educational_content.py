@@ -129,8 +129,12 @@ class EducationalContentTests(unittest.TestCase):
                 self.assertTrue(line.startswith(RLI), line)
                 self.assertTrue(line.endswith(PDI), line)
                 self.assertEqual(line.count(RLI) + line.count(LRI), line.count(PDI), line)
-        for control in ("\u061c", "\u200e", "\u200f", "\u202a", "\u202b", "\u202c", "\u202d", "\u202e", "\u2066", "\u2067", "\u2068", "\u2069"):
+        # RLM and the RLI/LRI/PDI isolates below are trusted renderer output.
+        # Untrusted override/embedding controls must never survive into display.
+        for control in ("\u061c", "\u200e", "\u202a", "\u202b", "\u202c", "\u202d", "\u202e", "\u2068"):
             self.assertNotIn(control, text)
+        sanitized = normalize_education_text("متن\u200f\u2066\u202e")
+        self.assertEqual(sanitized, "متن")
         self.assertIn("هوش مصنوعی", text)
 
     def test_rendering_emerging_keeps_canonical_term_without_branding(self):

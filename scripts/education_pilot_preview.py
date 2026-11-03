@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.educational_content import _generate, _lesson_sequence, format_educational_post
+from src.educational_content import _generate, _lesson_sequence, format_educational_post  # noqa: E402
 
 PILOT_IDS = (55, 56, 57)
 OUTPUT_DIR = Path("artifacts/education_pilot_preview")

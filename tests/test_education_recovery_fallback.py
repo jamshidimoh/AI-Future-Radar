@@ -134,9 +134,9 @@ def test_expansion_continues_after_all_previously_shipped_lessons(monkeypatch):
     lesson, lesson_id, total = module.educational_content._next_lesson()
     assert lesson_id == 123
     assert lesson is not None
-    assert lesson["title"] == "Agent Evaluation Task و Trial"
+    assert lesson["title"] == "Quantum Machine Learning و Quantum-Inspired Machine Learning"
     assert total == len(sequence)
-    assert total >= 84
+    assert total == 130
 
 
 def test_recovery_treats_true_exhaustion_as_non_fatal(monkeypatch, capsys):

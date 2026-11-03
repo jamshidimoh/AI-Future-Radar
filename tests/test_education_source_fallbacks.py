@@ -71,7 +71,7 @@ def test_retrieved_2025_source_is_verified_even_when_declared_year_missing(monke
             "authority_score": 95,
         },
     )
-    monkeypatch.setattr(educational_content, "call_llm_with_fallback", lambda *args, **kwargs: ('{"term_a_definition":"تعریف A معتبر و کافی است","term_a_simple":"توضیح ساده A معتبر است","term_b_definition":"تعریف B معتبر و کافی است","term_b_simple":"توضیح ساده B معتبر است","relationship":"رابطه معتبر میان A و B","example":"مثال معتبر و روشن برای هر دو مفهوم است","takeaway":"نکته کاربردی و معتبر برای یادگیری"}', 'test'))
+    monkeypatch.setattr(educational_content, "call_llm_with_fallback", lambda *args, **kwargs: ('{"term_a_definition":"تعریف A معتبر و کافی است","term_a_simple":"توضیح ساده A معتبر است","term_b_definition":"تعریف B معتبر و کافی است","term_b_simple":"توضیح ساده B معتبر است","technical_explanation":"سازوکار فنی A و B با فرض‌های روشن و جزئیات کافی توضیح داده شده است","relationship":"رابطه معتبر میان A و B","common_misconception":"برداشت نادرست این است که این دو مفهوم مترادف‌اند؛ درحالی‌که نقش متفاوتی دارند.","example":"مثال معتبر و روشن برای هر دو مفهوم است","takeaway":"نکته کاربردی و معتبر برای یادگیری"}', 'test'))
     monkeypatch.setattr(educational_content, "get_quality_chain", lambda: ["test"])
     generated, verified = educational_content._generate(lesson)
     assert generated is not None

@@ -1,251 +1,1134 @@
-education:
-  enabled: true
-  lessons_per_run: 1
-  curriculum_version: "2.0"
-  reviewed_at: "2026-11-03"
-  source_policy:
-    primary_first: true
-    preferred_domains:
-      - nist.gov
-      - developers.google.com
-      - ai.google.dev
-      - hai.stanford.edu
-      - oecd.org
-    freshness:
-      minimum_verified_year: 2025
-      preferred_verified_year: 2026
-      prefer_verified_2026_for_fast_moving_topics: true
-      preserve_canonical_sources_for_stable_fundamentals: true
-    rule: "Prioritize primary standards, official technical documentation, peer-reviewed research, major university research centers and authoritative reports. Prefer independently verified 2026 material when available; for stable fundamentals, retain canonical definitions and add current evidence only where it clarifies the present state. A declared year alone never proves freshness. Do not invent citations."
-  lessons:
-    - id: 1
-      title: "AI و Machine Learning"
-      a: {term: "Artificial Intelligence (AI)", fa: "هوش مصنوعی", seed: "سامانه‌ای ماشینی که برای هدف‌های صریح یا ضمنی از ورودی‌ها برای تولید خروجی‌هایی مانند پیش‌بینی، محتوا، توصیه یا تصمیم استفاده می‌کند."}
-      b: {term: "Machine Learning (ML)", fa: "یادگیری ماشین", seed: "روشی برای آموزش مدل‌ها با داده تا بتوانند روی نمونه‌های جدید پیش‌بینی یا تولید انجام دهند، بدون اینکه همه قواعد مسئله به‌صورت دستی نوشته شوند."}
-      relation: "یادگیری ماشین یکی از رویکردهای مهم برای ساخت سامانه‌های هوش مصنوعی است، نه مترادف کامل AI."
-      sources:
-        - {name: "OECD AI Principles / AI system definition", url: "https://www.oecd.org/en/topics/ai-principles.html"}
-        - {name: "Google Machine Learning: What is ML?", url: "https://developers.google.com/machine-learning/intro-to-ml/what-is-ml"}
-    - id: 2
-      title: "Supervised و Unsupervised Learning"
-      a: {term: "Supervised Learning", fa: "یادگیری نظارت‌شده", seed: "آموزش مدل با نمونه‌هایی که ورودی و پاسخ درست یا برچسب دارند."}
-      b: {term: "Unsupervised Learning", fa: "یادگیری بدون نظارت", seed: "یادگیری الگوها و ساختارها از داده‌هایی که برچسب پاسخ از پیش تعیین‌شده ندارند."}
-      relation: "تفاوت اصلی در وجود برچسب هدف در داده آموزشی است."
-      sources:
-        - {name: "Google ML Glossary: Fundamentals", url: "https://developers.google.com/machine-learning/glossary/fundamentals"}
-        - {name: "Google: What is Machine Learning?", url: "https://developers.google.com/machine-learning/intro-to-ml/what-is-ml"}
-    - id: 3
-      title: "Training و Inference"
-      a: {term: "Training", fa: "آموزش", seed: "فرایندی که طی آن پارامترهای مدل با مشاهده داده و بهینه‌سازی خطا تنظیم می‌شوند."}
-      b: {term: "Inference", fa: "استنتاج/اجرای مدل", seed: "استفاده از مدل آموزش‌دیده برای تولید پیش‌بینی یا پاسخ روی ورودی جدید."}
-      relation: "Training مدل را می‌سازد یا تغییر می‌دهد؛ inference از مدل موجود استفاده می‌کند."
-      sources:
-        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
-        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
-    - id: 4
-      title: "Feature و Label"
-      a: {term: "Feature", fa: "ویژگی", seed: "اطلاعات ورودی که مدل برای یادگیری یا پیش‌بینی از آن استفاده می‌کند."}
-      b: {term: "Label", fa: "برچسب/هدف", seed: "پاسخ یا نتیجه مورد انتظار در یک نمونه آموزشی نظارت‌شده."}
-      relation: "در یادگیری نظارت‌شده، مدل رابطه میان featureها و label را یاد می‌گیرد."
-      sources:
-        - {name: "Google ML Glossary: Fundamentals", url: "https://developers.google.com/machine-learning/glossary/fundamentals"}
-    - id: 5
-      title: "Neural Network و Deep Learning"
-      a: {term: "Neural Network", fa: "شبکه عصبی", seed: "مدلی متشکل از لایه‌ها و واحدهایی که با وزن‌ها و توابع فعال‌سازی روابط غیرخطی را یاد می‌گیرد."}
-      b: {term: "Deep Learning", fa: "یادگیری عمیق", seed: "خانواده‌ای از روش‌های یادگیری ماشین مبتنی بر شبکه‌های عصبی با لایه‌های متعدد برای یادگیری نمایش‌های پیچیده."}
-      relation: "Deep Learning زیرمجموعه‌ای از یادگیری ماشین است که عمدتاً بر شبکه‌های عصبی عمیق تکیه دارد."
-      sources:
-        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
-        - {name: "OECD Digital Economy Outlook: AI", url: "https://www.oecd.org/en/publications/2024/05/oecd-digital-economy-outlook-2024-volume-1_d30a04c9/full-report/component-5.html"}
-    - id: 6
-      title: "Parameter و Hyperparameter"
-      a: {term: "Parameter", fa: "پارامتر مدل", seed: "مقداری که مدل در جریان آموزش از داده یاد می‌گیرد؛ مانند وزن‌های شبکه عصبی."}
-      b: {term: "Hyperparameter", fa: "ابرپارامتر", seed: "تنظیمی که معمولاً پیش از یا خارج از فرایند یادگیری مستقیم مدل تعیین می‌شود؛ مانند نرخ یادگیری یا اندازه batch."}
-      relation: "پارامترها توسط آموزش یاد گرفته می‌شوند؛ ابرپارامترها برای کنترل فرایند آموزش تنظیم می‌شوند."
-      sources:
-        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
-    - id: 7
-      title: "Token و Embedding"
-      a: {term: "Token", fa: "توکن", seed: "واحدی از متن که مدل زبانی آن را به‌عنوان بخشی از ورودی یا خروجی پردازش می‌کند؛ یک کلمه همیشه الزاماً یک توکن نیست."}
-      b: {term: "Embedding", fa: "بردار تعبیه", seed: "نمایش عددی یک متن یا شیء در فضایی برداری که امکان سنجش شباهت و بازیابی معنایی را فراهم می‌کند."}
-      relation: "Tokenization متن را به واحدهای قابل پردازش تقسیم می‌کند؛ embedding معنای آن را به نمایش عددی تبدیل می‌کند."
-      sources:
-        - {name: "Google Gemini: Tokens", url: "https://ai.google.dev/gemini-api/docs/tokens"}
-        - {name: "Google AI: Embeddings", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
-    - id: 8
-      title: "Attention و Transformer"
-      a: {term: "Attention", fa: "توجه", seed: "مکانیزمی برای وزن‌دهی به بخش‌های مختلف ورودی هنگام محاسبه نمایش یا خروجی، به‌گونه‌ای که بخش‌های مرتبط‌تر اثر بیشتری داشته باشند."}
-      b: {term: "Transformer", fa: "ترنسفورمر", seed: "معماری عصبی مبتنی بر مکانیزم‌های attention که برای پردازش توالی‌ها طراحی شد و پایه بسیاری از مدل‌های زبانی مدرن است."}
-      relation: "Attention یک مکانیزم است؛ Transformer معماری‌ای است که از attention به‌صورت مرکزی استفاده می‌کند."
-      sources:
-        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
-    - id: 9
-      title: "Foundation Model و LLM"
-      a: {term: "Foundation Model", fa: "مدل پایه", seed: "مدل پیش‌آموزش‌دیده بزرگ و عمومی که می‌تواند مبنای چندین کاربرد و سازگارسازی بعدی باشد."}
-      b: {term: "Large Language Model (LLM)", fa: "مدل زبانی بزرگ", seed: "مدل زبانی با مقیاس بزرگ که الگوهای زبان را یاد می‌گیرد و می‌تواند متن را پردازش یا تولید کند."}
-      relation: "بسیاری از LLMها مدل پایه‌اند، اما foundation model مفهوم گسترده‌تری از مدل‌های زبانی دارد و می‌تواند چندوجهی یا غیرزبانی نیز باشد."
-      sources:
-        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-    - id: 10
-      title: "Pre-training و Fine-tuning"
-      a: {term: "Pre-training", fa: "پیش‌آموزش", seed: "آموزش اولیه مدل روی داده‌ای بزرگ و عمومی برای یادگیری قابلیت‌ها و نمایش‌های عمومی."}
-      b: {term: "Fine-tuning", fa: "ریزتنظیم", seed: "مرحله آموزشی تکمیلی برای سازگار کردن مدل پیش‌آموزش‌دیده با یک وظیفه یا حوزه مشخص."}
-      relation: "Pre-training قابلیت عمومی می‌سازد؛ fine-tuning آن را برای هدف مشخص‌تر تنظیم می‌کند."
-      sources:
-        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-    - id: 11
-      title: "Prompt و In-context Learning"
-      a: {term: "Prompt", fa: "پرامپت", seed: "ورودی متنی یا چندوجهی که رفتار و پاسخ مدل مولد را شرطی می‌کند."}
-      b: {term: "In-context Learning", fa: "یادگیری در متن/زمینه", seed: "توانایی مدل برای تطبیق با یک کار از طریق دستور و نمونه‌هایی که در همان ورودی ارائه می‌شوند، بدون به‌روزرسانی وزن‌های مدل."}
-      relation: "Prompt وسیله تعامل است؛ in-context learning یکی از توانایی‌هایی است که می‌تواند از طریق prompt و مثال در اختیار مدل قرار گیرد."
-      sources:
-        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-    - id: 12
-      title: "Hallucination و Grounding"
-      a: {term: "Hallucination", fa: "توهم‌زایی مدل", seed: "تولید خروجی نادرست یا ساختگی که ممکن است با لحن مطمئن ارائه شود."}
-      b: {term: "Grounding", fa: "اتصال به شواهد/منبع", seed: "واداشتن سیستم به تکیه بر اطلاعات قابل استناد و مرتبط، مانند اسناد بازیابی‌شده یا داده معتبر، برای کاهش پاسخ‌های بی‌پشتوانه."}
-      relation: "Grounding یکی از راه‌های کاهش ریسک hallucination است، اما تضمین حذف خطا نیست."
-      sources:
-        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"}
-        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-    - id: 13
-      title: "RAG و Vector Database"
-      a: {term: "Retrieval-Augmented Generation (RAG)", fa: "تولید تقویت‌شده با بازیابی", seed: "الگویی که پیش از تولید، اطلاعات مرتبط را از یک منبع بیرونی بازیابی و در زمینه مدل قرار می‌دهد."}
-      b: {term: "Vector Database", fa: "پایگاه داده برداری", seed: "سامانه‌ای برای ذخیره و بازیابی نمایش‌های برداری بر اساس شباهت، که برای جست‌وجوی معنایی کاربرد دارد."}
-      relation: "RAG یک معماری/الگوست؛ vector database می‌تواند یکی از اجزای بازیابی آن باشد."
-      sources:
-        - {name: "Google AI Embeddings", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
-    - id: 14
-      title: "Multimodal AI و Vision-Language Model"
-      a: {term: "Multimodal AI", fa: "هوش مصنوعی چندوجهی", seed: "سامانه‌ای که بیش از یک نوع داده یا modality مانند متن، تصویر، صدا یا ویدئو را پردازش یا به هم مرتبط می‌کند."}
-      b: {term: "Vision-Language Model (VLM)", fa: "مدل بینایی-زبانی", seed: "مدلی که اطلاعات تصویری و زبانی را در یک سامانه برای درک یا تولید ترکیبی به کار می‌گیرد."}
-      relation: "VLM یک نمونه مهم از AI چندوجهی است؛ multimodal مفهوم گسترده‌تری است."
-      sources:
-        - {name: "Google AI Embeddings 2", url: "https://ai.google.dev/gemini-api/docs/embeddings"}
-    - id: 15
-      title: "AI Agent و Tool Use"
-      a: {term: "AI Agent", fa: "عامل هوش مصنوعی", seed: "سامانه‌ای که برای رسیدن به هدف، می‌تواند وضعیت را ارزیابی کند، برنامه‌ریزی کند و در محیط یا ابزارها اقدام انجام دهد."}
-      b: {term: "Tool Use", fa: "استفاده از ابزار", seed: "توانایی مدل یا عامل برای فراخوانی ابزارهای بیرونی مانند جست‌وجو، API، پایگاه داده یا اجرای کد برای انجام کار."}
-      relation: "Tool use یکی از قابلیت‌های سازنده agentic systems است؛ یک agent معمولاً از ابزارها برای تبدیل پاسخ متنی به عمل استفاده می‌کند."
-      sources:
-        - {name: "NIST: Lessons Learned from the Consortium — Tool Use in Agent Systems", url: "https://www.nist.gov/news-events/news/2025/08/lessons-learned-consortium-tool-use-agent-systems", year: 2025}
-        - {name: "Google Developers: Agents, Agent Engine and A2A Enhancements", url: "https://developers.googleblog.com/en/agents-adk-agent-engine-a2a-enhancements-google-io/", year: 2025}
-    - id: 16
-      title: "Context Window و Memory"
-      a: {term: "Context Window", fa: "پنجره زمینه", seed: "مقدار اطلاعاتی که مدل می‌تواند در یک درخواست و پاسخ به‌عنوان زمینه پردازش کند؛ معمولاً با token اندازه‌گیری می‌شود."}
-      b: {term: "AI Memory", fa: "حافظه سامانه AI", seed: "سازوکاری بیرونی یا درون سامانه برای نگهداری اطلاعات قابل استفاده در تعاملات بعدی؛ لزوماً بخشی از وزن‌های مدل نیست."}
-      relation: "Context چیزی است که مدل در یک تعامل در اختیار دارد؛ memory می‌تواند زمینه را بین تعامل‌ها یا وظایف نگه دارد."
-      sources:
-        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-        - {name: "Google Gemini Tokens", url: "https://ai.google.dev/gemini-api/docs/tokens"}
-    - id: 17
-      title: "RLHF و Instruction Tuning"
-      a: {term: "RLHF", fa: "یادگیری تقویتی از بازخورد انسانی", seed: "روشی که از ترجیحات یا بازخورد انسان برای بهبود رفتار مدل، معمولاً پس از آموزش اولیه، استفاده می‌کند."}
-      b: {term: "Instruction Tuning", fa: "تنظیم دستوری", seed: "آموزش مدل با نمونه‌های دستور-پاسخ برای بهتر دنبال کردن دستورهای کاربر."}
-      relation: "هر دو برای بهبود رفتار مدل استفاده می‌شوند، اما instruction tuning معمولاً با داده‌های نمونه‌ای و RLHF با سیگنال ترجیح انسانی و مرحله تقویتی شناخته می‌شود."
-      sources:
-        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-    - id: 18
-      title: "LoRA و Parameter-Efficient Fine-Tuning"
-      a: {term: "LoRA", fa: "LoRA", seed: "روشی برای سازگار کردن مدل‌های بزرگ با افزودن پارامترهای کم‌رتبه قابل آموزش و ثابت نگه داشتن وزن‌های اصلی مدل."}
-      b: {term: "Parameter-Efficient Fine-Tuning (PEFT)", fa: "ریزتنظیم کم‌پارامتر", seed: "خانواده روش‌هایی که برای سازگار کردن مدل، به‌جای آموزش همه پارامترها تنها بخش کوچکی از پارامترها را تغییر می‌دهند."}
-      relation: "LoRA یکی از روش‌های شناخته‌شده PEFT است."
-      sources:
-        - {name: "Google ML Glossary: Generative AI", url: "https://developers.google.com/machine-learning/glossary/generative"}
-    - id: 19
-      title: "Benchmark و Evaluation"
-      a: {term: "Benchmark", fa: "بنچمارک", seed: "مجموعه وظایف یا داده استاندارد برای مقایسه عملکرد مدل‌ها تحت شرایط مشخص."}
-      b: {term: "Evaluation", fa: "ارزیابی", seed: "فرایند سنجش کیفیت، قابلیت، محدودیت یا ریسک یک مدل یا سامانه با معیارها و آزمون‌های مشخص."}
-      relation: "Benchmark یکی از ابزارهای evaluation است؛ یک ارزیابی خوب فقط به یک benchmark محدود نمی‌شود."
-      sources:
-        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
-    - id: 20
-      title: "Quantization و Distillation"
-      a: {term: "Quantization", fa: "کوانتیزه‌سازی", seed: "کاهش دقت عددی نمایش وزن‌ها یا محاسبات مدل برای کاهش حافظه و هزینه محاسبات، با کنترل افت کیفیت."}
-      b: {term: "Knowledge Distillation", fa: "تقطیر دانش", seed: "آموزش یک مدل کوچک‌تر با استفاده از خروجی‌ها یا رفتار یک مدل بزرگ‌تر به‌عنوان teacher."}
-      relation: "هر دو برای کارایی بیشتر مفیدند، اما quantization بیشتر نمایش عددی را فشرده می‌کند و distillation دانش را به مدل دیگری منتقل می‌کند."
-      sources:
-        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
-        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-    - id: 21
-      title: "Synthetic Data و Data Augmentation"
-      a: {term: "Synthetic Data", fa: "داده مصنوعی", seed: "داده‌ای که به‌صورت مصنوعی تولید می‌شود تا برخی ویژگی‌های داده واقعی را بازنمایی کند و برای آموزش، آزمون یا توسعه به کار رود."}
-      b: {term: "Data Augmentation", fa: "افزایش داده", seed: "تولید تغییرات کنترل‌شده از نمونه‌های موجود برای افزایش تنوع مؤثر داده آموزشی."}
-      relation: "Augmentation معمولاً نمونه‌های موجود را تغییر می‌دهد؛ synthetic data می‌تواند داده جدید را از یک فرایند مولد یا شبیه‌سازی تولید کند."
-      sources:
-        - {name: "NIST AI Glossary", url: "https://airc.nist.gov/glossary/"}
-        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
-    - id: 22
-      title: "Explainability و Interpretability"
-      a: {term: "Explainability", fa: "توضیح‌پذیری", seed: "توانایی ارائه اطلاعات قابل فهم درباره چرایی یا چگونگی یک خروجی سامانه AI."}
-      b: {term: "Interpretability", fa: "تفسیرپذیری", seed: "میزانی که انسان می‌تواند سازوکار یا رابطه درونی یک مدل و خروجی آن را درک کند."}
-      relation: "این دو مفهوم نزدیک‌اند اما یکسان نیستند؛ explainability می‌تواند بر توضیح خروجی تمرکز کند، در حالی که interpretability بیشتر بر قابل‌فهم بودن سازوکار مدل تأکید دارد."
-      sources:
-        - {name: "NIST Explainable AI resources", url: "https://www.nist.gov/artificial-intelligence"}
-        - {name: "NIST AI Glossary", url: "https://airc.nist.gov/glossary/"}
-    - id: 23
-      title: "AI Safety و Responsible AI"
-      a: {term: "AI Safety", fa: "ایمنی هوش مصنوعی", seed: "تمرکز بر پیشگیری، شناسایی و کاهش رفتارها یا پیامدهای خطرناک سامانه‌های AI در کاربرد واقعی."}
-      b: {term: "Responsible AI", fa: "هوش مصنوعی مسئولانه", seed: "رویکردی گسترده برای طراحی، توسعه و استفاده از AI با توجه به ایمنی، عدالت، شفافیت، حریم خصوصی، امنیت و مسئولیت‌پذیری."}
-      relation: "Safety بخشی مهم از مسئولیت‌پذیری AI است، اما Responsible AI دامنه وسیع‌تری از ملاحظات فنی و اجتماعی دارد."
-      sources:
-        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
-        - {name: "OECD AI Principles", url: "https://www.oecd.org/en/topics/ai-principles.html"}
-    - id: 24
-      title: "AI Compute و AI Accelerator"
-      a: {term: "AI Compute", fa: "توان محاسباتی AI", seed: "منابع محاسباتی، حافظه و زیرساخت لازم برای آموزش و اجرای مدل‌ها و سامانه‌های AI."}
-      b: {term: "AI Accelerator", fa: "شتاب‌دهنده هوش مصنوعی", seed: "پردازنده یا معماری سخت‌افزاری تخصصی برای اجرای کارآمدتر محاسبات AI مانند ضرب ماتریسی و عملیات تنسوری."}
-      relation: "AI accelerator یکی از اجزای سخت‌افزاری برای تأمین compute مورد نیاز AI است."
-      sources:
-        - {name: "OECD Emerging AI Divides 2025 glossary", url: "https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/06/emerging-divides-in-the-transition-to-artificial-intelligence_eeb5e120/7376c776-en.pdf"}
-        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-    - id: 25
-      title: "Embodied AI و Robotics"
-      a: {term: "Embodied AI", fa: "هوش مصنوعی تجسم‌یافته", seed: "هوش مصنوعی‌ای که ادراک و تصمیم‌گیری آن با تعامل با محیط فیزیکی یا شبیه‌سازی‌شده گره خورده است."}
-      b: {term: "Robotics", fa: "رباتیک", seed: "حوزه طراحی و ساخت سامانه‌هایی که می‌توانند در محیط فیزیکی ادراک، برنامه‌ریزی و عمل کنند."}
-      relation: "Embodied AI می‌تواند مغز نرم‌افزاری ربات باشد، اما هر سامانه رباتیک الزاماً دارای AI پیشرفته یا embodied intelligence نیست."
-      sources:
-        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-        - {name: "NIST Artificial Intelligence", url: "https://www.nist.gov/artificial-intelligence"}
-    - id: 26
-      title: "Quantum Computing و Qubit"
-      a: {term: "Quantum Computing", fa: "رایانش کوانتومی", seed: "مدل محاسباتی مبتنی بر پدیده‌های مکانیک کوانتومی که برای برخی مسائل می‌تواند مسیرهای محاسباتی متفاوتی نسبت به رایانش کلاسیک فراهم کند."}
-      b: {term: "Qubit", fa: "کیوبیت", seed: "واحد پایه اطلاعات کوانتومی که می‌تواند در برهم‌نهی حالت‌های کوانتومی قرار گیرد و با اندازه‌گیری به نتیجه‌ای کلاسیک منجر شود."}
-      relation: "Qubit واحد اطلاعات در رایانش کوانتومی است؛ quantum computing معماری و روش‌های محاسباتی مبتنی بر آن را در بر می‌گیرد."
-      sources:
-        - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/topics/quantum-information-science"}
-        - {name: "NIST Quantum", url: "https://www.nist.gov/quantum-information-science"}
-    - id: 27
-      title: "Quantum Machine Learning و Classical ML"
-      a: {term: "Quantum Machine Learning (QML)", fa: "یادگیری ماشین کوانتومی", seed: "حوزه‌ای که از مدارها یا الگوریتم‌های کوانتومی در بخش‌هایی از فرایند یادگیری ماشین استفاده می‌کند."}
-      b: {term: "Classical Machine Learning", fa: "یادگیری ماشین کلاسیک", seed: "روش‌های یادگیری ماشین که روی محاسبات کلاسیک اجرا می‌شوند و پایه اصلی کاربردهای امروزی ML را تشکیل می‌دهند."}
-      relation: "QML جایگزین عمومی ML کلاسیک نیست؛ ارزش آن باید برای مسئله و سخت‌افزار مشخص به‌صورت تجربی سنجیده شود."
-      sources:
-        - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/topics/quantum-information-science"}
-        - {name: "Google ML Glossary", url: "https://developers.google.com/machine-learning/glossary"}
-    - id: 28
-      title: "AI Governance و AI Incident"
-      a: {term: "AI Governance", fa: "حکمرانی هوش مصنوعی", seed: "مجموعه ساختارها، قواعد، فرایندها و مسئولیت‌هایی که نحوه طراحی، استقرار، استفاده و نظارت بر AI را هدایت می‌کنند."}
-      b: {term: "AI Incident", fa: "رخداد هوش مصنوعی", seed: "رخدادی که در آن سامانه AI موجب آسیب واقعی یا یک وضعیت ناخواسته مهم می‌شود و نیازمند ثبت، بررسی یا پاسخ است."}
-      relation: "Governance سازوکار مدیریت و پاسخ‌گویی را فراهم می‌کند؛ incident یکی از محرک‌های مهم برای بهبود آن است."
-      sources:
-        - {name: "OECD: Defining AI incidents", url: "https://www.oecd.org/en/publications/defining-ai-incidents-and-related-terms_d1a8d965-en.html"}
-        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
-    - id: 29
-      title: "Open-weight و Open-source AI"
-      a: {term: "Open-weight Model", fa: "مدل با وزن‌های باز", seed: "مدلی که وزن‌های آموزش‌دیده آن برای دریافت و اجرای مستقل در دسترس قرار می‌گیرند؛ این امر الزاماً به معنی باز بودن همه اجزای توسعه نیست."}
-      b: {term: "Open-source AI", fa: "هوش مصنوعی متن‌باز", seed: "اصطلاحی گسترده‌تر که درباره باز بودن کد، داده، وزن‌ها و شرایط مجوز به کار می‌رود و در AI تعریف ساده و واحدی ندارد."}
-      relation: "Open-weight و open-source یکی نیستند؛ برای ارزیابی بازبودن یک مدل باید دقیقاً دید کدام اجزا و با چه مجوزی منتشر شده‌اند."
-      sources:
-        - {name: "OECD AI openness 2025", url: "https://www.oecd.org/en/publications/ai-openness_02f73362-en.html"}
-        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-    - id: 30
-      title: "World Model و Digital Twin"
-      a: {term: "World Model", fa: "مدل جهان", seed: "مدلی که تلاش می‌کند ساختار یا پویایی محیط را یاد بگیرد تا بتواند پیامد اعمال یا وضعیت‌های آینده را پیش‌بینی کند."}
-      b: {term: "Digital Twin", fa: "دوقلوی دیجیتال", seed: "نمایش دیجیتال یک شیء، سامانه یا فرایند واقعی که با داده‌های آن سامانه برای پایش، شبیه‌سازی یا بهینه‌سازی به‌کار می‌رود."}
-      relation: "World model یک مفهوم یادگیری و پیش‌بینی محیط است؛ digital twin یک کاربرد مهندسی و داده‌محور برای بازنمایی یک سامانه واقعی است."
-      sources:
-        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-        - {name: "NIST Artificial Intelligence", url: "https://www.nist.gov/artificial-intelligence"}
+{
+  "education": {
+    "enabled": true,
+    "lessons_per_run": 1,
+    "curriculum_version": "3.0",
+    "reviewed_at": "2026-11-03",
+    "course_title": "دوره جامع هوش مصنوعی: از مبانی علمی تا سامانه‌های عامل‌محور و فناوری‌های مرزی",
+    "course_language": "fa-IR",
+    "total_lessons": 130,
+    "pedagogy": {
+      "progression": "از مفاهیم و پیش‌نیازها به ریاضیات، مدل‌ها، مهندسی، ارزیابی و فناوری‌های همگرا",
+      "lesson_contract": "پرسش راهبر، هدف یادگیری، دقیقاً دو مفهوم، تعریف علمی و شهودی، سازوکار فنی، رابطه و مرزبندی، برداشت نادرست، مثال، تمرین بازیابی و منابع مستقل",
+      "evidence_policy": "برای مبانی پایدار، منابع علمی و دانشگاهی مرجع همراه با مستندات جاری؛ برای فناوری‌های سریع‌التغییر، دست‌کم دو منبع مستقل معتبر و جاری، ترجیحاً منتشر یا به‌روزرسانی‌شده در ۲۰۲۶."
+    },
+    "modules": [
+      {
+        "id": 1,
+        "title": "مبانی هوش مصنوعی و استدلال",
+        "first_lesson": 1,
+        "last_lesson": 10,
+        "objective": "صورت‌بندی مسئله، عامل هوشمند، جست‌وجو، منطق و استدلال تحت عدم‌قطعیت."
+      },
+      {
+        "id": 2,
+        "title": "ریاضیات، آمار و اطلاعات برای AI",
+        "first_lesson": 11,
+        "last_lesson": 20,
+        "objective": "درک ابزارهای ریاضی برای نمایش داده، مدل‌سازی عدم‌قطعیت و بهینه‌سازی."
+      },
+      {
+        "id": 3,
+        "title": "یادگیری ماشین و یادگیری آماری",
+        "first_lesson": 21,
+        "last_lesson": 30,
+        "objective": "شناخت انواع یادگیری، الگوریتم‌های پایه، ارزیابی و تعمیم."
+      }
+    ],
+    "lessons": [
+      {
+        "id": 1,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "مبانی هوش مصنوعی و یادگیری ماشین",
+        "a": {
+          "term": "Artificial Intelligence",
+          "fa": "هوش مصنوعی",
+          "seed": "حوزه علمی و مهندسی ساخت سامانه‌هایی برای ادراک، استدلال، یادگیری، پیش‌بینی یا کنش هدفمند."
+        },
+        "b": {
+          "term": "Machine Learning",
+          "fa": "یادگیری ماشین",
+          "seed": "زیرحوزه‌ای از AI که از داده یا تجربه برای آموختن الگو و تنظیم رفتار مدل استفاده می‌کند."
+        },
+        "relation": "یادگیری ماشین یکی از رویکردهای ساخت AI است؛ سامانه‌های قاعده‌محور و نمادین نیز در دامنه هوش مصنوعی قرار می‌گیرند.",
+        "prerequisites": [],
+        "core_question": "Artificial Intelligence و Machine Learning چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند هوش مصنوعی و یادگیری ماشین را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "یک سامانه مسیریابی قاعده‌محور و یک سامانه پیش‌بینی ترافیک را از نظر AI و ML مقایسه کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna: Fundamentals of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
+          },
+          {
+            "name": "University of Freiburg: Foundations of AI SS26",
+            "url": "https://rl.uni-freiburg.de/teaching/ss26/ss26/foundations-ai/"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "پارادایم‌های هوش مصنوعی",
+        "a": {
+          "term": "Symbolic AI",
+          "fa": "هوش مصنوعی نمادین",
+          "seed": "رویکردی که دانش، قواعد و استنتاج را با نمادها و زبان‌های صریح بازنمایی می‌کند."
+        },
+        "b": {
+          "term": "Connectionist AI",
+          "fa": "هوش مصنوعی پیوندگرا",
+          "seed": "رویکردی که محاسبه و یادگیری را با شبکه‌ای از واحدهای متصل و پارامترهای قابل‌آموزش مدل می‌کند."
+        },
+        "relation": "نمادین‌بودن بر بازنمایی صریح دانش تکیه دارد؛ پیوندگرایی بر نمایش توزیع‌شده و یادگیری پارامترها.",
+        "prerequisites": [
+          1
+        ],
+        "core_question": "Symbolic AI و Connectionist AI چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند هوش مصنوعی نمادین و هوش مصنوعی پیوندگرا را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای تشخیص عیب شبکه، یک قاعده نمادین و یک راه‌حل پیوندگرا طراحی کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "FAU Artificial Intelligence I WS26/27",
+            "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
+          },
+          {
+            "name": "University of Bologna Fundamentals of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "عامل هوشمند و محیط",
+        "a": {
+          "term": "Agent",
+          "fa": "عامل",
+          "seed": "سامانه‌ای که از محیط ادراک دریافت می‌کند و با انتخاب کنش بر آن اثر می‌گذارد."
+        },
+        "b": {
+          "term": "Environment",
+          "fa": "محیط",
+          "seed": "مجموعه وضعیت‌ها، رویدادها، محدودیت‌ها و پیامدهایی که عامل در آن ادراک و عمل می‌کند."
+        },
+        "relation": "عامل و محیط با چرخه ادراک و کنش به هم متصل‌اند؛ تعریف محیط، نوع طراحی عامل را تعیین می‌کند.",
+        "prerequisites": [
+          1
+        ],
+        "core_question": "Agent و Environment چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند عامل و محیط را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "عامل یک ربات نظافت‌گر را با حسگرها، کنش‌ها و محیطش صورت‌بندی کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Freiburg: Foundations of AI SS26",
+            "url": "https://rl.uni-freiburg.de/teaching/ss26/ss26/foundations-ai/"
+          },
+          {
+            "name": "University of Bologna: Foundations of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/517542"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "عقلانیت و معیار عملکرد عامل",
+        "a": {
+          "term": "Rational Agent",
+          "fa": "عامل عقلانی",
+          "seed": "عاملی که با توجه به شواهد و محدودیت‌هایش کنشی را برای بیشینه‌کردن عملکرد مورد انتظار انتخاب می‌کند."
+        },
+        "b": {
+          "term": "Performance Measure",
+          "fa": "معیار عملکرد",
+          "seed": "معیاری برای سنجش موفقیت عامل در محیط و تعیین اینکه چه پیامدی مطلوب تلقی می‌شود."
+        },
+        "relation": "عقلانیت به دانایی کامل یا موفقیت تضمین‌شده معنا نمی‌دهد؛ انتخاب کنش به اطلاعات و معیار عملکرد وابسته است.",
+        "prerequisites": [
+          3
+        ],
+        "core_question": "Rational Agent و Performance Measure چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند عامل عقلانی و معیار عملکرد را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای دستیار زمان‌بندی، سه معیار عملکرد و تعارض میان آن‌ها را تعیین کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna Fundamentals of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
+          },
+          {
+            "name": "FAU Artificial Intelligence I WS26/27",
+            "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "صورت‌بندی مسئله و فضای حالت",
+        "a": {
+          "term": "Problem Formulation",
+          "fa": "صورت‌بندی مسئله",
+          "seed": "تعیین حالت آغازین، اعمال مجاز، مدل انتقال، آزمون هدف و هزینه مسیر برای تبدیل مسئله واقعی به مسئله قابل حل."
+        },
+        "b": {
+          "term": "State Space",
+          "fa": "فضای حالت",
+          "seed": "مجموعه همه وضعیت‌های ممکن مسئله که با تعریف رسمی آن مشخص می‌شود."
+        },
+        "relation": "صورت‌بندی مسئله اجزای حل را تعریف می‌کند؛ فضای حالت فقط یکی از اجزای آن است.",
+        "prerequisites": [
+          3
+        ],
+        "core_question": "Problem Formulation و State Space چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند صورت‌بندی مسئله و فضای حالت را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "مسئله عبور از رودخانه را با حالت، عمل و آزمون هدف تعریف کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna Fundamentals of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
+          },
+          {
+            "name": "FAU Artificial Intelligence I WS26/27",
+            "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "جست‌وجوی ناآگاهانه",
+        "a": {
+          "term": "Breadth-First Search",
+          "fa": "جست‌وجوی سطحی",
+          "seed": "الگوریتمی که گره‌ها را به ترتیب عمق و لایه‌به‌لایه گسترش می‌دهد."
+        },
+        "b": {
+          "term": "Depth-First Search",
+          "fa": "جست‌وجوی عمقی",
+          "seed": "الگوریتمی که یک مسیر را تا حد ممکن دنبال می‌کند و سپس به عقب بازمی‌گردد."
+        },
+        "relation": "BFS در گراف بدون وزن مسیر با کمترین تعداد یال را می‌یابد؛ DFS حافظه کمتری می‌خواهد اما بهینگی را تضمین نمی‌کند.",
+        "prerequisites": [
+          5
+        ],
+        "core_question": "Breadth-First Search و Depth-First Search چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند جست‌وجوی سطحی و جست‌وجوی عمقی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای گرافی با شاخه‌زایی زیاد، پیچیدگی حافظه و تضمین بهینگی دو روش را مقایسه کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "FAU Artificial Intelligence I WS26/27",
+            "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
+          },
+          {
+            "name": "University of Bologna Fundamentals of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "جست‌وجوی ابتکاری و A*",
+        "a": {
+          "term": "Heuristic Function",
+          "fa": "تابع ابتکاری",
+          "seed": "برآوردی از هزینه باقی‌مانده تا هدف که جست‌وجو را به سمت مسیرهای امیدوارکننده هدایت می‌کند."
+        },
+        "b": {
+          "term": "A* Search",
+          "fa": "جست‌وجوی A*",
+          "seed": "الگوریتمی که هزینه طی‌شده و برآورد ابتکاری هزینه باقی‌مانده را برای اولویت‌بندی گره‌ها ترکیب می‌کند."
+        },
+        "relation": "تابع ابتکاری راهنمای جست‌وجو است؛ تضمین بهینگی A* به ویژگی‌هایی مانند admissibility و سازگاری تابع ابتکاری وابسته است.",
+        "prerequisites": [
+          5,
+          6
+        ],
+        "core_question": "Heuristic Function و A* Search چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند تابع ابتکاری و جست‌وجوی A* را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "یک heuristic قابل قبول برای مسیریابی شهری بساز و شرط admissibility آن را بررسی کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna Fundamentals of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
+          },
+          {
+            "name": "FAU Artificial Intelligence I WS26/27",
+            "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "بازنمایی دانش و منطق",
+        "a": {
+          "term": "Knowledge Representation",
+          "fa": "بازنمایی دانش",
+          "seed": "سازمان‌دهی واقعیت‌ها، مفاهیم و روابط به شکلی که سامانه بتواند آن‌ها را پردازش و استنتاج کند."
+        },
+        "b": {
+          "term": "First-Order Logic",
+          "fa": "منطق مرتبه اول",
+          "seed": "زبان صوری برای بیان اشیا، ویژگی‌ها، روابط، متغیرها و کمیت‌گذارها."
+        },
+        "relation": "بازنمایی دانش مسئله‌ای گسترده است؛ منطق مرتبه اول یکی از زبان‌های صوری برای بیان دانش و استنتاج است.",
+        "prerequisites": [
+          2,
+          5
+        ],
+        "core_question": "Knowledge Representation و First-Order Logic چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند بازنمایی دانش و منطق مرتبه اول را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "سه واقعیت و دو قاعده درباره خرابی تجهیزات را با منطق مرتبه اول بنویس.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Freiburg Foundations of AI SS26",
+            "url": "https://rl.uni-freiburg.de/teaching/ss26/ss26/foundations-ai/"
+          },
+          {
+            "name": "University of Bologna Fundamentals of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "استدلال تحت عدم‌قطعیت",
+        "a": {
+          "term": "Deterministic Reasoning",
+          "fa": "استدلال قطعی",
+          "seed": "استدلالی که با قواعد و فرض‌های ثابت به نتیجه معین می‌رسد."
+        },
+        "b": {
+          "term": "Probabilistic Reasoning",
+          "fa": "استدلال احتمالاتی",
+          "seed": "استدلالی که عدم‌قطعیت شواهد و فرضیه‌ها را با احتمال و توزیع‌های آماری نمایش می‌دهد."
+        },
+        "relation": "استدلال قطعی برای قواعد دقیق مناسب است؛ استدلال احتمالاتی شواهد ناقص و عدم‌قطعیت را صریح می‌کند.",
+        "prerequisites": [
+          4,
+          8
+        ],
+        "core_question": "Deterministic Reasoning و Probabilistic Reasoning چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند استدلال قطعی و استدلال احتمالاتی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای تشخیص خرابی شبکه، یک قاعده قطعی و یک مدل احتمالاتی طراحی کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna Fundamentals of AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
+          },
+          {
+            "name": "SciPy Statistical Functions",
+            "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "module_id": 1,
+        "module_title": "مبانی هوش مصنوعی و استدلال",
+        "domain": "مبانی هوش مصنوعی و استدلال",
+        "level": "foundation",
+        "title": "مدل و سامانه هوش مصنوعی",
+        "a": {
+          "term": "AI Model",
+          "fa": "مدل هوش مصنوعی",
+          "seed": "جزء محاسباتی‌ای که ورودی را با پارامترها و قواعد خود به پیش‌بینی، محتوا یا تصمیم تبدیل می‌کند."
+        },
+        "b": {
+          "term": "AI System",
+          "fa": "سامانه هوش مصنوعی",
+          "seed": "ترکیبی از مدل، داده، نرم‌افزار، رابط، انسان، زیرساخت و فرایند عملیاتی برای تحقق یک کاربرد."
+        },
+        "relation": "مدل یکی از اجزای سامانه است؛ ایمنی و عملکرد باید در سطح کل سامانه و چرخه عمر بررسی شود.",
+        "prerequisites": [
+          1,
+          3
+        ],
+        "core_question": "AI Model و AI System چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند مدل هوش مصنوعی و سامانه هوش مصنوعی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "اجزای فراتر از مدل را در یک دستیار سازمانی فهرست کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "NIST AI Risk Management Framework",
+            "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+          },
+          {
+            "name": "Stanford AI Index 2026",
+            "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "بردارها و اسکالرها",
+        "a": {
+          "term": "Scalar",
+          "fa": "اسکالر",
+          "seed": "کمیتی با یک مقدار عددی منفرد."
+        },
+        "b": {
+          "term": "Vector",
+          "fa": "بردار",
+          "seed": "دنباله‌ای مرتب از مقادیر که می‌تواند یک نمونه داده، جهت یا مجموعه ویژگی‌ها را نمایش دهد."
+        },
+        "relation": "اسکالر یک مقدار دارد؛ بردار چند مؤلفه دارد و عملیات آن به ساختار و بُعد وابسته است.",
+        "prerequisites": [
+          1
+        ],
+        "core_question": "Scalar و Vector چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند اسکالر و بردار را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "چهار ویژگی یک مشترک را به‌صورت بردار عددی نمایش بده.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna Mathematical Methods for AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661"
+          },
+          {
+            "name": "LMU Mathematical Foundations of ML SoSe 2026",
+            "url": "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026/"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "ماتریس و تنسور",
+        "a": {
+          "term": "Matrix",
+          "fa": "ماتریس",
+          "seed": "آرایه‌ای دوبعدی از اعداد که داده چندنمونه‌ای یا تبدیل خطی را نمایش می‌دهد."
+        },
+        "b": {
+          "term": "Tensor",
+          "fa": "تنسور",
+          "seed": "تعمیمی از اسکالر، بردار و ماتریس به آرایه‌ای با تعداد دلخواه محور."
+        },
+        "relation": "ماتریس دوبعدی است؛ تنسور مفهوم عمومی‌تری برای آرایه چندمحوری است.",
+        "prerequisites": [
+          11
+        ],
+        "core_question": "Matrix و Tensor چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند ماتریس و تنسور را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "شکل تنسور یک دسته ۳۲ تصویر RGB با ابعاد ۲۲۴ در ۲۲۴ را مشخص کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna Mathematical Methods for AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661"
+          },
+          {
+            "name": "LMU Mathematical Foundations of ML SoSe 2026",
+            "url": "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026/"
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "ضرب داخلی و ضرب ماتریسی",
+        "a": {
+          "term": "Dot Product",
+          "fa": "ضرب داخلی",
+          "seed": "عملیاتی که حاصل‌ضرب مؤلفه‌های متناظر دو بردار را جمع می‌کند."
+        },
+        "b": {
+          "term": "Matrix Multiplication",
+          "fa": "ضرب ماتریسی",
+          "seed": "عملیاتی که سطرها و ستون‌ها را ترکیب می‌کند و تبدیل‌های خطی را پیاده می‌سازد."
+        },
+        "relation": "ضرب داخلی دو بردار را به یک مقدار نگاشت می‌کند؛ ضرب ماتریسی مجموعه‌ای از ضرب‌های داخلی را سازمان می‌دهد.",
+        "prerequisites": [
+          11,
+          12
+        ],
+        "core_question": "Dot Product و Matrix Multiplication چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند ضرب داخلی و ضرب ماتریسی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "ابعاد دو ماتریس سازگار برای یک لایه تمام‌متصل را تعیین کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna: Statistical and Mathematical Methods for AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661"
+          },
+          {
+            "name": "SciPy Statistical Functions",
+            "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "مشتق و گرادیان",
+        "a": {
+          "term": "Derivative",
+          "fa": "مشتق",
+          "seed": "نرخ تغییر تابع نسبت به یک متغیر که حساسیت خروجی به تغییر ورودی را نشان می‌دهد."
+        },
+        "b": {
+          "term": "Gradient",
+          "fa": "گرادیان",
+          "seed": "برداری از مشتق‌های جزئی تابع چندمتغیره که جهت بیشترین افزایش محلی را مشخص می‌کند."
+        },
+        "relation": "مشتق برای تابع تک‌متغیره است؛ گرادیان تعمیم چندمتغیره آن است.",
+        "prerequisites": [
+          11,
+          12
+        ],
+        "core_question": "Derivative و Gradient چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند مشتق و گرادیان را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "گرادیان تابع f(x,y)=x²+3y را محاسبه و تفسیر کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "LMU Munich: Mathematical Foundations of ML SoSe 2026",
+            "url": "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026/"
+          },
+          {
+            "name": "PyTorch Tutorials",
+            "url": "https://pytorch.org/tutorials/"
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "تابع زیان و تابع هدف",
+        "a": {
+          "term": "Loss Function",
+          "fa": "تابع زیان",
+          "seed": "تابعی که اختلاف پیش‌بینی مدل و هدف را کمّی می‌کند."
+        },
+        "b": {
+          "term": "Objective Function",
+          "fa": "تابع هدف",
+          "seed": "معیاری که الگوریتم بهینه‌سازی کمینه یا بیشینه می‌کند و ممکن است زیان و جریمه‌ها را ترکیب کند."
+        },
+        "relation": "تابع زیان خطای پیش‌بینی را اندازه می‌گیرد؛ تابع هدف می‌تواند زیان به‌علاوه منظم‌سازی یا قیود باشد.",
+        "prerequisites": [
+          14
+        ],
+        "core_question": "Loss Function و Objective Function چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند تابع زیان و تابع هدف را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای طبقه‌بندی دودویی، تابع زیان و تابع هدف را از هم تفکیک کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "Google Machine Learning Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
+          },
+          {
+            "name": "scikit-learn User Guide",
+            "url": "https://scikit-learn.org/stable/user_guide.html"
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "گرادیان کاهشی و نسخه تصادفی",
+        "a": {
+          "term": "Gradient Descent",
+          "fa": "گرادیان کاهشی",
+          "seed": "روش بهینه‌سازی که پارامترها را در خلاف جهت گرادیان تابع هدف به‌روزرسانی می‌کند."
+        },
+        "b": {
+          "term": "Stochastic Gradient Descent",
+          "fa": "گرادیان کاهشی تصادفی",
+          "seed": "نسخه‌ای که در هر گام از یک نمونه یا دسته کوچک برای برآورد گرادیان استفاده می‌کند."
+        },
+        "relation": "گرادیان کاهشی کلاسیک از کل داده استفاده می‌کند؛ SGD تخمین ارزان‌تر اما پرنوسان‌تری در هر گام دارد.",
+        "prerequisites": [
+          14,
+          15
+        ],
+        "core_question": "Gradient Descent و Stochastic Gradient Descent چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند گرادیان کاهشی و گرادیان کاهشی تصادفی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "تأثیر اندازه batch بر نوسان گرادیان و سرعت آموزش را توضیح بده.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "LMU Munich: Mathematical Foundations of ML SoSe 2026",
+            "url": "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026/"
+          },
+          {
+            "name": "PyTorch Tutorials",
+            "url": "https://pytorch.org/tutorials/"
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "توزیع احتمال و درست‌نمایی",
+        "a": {
+          "term": "Probability Distribution",
+          "fa": "توزیع احتمال",
+          "seed": "تابعی که احتمال مقادیر یا بازه‌های یک متغیر تصادفی را مشخص می‌کند."
+        },
+        "b": {
+          "term": "Likelihood",
+          "fa": "درستنمایی",
+          "seed": "تابعی از پارامترها که احتمال داده مشاهده‌شده را تحت هر مقدار پارامتر بیان می‌کند."
+        },
+        "relation": "توزیع بر پیامدهای ممکن تمرکز دارد؛ درست‌نمایی با داده ثابت، پارامترها را مقایسه می‌کند.",
+        "prerequisites": [
+          9,
+          11
+        ],
+        "core_question": "Probability Distribution و Likelihood چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند توزیع احتمال و درستنمایی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای ۷ شیر در ۱۰ پرتاب، تابع درست‌نمایی احتمال شیر را بنویس.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna: Statistical and Mathematical Methods for AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661"
+          },
+          {
+            "name": "SciPy Statistical Functions",
+            "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "احتمال شرطی و قضیه بیز",
+        "a": {
+          "term": "Conditional Probability",
+          "fa": "احتمال شرطی",
+          "seed": "احتمال وقوع یک رویداد با فرض دانستن وقوع رویداد دیگر."
+        },
+        "b": {
+          "term": "Bayes' Rule",
+          "fa": "قضیه بیز",
+          "seed": "قاعده‌ای برای به‌روزرسانی احتمال فرضیه پس از مشاهده شواهد با ترکیب احتمال پیشین و درست‌نمایی."
+        },
+        "relation": "احتمال شرطی مفهوم پایه است؛ قضیه بیز رابطه‌ای برای وارون‌سازی شرط و به‌روزرسانی باور فراهم می‌کند.",
+        "prerequisites": [
+          17
+        ],
+        "core_question": "Conditional Probability و Bayes' Rule چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند احتمال شرطی و قضیه بیز را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "با اعداد فرضی احتمال بیماری پس از نتیجه مثبت آزمایش را محاسبه کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "University of Bologna: Statistical and Mathematical Methods for AI 2026/27",
+            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661"
+          },
+          {
+            "name": "SciPy Statistical Functions",
+            "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "آنتروپی و آنتروپی متقاطع",
+        "a": {
+          "term": "Entropy",
+          "fa": "آنتروپی",
+          "seed": "معیاری از عدم‌قطعیت یک توزیع احتمال بر پایه میانگین اطلاعات خودی."
+        },
+        "b": {
+          "term": "Cross-Entropy",
+          "fa": "آنتروپی متقاطع",
+          "seed": "معیاری برای سنجش اختلاف توزیع هدف و توزیع پیش‌بینی‌شده که در آموزش طبقه‌بندها رایج است."
+        },
+        "relation": "آنتروپی عدم‌قطعیت یک توزیع را می‌سنجد؛ آنتروپی متقاطع هزینه پیش‌بینی توزیع هدف با توزیع مدل را اندازه می‌گیرد.",
+        "prerequisites": [
+          17
+        ],
+        "core_question": "Entropy و Cross-Entropy چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند آنتروپی و آنتروپی متقاطع را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "دو پیش‌بینی با اطمینان متفاوت را از نظر cross-entropy مقایسه کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "PyTorch Tutorials",
+            "url": "https://pytorch.org/tutorials/"
+          },
+          {
+            "name": "SciPy Statistical Functions",
+            "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "module_id": 2,
+        "module_title": "ریاضیات، آمار و اطلاعات برای AI",
+        "domain": "ریاضیات، آمار و اطلاعات برای AI",
+        "level": "mathematical foundation",
+        "title": "منظم‌سازی و قید بهینه‌سازی",
+        "a": {
+          "term": "Regularization",
+          "fa": "منظم‌سازی",
+          "seed": "افزودن جریمه یا ترجیحی به یادگیری برای محدودکردن پیچیدگی مدل و کاهش بیش‌برازش."
+        },
+        "b": {
+          "term": "Optimization Constraint",
+          "fa": "قید بهینه‌سازی",
+          "seed": "شرطی که مجموعه راه‌حل‌های مجاز مسئله بهینه‌سازی را محدود می‌کند."
+        },
+        "relation": "منظم‌سازی معمولاً در تابع هدف وارد می‌شود؛ قید مستقیماً فضای راه‌حل مجاز را محدود می‌کند.",
+        "prerequisites": [
+          15,
+          16
+        ],
+        "core_question": "Regularization و Optimization Constraint چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند منظم‌سازی و قید بهینه‌سازی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "تفاوت جریمه L2 و قید نرم پارامترها را توضیح بده.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "LMU Munich: Mathematical Foundations of ML SoSe 2026",
+            "url": "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026/"
+          },
+          {
+            "name": "scikit-learn Model Selection",
+            "url": "https://scikit-learn.org/stable/model_selection.html"
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "یادگیری نظارت‌شده و بدون نظارت",
+        "a": {
+          "term": "Supervised Learning",
+          "fa": "یادگیری نظارت‌شده",
+          "seed": "یادگیری نگاشت از ورودی به هدف با استفاده از نمونه‌های دارای برچسب."
+        },
+        "b": {
+          "term": "Unsupervised Learning",
+          "fa": "یادگیری بدون نظارت",
+          "seed": "یادگیری ساختار یا الگو از داده بدون برچسب هدف صریح."
+        },
+        "relation": "وجود برچسب هدف تفاوت اصلی است و نوع مسئله و معیار ارزیابی را تغییر می‌دهد.",
+        "prerequisites": [
+          1,
+          10,
+          20
+        ],
+        "core_question": "Supervised Learning و Unsupervised Learning چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند یادگیری نظارت‌شده و یادگیری بدون نظارت را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای داده مشترکان یک مسئله نظارت‌شده و یک مسئله بدون نظارت تعریف کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "scikit-learn Supervised Learning",
+            "url": "https://scikit-learn.org/stable/supervised_learning.html"
+          },
+          {
+            "name": "Google Machine Learning Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "رگرسیون و طبقه‌بندی",
+        "a": {
+          "term": "Regression",
+          "fa": "رگرسیون",
+          "seed": "مدل‌سازی رابطه ورودی‌ها با خروجی عددی پیوسته."
+        },
+        "b": {
+          "term": "Classification",
+          "fa": "طبقه‌بندی",
+          "seed": "پیش‌بینی کلاس گسسته یا احتمال تعلق نمونه به کلاس‌ها."
+        },
+        "relation": "رگرسیون مقدار عددی پیوسته می‌دهد؛ طبقه‌بندی برچسب یا احتمال کلاس‌ها را پیش‌بینی می‌کند.",
+        "prerequisites": [
+          21
+        ],
+        "core_question": "Regression و Classification چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند رگرسیون و طبقه‌بندی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "پیش‌بینی مصرف ماهانه و تشخیص قطعی خط را به نوع مسئله مناسب نگاشت کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "scikit-learn Supervised Learning",
+            "url": "https://scikit-learn.org/stable/supervised_learning.html"
+          },
+          {
+            "name": "Google Machine Learning Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "خوشه‌بندی و کاهش بُعد",
+        "a": {
+          "term": "Clustering",
+          "fa": "خوشه‌بندی",
+          "seed": "گروه‌بندی نمونه‌ها بر اساس شباهت یا ساختار بدون برچسب از پیش تعیین‌شده."
+        },
+        "b": {
+          "term": "Dimensionality Reduction",
+          "fa": "کاهش بُعد",
+          "seed": "تبدیل داده به نمایش کم‌بعدتر با هدف حفظ اطلاعات یا ساختار مهم."
+        },
+        "relation": "خوشه‌بندی گروه‌ها را می‌سازد؛ کاهش بُعد نمایش فشرده‌تری از ویژگی‌ها ایجاد می‌کند.",
+        "prerequisites": [
+          21,
+          12
+        ],
+        "core_question": "Clustering و Dimensionality Reduction چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند خوشه‌بندی و کاهش بُعد را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای داده مشترکان، کاربرد و محدودیت خوشه‌بندی و PCA را مقایسه کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "SciPy Statistical Functions",
+            "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
+          },
+          {
+            "name": "Google ML Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "مجموعه آموزش، اعتبارسنجی و آزمون",
+        "a": {
+          "term": "Training Set",
+          "fa": "مجموعه آموزش",
+          "seed": "بخشی از داده که مدل پارامترهای خود را با آن یاد می‌گیرد."
+        },
+        "b": {
+          "term": "Validation and Test Sets",
+          "fa": "مجموعه اعتبارسنجی و آزمون",
+          "seed": "اعتبارسنجی برای انتخاب مدل و تنظیم ابرپارامترهاست؛ آزمون برای برآورد نهایی عملکرد روی داده ندیده استفاده می‌شود."
+        },
+        "relation": "اعتبارسنجی ابزار انتخاب است؛ آزمون نهایی باید تا پایان توسعه مستقل بماند.",
+        "prerequisites": [
+          21
+        ],
+        "core_question": "Training Set و Validation and Test Sets چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند مجموعه آموزش و مجموعه اعتبارسنجی و آزمون را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای پیش‌بینی سری زمانی، تقسیم train/validation/test بدون نشت آینده طراحی کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "scikit-learn Model Selection",
+            "url": "https://scikit-learn.org/stable/model_selection.html"
+          },
+          {
+            "name": "Google Machine Learning Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
+          }
+        ]
+      },
+      {
+        "id": 25,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "بیش‌برازش و تعمیم‌پذیری",
+        "a": {
+          "term": "Overfitting",
+          "fa": "بیش‌برازش",
+          "seed": "یادگیری جزئیات و نویز داده آموزش به‌گونه‌ای که عملکرد روی داده جدید افت می‌کند."
+        },
+        "b": {
+          "term": "Generalization",
+          "fa": "تعمیم‌پذیری",
+          "seed": "توانایی مدل برای حفظ عملکرد روی نمونه‌هایی از توزیع هدف که در آموزش ندیده است."
+        },
+        "relation": "بیش‌برازش مانع تعمیم است؛ شکاف خطای آموزش و آزمون یکی از نشانه‌های آن است.",
+        "prerequisites": [
+          24
+        ],
+        "core_question": "Overfitting و Generalization چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند بیش‌برازش و تعمیم‌پذیری را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "از روی خطای آموزش و آزمون، بیش‌برازش را تشخیص بده.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "Google Machine Learning Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
+          },
+          {
+            "name": "scikit-learn Model Selection",
+            "url": "https://scikit-learn.org/stable/model_selection.html"
+          }
+        ]
+      },
+      {
+        "id": 26,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "موازنه بایاس و واریانس",
+        "a": {
+          "term": "Bias",
+          "fa": "بایاس",
+          "seed": "خطای نظام‌مند ناشی از فرض‌های ساده‌کننده یا محدودیت مدل."
+        },
+        "b": {
+          "term": "Variance",
+          "fa": "واریانس",
+          "seed": "حساسیت مدل به تغییر نمونه آموزش که باعث نوسان پیش‌بینی می‌شود."
+        },
+        "relation": "افزایش پیچیدگی می‌تواند بایاس را کاهش دهد اما واریانس را افزایش دهد؛ انتخاب مدل به موازنه این دو وابسته است.",
+        "prerequisites": [
+          25
+        ],
+        "core_question": "Bias و Variance چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند بایاس و واریانس را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "رفتار مدل خطی و درخت عمیق را روی داده کم‌حجم مقایسه کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "LMU Munich: Mathematical Foundations of ML SoSe 2026",
+            "url": "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026/"
+          },
+          {
+            "name": "scikit-learn Model Selection",
+            "url": "https://scikit-learn.org/stable/model_selection.html"
+          }
+        ]
+      },
+      {
+        "id": 27,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "درخت تصمیم و جنگل تصادفی",
+        "a": {
+          "term": "Decision Tree",
+          "fa": "درخت تصمیم",
+          "seed": "مدلی که با تقسیم بازگشتی فضای ویژگی‌ها بر اساس قواعد شرطی پیش‌بینی می‌کند."
+        },
+        "b": {
+          "term": "Random Forest",
+          "fa": "جنگل تصادفی",
+          "seed": "مجموعه‌ای از درخت‌ها که با نمونه‌گیری و انتخاب تصادفی ویژگی‌ها آموزش می‌بینند و خروجی را تجمیع می‌کنند."
+        },
+        "relation": "جنگل تصادفی با تجمیع چند درخت معمولاً واریانس را نسبت به یک درخت منفرد کاهش می‌دهد.",
+        "prerequisites": [
+          22,
+          25
+        ],
+        "core_question": "Decision Tree و Random Forest چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند درخت تصمیم و جنگل تصادفی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "تفسیرپذیری یک درخت و پایداری جنگل را برای یک مسئله طبقه‌بندی مقایسه کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "scikit-learn Decision Trees",
+            "url": "https://scikit-learn.org/stable/modules/tree.html"
+          },
+          {
+            "name": "Google Machine Learning Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "بگینگ و بوستینگ",
+        "a": {
+          "term": "Bagging",
+          "fa": "بگینگ",
+          "seed": "روش ensemble که مدل‌ها را روی نمونه‌های bootstrap آموزش می‌دهد و پیش‌بینی‌ها را تجمیع می‌کند."
+        },
+        "b": {
+          "term": "Boosting",
+          "fa": "بوستینگ",
+          "seed": "روش ensemble که مدل‌ها را ترتیبی می‌سازد تا خطاهای مراحل قبلی را جبران کنند."
+        },
+        "relation": "بگینگ عمدتاً واریانس را کاهش می‌دهد؛ بوستینگ به‌صورت ترتیبی خطاهای باقی‌مانده را هدف می‌گیرد.",
+        "prerequisites": [
+          27
+        ],
+        "core_question": "Bagging و Boosting چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند بگینگ و بوستینگ را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "ترتیب آموزش مدل‌ها و نحوه تجمیع خروجی در دو روش را ترسیم کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "scikit-learn Ensemble Methods",
+            "url": "https://scikit-learn.org/stable/modules/ensemble.html"
+          },
+          {
+            "name": "XGBoost Documentation",
+            "url": "https://xgboost.readthedocs.io/en/stable/"
+          }
+        ]
+      },
+      {
+        "id": 29,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "مهندسی ویژگی و انتخاب ویژگی",
+        "a": {
+          "term": "Feature Engineering",
+          "fa": "مهندسی ویژگی",
+          "seed": "ساخت یا تبدیل متغیرهای ورودی با دانش دامنه برای نمایش مناسب‌تر مسئله به مدل."
+        },
+        "b": {
+          "term": "Feature Selection",
+          "fa": "انتخاب ویژگی",
+          "seed": "گزینش زیرمجموعه‌ای از ویژگی‌های موجود بر اساس ارتباط، پایداری یا هزینه."
+        },
+        "relation": "مهندسی ویژگی نمایش را می‌سازد یا تغییر می‌دهد؛ انتخاب ویژگی از میان ویژگی‌های موجود گزینش می‌کند.",
+        "prerequisites": [
+          21,
+          22
+        ],
+        "core_question": "Feature Engineering و Feature Selection چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند مهندسی ویژگی و انتخاب ویژگی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "از timestamp خام سه ویژگی زمانی معنادار بساز و روش انتخاب آن‌ها را مشخص کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "scikit-learn Feature Selection",
+            "url": "https://scikit-learn.org/stable/modules/feature_selection.html"
+          },
+          {
+            "name": "Google Machine Learning Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
+          }
+        ]
+      },
+      {
+        "id": 30,
+        "module_id": 3,
+        "module_title": "یادگیری ماشین و یادگیری آماری",
+        "domain": "یادگیری ماشین و یادگیری آماری",
+        "level": "foundation",
+        "title": "یادگیری خودنظارتی و نیمه‌نظارتی",
+        "a": {
+          "term": "Self-Supervised Learning",
+          "fa": "یادگیری خودنظارتی",
+          "seed": "ساخت سیگنال آموزشی از خود داده، مانند پیش‌بینی بخش پنهان یا ادامه دنباله."
+        },
+        "b": {
+          "term": "Semi-Supervised Learning",
+          "fa": "یادگیری نیمه‌نظارتی",
+          "seed": "ترکیب مقدار محدودی داده برچسب‌دار با حجم بیشتری داده بدون برچسب."
+        },
+        "relation": "خودنظارتی هدف آموزشی را از ساختار داده می‌سازد؛ نیمه‌نظارتی از داده برچسب‌دار و بدون برچسب در کنار هم استفاده می‌کند.",
+        "prerequisites": [
+          21,
+          24
+        ],
+        "core_question": "Self-Supervised Learning و Semi-Supervised Learning چه تفاوتی دارند و این تمایز در صورت‌بندی یا حل مسئله چه اثری دارد؟",
+        "learning_outcome": "دانشجو بتواند یادگیری خودنظارتی و یادگیری نیمه‌نظارتی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله مشخص به‌درستی به‌کار گیرد.",
+        "practice": "برای مجموعه تصاویر کم‌برچسب، سناریوی خودنظارتی و نیمه‌نظارتی را طراحی کن.",
+        "status": "established",
+        "sources": [
+          {
+            "name": "Hugging Face LLM Course",
+            "url": "https://huggingface.co/learn/llm-course/"
+          },
+          {
+            "name": "scikit-learn Semi-Supervised Learning",
+            "url": "https://scikit-learn.org/stable/modules/semi_supervised.html"
+          }
+        ]
+      }
+    ]
+  }
+}

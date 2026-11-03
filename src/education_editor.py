@@ -184,7 +184,7 @@ def normalize_item(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def normalize_education_item(item: dict[str, Any]) -> dict[str, Any]:
-    fields = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
+    fields = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "technical_explanation", "relationship", "common_misconception", "example", "takeaway")
     out = dict(item)
     for field in fields:
         if field in out:

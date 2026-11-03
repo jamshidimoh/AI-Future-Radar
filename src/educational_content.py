@@ -93,9 +93,18 @@ def _expansion_lessons():
     return list(data.get("lessons") or []) if data.get("enabled", True) else []
 
 def _lesson_sequence():
+    """Build one canonical, ID-ordered course and reject gaps or duplicate lessons."""
     sequence = [("foundation", lesson) for lesson in _base_lessons()]
     sequence.extend(("emerging", lesson) for lesson in _emerging_lessons())
     sequence.extend(("expansion", lesson) for lesson in _expansion_lessons())
+    sequence.sort(key=lambda pair: int(pair[1].get("id", 0) or 0))
+    ids = [int(lesson.get("id", 0) or 0) for _, lesson in sequence]
+    if any(not lesson_id for lesson_id in ids):
+        raise RuntimeError("[Education Curriculum] lesson without a valid ID")
+    if len(ids) != len(set(ids)):
+        raise RuntimeError("[Education Curriculum] duplicate lesson IDs")
+    if ids and ids != list(range(1, max(ids) + 1)):
+        raise RuntimeError(f"[Education Curriculum] sequence gap or disorder: {ids[:8]}...{ids[-8:]}")
     return sequence
 
 def _completed_ids(state=None):
@@ -241,16 +250,22 @@ def _generate(lesson):
 8) بخش «به زبان ساده» برای هر دو مفهوم را نیز کامل و روشن بنویس و آن را صرفاً به یک جمله کوتاه تقلیل نده؛ از یک یا دو جمله توضیحیِ معنادار استفاده کن، بدون تکرار بی‌فایده.
 9) هیچ ادعا، عدد یا تاریخ قدیمی‌تر از 2025 را به‌عنوان وضعیت جاری وارد نکن.
 10) رابطه، مثال و نکته باید با تعریف‌ها سازگار باشند.
-11) طول بیشتر فقط برای دو بخش توضیح هر مفهوم (تعریف علمی و به زبان ساده) مجاز است؛ رابطه، مثال، نکته، منابع، ساختار JSON و سایر اجزای پیام را تغییر نده.
-12) خروجی فقط JSON معتبر باشد.
-JSON: {"term_a_definition":"...","term_a_simple":"...","term_b_definition":"...","term_b_simple":"...","relationship":"...","example":"...","takeaway":"..."}
+11) علاوه بر تعریف‌ها، یک توضیح فنی مستقل درباره سازوکار، فرض‌ها یا منطق ریاضی/محاسباتی دو مفهوم بنویس؛ در حدی که برای مخاطب دانشگاهی قابل فهم باشد.
+12) یک برداشت نادرست رایج را مشخص و با یک جمله اصلاح کن.
+13) رابطه، مثال و نکته باید با تعریف‌ها و منابع سازگار باشند؛ مثال باید واقعی یا صریحاً فرضی معرفی شود.
+14) برای مفاهیم مرزی، محدودیت شواهد و شرط اعتبار نتیجه را روشن کن؛ ادعای تبلیغاتی را یافته علمی جلوه نده.
+15) خروجی فقط JSON معتبر باشد.
+JSON: {"term_a_definition":"...","term_a_simple":"...","term_b_definition":"...","term_b_simple":"...","technical_explanation":"...","relationship":"...","common_misconception":"...","example":"...","takeaway":"..."}
 """
     user = (f"درس {lesson.get('id')}: {lesson.get('title')}\nحوزه: {lesson.get('domain', 'AI')}\nپیش‌نیازها: {lesson.get('prerequisites', [])}\nوضعیت: {status}\n"
             f"مفهوم اول: {a['term']} / معادل فارسی: {a['fa']}\nتعریف پایه: {a['seed']}\n"
             f"مفهوم دوم: {b['term']} / معادل فارسی: {b['fa']}\nتعریف پایه: {b['seed']}\n"
-            f"رابطه پایه: {lesson.get('relation', '')}\n\n" + "\n\n".join(source_blocks))
+            f"رابطه پایه: {lesson.get('relation', '')}\n"
+            f"پرسش راهبر: {lesson.get('core_question', '')}\n"
+            f"هدف یادگیری: {lesson.get('learning_outcome', '')}\n"
+            f"تمرین کوتاه: {lesson.get('practice', '')}\n\n" + "\n\n".join(source_blocks))
     raw, provider = call_llm_with_fallback(prompt, user, providers=get_quality_chain())
-    keys = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
+    keys = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "technical_explanation", "relationship", "common_misconception", "example", "takeaway")
     data = _parse_json(raw or "", keys) if raw else None
     if not data:
         return None, verified_sources
@@ -271,17 +286,17 @@ def build_educational_item():
     generated, verified_sources = _generate(lesson)
     if not generated:
         raise RuntimeError("[Education Contract] no publishable lesson: source policy requires two independent current sources")
-    track = "expansion" if lesson_id >= 115 else ("emerging" if lesson_id >= 101 else "foundation")
-    if track == "expansion":
-        track_label = "مسیر توسعه و موضوعات تکمیلی"
+    track = "frontier" if lesson_id >= 115 else ("emerging" if lesson_id >= 101 else "core")
+    if track == "frontier":
+        track_label = "مرزهای دانش و فناوری‌های همگرا"
         education_number = lesson_id - 114
     elif track == "emerging":
-        track_label = "ترمینولوژی روز و فناوری‌های نو"
+        track_label = "واژگان نوظهور و مهندسی AI"
         education_number = lesson_id - 100
     else:
-        track_label = "مفاهیم پایه و بنیادی"
+        track_label = "مسیر علمی اصلی: مبانی، مدل‌ها و مهندسی"
         education_number = lesson_id
-    return {"content_type": "education", "category": "ai", "education_id": lesson_id, "education_total": total, "education_track": track, "education_track_label": track_label, "education_number": education_number, "education_status": lesson.get("status", "established"), "education_title": lesson.get("title", ""), "education_term_a": lesson["a"]["term"], "education_term_a_fa": lesson["a"]["fa"], "education_term_b": lesson["b"]["term"], "education_term_b_fa": lesson["b"]["fa"], "education_sources": verified_sources, **generated}
+    return {"content_type": "education", "category": "ai", "education_id": lesson_id, "education_total": total, "education_track": track, "education_track_label": track_label, "education_number": education_number, "education_status": lesson.get("status", "established"), "education_title": lesson.get("title", ""), "education_module": lesson.get("module_title", lesson.get("domain", "هوش مصنوعی")), "education_domain": lesson.get("domain", ""), "education_core_question": lesson.get("core_question", f"تفاوت دو مفهوم «{lesson['a']['term']}» و «{lesson['b']['term']}» چیست؟"), "education_learning_outcome": lesson.get("learning_outcome", f"تعریف و تمایز «{lesson['a']['term']}» و «{lesson['b']['term']}» و کاربرد آن‌ها در یک مسئله واقعی."), "education_practice": lesson.get("practice", "یک مثال کاربردی بساز و محدودیت هر مفهوم را مشخص کن."), "education_term_a": lesson["a"]["term"], "education_term_a_fa": lesson["a"]["fa"], "education_term_b": lesson["b"]["term"], "education_term_b_fa": lesson["b"]["fa"], "education_sources": verified_sources, **generated}
 
 def commit_education_lesson(lesson_id):
     state = load_state()

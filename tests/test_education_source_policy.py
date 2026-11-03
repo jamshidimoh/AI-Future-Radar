@@ -159,3 +159,14 @@ def test_helm_maintenance_mode_is_not_mistaken_for_active_current_documentation(
         declared_year=None,
     )
     assert result["current"] is False
+
+
+def test_vibe_coding_reference_has_explicit_reviewed_year_override():
+    result = assess_source(
+        url="https://martinfowler.com/bliki/VibeCoding.html",
+        reachable=True,
+        detected_year=None,
+        declared_year=None,
+    )
+    assert result["current"] is True
+    assert result["year"] == 2025

@@ -30,9 +30,15 @@ def _deterministic_education_item(lesson: dict, verified_sources: list[dict]) ->
         "term_a_simple": f"{a['fa']} را می‌توان به‌صورت ساده این‌گونه دید: {a['seed']}",
         "term_b_definition": b["seed"],
         "term_b_simple": f"{b['fa']} را می‌توان به‌صورت ساده این‌گونه دید: {b['seed']}",
+        "technical_explanation": f"سازوکار فنی درس از ترکیب دو تعریف پایه و رابطه مستند آن‌ها به دست می‌آید: {a['seed']}؛ در سوی دیگر {b['seed']}؛ بنابراین باید نقش محاسباتی یا عملیاتی هرکدام را جداگانه تحلیل کرد.",
         "relationship": lesson.get("relation", ""),
+        "common_misconception": f"برداشت نادرست این است که {a['term']} و {b['term']} مترادف یا قابل جایگزینی‌اند؛ رابطه پایه درس نشان می‌دهد مرز دقیق آن‌ها باید حفظ شود.",
         "example": f"در یک سامانه مرتبط با «{lesson.get('title', '').strip() or a['term']}»، مفهوم {a['term']} می‌تواند بخش نخست مسئله را پوشش دهد و {b['term']} نقش مکمل آن را در اجرای سامانه ایفا کند؛ ترکیب این دو باید با هدف، محدودیت‌ها و شیوه ارزیابی سامانه سازگار باشد.",
         "takeaway": f"نکته کلیدی این درس این است که {a['term']} و {b['term']} دو مفهوم متمایزند اما در طراحی و اجرای سامانه‌های AI می‌توانند مکمل یکدیگر باشند؛ مرزبندی دقیق آن‌ها باعث می‌شود معماری، اجرا و ارزیابی با هم اشتباه نشوند.",
+        "education_module": lesson.get("module_title", lesson.get("domain", "هوش مصنوعی")), "education_domain": lesson.get("domain", ""),
+        "education_core_question": lesson.get("core_question", f"تفاوت {a['term']} و {b['term']} چیست؟"),
+        "education_learning_outcome": lesson.get("learning_outcome", f"تعریف و تمایز {a['term']} و {b['term']} در یک مسئله واقعی."),
+        "education_practice": lesson.get("practice", "یک مثال کاربردی بساز و محدودیت هر مفهوم را مشخص کن."),
         "education_sources": verified_sources,
         "_provider": "deterministic curriculum fallback",
         "_review_provider": "source-grounded deterministic QA",
@@ -97,8 +103,8 @@ def _build_with_deterministic_recovery() -> dict | None:
         return None
     item = _deterministic_education_item(lesson, verified_sources)
     item["education_total"] = total
-    item["education_track"] = "expansion" if lesson_id >= 115 else ("emerging" if lesson_id >= 101 else "foundation")
-    item["education_track_label"] = "مسیر توسعه و موضوعات تکمیلی" if lesson_id >= 115 else ("ترمینولوژی روز و فناوری‌های نو" if lesson_id >= 101 else "مفاهیم پایه و بنیادی")
+    item["education_track"] = "frontier" if lesson_id >= 115 else ("emerging" if lesson_id >= 101 else "core")
+    item["education_track_label"] = "مرزهای دانش و فناوری‌های همگرا" if lesson_id >= 115 else ("واژگان نوظهور و مهندسی AI" if lesson_id >= 101 else "مسیر علمی اصلی: مبانی، مدل‌ها و مهندسی")
     item["education_number"] = lesson_id - 114 if lesson_id >= 115 else (lesson_id - 100 if lesson_id >= 101 else lesson_id)
     print(f"[Education Recovery] deterministic lesson fallback selected lesson={lesson_id}", flush=True)
     return item

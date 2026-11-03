@@ -1,302 +1,1135 @@
 education_curriculum_modules:
-  version: "1.0"
-  reviewed_at: "2026-08-22"
+  version: "2.0"
+  reviewed_at: "2026-11-03"
+  modules:
+    - {id: 4, title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد", first_lesson: 31, last_lesson: 40, objective: "ارزیابی تعمیم، بهینه‌سازی، معماری‌های مولد، آموزش ترجیح‌محور و مبانی سرویس‌دهی."}
+    - {id: 5, title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل", first_lesson: 41, last_lesson: 50, objective: "ترکیب ابزار، زمینه، حافظه، ارزیابی، امنیت و تعامل انسان با مدل."}
+    - {id: 6, title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا", first_lesson: 51, last_lesson: 57, objective: "پیوند حاکمیت، زنجیره تأمین مدل، رباتیک، کوانتوم، علیت و مقیاس‌پذیری."}
+    - {id: 7, title: "روش‌های پیشرفته یادگیری آماری", first_lesson: 58, last_lesson: 65, objective: "اعتبارسنجی، عدم‌توازن، استنباط علّی، بهینه‌سازی بیزی، عدم‌قطعیت و یادگیری فدرال."}
+    - {id: 8, title: "معماری‌های پیشرفته شبکه‌های عصبی", first_lesson: 66, last_lesson: 72, objective: "اتصال باقیمانده، MoE، attention کارآمد، مدل فضای حالت و ادغام چندوجهی."}
+    - {id: 9, title: "مهندسی داده و یادگیری داده‌محور", first_lesson: 73, last_lesson: 80, objective: "کیفیت، منشأ، برچسب‌گذاری، drift، داده مصنوعی و یادگیری فعال."}
+    - {id: 10, title: "مهندسی و حاکمیت عامل‌های هوشمند", first_lesson: 81, last_lesson: 90, objective: "معماری کنترل، تجزیه وظیفه، هماهنگی، حافظه، هویت و محافظ‌های زمان اجرا."}
+    - {id: 11, title: "ارزیابی، امنیت و قابلیت اعتماد", first_lesson: 91, last_lesson: 100, objective: "آزمون استواری، ارزیابی مسیر عامل، حریم خصوصی، red teaming و تبار مصنوعات."}
   lessons:
     - id: 31
       domain: "Machine learning"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [2, 3, 6]
-      title: "Validation، Generalization و Distribution Shift"
+      title: "Generalization و Distribution Shift"
       status: "established"
       a: {term: "Generalization", fa: "تعمیم‌پذیری", seed: "توانایی مدل برای عملکرد مناسب روی داده‌های جدید و ندیده است، نه فقط داده‌های آموزش."}
       b: {term: "Distribution Shift", fa: "تغییر توزیع", seed: "تغییر معنادار در توزیع داده میان شرایط آموزش و استفاده از مدل که می‌تواند عملکرد مدل را کاهش دهد."}
       relation: "Validation، cross-validation و آزمون مستقل برای سنجش تعمیم‌پذیری‌اند؛ distribution shift یکی از علل مهم افت عملکرد پس از استقرار است."
+      core_question: "Generalization و Distribution Shift چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Generalization و Distribution Shift را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Generalization و Distribution Shift بر تصمیم فنی اثر بگذارد."
       sources:
-        - {name: "scikit-learn Cross-validation", url: "https://scikit-learn.org/stable/modules/cross_validation.html"}
-        - {name: "Google Machine Learning Crash Course: Validation", url: "https://developers.google.com/machine-learning/crash-course/validation"}
+        - {name: "scikit-learn Cross Validation", url: "https://scikit-learn.org/stable/modules/cross_validation.html"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 32
       domain: "Deep learning"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [5, 6]
-      title: "Optimization، Regularization و Normalization"
+      title: "Optimization و Regularization"
       status: "established"
       a: {term: "Optimization", fa: "بهینه‌سازی", seed: "فرایند تنظیم پارامترهای مدل برای کمینه‌کردن تابع هدف یا خطای تعریف‌شده."}
       b: {term: "Regularization", fa: "منظم‌سازی", seed: "روش‌هایی برای محدودکردن پیچیدگی مدل یا رفتار یادگیری با هدف کاهش overfitting و بهبود تعمیم."}
       relation: "بهینه‌سازی مسیر یادگیری را تعیین می‌کند و regularization و normalization به پایداری، سرعت و تعمیم کمک می‌کنند."
+      core_question: "Optimization و Regularization چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Optimization و Regularization را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Optimization و Regularization بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "PyTorch Optimizers", url: "https://pytorch.org/docs/stable/optim.html"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 33
       domain: "Generative AI"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [8, 9]
-      title: "Generative Architectures و Decoding"
+      title: "Generative Architecture و Decoding"
       status: "established"
       a: {term: "Generative Architecture", fa: "معماری مولد", seed: "معماری مدلی که برای تولید داده یا توکن‌های جدید از یک توزیع آموخته‌شده طراحی شده است."}
       b: {term: "Decoding", fa: "رمزگشایی", seed: "فرایند انتخاب خروجی از توزیع احتمالاتی مدل مولد، مانند greedy، sampling یا beam search."}
       relation: "معماری ظرفیت تولید را تعیین می‌کند و decoding نحوه تبدیل توزیع مدل به خروجی نهایی را کنترل می‌کند."
+      core_question: "Generative Architecture و Decoding چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Generative Architecture و Decoding را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Generative Architecture و Decoding بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Hugging Face Text Generation", url: "https://huggingface.co/docs/transformers/main/en/llm_tutorial"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 34
       domain: "Alignment & post-training"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [10, 11]
-      title: "SFT، Preference Optimization و RLHF/DPO"
+      title: "Supervised Fine-Tuning (SFT) و Preference Optimization"
       status: "established"
       a: {term: "Supervised Fine-Tuning (SFT)", fa: "ریزتنظیم نظارت‌شده", seed: "آموزش تکمیلی مدل با نمونه‌های ورودی-خروجی باکیفیت برای یادگیری رفتار یا وظیفه مشخص."}
       b: {term: "Preference Optimization", fa: "بهینه‌سازی ترجیح", seed: "روش‌هایی برای نزدیک‌کردن رفتار مدل به ترجیحات ثبت‌شده بدون اتکا به یک روش واحد برای یادگیری از بازخورد."}
       relation: "SFT یک رفتار مطلوب را مستقیماً یاد می‌دهد؛ preference optimization رفتار را نسبت به ترجیحات مقایسه‌ای تنظیم می‌کند."
+      core_question: "Supervised Fine-Tuning (SFT) و Preference Optimization چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Supervised Fine-Tuning (SFT) و Preference Optimization را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Supervised Fine-Tuning (SFT) و Preference Optimization بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Hugging Face TRL", url: "https://huggingface.co/docs/trl/index"}
         - {name: "Anthropic Research", url: "https://www.anthropic.com/research"}
     - id: 35
       domain: "Inference & optimization"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [3, 9]
-      title: "Serving، Batching و KV Cache"
+      title: "Model Serving و KV Cache"
       status: "established"
       a: {term: "Model Serving", fa: "سرویس‌دهی مدل", seed: "زیرساختی برای ارائه مدل آموزش‌دیده به‌عنوان یک سرویس قابل‌درخواست در محیط تولید."}
       b: {term: "KV Cache", fa: "کش کلید-مقدار", seed: "ذخیره نمایش‌های میانی attention برای کاهش محاسبه تکراری هنگام تولید توکن‌های متوالی."}
       relation: "Serving معماری عملیاتی را می‌سازد؛ batching و KV cache دو ابزار اصلی برای بهبود throughput و latency در inference هستند."
+      core_question: "Model Serving و KV Cache چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Model Serving و KV Cache را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Model Serving و KV Cache بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NVIDIA Triton Inference Server", url: "https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/"}
         - {name: "Google Cloud Vertex AI Prediction", url: "https://cloud.google.com/vertex-ai/docs/predictions/overview"}
     - id: 36
       domain: "Inference & optimization"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [20, 35]
       title: "Quantization و Speculative Decoding"
       status: "established"
       a: {term: "Quantization", fa: "کوانتیزه‌سازی", seed: "نمایش پارامترها یا محاسبات با دقت عددی کمتر برای کاهش حافظه و هزینه و افزایش سرعت بالقوه."}
       b: {term: "Speculative Decoding", fa: "رمزگشایی حدسی", seed: "روش تولید که در آن یک مدل یا مسیر سریع‌تر چند توکن پیشنهادی تولید و مدل اصلی آن‌ها را تأیید یا رد می‌کند."}
       relation: "هر دو برای کاهش هزینه و latency inference استفاده می‌شوند، اما یکی بر نمایش عددی و دیگری بر الگوی محاسبه تولید تمرکز دارد."
+      core_question: "Quantization و Speculative Decoding چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Quantization و Speculative Decoding را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Quantization و Speculative Decoding بر تصمیم فنی اثر بگذارد."
       sources:
-        - {name: "Hugging Face Quantization", url: "https://huggingface.co/docs/transformers/main/en/quantization/overview"}
-        - {name: "NVIDIA TensorRT-LLM", url: "https://nvidia.github.io/TensorRT-LLM/"}
+        - {name: "Hugging Face Quantization Documentation", url: "https://huggingface.co/docs/transformers/main/en/quantization/overview"}
+        - {name: "vLLM Speculative Decoding", url: "https://docs.vllm.ai/en/latest/features/speculative_decoding/"}
     - id: 37
       domain: "Data & data engineering"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [2, 4]
-      title: "Data Engineering، Quality و Lineage برای AI"
+      title: "Data Lineage و Data Quality"
       status: "established"
       a: {term: "Data Lineage", fa: "تبار داده", seed: "ثبت و ردیابی منبع، تبدیل‌ها و مسیر حرکت داده در چرخه تولید و استفاده."}
       b: {term: "Data Quality", fa: "کیفیت داده", seed: "میزان مناسب‌بودن داده از نظر صحت، کامل‌بودن، سازگاری، تازگی و تناسب با کاربرد."}
       relation: "کیفیت و lineage داده زیربنای قابلیت بازتولید، ارزیابی و حاکمیت سامانه‌های AI هستند."
+      core_question: "Data Lineage و Data Quality چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Data Lineage و Data Quality را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Data Lineage و Data Quality بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Google Machine Learning Data Quality", url: "https://developers.google.com/machine-learning/data-prep"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 38
       domain: "Data & data engineering"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [37]
-      title: "Synthetic Data، Curation و Augmentation"
+      title: "Synthetic Data و Data Curation"
       status: "established"
       a: {term: "Synthetic Data", fa: "داده مصنوعی", seed: "داده‌ای تولیدشده با فرایند مصنوعی برای افزایش پوشش، آزمایش یا کاهش برخی محدودیت‌های داده واقعی."}
       b: {term: "Data Curation", fa: "پایش و گزینش داده", seed: "فرایند انتخاب، پاک‌سازی، پالایش، برچسب‌گذاری و سازمان‌دهی داده برای یک هدف مشخص."}
       relation: "Synthetic data می‌تواند ماده اولیه باشد، اما کیفیت نهایی به curation، اعتبارسنجی و سنجش خطرهای حلقه‌ای وابسته است."
+      core_question: "Synthetic Data و Data Curation چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Synthetic Data و Data Curation را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Synthetic Data و Data Curation بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence"}
         - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
     - id: 39
       domain: "Retrieval & RAG"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [7, 12, 13]
-      title: "RAG Pipeline، Reranking و Grounding"
+      title: "Reranking و Grounding"
       status: "established"
       a: {term: "Reranking", fa: "بازمرتب‌سازی", seed: "مرحله‌ای پس از retrieval برای امتیازدهی دقیق‌تر و مرتب‌سازی مجدد اسناد یا قطعات بازیابی‌شده."}
       b: {term: "Grounding", fa: "مستند‌سازی پاسخ با منبع", seed: "پیوند دادن پاسخ مدل به اطلاعات بیرونی قابل‌ردیابی برای کاهش خطای بی‌پایه و افزایش قابلیت بررسی."}
       relation: "RAG خوب فقط embedding نیست؛ retrieval، reranking، grounding، citation و مدیریت failure modeها همگی بخشی از pipeline هستند."
+      core_question: "Reranking و Grounding چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Reranking و Grounding را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Reranking و Grounding بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Microsoft RAG Overview", url: "https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview"}
         - {name: "Google Cloud RAG", url: "https://cloud.google.com/vertex-ai/generative-ai/docs/rag-overview"}
     - id: 40
       domain: "Multimodal AI"
+      module_id: 4
+      module_title: "یادگیری آماری، بهینه‌سازی و مدل‌های مولد"
       prerequisites: [7, 8, 9]
-      title: "Vision-Language، Audio/Video و Multimodal Evaluation"
+      title: "Multimodal Model و Multimodal Evaluation"
       status: "established"
       a: {term: "Multimodal Model", fa: "مدل چندوجهی", seed: "مدلی که می‌تواند بیش از یک نوع داده مانند متن، تصویر، صدا یا ویدئو را پردازش یا تولید کند."}
       b: {term: "Multimodal Evaluation", fa: "ارزیابی چندوجهی", seed: "سنجش عملکرد مدل در وظایفی که چند modality را هم‌زمان یا در تعامل با یکدیگر به کار می‌گیرند."}
       relation: "چندوجهی‌بودن فقط افزودن ورودی جدید نیست؛ باید alignment بین modalityها و ارزیابی مستقل هر مسیر و تعامل آن‌ها را سنجید."
+      core_question: "Multimodal Model و Multimodal Evaluation چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Multimodal Model و Multimodal Evaluation را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Multimodal Model و Multimodal Evaluation بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Google Gemini Vision", url: "https://ai.google.dev/gemini-api/docs/vision"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 41
       domain: "Agents & agentic systems"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [15, 16]
-      title: "Agent Architecture، Planning و State"
+      title: "Agent Architecture و Planning"
       status: "established"
       a: {term: "Agent Architecture", fa: "معماری عامل", seed: "ساختاری که مدل، وضعیت، ابزارها، حافظه، سیاست تصمیم و چرخه اجرا را در یک سامانه عامل‌محور به هم متصل می‌کند."}
       b: {term: "Planning", fa: "برنامه‌ریزی", seed: "تجزیه هدف به گام‌ها یا تصمیم‌های میانی برای رسیدن به نتیجه مورد نظر."}
       relation: "Agent معماری سامانه است و planning یکی از قابلیت‌های تصمیم‌گیری در آن معماری است."
+      core_question: "Agent Architecture و Planning چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Agent Architecture و Planning را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Agent Architecture و Planning بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Anthropic Building Effective Agents", url: "https://www.anthropic.com/research/building-effective-agents"}
         - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 42
       domain: "Tool use & protocols"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [41]
-      title: "Tool Calling، MCP و Protocol Boundaries"
+      title: "Tool Calling و Model Context Protocol (MCP)"
       status: "established"
       a: {term: "Tool Calling", fa: "فراخوانی ابزار", seed: "مکانیزمی که به مدل اجازه می‌دهد یک عمل ساختاریافته را از طریق ابزار یا API درخواست کند."}
       b: {term: "Model Context Protocol (MCP)", fa: "پروتکل زمینه مدل", seed: "یک پروتکل برای اتصال مدل‌ها و agentها به ابزارها و منابع از طریق قراردادهای استاندارد."}
       relation: "Tool calling یک قابلیت تعامل مدل با ابزار است؛ پروتکل‌هایی مانند MCP قرارداد اتصال، کشف و مرزبندی را استاندارد می‌کنند."
+      core_question: "Tool Calling و Model Context Protocol (MCP) چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Tool Calling و Model Context Protocol (MCP) را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Tool Calling و Model Context Protocol (MCP) بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "MCP Specification", url: "https://modelcontextprotocol.io/specification/2025-11-25"}
         - {name: "Google Gemini Function Calling", url: "https://ai.google.dev/gemini-api/docs/function-calling"}
     - id: 43
       domain: "Memory & context"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [16, 41, 42]
       title: "Context Engineering و Agent Memory"
       status: "established"
       a: {term: "Context Engineering", fa: "مهندسی زمینه", seed: "طراحی نظام‌مند اطلاعاتی که در هر مرحله به مدل داده می‌شود، شامل انتخاب، فشرده‌سازی و بازیابی زمینه."}
       b: {term: "Agent Memory", fa: "حافظه عامل", seed: "سازوکار ذخیره و بازیابی اطلاعاتی که فراتر از یک درخواست منفرد برای تداوم رفتار عامل استفاده می‌شود."}
       relation: "Context کوتاه‌مدت اجرای جاری است؛ memory می‌تواند اطلاعات را در طول زمان نگهداری و دوباره وارد context کند."
+      core_question: "Context Engineering و Agent Memory چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Context Engineering و Agent Memory را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Context Engineering و Agent Memory بر تصمیم فنی اثر بگذارد."
       sources:
-        - {name: "OpenAI Context Management", url: "https://platform.openai.com/docs/guides/context"}
-        - {name: "Microsoft Agentic AI Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/agentic-ai"}
+        - {name: "Anthropic: Effective Context Engineering for AI Agents", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+        - {name: "LangChain Short-Term Memory Documentation", url: "https://docs.langchain.com/oss/python/langchain/short-term-memory"}
     - id: 44
       domain: "Evaluation & benchmarks"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [19, 41]
-      title: "Agent Evaluation، Verification و Reliability"
+      title: "Agent Evaluation و Verification"
       status: "established"
       a: {term: "Agent Evaluation", fa: "ارزیابی عامل", seed: "سنجش رفتار یک agent در انجام وظایف چندمرحله‌ای، استفاده از ابزار و رسیدن به نتیجه تحت شرایط واقعی یا شبیه‌سازی‌شده."}
       b: {term: "Verification", fa: "راستی‌آزمایی", seed: "بررسی مستقل خروجی، مسیر اجرا یا ادعای عامل برای کشف خطا پیش از اثرگذاری نهایی."}
       relation: "در سامانه‌های agentic، ارزیابی باید هم نتیجه و هم فرایند را بسنجد و verification نقش کنترل خطا پیش از اقدام را دارد."
+      core_question: "Agent Evaluation و Verification چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Agent Evaluation و Verification را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Agent Evaluation و Verification بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "OpenAI Evals", url: "https://platform.openai.com/docs/guides/evals"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 45
       domain: "AI security & robustness"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [28, 42]
       title: "Prompt Injection و Tool Abuse"
       status: "established"
       a: {term: "Prompt Injection", fa: "تزریق پرامپت", seed: "دستکاری ورودی یا محتوای زمینه برای منحرف کردن رفتار مدل از سیاست یا هدف مورد نظر."}
       b: {term: "Tool Abuse", fa: "سوءاستفاده از ابزار", seed: "استفاده مخرب یا ناایمن از قابلیت‌های ابزاری agent برای انجام عمل غیرمجاز یا پرخطر."}
       relation: "در agentهای ابزارمحور، prompt injection می‌تواند به tool abuse منجر شود؛ بنابراین مرزبندی داده، دستور و عمل ضروری است."
+      core_question: "Prompt Injection و Tool Abuse چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Prompt Injection و Tool Abuse را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Prompt Injection و Tool Abuse بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST AI 100-2e2025", url: "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"}
         - {name: "OWASP Top 10 for LLM Applications 2025", url: "https://genai.owasp.org/resource/owasp-top-10-for-llm-applications-2025/"}
     - id: 46
       domain: "AI security & robustness"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [45]
-      title: "Poisoning، Supply Chain و Adversarial Robustness"
+      title: "Data/Model Poisoning و Adversarial Robustness"
       status: "established"
       a: {term: "Data/Model Poisoning", fa: "مسموم‌سازی داده/مدل", seed: "واردکردن تغییرات مخرب به داده، آموزش یا artifactها با هدف اثرگذاری بر رفتار مدل یا زنجیره یادگیری."}
       b: {term: "Adversarial Robustness", fa: "تاب‌آوری در برابر حمله", seed: "توانایی سیستم برای حفظ رفتار قابل‌قبول در برابر ورودی‌ها یا دستکاری‌های خصمانه."}
       relation: "Poisoning و supply-chain risk در چرخه ساخت رخ می‌دهند و robustness و verification ابزارهای کنترل پیامد آن‌ها هستند."
+      core_question: "Data/Model Poisoning و Adversarial Robustness چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Data/Model Poisoning و Adversarial Robustness را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Data/Model Poisoning و Adversarial Robustness بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST AI 100-2e2025", url: "https://csrc.nist.gov/pubs/ai/100/2/e2025/final"}
         - {name: "OWASP Top 10 for LLM and GenAI", url: "https://genai.owasp.org/initiatives/top-10-for-llm-and-genai/"}
     - id: 47
       domain: "AI engineering & MLOps"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [19, 35, 44]
-      title: "MLOps، Observability و Rollback"
+      title: "MLOps و Model Rollback"
       status: "established"
       a: {term: "MLOps", fa: "عملیات چرخه عمر ML", seed: "مجموعه فرایندها و ابزارهایی برای ساخت، تست، استقرار، پایش و نگهداری سیستم‌های یادگیری ماشین."}
       b: {term: "Model Rollback", fa: "بازگردانی مدل", seed: "برگرداندن نسخهٔ مستقر مدل یا پیکربندی به وضعیت قبلی در واکنش به خطا یا افت عملکرد."}
       relation: "MLOps چرخه کامل است و rollback یکی از کنترل‌های ضروری برای کاهش ریسک deployment است."
+      core_question: "MLOps و Model Rollback چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند MLOps و Model Rollback را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز MLOps و Model Rollback بر تصمیم فنی اثر بگذارد."
       sources:
-        - {name: "Google Cloud MLOps Architecture", url: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"}
-        - {name: "Azure Machine Learning MLOps", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment"}
+        - {name: "MLflow Documentation", url: "https://mlflow.org/docs/latest/index.html"}
+        - {name: "Microsoft Learn: Model Management and Deployment", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment?view=azureml-api-2"}
     - id: 48
       domain: "AI infrastructure & compute"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [24, 35, 36]
-      title: "Accelerators، Distributed Training و AI Infrastructure"
+      title: "AI Accelerator و Distributed Training"
       status: "established"
       a: {term: "AI Accelerator", fa: "شتاب‌دهنده هوش مصنوعی", seed: "پردازنده یا سامانه‌ای تخصصی برای اجرای کارآمد عملیات رایج AI مانند tensor operations."}
       b: {term: "Distributed Training", fa: "آموزش توزیع‌شده", seed: "تقسیم فرایند آموزش بین چند پردازنده یا چند گره برای افزایش مقیاس و کاهش زمان یا افزایش ظرفیت."}
       relation: "شتاب‌دهنده ظرفیت محاسباتی را فراهم می‌کند و distributed training نحوه مقیاس‌دادن workload را تعیین می‌کند."
+      core_question: "AI Accelerator و Distributed Training چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند AI Accelerator و Distributed Training را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز AI Accelerator و Distributed Training بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NVIDIA AI Enterprise", url: "https://docs.nvidia.com/ai-enterprise/"}
         - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
     - id: 49
       domain: "AI for science & biomedicine"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [25, 30]
-      title: "AI for Science، Protein Models و Biomedical Validation"
+      title: "AI for Science و Scientific Validation"
       status: "emerging"
       a: {term: "AI for Science", fa: "هوش مصنوعی برای علم", seed: "استفاده از AI برای مدل‌سازی، کشف، شبیه‌سازی، تحلیل و طراحی در علوم طبیعی و مهندسی."}
       b: {term: "Scientific Validation", fa: "اعتبارسنجی علمی", seed: "تأیید نتایج AI با معیارها، آزمایش، داده مستقل یا شواهد تجربی مناسب با حوزه علمی."}
       relation: "توان مدل کافی نیست؛ در science و biomedicine نتیجه باید با validation تجربی یا مستقل از مدل پشتیبانی شود."
+      core_question: "AI for Science و Scientific Validation چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند AI for Science و Scientific Validation را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز AI for Science و Scientific Validation بر تصمیم فنی اثر بگذارد."
       sources:
-        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/science"}
-        - {name: "FDA AI/ML Medical Device Research", url: "https://www.fda.gov/medical-devices/medical-device-regulatory-science-research-programs-conducted-osel/artificial-intelligence-program-research-aiml-based-medical-devices"}
+        - {name: "Stanford AI Index 2026: Science", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "UK AI for Science Strategy", url: "https://www.gov.uk/government/publications/ai-for-science-strategy/ai-for-science-strategy"}
     - id: 50
       domain: "Human-AI interaction"
+      module_id: 5
+      module_title: "سامانه‌های AI، بازیابی، عامل‌ها و تعامل"
       prerequisites: [19, 28, 44]
-      title: "Human-AI Interaction، Calibration و Oversight"
+      title: "Calibration و Human Oversight"
       status: "established"
       a: {term: "Calibration", fa: "کالیبراسیون اعتماد", seed: "هم‌تراز کردن میزان اعتماد یا اتکا به خروجی AI با احتمال درست‌بودن و محدودیت واقعی آن."}
       b: {term: "Human Oversight", fa: "نظارت انسانی", seed: "طراحی نقاطی از چرخه تصمیم که انسان می‌تواند خروجی AI را بررسی، اصلاح یا متوقف کند."}
       relation: "سیستم قابل‌اعتماد باید سطح اعتماد کاربر و اختیار تصمیم را با قابلیت واقعی مدل و ریسک وظیفه هماهنگ کند."
+      core_question: "Calibration و Human Oversight چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Calibration و Human Oversight را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Calibration و Human Oversight بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
         - {name: "Stanford AI Index 2026 Responsible AI", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/responsible-ai"}
     - id: 51
       domain: "Governance & policy"
+      module_id: 6
+      module_title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا"
       prerequisites: [28, 50]
-      title: "AI Governance، Standards و Assurance"
+      title: "AI Governance و Assurance"
       status: "established"
       a: {term: "AI Governance", fa: "حاکمیت هوش مصنوعی", seed: "ساختارها و فرایندهایی برای تعیین مسئولیت، سیاست، کنترل و تصمیم‌گیری در چرخه عمر AI."}
       b: {term: "Assurance", fa: "اطمینان‌بخشی", seed: "شواهد و کنترل‌هایی که نشان می‌دهند یک سیستم نسبت به الزامات تعریف‌شده قابل‌اتکا و قابل‌ارزیابی است."}
       relation: "Governance چارچوب تصمیم‌گیری را می‌سازد و assurance شواهد قابل‌بررسی برای انطباق، ایمنی و کیفیت فراهم می‌کند."
+      core_question: "AI Governance و Assurance چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند AI Governance و Assurance را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز AI Governance و Assurance بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
         - {name: "Stanford AI Index 2026 Policy and Governance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/policy-and-governance"}
     - id: 52
       domain: "Open models & ecosystems"
+      module_id: 6
+      module_title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا"
       prerequisites: [9, 24]
-      title: "Open-Weight، Open-Source و Model Supply Chain"
+      title: "Open-Weight و Model Supply Chain"
       status: "established"
       a: {term: "Open-Weight", fa: "وزن‌باز", seed: "مدلی که وزن‌های آموزش‌دیده آن در دسترس دیگران قرار گرفته است، بدون اینکه الزاماً تمام اجزای یک پروژه open-source باشند."}
       b: {term: "Model Supply Chain", fa: "زنجیره تأمین مدل", seed: "مجموعه منابع، artifactها، داده‌ها و اجزایی که برای ساخت و استقرار مدل به یکدیگر وابسته‌اند."}
       relation: "Open-weight بودن با open-source بودن یکسان نیست و هر دو باید در کنار provenance، license و supply-chain risk تحلیل شوند."
+      core_question: "Open-Weight و Model Supply Chain چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Open-Weight و Model Supply Chain را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Open-Weight و Model Supply Chain بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Hugging Face Model Hub", url: "https://huggingface.co/docs/hub/models-the-hub"}
         - {name: "Stanford AI Index 2026 Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
     - id: 53
       domain: "Robotics & embodied AI"
+      module_id: 6
+      module_title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا"
       prerequisites: [25, 41, 48]
-      title: "Embodied AI، Perception-Action و Simulation"
+      title: "Embodied AI و Perception-Action Loop"
       status: "emerging"
       a: {term: "Embodied AI", fa: "هوش مصنوعی تجسم‌یافته", seed: "هوشی که در چرخه ادراک، تصمیم و عمل یک سامانه فیزیکی یا محیط شبیه‌سازی‌شده عمل می‌کند."}
       b: {term: "Perception-Action Loop", fa: "حلقه ادراک-عمل", seed: "چرخه‌ای که در آن سامانه محیط را دریافت می‌کند، تصمیم می‌گیرد، عمل می‌کند و بر اساس پیامد عمل دوباره ادراک می‌کند."}
       relation: "در embodied AI، موفقیت فقط کیفیت پیش‌بینی نیست؛ تعامل فیزیکی، latency، safety و uncertainty بخشی از مسئله‌اند."
+      core_question: "Embodied AI و Perception-Action Loop چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Embodied AI و Perception-Action Loop را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Embodied AI و Perception-Action Loop بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NVIDIA Isaac", url: "https://docs.nvidia.com/isaac/"}
         - {name: "Stanford AI Index 2026 Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 54
       domain: "Quantum AI"
+      module_id: 6
+      module_title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا"
       prerequisites: [26, 27]
-      title: "Quantum Machine Learning، Hybrid Algorithms و Evidence Limits"
+      title: "Quantum Machine Learning (QML) و Hybrid Quantum-Classical Algorithm"
       status: "emerging"
       a: {term: "Quantum Machine Learning (QML)", fa: "یادگیری ماشین کوانتومی", seed: "استفاده از محاسبات یا مدارهای کوانتومی در الگوریتم‌های یادگیری ماشین یا زیرروال‌های آن."}
       b: {term: "Hybrid Quantum-Classical Algorithm", fa: "الگوریتم ترکیبی کوانتومی-کلاسیک", seed: "روش محاسباتی که بخشی از چرخه را روی سامانه کوانتومی و بخشی را با محاسبات کلاسیک اجرا می‌کند."}
       relation: "QML یک حوزه پژوهشی است و بسیاری از روش‌های عملی امروز hybrid هستند؛ ادعاهای برتری باید با evidence و مقایسه منصفانه سنجیده شوند."
+      core_question: "Quantum Machine Learning (QML) و Hybrid Quantum-Classical Algorithm چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Quantum Machine Learning (QML) و Hybrid Quantum-Classical Algorithm را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Quantum Machine Learning (QML) و Hybrid Quantum-Classical Algorithm بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/quantum-information-science"}
         - {name: "IBM Quantum Learning", url: "https://quantum.cloud.ibm.com/learning"}
 
     - id: 55
       domain: "Evaluation & benchmarks"
+      module_id: 6
+      module_title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا"
       prerequisites: [19, 31]
       title: "Data Leakage و Benchmark Contamination"
       status: "established"
       a: {term: "Data Leakage", fa: "نشت داده", seed: "ورود ناخواسته اطلاعاتی از داده آزمون، آینده یا متغیر هدف به فرایند آموزش یا انتخاب مدل؛ رخدادی که برآورد عملکرد را بیش از واقع خوش‌بینانه می‌کند."}
       b: {term: "Benchmark Contamination", fa: "آلودگی بنچمارک", seed: "حضور نمونه‌ها یا پاسخ‌های بنچمارک ارزیابی در داده آموزش یا داده‌های در دسترس مدل، به‌گونه‌ای که نتیجه آزمون دیگر سنجش مستقلی از تعمیم‌پذیری نباشد."}
       relation: "Data leakage مسئله‌ای عمومی در چرخه یادگیری و ارزیابی است؛ benchmark contamination شکل مهمی از آن در ارزیابی مدل‌های پایه و زبانی محسوب می‌شود."
+      core_question: "Data Leakage و Benchmark Contamination چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Data Leakage و Benchmark Contamination را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Data Leakage و Benchmark Contamination بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
         - {name: "How Much Can We Forget about Data Contamination? — ICML 2025", url: "https://proceedings.mlr.press/v267/bordt25a.html"}
     - id: 56
       domain: "Machine learning"
+      module_id: 6
+      module_title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا"
       prerequisites: [2, 31]
       title: "Causal Inference و Predictive Modeling"
       status: "established"
       a: {term: "Causal Inference", fa: "استنباط علّی", seed: "روش‌هایی برای برآورد اثر علّی مداخله یا عامل بر پیامد، با تکیه بر فرض‌ها و طراحی‌هایی که اثر علت را از همبستگی صرف جدا می‌کنند."}
       b: {term: "Predictive Modeling", fa: "مدل‌سازی پیش‌بینانه", seed: "ساخت مدلی برای پیش‌بینی مقدار یا طبقه یک پیامد بر اساس الگوهای داده؛ دقت پیش‌بینی به‌تنهایی اثبات‌کننده رابطه علّی نیست."}
       relation: "مدل پیش‌بینانه می‌پرسد چه چیزی محتمل است رخ دهد؛ استنباط علّی می‌پرسد یک مداخله چه تغییری در پیامد ایجاد می‌کند. همبستگی پیش‌بینانه به‌تنهایی پاسخ علّی نمی‌دهد."
+      core_question: "Causal Inference و Predictive Modeling چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Causal Inference و Predictive Modeling را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Causal Inference و Predictive Modeling بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Microsoft Learn: Causal Inference", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-causal-inference?view=azureml-api-2"}
         - {name: "Prediction-Powered Causal Inferences — NeurIPS 2025", url: "https://proceedings.neurips.cc/paper_files/paper/2025/hash/6b0a3a259d3dcb75dfe92f7269e2e05e-Abstract-Conference.html"}
     - id: 57
       domain: "AI infrastructure & compute"
+      module_id: 6
+      module_title: "حکمرانی، مدل‌های باز و فناوری‌های همگرا"
       prerequisites: [24, 48]
       title: "Scaling Laws و Compute-Data Trade-off"
       status: "established"
       a: {term: "Scaling Laws", fa: "قوانین مقیاس‌پذیری", seed: "روابط تجربی میان مقیاس محاسبات، اندازه مدل، حجم داده و عملکرد که برای تحلیل روند رشد و برنامه‌ریزی آموزش مدل‌ها به‌کار می‌روند."}
       b: {term: "Compute-Data Trade-off", fa: "موازنه محاسبه و داده", seed: "مسئله تخصیص منابع محدود میان محاسبه، تعداد پارامترها و حجم یا کیفیت داده؛ افزایش یک عامل بدون تناسب با عوامل دیگر الزاماً بهترین عملکرد را نمی‌دهد."}
       relation: "Scaling laws روندهای عملکرد را در مقیاس‌های مختلف توصیف می‌کنند؛ موازنه محاسبه و داده از این روندها برای تصمیم‌گیری درباره تخصیص منابع آموزش استفاده می‌کند."
+      core_question: "Scaling Laws و Compute-Data Trade-off چه تفاوتی دارند و تغییر هرکدام چه اثری بر طراحی یا ارزیابی مدل می‌گذارد؟"
+      learning_outcome: "دانشجو بتواند Scaling Laws و Compute-Data Trade-off را تعریف کند، مرز کاربرد آن‌ها را توضیح دهد و در یک مسئله واقعی به‌کار گیرد."
+      practice: "یک نمونه واقعی یا فرضی بساز که در آن تمایز Scaling Laws و Compute-Data Trade-off بر تصمیم فنی اثر بگذارد."
       sources:
         - {name: "Stanford AI Index 2026: Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
         - {name: "Epoch AI: Data on AI Models", url: "https://epoch.ai/data/ai-models"}
+    - id: 58
+      domain: "Advanced ML"
+      module_id: 7
+      module_title: "روش‌های پیشرفته یادگیری آماری"
+      prerequisites: [24, 25]
+      title: "Cross-Validation و Nested Cross-Validation"
+      status: "established"
+      a: {term: "Cross-Validation", fa: "اعتبارسنجی متقاطع", seed: "تقسیم تکرارشونده داده به foldها برای برآورد پایداری عملکرد مدل."}
+      b: {term: "Nested Cross-Validation", fa: "اعتبارسنجی متقاطع تو‌در‌تو", seed: "ساختار دوحلقه‌ای که انتخاب ابرپارامتر را از برآورد نهایی عملکرد جدا می‌کند."}
+      relation: "حلقه بیرونی برآورد عملکرد را می‌سنجد؛ حلقه درونی انتخاب مدل را انجام می‌دهد."
+      learning_outcome: "دانشجو بتواند اعتبارسنجی متقاطع و اعتبارسنجی متقاطع تو‌در‌تو را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Cross-Validation و Nested Cross-Validation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای یک مجموعه کوچک، دلیل نیاز به nested CV را توضیح بده."
+      sources:
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 59
+      domain: "Advanced ML"
+      module_id: 7
+      module_title: "روش‌های پیشرفته یادگیری آماری"
+      prerequisites: [22, 25]
+      title: "Imbalanced Learning و Cost-Sensitive Learning"
+      status: "established"
+      a: {term: "Imbalanced Learning", fa: "یادگیری با کلاس‌های نامتوازن", seed: "یادگیری در داده‌ای که فراوانی کلاس‌ها به‌شدت متفاوت است و دقت کلی می‌تواند گمراه‌کننده باشد."}
+      b: {term: "Cost-Sensitive Learning", fa: "یادگیری حساس به هزینه", seed: "روش‌هایی که هزینه متفاوت خطاها را در تابع هدف یا تصمیم وارد می‌کنند."}
+      relation: "نامتوازن‌بودن ویژگی داده است؛ cost-sensitive learning راهبردی برای لحاظ‌کردن پیامد نامتقارن خطاهاست."
+      learning_outcome: "دانشجو بتواند یادگیری با کلاس‌های نامتوازن و یادگیری حساس به هزینه را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Imbalanced Learning و Cost-Sensitive Learning چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای کشف تقلب، هزینه false negative و false positive را تعریف کن."
+      sources:
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 60
+      domain: "Advanced ML"
+      module_id: 7
+      module_title: "روش‌های پیشرفته یادگیری آماری"
+      prerequisites: [56]
+      title: "Causal Inference و Counterfactual"
+      status: "established"
+      a: {term: "Causal Inference", fa: "استنباط علّی", seed: "روش‌هایی برای برآورد اثر مداخله با فرض‌ها و طراحی‌های علّی، نه صرفاً همبستگی."}
+      b: {term: "Counterfactual", fa: "واقعیت خلاف‌واقع", seed: "پیامد فرضی‌ای که برای همان واحد تحت وضعیت یا مداخله جایگزین رخ می‌داد."}
+      relation: "استنباط علّی اثر مداخله را برآورد می‌کند؛ counterfactual پیامد بالقوه در وضعیت جایگزین را صورت‌بندی می‌کند."
+      learning_outcome: "دانشجو بتواند استنباط علّی و واقعیت خلاف‌واقع را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Causal Inference و Counterfactual چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای اثر یک تخفیف بر خرید، counterfactual مناسب را تعریف کن."
+      sources:
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 61
+      domain: "Advanced ML"
+      module_id: 7
+      module_title: "روش‌های پیشرفته یادگیری آماری"
+      prerequisites: [6, 32]
+      title: "Bayesian Optimization و Hyperparameter Search"
+      status: "established"
+      a: {term: "Bayesian Optimization", fa: "بهینه‌سازی بیزی", seed: "روش بهینه‌سازی جعبه‌سیاه که از مدل احتمالاتی برای انتخاب هوشمندانه ارزیابی‌های بعدی استفاده می‌کند."}
+      b: {term: "Hyperparameter Search", fa: "جست‌وجوی ابرپارامتر", seed: "فرایند ارزیابی ترکیب‌های مختلف تنظیمات آموزش برای یافتن پیکربندی مناسب."}
+      relation: "Bayesian optimization یکی از راهبردهای hyperparameter search است و از ارزیابی‌های قبلی برای انتخاب بعدی بهره می‌گیرد."
+      learning_outcome: "دانشجو بتواند بهینه‌سازی بیزی و جست‌وجوی ابرپارامتر را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Bayesian Optimization و Hyperparameter Search چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای تنظیم سه ابرپارامتر با هزینه آموزش بالا، روش جست‌وجو انتخاب کن."
+      sources:
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 62
+      domain: "Advanced ML"
+      module_id: 7
+      module_title: "روش‌های پیشرفته یادگیری آماری"
+      prerequisites: [25, 27]
+      title: "Ensemble Uncertainty و Predictive Uncertainty"
+      status: "established"
+      a: {term: "Predictive Uncertainty", fa: "عدم‌قطعیت پیش‌بینی", seed: "میزان ناآگاهی یا ابهام مدل درباره خروجی پیش‌بینی‌شده."}
+      b: {term: "Ensemble Uncertainty", fa: "عدم‌قطعیت مبتنی بر مجموعه مدل", seed: "برآوردی از اختلاف پیش‌بینی چند مدل یا چند نمونه‌گیری برای سنجش عدم‌قطعیت."}
+      relation: "عدم‌قطعیت پیش‌بینی مفهوم کلی است؛ ensemble یکی از راه‌های تقریبی برآورد آن است."
+      learning_outcome: "دانشجو بتواند عدم‌قطعیت پیش‌بینی و عدم‌قطعیت مبتنی بر مجموعه مدل را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Predictive Uncertainty و Ensemble Uncertainty چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "چرا توافق چند مدل مشابه الزاماً عدم‌قطعیت را حذف نمی‌کند؟"
+      sources:
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 63
+      domain: "Advanced ML"
+      module_id: 7
+      module_title: "روش‌های پیشرفته یادگیری آماری"
+      prerequisites: [25, 62]
+      title: "Conformal Prediction و Coverage Guarantee"
+      status: "established"
+      a: {term: "Conformal Prediction", fa: "پیش‌بینی همدیس", seed: "چارچوبی برای ساخت مجموعه یا بازه پیش‌بینی با تضمین پوشش آماری تحت فرض‌هایی مانند exchangeability."}
+      b: {term: "Coverage Guarantee", fa: "تضمین پوشش", seed: "خاصیتی آماری که نرخ قرارگرفتن مقدار واقعی در مجموعه پیش‌بینی را در سطح مشخص تضمین می‌کند."}
+      relation: "conformal prediction روشی برای ساخت خروجی‌های همراه با پوشش است؛ تضمین آن به فرض‌های داده وابسته است."
+      learning_outcome: "دانشجو بتواند پیش‌بینی همدیس و تضمین پوشش را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Conformal Prediction و Coverage Guarantee چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای پیش‌بینی تقاضا، بازه پیش‌بینی با پوشش ۹۰٪ طراحی کن."
+      sources:
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 64
+      domain: "Advanced ML"
+      module_id: 7
+      module_title: "روش‌های پیشرفته یادگیری آماری"
+      prerequisites: [31, 25]
+      title: "Online Learning و Concept Drift"
+      status: "established"
+      a: {term: "Online Learning", fa: "یادگیری برخط", seed: "به‌روزرسانی مدل به‌صورت تدریجی با ورود داده‌های جدید، به‌جای آموزش یک‌باره روی کل داده."}
+      b: {term: "Concept Drift", fa: "تغییر مفهوم", seed: "تغییر رابطه میان ورودی‌ها و هدف در طول زمان که می‌تواند اعتبار مدل را کاهش دهد."}
+      relation: "online learning شیوه به‌روزرسانی است؛ concept drift تغییری در فرایند مولد داده است که ممکن است به آن نیاز ایجاد کند."
+      learning_outcome: "دانشجو بتواند یادگیری برخط و تغییر مفهوم را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Online Learning و Concept Drift چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای پیش‌بینی ترافیک، drift و trigger بازآموزی را تعریف کن."
+      sources:
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 65
+      domain: "Advanced ML"
+      module_id: 7
+      module_title: "روش‌های پیشرفته یادگیری آماری"
+      prerequisites: [37, 46]
+      title: "Federated Learning و Secure Aggregation"
+      status: "established"
+      a: {term: "Federated Learning", fa: "یادگیری فدرال", seed: "آموزش مشارکتی مدل روی چند دستگاه یا سازمان بدون انتقال مستقیم داده خام به یک مخزن مرکزی."}
+      b: {term: "Secure Aggregation", fa: "تجمیع امن", seed: "پروتکلی رمزنگاری‌شده که اجازه می‌دهد سرور مجموع به‌روزرسانی‌ها را ببیند، نه سهم هر مشارکت‌کننده را."}
+      relation: "یادگیری فدرال معماری آموزش توزیع‌شده است؛ secure aggregation یک کنترل حریم خصوصی در تجمیع به‌روزرسانی‌هاست."
+      learning_outcome: "دانشجو بتواند یادگیری فدرال و تجمیع امن را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Federated Learning و Secure Aggregation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "محدودیت‌های حریم خصوصی و ناهمگنی داده در federated learning را فهرست کن."
+      sources:
+        - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 66
+      domain: "Deep Learning Systems"
+      module_id: 8
+      module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
+      prerequisites: [32, 38]
+      title: "Residual Connection و Normalization Layer"
+      status: "established"
+      a: {term: "Residual Connection", fa: "اتصال باقیمانده", seed: "مسیر میان‌بری که ورودی یک بلوک را با خروجی تبدیل‌شده آن جمع می‌کند و جریان گرادیان را تسهیل می‌کند."}
+      b: {term: "Normalization Layer", fa: "لایه نرمال‌سازی", seed: "لایه‌ای که مقیاس یا توزیع فعال‌سازی‌ها را طبق روش مشخص تنظیم می‌کند."}
+      relation: "اتصال باقیمانده مسیر اطلاعات و گرادیان را حفظ می‌کند؛ نرمال‌سازی آمار فعال‌سازی را تنظیم می‌کند."
+      learning_outcome: "دانشجو بتواند اتصال باقیمانده و لایه نرمال‌سازی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Residual Connection و Normalization Layer چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "نقش هر دو را در پایداری آموزش ترنسفورمر توضیح بده."
+      sources:
+        - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 67
+      domain: "Deep Learning Systems"
+      module_id: 8
+      module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
+      prerequisites: [39, 57]
+      title: "Mixture of Experts و Routing Network"
+      status: "established"
+      a: {term: "Mixture of Experts", fa: "ترکیب خبره‌ها", seed: "معماری‌ای که چند زیرشبکه تخصصی دارد و برای هر ورودی تنها بخشی از آن‌ها را فعال می‌کند."}
+      b: {term: "Routing Network", fa: "شبکه مسیریاب", seed: "بخشی که تعیین می‌کند کدام خبره‌ها برای پردازش ورودی انتخاب شوند."}
+      relation: "MoE معماری کلان است؛ routing network سازوکار انتخاب زیرشبکه‌های فعال را اجرا می‌کند."
+      learning_outcome: "دانشجو بتواند ترکیب خبره‌ها و شبکه مسیریاب را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Mixture of Experts و Routing Network چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "تفاوت تعداد پارامتر کل و پارامترهای فعال را در MoE محاسبه کن."
+      sources:
+        - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 68
+      domain: "Deep Learning Systems"
+      module_id: 8
+      module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
+      prerequisites: [38, 48]
+      title: "Sparse Attention و FlashAttention"
+      status: "established"
+      a: {term: "Sparse Attention", fa: "توجه تنک", seed: "روش‌هایی که محاسبه توجه را به زیرمجموعه‌ای از موقعیت‌ها محدود می‌کنند تا هزینه کاهش یابد."}
+      b: {term: "FlashAttention", fa: "توجه سریع", seed: "الگوریتم دقیقی برای محاسبه کارآمد attention با بهبود استفاده از حافظه و جابه‌جایی داده در GPU."}
+      relation: "sparse attention ساختار محاسبه را تنک می‌کند؛ FlashAttention محاسبه دقیق را با الگوریتم و مدیریت حافظه کارآمدتر می‌سازد."
+      learning_outcome: "دانشجو بتواند توجه تنک و توجه سریع را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Sparse Attention و FlashAttention چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "چرا FlashAttention را نباید به‌عنوان تقریب تنک معرفی کرد؟"
+      sources:
+        - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 69
+      domain: "Deep Learning Systems"
+      module_id: 8
+      module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
+      prerequisites: [36, 38]
+      title: "State Space Model و Selective State Space"
+      status: "emerging"
+      a: {term: "State Space Model", fa: "مدل فضای حالت", seed: "چارچوبی برای نمایش تحول حالت پنهان در طول زمان و ارتباط آن با ورودی و خروجی."}
+      b: {term: "Selective State Space", fa: "مدل فضای حالت انتخابی", seed: "گونه‌ای که پارامترهای مؤثر بر انتقال اطلاعات را وابسته به ورودی می‌کند تا انتخاب‌گری محتوایی داشته باشد."}
+      relation: "مدل فضای حالت چارچوب عمومی پویایی است؛ نسخه انتخابی پارامترها را با محتوا تطبیق می‌دهد."
+      learning_outcome: "دانشجو بتواند مدل فضای حالت و مدل فضای حالت انتخابی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "State Space Model و Selective State Space چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "تفاوت مدل‌سازی توالی با attention و state space را از نظر هزینه بررسی کن."
+      sources:
+        - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 70
+      domain: "Deep Learning Systems"
+      module_id: 8
+      module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
+      prerequisites: [48, 68]
+      title: "Retrieval Head و Long-Context Attention"
+      status: "emerging"
+      a: {term: "Retrieval Head", fa: "سر توجه بازیابی‌گر", seed: "الگوی رفتاری برخی سرهای attention که اطلاعات مرتبط را از بخش‌های دورتر زمینه بازیابی می‌کنند."}
+      b: {term: "Long-Context Attention", fa: "توجه با زمینه بلند", seed: "سازوکار attention برای پردازش دنباله‌های طولانی با چالش حافظه و هزینه محاسباتی."}
+      relation: "retrieval head مشاهده‌ای درباره نقش برخی سرهاست؛ long-context attention مسئله معماری و مقیاس پردازش است."
+      learning_outcome: "دانشجو بتواند سر توجه بازیابی‌گر و توجه با زمینه بلند را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Retrieval Head و Long-Context Attention چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "چرا پنجره زمینه بزرگ به‌تنهایی بازیابی دقیق را تضمین نمی‌کند؟"
+      sources:
+        - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 71
+      domain: "Deep Learning Systems"
+      module_id: 8
+      module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
+      prerequisites: [61, 63]
+      title: "Multimodal Fusion و Late Fusion"
+      status: "established"
+      a: {term: "Multimodal Fusion", fa: "ادغام چندوجهی", seed: "ترکیب اطلاعات چند وجه داده برای ساخت نمایش یا تصمیم مشترک."}
+      b: {term: "Late Fusion", fa: "ادغام دیرهنگام", seed: "ترکیب خروجی یا نمایش‌های سطح بالای هر وجه پس از پردازش جداگانه آن‌ها."}
+      relation: "multimodal fusion هدف کلی ترکیب است؛ late fusion یکی از زمان‌بندی‌های ممکن ادغام است."
+      learning_outcome: "دانشجو بتواند ادغام چندوجهی و ادغام دیرهنگام را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Multimodal Fusion و Late Fusion چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای سامانه صوت و تصویر، early و late fusion را مقایسه کن."
+      sources:
+        - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 72
+      domain: "Deep Learning Systems"
+      module_id: 8
+      module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
+      prerequisites: [48, 68]
+      title: "Retrieval Head و Attention Sink"
+      status: "emerging"
+      a: {term: "Attention Sink", fa: "نقطه جذب توجه", seed: "موقعیت‌هایی در دنباله که به‌طور غیرمنتظره سهم زیادی از توجه را جذب می‌کنند و در برخی مدل‌ها به پایداری کش کمک می‌کنند."}
+      b: {term: "Streaming LLM", fa: "مدل زبانی جریانی", seed: "مدلی که ورودی و خروجی را به‌صورت پیوسته پردازش می‌کند و باید حافظه و زمینه را در طول جریان مدیریت کند."}
+      relation: "attention sink یک پدیده در الگوی توجه است؛ streaming LLM نیاز عملیاتی پردازش پیوسته را توصیف می‌کند."
+      learning_outcome: "دانشجو بتواند نقطه جذب توجه و مدل زبانی جریانی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Attention Sink و Streaming LLM چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای پردازش جریان طولانی، سیاست نگهداری context را طراحی کن."
+      sources:
+        - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+    - id: 73
+      domain: "Data-Centric AI"
+      module_id: 9
+      module_title: "مهندسی داده و یادگیری داده‌محور"
+      prerequisites: [37]
+      title: "Data Curation و Data Provenance"
+      status: "established"
+      a: {term: "Data Curation", fa: "گزینش و آماده‌سازی داده", seed: "فرایند انتخاب، پاک‌سازی، مستندسازی و سازمان‌دهی داده برای هدف مشخص."}
+      b: {term: "Data Provenance", fa: "تبار داده", seed: "اطلاعات ثبت‌شده درباره منشأ، تبدیل‌ها، نسخه‌ها و مسیر حرکت داده."}
+      relation: "curation کیفیت و تناسب مجموعه را بهبود می‌دهد؛ provenance قابلیت ردیابی منشأ و تغییرات را فراهم می‌کند."
+      learning_outcome: "دانشجو بتواند گزینش و آماده‌سازی داده و تبار داده را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Data Curation و Data Provenance چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای یک مجموعه آموزش، چک‌لیست curation و provenance بساز."
+      sources:
+        - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 74
+      domain: "Data-Centric AI"
+      module_id: 9
+      module_title: "مهندسی داده و یادگیری داده‌محور"
+      prerequisites: [73]
+      title: "Data Deduplication و Near-Duplicate Detection"
+      status: "established"
+      a: {term: "Data Deduplication", fa: "حذف داده تکراری", seed: "شناسایی و حذف نمونه‌های تکراری دقیق برای کاهش افزونگی و خطر نشت."}
+      b: {term: "Near-Duplicate Detection", fa: "تشخیص موارد تقریباً تکراری", seed: "شناسایی نمونه‌هایی که با وجود تفاوت سطحی، محتوای بسیار مشابه دارند."}
+      relation: "deduplication دقیق موارد یکسان را حذف می‌کند؛ near-duplicate detection شباهت محتوایی را نیز بررسی می‌کند."
+      learning_outcome: "دانشجو بتواند حذف داده تکراری و تشخیص موارد تقریباً تکراری را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Data Deduplication و Near-Duplicate Detection چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "چرا حذف تکرار میان train و test برای اعتبار ارزیابی ضروری است؟"
+      sources:
+        - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 75
+      domain: "Data-Centric AI"
+      module_id: 9
+      module_title: "مهندسی داده و یادگیری داده‌محور"
+      prerequisites: [21, 73]
+      title: "Data Labeling و Inter-Annotator Agreement"
+      status: "established"
+      a: {term: "Data Labeling", fa: "برچسب‌گذاری داده", seed: "تخصیص برچسب یا داوری به نمونه‌ها طبق دستورالعمل وظیفه."}
+      b: {term: "Inter-Annotator Agreement", fa: "توافق میان برچسب‌گذاران", seed: "سنجش میزان سازگاری داوری افراد مختلف درباره نمونه‌های مشترک."}
+      relation: "برچسب‌گذاری داده هدف می‌سازد؛ توافق ارزیابی می‌کند دستورالعمل و برچسب‌ها تا چه حد قابل تکرارند."
+      learning_outcome: "دانشجو بتواند برچسب‌گذاری داده و توافق میان برچسب‌گذاران را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Data Labeling و Inter-Annotator Agreement چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای برچسب‌گذاری محتوای نامناسب، معیار توافق و حل اختلاف تعریف کن."
+      sources:
+        - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 76
+      domain: "Data-Centric AI"
+      module_id: 9
+      module_title: "مهندسی داده و یادگیری داده‌محور"
+      prerequisites: [64, 73]
+      title: "Data Drift و Label Drift"
+      status: "established"
+      a: {term: "Data Drift", fa: "تغییر توزیع داده", seed: "تغییر توزیع ورودی‌های مشاهده‌شده در طول زمان نسبت به داده مرجع."}
+      b: {term: "Label Drift", fa: "تغییر توزیع برچسب", seed: "تغییر توزیع فراوانی کلاس‌ها یا مقادیر هدف در طول زمان."}
+      relation: "data drift به ورودی‌ها اشاره دارد؛ label drift به توزیع هدف مربوط است و هر دو می‌توانند عملکرد را تغییر دهند."
+      learning_outcome: "دانشجو بتواند تغییر توزیع داده و تغییر توزیع برچسب را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Data Drift و Label Drift چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "از تغییر توزیع ورودی و تغییر فراوانی هدف دو مثال متفاوت بساز."
+      sources:
+        - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 77
+      domain: "Data-Centric AI"
+      module_id: 9
+      module_title: "مهندسی داده و یادگیری داده‌محور"
+      prerequisites: [38, 73]
+      title: "Synthetic Data و Data Validation"
+      status: "established"
+      a: {term: "Synthetic Data", fa: "داده مصنوعی", seed: "داده تولیدشده به‌صورت مصنوعی برای شبیه‌سازی یا تکمیل داده واقعی."}
+      b: {term: "Data Validation", fa: "اعتبارسنجی داده", seed: "بررسی ساختار، دامنه، کیفیت، سازگاری و قواعد مورد انتظار داده."}
+      relation: "داده مصنوعی منبع داده است؛ اعتبارسنجی کنترل می‌کند داده واقعی یا مصنوعی با قرارداد و هدف سازگار باشد."
+      learning_outcome: "دانشجو بتواند داده مصنوعی و اعتبارسنجی داده را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Synthetic Data و Data Validation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "چه آزمون‌هایی برای تشخیص داده مصنوعی نامعتبر لازم است؟"
+      sources:
+        - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 78
+      domain: "Data-Centric AI"
+      module_id: 9
+      module_title: "مهندسی داده و یادگیری داده‌محور"
+      prerequisites: [73, 74]
+      title: "Data-Centric AI و Model-Centric AI"
+      status: "established"
+      a: {term: "Data-Centric AI", fa: "هوش مصنوعی داده‌محور", seed: "رویکردی که بهبود مستمر کیفیت، پوشش و برچسب داده را محور ارتقای سامانه قرار می‌دهد."}
+      b: {term: "Model-Centric AI", fa: "هوش مصنوعی مدل‌محور", seed: "رویکردی که تمرکز اصلی بهبود را بر معماری، پارامترها و تنظیمات مدل قرار می‌دهد."}
+      relation: "این دو رویکرد مکمل‌اند؛ بهبود داده یا مدل باید بر اساس تحلیل خطا و گلوگاه واقعی انتخاب شود."
+      learning_outcome: "دانشجو بتواند هوش مصنوعی داده‌محور و هوش مصنوعی مدل‌محور را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Data-Centric AI و Model-Centric AI چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای یک مدل کم‌دقت، تشخیص بده مسئله داده است یا معماری."
+      sources:
+        - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 79
+      domain: "Data-Centric AI"
+      module_id: 9
+      module_title: "مهندسی داده و یادگیری داده‌محور"
+      prerequisites: [75, 78]
+      title: "Active Learning و Human Annotation"
+      status: "established"
+      a: {term: "Active Learning", fa: "یادگیری فعال", seed: "انتخاب نمونه‌هایی که برچسب‌گذاری آن‌ها انتظار می‌رود بیشترین ارزش اطلاعاتی را برای مدل داشته باشد."}
+      b: {term: "Human Annotation", fa: "برچسب‌گذاری انسانی", seed: "فرایند تخصیص برچسب به داده توسط ارزیاب انسانی طبق راهنمای مشخص."}
+      relation: "active learning راهبرد انتخاب نمونه است؛ human annotation منبع تولید برچسب می‌تواند باشد."
+      learning_outcome: "دانشجو بتواند یادگیری فعال و برچسب‌گذاری انسانی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Active Learning و Human Annotation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای کاهش هزینه برچسب‌گذاری، معیار انتخاب نمونه فعال تعریف کن."
+      sources:
+        - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 80
+      domain: "Data-Centric AI"
+      module_id: 9
+      module_title: "مهندسی داده و یادگیری داده‌محور"
+      prerequisites: [75, 79]
+      title: "Weak Supervision و Programmatic Labeling"
+      status: "established"
+      a: {term: "Weak Supervision", fa: "نظارت ضعیف", seed: "یادگیری از برچسب‌های ناقص، پرنویز یا غیرمستقیم که از منابع مختلف حاصل می‌شوند."}
+      b: {term: "Programmatic Labeling", fa: "برچسب‌گذاری برنامه‌ای", seed: "تولید برچسب با قواعد، الگوها یا توابع برچسب‌زن به‌جای برچسب‌گذاری دستی همه نمونه‌ها."}
+      relation: "برچسب‌گذاری برنامه‌ای یکی از منابع weak supervision است؛ ترکیب چند منبع نیازمند مدل‌سازی تعارض و نویز است."
+      learning_outcome: "دانشجو بتواند نظارت ضعیف و برچسب‌گذاری برنامه‌ای را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Weak Supervision و Programmatic Labeling چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "سه تابع برچسب‌زن برای دسته‌بندی تیکت‌های پشتیبانی بنویس."
+      sources:
+        - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 81
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [41]
+      title: "Agent Architecture و Control Plane"
+      status: "established"
+      a: {term: "Agent Architecture", fa: "معماری عامل", seed: "ساختار اجزای ادراک، برنامه‌ریزی، حافظه، ابزار و کنترل در یک سامانه عامل‌محور."}
+      b: {term: "Control Plane", fa: "صفحه کنترل", seed: "لایه‌ای که سیاست‌ها، مجوزها، مسیریابی و نظارت بر اجرای عامل‌ها را مدیریت می‌کند."}
+      relation: "معماری عامل ساختار کلی سامانه است؛ control plane بخش حاکم بر اجرای کنترل‌شده را فراهم می‌کند."
+      learning_outcome: "دانشجو بتواند معماری عامل و صفحه کنترل را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Agent Architecture و Control Plane چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "نقشه اجزای data plane و control plane یک عامل سازمانی را ترسیم کن."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 82
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [81]
+      title: "Task Decomposition و Hierarchical Planning"
+      status: "established"
+      a: {term: "Task Decomposition", fa: "تجزیه وظیفه", seed: "شکستن هدف پیچیده به زیرمسئله‌ها یا گام‌های قابل مدیریت."}
+      b: {term: "Hierarchical Planning", fa: "برنامه‌ریزی سلسله‌مراتبی", seed: "برنامه‌ریزی در چند سطح انتزاعی که هدف‌های کلان را به برنامه‌های جزئی‌تر پیوند می‌دهد."}
+      relation: "تجزیه وظیفه مسئله را خرد می‌کند؛ برنامه‌ریزی سلسله‌مراتبی وابستگی و ترتیب تصمیم‌ها را در سطوح مختلف مدیریت می‌کند."
+      learning_outcome: "دانشجو بتواند تجزیه وظیفه و برنامه‌ریزی سلسله‌مراتبی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Task Decomposition و Hierarchical Planning چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "یک درخواست تحلیل بازار را به اهداف و زیرکارهای قابل ارزیابی بشکن."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 83
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [81, 82]
+      title: "State Machine و Event-Driven Agent"
+      status: "established"
+      a: {term: "State Machine", fa: "ماشین حالت", seed: "مدلی که وضعیت‌های مجاز و انتقال میان آن‌ها را بر اساس رویدادها تعریف می‌کند."}
+      b: {term: "Event-Driven Agent", fa: "عامل رویدادمحور", seed: "عاملی که با دریافت رویدادهای محیط یا سامانه، تصمیم یا گردش‌کار مناسب را فعال می‌کند."}
+      relation: "ماشین حالت مدل صریح وضعیت و انتقال است؛ عامل رویدادمحور الگوی فعال‌سازی رفتار بر اساس رویداد را توصیف می‌کند."
+      learning_outcome: "دانشجو بتواند ماشین حالت و عامل رویدادمحور را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "State Machine و Event-Driven Agent چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای عامل پیگیری سفارش، حالت‌ها و رویدادهای انتقال را مشخص کن."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 84
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [81, 83]
+      title: "Agent Handoff و Delegation"
+      status: "established"
+      a: {term: "Agent Handoff", fa: "واگذاری کنترل عامل", seed: "انتقال اجرای وظیفه یا مکالمه از یک عامل به عامل یا مؤلفه دیگر با حفظ زمینه لازم."}
+      b: {term: "Delegation", fa: "تفویض وظیفه", seed: "واگذاری مسئولیت یک زیرکار به عامل یا سرویس دیگر همراه با تعریف خروجی مورد انتظار."}
+      relation: "handoff انتقال کنترل است؛ delegation واگذاری مسئولیت است و ممکن است بدون انتقال کامل کنترل رخ دهد."
+      learning_outcome: "دانشجو بتواند واگذاری کنترل عامل و تفویض وظیفه را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Agent Handoff و Delegation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "قواعد بازگشت کنترل پس از delegation را طراحی کن."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 85
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [44, 81]
+      title: "Agent Evaluation و Trajectory Evaluation"
+      status: "established"
+      a: {term: "Agent Evaluation", fa: "ارزیابی عامل", seed: "سنجش موفقیت، هزینه، ایمنی و قابلیت اعتماد عامل در انجام وظایف چندمرحله‌ای."}
+      b: {term: "Trajectory Evaluation", fa: "ارزیابی مسیر اجرا", seed: "ارزیابی دنباله تصمیم‌ها، فراخوانی ابزارها و وضعیت‌های میانی عامل، نه فقط پاسخ نهایی."}
+      relation: "ارزیابی عامل کل سامانه را می‌سنجد؛ ارزیابی مسیر اجرا کیفیت مراحل و تصمیم‌های میانی را آشکار می‌کند."
+      learning_outcome: "دانشجو بتواند ارزیابی عامل و ارزیابی مسیر اجرا را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Agent Evaluation و Trajectory Evaluation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای عامل رزرو، معیار موفقیت نهایی و معیار مسیر اجرا تعریف کن."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 86
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [84]
+      title: "Tool Schema و Input Validation"
+      status: "established"
+      a: {term: "Tool Schema", fa: "طرحواره ابزار", seed: "تعریف ساختاریافته نام، پارامترها، نوع داده و قرارداد ورودی و خروجی ابزار."}
+      b: {term: "Input Validation", fa: "اعتبارسنجی ورودی", seed: "بررسی اینکه داده ورودی از نظر نوع، دامنه، قالب و سیاست امنیتی مجاز و معتبر باشد."}
+      relation: "schema قرارداد ساختاری را اعلام می‌کند؛ validation درخواست واقعی را با قرارداد و سیاست تطبیق می‌دهد."
+      learning_outcome: "دانشجو بتواند طرحواره ابزار و اعتبارسنجی ورودی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Tool Schema و Input Validation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای ابزار حذف فایل، schema و قواعد validation امن طراحی کن."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 87
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [84, 85]
+      title: "Agent Identity و Delegated Credentials"
+      status: "established"
+      a: {term: "Agent Identity", fa: "هویت عامل", seed: "شناسه و مشخصات امنیتی عامل که برای انتساب کنش‌ها و اعمال سیاست دسترسی استفاده می‌شود."}
+      b: {term: "Delegated Credentials", fa: "اعتبارنامه تفویض‌شده", seed: "مجوز یا توکنی که دسترسی محدود عامل را از طرف کاربر یا سرویس دیگر ممکن می‌کند."}
+      relation: "هویت عامل مشخص می‌کند چه مؤلفه‌ای عمل می‌کند؛ اعتبارنامه تفویض‌شده دامنه مجوزی را که در اختیار آن قرار می‌گیرد تعیین می‌کند."
+      learning_outcome: "دانشجو بتواند هویت عامل و اعتبارنامه تفویض‌شده را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Agent Identity و Delegated Credentials چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "چگونه مجوزهای یک عامل را به کاربر، وظیفه و زمان محدود می‌کنی؟"
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 88
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [86]
+      title: "Multi-Agent Coordination و Conflict Resolution"
+      status: "established"
+      a: {term: "Multi-Agent Coordination", fa: "هماهنگی چندعاملی", seed: "تنظیم تعامل و تقسیم کار میان عامل‌ها برای دستیابی به هدف مشترک یا اهداف مرتبط."}
+      b: {term: "Conflict Resolution", fa: "حل تعارض", seed: "روش تشخیص و حل ناسازگاری میان تصمیم‌ها، منابع یا اهداف عامل‌ها."}
+      relation: "هماهنگی همکاری را سازمان می‌دهد؛ حل تعارض زمانی لازم است که برنامه‌ها یا ترجیحات ناسازگار شوند."
+      learning_outcome: "دانشجو بتواند هماهنگی چندعاملی و حل تعارض را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Multi-Agent Coordination و Conflict Resolution چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای سه عامل تحلیل‌گر، قاعده حل تعارض خروجی‌ها را تعریف کن."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 89
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [87]
+      title: "Agent Memory Retrieval و Memory Consolidation"
+      status: "established"
+      a: {term: "Memory Retrieval", fa: "بازیابی حافظه عامل", seed: "انتخاب اطلاعات ذخیره‌شده مرتبط با وضعیت و هدف جاری عامل."}
+      b: {term: "Memory Consolidation", fa: "تجمیع حافظه", seed: "فشرده‌سازی و سازمان‌دهی تجربه‌های پراکنده به دانش پایدار و قابل استفاده مجدد."}
+      relation: "بازیابی حافظه اطلاعات را برای وظیفه جاری انتخاب می‌کند؛ تجمیع حافظه ساختار ذخیره‌شده را در طول زمان بازسازی می‌کند."
+      learning_outcome: "دانشجو بتواند بازیابی حافظه عامل و تجمیع حافظه را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Memory Retrieval و Memory Consolidation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "سیاستی برای خلاصه‌سازی و حذف خاطرات کم‌ارزش عامل طراحی کن."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 90
+      domain: "Agentic Systems"
+      module_id: 10
+      module_title: "مهندسی و حاکمیت عامل‌های هوشمند"
+      prerequisites: [81, 87]
+      title: "Agent Governance و Runtime Guardrails"
+      status: "established"
+      a: {term: "Agent Governance", fa: "حکمرانی عامل", seed: "سیاست‌ها و مسئولیت‌هایی برای کنترل اختیار، نظارت، پاسخ‌گویی و تغییرات عامل در چرخه عمر."}
+      b: {term: "Runtime Guardrails", fa: "محافظ‌های زمان اجرا", seed: "کنترل‌هایی که هنگام اجرای عامل درخواست‌ها، ابزارها و خروجی‌ها را بررسی یا محدود می‌کنند."}
+      relation: "governance چارچوب سازمانی است؛ runtime guardrails کنترل‌های فنی در لحظه اجرا هستند."
+      learning_outcome: "دانشجو بتواند حکمرانی عامل و محافظ‌های زمان اجرا را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Agent Governance و Runtime Guardrails چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "سه اقدام حساس عامل را مشخص و برای هرکدام guardrail بگذار."
+      sources:
+        - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
+    - id: 91
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [31, 46]
+      title: "Distribution Shift Testing و Stress Testing"
+      status: "established"
+      a: {term: "Distribution Shift Testing", fa: "آزمون تغییر توزیع", seed: "ارزیابی عملکرد مدل تحت تغییرات مشخص میان توزیع آموزش و محیط استفاده."}
+      b: {term: "Stress Testing", fa: "آزمون فشار", seed: "سنجش رفتار سامانه در بار، ورودی یا شرایط شدید و مرزی."}
+      relation: "آزمون تغییر توزیع نوعی آزمون robustness است؛ stress testing ظرفیت و رفتار سامانه را تحت شرایط شدید می‌سنجد."
+      learning_outcome: "دانشجو بتواند آزمون تغییر توزیع و آزمون فشار را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Distribution Shift Testing و Stress Testing چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "یک ماتریس آزمون برای تغییرات فصلی و بار شدید بساز."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 92
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [91]
+      title: "Property-Based Testing و Metamorphic Testing"
+      status: "established"
+      a: {term: "Property-Based Testing", fa: "آزمون مبتنی بر ویژگی", seed: "تولید ورودی‌های متعدد برای بررسی برقرارماندن خواص یا ناورداهای تعریف‌شده سامانه."}
+      b: {term: "Metamorphic Testing", fa: "آزمون دگرگونی‌پذیری", seed: "آزمونی که رابطه مورد انتظار میان خروجی‌ها را پس از تبدیل کنترل‌شده ورودی می‌سنجد."}
+      relation: "property-based دامنه وسیعی از ورودی‌ها را می‌آزماید؛ metamorphic رابطه میان چند اجرای مرتبط را بررسی می‌کند."
+      learning_outcome: "دانشجو بتواند آزمون مبتنی بر ویژگی و آزمون دگرگونی‌پذیری را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Property-Based Testing و Metamorphic Testing چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای سامانه خلاصه‌سازی، یک رابطه metamorphic قابل آزمون تعریف کن."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 93
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [46]
+      title: "Certified Robustness و Adversarial Training"
+      status: "established"
+      a: {term: "Certified Robustness", fa: "استواری گواهی‌شده", seed: "تضمین ریاضی رفتار مدل در محدوده‌ای از تغییرات ورودی تحت فرض‌ها و روش مشخص."}
+      b: {term: "Adversarial Training", fa: "آموزش خصمانه", seed: "آموزش مدل با نمونه‌های خصمانه یا دست‌کاری‌شده برای افزایش مقاومت در برابر حملات تعریف‌شده."}
+      relation: "adversarial training یک دفاع تجربی است؛ certified robustness ادعای تضمین‌شده در محدوده مشخص ارائه می‌کند."
+      learning_outcome: "دانشجو بتواند استواری گواهی‌شده و آموزش خصمانه را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Certified Robustness و Adversarial Training چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "تفاوت شواهد تجربی و تضمین رسمی در دفاع خصمانه را شرح بده."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 94
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [46, 65]
+      title: "Model Extraction و Membership Inference"
+      status: "established"
+      a: {term: "Model Extraction", fa: "استخراج مدل", seed: "حمله‌ای که با پرس‌وجو از سامانه، مدلی جانشین یا اطلاعاتی درباره رفتار و پارامترهای مدل هدف بازسازی می‌کند."}
+      b: {term: "Membership Inference", fa: "استنباط عضویت", seed: "حمله‌ای که تشخیص می‌دهد رکورد مشخصی در داده آموزش مدل حضور داشته است یا خیر."}
+      relation: "model extraction رفتار یا مدل را بازسازی می‌کند؛ membership inference درباره عضویت رکورد در داده آموزش پرس‌وجو می‌کند."
+      learning_outcome: "دانشجو بتواند استخراج مدل و استنباط عضویت را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Model Extraction و Membership Inference چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "دو threat model و کنترل متناظر برای API مدل تعریف کن."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 95
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [28, 51]
+      title: "Failure Mode Analysis و Risk Register"
+      status: "established"
+      a: {term: "Failure Mode Analysis", fa: "تحلیل حالت‌های شکست", seed: "شناسایی شیوه‌های ممکن شکست یک فرایند یا سامانه و بررسی علت و پیامد آن‌ها."}
+      b: {term: "Risk Register", fa: "دفتر ثبت ریسک", seed: "فهرست ساختاریافته ریسک‌ها، مالک، احتمال، شدت، کنترل‌ها و وضعیت رسیدگی."}
+      relation: "تحلیل حالت شکست روش کشف سناریوهاست؛ risk register خروجی مدیریت و پیگیری آن‌ها را ثبت می‌کند."
+      learning_outcome: "دانشجو بتواند تحلیل حالت‌های شکست و دفتر ثبت ریسک را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Failure Mode Analysis و Risk Register چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای سامانه پاسخ‌گوی مشترکان پنج حالت شکست را ثبت کن."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 96
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [91]
+      title: "LLM-as-a-Judge و Human Evaluation"
+      status: "established"
+      a: {term: "LLM-as-a-Judge", fa: "ارزیابی با داور زبانی", seed: "استفاده از یک مدل زبانی برای امتیازدهی یا مقایسه خروجی مدل دیگر طبق rubric مشخص."}
+      b: {term: "Human Evaluation", fa: "ارزیابی انسانی", seed: "قضاوت ارزیابان انسانی درباره کیفیت خروجی با دستورالعمل و معیارهای تعریف‌شده."}
+      relation: "داور زبانی مقیاس‌پذیر است اما سوگیری و خطای داور دارد؛ ارزیابی انسانی مرجع مهمی است ولی هزینه و تنوع ارزیاب دارد."
+      learning_outcome: "دانشجو بتواند ارزیابی با داور زبانی و ارزیابی انسانی را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "LLM-as-a-Judge و Human Evaluation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "rubric و کنترل سوگیری برای مقایسه دو پاسخ مدل طراحی کن."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 97
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [45, 86]
+      title: "Prompt Injection Defense و Instruction Hierarchy"
+      status: "established"
+      a: {term: "Prompt Injection Defense", fa: "دفاع در برابر تزریق دستور", seed: "کنترل‌های معماری و زمان اجرا برای جلوگیری از اثرگذاری دستورهای غیرمجاز در ورودی یا محتوای بازیابی‌شده."}
+      b: {term: "Instruction Hierarchy", fa: "سلسله‌مراتب دستور", seed: "ترتیب اولویت و مرزبندی میان دستورهای سیستمی، توسعه‌دهنده، کاربر و داده غیرقابل اعتماد."}
+      relation: "دفاع مجموعه کنترل‌هاست؛ سلسله‌مراتب دستور سیاست اولویت‌دهی را تعریف می‌کند و به‌تنهایی کافی نیست."
+      learning_outcome: "دانشجو بتواند دفاع در برابر تزریق دستور و سلسله‌مراتب دستور را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Prompt Injection Defense و Instruction Hierarchy چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای RAG، دستور معتبر را از متن سند غیرقابل اعتماد جدا کن."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 98
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [87, 97]
+      title: "Data Exfiltration و Tool Abuse"
+      status: "established"
+      a: {term: "Data Exfiltration", fa: "استخراج غیرمجاز داده", seed: "انتقال یا افشای داده حساس از سامانه به مقصد یا فرد غیرمجاز."}
+      b: {term: "Tool Abuse", fa: "سوءاستفاده از ابزار", seed: "به‌کارگیری ابزار مجاز در زمینه یا هدفی خارج از سیاست و اختیار مورد انتظار."}
+      relation: "استخراج داده پیامد یا هدف حمله است؛ سوءاستفاده از ابزار یکی از مسیرهای ممکن برای تحقق آن است."
+      learning_outcome: "دانشجو بتواند استخراج غیرمجاز داده و سوءاستفاده از ابزار را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Data Exfiltration و Tool Abuse چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای عامل دارای دسترسی ایمیل، مسیرهای exfiltration را مدل کن."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 99
+      domain: "Trustworthy AI"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [65, 94]
+      title: "Privacy Threat Modeling و Data Minimization"
+      status: "established"
+      a: {term: "Privacy Threat Modeling", fa: "مدل‌سازی تهدید حریم خصوصی", seed: "شناسایی دارایی‌های حساس، مهاجم، مسیرهای افشا و پیامدهای پردازش داده شخصی."}
+      b: {term: "Data Minimization", fa: "کمینه‌سازی داده", seed: "محدودکردن جمع‌آوری و نگهداری داده به مقدار لازم برای هدف مشخص."}
+      relation: "مدل‌سازی تهدید مسیرهای خطر را شناسایی می‌کند؛ data minimization سطح مواجهه را کاهش می‌دهد."
+      learning_outcome: "دانشجو بتواند مدل‌سازی تهدید حریم خصوصی و کمینه‌سازی داده را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Privacy Threat Modeling و Data Minimization چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای یک دستیار منابع انسانی، داده‌های غیرضروری را حذف کن."
+      sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+    - id: 100
+      domain: "AI Engineering"
+      module_id: 11
+      module_title: "ارزیابی، امنیت و قابلیت اعتماد"
+      prerequisites: [47, 73]
+      title: "Model Registry و Artifact Lineage"
+      status: "established"
+      a: {term: "Model Registry", fa: "مخزن ثبت مدل", seed: "سامانه‌ای برای نسخه‌بندی و ثبت فراداده مدل‌ها، نسخه‌ها، معیارها و وضعیت استقرار."}
+      b: {term: "Artifact Lineage", fa: "تبار مصنوعات", seed: "ردیابی ارتباط میان داده، کد، پیکربندی، مدل و خروجی‌های تولیدشده در چرخه توسعه."}
+      relation: "registry مدل‌ها را مدیریت می‌کند؛ artifact lineage منشأ و وابستگی همه مصنوعات را قابل ردیابی می‌سازد."
+      learning_outcome: "دانشجو بتواند مخزن ثبت مدل و تبار مصنوعات را تعریف کند، سازوکار آن‌ها را توضیح دهد و در یک مسئله واقعی تمایز آن‌ها را به‌کار گیرد."
+      core_question: "Model Registry و Artifact Lineage چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
+      practice: "برای انتشار یک مدل، lineage لازم از داده تا artifact نهایی را فهرست کن."
+      sources:
+
+        - {name: "Microsoft Learn: Model Management and Deployment", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment?view=azureml-api-2"}
+        - {name: "MLflow Documentation", url: "https://mlflow.org/docs/latest/index.html"}

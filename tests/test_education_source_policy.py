@@ -137,3 +137,14 @@ def test_tier_one_authority_wins_over_tier_four_when_scores_and_freshness_match(
     ok, verified, reason = validate_current_sources([tier_four, tier_one])
     assert ok, reason
     assert verified[0]["authority_tier"] == 1
+
+
+def test_current_stanford_research_and_teaching_sites_are_recognized_as_maintained():
+    for url in (
+        "https://crfm.stanford.edu/helm/latest/",
+        "https://www.gsb.stanford.edu/faculty-research/labs-initiatives/sil/research/methods/ai-machine-learning/short-course",
+    ):
+        result = assess_source(url=url, reachable=True, detected_year=None, declared_year=None)
+        assert result["current"] is True, url
+        assert result["status"] == "maintained_current", url
+        assert result["organization"] == "stanford", url

@@ -28,7 +28,8 @@ MAINTAINED_CURRENT_DOMAINS = {
     "developers.google.com", "ai.google.dev", "cloud.google.com",
     "huggingface.co", "scikit-learn.org", "sbert.net", "pytorch.org",
     "tensorflow.org", "platform.openai.com", "openai.com", "deepmind.google",
-    "mlflow.org", "robotics.umich.edu",
+    "mlflow.org", "robotics.umich.edu", "digital-strategy.ec.europa.eu",
+    "docs.vllm.ai", "docs.langchain.com",
     "anthropic.com", "alignment.anthropic.com", "docs.anthropic.com", "modelcontextprotocol.io",
     "learn.microsoft.com", "nvidia.com", "docs.nvidia.com",
     "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu",
@@ -79,6 +80,8 @@ VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/": 2026,
     "https://www.dfg.de/de/aktuelles/neuigkeiten-themen/info-wissenschaft/2025/ifw-25-82": 2025,
     "https://github.com/github/spec-kit": 2026,
+    "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents": 2026,
+    "https://martinfowler.com/bliki/VibeCoding.html": 2025,
     "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents": 2026,
 }
 

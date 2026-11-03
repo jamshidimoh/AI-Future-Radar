@@ -139,11 +139,23 @@ def test_tier_one_authority_wins_over_tier_four_when_scores_and_freshness_match(
     assert verified[0]["authority_tier"] == 1
 
 
-def test_current_stanford_research_and_teaching_sites_are_recognized_as_maintained():
-    for url in (
-        "https://crfm.stanford.edu/helm/latest/",
-    ):
-        result = assess_source(url=url, reachable=True, detected_year=None, declared_year=None)
-        assert result["current"] is True, url
-        assert result["status"] == "maintained_current", url
-        assert result["organization"] == "stanford", url
+def test_current_stanford_ai_index_is_recognized_as_maintained():
+    result = assess_source(
+        url="https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance",
+        reachable=True,
+        detected_year=None,
+        declared_year=None,
+    )
+    assert result["current"] is True
+    assert result["status"] == "maintained_current"
+    assert result["organization"] == "stanford"
+
+
+def test_helm_maintenance_mode_is_not_mistaken_for_active_current_documentation():
+    result = assess_source(
+        url="https://crfm.stanford.edu/helm/latest/",
+        reachable=True,
+        detected_year=None,
+        declared_year=None,
+    )
+    assert result["current"] is False

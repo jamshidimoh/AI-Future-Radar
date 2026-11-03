@@ -97,11 +97,11 @@
         "status": "established",
         "sources": [
           {
-            "name": "FAU: Artificial Intelligence I WS26/27",
+            "name": "FAU Artificial Intelligence I WS26/27",
             "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
           },
           {
-            "name": "University of Bologna: Fundamentals of AI 2026/27",
+            "name": "University of Bologna Fundamentals of AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
           }
         ]
@@ -169,11 +169,11 @@
         "status": "established",
         "sources": [
           {
-            "name": "University of Bologna: Fundamentals of AI 2026/27",
+            "name": "University of Bologna Fundamentals of AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
           },
           {
-            "name": "FAU: Artificial Intelligence I WS26/27",
+            "name": "FAU Artificial Intelligence I WS26/27",
             "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
           }
         ]
@@ -205,11 +205,11 @@
         "status": "established",
         "sources": [
           {
-            "name": "University of Bologna: Fundamentals of AI 2026/27",
+            "name": "University of Bologna Fundamentals of AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
           },
           {
-            "name": "FAU: Artificial Intelligence I WS26/27",
+            "name": "FAU Artificial Intelligence I WS26/27",
             "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
           }
         ]
@@ -241,11 +241,11 @@
         "status": "established",
         "sources": [
           {
-            "name": "FAU: Artificial Intelligence I WS26/27",
+            "name": "FAU Artificial Intelligence I WS26/27",
             "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
           },
           {
-            "name": "University of Bologna: Fundamentals of AI 2026/27",
+            "name": "University of Bologna Fundamentals of AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
           }
         ]
@@ -278,11 +278,11 @@
         "status": "established",
         "sources": [
           {
-            "name": "University of Bologna: Fundamentals of AI 2026/27",
+            "name": "University of Bologna Fundamentals of AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
           },
           {
-            "name": "FAU: Artificial Intelligence I WS26/27",
+            "name": "FAU Artificial Intelligence I WS26/27",
             "url": "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26"
           }
         ]
@@ -315,11 +315,11 @@
         "status": "established",
         "sources": [
           {
-            "name": "University of Oxford: Knowledge Representation and Reasoning 2026/27",
-            "url": "https://algo.cs.ox.ac.uk/teaching/courses/2026-2027/KRR/index.html"
+            "name": "University of Freiburg Foundations of AI SS26",
+            "url": "https://rl.uni-freiburg.de/teaching/ss26/ss26/foundations-ai/"
           },
           {
-            "name": "University of Bologna: Fundamentals of AI 2026/27",
+            "name": "University of Bologna Fundamentals of AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
           }
         ]
@@ -352,12 +352,12 @@
         "status": "established",
         "sources": [
           {
-            "name": "University of Bologna: Fundamentals of AI 2026/27",
+            "name": "University of Bologna Fundamentals of AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775"
           },
           {
-            "name": "University of Bologna: Statistical and Mathematical Methods for AI 2026/27",
-            "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661"
+            "name": "SciPy Statistical Functions",
+            "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
           }
         ]
       },
@@ -425,12 +425,12 @@
         "status": "established",
         "sources": [
           {
-            "name": "University of Bologna: Statistical and Mathematical Methods for AI 2026/27",
+            "name": "University of Bologna Mathematical Methods for AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661"
           },
           {
-            "name": "Georgia Tech: Mathematical Foundations of ML Fall 2026",
-            "url": "https://syllabus.gatech.edu/sites/default/files/2026-04/Fall-2026-Fridovich-Keil-ECE-7750_1.pdf"
+            "name": "LMU Mathematical Foundations of ML SoSe 2026",
+            "url": "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026/"
           }
         ]
       },
@@ -461,12 +461,12 @@
         "status": "established",
         "sources": [
           {
-            "name": "University of Bologna: Statistical and Mathematical Methods for AI 2026/27",
+            "name": "University of Bologna Mathematical Methods for AI 2026/27",
             "url": "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661"
           },
           {
-            "name": "Georgia Tech: Mathematical Foundations of ML Fall 2026",
-            "url": "https://syllabus.gatech.edu/sites/default/files/2026-04/Fall-2026-Fridovich-Keil-ECE-7750_1.pdf"
+            "name": "LMU Mathematical Foundations of ML SoSe 2026",
+            "url": "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026/"
           }
         ]
       },
@@ -865,12 +865,12 @@
         "status": "established",
         "sources": [
           {
-            "name": "scikit-learn Clustering",
-            "url": "https://scikit-learn.org/stable/modules/clustering.html"
-          },
-          {
             "name": "SciPy Statistical Functions",
             "url": "https://docs.scipy.org/doc/scipy/reference/stats.html"
+          },
+          {
+            "name": "Google ML Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
           }
         ]
       },
@@ -1014,8 +1014,8 @@
             "url": "https://scikit-learn.org/stable/modules/tree.html"
           },
           {
-            "name": "scikit-learn Ensemble Methods",
-            "url": "https://scikit-learn.org/stable/modules/ensemble.html"
+            "name": "Google Machine Learning Crash Course",
+            "url": "https://developers.google.com/machine-learning/crash-course"
           }
         ]
       },

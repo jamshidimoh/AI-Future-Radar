@@ -393,7 +393,7 @@ education_curriculum_modules:
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
     - id: 65
       domain: "Advanced ML"
-      prerequisites: [37, 99]
+      prerequisites: [37, 46]
       title: "Federated Learning و Secure Aggregation"
       status: "established"
       a: {term: "Federated Learning", fa: "یادگیری فدرال", seed: "آموزش مشارکتی مدل روی چند دستگاه یا سازمان بدون انتقال مستقیم داده خام به یک مخزن مرکزی."}
@@ -601,7 +601,7 @@ education_curriculum_modules:
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
     - id: 81
       domain: "Agentic Systems"
-      prerequisites: [81]
+      prerequisites: [41]
       title: "Agent Architecture و Control Plane"
       status: "established"
       a: {term: "Agent Architecture", fa: "معماری عامل", seed: "ساختار اجزای ادراک، برنامه‌ریزی، حافظه، ابزار و کنترل در یک سامانه عامل‌محور."}
@@ -614,7 +614,7 @@ education_curriculum_modules:
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
     - id: 82
       domain: "Agentic Systems"
-      prerequisites: [83]
+      prerequisites: [81]
       title: "Task Decomposition و Hierarchical Planning"
       status: "established"
       a: {term: "Task Decomposition", fa: "تجزیه وظیفه", seed: "شکستن هدف پیچیده به زیرمسئله‌ها یا گام‌های قابل مدیریت."}
@@ -640,7 +640,7 @@ education_curriculum_modules:
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
     - id: 84
       domain: "Agentic Systems"
-      prerequisites: [81, 86]
+      prerequisites: [81, 83]
       title: "Agent Handoff و Delegation"
       status: "established"
       a: {term: "Agent Handoff", fa: "واگذاری کنترل عامل", seed: "انتقال اجرای وظیفه یا مکالمه از یک عامل به عامل یا مؤلفه دیگر با حفظ زمینه لازم."}
@@ -731,7 +731,7 @@ education_curriculum_modules:
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
     - id: 91
       domain: "Trustworthy AI"
-      prerequisites: [31, 95]
+      prerequisites: [31, 46]
       title: "Distribution Shift Testing و Stress Testing"
       status: "established"
       a: {term: "Distribution Shift Testing", fa: "آزمون تغییر توزیع", seed: "ارزیابی عملکرد مدل تحت تغییرات مشخص میان توزیع آموزش و محیط استفاده."}
@@ -757,7 +757,7 @@ education_curriculum_modules:
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
     - id: 93
       domain: "Trustworthy AI"
-      prerequisites: [97]
+      prerequisites: [46]
       title: "Certified Robustness و Adversarial Training"
       status: "established"
       a: {term: "Certified Robustness", fa: "استواری گواهی‌شده", seed: "تضمین ریاضی رفتار مدل در محدوده‌ای از تغییرات ورودی تحت فرض‌ها و روش مشخص."}
@@ -770,7 +770,7 @@ education_curriculum_modules:
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
     - id: 94
       domain: "Trustworthy AI"
-      prerequisites: [99]
+      prerequisites: [46, 65]
       title: "Model Extraction و Membership Inference"
       status: "established"
       a: {term: "Model Extraction", fa: "استخراج مدل", seed: "حمله‌ای که با پرس‌وجو از سامانه، مدلی جانشین یا اطلاعاتی درباره رفتار و پارامترهای مدل هدف بازسازی می‌کند."}

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793714484,
+  "updated_at": 1793716447,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -22038,6 +22038,25 @@
       "why_it_matters": "این انتقاد نشاندهنده نگرانیهای مرتبط با مدیریت منابع محاسباتی و هزینه‌های عملیاتی در صنعت فناوری است. استفاده از حافظه RAM برای ذخیرهسازی دادهها می‌تواند منجر به کاهش عملکرد سیستمها و افزایش هزینه‌های نگهداری شود. این نگرانیها برای شرکتها و کاربران نهایی در زمینههای مختلف فناوری، از جمله هوش مصنوعی و پردازش داده‌های بزرگ، اهمیت دارد.",
       "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNdWI4N3VkOVhxbW1RSnMtSTNodUY2SzZhc24xemU1c0w2S2JPTjIzSDNrdnJHRFhSODVvcUhQSHQyZGg3OHhOMVYzVlpmUGpjajAyNU1wUzlnNWVjczVZRm05ZlVxQnFsbjVxY0t6QmhoMnAzSDVhUHhJaHJIOURmajl3?oc=5",
       "posted_at": 1793714484
+    },
+    "-1004482051328:2278": {
+      "chat_id": -1004482051328,
+      "message_id": 2278,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Simon Willison",
+      "content_type": "analysis",
+      "category": "ai",
+      "leader": "",
+      "title": "آژانس سرشماری آمریکا و تغییر در گزارش پذیرش هوش مصنوعی",
+      "summary": "آژانس سرشماری آمریکا (Census Bureau) در سال ۲۰۲۶ با اجرای دستور اجرایی ۱۴۴۳۴، تغییراتی در پرسشنامهٔ Business Trends and Outlook Survey (BTOS) اعمال کرد. این تغییر باعث شد که داده‌های جدید دربارهٔ استفاده از هوش مصنوعی در شرکت‌های بزرگ در گزارش‌های بعدی قابل مقایسه با دورهٔ پیشین نباشد. Simon Willison با استفاده از آخرین انتشار داده‌ها (۲۲ اکتبر ۲۰۲۶) نمودار جدیدی از نرخ پذیرش AI تهیه کرد که تغییرات در پرسشنامه و دورهٔ جمع‌آوری داده را نشان می‌دهد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "تغییر در پرسشنامه BTOS باعث قطع ارتباط سری‌های دادهٔ قبلی می‌شود، که برای تحلیل روندهای بلندمدت پذیرش هوش مصنوعی ضروری است. بدون امکان مقایسه، پژوهشگران و سیاستگذاران نمی‌توانند به‌طور دقیق تأثیر تغییرات اقتصادی یا فناوری بر استفاده از AI را ارزیابی کنند. این محدودیت می‌تواند بر تصمیم‌گیری‌های سرمایه‌گذاری و سیاست‌گذاری در حوزهٔ فناوری تأثیر بگذارد.",
+      "link": "https://simonwillison.net/2026/Nov/2/census-bureau-super-intelligence/",
+      "posted_at": 1793716447
     }
   }
 }

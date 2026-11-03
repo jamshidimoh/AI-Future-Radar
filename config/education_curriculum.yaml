@@ -1,8 +1,8 @@
 education:
   enabled: true
   lessons_per_run: 1
-  curriculum_version: "1.0"
-  reviewed_at: "2026-08-14"
+  curriculum_version: "2.0"
+  reviewed_at: "2026-11-03"
   source_policy:
     primary_first: true
     preferred_domains:
@@ -11,7 +11,12 @@ education:
       - ai.google.dev
       - hai.stanford.edu
       - oecd.org
-    rule: "Use primary standards, official technical documentation, major research papers and current authoritative reports. Do not invent citations."
+    freshness:
+      minimum_verified_year: 2025
+      preferred_verified_year: 2026
+      prefer_verified_2026_for_fast_moving_topics: true
+      preserve_canonical_sources_for_stable_fundamentals: true
+    rule: "Prioritize primary standards, official technical documentation, peer-reviewed research, major university research centers and authoritative reports. Prefer independently verified 2026 material when available; for stable fundamentals, retain canonical definitions and add current evidence only where it clarifies the present state. A declared year alone never proves freshness. Do not invent citations."
   lessons:
     - id: 1
       title: "AI و Machine Learning"

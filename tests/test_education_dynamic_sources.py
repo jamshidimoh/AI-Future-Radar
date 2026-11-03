@@ -54,3 +54,14 @@ def test_dynamic_candidates_never_return_globally_excluded_urls():
     blocked = {"name": "blocked", "url": "https://arxiv.org/abs/1234.5678"}
     candidates = module.dynamic_source_candidates(lesson, [blocked], limit=20)
     assert all("arxiv.org" not in str(item.get("url", "")).casefold() for item in candidates)
+
+
+
+def test_verified_2026_breaks_ties_after_relevance_and_authority():
+    module = importlib.import_module("src.education_dynamic_sources")
+    sources = [
+        {"url": "https://source.example/2025", "dynamic_relevance": 5, "authority_score": 90, "authority_tier": 2, "current_status": "dated_current", "year": 2025},
+        {"url": "https://source.example/2026", "dynamic_relevance": 5, "authority_score": 90, "authority_tier": 2, "current_status": "dated_current", "year": 2026},
+    ]
+    ranked = module.rank_verified_sources(sources)
+    assert ranked[0]["year"] == 2026

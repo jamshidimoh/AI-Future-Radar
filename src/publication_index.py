@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import difflib
 import logging
-import os
 import time
 from collections import OrderedDict
 from datetime import datetime, timezone
@@ -50,7 +49,7 @@ def _record_timestamp(record: dict[str, Any]) -> float:
         if value in (None, ""):
             continue
         try:
-            if isinstance(value, (int, float)) or str(value).strip().isdigit():
+            if isinstance(value, int | float) or str(value).strip().isdigit():
                 stamp = float(value)
                 if stamp > 10_000_000_000:
                     stamp /= 1000.0

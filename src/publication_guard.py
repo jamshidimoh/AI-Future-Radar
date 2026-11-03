@@ -1,3 +1,4 @@
+# ruff: noqa: I001
 """Final, fail-closed publication gate shared with ranking and delivery."""
 from __future__ import annotations
 

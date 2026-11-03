@@ -20,8 +20,8 @@ education_curriculum_modules:
       b: {term: "Distribution Shift", fa: "تغییر توزیع", seed: "تغییر معنادار در توزیع داده میان شرایط آموزش و استفاده از مدل که می‌تواند عملکرد مدل را کاهش دهد."}
       relation: "Validation، cross-validation و آزمون مستقل برای سنجش تعمیم‌پذیری‌اند؛ distribution shift یکی از علل مهم افت عملکرد پس از استقرار است."
       sources:
-        - {name: "scikit-learn Cross-validation", url: "https://scikit-learn.org/stable/modules/cross_validation.html"}
-        - {name: "Google Machine Learning Crash Course: Validation", url: "https://developers.google.com/machine-learning/crash-course/validation"}
+        - {name: "scikit-learn Cross Validation", url: "https://scikit-learn.org/stable/modules/cross_validation.html"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 32
       domain: "Deep learning"
       prerequisites: [5, 6]
@@ -75,8 +75,8 @@ education_curriculum_modules:
       b: {term: "Speculative Decoding", fa: "رمزگشایی حدسی", seed: "روش تولید که در آن یک مدل یا مسیر سریع‌تر چند توکن پیشنهادی تولید و مدل اصلی آن‌ها را تأیید یا رد می‌کند."}
       relation: "هر دو برای کاهش هزینه و latency inference استفاده می‌شوند، اما یکی بر نمایش عددی و دیگری بر الگوی محاسبه تولید تمرکز دارد."
       sources:
-        - {name: "Hugging Face Quantization", url: "https://huggingface.co/docs/transformers/main/en/quantization/overview"}
-        - {name: "NVIDIA TensorRT-LLM", url: "https://nvidia.github.io/TensorRT-LLM/"}
+        - {name: "Hugging Face Quantization Documentation", url: "https://huggingface.co/docs/transformers/main/en/quantization/overview"}
+        - {name: "vLLM Speculative Decoding", url: "https://docs.vllm.ai/en/latest/features/speculative_decoding/"}
     - id: 37
       domain: "Data & data engineering"
       prerequisites: [2, 4]
@@ -152,8 +152,8 @@ education_curriculum_modules:
       b: {term: "Agent Memory", fa: "حافظه عامل", seed: "سازوکار ذخیره و بازیابی اطلاعاتی که فراتر از یک درخواست منفرد برای تداوم رفتار عامل استفاده می‌شود."}
       relation: "Context کوتاه‌مدت اجرای جاری است؛ memory می‌تواند اطلاعات را در طول زمان نگهداری و دوباره وارد context کند."
       sources:
-        - {name: "OpenAI Context Management", url: "https://platform.openai.com/docs/guides/context"}
-        - {name: "Microsoft Agentic AI Architecture", url: "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/agentic-ai"}
+        - {name: "Anthropic: Effective Context Engineering for AI Agents", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"}
+        - {name: "LangChain Short-Term Memory Documentation", url: "https://docs.langchain.com/oss/python/langchain/short-term-memory"}
     - id: 44
       domain: "Evaluation & benchmarks"
       prerequisites: [19, 41]
@@ -196,8 +196,8 @@ education_curriculum_modules:
       b: {term: "Model Rollback", fa: "بازگردانی مدل", seed: "برگرداندن نسخهٔ مستقر مدل یا پیکربندی به وضعیت قبلی در واکنش به خطا یا افت عملکرد."}
       relation: "MLOps چرخه کامل است و rollback یکی از کنترل‌های ضروری برای کاهش ریسک deployment است."
       sources:
-        - {name: "Google Cloud MLOps Architecture", url: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"}
-        - {name: "Azure Machine Learning MLOps", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment"}
+        - {name: "MLflow Documentation", url: "https://mlflow.org/docs/latest/index.html"}
+        - {name: "Microsoft Learn: Model Management and Deployment", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment?view=azureml-api-2"}
     - id: 48
       domain: "AI infrastructure & compute"
       prerequisites: [24, 35, 36]
@@ -218,8 +218,8 @@ education_curriculum_modules:
       b: {term: "Scientific Validation", fa: "اعتبارسنجی علمی", seed: "تأیید نتایج AI با معیارها، آزمایش، داده مستقل یا شواهد تجربی مناسب با حوزه علمی."}
       relation: "توان مدل کافی نیست؛ در science و biomedicine نتیجه باید با validation تجربی یا مستقل از مدل پشتیبانی شود."
       sources:
-        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/science"}
-        - {name: "FDA AI/ML Medical Device Research", url: "https://www.fda.gov/medical-devices/medical-device-regulatory-science-research-programs-conducted-osel/artificial-intelligence-program-research-aiml-based-medical-devices"}
+        - {name: "Stanford AI Index 2026: Science", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "UK AI for Science Strategy", url: "https://www.gov.uk/government/publications/ai-for-science-strategy/ai-for-science-strategy"}
     - id: 50
       domain: "Human-AI interaction"
       prerequisites: [19, 28, 44]
@@ -749,6 +749,7 @@ education_curriculum_modules:
       core_question: "Distribution Shift Testing و Stress Testing چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "یک ماتریس آزمون برای تغییرات فصلی و بار شدید بساز."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 92
       domain: "Trustworthy AI"
@@ -761,6 +762,7 @@ education_curriculum_modules:
       core_question: "Property-Based Testing و Metamorphic Testing چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای سامانه خلاصه‌سازی، یک رابطه metamorphic قابل آزمون تعریف کن."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 93
       domain: "Trustworthy AI"
@@ -773,6 +775,7 @@ education_curriculum_modules:
       core_question: "Certified Robustness و Adversarial Training چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "تفاوت شواهد تجربی و تضمین رسمی در دفاع خصمانه را شرح بده."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 94
       domain: "Trustworthy AI"
@@ -785,6 +788,7 @@ education_curriculum_modules:
       core_question: "Model Extraction و Membership Inference چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "دو threat model و کنترل متناظر برای API مدل تعریف کن."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 95
       domain: "Trustworthy AI"
@@ -797,6 +801,7 @@ education_curriculum_modules:
       core_question: "Failure Mode Analysis و Risk Register چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای سامانه پاسخ‌گوی مشترکان پنج حالت شکست را ثبت کن."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 96
       domain: "Trustworthy AI"
@@ -809,6 +814,7 @@ education_curriculum_modules:
       core_question: "LLM-as-a-Judge و Human Evaluation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "rubric و کنترل سوگیری برای مقایسه دو پاسخ مدل طراحی کن."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 97
       domain: "Trustworthy AI"
@@ -821,6 +827,7 @@ education_curriculum_modules:
       core_question: "Prompt Injection Defense و Instruction Hierarchy چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای RAG، دستور معتبر را از متن سند غیرقابل اعتماد جدا کن."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 98
       domain: "Trustworthy AI"
@@ -833,6 +840,7 @@ education_curriculum_modules:
       core_question: "Data Exfiltration و Tool Abuse چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای عامل دارای دسترسی ایمیل، مسیرهای exfiltration را مدل کن."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 99
       domain: "Trustworthy AI"
@@ -845,6 +853,7 @@ education_curriculum_modules:
       core_question: "Privacy Threat Modeling و Data Minimization چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای یک دستیار منابع انسانی، داده‌های غیرضروری را حذف کن."
       sources:
+        - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
         - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
     - id: 100
       domain: "AI Engineering"

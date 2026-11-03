@@ -108,3 +108,32 @@ def test_unrelated_outdated_official_looking_url_is_not_globally_overridden():
     )
     assert result["current"] is False
     assert result["status"] == "outdated"
+
+
+
+def test_verified_2026_source_is_preferred_when_authority_is_equal():
+    from src.education_source_policy import validate_current_sources
+
+    ok, verified, reason = validate_current_sources([
+        _src("https://nist.gov/guide-2025", org="nist", score=95),
+        {**_src("https://hai.stanford.edu/guide-2026", org="stanford", score=95), "year": 2026},
+    ])
+    assert ok, reason
+    assert verified[0]["year"] == 2026
+
+
+def test_declared_2026_year_on_maintained_page_is_not_treated_as_verified_freshness():
+    from src.education_source_policy import verified_source_year
+
+    source = {**_src("https://developers.google.com/ai", org="google"), "current_status": "maintained_current", "year": 2026}
+    assert verified_source_year(source) == 0
+
+
+def test_tier_one_authority_wins_over_tier_four_when_scores_and_freshness_match():
+    from src.education_source_policy import validate_current_sources
+
+    tier_four = {**_src("https://example.org/guide", org="example", score=90), "authority_tier": 4}
+    tier_one = {**_src("https://nist.gov/guide", org="nist", score=90), "authority_tier": 1}
+    ok, verified, reason = validate_current_sources([tier_four, tier_one])
+    assert ok, reason
+    assert verified[0]["authority_tier"] == 1

@@ -81,7 +81,7 @@ VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://www.dfg.de/de/aktuelles/neuigkeiten-themen/info-wissenschaft/2025/ifw-25-82": 2025,
     "https://github.com/github/spec-kit": 2026,
     "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents": 2026,
-    "https://martinfowler.com/bliki/VibeCoding.html": 2025,
+    "https://martinfowler.com/bliki/vibecoding.html": 2025,
     "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775": 2026,
     "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/517542": 2026,
     "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661": 2026,

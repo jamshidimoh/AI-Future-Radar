@@ -14,12 +14,14 @@ import time
 import main as _pipeline
 from src.dedup import load_seen
 from src.editorial_score_v2 import is_major_ai_product_release, is_strategic_leader_statement
+from src.event_identity import compare_events
 from src.logging_setup import configure_logging
 from src.model_release_priority import model_release_bonus
 from src.priority_people import priority_people_features
 from src.protected_editorial_lane import choose_additive_candidate
 from src.protected_story_identity import probable_same_story
-from src.publication_guard import _canonical_url, _load_records, _normalized_title, _semantic_conflict
+from src.publication_guard import LEDGER_PATH, _canonical_url, _load_records, _normalized_title, _semantic_conflict
+from src.publication_index import cached_publication_index
 from src.semantic_dedup import get_story_signature
 from src.story_gate import _technology_relevant
 from src.technical_trend_lane import choose_technical_trend_candidate
@@ -259,32 +261,42 @@ def _semantic_comparison_possible(candidate_title, candidate_summary, record):
 
 
 def _exclude_published_candidates(items):
+    started = time.perf_counter()
     records = _load_records()
-    if not records or not items:
+    index = cached_publication_index(
+        records,
+        cache_key=(str(LEDGER_PATH.resolve()),),
+    )
+    if not index.records or not items:
         return items
+
     kept, blocked = [], {"canonical_url": 0, "title": 0, "semantic": 0}
     semantic_bypassed = protected_same_story_blocked = 0
-    semantic_prefiltered = 0
+    semantic_prefiltered = semantic_comparisons = 0
+
     for item in items:
         candidate_url = _canonical_url(item.get("canonical_url") or item.get("link") or item.get("url") or "")
         title = _normalized_title(item.get("title") or "")
         summary = str(item.get("summary") or item.get("description") or "")
         protected = _is_protected_publication_story(item)
         conflict = conflict_record = None
-        for record in records:
-            record_url = _canonical_url(record.get("link", ""))
-            if candidate_url and record_url and candidate_url == record_url:
-                conflict, conflict_record = "canonical_url", record
-                break
-            stored_title = _normalized_title(record.get("title", ""))
-            if title and stored_title and title == stored_title:
-                conflict, conflict_record = "title", record
-                break
+
+        if candidate_url and index.has_url(candidate_url):
+            conflict, conflict_record = "canonical_url", index.url_record(candidate_url)
+        elif title and index.has_title(title):
+            conflict, conflict_record = "title", index.title_record(title)
+
         if conflict is None:
+            candidate_records = index.semantic_candidates(item, limit=10)
             if protected:
-                for record in records:
+                for record in candidate_records:
                     if not str(record.get("title") or "").strip():
                         continue
+                    event_kind, _event_score, _event_evidence = compare_events(item, record)
+                    if event_kind == "UPDATE":
+                        continue
+                    semantic_comparisons += 1
+                    index.note_comparison()
                     if probable_same_story(item, record):
                         conflict, conflict_record = "semantic", record
                         protected_same_story_blocked += 1
@@ -292,24 +304,40 @@ def _exclude_published_candidates(items):
                 if conflict is None:
                     semantic_bypassed += 1
             else:
-                for record in records:
+                for record in candidate_records:
                     if not str(record.get("title") or "").strip():
                         continue
                     if not _semantic_comparison_possible(title, summary, record):
                         semantic_prefiltered += 1
                         continue
+                    semantic_comparisons += 1
+                    index.note_comparison()
                     if _semantic_conflict(title, summary, record) >= REGULAR_SAME_STORY_THRESHOLD:
                         conflict, conflict_record = "semantic", record
                         break
+
         if conflict:
             blocked[conflict] += 1
             if conflict == "semantic":
-                print(f"[Pre-Ranking Publication Guard] semantic block title={str(item.get('title',''))[:90]} matched={str((conflict_record or {}).get('title',''))[:90]}", flush=True)
+                print(
+                    f"[Pre-Ranking Publication Guard] semantic block title={str(item.get('title',''))[:90]} "
+                    f"matched={str((conflict_record or {}).get('title',''))[:90]}",
+                    flush=True,
+                )
             continue
         kept.append(item)
+
     total_blocked = sum(blocked.values())
-    if total_blocked or semantic_bypassed or protected_same_story_blocked or semantic_prefiltered:
-        print(f"[Pre-Ranking Publication Guard] excluded={total_blocked} canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} semantic_prefiltered={semantic_prefiltered} protected_semantic_bypassed={semantic_bypassed} protected_same_story_blocked={protected_same_story_blocked} regular_semantic_threshold={REGULAR_SAME_STORY_THRESHOLD:.2f} remaining={len(kept)}", flush=True)
+    elapsed_ms = (time.perf_counter() - started) * 1000.0
+    print(
+        f"[Pre-Ranking Publication Guard] excluded={total_blocked} "
+        f"canonical={blocked['canonical_url']} title={blocked['title']} semantic={blocked['semantic']} "
+        f"semantic_prefiltered={semantic_prefiltered} semantic_comparisons={semantic_comparisons} "
+        f"protected_semantic_bypassed={semantic_bypassed} protected_same_story_blocked={protected_same_story_blocked} "
+        f"ledger={len(index.records)} semantic_window={len(index.semantic_records)} "
+        f"remaining={len(kept)} elapsed_ms={elapsed_ms:.1f}",
+        flush=True,
+    )
     return kept
 
 

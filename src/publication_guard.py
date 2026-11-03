@@ -5,13 +5,14 @@ import difflib
 import html
 import logging
 import re
+import time
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from src.event_identity import compare_events, events
+from src.publication_index import cached_publication_index, load_feedback_records, remember_feedback_record
 from src.semantic_dedup import _similarity, get_story_signature
 from src.semantic_publication_guard import shared_anchor_count
-from src.state_io import load_json_state
 
 logger = logging.getLogger(__name__)
 
@@ -79,9 +80,34 @@ def _normalized_title(value: str) -> str:
 
 
 def _load_records() -> list[dict]:
-    data = load_json_state(LEDGER_PATH, {}, label="publication ledger")
-    messages = data.get("messages", {}) if isinstance(data, dict) else {}
-    return [x for x in messages.values() if isinstance(x, dict)] if isinstance(messages, dict) else []
+    return load_feedback_records(LEDGER_PATH)
+
+
+def _publication_index():
+    records = _load_records()
+    return cached_publication_index(
+        records,
+        cache_key=(str(Path(LEDGER_PATH).resolve()),),
+    )
+
+
+def remember_successful_publication(story: dict) -> None:
+    """Refresh exact and semantic indexes after confirmed Telegram delivery."""
+    record = {
+        "source": story.get("source"),
+        "content_type": story.get("content_type"),
+        "category": story.get("category"),
+        "leader": story.get("leader"),
+        "watch_person": story.get("watch_person"),
+        "person_name": story.get("person_name"),
+        "people_lane": bool(story.get("people_lane")),
+        "title": str(story.get("title") or "").strip(),
+        "summary": str(story.get("summary") or story.get("description") or "").strip(),
+        "description": str(story.get("description") or "").strip(),
+        "link": str(story.get("link") or story.get("url") or "").strip(),
+        "posted_at": int(time.time()),
+    }
+    remember_feedback_record(LEDGER_PATH, record)
 
 
 def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dict) -> float:
@@ -127,9 +153,13 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
     ).ratio()
     shared_title_numeric_identifiers = _title_numeric_identifiers(candidate_title) & _title_numeric_identifiers(stored_title)
 
-    # Language-aware title identity is evaluated before event-kind short circuits.
-    # This catches fully Persian rewrites where the Latin/digit anchor guard has
-    # no usable cross-language anchors.
+    # Material updates are distinct developments and must not be suppressed by
+    # otherwise strong title/entity overlap.
+    if kind == "UPDATE":
+        return 0.0
+
+    # Language-aware title identity is evaluated before other duplicate checks.
+    # This catches fully Persian rewrites where Latin/digit anchors are sparse.
     if (
         semantic_shared_anchors
         and semantic_shared_events
@@ -138,13 +168,6 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
         and semantic_title_sequence >= 0.60
     ):
         return 1.0
-
-    if kind == "UPDATE":
-        if anchors >= 2 and shared_events and semantic_score >= 0.55:
-            return 1.0
-        if title_similarity >= 0.90 and context_jaccard >= 0.45:
-            return 1.0
-        return 0.0
 
     if kind == "DUPLICATE":
         # Cross-source rewrites are the primary failure mode: one source may
@@ -196,49 +219,64 @@ def _semantic_conflict(candidate_title: str, candidate_summary: str, record: dic
 
 
 def check_before_publish(text: str, source_link: str = "", records: list[dict] | None = None, candidate: dict | None = None) -> tuple[bool, str]:
-    """Return (allowed, reason). Known same-story publications block delivery."""
-    stored_records = _load_records()
+    """Return (allowed, reason) using one indexed ledger and bounded semantic history."""
+    index = _publication_index()
     runtime_records = [x for x in (records or []) if isinstance(x, dict)]
-    all_records = runtime_records + stored_records
-    candidate_people_lane = bool((candidate or {}).get("people_lane"))
-    candidate_people_bootstrap = bool((candidate or {}).get("people_bootstrap"))
-    if not all_records:
-        return True, "ledger_empty"
+    candidate_data = candidate or {}
+    candidate_people_lane = bool(candidate_data.get("people_lane"))
+    candidate_people_bootstrap = bool(candidate_data.get("people_bootstrap"))
     candidate_title, candidate_summary = _extract_candidate(text)
     candidate_url = _canonical_url(source_link)
     title_key = _normalized_title(candidate_title)
-    candidate_person = str((candidate or {}).get("person_name") or (candidate or {}).get("watch_person") or (candidate or {}).get("leader") or "").strip()
+    candidate_person = str(
+        candidate_data.get("person_name")
+        or candidate_data.get("watch_person")
+        or candidate_data.get("leader")
+        or ""
+    ).strip()
+
+    if not index.records and not runtime_records:
+        return True, "ledger_empty"
+
     if candidate_people_bootstrap and candidate_person:
-        for record in all_records:
+        if index.has_people_person(candidate_person):
+            return False, "people_bootstrap_person_already_published"
+        for record in runtime_records:
             if not record.get("people_lane"):
                 continue
             stored_person = str(
-                record.get("person_name")
-                or record.get("watch_person")
-                or record.get("leader")
-                or ""
+                record.get("person_name") or record.get("watch_person") or record.get("leader") or ""
             ).strip()
             if stored_person and stored_person.casefold() == candidate_person.casefold():
                 return False, "people_bootstrap_person_already_published"
         return True, "people_bootstrap_baseline"
-    # People signals from different watched people are independent perspectives.
-    # Keep same-event commentary from different people from being treated as one
-    # publication, while retaining normal same-person duplicate protection.
-    for record in all_records:
+
+    if candidate_url and index.has_url(candidate_url):
+        return False, "canonical_url_already_published"
+    if title_key and index.has_title(title_key):
+        return False, "exact_story_title_already_published"
+    for record in runtime_records:
         record_url = _canonical_url(record.get("link", ""))
         if candidate_url and record_url and candidate_url == record_url:
             return False, "canonical_url_already_published"
         stored_title = _normalized_title(record.get("title", ""))
         if title_key and stored_title and title_key == stored_title:
             return False, "exact_story_title_already_published"
-    for record in all_records:
+
+    semantic_candidate = {"title": candidate_title, "summary": candidate_summary}
+    candidates = index.semantic_candidates(semantic_candidate, extra_records=runtime_records, limit=10)
+    for record in candidates:
         if not str(record.get("title") or "").strip():
             continue
         if candidate_people_lane and record.get("people_lane"):
-            stored_person = str(record.get("person_name") or record.get("watch_person") or record.get("leader") or "").strip()
+            stored_person = str(
+                record.get("person_name") or record.get("watch_person") or record.get("leader") or ""
+            ).strip()
             if candidate_person and stored_person and candidate_person.casefold() != stored_person.casefold():
                 continue
+        index.note_comparison()
         score = _semantic_conflict(candidate_title, candidate_summary, record)
         if score >= 0.82:
             return False, f"semantic_story_already_published score={score:.3f}"
+
     return True, "no_publication_conflict"

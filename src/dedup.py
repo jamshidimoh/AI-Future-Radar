@@ -6,6 +6,7 @@ import time
 
 from src.canonical_story import canonical_url, normalize_title, story_id, url_id
 from src.event_identity import compare_events
+from src.publication_index import cached_publication_index, load_feedback_records
 from src.semantic_dedup import SEMANTIC_MARKER, _decode_signature, _overlap, _rewrite_floors, _similarity, encode_story_signature, get_story_signature
 from src.semantic_threshold import semantic_threshold
 from src.state_io import load_json_state
@@ -34,9 +35,7 @@ def _load_state():
 
 
 def _load_feedback_records():
-    data = load_json_state(FEEDBACK_FILE, {}, label="Telegram feedback state")
-    messages = data.get("messages", {}) if isinstance(data, dict) else {}
-    return [m for m in messages.values() if isinstance(m, dict)] if isinstance(messages, dict) else []
+    return load_feedback_records(FEEDBACK_FILE)
 
 
 def _reconcile_feedback(seen_hashes, seen_signatures):
@@ -50,8 +49,6 @@ def _reconcile_feedback(seen_hashes, seen_signatures):
             item = dict(record); item["title"] = title
             identity = _story_id(item)
             if identity: seen_signatures.append(STORY_MARKER + identity)
-            try: seen_signatures.append(encode_story_signature(item))
-            except Exception as exc: logger.warning("Could not encode reconciled feedback story: %s", exc, exc_info=True)
     return seen_hashes, seen_signatures, (len(seen_hashes)-before_h)+(len(seen_signatures)-before_s)
 
 
@@ -153,6 +150,20 @@ def _semantic_publication_match(candidate_signature, stored_signature):
     if not isinstance(stored_signature, str) or not stored_signature.startswith(SEMANTIC_MARKER): return False
     candidate = _decode_signature(candidate_signature) or get_story_signature(str(candidate_signature))
     stored = _decode_signature(stored_signature) or get_story_signature(str(stored_signature))
+    try:
+        candidate_item = {
+            "title": str(candidate.get("title_text") or " ".join(candidate.get("title") or [])),
+            "summary": " ".join(candidate.get("context") or []),
+        }
+        stored_item = {
+            "title": str(stored.get("title_text") or " ".join(stored.get("title") or [])),
+            "summary": " ".join(stored.get("context") or []),
+        }
+        event_kind, _event_score, _evidence = compare_events(candidate_item, stored_item)
+        if event_kind == "UPDATE":
+            return False
+    except Exception as exc:
+        logger.debug("Could not classify material update during semantic dedup: %s", exc)
     overlap = _overlap(candidate, stored)
     score = _similarity(candidate, stored)
     if score < 0.66: return False
@@ -169,32 +180,109 @@ def _semantic_history_match(item, signatures):
     return best
 
 
-def filter_new_items(items, seen_hashes):
-    _,seen_signatures=load_seen(); stored_story_ids=_stored_story_ids(seen_signatures); protected_hashes=_stored_protected_hashes(seen_signatures)
-    result=[]; local_event_items=[]; local_semantic=[]
-    rejected_url=rejected_story=rejected_semantic=0; protected_event_blocked=0
+def filter_new_items(items, seen_hashes, seen_signatures=None):
+    """Filter against one shared publication index and the current input batch."""
+    started = time.perf_counter()
+    if seen_signatures is None:
+        _, seen_signatures = load_seen()
+    records = _load_feedback_records()
+    index = cached_publication_index(
+        records,
+        cache_key=(os.path.realpath(FEEDBACK_FILE),),
+    )
+    stored_story_ids = _stored_story_ids(seen_signatures)
+    protected_hashes = _stored_protected_hashes(seen_signatures)
+    result = []
+    local_event_items = []
+    local_semantic = []
+    rejected_url = rejected_story = rejected_semantic = 0
+    protected_event_blocked = 0
+    detailed_comparisons = 0
+
     for item in items or []:
         if _is_education(item):
-            identity=_education_identity(item)
-            if identity and identity in stored_story_ids: rejected_story+=1; continue
-            result.append(item); continue
-        link_hash,identity=_hash_link(item.get("link", "")),_story_id(item)
-        if link_hash in seen_hashes or (_is_protected_leader(item) and link_hash in protected_hashes): rejected_url+=1; continue
-        if identity and identity in stored_story_ids: rejected_story+=1; continue
-        matched,_score=_event_match(item,seen_signatures)
-        if matched:
-            rejected_semantic+=1
-            if _is_protected_leader(item): protected_event_blocked+=1
+            identity = _education_identity(item)
+            if identity and identity in stored_story_ids:
+                rejected_story += 1
+                continue
+            result.append(item)
             continue
-        if any(compare_events(item,previous)[0]=="DUPLICATE" for previous in local_event_items): rejected_semantic+=1; continue
-        candidate_sig=get_story_signature(item)
-        if not _is_leader_exception(item) and any(_semantic_publication_match(candidate_sig,s) for s in seen_signatures if isinstance(s,str) and s.startswith(SEMANTIC_MARKER)):
-            rejected_semantic+=1; continue
-        local_match=max((_similarity(candidate_sig,p) for p in local_semantic),default=0.0)
-        local_rewrite_match=any(_semantic_publication_match(candidate_sig,p) for p in local_semantic)
-        if local_rewrite_match or local_match>=semantic_threshold(item,local=True): rejected_semantic+=1; continue
-        local_semantic.append(encode_story_signature(item)); local_event_items.append(dict(item)); result.append(item)
-    print(f"[Canonical Story Gate] kept={len(result)} | url_rejected={rejected_url} | story_rejected={rejected_story} | semantic_rejected={rejected_semantic} | protected_event_blocked={protected_event_blocked}")
+
+        link_hash, identity = _hash_link(item.get("link", "")), _story_id(item)
+        if (
+            link_hash in seen_hashes
+            or (_is_protected_leader(item) and link_hash in protected_hashes)
+            or index.has_url(item.get("canonical_url") or item.get("link") or item.get("url") or "")
+        ):
+            rejected_url += 1
+            continue
+        if (
+            (identity and identity in stored_story_ids)
+            or index.has_title(item.get("title", ""))
+        ):
+            rejected_story += 1
+            continue
+
+        recent_records = index.semantic_candidates(item, limit=10)
+        recent_signatures = []
+        for record in recent_records:
+            try:
+                recent_signatures.append(index.semantic_signature(record))
+            except Exception as exc:
+                logger.debug("Could not encode bounded publication history record: %s", exc)
+        # Retain legacy seen.json-only support when the Telegram ledger has no
+        # semantic records, such as during migration from an older deployment.
+        if not recent_signatures and not index.records:
+            recent_signatures = [
+                value for value in seen_signatures
+                if isinstance(value, str) and value.startswith(SEMANTIC_MARKER)
+            ][-200:]
+        detailed_comparisons += len(recent_signatures)
+        index.note_comparison(len(recent_signatures))
+
+        matched, _score = _event_match(item, recent_signatures)
+        if matched:
+            rejected_semantic += 1
+            if _is_protected_leader(item):
+                protected_event_blocked += 1
+            continue
+
+        if any(compare_events(item, previous)[0] == "DUPLICATE" for previous in local_event_items):
+            rejected_semantic += 1
+            continue
+
+        candidate_sig = get_story_signature(item)
+        if not _is_leader_exception(item) and any(
+            _semantic_publication_match(candidate_sig, stored)
+            for stored in recent_signatures
+        ):
+            rejected_semantic += 1
+            continue
+
+        local_match = max(
+            (_similarity(candidate_sig, previous) for previous in local_semantic),
+            default=0.0,
+        )
+        local_rewrite_match = any(
+            _semantic_publication_match(candidate_sig, previous)
+            for previous in local_semantic
+        )
+        if local_rewrite_match or local_match >= semantic_threshold(item, local=True):
+            rejected_semantic += 1
+            continue
+
+        local_semantic.append(encode_story_signature(item))
+        local_event_items.append(dict(item))
+        result.append(item)
+
+    elapsed_ms = (time.perf_counter() - started) * 1000.0
+    print(
+        f"[Canonical Story Gate] kept={len(result)} | url_rejected={rejected_url} "
+        f"| story_rejected={rejected_story} | semantic_rejected={rejected_semantic} "
+        f"| protected_event_blocked={protected_event_blocked} "
+        f"| ledger={len(index.records)} semantic_window={len(index.semantic_records)} "
+        f"| semantic_comparisons={detailed_comparisons} elapsed_ms={elapsed_ms:.1f}"
+    )
     return result
 
 

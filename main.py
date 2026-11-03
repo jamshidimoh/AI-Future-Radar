@@ -7,6 +7,7 @@ from pathlib import Path
 import requests
 
 from src.dedup import filter_new_items, load_seen, load_source_history, mark_as_seen, save_seen
+from src.publication_index import clear_publication_caches
 from src.editorial import enrich_items, filter_ai_relevance
 from src.editorial_quality_policy import NORMAL_SCORE_FLOOR as CANONICAL_NORMAL_SCORE_FLOOR
 from src.fetch_google_news import fetch_google_news_items
@@ -377,7 +378,7 @@ def _next_lazy_normal_rank(publication_queue, start_index, rank_window):
     return next_rank if next_rank <= window else None
 
 
-def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap=None, *, cap=None, bootstrap_mode=False):
+def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_posts, max_per_source, max_per_type, policy, seen_hashes, runtime_selection_cap=None, *, cap=None, bootstrap_mode=False, seen_signatures=None):
     if runtime_selection_cap is None:
         runtime_selection_cap = cap if cap is not None else max_posts + int(policy.get("leader_protected_max", 2) or 2) + MAX_MIND_IDEAS_VOICES_PER_PERIOD
     if bootstrap_mode:
@@ -387,11 +388,11 @@ def _refill_after_late_dedup(selected, editorial_pool, select_editorial_fn, max_
     target = min(runtime_selection_cap, max_posts + int(policy.get("leader_protected_max", 2) or 2) + MAX_MIND_IDEAS_VOICES_PER_PERIOD)
     people_selected = [x for x in selected if x.get("people_lane")]
     non_people_selected = [x for x in selected if not x.get("people_lane")]
-    non_people_selected = filter_new_items(non_people_selected, seen_hashes)
+    non_people_selected = filter_new_items(non_people_selected, seen_hashes, seen_signatures)
     selected = people_selected + non_people_selected
     existing = {_publication_identity(x) for x in selected}
     pool = [x for x in editorial_pool if not x.get("people_lane") and not x.get("protected_content") and not x.get("protected_slot") and _publication_identity(x) not in existing]
-    pool = filter_new_items(pool, seen_hashes)
+    pool = filter_new_items(pool, seen_hashes, seen_signatures)
     while len(selected) < target and pool:
         extra = select_editorial_fn(pool, max_posts=1, max_per_source=max_per_source, max_per_type=max_per_type, policy=policy)
         if not extra:
@@ -784,6 +785,7 @@ def _mission_coverage_recovery(selected, editorial_pool, select_editorial_fn, su
 def main(hooks=None):
     global PEOPLE_BOOTSTRAP_RESULT
     configure_logging()
+    clear_publication_caches()
     hooks = dict(hooks or {})
     select_editorial_fn = hooks.get("select_editorial", _select_editorial_default)
     split_protected_fn = hooks.get("split_protected", _split_protected)
@@ -924,7 +926,7 @@ def main(hooks=None):
         print(f"[People Signal] bootstrap_at={people_bootstrap_at} candidates_after_dedup={len(people_candidates)}")
     # Global seen/event dedup remains for the normal Radar lanes only. People
     # must reach its own per-person event clustering first.
-    new_items = filter_new_items(all_items, seen_hashes)
+    new_items = filter_new_items(all_items, seen_hashes, seen_signatures)
     people_ids = {people_identity(x) for x in people_candidates if people_identity(x)}
 
     normal_input_items = [x for x in new_items if people_identity(x) not in people_ids]
@@ -999,6 +1001,7 @@ def main(hooks=None):
         seen_hashes,
         runtime_selection_cap,
         bootstrap_mode=people_bootstrap_mode,
+        seen_signatures=seen_signatures,
     )
     selected = _publication_summary_budget(selected, max_posts, policy)
     if not selected:

@@ -214,7 +214,7 @@ education:
       b: {term: "AI Accelerator", fa: "شتاب‌دهنده هوش مصنوعی", seed: "پردازنده یا معماری سخت‌افزاری تخصصی برای اجرای کارآمدتر محاسبات AI مانند ضرب ماتریسی و عملیات تنسوری."}
       relation: "AI accelerator یکی از اجزای سخت‌افزاری برای تأمین compute مورد نیاز AI است."
       sources:
-        - {name: "NVIDIA AI Documentation", url: "https://docs.nvidia.com/ai/"}
+        - {name: "PyTorch Performance Tuning Guide", url: "https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html"}
         - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
     - id: 25
       title: "Embodied AI و Robotics"

@@ -44,6 +44,10 @@ class EducationalContentTests(unittest.TestCase):
         for bad in ("دمیس هاسابیس", "پلی‌کریسیس", "پلی‌تونی‌تی"):
             self.assertNotIn(bad, text)
 
+    def test_education_normalization_repairs_arabic_keyboard_letters(self):
+        text = normalize_education_text("هوش مصنوعي با كاربردهاي نوين")
+        self.assertEqual(text, "هوش مصنوعی با کاربردهای نوین")
+
     def test_education_is_persian_first(self):
         text = normalize_education_text("یادگیری ماشین و شبکه عصبی برای آموزش مناسب‌اند.")
         self.assertIn("یادگیری ماشین", text)

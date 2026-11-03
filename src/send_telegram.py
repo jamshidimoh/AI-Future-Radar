@@ -30,6 +30,9 @@ CONTENT_TYPE_LABELS = {
     "podcast": "🎙 گفت‌وگوی تخصصی",
     "interviews_podcasts": "🎙 گفت‌وگوی تخصصی",
     "conversation": "🎙 گفت‌وگو",
+    "fireside": "🎙 گفت‌وگوی تخصصی",
+    "discussion": "🎙 گفت‌وگوی تخصصی",
+    "q&a": "🎙 پرسش و پاسخ",
     "talk": "🎤 سخنرانی",
     "lecture": "🎤 سخنرانی",
 }

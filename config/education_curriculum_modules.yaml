@@ -626,7 +626,7 @@ education_curriculum_modules:
       module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
       prerequisites: [36, 38]
       title: "State Space Model و Selective State Space"
-      status: "established"
+      status: "emerging"
       a: {term: "State Space Model", fa: "مدل فضای حالت", seed: "چارچوبی برای نمایش تحول حالت پنهان در طول زمان و ارتباط آن با ورودی و خروجی."}
       b: {term: "Selective State Space", fa: "مدل فضای حالت انتخابی", seed: "گونه‌ای که پارامترهای مؤثر بر انتقال اطلاعات را وابسته به ورودی می‌کند تا انتخاب‌گری محتوایی داشته باشد."}
       relation: "مدل فضای حالت چارچوب عمومی پویایی است؛ نسخه انتخابی پارامترها را با محتوا تطبیق می‌دهد."
@@ -642,7 +642,7 @@ education_curriculum_modules:
       module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
       prerequisites: [48, 68]
       title: "Retrieval Head و Long-Context Attention"
-      status: "established"
+      status: "emerging"
       a: {term: "Retrieval Head", fa: "سر توجه بازیابی‌گر", seed: "الگوی رفتاری برخی سرهای attention که اطلاعات مرتبط را از بخش‌های دورتر زمینه بازیابی می‌کنند."}
       b: {term: "Long-Context Attention", fa: "توجه با زمینه بلند", seed: "سازوکار attention برای پردازش دنباله‌های طولانی با چالش حافظه و هزینه محاسباتی."}
       relation: "retrieval head مشاهده‌ای درباره نقش برخی سرهاست؛ long-context attention مسئله معماری و مقیاس پردازش است."
@@ -674,7 +674,7 @@ education_curriculum_modules:
       module_title: "معماری‌های پیشرفته شبکه‌های عصبی"
       prerequisites: [48, 68]
       title: "Retrieval Head و Attention Sink"
-      status: "established"
+      status: "emerging"
       a: {term: "Attention Sink", fa: "نقطه جذب توجه", seed: "موقعیت‌هایی در دنباله که به‌طور غیرمنتظره سهم زیادی از توجه را جذب می‌کنند و در برخی مدل‌ها به پایداری کش کمک می‌کنند."}
       b: {term: "Streaming LLM", fa: "مدل زبانی جریانی", seed: "مدلی که ورودی و خروجی را به‌صورت پیوسته پردازش می‌کند و باید حافظه و زمینه را در طول جریان مدیریت کند."}
       relation: "attention sink یک پدیده در الگوی توجه است؛ streaming LLM نیاز عملیاتی پردازش پیوسته را توصیف می‌کند."

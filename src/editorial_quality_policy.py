@@ -205,7 +205,7 @@ def editorial_sections_redundant(summary: str, why_it_matters: str) -> bool:
         return False
     shared = len(left & right)
     containment = shared / max(1, min(len(left), len(right)))
-    return containment >= 0.82 or _overlap(summary, why_it_matters) >= 0.68
+    return containment >= 0.62 or _overlap(summary, why_it_matters) >= 0.48
 
 
 def editorial_value_ok(title: str, summary: str, why_it_matters: str, source_text: str = "") -> bool:

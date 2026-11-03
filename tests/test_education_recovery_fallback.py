@@ -156,3 +156,22 @@ def test_recovery_treats_true_exhaustion_as_non_fatal(monkeypatch, capsys):
     assert result == 0
     assert "EXHAUSTED" in captured
     assert "no lesson reuse permitted" in captured
+
+
+def test_recovery_does_not_send_a_second_lesson_after_current_run_delivery(monkeypatch, capsys):
+    monkeypatch.setattr(
+        module.production_entrypoint,
+        "_load_cadence",
+        lambda: {"run_number": 514, "last_education_run": 514, "last_education_slot": "2026-09-14:morning"},
+    )
+    monkeypatch.setenv("FORCE_EDUCATION_PUBLICATION", "true")
+    publish_calls = []
+    monkeypatch.setattr(
+        module.production_resilient_runner,
+        "_publish_education_after_news",
+        lambda run_number: publish_calls.append(run_number) or True,
+    )
+
+    assert module.main() == 0
+    assert publish_calls == []
+    assert "duplicate prevented" in capsys.readouterr().out

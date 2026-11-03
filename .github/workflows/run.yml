@@ -394,7 +394,7 @@ jobs:
           HF_MODEL: ${{ vars.HF_MODEL }}
           HF_POLICY: free-first
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
-          FORCE_EDUCATION_PUBLICATION: false
+          FORCE_EDUCATION_PUBLICATION: ${{ github.event_name == 'push' && startsWith(github.event.head_commit.message || '', '[manual-education]') }}
         run: |
           if [ -f run.log ]; then
             python -u scripts/education_recovery.py

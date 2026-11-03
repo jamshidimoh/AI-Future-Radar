@@ -106,6 +106,14 @@ def _build_with_deterministic_recovery() -> dict | None:
 
 def main() -> int:
     cadence = production_entrypoint._load_cadence()
+    run_number = int(cadence.get("run_number", 0) or 0)
+    last_education_run = int(cadence.get("last_education_run", -1) or -1)
+    if run_number > 0 and last_education_run == run_number:
+        print(
+            f"[Education Recovery] skipped: education already confirmed in current run={run_number}; duplicate prevented",
+            flush=True,
+        )
+        return 0
     forced = os.getenv("FORCE_EDUCATION_PUBLICATION", "").strip().lower() in {"1", "true", "yes"}
     now = production_entrypoint._tehran_now()
     due, slot = production_entrypoint._education_is_due(now, cadence.get("last_education_slot", ""))
@@ -117,7 +125,6 @@ def main() -> int:
     if not due:
         print("[Education Recovery] no recovery required", flush=True)
         return 0
-    run_number = int(cadence.get("run_number", 0) or 0)
     try:
         lesson, lesson_id, total = educational_content._next_lesson()
         if not lesson or not int(lesson_id):

@@ -27,7 +27,14 @@ from src.story_gate import _technology_relevant
 from src.technical_trend_lane import choose_technical_trend_candidate
 from src.topic_repetition_guard import filter_history_topic_repetition
 from src.typesafe_judgment import rerank_candidates
-from src.unified_editorial_selection import freshness_score, load_editorial_contract, mission_area, select_regular_portfolio
+from src.unified_editorial_selection import (
+    _is_genetics_heavy,
+    _is_health_medical_heavy,
+    freshness_score,
+    load_editorial_contract,
+    mission_area,
+    select_regular_portfolio,
+)
 from src.voices_perspectives_lane import choose_voices_candidate
 
 logger = logging.getLogger(__name__)
@@ -162,6 +169,10 @@ def _window_counts(history, window_items):
         source_counts[source] = source_counts.get(source, 0) + 1
         area = mission_area(record)
         area_counts[area] = area_counts.get(area, 0) + 1
+        if _is_genetics_heavy(record):
+            area_counts["__genetics__"] = area_counts.get("__genetics__", 0) + 1
+        if _is_health_medical_heavy(record):
+            area_counts["__health_medical__"] = area_counts.get("__health_medical__", 0) + 1
     return source_counts, area_counts
 
 

@@ -311,8 +311,8 @@ education_curriculum_modules:
       core_question: "Cross-Validation و Nested Cross-Validation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای یک مجموعه کوچک، دلیل نیاز به nested CV را توضیح بده."
       sources:
-        - {name: "آ", url: "م"}
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 59
       domain: "Advanced ML"
       prerequisites: [22, 25]
@@ -324,8 +324,8 @@ education_curriculum_modules:
       core_question: "Imbalanced Learning و Cost-Sensitive Learning چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای کشف تقلب، هزینه false negative و false positive را تعریف کن."
       sources:
-        - {name: "آ", url: "م"}
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 60
       domain: "Advanced ML"
       prerequisites: [56]
@@ -337,8 +337,8 @@ education_curriculum_modules:
       core_question: "Causal Inference و Counterfactual چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای اثر یک تخفیف بر خرید، counterfactual مناسب را تعریف کن."
       sources:
-        - {name: "آ", url: "م"}
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 61
       domain: "Advanced ML"
       prerequisites: [6, 32]
@@ -350,8 +350,8 @@ education_curriculum_modules:
       core_question: "Bayesian Optimization و Hyperparameter Search چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای تنظیم سه ابرپارامتر با هزینه آموزش بالا، روش جست‌وجو انتخاب کن."
       sources:
-        - {name: "آ", url: "م"}
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 62
       domain: "Advanced ML"
       prerequisites: [25, 27]
@@ -363,8 +363,8 @@ education_curriculum_modules:
       core_question: "Predictive Uncertainty و Ensemble Uncertainty چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "چرا توافق چند مدل مشابه الزاماً عدم‌قطعیت را حذف نمی‌کند؟"
       sources:
-        - {name: "آ", url: "م"}
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 63
       domain: "Advanced ML"
       prerequisites: [25, 62]
@@ -376,8 +376,8 @@ education_curriculum_modules:
       core_question: "Conformal Prediction و Coverage Guarantee چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای پیش‌بینی تقاضا، بازه پیش‌بینی با پوشش ۹۰٪ طراحی کن."
       sources:
-        - {name: "آ", url: "م"}
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 64
       domain: "Advanced ML"
       prerequisites: [31, 25]
@@ -389,8 +389,8 @@ education_curriculum_modules:
       core_question: "Online Learning و Concept Drift چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای پیش‌بینی ترافیک، drift و trigger بازآموزی را تعریف کن."
       sources:
-        - {name: "آ", url: "م"}
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 65
       domain: "Advanced ML"
       prerequisites: [37, 46]
@@ -402,8 +402,8 @@ education_curriculum_modules:
       core_question: "Federated Learning و Secure Aggregation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "محدودیت‌های حریم خصوصی و ناهمگنی داده در federated learning را فهرست کن."
       sources:
-        - {name: "آ", url: "م"}
         - {name: "scikit-learn Model Selection", url: "https://scikit-learn.org/stable/model_selection.html"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 66
       domain: "Deep Learning Systems"
       prerequisites: [32, 38]
@@ -415,8 +415,8 @@ education_curriculum_modules:
       core_question: "Residual Connection و Normalization Layer چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "نقش هر دو را در پایداری آموزش ترنسفورمر توضیح بده."
       sources:
-        - {name: "م", url: "ع"}
         - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 67
       domain: "Deep Learning Systems"
       prerequisites: [39, 57]
@@ -428,8 +428,8 @@ education_curriculum_modules:
       core_question: "Mixture of Experts و Routing Network چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "تفاوت تعداد پارامتر کل و پارامترهای فعال را در MoE محاسبه کن."
       sources:
-        - {name: "م", url: "ع"}
         - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 68
       domain: "Deep Learning Systems"
       prerequisites: [38, 48]
@@ -441,8 +441,8 @@ education_curriculum_modules:
       core_question: "Sparse Attention و FlashAttention چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "چرا FlashAttention را نباید به‌عنوان تقریب تنک معرفی کرد؟"
       sources:
-        - {name: "م", url: "ع"}
         - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 69
       domain: "Deep Learning Systems"
       prerequisites: [36, 38]
@@ -454,8 +454,8 @@ education_curriculum_modules:
       core_question: "State Space Model و Selective State Space چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "تفاوت مدل‌سازی توالی با attention و state space را از نظر هزینه بررسی کن."
       sources:
-        - {name: "م", url: "ع"}
         - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 70
       domain: "Deep Learning Systems"
       prerequisites: [48, 68]
@@ -467,8 +467,8 @@ education_curriculum_modules:
       core_question: "Retrieval Head و Long-Context Attention چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "چرا پنجره زمینه بزرگ به‌تنهایی بازیابی دقیق را تضمین نمی‌کند؟"
       sources:
-        - {name: "م", url: "ع"}
         - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 71
       domain: "Deep Learning Systems"
       prerequisites: [61, 63]
@@ -480,8 +480,8 @@ education_curriculum_modules:
       core_question: "Multimodal Fusion و Late Fusion چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای سامانه صوت و تصویر، early و late fusion را مقایسه کن."
       sources:
-        - {name: "م", url: "ع"}
         - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 72
       domain: "Deep Learning Systems"
       prerequisites: [48, 68]
@@ -493,8 +493,8 @@ education_curriculum_modules:
       core_question: "Attention Sink و Streaming LLM چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای پردازش جریان طولانی، سیاست نگهداری context را طراحی کن."
       sources:
-        - {name: "م", url: "ع"}
         - {name: "PyTorch Tutorials", url: "https://pytorch.org/tutorials/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
     - id: 73
       domain: "Data-Centric AI"
       prerequisites: [37]
@@ -506,8 +506,8 @@ education_curriculum_modules:
       core_question: "Data Curation و Data Provenance چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای یک مجموعه آموزش، چک‌لیست curation و provenance بساز."
       sources:
-        - {name: "م", url: "ه"}
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 74
       domain: "Data-Centric AI"
       prerequisites: [73]
@@ -519,8 +519,8 @@ education_curriculum_modules:
       core_question: "Data Deduplication و Near-Duplicate Detection چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "چرا حذف تکرار میان train و test برای اعتبار ارزیابی ضروری است؟"
       sources:
-        - {name: "م", url: "ه"}
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 75
       domain: "Data-Centric AI"
       prerequisites: [21, 73]
@@ -532,8 +532,8 @@ education_curriculum_modules:
       core_question: "Data Labeling و Inter-Annotator Agreement چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای برچسب‌گذاری محتوای نامناسب، معیار توافق و حل اختلاف تعریف کن."
       sources:
-        - {name: "م", url: "ه"}
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 76
       domain: "Data-Centric AI"
       prerequisites: [64, 73]
@@ -545,8 +545,8 @@ education_curriculum_modules:
       core_question: "Data Drift و Label Drift چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "از تغییر توزیع ورودی و تغییر فراوانی هدف دو مثال متفاوت بساز."
       sources:
-        - {name: "م", url: "ه"}
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 77
       domain: "Data-Centric AI"
       prerequisites: [38, 73]
@@ -558,8 +558,8 @@ education_curriculum_modules:
       core_question: "Synthetic Data و Data Validation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "چه آزمون‌هایی برای تشخیص داده مصنوعی نامعتبر لازم است؟"
       sources:
-        - {name: "م", url: "ه"}
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 78
       domain: "Data-Centric AI"
       prerequisites: [73, 74]
@@ -571,8 +571,8 @@ education_curriculum_modules:
       core_question: "Data-Centric AI و Model-Centric AI چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای یک مدل کم‌دقت، تشخیص بده مسئله داده است یا معماری."
       sources:
-        - {name: "م", url: "ه"}
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 79
       domain: "Data-Centric AI"
       prerequisites: [75, 78]
@@ -584,8 +584,8 @@ education_curriculum_modules:
       core_question: "Active Learning و Human Annotation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای کاهش هزینه برچسب‌گذاری، معیار انتخاب نمونه فعال تعریف کن."
       sources:
-        - {name: "م", url: "ه"}
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 80
       domain: "Data-Centric AI"
       prerequisites: [75, 79]
@@ -597,8 +597,8 @@ education_curriculum_modules:
       core_question: "Weak Supervision و Programmatic Labeling چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "سه تابع برچسب‌زن برای دسته‌بندی تیکت‌های پشتیبانی بنویس."
       sources:
-        - {name: "م", url: "ه"}
         - {name: "University of Bologna Data-Centric AI 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/558661"}
+        - {name: "Google ML Crash Course", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 81
       domain: "Agentic Systems"
       prerequisites: [41]
@@ -610,8 +610,8 @@ education_curriculum_modules:
       core_question: "Agent Architecture و Control Plane چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "نقشه اجزای data plane و control plane یک عامل سازمانی را ترسیم کن."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 82
       domain: "Agentic Systems"
       prerequisites: [81]
@@ -623,8 +623,8 @@ education_curriculum_modules:
       core_question: "Task Decomposition و Hierarchical Planning چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "یک درخواست تحلیل بازار را به اهداف و زیرکارهای قابل ارزیابی بشکن."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 83
       domain: "Agentic Systems"
       prerequisites: [81, 82]
@@ -636,8 +636,8 @@ education_curriculum_modules:
       core_question: "State Machine و Event-Driven Agent چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای عامل پیگیری سفارش، حالت‌ها و رویدادهای انتقال را مشخص کن."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 84
       domain: "Agentic Systems"
       prerequisites: [81, 83]
@@ -649,8 +649,8 @@ education_curriculum_modules:
       core_question: "Agent Handoff و Delegation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "قواعد بازگشت کنترل پس از delegation را طراحی کن."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 85
       domain: "Agentic Systems"
       prerequisites: [44, 81]
@@ -662,8 +662,8 @@ education_curriculum_modules:
       core_question: "Agent Evaluation و Trajectory Evaluation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای عامل رزرو، معیار موفقیت نهایی و معیار مسیر اجرا تعریف کن."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 86
       domain: "Agentic Systems"
       prerequisites: [84]
@@ -675,8 +675,8 @@ education_curriculum_modules:
       core_question: "Tool Schema و Input Validation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای ابزار حذف فایل، schema و قواعد validation امن طراحی کن."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 87
       domain: "Agentic Systems"
       prerequisites: [84, 85]
@@ -688,8 +688,8 @@ education_curriculum_modules:
       core_question: "Agent Identity و Delegated Credentials چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "چگونه مجوزهای یک عامل را به کاربر، وظیفه و زمان محدود می‌کنی؟"
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 88
       domain: "Agentic Systems"
       prerequisites: [86]
@@ -701,8 +701,8 @@ education_curriculum_modules:
       core_question: "Multi-Agent Coordination و Conflict Resolution چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای سه عامل تحلیل‌گر، قاعده حل تعارض خروجی‌ها را تعریف کن."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 89
       domain: "Agentic Systems"
       prerequisites: [87]
@@ -714,8 +714,8 @@ education_curriculum_modules:
       core_question: "Memory Retrieval و Memory Consolidation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "سیاستی برای خلاصه‌سازی و حذف خاطرات کم‌ارزش عامل طراحی کن."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 90
       domain: "Agentic Systems"
       prerequisites: [81, 87]
@@ -727,8 +727,8 @@ education_curriculum_modules:
       core_question: "Agent Governance و Runtime Guardrails چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "سه اقدام حساس عامل را مشخص و برای هرکدام guardrail بگذار."
       sources:
-        - {name: "ط", url: "ر"}
         - {name: "University of Mannheim LLMs and Agents 2026", url: "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents/"}
+        - {name: "OpenAI Agents Guide", url: "https://platform.openai.com/docs/guides/agents"}
     - id: 91
       domain: "Trustworthy AI"
       prerequisites: [31, 46]
@@ -740,8 +740,8 @@ education_curriculum_modules:
       core_question: "Distribution Shift Testing و Stress Testing چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "یک ماتریس آزمون برای تغییرات فصلی و بار شدید بساز."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 92
       domain: "Trustworthy AI"
       prerequisites: [91]
@@ -753,8 +753,8 @@ education_curriculum_modules:
       core_question: "Property-Based Testing و Metamorphic Testing چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای سامانه خلاصه‌سازی، یک رابطه metamorphic قابل آزمون تعریف کن."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 93
       domain: "Trustworthy AI"
       prerequisites: [46]
@@ -766,8 +766,8 @@ education_curriculum_modules:
       core_question: "Certified Robustness و Adversarial Training چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "تفاوت شواهد تجربی و تضمین رسمی در دفاع خصمانه را شرح بده."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 94
       domain: "Trustworthy AI"
       prerequisites: [46, 65]
@@ -779,8 +779,8 @@ education_curriculum_modules:
       core_question: "Model Extraction و Membership Inference چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "دو threat model و کنترل متناظر برای API مدل تعریف کن."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 95
       domain: "Trustworthy AI"
       prerequisites: [28, 51]
@@ -792,8 +792,8 @@ education_curriculum_modules:
       core_question: "Failure Mode Analysis و Risk Register چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای سامانه پاسخ‌گوی مشترکان پنج حالت شکست را ثبت کن."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 96
       domain: "Trustworthy AI"
       prerequisites: [91]
@@ -805,8 +805,8 @@ education_curriculum_modules:
       core_question: "LLM-as-a-Judge و Human Evaluation چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "rubric و کنترل سوگیری برای مقایسه دو پاسخ مدل طراحی کن."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 97
       domain: "Trustworthy AI"
       prerequisites: [45, 86]
@@ -818,8 +818,8 @@ education_curriculum_modules:
       core_question: "Prompt Injection Defense و Instruction Hierarchy چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای RAG، دستور معتبر را از متن سند غیرقابل اعتماد جدا کن."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 98
       domain: "Trustworthy AI"
       prerequisites: [87, 97]
@@ -831,8 +831,8 @@ education_curriculum_modules:
       core_question: "Data Exfiltration و Tool Abuse چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای عامل دارای دسترسی ایمیل، مسیرهای exfiltration را مدل کن."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 99
       domain: "Trustworthy AI"
       prerequisites: [65, 94]
@@ -844,8 +844,8 @@ education_curriculum_modules:
       core_question: "Privacy Threat Modeling و Data Minimization چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای یک دستیار منابع انسانی، داده‌های غیرضروری را حذف کن."
       sources:
-        - {name: "ا", url: "ر"}
         - {name: "ETH Zürich Reliable and Trustworthy AI 2026", url: "https://www.sri.inf.ethz.ch/teaching/rtai26"}
+        - {name: "NIST Generative AI Profile", url: "https://www.nist.gov/itl/ai-risk-management-framework/generative-artificial-intelligence-profile"}
     - id: 100
       domain: "AI Engineering"
       prerequisites: [47, 73]
@@ -857,5 +857,6 @@ education_curriculum_modules:
       core_question: "Model Registry و Artifact Lineage چه تفاوتی دارند و در طراحی سامانه چه اثری دارند؟"
       practice: "برای انتشار یک مدل، lineage لازم از داده تا artifact نهایی را فهرست کن."
       sources:
-        - {name: "ز", url: "ی"}
-        - {name: "Google Cloud MLOps", url: "https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"}
+
+        - {name: "Microsoft Learn: Model Management and Deployment", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-model-management-and-deployment?view=azureml-api-2"}
+        - {name: "MLflow Documentation", url: "https://mlflow.org/docs/latest/index.html"}

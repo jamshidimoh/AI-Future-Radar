@@ -88,6 +88,9 @@ VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://rl.uni-freiburg.de/teaching/ss26/ss26/foundations-ai": 2026,
     "https://algo.cs.ox.ac.uk/teaching/courses/2026-2027/krr/index.html": 2026,
     "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026": 2026,
+    "https://www.fau.tv/series/artificial-intelligence-i-ws2627-w26": 2026,
+    "https://developers.google.com/machine-learning/crash-course": 2026,
+    "https://scikit-learn.org/stable/modules/ensemble.html": 2026,
     "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents": 2026,
 }
 

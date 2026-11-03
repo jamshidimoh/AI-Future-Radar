@@ -199,6 +199,11 @@ def _source_support(summary: str, why: str, source_text: str) -> tuple[float, fl
 
 def editorial_sections_redundant(summary: str, why_it_matters: str) -> bool:
     """Whether the two editorial blocks mostly restate the same information."""
+    why_text = str(why_it_matters or "").strip()
+    # Generic impact boilerplate must never become acceptable merely because
+    # it shares broad AI/future vocabulary with the summary.
+    if any(phrase in why_text for phrase in _GENERIC_WHY):
+        return False
     left = _content_tokens(summary)
     right = _content_tokens(why_it_matters)
     if not left or not right:

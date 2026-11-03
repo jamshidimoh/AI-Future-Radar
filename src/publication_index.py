@@ -25,7 +25,7 @@ MAX_SEMANTIC_RECORDS = 200
 MAX_SEMANTIC_COMPARISONS = 10
 
 _RECORD_CACHE: dict[str, tuple[tuple[int, int] | None, list[dict[str, Any]]]] = {}
-_INDEX_CACHE: dict[tuple[Any, ...], "PublicationIndex"] = {}
+_INDEX_CACHE: dict[tuple[Any, ...], PublicationIndex] = {}
 
 
 def normalize_publication_title(value: object) -> str:
@@ -339,13 +339,9 @@ def remember_feedback_record(path: str | Path, record: dict[str, Any]) -> None:
     key = _path_key(path)
     cached = _RECORD_CACHE.get(key)
     current_fingerprint = _fingerprint(path)
-    if cached is not None and cached[0] == current_fingerprint:
-        records = cached[1]
-    else:
-        # A confirmed-delivery callback may have just persisted this message
-        # (or another collector may have updated feedback). Reload that version
-        # before refreshing the shared index instead of overwriting newer state.
-        records = load_feedback_records(path)
+    # A confirmed-delivery callback may have just persisted this message (or
+    # another collector may have updated feedback); reload the changed version.
+    records = cached[1] if cached is not None and cached[0] == current_fingerprint else load_feedback_records(path)
 
     link = canonical_url(record.get("link") or record.get("url") or "")
     title = normalize_publication_title(record.get("title") or "")

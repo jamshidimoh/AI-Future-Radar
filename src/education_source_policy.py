@@ -29,7 +29,7 @@ MAINTAINED_CURRENT_DOMAINS = {
     "huggingface.co", "scikit-learn.org", "sbert.net", "pytorch.org",
     "tensorflow.org", "platform.openai.com", "openai.com", "deepmind.google",
     "mlflow.org", "robotics.umich.edu", "digital-strategy.ec.europa.eu",
-    "docs.vllm.ai", "docs.langchain.com",
+    "docs.vllm.ai", "docs.langchain.com", "scipy.org", "xgboost.readthedocs.io",
     "anthropic.com", "alignment.anthropic.com", "docs.anthropic.com", "modelcontextprotocol.io",
     "learn.microsoft.com", "nvidia.com", "docs.nvidia.com",
     "quantum.cloud.ibm.com", "ibm.com", "hai.stanford.edu",
@@ -82,6 +82,12 @@ VERIFIED_SOURCE_YEAR_OVERRIDES = {
     "https://github.com/github/spec-kit": 2026,
     "https://www.uni-mannheim.de/dws/teaching/course-details/courses-for-master-candidates/ie-685-large-language-models-and-agents": 2026,
     "https://martinfowler.com/bliki/VibeCoding.html": 2025,
+    "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/542775": 2026,
+    "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/517542": 2026,
+    "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/530661": 2026,
+    "https://rl.uni-freiburg.de/teaching/ss26/ss26/foundations-ai": 2026,
+    "https://algo.cs.ox.ac.uk/teaching/courses/2026-2027/krr/index.html": 2026,
+    "https://www.math.lmu.de/math4ai/en/teaching/sose-2026/mathematical-foundations-of-machine-learning-sose-2026": 2026,
     "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents": 2026,
 }
 

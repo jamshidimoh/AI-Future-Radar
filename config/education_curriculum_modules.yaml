@@ -276,8 +276,8 @@ education_curriculum_modules:
       b: {term: "Benchmark Contamination", fa: "آلودگی بنچمارک", seed: "حضور نمونه‌ها یا پاسخ‌های بنچمارک ارزیابی در داده آموزش یا داده‌های در دسترس مدل، به‌گونه‌ای که نتیجه آزمون دیگر سنجش مستقلی از تعمیم‌پذیری نباشد."}
       relation: "Data leakage مسئله‌ای عمومی در چرخه یادگیری و ارزیابی است؛ benchmark contamination شکل مهمی از آن در ارزیابی مدل‌های پایه و زبانی محسوب می‌شود."
       sources:
-        - {name: "Google Machine Learning Crash Course: Data Leakage", url: "https://developers.google.com/machine-learning/crash-course"}
-        - {name: "Stanford HELM: Holistic Evaluation of Language Models", url: "https://crfm.stanford.edu/helm/latest/"}
+        - {name: "Stanford AI Index 2026: Technical Performance", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance"}
+        - {name: "How Much Can We Forget about Data Contamination? — ICML 2025", url: "https://proceedings.mlr.press/v267/bordt25a.html"}
     - id: 56
       domain: "Machine learning"
       prerequisites: [2, 31]
@@ -287,8 +287,8 @@ education_curriculum_modules:
       b: {term: "Predictive Modeling", fa: "مدل‌سازی پیش‌بینانه", seed: "ساخت مدلی برای پیش‌بینی مقدار یا طبقه یک پیامد بر اساس الگوهای داده؛ دقت پیش‌بینی به‌تنهایی اثبات‌کننده رابطه علّی نیست."}
       relation: "مدل پیش‌بینانه می‌پرسد چه چیزی محتمل است رخ دهد؛ استنباط علّی می‌پرسد یک مداخله چه تغییری در پیامد ایجاد می‌کند. همبستگی پیش‌بینانه به‌تنهایی پاسخ علّی نمی‌دهد."
       sources:
-        - {name: "Microsoft EconML Documentation", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-causal-inference?view=azureml-api-2"}
-        - {name: "DoWhy: Causal Inference for Python", url: "https://developers.google.com/machine-learning/crash-course"}
+        - {name: "Microsoft Learn: Causal Inference", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-causal-inference?view=azureml-api-2"}
+        - {name: "Prediction-Powered Causal Inferences — NeurIPS 2025", url: "https://proceedings.neurips.cc/paper_files/paper/2025/hash/6b0a3a259d3dcb75dfe92f7269e2e05e-Abstract-Conference.html"}
     - id: 57
       domain: "AI infrastructure & compute"
       prerequisites: [24, 48]

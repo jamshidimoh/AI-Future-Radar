@@ -286,15 +286,15 @@ def build_educational_item():
     generated, verified_sources = _generate(lesson)
     if not generated:
         raise RuntimeError("[Education Contract] no publishable lesson: source policy requires two independent current sources")
-    track = "expansion" if lesson_id >= 115 else ("emerging" if lesson_id >= 101 else "foundation")
-    if track == "expansion":
-        track_label = "مسیر توسعه و موضوعات تکمیلی"
+    track = "frontier" if lesson_id >= 115 else ("emerging" if lesson_id >= 101 else "core")
+    if track == "frontier":
+        track_label = "مرزهای دانش و فناوری‌های همگرا"
         education_number = lesson_id - 114
     elif track == "emerging":
-        track_label = "ترمینولوژی روز و فناوری‌های نو"
+        track_label = "واژگان نوظهور و مهندسی AI"
         education_number = lesson_id - 100
     else:
-        track_label = "مفاهیم پایه و بنیادی"
+        track_label = "مسیر علمی اصلی: مبانی، مدل‌ها و مهندسی"
         education_number = lesson_id
     return {"content_type": "education", "category": "ai", "education_id": lesson_id, "education_total": total, "education_track": track, "education_track_label": track_label, "education_number": education_number, "education_status": lesson.get("status", "established"), "education_title": lesson.get("title", ""), "education_module": lesson.get("domain", "هوش مصنوعی"), "education_core_question": lesson.get("core_question", f"تفاوت دو مفهوم «{lesson['a']['term']}» و «{lesson['b']['term']}» چیست؟"), "education_learning_outcome": lesson.get("learning_outcome", f"تعریف و تمایز «{lesson['a']['term']}» و «{lesson['b']['term']}» و کاربرد آن‌ها در یک مسئله واقعی."), "education_practice": lesson.get("practice", "یک مثال کاربردی بساز و محدودیت هر مفهوم را مشخص کن."), "education_term_a": lesson["a"]["term"], "education_term_a_fa": lesson["a"]["fa"], "education_term_b": lesson["b"]["term"], "education_term_b_fa": lesson["b"]["fa"], "education_sources": verified_sources, **generated}
 

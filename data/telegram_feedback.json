@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793716447,
+  "updated_at": 1793719577,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -22057,6 +22057,27 @@
       "why_it_matters": "تغییر در پرسشنامه BTOS باعث قطع ارتباط سری‌های دادهٔ قبلی می‌شود، که برای تحلیل روندهای بلندمدت پذیرش هوش مصنوعی ضروری است. بدون امکان مقایسه، پژوهشگران و سیاستگذاران نمی‌توانند به‌طور دقیق تأثیر تغییرات اقتصادی یا فناوری بر استفاده از AI را ارزیابی کنند. این محدودیت می‌تواند بر تصمیم‌گیری‌های سرمایه‌گذاری و سیاست‌گذاری در حوزهٔ فناوری تأثیر بگذارد.",
       "link": "https://simonwillison.net/2026/Nov/2/census-bureau-super-intelligence/",
       "posted_at": 1793716447
+    },
+    "-1004482051328:2279": {
+      "chat_id": -1004482051328,
+      "message_id": 2279,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Data Center Dynamics)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن با مقامات سامسونگ درباره کمبود تراشه‌های حافظه برای زیرساخت‌های هوش مصنوعی ملاقات کرد",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در جلسه‌ای با مقامات سامسونگ درباره کمبود تراشه‌های حافظه که بر مراکز داده و محاسبات هوش مصنوعی تأثیر می‌گذارد، گفتگو کرد. این ملاقات توسط Data Center Dynamics گزارش شده و جزئیات گفت‌وگو یا نقل‌قول مستقیم ارائه نمی‌دهد.",
+      "why_it_matters": "کمبود تراشه‌های حافظه می‌تواند ظرفیت پردازش مدل‌های هوش مصنوعی را محدود کرده و هزینه‌های مراکز داده را افزایش دهد. اگر این مشکل ادامه یابد، توسعه و استقرار سرویس‌های AI ممکن است با تأخیر یا هزینه‌های بالاتر مواجه شود. مذاکرات بین OpenAI و سامسونگ می‌تواند به بررسی راهکارهای تامین این قطعات کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQa1BNWWxLUXZzWTlSbTlKMFYtM0NjeXY4bjlMRjJHMXpuSkpkUkNxamVpRW5ic3RUbjZ3NVRqeGcxU0FCX2JDNTM5cE9FNXFPTG40SzhEOC1OYmFUUGY4X2EycWN1a2Rta2pBejQ0LVA2NmhDaWo5Z0FxMDRnZzNNQl9lVFpxcnBMeF9WYmIxek5sV1ZtMmpsUE1BR19CRWJPOWNRazN0dkc1OXVJZ3NENFVuVlpkeGxrLXJpYXkwbw?oc=5",
+      "posted_at": 1793719362
     }
   }
 }

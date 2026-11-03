@@ -232,11 +232,14 @@ def _rtl_html_fragment(text):
 
 def format_post(summary_data, source_name, link, is_video=False, published="", content_type="news", source_tier=3, source_type="news", leader=""):
     """Build the original boxed Persian-first Telegram card with explicit bidi isolation."""
-    title_raw = str(summary_data.get("title", "")).strip()
-    summary_raw = str(summary_data.get("summary", "")).strip()
-    why_raw = str(summary_data.get("why_it_matters", "")).strip()
-    quote_raw = str(summary_data.get("key_quote", "")).strip()
-    model = _model_name(summary_data)
+    # Telegram messages may wrap visually, but each HTML content block must
+    # remain one logical line so bidi isolate boundaries stay balanced.
+    title_raw = " ".join(str(summary_data.get("title", "")).split())
+    summary_raw = " ".join(str(summary_data.get("summary", "")).split())
+    why_raw = " ".join(str(summary_data.get("why_it_matters", "")).split())
+    quote_raw = " ".join(str(summary_data.get("key_quote", "")).split())
+    model = " ".join(_model_name(summary_data).split())
+    source_name = " ".join(str(source_name or "منبع").split())
     date = _gregorian_date(published)
 
     # Every primary content block receives an explicit RTL base direction.
@@ -284,7 +287,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
             ]
         )
 
-    source_name_clean = str(source_name or "منبع").strip()
+    source_name_clean = source_name
     source_url = _esc(link, quote=True)
     source_row = (
         _rtl_text(f"🏛 {source_name_clean}")

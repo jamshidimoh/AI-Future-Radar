@@ -174,6 +174,28 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertIn("\u2067", text)
         self.assertIn("\u2066Jane Doe\u2069", text)
 
+    def test_multiline_fields_keep_balanced_rtl_isolates(self):
+        text = format_post(
+            {
+                "title": "OpenAI قابلیت تازه‌ای معرفی کرد\\nکه اجرای عامل‌ها را بهبود می‌دهد",
+                "summary": "OpenAI قابلیت را معرفی کرد.\\nاین قابلیت چند مرحله را پشتیبانی می‌کند.",
+                "why_it_matters": "این تغییر برای توسعه عامل‌های نرم‌افزاری اهمیت دارد.\\nمحدودیت‌های عملیاتی باید جداگانه ارزیابی شوند.",
+                "key_quote": "We need better evaluations.\\nAnd stronger safeguards.",
+                "category": "ai",
+            },
+            "OpenAI News\\nResearch",
+            "https://example.com/openai",
+            content_type="interviews_podcasts",
+        )
+        for line in text.splitlines():
+            if line:
+                self.assertTrue(line.startswith("\\u2067"), line)
+                self.assertTrue(line.endswith("\\u2069"), line)
+        isolate_starts = text.count("\\u2067") + text.count("\\u2066")
+        self.assertEqual(isolate_starts, text.count("\\u2069"))
+        self.assertIn("نقل‌قول کلیدی", self._plain(text))
+
+
     def test_speaker_line_is_omitted_when_name_is_already_in_summary(self):
         text = format_post(
             {

@@ -6,7 +6,11 @@ calls Telegram publication code. It is safe to use for isolated editorial QA.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from src.educational_content import _generate, _lesson_sequence, format_educational_post
 

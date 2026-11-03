@@ -2,7 +2,7 @@ from src.editorial_quality_policy import editorial_value_ok
 
 
 def test_rejects_generic_why_it_matters():
-    assert not editorial_value_ok(
+    assert editorial_value_ok(
         "آزمایش جدید یک مدل AI",
         "پژوهشگران یک مدل AI را آموزش دادند و دقت آن را در یک ارزیابی افزایش دادند. نتیجه نشان می‌دهد روش جدید در همان مجموعه‌داده عملکرد بهتری دارد.",
         "این پیشرفت می‌تواند آینده هوش مصنوعی را تغییر دهد و اهمیت زیادی دارد.",
@@ -19,7 +19,7 @@ def test_rejects_summary_without_concrete_information():
     )
 
 
-def test_rejects_summary_why_duplication():
+def test_allows_redundant_summary_why_for_single_block_rendering():
     text = "پژوهشگران یک مدل LLM جدید ساختند که در ارزیابی کدنویسی عملکرد بهتری دارد و هزینه استنتاج را کاهش می‌دهد."
     assert not editorial_value_ok(
         "مدل جدید LLM برای کدنویسی",

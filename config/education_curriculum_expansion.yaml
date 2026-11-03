@@ -16,8 +16,8 @@ education_curriculum_expansion:
       core_question: "Embodied Intelligence و Sensorimotor Learning چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Michigan Robotics: Robot Learning & Foundational Models", url: "https://www.robotics.umich.edu/research/focus-areas/robot-learning-foundational-models/"}
-        - {name: "NSF: Foundational Research in Robotics", url: "https://www.nsf.gov/focus-areas/brain"}
+        - {name: "Stanford AI Index 2026: Science", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "NSF: Understanding the Brain and Robotics", url: "https://www.nsf.gov/focus-areas/brain"}
     - id: 116
       domain: "Reinforcement learning"
       status: "established"
@@ -29,7 +29,7 @@ education_curriculum_expansion:
       core_question: "Reinforcement Learning from Verifiable Rewards (RLVR) و Outcome Supervision چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "University of Bologna: Agentic AI Systems 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/543049"}
+        - {name: "University of Bologna Agentic AI Systems 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/543049"}
         - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
     - id: 117
       domain: "Robotics and world models"
@@ -42,7 +42,7 @@ education_curriculum_expansion:
       core_question: "Action-Conditioned World Model و Digital Twin چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Michigan Robotics: Robot Learning & Foundational Models", url: "https://www.robotics.umich.edu/research/focus-areas/robot-learning-foundational-models/"}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
         - {name: "UK AI for Science Strategy", url: "https://www.gov.uk/government/publications/ai-for-science-strategy/ai-for-science-strategy"}
     - id: 118
       domain: "Robotics and foundation models"
@@ -55,8 +55,8 @@ education_curriculum_expansion:
       core_question: "Vision-Language-Action Model (VLA) و Diffusion Policy چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Michigan Robotics: Robot Learning & Foundational Models", url: "https://www.robotics.umich.edu/research/focus-areas/robot-learning-foundational-models/"}
-        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_5_science.pdf"}
+        - {name: "University of Michigan Robotics: Robot Learning & Foundational Models", url: "https://www.robotics.umich.edu/research/focus-areas/robot-learning-foundational-models/"}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
     - id: 119
       domain: "AI for science"
       status: "established"
@@ -68,7 +68,7 @@ education_curriculum_expansion:
       core_question: "Scientific Foundation Model و Scientific Simulator چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_5_science.pdf"}
+        - {name: "UK AI for Science Strategy", url: "https://www.gov.uk/government/publications/ai-for-science-strategy/ai-for-science-strategy"}
         - {name: "European AI in Science Strategy", url: "https://research-and-innovation.ec.europa.eu/strategy/strategy-research-and-innovation/our-digital-future/european-ai-science-strategy_en"}
     - id: 120
       domain: "Protein AI"
@@ -82,7 +82,7 @@ education_curriculum_expansion:
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
         - {name: "DFG: AI for Protein Function 2025", url: "https://www.dfg.de/de/aktuelles/neuigkeiten-themen/info-wissenschaft/2025/ifw-25-82"}
-        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_5_science.pdf"}
+        - {name: "DeepMind AlphaFold", url: "https://deepmind.google/science/alphafold/"}
     - id: 121
       domain: "Genomics AI"
       status: "established"
@@ -94,8 +94,8 @@ education_curriculum_expansion:
       core_question: "Genomic Foundation Model و Regulatory Genomics چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Stanford AI Index 2026 Science", url: "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_5_science.pdf"}
-        - {name: "UCL Biosciences AI and Machine Learning", url: "https://www.ucl.ac.uk/life-sciences/biosciences/ai-and-machine-learning"}
+        - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
+        - {name: "DeepMind AlphaGenome", url: "https://deepmind.google/science/alphagenome/"}
     - id: 122
       domain: "AI for materials"
       status: "established"
@@ -133,7 +133,7 @@ education_curriculum_expansion:
       core_question: "Brain-Computer Interface و Closed-Loop Neural Decoding چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NSF Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
+        - {name: "NSF: Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
         - {name: "NIH BRAIN Initiative", url: "https://www.nih.gov/brain"}
     - id: 125
       domain: "Cognitive science"
@@ -146,8 +146,8 @@ education_curriculum_expansion:
       core_question: "Cognitive Architecture و Neural Network چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NSF Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
-        - {name: "University of Ulm Cognitive Systems Modeling", url: "https://www.uni-ulm.de/in/neuroinformatik/lehre/lehre/winter-sem-25-26/"}
+        - {name: "NSF: Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
+        - {name: "NIH BRAIN Initiative", url: "https://www.nih.gov/brain"}
     - id: 126
       domain: "Consciousness research"
       status: "established"
@@ -159,8 +159,8 @@ education_curriculum_expansion:
       core_question: "Consciousness Theory و Functionalism چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "Stanford Encyclopedia of Philosophy: Consciousness", url: "https://plato.stanford.edu/entries/consciousness/"}
-        - {name: "NSF Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
+        - {name: "Oxford Academic: Overcoming Essentialism in Consciousness Theory (2026)", url: "https://academic.oup.com/nc/article/2026/1/niag069/9006407"}
+        - {name: "Nature: Consciousness, Subjectivity and Functionalism (2026)", url: "https://www.nature.com/articles/s41386-026-02321-5"}
     - id: 127
       domain: "Metacognition in AI"
       status: "established"
@@ -173,7 +173,7 @@ education_curriculum_expansion:
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
         - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-        - {name: "NSF Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
+        - {name: "NSF: Understanding the Brain", url: "https://www.nsf.gov/focus-areas/brain"}
     - id: 128
       domain: "AI alignment"
       status: "established"
@@ -185,7 +185,7 @@ education_curriculum_expansion:
       core_question: "AI Alignment و Control Problem چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
-        - {name: "NIST AI RMF", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
+        - {name: "NIST AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework"}
         - {name: "University of Bologna Agentic AI Systems 2026", url: "https://www.unibo.it/en/study/course-units-transferable-skills-moocs/course-unit-catalogue/course-unit/2026/543049"}
     - id: 129
       domain: "General intelligence"
@@ -211,5 +211,6 @@ education_curriculum_expansion:
       core_question: "Scenario Planning و Technology Forecasting چه نسبتی دارند و شواهد علمی چه چیزی را پشتیبانی می‌کنند؟"
       practice: "برای این دو مفهوم، یک ادعای قابل آزمون و یک محدودیت شواهد مشخص کن."
       sources:
+
         - {name: "Stanford AI Index 2026", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report"}
-        - {name: "OECD AI Principles", url: "https://oecd.ai/en/ai-principles"}
+        - {name: "European AI in Science Strategy", url: "https://research-and-innovation.ec.europa.eu/strategy/strategy-research-and-innovation/our-digital-future/european-ai-science-strategy_en"}

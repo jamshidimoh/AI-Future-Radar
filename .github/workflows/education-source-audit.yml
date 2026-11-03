@@ -1,17 +1,38 @@
 name: Education Source Audit
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "config/education_curriculum.yaml"
+      - "config/education_curriculum_modules.yaml"
+      - "config/education_curriculum_expansion.yaml"
+      - "config/education_source_fallbacks.yaml"
+      - "config/emerging_terminology.yaml"
+      - "config/education_governance.yaml"
+      - "src/education_source_policy.py"
+      - "src/education_dynamic_sources.py"
+      - "tools/audit_education_sources.py"
+      - "tests/test_education_source_audit.py"
+      - "tests/test_education_source_policy.py"
+      - "tests/test_education_dynamic_sources.py"
   workflow_dispatch:
   schedule:
     - cron: "17 3 * * 1"
   pull_request:
     paths:
       - "config/education_curriculum.yaml"
+      - "config/education_curriculum_modules.yaml"
+      - "config/education_curriculum_expansion.yaml"
       - "config/education_source_fallbacks.yaml"
       - "config/emerging_terminology.yaml"
       - "config/education_governance.yaml"
+      - "src/education_source_policy.py"
+      - "src/education_dynamic_sources.py"
       - "tools/audit_education_sources.py"
       - "tests/test_education_source_audit.py"
+      - "tests/test_education_source_policy.py"
+      - "tests/test_education_dynamic_sources.py"
 
 permissions:
   contents: read
@@ -26,8 +47,8 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
-      - name: Run deterministic audit tests
-        run: python -m pytest -q tests/test_education_source_audit.py
+      - name: Run deterministic education source tests
+        run: python -m pytest -q tests/test_education_source_audit.py tests/test_education_source_policy.py tests/test_education_dynamic_sources.py
       - name: Run live source audit
         run: python -u tools/audit_education_sources.py
       - name: Upload audit report

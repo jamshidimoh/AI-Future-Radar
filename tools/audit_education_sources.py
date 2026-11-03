@@ -12,12 +12,13 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from src.education_source_policy import MIN_CURRENT_YEAR, assess_source  # noqa: E402
+from src.education_source_policy import MIN_CURRENT_YEAR, PREFERRED_CURRENT_YEAR, assess_source  # noqa: E402
 
 CURRICULUM = ROOT / "config" / "education_curriculum.yaml"
 MODULES = ROOT / "config" / "education_curriculum_modules.yaml"
 FALLBACKS = ROOT / "config" / "education_source_fallbacks.yaml"
 EMERGING = ROOT / "config" / "emerging_terminology.yaml"
+EXPANSION = ROOT / "config" / "education_curriculum_expansion.yaml"
 REPORT = ROOT / "data" / "education_source_audit.json"
 AUDIT_WORKERS = 12
 
@@ -73,7 +74,13 @@ def collect() -> list[dict]:
     modules = load_yaml(MODULES).get("education_curriculum_modules", {})
     fallbacks = load_fallbacks()
     emerging = load_yaml(EMERGING).get("emerging_terminology", {})
-    lessons = list(curriculum.get("lessons") or []) + list(modules.get("lessons") or []) + list(emerging.get("lessons") or [])
+    expansion = load_yaml(EXPANSION).get("education_curriculum_expansion", {})
+    lessons = (
+        list(curriculum.get("lessons") or [])
+        + list(modules.get("lessons") or [])
+        + list(emerging.get("lessons") or [])
+        + list(expansion.get("lessons") or [])
+    )
     source_specs: list[tuple[dict, dict]] = []
     for lesson in lessons:
         lid = str(lesson.get("id"))
@@ -116,6 +123,7 @@ def collect() -> list[dict]:
             "reachable": ok,
             "declared_year": declared_year,
             "detected_year": detected_year,
+            "verified_source_year": assessment.get("year") if assessment.get("status") == "dated_current" else None,
             "maintained_current": assessment.get("status") == "maintained_current",
             "current_2025_plus": bool(assessment.get("current")),
             "date_verification": "verified" if detected_year else ("maintained_current" if assessment.get("current") else "unverified"),
@@ -133,6 +141,7 @@ def summarize(rows: list[dict]) -> dict:
         current = [x for x in items if x["reachable"] and x["current_2025_plus"]]
         orgs = {x["organization"] for x in current}
         authoritative = any(int(x.get("authority_tier", 4)) == 1 for x in current)
+        verified_2026 = [x for x in current if int(x.get("verified_source_year") or 0) >= PREFERRED_CURRENT_YEAR]
         warnings = []
         violations = []
         if not current:
@@ -152,6 +161,7 @@ def summarize(rows: list[dict]) -> dict:
             "lesson_title": items[0]["lesson_title"],
             "domain": items[0].get("domain", ""),
             "verified_current_count": len(current),
+            "verified_2026_source_count": len(verified_2026),
             "independent_organizations": sorted(orgs),
             "has_tier1": authoritative,
             "violations": violations,
@@ -160,6 +170,7 @@ def summarize(rows: list[dict]) -> dict:
     return {
         "policy": {
             "min_current_year": MIN_CURRENT_YEAR,
+            "preferred_verified_year": PREFERRED_CURRENT_YEAR,
             "min_verified_current_sources": 2,
             "require_independent_organizations": True,
             "tier1_is_preferred_not_automatically_blocking": True,

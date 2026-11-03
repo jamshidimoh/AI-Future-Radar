@@ -12,6 +12,7 @@ def test_education_governance_policy_is_complete():
 
     assert policy["priorities"] == [
         "scientific_authority",
+        "source_claim_alignment",
         "current_validity",
         "topical_coverage",
     ]

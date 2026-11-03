@@ -231,3 +231,38 @@ if __name__ == "__main__":
     unittest.main()
 
 
+
+
+
+def test_redundant_summary_and_why_render_as_one_merged_block():
+    text = format_post(
+        {
+            "title": "معرفی یک مدل تازه",
+            "summary": "شرکت مدل تازه‌ای را معرفی کرد که هزینه پردازش را کاهش می‌دهد و سرعت پاسخ‌گویی را افزایش می‌دهد.",
+            "why_it_matters": "مدل تازه شرکت هزینه پردازش را پایین می‌آورد و سرعت پاسخ‌گویی را بیشتر می‌کند.",
+            "category": "ai",
+        },
+        "منبع",
+        "https://example.com/model",
+    )
+    plain = TelegramFormatTests()._plain(text)
+    assert "نکته اصلی" in plain
+    assert "خلاصه" not in plain
+    assert "چرا مهم است؟" not in plain
+
+
+def test_merged_editorial_block_preserves_additive_impact_sentence():
+    text = format_post(
+        {
+            "title": "معرفی یک مدل تازه",
+            "summary": "شرکت مدل تازه‌ای را معرفی کرد که هزینه پردازش را کاهش می‌دهد و سرعت پاسخ‌گویی را افزایش می‌دهد.",
+            "why_it_matters": "مدل تازه شرکت هزینه پردازش را پایین می‌آورد و سرعت پاسخ‌گویی را بیشتر می‌کند. این کاهش هزینه می‌تواند استفاده دانشگاه‌ها از مدل‌های بزرگ را ممکن‌تر کند.",
+            "category": "ai",
+        },
+        "منبع",
+        "https://example.com/model",
+    )
+    plain = TelegramFormatTests()._plain(text)
+    assert "نکته اصلی" in plain
+    assert "استفاده دانشگاه‌ها" in plain
+    assert "چرا مهم است؟" not in plain

@@ -27,7 +27,7 @@ education_curriculum_expansion:
       domain: "Reinforcement learning"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [34, 56]
       title: "Reinforcement Learning from Verifiable Rewards (RLVR) و Outcome Supervision"
       a: {term: "Reinforcement Learning from Verifiable Rewards (RLVR)", fa: "یادگیری تقویتی با پاداش قابل راستی‌آزمایی", seed: "روشی که در آن پاداش از معیار یا نتیجه‌ای قابل بررسی مانند پاسخ درست، آزمون موفق یا اثبات معتبر استخراج می‌شود."}
@@ -43,7 +43,7 @@ education_curriculum_expansion:
       domain: "Robotics and world models"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [30, 53]
       title: "Action-Conditioned World Model و Digital Twin"
       a: {term: "Action-Conditioned World Model", fa: "مدل جهان شرطی‌شده بر کنش", seed: "مدلی که وضعیت آینده محیط را با توجه به وضعیت فعلی و کنش انتخاب‌شده پیش‌بینی می‌کند."}
@@ -59,7 +59,7 @@ education_curriculum_expansion:
       domain: "Robotics and foundation models"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [40, 53]
       title: "Vision-Language-Action Model (VLA) و Diffusion Policy"
       a: {term: "Vision-Language-Action Model (VLA)", fa: "مدل بینایی-زبان-کنش", seed: "مدلی که ورودی دیداری و دستور زبانی را به نمایش یا دنباله کنش رباتیک نگاشت می‌کند."}
@@ -75,7 +75,7 @@ education_curriculum_expansion:
       domain: "AI for science"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [49, 54]
       title: "Scientific Foundation Model و Scientific Simulator"
       a: {term: "Scientific Foundation Model", fa: "مدل پایه علمی", seed: "مدلی پیش‌آموزش‌یافته روی داده یا ساختارهای یک یا چند حوزه علمی برای انتقال به وظایف پژوهشی."}
@@ -107,7 +107,7 @@ education_curriculum_expansion:
       domain: "Genomics AI"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [49, 119]
       title: "Genomic Foundation Model و Regulatory Genomics"
       a: {term: "Genomic Foundation Model", fa: "مدل پایه ژنومی", seed: "مدلی آموزش‌دیده روی توالی‌های ژنومی برای یادگیری الگوهای توالی و انتقال به وظایف زیستی."}
@@ -123,7 +123,7 @@ education_curriculum_expansion:
       domain: "AI for materials"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [119]
       title: "Materials Discovery و Molecular Dynamics"
       a: {term: "Materials Discovery", fa: "کشف مواد", seed: "شناسایی یا طراحی مواد با ویژگی‌های مطلوب با ترکیب داده، مدل‌سازی و آزمایش."}
@@ -139,7 +139,7 @@ education_curriculum_expansion:
       domain: "Quantum AI"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [26, 27]
       title: "Quantum Machine Learning و Quantum-Inspired Machine Learning"
       a: {term: "Quantum Machine Learning", fa: "یادگیری ماشین کوانتومی", seed: "روش‌های پژوهشی برای ترکیب مدل‌های یادگیری با مدارها یا منابع محاسبات کوانتومی."}
@@ -155,7 +155,7 @@ education_curriculum_expansion:
       domain: "Neurotechnology"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [50, 53]
       title: "Brain-Computer Interface و Closed-Loop Neural Decoding"
       a: {term: "Brain-Computer Interface", fa: "رابط مغز-رایانه", seed: "سامانه‌ای برای تبدیل سیگنال‌های عصبی به اطلاعات یا فرمان قابل استفاده در دستگاه بیرونی."}
@@ -219,7 +219,7 @@ education_curriculum_expansion:
       domain: "AI alignment"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [23, 51, 90]
       title: "AI Alignment و Control Problem"
       a: {term: "AI Alignment", fa: "هم‌راستاسازی هوش مصنوعی", seed: "پژوهش و روش‌هایی برای سازگارکردن اهداف، رفتار و پیامدهای سامانه AI با ارزش‌ها و محدودیت‌های انسانی."}
@@ -235,7 +235,7 @@ education_curriculum_expansion:
       domain: "General intelligence"
       module_id: 13
       module_title: "مرزهای دانش و فناوری‌های همگرا"
-      status: "established"
+      status: "emerging"
       prerequisites: [19, 91, 96]
       title: "AGI Benchmark و General Intelligence"
       a: {term: "AGI Benchmark", fa: "معیار ارزیابی هوش عمومی مصنوعی", seed: "آزمونی برای سنجش دامنه و انتقال توانایی‌ها در مجموعه‌ای از وظایف، با محدودیت‌های اعتبار و پوشش."}

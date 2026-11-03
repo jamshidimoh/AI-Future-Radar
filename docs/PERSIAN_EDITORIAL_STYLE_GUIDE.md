@@ -45,6 +45,12 @@ The headline should be concise, factual and specific. Avoid clickbait, empty sup
 - Show speaker attribution when relevant and when the name is not already clear in the headline or summary.
 - Keep the main message atomic and readable. Do not add decorative metadata unless it helps the reader.
 
+## Observed presentation patterns from the reference channels
+
+The public Telegram samples reviewed show complementary editorial strengths rather than one uniform style. MrArtificialintelligence often uses a question-led explainer that moves from an announcement or expert statement to mechanism, societal implications and a practical learning takeaway. NextBrain more often frames AI around organizational strategy, the future of work, governance, human agency and long-range scenarios. Silicon Brain emphasizes architecture, inference economics, model internals, quantitative specifications and concrete agent workflows. SharifGPT frequently presents model releases and feature/specification summaries in a compact, quickly scannable form. Digiato favors direct product headlines, rapid updates and short factual openings.
+
+The Radar should borrow these functions selectively: explain the mechanism, quantify what is genuinely new, place the change in a strategic context and keep routine announcements easy to scan. It should not reproduce the channels' emoji density, promotional calls to action, speculative certainty or unrelated consumer-technology coverage. Some channels forward one another's posts; repeated circulation is one discovery signal, not independent corroboration.
+
 ## Source and evidence hierarchy
 
 1. Original research paper, journal, technical report, transcript, dataset or official product documentation.

@@ -36,7 +36,7 @@ class EducationalContentTests(unittest.TestCase):
         for lesson in lessons:
             self.assertTrue(lesson["a"]["term"] and lesson["b"]["term"])
             self.assertNotEqual(lesson["a"]["term"].strip().lower(), lesson["b"]["term"].strip().lower())
-            self.assertGreaterEqual(len(lesson.get("sources") or []), 1)
+            self.assertGreaterEqual(len(lesson.get("sources") or []), 2)
 
     def test_source_floor_is_2025(self):
         self.assertEqual(MIN_SOURCE_YEAR, 2025)

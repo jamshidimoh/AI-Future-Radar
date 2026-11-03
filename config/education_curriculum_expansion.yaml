@@ -4,6 +4,8 @@ education_curriculum_expansion:
   reviewed_at: "2026-11-03"
   policy:
     rule: "Frontier lessons distinguish established evidence, active research, and philosophical hypotheses. No speculative claim may be presented as settled science."
+  modules:
+    - {id: 13, title: "مرزهای دانش و فناوری‌های همگرا", first_lesson: 115, last_lesson: 130, objective: "تحلیل انتقادی AI در علم، زیست‌فناوری، رباتیک، کوانتوم، علوم اعصاب، آگاهی و آینده‌پژوهی."}
   lessons:
     - id: 115
       domain: "embodied AI"

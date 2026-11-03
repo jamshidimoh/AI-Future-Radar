@@ -238,15 +238,15 @@ def _editorial_sentence_tokens(text):
     generic = {"این", "آن", "برای", "در", "از", "به", "با", "که", "و", "یک", "است", "شود", "دارد", "همین", "موضوع", "خبر"}
     return {
         token.casefold()
-        for token in re.findall(r"[\\u0600-\\u06FF]{3,}|[A-Za-z][A-Za-z0-9.+/#-]{1,}|\\d+", str(text or ""))
+        for token in re.findall(r"[\u0600-\u06FF]{3,}|[A-Za-z][A-Za-z0-9.+/#-]{1,}|\d+", str(text or ""))
         if token.casefold() not in generic
     }
 
 
 def _merge_redundant_editorial_sections(summary, why):
     """Keep only genuinely additive why-sentences when the two blocks overlap."""
-    summary_sentences = [x.strip() for x in re.split(r"(?<=[.!؟])\\s+", str(summary or "")) if x.strip()]
-    why_sentences = [x.strip() for x in re.split(r"(?<=[.!؟])\\s+", str(why or "")) if x.strip()]
+    summary_sentences = [x.strip() for x in re.split(r"(?<=[.!؟])\s+", str(summary or "")) if x.strip()]
+    why_sentences = [x.strip() for x in re.split(r"(?<=[.!؟])\s+", str(why or "")) if x.strip()]
     kept = list(summary_sentences)
     for sentence in why_sentences:
         candidate = _editorial_sentence_tokens(sentence)
@@ -260,7 +260,7 @@ def _merge_redundant_editorial_sections(summary, why):
             shared = len(candidate & prior)
             containment = shared / max(1, min(len(candidate), len(prior)))
             jaccard = shared / max(1, len(candidate | prior))
-            if containment >= 0.78 or jaccard >= 0.58:
+            if containment >= 0.62 or jaccard >= 0.48:
                 redundant = True
                 break
         if not redundant:

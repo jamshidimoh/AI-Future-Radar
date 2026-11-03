@@ -83,3 +83,14 @@ def test_education_state_restarts_for_curriculum_v3():
     assert state["next_lesson"] == 1
     assert state["completed"] == []
     assert state["restart_generation"] >= 2
+
+def test_frontier_and_emerging_terms_are_labeled_without_overstating_maturity():
+    emerging = _yaml(ROOT / "config" / "emerging_terminology.yaml")["emerging_terminology"]["lessons"]
+    expansion = _yaml(ROOT / "config" / "education_curriculum_expansion.yaml")["education_curriculum_expansion"]["lessons"]
+    allowed = {"established", "emerging", "informal"}
+    assert all(x.get("status") in allowed for x in emerging + expansion)
+    by_id = {int(x["id"]): x for x in emerging + expansion}
+    assert by_id[102]["status"] == "informal"
+    assert by_id[116]["status"] == "emerging"
+    assert by_id[123]["status"] == "emerging"
+    assert by_id[129]["status"] == "emerging"

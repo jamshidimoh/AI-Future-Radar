@@ -266,3 +266,37 @@ education_curriculum_modules:
       sources:
         - {name: "NIST Quantum Information Science", url: "https://www.nist.gov/quantum-information-science"}
         - {name: "IBM Quantum Learning", url: "https://quantum.cloud.ibm.com/learning"}
+
+    - id: 55
+      domain: "Evaluation & benchmarks"
+      prerequisites: [19, 31]
+      title: "Data Leakage و Benchmark Contamination"
+      status: "established"
+      a: {term: "Data Leakage", fa: "نشت داده", seed: "ورود ناخواسته اطلاعاتی از داده آزمون، آینده یا متغیر هدف به فرایند آموزش یا انتخاب مدل؛ رخدادی که برآورد عملکرد را بیش از واقع خوش‌بینانه می‌کند."}
+      b: {term: "Benchmark Contamination", fa: "آلودگی بنچمارک", seed: "حضور نمونه‌ها یا پاسخ‌های بنچمارک ارزیابی در داده آموزش یا داده‌های در دسترس مدل، به‌گونه‌ای که نتیجه آزمون دیگر سنجش مستقلی از تعمیم‌پذیری نباشد."}
+      relation: "Data leakage مسئله‌ای عمومی در چرخه یادگیری و ارزیابی است؛ benchmark contamination شکل مهمی از آن در ارزیابی مدل‌های پایه و زبانی محسوب می‌شود."
+      sources:
+        - {name: "Google Machine Learning Crash Course: Data Leakage", url: "https://developers.google.com/machine-learning/crash-course"}
+        - {name: "Stanford HELM: Holistic Evaluation of Language Models", url: "https://crfm.stanford.edu/helm/latest/"}
+    - id: 56
+      domain: "Machine learning"
+      prerequisites: [2, 31]
+      title: "Causal Inference و Predictive Modeling"
+      status: "established"
+      a: {term: "Causal Inference", fa: "استنباط علّی", seed: "روش‌هایی برای برآورد اثر علّی مداخله یا عامل بر پیامد، با تکیه بر فرض‌ها و طراحی‌هایی که اثر علت را از همبستگی صرف جدا می‌کنند."}
+      b: {term: "Predictive Modeling", fa: "مدل‌سازی پیش‌بینانه", seed: "ساخت مدلی برای پیش‌بینی مقدار یا طبقه یک پیامد بر اساس الگوهای داده؛ دقت پیش‌بینی به‌تنهایی اثبات‌کننده رابطه علّی نیست."}
+      relation: "مدل پیش‌بینانه می‌پرسد چه چیزی محتمل است رخ دهد؛ استنباط علّی می‌پرسد یک مداخله چه تغییری در پیامد ایجاد می‌کند. همبستگی پیش‌بینانه به‌تنهایی پاسخ علّی نمی‌دهد."
+      sources:
+        - {name: "Microsoft EconML Documentation", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-causal-inference?view=azureml-api-2"}
+        - {name: "DoWhy: Causal Inference for Python", url: "https://developers.google.com/machine-learning/crash-course"}
+    - id: 57
+      domain: "AI infrastructure & compute"
+      prerequisites: [24, 48]
+      title: "Scaling Laws و Compute-Data Trade-off"
+      status: "established"
+      a: {term: "Scaling Laws", fa: "قوانین مقیاس‌پذیری", seed: "روابط تجربی میان مقیاس محاسبات، اندازه مدل، حجم داده و عملکرد که برای تحلیل روند رشد و برنامه‌ریزی آموزش مدل‌ها به‌کار می‌روند."}
+      b: {term: "Compute-Data Trade-off", fa: "موازنه محاسبه و داده", seed: "مسئله تخصیص منابع محدود میان محاسبه، تعداد پارامترها و حجم یا کیفیت داده؛ افزایش یک عامل بدون تناسب با عوامل دیگر الزاماً بهترین عملکرد را نمی‌دهد."}
+      relation: "Scaling laws روندهای عملکرد را در مقیاس‌های مختلف توصیف می‌کنند؛ موازنه محاسبه و داده از این روندها برای تصمیم‌گیری درباره تخصیص منابع آموزش استفاده می‌کند."
+      sources:
+        - {name: "Stanford AI Index 2026: Research and Development", url: "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development"}
+        - {name: "Epoch AI: Data on AI Models", url: "https://epoch.ai/data/ai-models"}

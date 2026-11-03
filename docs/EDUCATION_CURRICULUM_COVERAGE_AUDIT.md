@@ -1,61 +1,78 @@
-# Education Curriculum Coverage Audit
+# ممیزی پوشش و معماری برنامه آموزشی
 
-## هدف
-این سند نقشهٔ یکپارچهٔ Curriculum را ثبت می‌کند تا گسترش Education به‌صورت وصله‌ای انجام نشود.
+## هدف و اصل معماری
+این سند مرجع واحد برای جلوگیری از توسعه وصله‌ای دوره است. مسیر یادگیری باید از مبانی و مدل‌ها به سامانه‌ها و مهندسی، سپس به ارزیابی، ایمنی، زیرساخت و حوزه‌های همگرا حرکت کند. هر مفهوم یک جایگاه اصلی دارد و ارتباط با سایر درس‌ها از طریق پیش‌نیازها ثبت می‌شود.
 
-## اصل معماری
-مسیر آموزشی باید از مبانی به مدل‌ها، از مدل‌ها به سامانه‌ها، از سامانه‌ها به مهندسی و ارزیابی، و سپس به ایمنی/حاکمیت و حوزه‌های نوظهور حرکت کند. هر مفهوم باید دقیقاً در یک حوزهٔ اصلی جایگاه داشته باشد و در صورت نیاز به پیش‌نیازها ارجاع دهد.
+## نتیجه ممیزی ساختاری در ۳ نوامبر ۲۰۲۶
+مجموعه فایل‌های فعال در این تاریخ شامل ۸۴ درس است، نه ۱۳۰ درس:
+- فایل پایه: درس‌های ۱ تا ۳۰ (۳۰ درس)
+- فایل ماژول‌های پیشرفته: درس‌های ۳۱ تا ۵۷ پس از اجرای پایلوت (۲۷ درس؛ پیش از پایلوت ۲۴ درس)
+- واژگان نوظهور: درس‌های ۱۰۱ تا ۱۱۴ (۱۴ درس)
+- گسترش تکمیلی: درس‌های ۱۱۵ تا ۱۳۰ (۱۶ درس)
 
-## لایه‌های Curriculum
-1. Fundamentals: AI/ML، داده، آموزش و inference، neural networks
-2. Representation & Models: tokens، embeddings، attention، transformers، foundation models، LLM
-3. Generative AI: prompting، in-context learning، post-training، alignment، RAG، multimodal generation
-4. Agentic Systems: agents، planning، tool use، protocols، context، memory، evaluation، verification
-5. Engineering: inference optimization، quantization، PEFT، MLOps، observability، deployment، testing
-6. Data: data engineering، quality، synthetic data، augmentation، retrieval، vector systems
-7. Trust & Security: hallucination، grounding، robustness، adversarial ML، AI security، privacy
-8. Safety & Governance: responsible AI، risk management، incidents، governance، policy، standards
-9. Infrastructure: compute، accelerators، networking، serving، distributed training
-10. Embodied & Scientific AI: robotics، embodied AI، AI for science، biomedicine، digital twins
-11. Open Ecosystems: open-weight، open-source distinctions، model ecosystems، standards/protocols
-12. Frontier & Emerging: quantum AI، world models، advanced agent architectures، emerging terminology
+پیش از پایلوت، ۴۶ شناسه ۵۵ تا ۱۰۰ تعریف نشده بود. سه درس ۵۵ تا ۵۷ در پایلوت حاضر اضافه شده‌اند؛ بنابراین هنوز ۴۳ شناسه ۵۸ تا ۱۰۰ فاقد درس هستند. عدد ۱۳۰ در نام‌گذاری یا state به‌تنهایی به معنی وجود ۱۳۰ درس نیست. تا زمان تکمیل این بازه و آزمون پوشش، دوره نباید «۱۳۰ درس کامل» معرفی شود.
 
-## وضعیت فعلی بر اساس Curriculum موجود
-| حوزه | وضعیت | اقدام لازم |
-|---|---|---|
-| AI fundamentals | Covered | عمق و به‌روزرسانی دوره‌ای |
-| Machine learning | Covered | افزودن validation، generalization، leakage، causal limitations |
-| Deep learning | Partial | architecture families، normalization، optimization و scaling تکمیل شود |
-| Generative AI | Partial | معماری‌های تولیدی، decoding، post-training و current model patterns تکمیل شود |
-| LLM | Partial | tokenizer، context، inference، training lifecycle و evaluation تکمیل شود |
-| Multimodal AI | Partial | vision-language، audio، video و multimodal evaluation تکمیل شود |
-| Retrieval & RAG | Partial | retrieval pipeline، reranking، citation/grounding و failure modes تکمیل شود |
-| Agents & agentic systems | Partial | planning، state، tools، verification، memory، orchestration و autonomy تکمیل شود |
-| Tool use & protocols | Partial | function/tool calling، MCP، protocol boundaries و security تکمیل شود |
-| Memory & context | Partial | context engineering، compaction، persistence و retrieval memory تکمیل شود |
-| Evaluation & benchmarks | Partial | model/agent eval، task design، contamination، robustness و production eval تکمیل شود |
-| Alignment & post-training | Partial | SFT، preference optimization، RLHF/DPO و safety post-training تکمیل شود |
-| Inference & optimization | Gap | serving، batching، KV cache، quantization، speculative decoding و cost/latency تکمیل شود |
-| Data & data engineering | Gap | pipelines، quality، lineage، curation، synthetic data و governance تکمیل شود |
-| AI security & robustness | Gap | prompt injection، tool abuse، adversarial robustness، data poisoning و model supply-chain تکمیل شود |
-| Safety & responsible AI | Partial | risk taxonomy، assurance، red teaming و deployment controls تکمیل شود |
-| Governance & policy | Partial | standards، regulation، incidents، conformity/assurance و lifecycle governance تکمیل شود |
-| AI infrastructure & compute | Partial | accelerator taxonomy، distributed training، serving، memory/interconnect و energy تکمیل شود |
-| Robotics & embodied AI | Partial | perception-action loops، simulation، policy learning و deployment constraints تکمیل شود |
-| AI for science & biomedicine | Gap | scientific discovery، lab automation، protein/drug workflows و validation تکمیل شود |
-| Quantum AI | Partial | quantum basics، QML limits، hybrid algorithms و evidence standards تکمیل شود |
-| Open models & ecosystems | Partial | licensing، open-weight vs open-source، reproducibility و model supply chain تکمیل شود |
-| AI engineering & MLOps | Partial | CI/CD for models، monitoring، rollback، evaluation gates و reproducibility تکمیل شود |
-| Human-AI interaction | Gap | interaction patterns، calibration، oversight، usability و cognitive effects تکمیل شود |
-| Emerging terminology | Covered as separate registry | freshness، authority و status-label audit دوره‌ای |
+## نقشه مفهومی دوره در ۹ مرحله
+۱. مبانی هوش مصنوعی، یادگیری ماشین، داده و منطق یادگیری  
+۲. شبکه‌های عصبی، معماری مدل‌ها و نمایش‌های داده  
+۳. مدل‌های پایه، مدل‌های زبانی و هوش مصنوعی مولد  
+۴. عامل‌ها، ابزارها، پروتکل‌ها، زمینه و حافظه  
+۵. مهندسی مدل، استنتاج، استقرار، داده و عملیات  
+۶. ارزیابی، قابلیت اتکا، امنیت، ایمنی و حاکمیت  
+۷. زیرساخت محاسباتی، مقیاس‌پذیری و اقتصاد محاسبات  
+۸. هوش مصنوعی تجسم‌یافته و کاربردهای علمی؛ از جمله رباتیک، زیست‌فناوری، کوانتوم و رابط مغز-رایانه  
+۹. علوم شناختی، ذهن و آگاهی، آینده‌پژوهی و فناوری‌های مرزی  
 
-## اصل منبع
-برای هر مفهوم بنیادی: منبع canonical/historical در صورت نیاز + حداقل یک منبع جاری معتبر.
-برای حوزه‌های سریع‌التغییر: حداقل دو منبع مستقل معتبر، ترجیحاً یکی primary/official.
-برای اصطلاحات emerging/informal: حداقل دو شاهد جاری و برچسب وضعیت؛ هرگز به‌عنوان standard علمی ارائه نشوند.
+این مراحل نقشه موضوعی‌اند، نه مجوز جابه‌جایی خودکار شناسه‌های موجود. ترتیب نهایی باید پس از ممیزی پیش‌نیازها و جلوگیری از تکرار تثبیت شود.
 
-## ترتیب توسعه
-ابتدا Gapها، سپس Partialهای دارای ریسک بالا، و بعد عمق و exampleهای حوزه‌های Covered. هیچ lesson جدیدی بدون قرارگیری در این نقشه اضافه نشود.
+## پایلوت درس‌های ۵۵ تا ۵۷
+- ۵۵: Data Leakage و Benchmark Contamination؛ تکمیل شکاف ارزیابی مستقل و آلودگی بنچمارک
+- ۵۶: Causal Inference و Predictive Modeling؛ تمایز پیش‌بینی از استنباط علّی
+- ۵۷: Scaling Laws و Compute-Data Trade-off؛ پیوند مقیاس مدل با داده و محاسبه
 
-## معیار پایان
-پوشش فقط زمانی «کامل» اعلام می‌شود که برای تمام domainهای اجباری حداقل یک مسیر آموزشی مشخص، پیش‌نیازهای روشن، اصطلاحات کلیدی، و زنجیرهٔ منابع معتبر/به‌روز ثبت و با regression test قابل بررسی باشد.
+این سه درس برای آزمون الگوی تعریف، پیش‌نیاز، رابطه مفهومی و حداقل دو منبع انتخاب شده‌اند. افزودن آن‌ها به فایل curriculum به معنی تأیید کیفیت انتشار نیست؛ کیفیت منابع و متن تولیدی باید در اجرای آزمایشی سنجیده شود.
+
+## حوزه‌های اجباری پوشش
+- AI fundamentals و Machine learning
+- Deep learning و Generative AI
+- LLM و Multimodal AI
+- Retrieval & RAG
+- Agents & agentic systems
+- Tool use & protocols
+- Memory & context
+- Evaluation & benchmarks
+- Alignment & post-training
+- Inference & optimization
+- Data & data engineering
+- AI security & robustness
+- Safety & responsible AI
+- Governance & policy
+- AI infrastructure & compute
+- Robotics & embodied AI
+- AI for science & biomedicine
+- Quantum AI
+- Open models & ecosystems
+- AI engineering & MLOps
+- Human-AI interaction
+- Emerging terminology
+- Cognitive science، philosophy of mind، consciousness، BCI و futures studies
+
+## قواعد منبع
+- برای مفاهیم بنیادی، در صورت نیاز یک منبع canonical/historical برای تعریف پایه به‌علاوه یک منبع جاری معتبر برای وضعیت امروز انتخاب شود.
+- حوزه‌های سریع‌التغییر: حداقل دو منبع مستقل معتبر، ترجیحاً یک منبع اولیه/رسمی.
+- اصطلاحات نوظهور یا غیررسمی: حداقل دو شاهد کاربرد معتبر و برچسب وضعیت established / emerging / informal.
+- سال درج‌شده در YAML به‌تنهایی اثبات تازگی نیست؛ دسترسی واقعی، تاریخ قابل‌تشخیص و انطباق محتوا با ادعا باید بررسی شود.
+- منابع باید مستقیماً ادعای درس را پشتیبانی کنند؛ در صورت خرابی منبع، فقط fallback مرتبط با همان درس مجاز است.
+
+## معیار پذیرش هر درس
+۱. دقیقاً دو مفهوم اصلی غیرتکراری  
+۲. تعریف علمی و توضیح شهودی، با تفکیک روشن  
+۳. رابطه مفهومی دقیق و مثال واقعی مستند  
+۴. پیش‌نیازهای موجود و قابل‌حل در ترتیب دوره  
+۵. حداقل دو منبع مستقل معتبر و قابل بازیابی  
+۶. برچسب وضعیت اصطلاحات نوظهور  
+۷. متن فارسی روان، راست‌چین و بدون تکرار بی‌فایده  
+۸. آزمون عدم تکرار و سازگاری ساختاری  
+
+## معیار تکمیل دوره
+پوشش کامل فقط وقتی اعلام می‌شود که شناسه‌های ۱ تا ۱۳۰ واقعاً تعریف شده، یکتا و قابل انتخاب باشند؛ پیش‌نیازها به درس موجود اشاره کنند؛ همه حوزه‌های اجباری پوشش داشته باشند؛ منابع و خروجی‌های آموزشی از دروازه کیفیت عبور کنند؛ و آزمون regression این الزامات را تضمین کند. در وضعیت فعلی، ۴۳ شناسه ۵۸ تا ۱۰۰ هنوز باز هستند.

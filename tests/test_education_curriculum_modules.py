@@ -14,7 +14,7 @@ def _lessons():
 def test_advanced_core_has_expected_lessons_and_unique_ids():
     lessons = _lessons()
     ids = [int(x["id"]) for x in lessons]
-    assert ids == list(range(31, 55))
+    assert ids == list(range(31, 58))
     assert len(ids) == len(set(ids))
 
 
@@ -42,3 +42,15 @@ def test_advanced_core_covers_high_priority_gaps():
         "Quantum AI",
     }
     assert required <= domains
+
+
+def test_three_pilot_lessons_cover_distinct_unfilled_topics():
+    lessons = {int(x["id"]): x for x in _lessons()}
+    assert set(lessons) >= {55, 56, 57}
+    assert "Benchmark Contamination" in lessons[55]["title"]
+    assert "Causal Inference" in lessons[56]["title"]
+    assert "Scaling Laws" in lessons[57]["title"]
+    for lesson_id in (55, 56, 57):
+        lesson = lessons[lesson_id]
+        assert len(lesson["sources"]) >= 2
+        assert lesson["prerequisites"]

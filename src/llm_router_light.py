@@ -45,7 +45,14 @@ def _provider_family(name: str) -> str:
 
 def _provider_credential_available(name: str) -> bool:
     family = _provider_family(name)
-    env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","huggingface":"HF_TOKEN"}.get(family)
+    env = {
+        "omniroute": "OMNIROUTE_BASE_URL",
+        "groq": "GROQ_API_KEY",
+        "nararouter": "NARAROUTER_API_KEY",
+        "openrouter": "OPENROUTER_API_KEY",
+        "kiraai": "KIRAAI_API_KEY",
+        "huggingface": "HF_TOKEN",
+    }.get(family)
     return bool(os.getenv(env)) if env else False
 
 def _extract_message(payload: dict):

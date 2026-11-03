@@ -6,6 +6,7 @@ import re
 from typing import Any
 from urllib.parse import quote
 
+from src.education_editor import normalize_persian_unicode
 from src.education_quality import assert_publishable
 
 RLI = "\u2067"
@@ -29,7 +30,9 @@ MAX_TAKEAWAY = 240
 
 
 def _e(value: Any, quote: bool = False) -> str:
-    return html.escape(str(value or "").strip(), quote=quote)
+    raw = normalize_persian_unicode(str(value or ""))
+    raw = " ".join(raw.split())
+    return html.escape(raw.strip(), quote=quote)
 
 
 def _fit(value: Any, limit: int) -> str:
@@ -52,7 +55,14 @@ def _latin_runs(text: str) -> str:
 
 
 def _rtl(text: str) -> str:
-    return f"{RLI}{RLM}{_latin_runs(text)}{RLM}{PDI}"
+    # Bidi isolates must not span physical Telegram lines. This matters for
+    # bilingual term labels and any definition that contains intentional
+    # paragraph breaks: every visible line has its own RTL base direction.
+    raw = str(text or "").replace("\\r\\n", "\\n").replace("\\r", "\\n")
+    rendered = []
+    for line in raw.split("\\n"):
+        rendered.append(f"{RLI}{RLM}{_latin_runs(line)}{RLM}{PDI}" if line else "")
+    return "\\n".join(rendered)
 
 
 def _ltr(text: str) -> str:

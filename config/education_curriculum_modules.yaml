@@ -1,6 +1,6 @@
 education_curriculum_modules:
-  version: "1.0"
-  reviewed_at: "2026-08-22"
+  version: "2.0"
+  reviewed_at: "2026-11-03"
   lessons:
     - id: 31
       domain: "Machine learning"

@@ -117,6 +117,30 @@ class TelegramFormatTests(unittest.TestCase):
             why,
         )
 
+    def test_news_normalization_removes_untrusted_bidi_controls(self):
+        text = normalize_news_editorial_text(
+            "عنوان\u202e فارسی با\u2066OpenAI\u2069 و متن عادی"
+        )
+        self.assertIn("OpenAI", text)
+        for control in (
+            "\u061c", "\u200e", "\u200f", "\u202a", "\u202b", "\u202c",
+            "\u202d", "\u202e", "\u2066", "\u2067", "\u2068", "\u2069",
+        ):
+            self.assertNotIn(control, text)
+
+
+    def test_news_normalization_repairs_arabic_keyboard_variants_and_common_zwnj(self):
+        text = normalize_news_editorial_text(
+            "هوش مصنوعي با كاربردهاي جديد، مدلهاي زباني و عامل های هوشمند کار ميكند؛ OpenAI نيز فعال است."
+        )
+        self.assertIn("هوش مصنوعی", text)
+        self.assertIn("کاربردهای", text)
+        self.assertIn("مدل‌های زبانی", text)
+        self.assertIn("عامل‌های هوشمند", text)
+        self.assertIn("OpenAI", text)
+        self.assertNotIn("مصنوعي", text)
+        self.assertNotIn("ك", text)
+
     def test_english_first_primary_lines_keep_rtl_base_and_isolate_latin_runs(self):
         text = format_post(
             {
@@ -136,6 +160,72 @@ class TelegramFormatTests(unittest.TestCase):
         self.assertTrue(any("\u2066DeepMind" in line and "\u2069" in line for line in lines))
         self.assertIn("<blockquote>📌 <b>خلاصه</b>", text)
         self.assertIn("<blockquote>💡 <b>چرا مهم است؟</b>", text)
+        # The formatter itself, not only a later production wrapper, gives every
+        # non-empty display line an explicit RTL base direction.
+        for line in lines:
+            if line:
+                self.assertTrue(line.startswith("\u2067"), line)
+                self.assertTrue(line.endswith("\u2069"), line)
+
+    def test_expert_voice_label_and_missing_speaker_are_displayed_without_duplication(self):
+        text = format_post(
+            {
+                "title": "گفت‌وگوی تخصصی درباره آینده عامل‌های هوشمند",
+                "summary": "در این مصاحبه درباره معماری عامل‌ها و ارزیابی عملکرد آن‌ها بحث شده است.",
+                "why_it_matters": "این بحث برای طراحی ارزیابی‌های قابل اتکا و تشخیص محدودیت‌های عامل‌ها اهمیت دارد.",
+                "speakers": "Jane Doe",
+                "category": "ai",
+            },
+            "منبع مصاحبه",
+            "https://example.com/interview",
+            content_type="interview",
+        )
+        plain = self._plain(text)
+        self.assertIn("🎙 گفت‌وگوی تخصصی", plain)
+        self.assertIn("🎙 مهمان: Jane Doe", plain)
+        self.assertIn("\u2067", text)
+        self.assertIn("\u2066Jane Doe\u2069", text)
+
+    def test_multiline_fields_keep_balanced_rtl_isolates(self):
+        text = format_post(
+            {
+                "title": "OpenAI قابلیت تازه‌ای معرفی کرد\nکه اجرای عامل‌ها را بهبود می‌دهد",
+                "summary": "OpenAI قابلیت را معرفی کرد.\nاین قابلیت چند مرحله را پشتیبانی می‌کند.",
+                "why_it_matters": "این تغییر برای توسعه عامل‌های نرم‌افزاری اهمیت دارد.\nمحدودیت‌های عملیاتی باید جداگانه ارزیابی شوند.",
+                "key_quote": "We need better evaluations.\nAnd stronger safeguards.",
+                "category": "ai",
+            },
+            "OpenAI News\nResearch",
+            "https://example.com/openai",
+            content_type="interviews_podcasts",
+        )
+        for line in text.splitlines():
+            if line:
+                self.assertTrue(line.startswith("\u2067"), line)
+                self.assertTrue(line.endswith("\u2069"), line)
+                # Nested RTL/LTR isolates must be balanced on each physical line.
+                self.assertEqual(
+                    line.count("\u2067") + line.count("\u2066"),
+                    line.count("\u2069"),
+                    line,
+                )
+        isolate_starts = text.count("\u2067") + text.count("\u2066")
+        self.assertEqual(isolate_starts, text.count("\u2069"))
+        self.assertIn("نقل‌قول کلیدی", self._plain(text))
+
+    def test_speaker_line_is_omitted_when_name_is_already_in_summary(self):
+        text = format_post(
+            {
+                "title": "گفت‌وگو درباره هوش مصنوعی",
+                "summary": "Jane Doe در این گفت‌وگو به محدودیت‌های مدل‌ها اشاره می‌کند.",
+                "why_it_matters": "این دیدگاه برای ارزیابی مدل‌ها و کاربردهای واقعی آن‌ها اهمیت دارد.",
+                "speakers": "Jane Doe",
+            },
+            "منبع",
+            "https://example.com/interview",
+            content_type="podcast",
+        )
+        self.assertNotIn("مهمان:", self._plain(text))
 
 if __name__ == "__main__":
     unittest.main()

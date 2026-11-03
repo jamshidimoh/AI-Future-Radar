@@ -8,9 +8,38 @@ from urllib.parse import parse_qs, quote, urlparse
 
 import requests
 
+from src.rtl_contract import force_rtl_blocks
+
 logger = logging.getLogger(__name__)
 
 CATEGORY_EMOJI = {"ai": "🤖", "quantum": "⚛️", "genetics": "🧬", "mind": "🧠", "future": "🔮"}
+CONTENT_TYPE_LABELS = {
+    "news": "📰 خبر فناوری",
+    "official": "🏢 اعلام رسمی",
+    "product_news": "🚀 معرفی محصول یا مدل",
+    "research": "🔬 یافته پژوهشی",
+    "paper": "🔬 مقاله علمی",
+    "study": "🔬 نتیجه مطالعه",
+    "preprint": "🧪 پیش‌چاپ پژوهشی",
+    "analysis": "🧭 تحلیل",
+    "opinion": "💬 دیدگاه",
+    "leader_signal": "💬 اظهارنظر چهره فناوری",
+    "security": "🛡 امنیت و ایمنی",
+    "incident": "🛡 رخداد امنیتی",
+    "interview": "🎙 گفت‌وگوی تخصصی",
+    "podcast": "🎙 گفت‌وگوی تخصصی",
+    "interviews_podcasts": "🎙 گفت‌وگوی تخصصی",
+    "conversation": "🎙 گفت‌وگو",
+    "fireside": "🎙 گفت‌وگوی تخصصی",
+    "discussion": "🎙 گفت‌وگوی تخصصی",
+    "q&a": "🎙 پرسش و پاسخ",
+    "talk": "🎤 سخنرانی",
+    "lecture": "🎤 سخنرانی",
+}
+VOICE_CONTENT_TYPES = frozenset({
+    "interview", "podcast", "talk", "lecture", "fireside", "conversation",
+    "discussion", "q&a", "interviews_podcasts",
+})
 TITLE_ICON = "📡"
 DIVIDER = "━━━━━━━━━━━━━━━━━━━━"
 TELEGRAM_TEXT_LIMIT = 4096
@@ -80,6 +109,23 @@ def _gregorian_date(value):
 
 def _model_name(summary_data):
     return str(summary_data.get("_provider") or summary_data.get("_provider_editorial") or summary_data.get("_provider_draft") or "").strip()
+
+
+def _voice_speaker_line(summary_data, leader, content_type, title, summary):
+    """Expose speaker attribution only when the names are not already visible."""
+    if content_type not in VOICE_CONTENT_TYPES:
+        return ""
+    raw = str(summary_data.get("speakers") or leader or "").strip()
+    if not raw:
+        return ""
+    names = [
+        part.strip()
+        for part in re.split(r"\s*(?:,|،|;|؛|\||&|\band\b)\s*", raw, flags=re.I)
+        if part.strip()
+    ]
+    visible = f"{title} {summary}".casefold()
+    missing = [name for name in names if name.casefold() not in visible]
+    return "🎙 مهمان: " + "، ".join(missing) if missing else ""
 
 
 def _youtube_thumbnail(url):
@@ -189,11 +235,14 @@ def _rtl_html_fragment(text):
 
 def format_post(summary_data, source_name, link, is_video=False, published="", content_type="news", source_tier=3, source_type="news", leader=""):
     """Build the original boxed Persian-first Telegram card with explicit bidi isolation."""
-    title_raw = str(summary_data.get("title", "")).strip()
-    summary_raw = str(summary_data.get("summary", "")).strip()
-    why_raw = str(summary_data.get("why_it_matters", "")).strip()
-    quote_raw = str(summary_data.get("key_quote", "")).strip()
-    model = _model_name(summary_data)
+    # Telegram messages may wrap visually, but each HTML content block must
+    # remain one logical line so bidi isolate boundaries stay balanced.
+    title_raw = " ".join(str(summary_data.get("title", "")).split())
+    summary_raw = " ".join(str(summary_data.get("summary", "")).split())
+    why_raw = " ".join(str(summary_data.get("why_it_matters", "")).split())
+    quote_raw = " ".join(str(summary_data.get("key_quote", "")).split())
+    model = " ".join(_model_name(summary_data).split())
+    source_name = " ".join(str(source_name or "منبع").split())
     date = _gregorian_date(published)
 
     # Every primary content block receives an explicit RTL base direction.
@@ -202,10 +251,21 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
     title_markup = f"<b>{NBSP}{TITLE_ICON}{RLM} {_esc(title_raw)}</b>"
     lines = [_rtl_text(title_markup, escape=False), ""]
 
+    content_type_key = str(content_type or "news").strip().casefold()
+    genre_label = CONTENT_TYPE_LABELS.get(content_type_key)
+    if genre_label:
+        lines.extend([_rtl_text(f"<i>{_esc(genre_label)}</i>", escape=False), ""])
+
+    speaker_line = _voice_speaker_line(
+        summary_data, leader, content_type_key, title_raw, summary_raw
+    )
+    if speaker_line:
+        lines.extend([_rtl_text(speaker_line), ""])
+
     if summary_raw:
         lines.append(
             _rtl_text(
-                f"<blockquote>📌 <b>خلاصه</b>\n{_esc(summary_raw)}</blockquote>",
+                f"<blockquote>📌 <b>خلاصه</b> — {_esc(summary_raw)}</blockquote>",
                 escape=False,
             )
         )
@@ -214,23 +274,23 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
             [
                 "",
                 _rtl_text(
-                    f"<blockquote>💡 <b>چرا مهم است؟</b>\n{_esc(why_raw)}</blockquote>",
+                    f"<blockquote>💡 <b>چرا مهم است؟</b> — {_esc(why_raw)}</blockquote>",
                     escape=False,
                 ),
             ]
         )
-    if quote_raw and content_type in {"interview", "podcast", "talk", "lecture", "conversation", "q&a"}:
+    if quote_raw and content_type_key in VOICE_CONTENT_TYPES:
         lines.extend(
             [
                 "",
                 _rtl_text(
-                    f"<blockquote>💬 <b>نقل‌قول کلیدی</b>\n«{_esc(quote_raw)}»</blockquote>",
+                    f"<blockquote>💬 <b>نقل‌قول کلیدی</b> — «{_esc(quote_raw)}»</blockquote>",
                     escape=False,
                 ),
             ]
         )
 
-    source_name_clean = str(source_name or "منبع").strip()
+    source_name_clean = source_name
     source_url = _esc(link, quote=True)
     source_row = (
         _rtl_text(f"🏛 {source_name_clean}")
@@ -259,7 +319,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
         lines.extend(
             ["", _rtl_text(f"<i>{'  ·  '.join(metadata_parts)}</i>", escape=False)]
         )
-    return "\n".join(lines)
+    return force_rtl_blocks("\n".join(lines))
 
 def resolve_source_image(item):
     if not isinstance(item, dict):

@@ -1,0 +1,99 @@
+# Editorial inspiration only. These channels are not ingestion, citation or fact-checking sources.
+policy:
+  purpose: "editorial_style_reference_only"
+  evidence_authority: "none"
+  direct_content_ingestion: false
+  verbatim_copying: false
+  source_substitution: false
+  primary_source_revalidation_required: true
+  rule: "Use format and storytelling ideas; verify factual claims against original publishers, papers, transcripts or official statements."
+
+channels:
+  - name: "آقای هوش مصنوعی"
+    handle: "MrArtificialintelligence"
+    url: "https://t.me/MrArtificialintelligence"
+    reference_mode: "style_only"
+    useful_patterns:
+      - "Open with a consequential development, claim or question, then explain the mechanism in accessible Persian."
+      - "Move from what happened to why it matters, who is affected and what capabilities or risks follow."
+      - "Translate expert comments into a structured explainer while preserving the speaker's exact position."
+      - "Close with a concrete implication for learning, work, business or governance when the evidence supports it."
+    guardrails:
+      - "The channel also forwards material from other channels; cross-posts are not independent confirmation."
+      - "Do not inherit forecasts, statistics or dramatic claims without the original statement or research."
+
+  - name: "مغز آینده"
+    handle: "NextBrain_ir"
+    url: "https://t.me/NextBrain_ir"
+    reference_mode: "style_only"
+    useful_patterns:
+      - "Frame AI through strategy, the future of work, organizational redesign, education and human agency."
+      - "Connect a technical shift to an explicit economic, institutional or societal consequence."
+      - "Use long-form questions and scenarios to expose assumptions and competing futures."
+      - "Translate leadership and researcher viewpoints into decision-relevant implications."
+    guardrails:
+      - "Separate reported events, named-person opinions and the channel's own forecasts."
+      - "Treat sponsored services, courses and product promotion as commercial material, not evidence."
+
+  - name: "Silicon Brain"
+    handle: "silicon_brain"
+    url: "https://t.me/silicon_brain"
+    reference_mode: "style_only"
+    useful_patterns:
+      - "Explain model architecture, inference paths, memory, context handling and agent-system mechanics."
+      - "Retain meaningful parameter counts, active parameters, latency, compute and cost units."
+      - "Use short technical breakdowns, concrete workflows and compact comparisons."
+      - "Explain what a design change does in practice, not only what it is called."
+    guardrails:
+      - "Verify architecture names, version numbers, parameter counts and benchmark baselines against papers or official documentation."
+      - "Do not confuse a channel's interpretation of a technical result with the result itself."
+
+  - name: "دیجیاتو"
+    handle: "Digiato"
+    url: "https://t.me/Digiato"
+    reference_mode: "style_only"
+    useful_patterns:
+      - "Use direct, specific headlines and put the product or event in the first sentence."
+      - "Keep breaking product news compact, skimmable and linked to the source."
+      - "Separate the announcement from a short explanation of what is new."
+    guardrails:
+      - "General consumer electronics, cars and unrelated technology remain outside the Radar unless there is a material AI connection."
+      - "Use the channel for discovery and presentation ideas; recover and verify the original announcement."
+
+  - name: "SharifGPT"
+    handle: "sharifgpt"
+    url: "https://t.me/sharifgpt"
+    reference_mode: "limited_style_reference"
+    useful_patterns:
+      - "Use a compact model/product announcement with a clearly labeled set of specifications and capabilities."
+      - "Make fast-moving release news easy to scan through short bullets and a concrete use case."
+      - "Use accessible analogies for complex ideas without discarding the technical distinction."
+    guardrails:
+      - "Check whether the item is an official release, preview, rumor, forecast or opinion."
+      - "Treat superlatives, benchmark claims and timelines as claims requiring primary-source verification."
+
+similar_editorial_patterns:
+  - "Short, information-rich headlines without clickbait."
+  - "A clear distinction between breaking news, product releases, research, expert viewpoints and analysis."
+  - "Accessible explanation of technical mechanisms with exact terms and concrete examples."
+  - "Explicit limitations, uncertainty and attribution for disputed or promotional claims."
+  - "A useful answer to: what happened, what is genuinely new, and why does it matter?"
+
+presentation_policy:
+  emoji_density: "low_to_moderate"
+  hashtag_policy: "few_topic-specific_tags_only_when_discovery_value_is_real"
+  headline_style: "specific_and_informative_not_clickbait"
+  paragraphs: "short_and_scannable_but_not_fragmented"
+  primary_source_link: "required_when_available"
+  cross_post_policy: "cluster_forwarded_or_reposted_items_as_one_discovery_signal"
+
+cross_channel_observation:
+  - "MrArtificialintelligence and NextBrain sometimes forward or reproduce the same item; treat this as one lead, not two independent confirmations."
+  - "The channels mix original explainers, curated reposts, short news, forecasts and commercial material; identify the content type before drawing editorial lessons."
+
+non_negotiable_radar_contract:
+  - "AI remains the core mission; cross-domain stories need a material and evidenced AI connection."
+  - "Keep mind, consciousness, cognitive science, philosophy of science, future studies, quantum, BCI, robotics and AI-biology under their existing relevance gates."
+  - "Keep arXiv excluded, Telegram channels out of the live source registry, and social posts as low-authority discovery signals."
+  - "Preserve adaptive quality-based publication, duplicate controls, source diversity, leader coverage and the operational publication ceiling."
+  - "Never copy channel posts or treat style references as primary sources."

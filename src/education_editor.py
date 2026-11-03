@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import Any
 
 NON_IRANIAN_NAMES_EN = {
@@ -40,6 +41,35 @@ EDUCATION_EMERGING = {
 }
 
 
+_PERSIAN_CHAR_TRANSLATION = str.maketrans({
+    "\u064a": "\u06cc",
+    "\u0649": "\u06cc",
+    "\u0643": "\u06a9",
+    "\u00a0": " ",
+    "\u0640": None,
+    # Strip directional controls from untrusted LLM/source text. The renderer
+    # applies its own balanced isolates after editorial normalization.
+    "\u061c": None,
+    "\u200e": None,
+    "\u200f": None,
+    "\u202a": None,
+    "\u202b": None,
+    "\u202c": None,
+    "\u202d": None,
+    "\u202e": None,
+    "\u2066": None,
+    "\u2067": None,
+    "\u2068": None,
+    "\u2069": None,
+})
+
+
+def normalize_persian_unicode(text: str) -> str:
+    """Normalize Arabic-keyboard Yeh/Kaf variants without altering Latin identifiers."""
+    value = str(text or "").translate(_PERSIAN_CHAR_TRANSLATION)
+    return unicodedata.normalize("NFC", value)
+
+
 def _replace(value: str, mapping: dict[str, str]) -> str:
     for fa, en in sorted(mapping.items(), key=lambda x: len(x[0]), reverse=True):
         value = value.replace(fa, en)
@@ -47,7 +77,7 @@ def _replace(value: str, mapping: dict[str, str]) -> str:
 
 
 def normalize_editorial_text(text: str) -> str:
-    value = _replace(str(text or ""), NON_IRANIAN_NAMES_EN)
+    value = _replace(normalize_persian_unicode(text), NON_IRANIAN_NAMES_EN)
     value = _replace(value, TECHNICAL_CANONICAL)
     value = re.sub(r"[ \t]{2,}", " ", value)
     return value.strip()
@@ -69,7 +99,7 @@ _SPACED_PERSIAN_VERB_RE = re.compile(
 
 def normalize_news_editorial_text(text: str) -> str:
     """Normalize published news prose without converting ordinary Persian AI terms to English."""
-    value = _replace(str(text or ""), NON_IRANIAN_NAMES_EN)
+    value = _replace(normalize_persian_unicode(text), NON_IRANIAN_NAMES_EN)
     news_emerging = {
         "پلی‌کریسیس": "Polycrisis",
         "پلی کریسیس": "Polycrisis",
@@ -98,8 +128,25 @@ def normalize_news_editorial_text(text: str) -> str:
         "پروتئین های": "پروتئین‌های",
         "سلسلهمراتب": "سلسله‌مراتب",
         "مدل های": "مدل‌های",
+        "مدلهای": "مدل‌های",
+        "عامل های": "عامل‌های",
+        "عاملهای": "عامل‌های",
+        "روش های": "روش‌های",
+        "روشهای": "روش‌های",
+        "سامانه های": "سامانه‌های",
+        "سامانههای": "سامانه‌های",
+        "فناوری های": "فناوری‌های",
+        "فناوریهای": "فناوری‌های",
+        "قابلیت های": "قابلیت‌های",
+        "قابلیتهای": "قابلیت‌های",
+        "پلتفرم های": "پلتفرم‌های",
+        "پلتفرمهای": "پلتفرم‌های",
+        "پژوهش های": "پژوهش‌های",
+        "پژوهشهای": "پژوهش‌های",
         "شرکت های": "شرکت‌های",
+        "شرکتهای": "شرکت‌های",
         "نسخه های": "نسخه‌های",
+        "نسخههای": "نسخه‌های",
     }
     value = _replace(value, repairs)
     # Repair only a closed list of common Persian verb stems. This is a deterministic
@@ -121,7 +168,7 @@ def normalize_news_editorial_text(text: str) -> str:
 
 def normalize_education_text(text: str) -> str:
     """Persian-first normalization for education; do not translate ordinary AI terms."""
-    value = _replace(str(text or ""), NON_IRANIAN_NAMES_EN)
+    value = _replace(normalize_persian_unicode(text), NON_IRANIAN_NAMES_EN)
     value = _replace(value, EDUCATION_EMERGING)
     value = re.sub(r"[ \t]{2,}", " ", value)
     return value.strip()
@@ -170,6 +217,12 @@ def news_terminology_review_prompt() -> str:
 6) فعل روشن، نهاد مشخص، جمله‌های متوسط و نیم‌فاصله درست به‌کار ببر. عبارت‌های اداری و ترجمه‌زده مانند «می‌باشد»، «صورت می‌گیرد»، «در این راستا»، «گزارش می‌کند که» و «این موضوع نشان می‌دهد» ممنوع.
 7) هیچ ادعای جدید، تفسیر شخصی یا جزئیات خارج از منبع اضافه نکن.
 8) نقل‌قول فقط وقتی نگه داشته شود که در متن منبع قابل اتکا باشد؛ در غیر این صورت خالی بماند.
-9) خروجی فقط JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
+9) تفاوت‌های فنی را حفظ کن: training=آموزش مدل، inference=استنتاج، pretraining=پیش‌آموزش، fine-tuning=تنظیم دقیق، model=مدل، agent=عامل، open-weight=دارای وزن‌های در دسترس و open-source=متن‌باز؛ این دو مفهوم آخر را مترادف نکن.
+10) multimodal را «چندوجهی»، reasoning را «استدلال»، context window را «پنجره زمینه»، retrieval-augmented generation را «تولید تقویت‌شده با بازیابی»، benchmark را «معیار/آزمون ارزیابی» و world model را «مدل جهان» ترجمه کن؛ در صورت نیاز به دقت بیشتر، نام انگلیسی را فقط در نخستین کاربرد بیاور.
+11) prototype، research preview، limited access، general availability و deployment را به‌ترتیب «نمونه اولیه»، «پیش‌نمایش پژوهشی»، «دسترسی محدود»، «عرضه عمومی» و «استقرار عملیاتی» در نظر بگیر؛ وضعیت عرضه را از متن منبع استخراج کن و حدس نزن.
+12) اعداد، واحدها، تاریخ‌ها، مبنای مقایسه و نام آزمون‌ها را حفظ کن. امتیاز benchmark را معادل قابلیت قابل اتکای واقعی معرفی نکن.
+13) مقاله داوری‌شده، پیش‌چاپ، گزارش فنی و اطلاعیه شرکت را از هم تفکیک کن؛ پیش‌چاپ را مقاله داوری‌شده ننام و ادعای تبلیغاتی شرکت را یافته مستقل جلوه نده.
+14) جمله فارسی را با نحو طبیعی فارسی بازنویسی کن؛ حتی اگر جمله با نام محصول یا سازمان لاتین آغاز می‌شود، ساختار کلی جمله فارسی بماند. انگلیسی تزئینی، آوانویسی نام‌های رسمی و تکرار بی‌دلیل معادل انگلیسی ممنوع است.
+15) خروجی فقط JSON معتبر با کلیدهای title, summary, why_it_matters, speakers, key_quote, category باشد.
 """
 

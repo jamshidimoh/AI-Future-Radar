@@ -13,7 +13,7 @@ _TECH_SIGNAL_TERMS = (
     "reasoning model", "foundation model", "frontier model", "ai agent", "agentic ai",
     "robotics", "humanoid", "physical ai", "computer use", "ai safety", "ai security",
     "ai governance", "ai policy", "ai regulation", "ai infrastructure", "ai chip", "gpu",
-    "npu", "tpu", "ai accelerator", "quantum computing", "quantum ai", "brain-computer interface",
+    "npu", "tpu", "ai accelerator", "quantum computing", "quantum hardware", "quantum processor", "quantum chip", "qubit", "quantum ai", "brain-computer interface",
     "bci", "neurotechnology", "synthetic biology", "protein design", "computational biology",
     "photonic computing", "neuromorphic", "digital transformation",
     "هوش مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی", "عامل هوشمند", "رباتیک",

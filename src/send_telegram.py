@@ -273,7 +273,7 @@ def format_post(summary_data, source_name, link, is_video=False, published="", c
                 ),
             ]
         )
-    if quote_raw and content_type in {"interview", "podcast", "talk", "lecture", "conversation", "q&a"}:
+    if quote_raw and content_type_key in VOICE_CONTENT_TYPES:
         lines.extend(
             [
                 "",

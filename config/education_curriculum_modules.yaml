@@ -288,7 +288,7 @@ education_curriculum_modules:
       relation: "مدل پیش‌بینانه می‌پرسد چه چیزی محتمل است رخ دهد؛ استنباط علّی می‌پرسد یک مداخله چه تغییری در پیامد ایجاد می‌کند. همبستگی پیش‌بینانه به‌تنهایی پاسخ علّی نمی‌دهد."
       sources:
         - {name: "Microsoft EconML Documentation", url: "https://learn.microsoft.com/en-us/azure/machine-learning/concept-causal-inference?view=azureml-api-2"}
-        - {name: "DoWhy: Causal Inference for Python", url: "https://www.gsb.stanford.edu/faculty-research/labs-initiatives/sil/research/methods/ai-machine-learning/short-course"}
+        - {name: "DoWhy: Causal Inference for Python", url: "https://developers.google.com/machine-learning/crash-course"}
     - id: 57
       domain: "AI infrastructure & compute"
       prerequisites: [24, 48]

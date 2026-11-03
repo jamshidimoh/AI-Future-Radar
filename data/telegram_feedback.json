@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793702241,
+  "updated_at": 1793704819,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -21924,6 +21924,39 @@
       "why_it_matters": "این پاسخ نشان می‌دهد که انتوپیک در حال حفظ جایگاه خود در بازار هوش مصنوعی است و به‌دنبال پیشرفت در این حوزه می‌باشد. وجود چنین توضیحی در X، به‌عنوان یک پلتفرم عمومی، به مخاطبان و سرمایه‌گذاران اطمینان می‌دهد که شرکت در مسیر توسعه و بهبود فناوری‌های AI مستمر است.",
       "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQSHZ5ZEs4b1dRam9DVHZMeDFfWE93MXo0b3N5SzhhR3ptdEFoSGh3T08xNHZIS25WaFJ1LTRIYTloMmtKNkc3N0JtR0xVdmVRaS1adDFJQnJleHQ0Z0QwVzZack9RVVVjYVpUZV9zaUZReFF6R1JVSGxpSkxLYzRmYXhXRm1iMDlObTNHcA?oc=5",
       "posted_at": 1793702240
+    },
+    "-1004482051328:2272": {
+      "chat_id": -1004482051328,
+      "message_id": 2272,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (YouTube)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن: هوش مصنوعی در حال پیشرفت سریع است",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در مصاحبه با AC14، از پیشرفت سریع هوش مصنوعی هیجانزده است و از قابلیت‌های پیشرفته مدل‌های زبانی و سیستمهای خودکار یادگیری صحبت کرد. او همچنین از اهمیت همکاری بین شرکتها و دانشگاهها برای پیشبرد تحقیقات در زمینه هوش مصنوعی صحبت کرد.",
+      "why_it_matters": "مصاحبه با سام آلتمن، مدیرعامل OpenAI، نشاندهنده هیجان و انگیزه او در مورد آینده هوش مصنوعی است. این مصاحبه اهمیت پیشرفتهای اخیر در زمینه هوش مصنوعی را برجسته می‌کند و نشان می‌دهد که این فناوری به سرعت در حال پیشرفت است. همچنین، این مصاحبه اهمیت همکاری بین شرکتها و دانشگاهها برای پیشبرد تحقیقات در زمینه هوش مصنوعی را نشان می‌دهد.",
+      "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBmYUdMRDBMTDFZR2pNNTZldGNlcV9CeWRyWHZ5UWYwTFJhTzh2Uk1mcEVyYkZJVWJHUERMM3lYdm5BVGdHZVViZ2tlajNSZGFDaUgydUJ3?oc=5",
+      "posted_at": 1793704808
+    },
+    "-1004482051328:2273": {
+      "chat_id": -1004482051328,
+      "message_id": 2273,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "content_type": "education",
+      "category": "ai",
+      "posted_at": 1793704819
     }
   }
 }

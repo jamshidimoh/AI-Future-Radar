@@ -144,7 +144,7 @@ def _is_voice_item(item):
     return bool(
         lane == "voices_perspectives"
         or item.get("voices_perspectives_lane_selected")
-        or content_type in {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a"}
+        or content_type in {"interview", "podcast", "talk", "lecture", "fireside", "conversation", "discussion", "q&a", "interviews_podcasts"}
         or item.get("expert_deep_lane")
     )
 

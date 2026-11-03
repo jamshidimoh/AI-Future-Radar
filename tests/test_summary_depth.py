@@ -24,6 +24,18 @@ def test_expert_voice_gets_dedicated_summary_depth():
     assert "Expert Voice" in _summary_depth(item)
 
 
+def test_interviews_podcasts_content_type_uses_expert_voice_guidance():
+    item = {
+        "title": "A technology podcast",
+        "content_type": "interviews_podcasts",
+        "mission_area": "ai_core",
+        "speakers": "Jane Doe",
+    }
+    depth = _summary_depth(item)
+    assert "Expert Voice" in depth
+    assert "استدلال" in depth
+
+
 def test_product_release_uses_status_and_claim_attribution_guidance():
     item = {
         "title": "A new model launch",

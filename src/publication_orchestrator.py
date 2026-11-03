@@ -96,16 +96,22 @@ def _final_story_guard(story: Mapping[str, Any]) -> tuple[bool, str]:
 
 
 def _remember_current_run_publication(story: Mapping[str, Any]) -> None:
-    _CURRENT_RUN_PUBLICATIONS.append(
-        {
-            "title": str(story.get("title") or "").strip(),
-            "summary": str(story.get("summary") or story.get("description") or "").strip(),
-            "link": str(story.get("link") or story.get("url") or "").strip(),
-            "leader": str(story.get("leader") or story.get("watch_person") or "").strip(),
-            "person_name": str(story.get("person_name") or story.get("watch_person") or story.get("leader") or "").strip(),
-            "people_lane": bool(story.get("people_lane")),
-        }
-    )
+    record = {
+        "title": str(story.get("title") or "").strip(),
+        "summary": str(story.get("summary") or story.get("description") or "").strip(),
+        "link": str(story.get("link") or story.get("url") or "").strip(),
+        "leader": str(story.get("leader") or story.get("watch_person") or "").strip(),
+        "person_name": str(story.get("person_name") or story.get("watch_person") or story.get("leader") or "").strip(),
+        "people_lane": bool(story.get("people_lane")),
+    }
+    _CURRENT_RUN_PUBLICATIONS.append(record)
+    try:
+        from src.publication_guard import remember_successful_publication
+        remember_successful_publication(dict(story))
+    except Exception as exc:
+        # Delivery is already confirmed. Keep the current-run guard active even
+        # if the durable cache refresh encounters a recoverable local error.
+        logger.warning("Could not update in-memory publication index after delivery: %s", exc, exc_info=True)
 
 
 def publish_story(

@@ -1,12 +1,10 @@
 {
-  "version": 7,
-  "next_lesson": 2,
-  "next_slot": 1,
-  "completed": [
-    1
-  ],
-  "restart_generation": 1,
+  "version": 8,
+  "next_lesson": 1,
+  "next_slot": 0,
+  "completed": [],
+  "restart_generation": 2,
   "restart_date": "2026-11-03",
-  "restart_reason": "user_requested_restart_from_lesson_1",
-  "updated_at": 1793704819
+  "restart_reason": "full_curriculum_redesign_v3_scientific_pedagogy",
+  "updated_at": 1793714809
 }

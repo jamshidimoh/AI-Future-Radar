@@ -1,8 +1,8 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 17,
-      "disabled_until": 1793813175.558,
+      "failures": 18,
+      "disabled_until": 1793815903.236,
       "last_error": "auth",
       "last_success": 0
     },
@@ -17,12 +17,18 @@
       "disabled_until": 1793730375.558,
       "last_error": "rate_limit",
       "last_success": 0
+    },
+    "groq:openai/gpt-oss-20b": {
+      "failures": 1,
+      "disabled_until": 1793733103.236,
+      "last_error": "rate_limit",
+      "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 17,
-      "disabled_until": 1793813175.558,
+      "failures": 18,
+      "disabled_until": 1793815903.236,
       "last_error": "auth"
     },
     "kiraai": {
@@ -36,12 +42,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1793726775.5582986,
+  "updated_at": 1793729503.2364867,
   "version": 1,
   "telemetry": {
-    "observed_failures": 4,
-    "observed_events": 11,
-    "updated_at": 1793726775.5582986
+    "observed_failures": 3,
+    "observed_events": 8,
+    "updated_at": 1793729503.2364867
   },
   "observed_failures": 0,
   "observed_events": 0

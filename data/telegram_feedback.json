@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793726769,
+  "updated_at": 1793729502,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -22218,6 +22218,67 @@
       "why_it_matters": "این یافتهها نشان می‌دهند که مدل‌های بزرگ زبان قادر به درک و اصلاح وزنهای مدل‌های دیگر هستند. این قابلیت ممکن است در آینده به بهینهسازی و بهبود مدل‌های یادگیری ماشین کمک کند. با این حال، این قابلیت هنوز در مرحله آزمایشی است و نیاز به بررسیهای بیشتر دارد. همچنین، این یافتهها نشان می‌دهند که مدل‌های بزرگ زبان قادر به انجام وظایف پیچیدهتری هستند و این قابلیتها ممکن است در آینده در حوزههای مختلفی از جمله توسعه نرمافزار و مهندسی داده کاربرد داشته باشند.",
       "link": "https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/",
       "posted_at": 1793726769
+    },
+    "-1004482051328:2287": {
+      "chat_id": -1004482051328,
+      "message_id": 2287,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (PCWorld)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن: حافظه کامپیوتر شما باید متعلق به او باشد",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، در مصاحبه با PCWorld ادعا کرده است که حافظه کامپیوتر شخصی کاربران باید در اختیار او قرار گیرد. این اظهارنظر نشاندهنده رویکرد او در ادغام هوش مصنوعی با سختافزارهای شخصی است. متن ارائه شده جزئیات فنی یا استدلالهای تکمیلی این ادعا را شامل نمی‌شود و صرفاً به عنوان اصلی خبر معرفی شده است. این موضع می‌تواند نگرانیهای جدی در خصوص حریم خصوصی و مالکیت داده‌های کاربران برانگیزد.",
+      "why_it_matters": "ادعای سام آلتمن مبنی بر مالکیت حافظه کامپیوترهای شخصی، چارچوبهای سنتی حریم خصوصی و مالکیت دادهها را به چالش میکشد. اگر این رویکرد عملیاتی شود، کنترل بر داده‌های محلی کاربران از دست خودشان خارج و به یک نهاد مرکزی واگذار خواهد شد. این موضوع می‌تواند پیامدهای عمیقی بر اعتماد عمومی به فناوری‌های هوش مصنوعی و سیاستگذاریهای امنیتی سایبری داشته باشد.",
+      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxQa0lxdUZlcmNDZ1JVY0tFamQtaFowVzdSa0s0Vk5fOWZBZHB0c3JpQUdDVEl5NWVSdjA2MkxpMGNObnF2SDVKU3FmMnU1SW9TUVRXQmU0R3RPM0VtaHFmb01wclFJLTBxQUtfOWJZa2g4Z2ZSSW1xX1ZRQ0EwV3JYOHZTTDAtT0ctNmc3NndDTTFZR29uUnZEVXRlRS1WUQ?oc=5",
+      "posted_at": 1793729131
+    },
+    "-1004482051328:2288": {
+      "chat_id": -1004482051328,
+      "message_id": 2288,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "دموکراسیهای غیرلیبرال: چالشهای جدید حکومت در جهان",
+      "summary": "Kishore Mahbubani، Michael Ignatieff و Marlène Laruelle در مورد دموکراسیهای غیرلیبرال بحث کردند. این نوع دموکراسیها، که به چک کردن قدرت اجرایی و نهادهای لیبرال شک دارند، امروزه رایجترین شکل حکومت هستند. بر اساس The Economist، این دموکراسیها در مقایسه با دموکراسیهای لیبرال غربی، رشد اقتصادی ۳ درصدی بیشتری داشتهاند. این متخصصان از این موضوع پرسیدند که آیا دموکراسیهای غیرلیبرال تهدیدی برای رژیمهای استبدادی یا حتی فاشیستی هستند؟ همچنین، آیا دموکراسی بیمعنی است اگر حکومت آزادی بیان را محدود کند یا سعی در تأثیرگذاری بر رسانهها و قوه قضائیه داشته باشد؟",
+      "description": "Kishore Mahbubani, Michael Ignatieff and Marlène Laruelle discuss illiberal democracies?\n\nAre illiberal democracies more effective?\n\nWith a free trial, you can watch the full debate NOW at https://iai.tv/video/the-age-of-the-illiberal-democracy?utm_source=YouTube&amp;utm_medium=description\n\nThe West is often defined as the home of liberal democracy, with liberalism and democracy seen as inseparable. But from the start, there has been tension between democracy as the will of the majority, and liberalism as the protection of minority rights and free speech. Now we are seeing the rise of so-called 'illiberal democracies', sceptical of checks on executive power and liberal institutions. Illiberal democracies are now the most common form of government, according to The Economist. Victor Orbán, the former President of Hungary, listed his own country along with Singapore, Russia, Turkey and China among them, with 3% higher growth on average over the last 30 years than the liberal democracies of the West.\n\nDoes illiberal democracy threaten the rise of autocratic or even fascist regimes? Is democracy meaningless if government constrains freedom of speech or seeks to influence the media and the judiciary? Or are unelected bodies such as the civil service, federal agencies, academia and the law themselves potential threats to the democratic will of the people?\n\n#democracy #china #politics \n\nKishore Mahbubani is a Singaporean diplomat and scholar, former President of the UN Security Council, whose work examines the geopolitics of Asia's return to the global centre stage. \n\nMichael Ignatieff is a writer, historian, and former Leader of Canada's Liberal Party whose books on nationalism and human rights established him as a central voice in post–Cold War political thought.\n\nMarlene Laruelle is a historian, sociologist and political scientist at George Washington University, where she directs the Illiberalism Studies Programme.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=https://iai.tv/video/the-age-of-the-illiberal-democracy\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "دموکراسیهای غیرلیبرال نشاندهنده تغییرات عمیق در ساختار حکومت در سراسر جهان هستند. این تغییرات ممکن است به چالشهای جدیدی در زمینه آزادیهای مدنی و حقوق اقلیتها منجر شود. با این حال، این نوع دموکراسیها رشد اقتصادی بیشتری داشتهاند که نشاندهنده تأثیر مثبت آنها بر اقتصاد است. این بحث نشاندهنده اهمیت بررسی تأثیرات دموکراسیهای غیرلیبرال بر جامعه و سیاست جهانی است.",
+      "link": "https://www.youtube.com/watch?v=tncdcMBz1M8",
+      "posted_at": 1793729152
+    },
+    "-1004482051328:2289": {
+      "chat_id": -1004482051328,
+      "message_id": 2289,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Standard (HK))",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "جینسن هوآنگ انکار کرد که چین بر روی او جاسوسی کرده است",
+      "summary": "جینسن هوآنگ، مدیرعامل انویدیا، در مصاحبه با The Standard (HK) گفت که چین هرگز بر روی او جاسوسی نکرده است. او همچنین گفت که چین به طور مداوم با انویدیا در زمینه فناوری همکاری می‌کند و این همکاریها به طور مثبت بر رشد شرکت تأثیر گذاشته است. هوآنگ همچنین گفت که چین یک بازار بزرگ و پررونق برای فناوری است و انویدیا در حال گسترش فعالیتهای خود در این کشور است.",
+      "why_it_matters": "مصاحبه جینسن هوآنگ با The Standard (HK) نشان می‌دهد که انویدیا در حال گسترش فعالیتهای خود در چین است و این کشور یک بازار بزرگ و پررونق برای فناوری است. همچنین این مصاحبه نشان می‌دهد که چین به طور مداوم با انویدیا در زمینه فناوری همکاری می‌کند و این همکاریها به طور مثبت بر رشد شرکت تأثیر گذاشته است.",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPZl9aOWVMaEZ0bUlSOEUzQzNBaXp6N1VBWUg2SU1ObWJqWjNzZnlhUTNTeFp0NTM0TmdCc1Y4ZUd4OVlscG8xeTFpVDl5YVdlMFdLQzQ2WmV2dk04TUhIZFE2cU9QYkd2bS1BMVhnZWw2RkFmVTBGYkRoWlFRcndfY3JFbTRJX1lSaUoxdUx1SENJQi1lLW5UWGpuWQ?oc=5",
+      "posted_at": 1793729502
     }
   }
 }

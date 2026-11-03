@@ -117,6 +117,18 @@ class TelegramFormatTests(unittest.TestCase):
             why,
         )
 
+    def test_news_normalization_removes_untrusted_bidi_controls(self):
+        text = normalize_news_editorial_text(
+            "عنوان\u202e فارسی با\u2066OpenAI\u2069 و متن عادی"
+        )
+        self.assertIn("OpenAI", text)
+        for control in (
+            "\u061c", "\u200e", "\u200f", "\u202a", "\u202b", "\u202c",
+            "\u202d", "\u202e", "\u2066", "\u2067", "\u2068", "\u2069",
+        ):
+            self.assertNotIn(control, text)
+
+
     def test_news_normalization_repairs_arabic_keyboard_variants_and_common_zwnj(self):
         text = normalize_news_editorial_text(
             "هوش مصنوعي با كاربردهاي جديد، مدلهاي زباني و عامل های هوشمند کار ميكند؛ OpenAI نيز فعال است."

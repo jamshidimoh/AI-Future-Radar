@@ -47,6 +47,20 @@ _PERSIAN_CHAR_TRANSLATION = str.maketrans({
     "\u0643": "\u06a9",
     "\u00a0": " ",
     "\u0640": None,
+    # Strip directional controls from untrusted LLM/source text. The renderer
+    # applies its own balanced isolates after editorial normalization.
+    "\u061c": None,
+    "\u200e": None,
+    "\u200f": None,
+    "\u202a": None,
+    "\u202b": None,
+    "\u202c": None,
+    "\u202d": None,
+    "\u202e": None,
+    "\u2066": None,
+    "\u2067": None,
+    "\u2068": None,
+    "\u2069": None,
 })
 
 

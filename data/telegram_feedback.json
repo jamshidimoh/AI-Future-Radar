@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793808431,
+  "updated_at": 1793834733,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -22431,6 +22431,60 @@
       "why_it_matters": "شناخت اینکه هند بزرگ‌ترین بازار ChatGPT است، نشان می‌دهد تقاضای قابل‌توجهی برای فناوری‌های هوش مصنوعی در این کشور وجود دارد. این می‌تواند برای شرکت‌های فناوری فرصتی برای گسترش خدمات و محصولات هوش مصنوعی در بازار هند باشد. همچنین، این داده می‌تواند سیاست‌گذاران و سرمایه‌گذاران را در تصمیم‌گیری‌های استراتژیک درباره سرمایه‌گذاری در زیرساخت‌های دیجیتال هدایت کند.",
       "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNHJxZ1Y3cmpwUUdWVGswOG5JenlxX1BuT3BtWXlJN183c2c3UW9YV0dsOFQ4RTk3RzBGNTFyNUNvM1ppaFFzZ0dmNGU5OFk5RDdZMlEwQUl3TWpKZ0JIOUpDbmRwRUoyTVYtcU9yYzAySzNDWVg5aVctWW9yS0h0UUFxejJDRE53cHJiektMS3loZm9fZmtjUE8xdFgzZzFLVkNNQ3lhbWRhbm0zcjlPOW1TWE1ScVhw?oc=5",
       "posted_at": 1793808430
+    },
+    "-1004482051328:2298": {
+      "chat_id": -1004482051328,
+      "message_id": 2298,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "AWS Machine Learning Blog",
+      "content_type": "analysis",
+      "category": "ai",
+      "leader": "",
+      "title": "چگونه Indegene کیفیت داده‌های سازمانی در علوم زندگی را مدرن‌سازی و مقیاس‌پذیر می‌کند",
+      "summary": "Indegene در پلتفرم NEXT Unified Data Platform خود بر روی AWS، یک عامل کیفیت داده مبتنی بر مدل زبان بزرگ (LLM) پیاده‌سازی کرده است. این عامل قوانین کیفیت داده‌های متناسب با زمینه را تولید، اعتبارسنجی می‌کند و کدهای SQL و Python آماده اجرا را فراهم می‌سازد. این قابلیت‌ها به سازمان‌های علوم زندگی امکان می‌دهد تا کیفیت داده‌های سازمانی را در مقیاس بزرگ ارتقا دهند و هزینه و زمان صرف شده برای ساخت و نگهداری برنامه‌های کیفیت داده را کاهش دهند.",
+      "why_it_matters": "کیفیت داده‌های سازمانی پایه‌ای برای تصمیم‌گیری‌های دقیق در حوزه‌های تجاری، پزشکی و دسترسی به بازار در صنایع علوم زندگی است. با استفاده از این فناوری، سازمان‌ها می‌توانند داده‌های خود را به‌روز و قابل اعتماد نگه دارند و از این طریق کارایی عملیاتی و انطباق با مقررات سختگیرانه را بهبود بخشند. این رویکرد به‌ویژه در محیط‌های مقرون‌به‌صرفه که نیاز به مقیاس‌پذیری و حاکمیت متمرکز دارد، ارزش افزوده قابل‌توجهی ایجاد می‌کند.",
+      "link": "https://aws.amazon.com/blogs/machine-learning/how-indegene-is-modernizing-and-scaling-enterprise-data-quality-in-life-sciences/",
+      "posted_at": 1793834523
+    },
+    "-1004482051328:2299": {
+      "chat_id": -1004482051328,
+      "message_id": 2299,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "AWS Machine Learning Blog",
+      "content_type": "analysis",
+      "category": "ai",
+      "leader": "",
+      "title": "Amazon Quick تایید هوشمند را معرفی کرد",
+      "summary": "Amazon Quick یک ویژگی تایید هوشمند را معرفی کرده است که با بررسی اقدامات عامل‌های مجاز در چارچوب کنترلهای موجود، تاییدهای غیرضروری را کاهش می‌دهد و در عین حال تصمیمات مهم را به انسانها ارجاع می‌دهد. این ویژگی با استفاده از یک مدل طبقهبندی، اقدامات را بر اساس درخواست کاربر و یک نگاه محدود به گفتگو ارزیابی می‌کند و در صورت لزوم، آنها را به کاربر برای بررسی ارجاع می‌دهد.",
+      "why_it_matters": "تایید هوشمند در Amazon Quick به مدیران امنیت اجازه می‌دهد که در حالی که از مزایای خودکارسازی بهرهمند می‌شوند، نظارت انسانی را در تصمیمات مهم حفظ کنند. این ویژگی با کاهش تاییدهای غیرضروری، کارایی و کارآمدی فرآیندها را افزایش می‌دهد و در عین حال ریسکهای امنیتی را کاهش می‌دهد.",
+      "link": "https://aws.amazon.com/blogs/machine-learning/smart-approvals-in-amazon-quick-human-oversight-where-it-matters/",
+      "posted_at": 1793834525
+    },
+    "-1004482051328:2300": {
+      "chat_id": -1004482051328,
+      "message_id": 2300,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "AMD ۲٫۹ میلیارد دلار برای Taalas پرداخت می‌کند",
+      "summary": "AMD اعلام کرد که ۲٫۹ میلیارد دلار نقد و سهام برای خرید شرکت تراشهساز هوش مصنوعی Taalas از تورنتو صرف خواهد شد. این معامله در اوت اعلام شد و امروز در فرم filing شرکت ثبت شد. جزئیات مالی شامل ترکیب نقدی و سهام است و شرایط دقیق پرداخت باقیمانده هنوز مشخص نشده است.",
+      "why_it_matters": "این خرید نشان می‌دهد AMD قصد دارد توانمندیهای پردازش هوش مصنوعی خود را با افزودن فناوری‌های تخصصی تراشههای Taalas تقویت کند. در صورت تحقق شرایط، AMD می‌تواند بهسرعت محصولات AI‑محور خود را گسترش دهد، اما عدم شفافیت دربارهٔ این شرایط می‌تواند بر ارزیابی ارزش واقعی معامله توسط سرمایهگذاران تأثیر بگذارد.",
+      "link": "https://www.techmeme.com/261104/p48#a261104p48",
+      "posted_at": 1793834527
     }
   }
 }

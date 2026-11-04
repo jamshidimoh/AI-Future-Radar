@@ -1,50 +1,51 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-11-03
+Status date: 2026-11-04
 
-## وضعیت جاری
+## وضعیت نهایی
 
-**وضعیت: IN PROGRESS — NOT CURRENTLY CLOSED**
+**وضعیت: CLOSED / PRODUCTION BASELINE**
 
-گواهی CLOSED قبلی مربوط به پنجره اجرای #1583 تا #1585 و اثرانگشت کد همان دوره بود. پس از تغییرات جدید در خط انتشار و ادغام اصلاح کنترل داپلیکیت و توازن دامنه‌ها، آن گواهی دیگر اثبات‌کننده وضعیت نسخه جاری نیست. وضعیت پروژه باید بر اساس شواهد اجرای جدید ارزیابی شود.
+این وضعیت فقط پس از سه اجرای متوالی موفق روی اثرانگشت یکسان کد برنامه، شواهد انتشار واقعی، کنترل عدم انتشار تکراری و عبور همه معیارهای پذیرش ثبت شده است.
 
-## نسخه و شواهد جاری
+## پنجره شواهد نهایی
 
-- اصلاح کنترل داپلیکیت در PR #302 ادغام شده است.
-- کد اصلاح‌شدهٔ داپلیکیت در commit `c9c69c217832dba5f18771b67c9f5f214fbe0da7` قرار دارد.
-- اصلاح توازن دامنه‌های پزشکی و ژنتیک در PR #303 ادغام شده است.
-- commit ادغام PR #303: `0c07840f2f9aa75cc9d13baa37547aab5b5848fb`
-- سقف توازن جدید: حداکثر ۴ خبر پزشکی و ۶ خبر ژنتیک در ۴۸ انتشار اخیر غیرآموزشی؛ سقف هر اجرا نیز حفظ شده است. هیچ آستانهٔ کیفیت یا اعتبار منبعی کاهش نیافته است.
-- CI مربوط به PR #303 موفق بوده است: Final Production Acceptance، Production Quality Gate، P1 Audit، Graphify، TypeSafe و Signal Engine.
-- اجرای تولیدی #1591 روی کد پیش از PR #303 آغاز شده و در آخرین مشاهده هنوز در حال اجرا بوده است: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41612856035
-- اجرای آموزشی #1592 در صف بود، اما به commit پیش از PR #303 متصل شده بود: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41615574824
-- این به‌روزرسانی با پیشوند `[manual-education]` ثبت می‌شود تا اجرای جدیدتر، کد فعلی main را اجرا کند و درس 1 را نیز به‌صورت کنترل‌شده اعتبارسنجی کند. این اجرا باید شناسه پیام تلگرام و ذخیره وضعیت درس را تأیید کند.
-- آزمون کیفیت کد پس از ادغام PR #302 موفق بوده است: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41612855962
-- تحلیل معماری پس از ادغام PR #302 موفق بوده است: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41612855994
-- Production Closure Gate در اجرای #1553 شکست خورده است؛ علت ثبت‌شده، لغو شدن اجرای تولیدی #1589 در پنجره سه‌اجرایی بوده است: https://github.com/jamshidimoh/AI-Future-Radar/actions/runs/41613246498
+- Run #1611 — SHA 6a177fa46d6f30232ecdd3607d804024cdd6b2fc — workflow success — fingerprint 68898d521743756363b52f9c1ce30184a1ebe9e851a6097149e0675c59e63629
+- Run #1610 — SHA 80cd54ece02fdfa1140723a168daa0e03aa7ac81 — workflow success — fingerprint 68898d521743756363b52f9c1ce30184a1ebe9e851a6097149e0675c59e63629
+- Run #1609 — SHA c06fbdf390640b7e058c32acbac83e7d40e50c40 — workflow success — fingerprint 68898d521743756363b52f9c1ce30184a1ebe9e851a6097149e0675c59e63629
 
-## وضعیت محتوای آموزشی
+## معیارهای پذیرش
 
-- چرخه آموزشی در تاریخ 2026-11-03 از درس 1 بازنشانی شده است.
-- در زمان بازنشانی، تعداد درس‌های تکمیل‌شده صفر و درس بعدی شماره 1 بوده است.
-- سیاست منابع: حداقل دو منبع جاری و مستقل؛ منابع رسمی، استانداردها، دانشگاه‌ها و گزارش‌های مرجع در اولویت؛ شواهد 2026 ترجیح دارد و منابع معتبر 2025+ نیز برای موضوعات پایدار پذیرفته می‌شوند.
-- اجرای #1590 به دلیل خارج بودن از پنجره زمانی آموزشی، درس منتشر نکرده است.
-- درس 1 (AI و Machine Learning) باید در اجرای نشان‌دار بعدی، با تأیید منبع و تحویل تلگرام منتشر شود. صرف reset یا آماده‌بودن منابع به معنای تکمیل آموزش نیست.
+- 01_three_successful_runs: PASS
+- 02_code_pinned: PASS
+- 03_publish_and_fail_closed_per_run: PASS
+- 04_no_duplicate_publication: PASS
+- 05_image_preserves_full_text: PASS
+- 06_rank_within_window_no_bypass: PASS
+- 07_replacement_after_qa: PASS
+- 08_leader_watch_eligible: PASS
+- 09_provider_failure_isolated: PASS
+- 10_state_after_confirmed_delivery: PASS
+- 11_mission_portfolio_not_generic: PASS
+- 12_tier0_quality_floor: PASS
+- 13_education_cadence_contract: PASS
+- 14_people_bootstrap_30_deliveries: PASS
+- 15_llm_health_fresh_for_latest_run: PASS
+- 16_runtime_source_revision_matches_event_sha: PASS
 
-## شواهد اجرای قبلی
+## شواهد انتشار
 
-اجرای #1590 با موفقیت فنی خاتمه یافت و دو پیام تلگرامی ثبت کرد؛ اما گزارش آن فقط یک خبر عادی و یک مورد از مسیر افراد را در خروجی نهایی نشان داد. سهم روندهای فنی، ذهن/شناخت و دیدگاه‌های رهبران در آن اجرا صفر بود. بازیابی پوشش نیز فقط خبر AI/پزشکی را یافت؛ گزینه‌های mind و convergence به علت نرسیدن به کف امتیاز رد شدند. چند نامزد دیگر نیز به‌علت شکست ترجمه/QA، ادعای پشتیبانی‌نشده یا دسترسی ناموفق به provider رد شدند.
+PUBLISH_PER_RUN: {1611: True, 1610: True, 1609: True}
 
-گزارش همان اجرا، فهرست People Bootstrap را 30/30 تأیید کرد. همچنین چند provider جایگزین به علت محدودیت سهمیه، محدودیت دسترسی یا timeout در دسترس نبودند؛ مسیر اصلی Mistral با موفقیت پاسخ داده است.
+PROVIDER_EVIDENCE: deterministic regression True
 
-## معیارهای لازم برای بستن مجدد پروژه
+EDUCATION_EVIDENCE: published False, recovery False, not due all True, contract not due True
 
-1. سه اجرای متوالی موفق روی یک اثرانگشت یکسان کد برنامه.
-2. شواهد انتشار واقعی تلگرام و کنترل عدم انتشار تکراری.
-3. عبور runtime acceptance در هر اجرای لازم.
-4. اثبات اعتبار منبع، provenance، کیفیت فارسی و رعایت رتبه‌بندی بدون bypass.
-5. پوشش مأموریت رادار، شامل محصولات و دستاوردهای مهم AI، مصاحبه و دیدگاه رهبران، ذهن و شناخت، آینده‌پژوهی و حوزه‌های فناوری پیشرفته؛ نه صرفاً موفقیت یک انتشار منفرد.
-6. حفظ وضعیت پایدار People Bootstrap در 30/30 و LLM health مبتنی بر شواهد اجرای جاری.
-7. تأیید انتشار آموزشی درس 1 با منبع‌یابی معتبر و ذخیره state پس از تحویل تلگرام.
+## مرز پذیرش
 
-تا زمانی که Production Closure Gate همه این معیارها را با داده‌های اجرای جاری تأیید نکرده است، وضعیت پروژه نباید CLOSED یا Production Complete اعلام شود. نسخه رسمی جدید نیز نباید صرفاً بر اساس سبز بودن CI منتشر شود.
+- اجرای تولید روی یک baseline ثابت تأیید شده است.
+- اجرای ناموفق یا شواهد ناقص به‌عنوان پذیرش موفق محسوب نشده است.
+- کیفیت فارسی، اعتبار منبع، جلوگیری از تکرار، رتبه‌بندی و قرارداد تحویل همچنان الزامی‌اند.
+- این گواهی جایگزین پایش اجرای‌های بعدی نیست.
+
+ثبت نهایی خودکار توسط Production Closure Gate انجام شده است.

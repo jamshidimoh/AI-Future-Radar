@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793781479,
+  "updated_at": 1793808431,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -22392,6 +22392,45 @@
       "why_it_matters": "این ادعا نشاندهنده پیشرفتهای قابل توجه در زمینه هوش مصنوعی است و نشاندهنده توانایی هوش مصنوعی در حل مسائل پیچیده و خلاقانه است. با این حال، این ادعا نیاز به تأیید مستقل دارد و همچنین به چالشهای اخلاقی و مقرراتی که با استفاده از هوش مصنوعی همراه است، توجه می‌کند. این پیشرفتها می‌توانند منجر به تغییرات عمده در صنایع مختلف و بهبود کیفیت زندگی بشریت شوند، اما همچنین نیاز به نظارت و کنترلهای مناسب برای جلوگیری از سوء استفاده از فناوری دارد.",
       "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOdEQ1TVJOMlMtODBrbl9hOHpSUDNDSkw0RlBJcVRpemFXSnltMXp2N2V4ZTZ3YXhxODRMLUJyUEJjaFNrRUFteU5aV1pxY29pS2NINUs4aHBDclh2LUxYRjNuckE1SUZIcDdqYUdSU293ckN2VUxvZXZJZ2k5LV94dDFtbFpWdU00YllPZndaQ29hVXNuaF9hTEVOdTdWSU5helA4ZGFQZjVWYlNob01XcTJ3Z2FfOWtFRnRYYQ?oc=5",
       "posted_at": 1793781479
+    },
+    "-1004482051328:2296": {
+      "chat_id": -1004482051328,
+      "message_id": 2296,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MIT News - Robotics",
+      "content_type": "research",
+      "category": "robotics_embodied_ai",
+      "leader": "",
+      "title": "دستگاه‌های رباتیک جنگی MIT: یادگیری از شکست در مسابقات NHRL",
+      "summary": "دستگاه ARES، ربات 30 پوندی CRC، در مسابقات جهانی 2025 NHRL دو بار شکست خورد؛ دو شکست به دلیل زره ناکافی در برابر سلاح‌های مشابه رخ داد. تیم با این شکست‌ها به‌عنوان فرصت برای بهبود طراحی زره و سیستم‌های حرکتی نگاه کرد و در مسابقات آوریل و اکتبر 2025 به ترتیب دوم و سوم شد. در حال حاضر CRC در حال ارتقاء ARES و ربات KRATOS برای نسل بعدی است.",
+      "why_it_matters": "شکست‌های ARES نشان می‌دهد که تحلیل دقیق آسیب‌های فیزیکی و طراحی زره می‌تواند به بهبود عملکرد در مسابقات رباتیک منجر شود؛ این روند به مهندسان امکان می‌دهد تا با استفاده از داده‌های واقعی، سیستم‌های دفاعی مقاوم‌تری بسازند. به‌روزرسانی مداوم در CRC نمونه‌ای از چرخه طراحی-آزمون-بهبود در مهندسی رباتیک است که می‌تواند به توسعه فناوری‌های مقاومت در برابر ضربه در صنایع دیگر کمک کند.",
+      "link": "https://news.mit.edu/2026/dream-build-destroy-repeat-combat-robotics-club-1104",
+      "posted_at": 1793808253
+    },
+    "-1004482051328:2297": {
+      "chat_id": -1004482051328,
+      "message_id": 2297,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The South First)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "هند بزرگ‌ترین بازار جهانی ChatGPT است",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، اعلام کرد که هند بزرگ‌ترین بازار جهانی برای ChatGPT می‌باشد. بر اساس گفته او، تعداد کاربران ChatGPT در هند از ایالات متحده پیشی گرفته است. این اطلاعات در مقاله‌ای از The South First منتشر شد. منبع فقط به این نکته اشاره کرد و جزئیات دیگری درباره دلایل یا عوامل رشد ارائه نداد.",
+      "why_it_matters": "شناخت اینکه هند بزرگ‌ترین بازار ChatGPT است، نشان می‌دهد تقاضای قابل‌توجهی برای فناوری‌های هوش مصنوعی در این کشور وجود دارد. این می‌تواند برای شرکت‌های فناوری فرصتی برای گسترش خدمات و محصولات هوش مصنوعی در بازار هند باشد. همچنین، این داده می‌تواند سیاست‌گذاران و سرمایه‌گذاران را در تصمیم‌گیری‌های استراتژیک درباره سرمایه‌گذاری در زیرساخت‌های دیجیتال هدایت کند.",
+      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNHJxZ1Y3cmpwUUdWVGswOG5JenlxX1BuT3BtWXlJN183c2c3UW9YV0dsOFQ4RTk3RzBGNTFyNUNvM1ppaFFzZ0dmNGU5OFk5RDdZMlEwQUl3TWpKZ0JIOUpDbmRwRUoyTVYtcU9yYzAySzNDWVg5aVctWW9yS0h0UUFxejJDRE53cHJiektMS3loZm9fZmtjUE8xdFgzZzFLVkNNQ3lhbWRhbm0zcjlPOW1TWE1ScVhw?oc=5",
+      "posted_at": 1793808430
     }
   }
 }

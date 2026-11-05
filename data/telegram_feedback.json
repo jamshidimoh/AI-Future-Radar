@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793834733,
+  "updated_at": 1793870425,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -22485,6 +22485,67 @@
       "why_it_matters": "این خرید نشان می‌دهد AMD قصد دارد توانمندیهای پردازش هوش مصنوعی خود را با افزودن فناوری‌های تخصصی تراشههای Taalas تقویت کند. در صورت تحقق شرایط، AMD می‌تواند بهسرعت محصولات AI‑محور خود را گسترش دهد، اما عدم شفافیت دربارهٔ این شرایط می‌تواند بر ارزیابی ارزش واقعی معامله توسط سرمایهگذاران تأثیر بگذارد.",
       "link": "https://www.techmeme.com/261104/p48#a261104p48",
       "posted_at": 1793834527
+    },
+    "-1004482051328:2301": {
+      "chat_id": -1004482051328,
+      "message_id": 2301,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "مدل استدلال TwIL-8B از webAI با 98.2 امتیاز در آزمون MATH-500",
+      "summary": "webAI مدل استدلالی 8.8 میلیارد پارامتری به نام TwIL-8B را منتشر کرد. این مدل بر پایه Granite 4.2 8B شرکت IBM ساخته شده است و در نسخه 4-بیتی تنها 4.98 گیگابایت حافظه می‌گیرد. در آزمون MATH-500، TwIL-8B با امتیاز 98.2 بهترین نتیجه را در کلاس اندازه خود کسب کرد. مدل دو نسخه متعادل و مفصل دارد که برای مسائل ساده یا مسابقات دشوار بهکار می‌روند و وزنهای کامل آن 16.38 گیگابایت است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "TwIL-8B نشان می‌دهد که میتوان مدل‌های استدلالی بزرگ را با هزینه حافظهٔ پایین و عملکرد برتر در ریاضیات ارائه داد. این مدل برای کاربران با سختافزار محدود جذاب است. امتیاز 98.2 در MATH-500 پیشرفت قابل توجهی در توانایی حل مسائل ریاضی پیچیده نشان می‌دهد و می‌تواند بهبود ابزارهای آموزشی و پژوهشی را تسهیل کند. با ارائهٔ وزنها تحت مجوز غیرتجاری در Hugging Face، دسترسی پژوهشگران به این فناوری آسانتر می‌شود. با این حال، عملکرد مدل در حوزهٔ دانش عمومی همچنان ضعیف است و برای کاربردهای گستردهتر نیاز به بهبود دارد.",
+      "link": "https://www.marktechpost.com/2026/11/04/webai-twil-8b-reasoning-model/",
+      "posted_at": 1793870419
+    },
+    "-1004482051328:2302": {
+      "chat_id": -1004482051328,
+      "message_id": 2302,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Y Combinator",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Fei-Fei Li",
+      "watch_person": "Fei-Fei Li",
+      "person_name": "Fei-Fei Li",
+      "people_lane": true,
+      "title": "10 عادت آکادمیک که بنیانگذاران استارتآپ باید رها کنند",
+      "summary": "فرانسوا شوبارد، متخصص هوش مصنوعی و بنیانگذار شرکت Focal، در مصاحبه با ی کامبرنتر، 10 عادت آکادمیک را که برای تأسیس استارتآپ ضروری است رها کردن، توضیح می‌دهد. او می‌گوید که تمرکز بر معیارهای خودنمایی در تحقیقات آکادمیک، به جای نیازهای واقعی بازار، می‌تواند به شکست استارتآپها منجر شود. همچنین، او تأکید می‌کند که ایدههای جالب ممکن است مهم نباشند و نوآوری بدون کپیبرداری از کارهای دیگر، ضروری است. شوبارد همچنین توصیه می‌کند که بنیانگذاران از ددلاینها و نمرات رها شوند و به جای آن، با مردم صحبت کنند و به سرعت به بازار وارد شوند.",
+      "why_it_matters": "این مصاحبه نشان می‌دهد که انتقال از محیط آکادمیک به دنیای استارتآپها چقدر چالشبرانگیز است. با درک این تفاوتها، بنیانگذاران می‌توانند از خطاها و شکستهای رایج جلوگیری کرده و به موفقیت در دنیای کسب و کار دست یابند. همچنین، این مصاحبه اهمیت ارتباط مستقیم با مشتریان و تمرکز بر نیازهای واقعی بازار را برجسته می‌کند.",
+      "link": "https://www.youtube.com/watch?v=u-8KpXcPYCw",
+      "posted_at": 1793870422
+    },
+    "-1004482051328:2303": {
+      "chat_id": -1004482051328,
+      "message_id": 2303,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Economic Times)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Sam Altman",
+      "watch_person": "Sam Altman",
+      "person_name": "Sam Altman",
+      "people_lane": true,
+      "title": "سام آلتمن نام نمایشی خود را در X به رام آلتمن تغییر داد",
+      "summary": "سام آلتمن، مدیرعامل OpenAI، پس از دریافت پیشنهاد از کاربران، نام نمایشی خود را در شبکهٔ اجتماعی X به «Ram Altman» تغییر داد. این تغییر در گزارش Economic Times منتشر شد و نشان می‌دهد که او به بازخوردهای عمومی واکنش نشان می‌دهد.",
+      "why_it_matters": "تغییر نام نمایشی توسط یک مدیرعامل برجسته نشان‌دهندهٔ تمایل به تعامل مستقیم با کاربران است. این اقدام می‌تواند به افزایش شفافیت و ارتباط نزدیک‌تر بین رهبری شرکت‌های فناوری و جامعهٔ دیجیتال منجر شود. همچنین، نشان می‌دهد که حتی افراد برجسته نیز می‌توانند به پیشنهادهای سادهٔ کاربران پاسخ دهند.",
+      "link": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxPQUREUUJSazAwVlNSaVhrbVRzcUtRX1k2MDlmektwMW5fS0hhTUJkMXlPQUFWR1RnY0ctbnhsS1JsMlNKMHRLaWg2Y0pFNDR2WkV0WW5ZdDhDMWh1cVFGaExCQ3psb2M1aFpwd2lIYVhrdkFmODAwNlFvZklDeWNZY0ptUXRaakh6c1FhU2dlNWRRMnlSRHE5UnNTWVRGM3RqYTRFU2pwT29XSXpZYXFnUmdob3VpSmlnemtRMmpmY2NKNnNkTDRIRjg1MHJ0aWlLa2QtS2YwS0YxNlJmV1hKeGx2Rm1tcTlLbklmYtIB8gFBVV95cUxPMzhCYmJ6cU92NDVkb3ZBV3hsenQ0WTFiM3dGTk44eFZpaVQ3Q216aDdQOXZRdUVlTFJ3ZzhiX1JXY0piZW42Ty0zb1VUTmdKVXRJYmszU0J0TkhkczVUaFdPUUZtRkJwTnhxTDI1emRBUnRCZzBnLVAwblhxLVYtaW9Zc0ZxWlhRTU5OUTlMUTlMbFo5cEI2Y3FQN01kMURXOHJQdEhMdnZwU0RhX21nN0NuQjZYcmNYRTdLR1JZLUxUTmg4WDlJelNPNU4xS1F2ZC1QN2VVOVFrUU9jNDlfdU5GZ1Z4Vll3YkZETXdteTZRQQ?oc=5",
+      "posted_at": 1793870425
     }
   }
 }

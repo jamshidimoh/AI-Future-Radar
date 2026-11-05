@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1793870425,
+  "updated_at": 1793894733,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -22546,6 +22546,61 @@
       "why_it_matters": "تغییر نام نمایشی توسط یک مدیرعامل برجسته نشان‌دهندهٔ تمایل به تعامل مستقیم با کاربران است. این اقدام می‌تواند به افزایش شفافیت و ارتباط نزدیک‌تر بین رهبری شرکت‌های فناوری و جامعهٔ دیجیتال منجر شود. همچنین، نشان می‌دهد که حتی افراد برجسته نیز می‌توانند به پیشنهادهای سادهٔ کاربران پاسخ دهند.",
       "link": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxPQUREUUJSazAwVlNSaVhrbVRzcUtRX1k2MDlmektwMW5fS0hhTUJkMXlPQUFWR1RnY0ctbnhsS1JsMlNKMHRLaWg2Y0pFNDR2WkV0WW5ZdDhDMWh1cVFGaExCQ3psb2M1aFpwd2lIYVhrdkFmODAwNlFvZklDeWNZY0ptUXRaakh6c1FhU2dlNWRRMnlSRHE5UnNTWVRGM3RqYTRFU2pwT29XSXpZYXFnUmdob3VpSmlnemtRMmpmY2NKNnNkTDRIRjg1MHJ0aWlLa2QtS2YwS0YxNlJmV1hKeGx2Rm1tcTlLbklmYtIB8gFBVV95cUxPMzhCYmJ6cU92NDVkb3ZBV3hsenQ0WTFiM3dGTk44eFZpaVQ3Q216aDdQOXZRdUVlTFJ3ZzhiX1JXY0piZW42Ty0zb1VUTmdKVXRJYmszU0J0TkhkczVUaFdPUUZtRkJwTnhxTDI1emRBUnRCZzBnLVAwblhxLVYtaW9Zc0ZxWlhRTU5OUTlMUTlMbFo5cEI2Y3FQN01kMURXOHJQdEhMdnZwU0RhX21nN0NuQjZYcmNYRTdLR1JZLUxUTmg4WDlJelNPNU4xS1F2ZC1QN2VVOVFrUU9jNDlfdU5GZ1Z4Vll3YkZETXdteTZRQQ?oc=5",
       "posted_at": 1793870425
+    },
+    "-1004482051328:2304": {
+      "chat_id": -1004482051328,
+      "message_id": 2304,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "روزی که تلفن رابرت موزس رینگ نکرد",
+      "summary": "در این قسمت از مصاحبه، Dwarkesh Patel به کتاب «The Day Robert Moses’ Phone Stopped Ringing» اثر Robert Caro می‌پردازد و توضیح می‌دهد کتاب چگونه به بررسی نقش رابرت موزس در شکل‌گیری زیرساخت‌های شهری نیویورک، از جمله ساخت بزرگراه‌ها و پارک‌ها می‌پردازد. Patel به قدرت سیاسی موزس، روش‌های پروژه‌محوری او و تأثیرات طولانی‌مدت این تصمیمات بر شهر اشاره می‌کند.",
+      "description": "Full episode: https://www.youtube.com/watch?v=f0J_EeW42Lo\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "درک چگونگی استفاده موزس از ابزارهای قانونی و مالی برای پیشبرد پروژه‌های بزرگ، به برنامه‌ریزان شهری امروز نشان می‌دهد که چگونه تمرکز قدرت می‌تواند مسیر توسعه شهری را تغییر دهد. این بینش می‌تواند به سیاست‌گذاران کمک کند تا سازوکارهای نظارتی و مشارکتی قوی‌تری برای جلوگیری از تصمیم‌گیری‌های یک‌جانبه در پروژه‌های زیرساختی ایجاد کنند.",
+      "link": "https://www.youtube.com/watch?v=5uCnoxImxbU",
+      "posted_at": 1793894510
+    },
+    "-1004482051328:2305": {
+      "chat_id": -1004482051328,
+      "message_id": 2305,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "AI همکاریکننده برای پیشفرضبندی ایمن لیست کار در تصاویر مغز بدون کنتراست",
+      "summary": "محققان یک سیستم AI همکاریکننده را برای پیشفرضبندی ایمن لیست کار در تصاویر مغز بدون کنتراست (NCCT) توسعه دادند. این سیستم از یک مدل پایه عمومی به نام BrainCT-CLIP که با روش پیشآموزش زبان-تصویر (CLIP) آموزش دیده است، و تشخیصدهندههای تجاری استفاده می‌کند. در یک بررسی چندمرکز از 2001 مورد در گروههای اضطراری و آسیبشناسی، سیستم همکاریکننده همه موارد قابل توجه را بازیابی کرد و 100 درصد حساسیت و ارزش پیشبینی منفی (NPV) داشت، در حالی که 18 درصد از موارد را پیشفرضبندی کرد. در مقایسه، تشخیصدهندههای تجاری تنها 15 مورد را بازیابی کردند و 16 مورد نادرست را از دست دادند.",
+      "why_it_matters": "این سیستم می‌تواند به کاهش بار کاری رادیولوژیستها کمک کند، در حالی که حساسیت بالا برای تشخیصهای مهم را حفظ می‌کند. این یافتهها نشان می‌دهد که استفاده از مدل‌های پایه عمومی و تخصصی می‌تواند به بهبود ایمنی و کارایی در تصاویر پزشکی کمک کند.",
+      "link": "https://www.nature.com/articles/s41746-026-03447-y",
+      "posted_at": 1793894513
+    },
+    "-1004482051328:2306": {
+      "chat_id": -1004482051328,
+      "message_id": 2306,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "TechCrunch",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "استارتاپ Discovered Materials با سرمایهگذاری یکمیلیون دلاری برای حل پنج چالش اصلی علم مواد در زمینه هوش مصنوعی",
+      "summary": "استارتاپ Discovered Materials که در دورهٔ بهار 2026 Y Combinator قرار دارد، برای هریک از پنج مسألهٔ باز در علم مواد که به پیشرفت هوش مصنوعی مرتبط هستند، جایزهٔ ۲۰۰ هزار دلاری در مجموع یکمیلیون دلار اعلام کرد. این مسألهها شامل نظریهای برای توضیح ابررسانایی کوپرات، روش عددی پیشبینی ساختارهای رابط سیلیکون/سیلیکوندیاکسید، روش عددی نقشهبرداری ساختار دانهای به خواص حرارتی، نظریهای برای اثر نور بر رفتار مواد و بهبود روش چگالی تابعی (Density Functional Theory) می‌شود. شرکت با استفاده از مدل‌های پیشرفتهٔ هوش مصنوعی این چالشها را آزمایش کرد، اما پیشرفت قابلتوجهی حاصل نشد؛ بنابراین هدف ایجاد معیارهای سنجش پیشرفت مدلهاست. مشاوران علمی شامل اساتید برجستهٔ دانشگاههای جهانی بودهاند که این مسألهها را تعریف کردند.",
+      "why_it_matters": "حل این چالشها می‌تواند درک فیزیکی پدیدههای پیچیدهٔ مواد را گسترش دهد و مستقیماً بر طراحی نیمههادیهای پیشرفته، ذخیرهسازی انرژی و تولید مواد آینده تأثیر بگذارد. ارائهٔ جایزهٔ مالی بهعنوان نقطهٔ عطف، انگیزهٔ پژوهشگران و تیمهای هوش مصنوعی را برای تمرکز بر بهبود مدل‌های فیزیکی و عددی فراهم می‌کند. موفقیت در این حوزه نشانگر توانایی مدل‌های هوش مصنوعی در حل مسائل فیزیکی پیچیده است و می‌تواند مسیر پیشرفتهای صنعتی و علمی را تسریع کند.",
+      "link": "https://techcrunch.com/2026/11/05/a-yc-startup-is-putting-1m-behind-five-unsolved-materials-science-problems-for-ai/",
+      "posted_at": 1793894732
     }
   }
 }

@@ -6,22 +6,16 @@
       "last_error": "auth",
       "last_success": 0
     },
-    "openrouter:google/gemma-4-31b-it:free": {
-      "failures": 1,
-      "disabled_until": 1793924390.076,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1793924390.076,
+      "disabled_until": 1793960293.765,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
       "failures": 1,
-      "disabled_until": 1793924390.076,
-      "last_error": "quota",
+      "disabled_until": 1793978293.765,
+      "last_error": "model",
       "last_success": 0
     }
   },
@@ -35,19 +29,14 @@
       "failures": 1,
       "disabled_until": 1793956826.364,
       "last_error": "wallet"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1793942390.076,
-      "last_error": "quota"
     }
   },
-  "updated_at": 1793920790.0760937,
+  "updated_at": 1793956693.7648501,
   "version": 1,
   "telemetry": {
-    "observed_failures": 51,
-    "observed_events": 75,
-    "updated_at": 1793920790.0760937
+    "observed_failures": 9,
+    "observed_events": 32,
+    "updated_at": 1793956693.7648501
   },
   "observed_failures": 0,
   "observed_events": 0

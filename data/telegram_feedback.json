@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794062721,
+  "updated_at": 1794079467,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23089,6 +23089,43 @@
       "why_it_matters": "رویکرد آمودی به ایمنی مدل‌های زبانی بزرگ می‌تواند به کاهش خطر خروج‌های ناخواسته در کاربردهای تجاری منجر شود. استفاده از اصول ریاضی و آزمون‌های استرس‌پذیری به شرکت‌ها امکان می‌دهد پیش از استقرار مدل‌ها، سناریوهای حاشیه‌ای را شناسایی و اصلاح کنند. این روش‌ها می‌توانند استانداردهای جدیدی برای توسعه مسئولانه هوش مصنوعی ایجاد کنند.",
       "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNQzc5ME9TaVQ4MWd2dlgyempENHN0eTRwRDZ0NmN1Vlo3OTRLQWpIdjVsRDVJSnFTSGlyWlJzamtaelVoTHpuSnVITlpuT0VLUnFKUlZpOWFWb2V5UUdyVk5EU3lYb1BwSzFBQ2c0TDNZY3pmcXZFTkM4MXpscEk4V3pR?oc=5",
       "posted_at": 1794062720
+    },
+    "-1004482051328:2332": {
+      "chat_id": -1004482051328,
+      "message_id": 2332,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Science Festival",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "ادعای OpenAI درباره اثبات ریاضی نظریه یانگ‑میلز با هوش مصنوعی",
+      "summary": "OpenAI ادعا می‌کند مدل‌های هوش مصنوعی آن شرکت، بخش اصلی نظریه یانگ‑میلز در مدل استاندارد ذرات را به‌صورت ریاضی معتبر اثبات کرده‌اند. این ادعا بر این استوار است که مدل‌ها گام‌های ریاضی مورد نیاز برای رسیدن به نتایج دقیق مدل را تکمیل کرده‌اند. بررسی این ادعا توسط برایان گرین نشان می‌دهد که بخش اول مسئله هزاره‌ساله یانگ‑میلز پوشش داده شده، اما بخش دوم، یعنی مسئله فاصله جرم، هنوز در انتظار بررسی نهایی است.",
+      "description": "Has AI tackled a problem in physics that has been open for more than half-a-century? It seems so. Brian Greene explains OpenAI’s claim that a dominant component of the Standard Model of Particle Physics – so called, Yang-Mills Gauge Theory – has now been proven mathematically sound.\n\nFor decades, physicists have used the equations of the Standard Model to make exquisitely precise predictions, borne out by a mountain of experimental results. But getting to these results has required intermediate steps of questionable mathematical rigor. OpenAI says its models have now filled in the missing math, finally placing years of calculations on a firm mathematical footing, and addressing half of a million-dollar Millennium Prize problem. Brian walks through what that proof covers, what still sits with the review committee, and why the other half of the million-dollar problem, the Mass Gap problem, remains open.\n\nThis program is part of the Rethinking Reality series, supported by the John Templeton Foundation. \n\nABOUT WORLD SCIENCE FESTIVAL: \nThe World Science Festival (WSF) is a multimedia organization bringing the most transformative ideas in science to global audiences. Through long- and short-form videos spanning physics, cosmology, quantum mechanics, biology, neuroscience, consciousness, medicine, space exploration, the dilemma of free will, artificial intelligence, engineering, robotics, and beyond. WSF gathers world-renowned scientists, artists, and thinkers for dynamic discussions, debates, lectures, performances, films, and immersive live experiences. \n\nFounded in 2008 and headquartered in New York City, the World Science Festival is a production of the World Science Foundation, a 501(c)(3) nonprofit organization. Our mission is to cultivate a public informed by science, inspired by its wonder, convinced of its value, and prepared to engage with its implications for the future. With live events reaching millions worldwide and hundreds of millions of digital views, WSF continues to expand its global impact through festivals, educational initiatives like World Science U, and digital content that explores the near and far future of our world. \n\nFOLLOW WORLD SCIENCE FESTIVAL:\nWebsite: https://worldsciencefestival.com/\nInstagram: https://www.instagram.com/worldscifest/\nTikTok: https://www.tiktok.com/@worldscifest\nX(Twitter): https://twitter.com/worldscifest\nFacebook: https://www.facebook.com/worldsciencefestival\nLinkedIn: https://www.linkedin.com/company/world-science-festival\n\nHas AI cracked a Half-Century-Old Problem in Physics? | World Science Festival\nhttps://www.youtube.com/channel/UCShHFwKyhcDo3g7hr4f1R8A\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube. artificial intelligence",
+      "why_it_matters": "تأیید ریاضی نظریه یانگ‑میلز می‌تواند پایه‌های نظری فیزیک ذرات را از محاسبات عددی به چارچوبی دقیق‌تر منتقل کند. این پیشرفت نشان می‌دهد که هوش مصنوعی می‌تواند در حل مسائل بنیادی ریاضی‑فیزیکی نقش داشته باشد، هرچند پذیرش علمی آن به ارزیابی دقیق جامعه متخصصان بستگی دارد.",
+      "link": "https://www.youtube.com/watch?v=sfKc2uoA9pA",
+      "posted_at": 1794079464
+    },
+    "-1004482051328:2333": {
+      "chat_id": -1004482051328,
+      "message_id": 2333,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "The Verge - AI",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "Muse AI متا امکان ساخت «فضاهای» سفارشی داخل برنامه را فراهم کرد",
+      "summary": "Meta با معرفی قابلیت «spaces» در دستیار هوش مصنوعی Muse، به کاربران اجازه می‌دهد با توصیف یک ایده، داشبوردهای شخصی‌سازی‌شده مانند مرکز خرید، برنامه‌ریز مدرسه یا ردیاب موسیقی بسازند. این فضاها می‌توانند با برنامه‌های خارجی مانند Gmail، Google Calendar یا Notion همگام شوند و اطلاعاتی چون قیمت‌ها یا تاریخ‌ها را به‌صورت خودکار به‌روز کنند. کاربران می‌توانند محتوا را ویرایش، یادداشت اضافه یا موارد را علامت‌گذاری کنند و محل نمایش فضاها را در نوار کناری یا تب اصلی تنظیم نمایند. قابلیت‌های جدید «Active Memory» و «Active Focus» نیز به Muse اضافه شده تا بتواند اطلاعات گذشته را در زمان مناسب به‌کار گیرد و هدف‌گذاری بهتری داشته باشد.",
+      "why_it_matters": "این قابلیت، تجربه کاربری را از یک دستیار متنی ساده به یک محیط کاری ترکیبی تبدیل می‌کند و امکان یکپارچه‌سازی داده‌های چندمنبعی را در یک رابط تعاملی فراهم می‌آورد. با به‌روزرسانی خودکار اطلاعات، کاربران می‌توانند تصمیم‌گیری‌های سریع‌تری داشته باشند و زمان صرف شده برای جستجو و ورود داده‌ها کاهش یابد. همچنین، ویژگی‌های «Active Memory» و «Active Focus» می‌توانند تعاملات طولانی‌مدت و پروژه‌های هدفمند را بهبود بخشند، که برای کاربران حرفه‌ای و تیم‌های همکاری مهم است.",
+      "link": "https://www.theverge.com/tech/1028871/meta-muse-ai-spaces",
+      "posted_at": 1794079467
     }
   }
 }

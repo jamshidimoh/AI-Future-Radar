@@ -1,15 +1,9 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 26,
-      "disabled_until": 1794149122.113,
+      "failures": 27,
+      "disabled_until": 1794165868.511,
       "last_error": "auth",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1794066322.113,
-      "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
@@ -18,31 +12,60 @@
       "last_error": "model",
       "last_success": 0
     },
+    "groq:openai/gpt-oss-120b": {
+      "failures": 1,
+      "disabled_until": 1794083068.511,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1794066322.113,
+      "disabled_until": 1794083068.511,
       "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "kiraai:qwen3.8-flash": {
+      "failures": 1,
+      "disabled_until": 1794083068.511,
+      "last_error": "quota",
+      "last_success": 0
+    },
+    "groq:openai/gpt-oss-20b": {
+      "failures": 1,
+      "disabled_until": 1794083068.511,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
+      "failures": 1,
+      "disabled_until": 1794083068.511,
+      "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 26,
-      "disabled_until": 1794149122.113,
+      "failures": 27,
+      "disabled_until": 1794165868.511,
       "last_error": "auth"
     },
     "kiraai": {
       "failures": 1,
-      "disabled_until": 1794066827.838,
+      "disabled_until": 1794165868.511,
       "last_error": "wallet"
+    },
+    "openrouter": {
+      "failures": 1,
+      "disabled_until": 1794101068.511,
+      "last_error": "quota"
     }
   },
-  "updated_at": 1794062722.1126888,
+  "updated_at": 1794079468.51083,
   "version": 1,
   "telemetry": {
-    "observed_failures": 16,
-    "observed_events": 38,
-    "updated_at": 1794062722.1126888
+    "observed_failures": 92,
+    "observed_events": 119,
+    "updated_at": 1794079468.51083
   },
   "observed_failures": 0,
   "observed_events": 0

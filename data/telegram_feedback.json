@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794039840,
+  "updated_at": 1794062721,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23068,6 +23068,27 @@
       "why_it_matters": "برگزاری این سخنرانی توسط یک پژوهشگر برجسته، نشان‌دهندهٔ توجه دانشگاه به پیشبرد مطالعات آگاهی در علوم شناختی است. این رویداد می‌تواند فرصت‌های همکاری بین‌المللی و تبادل دانش برای پژوهشگران و دانشجویان فراهم کند و به ارتقای شناخت عمومی از مباحث پیچیدهٔ ذهن کمک نماید.",
       "link": "https://news.google.com/rss/articles/CBMid0FVX3lxTE40alFHaE9Qd1p4ZDBmWmlTTTVFRHFNR1FKRkZPREtqU3VxX09nbEZzOTJJdEFSc0hKNXVwa0ZiNHNRSlhsNHlTOUdHa2dvbHRkS2w3Q2RXTmduNzBKNGNtbzZrcHozOW12dWhDZHYxZHdIemVBd0NZ?oc=5",
       "posted_at": 1794039812
+    },
+    "-1004482051328:2331": {
+      "chat_id": -1004482051328,
+      "message_id": 2331,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The New York Times)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "person_name": "Dario Amodei",
+      "people_lane": true,
+      "title": "چه عواملی دیدگاه‌های داریو آمودی، مدیرعامل Anthropic، درباره هوش مصنوعی را شکل داد؟",
+      "summary": "داریو آمودی در مصاحبه‌ای با نیویورک تایمز درباره مسیر شغلی خود صحبت کرد. او اشاره کرد که پیش از تأسیس Anthropic در OpenAI کار کرده و در طول آن دوره با چالش‌های کنترل رفتار مدل‌های زبانی بزرگ مواجه شد. پس از ترک OpenAI، تیم او بر توسعه پروتکل‌های ایمنی مبتنی بر اصول ریاضی و انجام آزمون‌های استرس‌پذیری برای پیش‌بینی رفتارهای ناخواسته مدل‌ها تمرکز کرد.",
+      "why_it_matters": "رویکرد آمودی به ایمنی مدل‌های زبانی بزرگ می‌تواند به کاهش خطر خروج‌های ناخواسته در کاربردهای تجاری منجر شود. استفاده از اصول ریاضی و آزمون‌های استرس‌پذیری به شرکت‌ها امکان می‌دهد پیش از استقرار مدل‌ها، سناریوهای حاشیه‌ای را شناسایی و اصلاح کنند. این روش‌ها می‌توانند استانداردهای جدیدی برای توسعه مسئولانه هوش مصنوعی ایجاد کنند.",
+      "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNQzc5ME9TaVQ4MWd2dlgyempENHN0eTRwRDZ0NmN1Vlo3OTRLQWpIdjVsRDVJSnFTSGlyWlJzamtaelVoTHpuSnVITlpuT0VLUnFKUlZpOWFWb2V5UUdyVk5EU3lYb1BwSzFBQ2c0TDNZY3pmcXZFTkM4MXpscEk4V3pR?oc=5",
+      "posted_at": 1794062720
     }
   }
 }

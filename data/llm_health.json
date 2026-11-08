@@ -1,53 +1,59 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 30,
-      "disabled_until": 1794235648.169,
+      "failures": 31,
+      "disabled_until": 1794261081.55,
       "last_error": "auth",
       "last_success": 0
     },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
+    "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1794152848.169,
+      "disabled_until": 1794178281.55,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "openrouter:google/gemma-4-31b-it:free": {
+    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
       "failures": 1,
-      "disabled_until": 1794152848.169,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free": {
-      "failures": 1,
-      "disabled_until": 1794152848.169,
+      "disabled_until": 1794178281.55,
       "last_error": "quota",
+      "last_success": 0
+    },
+    "kiraai:kira-mini-1.0": {
+      "failures": 1,
+      "disabled_until": 1794178281.55,
+      "last_error": "quota",
+      "last_success": 0
+    },
+    "groq:openai/gpt-oss-20b": {
+      "failures": 1,
+      "disabled_until": 1794178281.55,
+      "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 30,
-      "disabled_until": 1794235648.169,
+      "failures": 31,
+      "disabled_until": 1794261081.55,
       "last_error": "auth"
-    },
-    "kiraai": {
-      "failures": 1,
-      "disabled_until": 1794165868.511,
-      "last_error": "wallet"
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1794170848.169,
+      "disabled_until": 1794196281.55,
       "last_error": "quota"
+    },
+    "kiraai": {
+      "failures": 1,
+      "disabled_until": 1794261081.55,
+      "last_error": "wallet"
     }
   },
-  "updated_at": 1794149248.1689336,
+  "updated_at": 1794174681.5499399,
   "version": 1,
   "telemetry": {
-    "observed_failures": 79,
-    "observed_events": 116,
-    "updated_at": 1794149248.1689336
+    "observed_failures": 18,
+    "observed_events": 32,
+    "updated_at": 1794174681.5499399
   },
   "observed_failures": 0,
   "observed_events": 0

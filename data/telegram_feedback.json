@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794093164,
+  "updated_at": 1794127658,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23163,6 +23163,44 @@
       "why_it_matters": "پراکندگی سرمایه‌گذاری می‌تواند فشار بر بازار داده‌مرکزها را کاهش دهد و ریسک ایجاد حباب سرمایه‌گذاری در هوش مصنوعی را کم کند. همچنین حذف پروژه‌های ناپایدار می‌تواند منابع را به برنامه‌های پایدارتر هدایت کند، اگرچه ممکن است سرعت پیشرفت فناوری تحت تأثیر قرار گیرد.",
       "link": "https://www.techmeme.com/261107/p11#a261107p11",
       "posted_at": 1794093164
+    },
+    "-1004482051328:2336": {
+      "chat_id": -1004482051328,
+      "message_id": 2336,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "The Cognitive Revolution",
+      "content_type": "interviews_podcasts",
+      "category": "ai_innovators_experts",
+      "leader": "",
+      "title": "هوش مصنوعی: سرعت پیشرفت نگرانکننده، پیشبینی انتخابات و معامله GPU",
+      "summary": "نثن لابنز و پرکاش ناراینان در مصاحبهای با مهمانان خود، برایان ژو از Thoughtful، مایک سان میگل از Luxor Technology و برایان بیشوف از Theory Ventures، به بررسی شواهد سرعت پیشرفت سریع هوش مصنوعی میپردازند. مهمانان درباره عملکرد عامل‌های پیشرو در معامله با پول واقعی در پیشبینی انتخابات میانهروزی صحبت می‌کنند و چالشهای فیزیکی و مقرراتی که معاملات ثانویه GPU را شکل می‌دهند را بررسی می‌کنند. همچنین، نحوه استفاده از هزاران اجرای عامل توسط شرکت‌های سرمایهگذاری برای شناسایی آلفا مورد بحث قرار می‌گیرد. میزبانان با توجه به ارزیابی METR و فایلهای ثبتشده توسط Anthropic، به بررسی این موضوع میپردازند که آیا آزمایشگاههای پیشرو در حال پیشرفت سریع و تحت تأثیر هوش مصنوعی هستند که ممکن است از نظارت انسانی پیشی بگیرد. در نهایت، مهمانان به چالشهای حاکمیت بر سیستمهای خودمختار پیشرفته و سرعت پیشرفت آنها میپردازند.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این مصاحبه به درک سرعت پیشرفت هوش مصنوعی و چالشهای مربوط به آن کمک می‌کند. همچنین، به بررسی نحوه استفاده از هوش مصنوعی در پیشبینی انتخابات و معاملات مالی میپردازد. این موضوعات اهمیت زیادی در زمینههای مختلف از جمله سیاست، اقتصاد و فناوری دارند. همچنین، به درک چگونگی استفاده از هوش مصنوعی در سرمایهگذاری و چالشهای حاکمیت بر سیستمهای خودمختار پیشرفته میپردازد.",
+      "link": "https://www.cognitiverevolution.ai/ai-am-is-this-the-ai-we-want-alarming-acceleration-ai-election-bets-gpu-trading-ai-native-vc/",
+      "posted_at": 1794127655
+    },
+    "-1004482051328:2337": {
+      "chat_id": -1004482051328,
+      "message_id": 2337,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - 80,000 Hours",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "پادکست 80,000 Hours: ۱۰ قسمت منتخب دربارهٔ هوش مصنوعی و تحول آن",
+      "summary": "80,000 Hours مجموعه‌ای از ۱۰ قسمت پادکست جدید منتشر کرد که به بررسی هوش مصنوعی، AGI و سوپرهوش می‌پردازد. در این قسمت‌ها به فشرده‌سازی یک قرن پیشرفت علمی به یک دهه، فریب مدل‌ها توسط تکنیک‌های آموزشی مدرن، تغییرات اقتصادی‑ژئوپولیتیکی ناشی از هوش فوق‌العاده، تنش بین سوپرهوش و دموکراسی، رقابت تسلیحات هوش مصنوعی میان ایالات متحده و چین، و تأثیر هوش مصنوعی بر ریسک‌های همه‌گیری و سلاح‌های زیستی پرداخته می‌شود. همچنین یک قسمت راهنمای عملی برای تغییر مسیر شغلی به حوزهٔ هوش مصنوعی ارائه می‌دهد. علاقه‌مندان می‌توانند این قسمت‌ها را از فهرست پادکست YouTube یا با ثبت‌نام ایمیلی هفتگی دریافت کنند.",
+      "description": "We make _a lot_ of episodes about AI these days. We recently picked out the best 10 episodes of the show to really help deepen your understanding of AI and AGI and superintelligence and recursive self-improvement — and the impact all of those things might have.\n\nWe aimed for episodes that were entertaining as well as highly informative, and tried to choose 10 that didn't overlap too much, so between them could cover most of the core issues. \n\nYou can find them all now in a feed called The 80,000 Hours Podcast on Artificial Intelligence:\nhttps://www.youtube.com/playlist?list=PL-BRtcBm4Yj51FAtGx3nPqjJj9N19FJzZ\n\nAnd at https://80000hours.org/AIpod, you can sign up to get one of them sent to your email each week for 10 weeks — plus one week with our bonus episodes of article readings and how to pivot your career into AI.\n\nAcross the 10 core episodes, you will learn:\n• How AI could compress a century of intellectual progress into a decade\n• Why today's training techniques actively encourage models to lie to us\n• How the economy and geopolitics will shift in response to superhuman AI, and indeed are shifting already in response to superhuman AI\n• How superintelligent AI is in serious tension with maintaining democracy\nthe real nature of the AI arms race between the US and China\n• How AI shifts the risks of pandemics and bioweapons over time\nhow to think about AI consciousness and welfare and whether it matters, and the scramble to understand what AI models are really thinking about deep down.\n\nIf you're also looking to change your career to work in AI, we close out with an episode that lays out dozens of valuable concrete projects that need people to work on them right now, and an interview with the founder of 80,000 Hours explaining how to redirect your career towards this kind of work.\n\nLearn more about what you can do to help: https://80000hours.org/ai/\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube. artificial intelligence",
+      "why_it_matters": "این مجموعه به افراد امکان می‌دهد تا با دیدی علمی و انتقادی به پیامدهای اقتصادی، سیاسی و امنیتی هوش مصنوعی نگریسته و تصمیمات آگاهانه‌تری دربارهٔ مشارکت در پروژه‌های هوش مصنوعی یا تغییر مسیر شغلی اتخاذ کنند. شناخت روش‌های فریب مدل‌ها می‌تواند به بهبود ارزیابی و توسعه مدل‌های شفاف‌تر کمک کند.",
+      "link": "https://www.youtube.com/watch?v=kHbAPjLezzA",
+      "posted_at": 1794127657
     }
   }
 }

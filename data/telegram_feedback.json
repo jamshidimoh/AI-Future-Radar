@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794127658,
+  "updated_at": 1794149247,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23201,6 +23201,44 @@
       "why_it_matters": "این مجموعه به افراد امکان می‌دهد تا با دیدی علمی و انتقادی به پیامدهای اقتصادی، سیاسی و امنیتی هوش مصنوعی نگریسته و تصمیمات آگاهانه‌تری دربارهٔ مشارکت در پروژه‌های هوش مصنوعی یا تغییر مسیر شغلی اتخاذ کنند. شناخت روش‌های فریب مدل‌ها می‌تواند به بهبود ارزیابی و توسعه مدل‌های شفاف‌تر کمک کند.",
       "link": "https://www.youtube.com/watch?v=kHbAPjLezzA",
       "posted_at": 1794127657
+    },
+    "-1004482051328:2338": {
+      "chat_id": -1004482051328,
+      "message_id": 2338,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "مصاحبه‌ای با Dwarkesh Patel منتشر شد",
+      "summary": "در این مصاحبهٔ یوتیوبی، Dwarkesh Patel به بررسی کتاب «How to Get Someone to Tell You the Truth» اثر Robert Caro می‌پردازد و سه روش کلیدی برای استخراج حقیقت را شرح می‌دهد: ایجاد اعتماد اولیه، پرسیدن سؤال‌های باز و پیگیری جزئیات با سؤال‌های تکمیلی. Patel نمونه‌های واقعی از مصاحبه‌های سیاسی و تجاری را که با این تکنیک‌ها موفق به دریافت پاسخ‌های صادقانه شده‌اند، بیان می‌کند. همچنین او محدودیت‌های این روش‌ها را در مواجهه با افراد مقاوم یا در محیط‌های دیجیتال اشاره می‌کند.",
+      "description": "Full episode: https://www.youtube.com/watch?v=f0J_EeW42Lo\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "اعتمادسازی و سؤال‌های باز می‌توانند دقت گزارش‌های خبری را افزایش دهند؛ وقتی خبرنگاران این روش‌ها را به کار ببرند، احتمال انتشار اطلاعات نادرست کاهش می‌یابد. در حوزهٔ هوش مصنوعی، الگوریتم‌های تشخیص حقیقت می‌توانند با مدل‌سازی این الگوهای گفتاری، توانایی شناسایی ادعاهای نادرست را بهبود بخشند. بنابراین، ترکیب روش‌های انسانی کارآمد با ابزارهای AI می‌تواند زیرساخت‌های اعتبارسنجی اطلاعات را تقویت کند.",
+      "link": "https://www.youtube.com/watch?v=HOc77LTkt94",
+      "posted_at": 1794149244
+    },
+    "-1004482051328:2339": {
+      "chat_id": -1004482051328,
+      "message_id": 2339,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (X)",
+      "content_type": "social_post",
+      "category": "ai",
+      "leader": "Andrej Karpathy",
+      "watch_person": "Andrej Karpathy",
+      "title": "کارپاتی و HackerTube: انتخاب هوشمند بهترین ویدیوهای Hacker News",
+      "summary": "مقالهٔ گوگل نیوز گزارش می‌کند که HackerTube با استفاده از هوش مصنوعی، بهترین ویدیوهای مطرح در Hacker News را انتخاب می‌کند. این سرویس به‌صورت خودکار محتوا را فیلتر و نمایش می‌دهد. اطلاعاتی در مورد الگوریتم یا معیارهای انتخاب در متن وجود ندارد.",
+      "why_it_matters": "استفاده از هوش مصنوعی برای فیلتر کردن محتوا می‌تواند زمان جستجو را برای کاربران کاهش دهد. این رویکرد نمونه‌ای از کاربردهای عملی هوش مصنوعی در پلتفرم‌های خبری است. موفقیت چنین سیستمی می‌تواند الگویی برای سایر سرویس‌های محتواگردی باشد.",
+      "link": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE5kQmxNNW9vbDdReFo0bW9VUER0aGhRNTd4ODg5NE40RUc2ZjI5R1dtS042cGRnZTU1QWhoSUtnLUUzLXRiaEhXQk82LS1HSEstdkRUeHJjcw?oc=5",
+      "posted_at": 1794149246
     }
   }
 }

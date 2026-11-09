@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794216047,
+  "updated_at": 1794248275,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23276,6 +23276,63 @@
       "why_it_matters": "این افزونه با اجباری کردن بازبینی مستقل قبل از نوشتن کد، خطر اشتباهات ناشی از فرضیات نادرست در مستندات را کاهش می‌دهد و می‌تواند کیفیت نرم‌افزارهای تولیدشده توسط هوش مصنوعی را ارتقا دهد. با استفاده از زیرعامل‌های بی‌سابقه، وابستگی به تاریخچه گفتگوهای قبلی حذف می‌شود و امکان ارزیابی دقیق‌تر طراحی فراهم می‌شود. اگرچه مصرف توکن بالا و عدم تضمین جداسازی کامل در برخی میزبان‌ها از معایب آن است، اما پذیرش وسیع توسط مهندسان گوگل نشان از کارایی عملی این روش دارد. در نهایت، EGM می‌تواند به عنوان چارچوبی استاندارد برای ترکیب طراحی مستندات و بازبینی خودکار در پروژه‌های کدنویسی هوش مصنوعی مورد استفاده قرار گیرد.",
       "link": "https://www.marktechpost.com/2026/11/08/google-elephant-goldfish-model-plugin-spec-review-coding-agents/",
       "posted_at": 1794174680
+    },
+    "-1004482051328:2342": {
+      "chat_id": -1004482051328,
+      "message_id": 2342,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - TED",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "AI Brain Fry Is Real – راهکارهای رهبری برای مقابله با خستگی ناشی از هوش مصنوعی",
+      "summary": "جولی بیدارد، مشاور هوش مصنوعی، در سخنرانی TED@BCG در ۱۷ اوت ۲۰۲۶ به پدیده «AI brain fry» می‌پردازد که ناشی از بازطراحی ناخواسته شغل‌ها توسط کارکنان با کمک هوش مصنوعی است. او تأکید می‌کند که اگرچه این تغییرات بهره‌وری را افزایش داده‌اند، اما مشکلات جدیدی نظیر خستگی شناختی و بار روانی برای کارکنان ایجاد کرده‌اند. بیدارد بر اساس تحقیقات جدید، سه حوزه کلیدی را برای رهبران سازمان‌ها شناسایی کرده تا بتوانند این تغییر را به‌صورت فعال مدیریت کنند. او معتقد است رهبران باید به‌جای واکنش‌دهی غیرفعال، شکل‌دهی استراتژیک به ادغام هوش مصنوعی را در اولویت قرار دهند.",
+      "description": "Workers everywhere are quietly redesigning their jobs around AI, boosting productivity but also creating new kinds of problems. AI advisor Julie Bedard thinks she has a fix. She shares new research on three areas for leaders to focus on — including how to avoid \"AI brain fry\" — and why we need to shape this change rather than let it happen to us. (Recorded at TED@BCG on August 17, 2026)\n\nJoin us in person at a TED conference: https://tedtalks.social/events\nBecome a TED Member to support our mission: https://ted.com/membership\nSubscribe to a TED newsletter: https://ted.com/newsletters\n\nFollow TED! \nInstagram: https://www.instagram.com/ted\nLinkedIn: https://www.linkedin.com/company/ted-conferences\nTikTok: https://www.tiktok.com/@tedtoks\nFacebook: https://facebook.com/TED\nX: https://www.twitter.com/TEDTalks\n\nThe TED Talks channel features the best talks and performances from the TED Conference, where the world's leading thinkers and doers give the talk of their lives in 18 minutes (or less) — plus originals, podcasts and exclusive content. Look for videos on Technology, Entertainment and Design as well as science, business, global issues, the arts and more. Visit https://TED.com for our entire library, transcripts, translations and personalized recommendations.\n\nWatch more: https://go.ted.com/juliebedard\n\nhttps://youtu.be/g3_TqjSLyLk\n\nTED videos may be used for non-commercial purposes under a Creative Commons License, Attribution–Non Commercial–No Derivatives (or the CC BY – NC – ND 4.0 International) and in accordance with the TED Talks Usage Policy: https://www.ted.com/about/our-organization/our-policies-terms/ted-talks-usage-policy. For more information on using TED for commercial purposes (e.g. employee learning, in a film or online course), submit a request at https://media-requests.ted.com\n\n#TED #TEDTalks #Business",
+      "why_it_matters": "بدون مدیریت فعال، ادغام هوش مصنوعی در فرآیندهای کاری می‌تواند به خستگی شدید کارکنان، کاهش خلاقیت و افزایش نرخ ترک کار منجر شود. رهبران که سه حوزه شناسایی‌شده را نادیده بگیرند، با کاهش بهره‌وری در درازمدت و 저항 فرهنگی در برابر فناوری روبرو خواهند شد. شکل‌دهی عمدی به این تحول، مزیت رقابتی پایدار ایجاد کرده و تضمین می‌کند که هوش مصنوعی ابزاری برای تقویت توانایی‌های انسانی باشد، نه جایگزینی که سلامت روان کارکنان را به خطر بیندازد.",
+      "link": "https://www.youtube.com/watch?v=g3_TqjSLyLk",
+      "posted_at": 1794248270
+    },
+    "-1004482051328:2343": {
+      "chat_id": -1004482051328,
+      "message_id": 2343,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Edge.org)",
+      "content_type": "interview",
+      "category": "mind",
+      "leader": "Susan Schneider",
+      "watch_person": "Susan Schneider",
+      "title": "مصاحبهٔ سوزان شنایدر دربارهٔ آیندهٔ ذهن",
+      "summary": "مقالهٔ \"The Future of the Mind\" در Edge.org به بررسی پیشرفت‌های علمی در حوزهٔ ذهن می‌پردازد. در متن، اشاره‌ای به انتشار مقاله در Google News و لینک مستقیم به آن وجود دارد. این منابع نشان می‌دهند که مقاله در حوزهٔ علمی و رسانه‌ای معتبر منتشر شده است.",
+      "why_it_matters": "توجه به این مقاله می‌تواند پژوهشگران را به بررسی تأثیرات فناوری‌های نوین بر شناخت و حافظه تشویق کند. انتشار آن در Google News نشان می‌دهد که موضوع به‌طور گسترده‌ای مورد توجه قرار گرفته و می‌تواند به شکل‌گیری سیاست‌های علمی و آموزشی کمک کند.",
+      "link": "https://news.google.com/rss/articles/CBMifEFVX3lxTE1WSzBQRVJYcDlrUjZCcjA1UHJOQ2p1ZzV0cng0UVpiaFlyLVRuZEtralpISTlQTDgxZDNpSUdrOElydkFWUDl4b1JYS3VUdjVtZWZUSXN4ckN4WGlhX2VoY3NXWjNKTllBMGYwaW9rV0h6UEVMSF9OWXBUWE8?oc=5",
+      "posted_at": 1794248272
+    },
+    "-1004482051328:2344": {
+      "chat_id": -1004482051328,
+      "message_id": 2344,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چالش‌های مقیاس‌پذیری انرژی‌های تجدیدپذیر در مسیر الکتریفیکیشن",
+      "summary": "در سال‌های اخیر، انرژی‌های تجدیدپذیر تنها یک سوم برق جهانی و ۱۴٪ از انرژی اولیه را تأمین می‌کنند. گزارش جدید World Economic Forum با عنوان *Enabling the Electricity Era: From Proven Solutions to Execution at Scale*، راهکارهایی برای گسترش سریع سیستم‌های برقی در مواجهه با تقاضای رو به رشد ناشی از الکتریفیکیشن، رشد صنعتی و زیرساخت‌های دیجیتال ارائه می‌دهد. چهار متخصص – Bruce Douglas (Global Renewables Alliance)، Chao Zhang (Ming Yang Smart Energy Group)، Georgios Stassis (PPC) و Gyanesh Chaudhary (Vikram Solar) – موانع فنی، مالی و ساختاری این روند را بررسی کردند. گزارش تأکید می‌کند که همکاری‌های عمومی‑خصوصی و ایجاد اعتماد برای اجرای سریع راه‌حل‌های اثبات‌شده ضروری است.",
+      "description": "The energy transition began three decades ago - and yet renewables still provide just a third of global electricity and 14% of the primary energy supply.\n\nSo what’s the hold-up?\n\nWe asked four experts: Bruce Douglas of the Global Renewables Alliance, Chao Zhang of Ming Yang Smart Energy Group, Georgios Stassis of PPC and Gyanesh Chaudhary of Vikram Solar.\n\nA new World Economic Forum report, Enabling the Electricity Era: From Proven Solutions to Execution at Scale, explores how power systems can scale fast enough to meet rapidly growing electricity demand driven by electrification, industrial growth and digital infrastructure. Read it here: https://www.weforum.org/publications/enabling-the-electricity-era-from-proven-solutions-to-execution-at-scale \n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "برای رسیدن به اهداف پایداری، سیستم‌های برقی باید به سرعت مقیاس‌پذیر شوند؛ در غیر این صورت، تقاضای برق در حال افزایش و زیرساخت‌های دیجیتال فشار بیشتری خواهند داشت. گزارش نشان می‌دهد که بدون اجرای سریع راه‌حل‌های مقیاس‌پذیر، محدودیت‌های فنی و مالی مانع از پوشش گسترده انرژی‌های تجدیدپذیر می‌شود. همکاری‌های بین‌المللی و چارچوب‌های مشترک می‌توانند این موانع را کاهش داده و سرعت انتقال به انرژی پاک را افزایش دهند.",
+      "link": "https://www.youtube.com/watch?v=rKoD_o8w7XE",
+      "posted_at": 1794248274
     }
   }
 }

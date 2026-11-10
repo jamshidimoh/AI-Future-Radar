@@ -1,40 +1,34 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 35,
-      "disabled_until": 1794388741.285,
+      "failures": 36,
+      "disabled_until": 1794413709.409,
       "last_error": "auth",
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 1,
-      "disabled_until": 1794305941.285,
+      "disabled_until": 1794330909.409,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1794305941.285,
+      "disabled_until": 1794330909.409,
       "last_error": "quota",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1794305941.285,
-      "last_error": "rate_limit",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1794305941.285,
+      "disabled_until": 1794330909.409,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 35,
-      "disabled_until": 1794388741.285,
+      "failures": 36,
+      "disabled_until": 1794413709.409,
       "last_error": "auth"
     },
     "kiraai": {
@@ -44,16 +38,16 @@
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1794323941.285,
+      "disabled_until": 1794348909.409,
       "last_error": "quota"
     }
   },
-  "updated_at": 1794302341.2851737,
+  "updated_at": 1794327309.4087214,
   "version": 1,
   "telemetry": {
-    "observed_failures": 50,
-    "observed_events": 62,
-    "updated_at": 1794302341.2851737
+    "observed_failures": 41,
+    "observed_events": 63,
+    "updated_at": 1794327309.4087214
   },
   "observed_failures": 0,
   "observed_events": 0

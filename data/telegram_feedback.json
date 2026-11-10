@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794302340,
+  "updated_at": 1794327308,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23450,6 +23450,24 @@
       "why_it_matters": "اگر یک فرد در رده‌های بالای یک شرکت فناوری بزرگ بیش از حد قدرتمند شود، امکان اعمال مسئولیت‌پذیری برای تصمیماتش کاهش می‌یابد. این وضعیت می‌تواند بر شفافیت مالی و اعتماد سرمایه‌گذاران تأثیر منفی بگذارد. بنابراین، بررسی قدرت جنسن هوانگ برای درک چگونگی حفظ تعادل بین رهبری و نظارت در Nvidia اهمیت دارد.",
       "link": "https://news.google.com/rss/articles/CBMirgFBVV95cUxNbGZ3TVBCRzZ4V013Q1FRNF9GX0d0Y2FGMWhrdFR1LUdfb0d6cklWWlNZSlE0VHRjb3dvNkxQUHM0TjhtV1VmODlaRWpOTWtFd0thWVNWUU5aSmVkcmlndjJmYkdhUi1Hcl9odVJPR3NOSm1RNmZheHRHNGV1WTlXbExSY2N4eGtyQVYwS0o4RzFVMkFFSmhPenU4V2ZMYm81RHRRcHI5R3NuUTB2MXc?oc=5",
       "posted_at": 1794279638
+    },
+    "-1004482051328:2351": {
+      "chat_id": -1004482051328,
+      "message_id": 2351,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "Path Robotics 300 میلیون دلار جذب کرد؛ ارزش‌گذاری به 2.45 میلیارد دلار رسید",
+      "summary": "شرکت Path Robotics، که نرم‌افزار روبات‌های تولید خودکار می‌سازد، در دور سری E مبلغ 300 میلیون دلار جمع‌آوری کرد. این سرمایه‌گذاری ارزش‌گذاری شرکت را به 2.45 میلیارد دلار ارتقا داد. پس از این دور، مجموع سرمایه‌گذاری‌های جذب‌شده حدود 610 میلیون دلار می‌شود.",
+      "why_it_matters": "سرمایه‌گذاری 300 میلیون دلاری به Path Robotics امکان می‌دهد تیم مهندسی و زیرساخت‌های پردازشی خود را گسترش دهد. این منابع می‌توانند به بهبود الگوریتم‌های هوش مصنوعی برای روبات‌های خودکار کمک کنند. بهبود این الگوریتم‌ها می‌تواند کارایی خطوط تولید را افزایش دهد و هزینه‌های تولید را کاهش دهد.",
+      "link": "https://www.techmeme.com/261110/p20#a261110p20",
+      "posted_at": 1794327307
     }
   }
 }

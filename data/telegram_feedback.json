@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794327308,
+  "updated_at": 1794350959,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23468,6 +23468,65 @@
       "why_it_matters": "سرمایه‌گذاری 300 میلیون دلاری به Path Robotics امکان می‌دهد تیم مهندسی و زیرساخت‌های پردازشی خود را گسترش دهد. این منابع می‌توانند به بهبود الگوریتم‌های هوش مصنوعی برای روبات‌های خودکار کمک کنند. بهبود این الگوریتم‌ها می‌تواند کارایی خطوط تولید را افزایش دهد و هزینه‌های تولید را کاهش دهد.",
       "link": "https://www.techmeme.com/261110/p20#a261110p20",
       "posted_at": 1794327307
+    },
+    "-1004482051328:2352": {
+      "chat_id": -1004482051328,
+      "message_id": 2352,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Seattle Times)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "طرح جاسوسی علیه جنسن هوانگ، مدیرعامل Nvidia، سوالاتی درباره آینده شرکت برانگیخت",
+      "summary": "مقاله در The Seattle Times به ادعای وجود یک طرح جاسوسی علیه جنسن هوانگ، مدیرعامل Nvidia، اشاره می‌کند. جزئیات دقیق درباره نحوهٔ اجرای طرح، افراد درگیر یا تأثیرات ملموس بر عملکرد Nvidia در متن موجود نیست.",
+      "why_it_matters": "اگر ادعای جاسوسی صحت داشته باشد، می‌تواند خطرات امنیتی جدی برای رهبری و داراییهای فکری Nvidia ایجاد کند. چنین تهدیدی ممکن است اعتماد سرمایهگذاران و شرکای تجاری را تحت فشار قرار دهد و استراتژیهای توسعهٔ فناوری‌های پیشرفته را به چالش بکشد. بنابراین، بررسی دقیق این ادعا برای ارزیابی ریسکهای امنیتی و حفظ موقعیت رقابتی Nvidia ضروری است.",
+      "link": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQNlNybVM1WjFmNUs1Qy1KNFJwVnJtZUJkbHU0SGFFNVFBSm1LT0NxOUk3WkY2OUVJY0RkZnlmTUZycnU0ZlVmOEpkZUFSRWRrSDlXV1Viazczc245ck9WZkZ5UjBCNHpTdUJjTGtUUXlyQm1US0NNVTZjMXRHcVdQQjBkRDFOWmlqLUNpYXAyS09JLTZfS3JDaEJBX2tQLU9kcVMtaENOV01iTnZ4U0ttWV81Y3FCUkJUMkJCbw?oc=5",
+      "posted_at": 1794350955
+    },
+    "-1004482051328:2353": {
+      "chat_id": -1004482051328,
+      "message_id": 2353,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "The Cognitive Revolution",
+      "content_type": "interviews_podcasts",
+      "category": "ai_innovators_experts",
+      "leader": "",
+      "title": "کرت تِجِس: تفسیرپذیری نوترونهای MLP در مدل‌های زبانی مدرن",
+      "summary": "کرت تِجِس، عضو تیم فنی Goodfire، در این گفت‌وگو توضیح می‌دهد که نوترونهای فردی MLP در مدل‌های زبانی مدرن قابل تفسیرتر و دارای محدودیت‌های عملکردی مشخص‌تری هستند. او با استفاده از یک عامل خودکار برای آزمایش فرضیه‌ها در معماری‌هایی مانند Qwen3.6-35B-A3B نشان می‌دهد که MLPهای گیتدار به‌عنوان ترکیبات منطقی خوانا و سیگنال‌های کنترل عمل می‌کنند و می‌توانند پراکندگی پویا گسترده‌ای داشته باشند بدون اینکه به‌طور ماندگاری بر معیارهای عملکردی تأثیر بگذارند. این پژوهش امکان شمارش مستقیم بسیاری از نمایش‌های داخلی را فراهم می‌کند و جایگزین عملی برای ابزارهای پیچیده بیرونی ارائه می‌دهد.",
+      "description": "artificial intelligence",
+      "why_it_matters": "درک بهتر ساختارهای داخلی مدل‌های زبانی می‌تواند به بهبود روش‌های نظارت بر رفتار و هدایت شخصیت مدل‌ها کمک کند. این رویکرد امکان استفاده از قابلیت‌های ذاتی معماری برای کنترل و دیباگ مدل‌ها را فراهم می‌آورد و می‌تواند فرآیندهای مرتبط با شفافیت و همراستایی را ساده‌تر سازد.",
+      "link": "https://www.cognitiverevolution.ai/the-neuron-basis-goodfire-s-curt-tigges-on-agentic-interp-monosemanticity-reverse-engineering/",
+      "posted_at": 1794350957
+    },
+    "-1004482051328:2354": {
+      "chat_id": -1004482051328,
+      "message_id": 2354,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "سکته فلسفه: دیدگاه سِیمن کریچلی دربارهٔ هیودگر و آیندهٔ فلسفه",
+      "summary": "سِیمن کریچلی در این گفت‌وگو به بررسی حاشیه‌های فلسفه می‌پردازد و تلاش می‌کند برداشت‌های پیچیدهٔ هیودگر را به زندگی روزمره نزدیک کند. او به تضعیف فلسفهٔ دانشگاهی اشاره می‌کند و نشان می‌دهد چگونه می‌توان فلسفه را به‌عنوان ابزاری برای درک وجود و زمان به‌کار برد. کریچلی در مسیر فکری خود، به‌جای پذیرش مشورت، مسیر خود را دنبال کرده و با تفسیر هیودگر، چارچوبی روشن برای فهم «Being and Time» ارائه می‌دهد. این گفت‌وگو به‌عنوان پلی میان متافیزیک، مِسْتِیسیسم و کاربردهای عملی فلسفه مطرح می‌شود.",
+      "description": "Simon Critchley discusses mysticism, Heidegger, and the future of philosophy\n\nWhat sits at the edges of philosophy?\n\nWith a free trial, you can watch the full talk NOW at https://iai.tv/video/mysticism-heidegger-and-the-future-of-philosophy-with-simon-critchley\n\nHeidegger can often appear to be an impenetrable and esoteric thinker, whose ideas have little bearing on real life. But Simon Critchley works to undo this perception and bring phenomenology to bear on the everyday. In this interview, Critchley takes us from the atrophy of academic philosophy all the way to what philosophy can and should be. After reflecting on his own intellectual journey, as one in which he “ignored advice”, he discusses Heidegger’s and thereby offers an enlightening interpretive frame to understand Being and Time.\n\n#philosophy #mysticism #heidegger \n\nSimon Critchley is a leading continental philosopher and Hans Jonas Professor at The New School for Social Research whose more than twenty books span ethics, tragedy, mysticism, and the meaning of life. Host of the Apply-degger podcast, he works to make Heidegger's philosophy more accessible.\n\nThe Institute of Art and Ideas features videos and articles from cutting edge thinkers discussing the ideas that are shaping the world, from metaphysics to string theory, technology to democracy, aesthetics to genetics. Subscribe today! https://iai.tv/subscribe?utm_source=YouTube&amp;utm_medium=description&amp;utm_campaign=[IAI TV URL]\n\nFor debates and talks: https://iai.tv \nFor articles: https://iai.tv/articles \nFor courses: https://iai.tv/iai-academy/courses",
+      "why_it_matters": "این گفتگو نشان می‌دهد که فلسفه می‌تواند فراتر از حوزهٔ دانشگاهی باشد و درک عمیق‌تری از وجود و زمان را در زندگی روزمره فراهم کند. کریچلی با بازنگری در آثار هیودگر، نشان می‌دهد که مفاهیم پیچیدهٔ فلسفی می‌توانند به‌صورت ملموس و کاربردی درک شوند. این رویکرد می‌تواند به‌عنوان یک الگوی جدید برای آموزش و پژوهش فلسفی در دورهٔ دیجیتال و پویا عمل کند. در نهایت، این دیدگاه می‌تواند به‌عنوان یک ابزار انتقادی برای تحلیل مسائل اخلاقی و اجتماعی در عصر فناوری‌های نوین مورد استفاده قرار گیرد.",
+      "link": "https://www.youtube.com/watch?v=TwNVNv_nSSo",
+      "posted_at": 1794350959
     }
   }
 }

@@ -1,60 +1,59 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 34,
-      "disabled_until": 1794366243.986,
+      "failures": 35,
+      "disabled_until": 1794388741.285,
       "last_error": "auth",
       "last_success": 0
     },
-    "kiraai:kira-mini-1.0": {
+    "groq:openai/gpt-oss-20b": {
       "failures": 1,
-      "disabled_until": 1794283443.986,
-      "last_error": "quota",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1794283443.986,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1794283443.986,
+      "disabled_until": 1794305941.285,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1794283443.986,
+      "disabled_until": 1794305941.285,
+      "last_error": "quota",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
+      "failures": 1,
+      "disabled_until": 1794305941.285,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free": {
+    "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1794283443.986,
+      "disabled_until": 1794305941.285,
       "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 34,
-      "disabled_until": 1794366243.986,
+      "failures": 35,
+      "disabled_until": 1794388741.285,
       "last_error": "auth"
     },
     "kiraai": {
       "failures": 1,
       "disabled_until": 1794366243.986,
       "last_error": "wallet"
+    },
+    "openrouter": {
+      "failures": 1,
+      "disabled_until": 1794323941.285,
+      "last_error": "quota"
     }
   },
-  "updated_at": 1794279843.9855926,
+  "updated_at": 1794302341.2851737,
   "version": 1,
   "telemetry": {
-    "observed_failures": 252,
-    "observed_events": 318,
-    "updated_at": 1794279843.9855926
+    "observed_failures": 50,
+    "observed_events": 62,
+    "updated_at": 1794302341.2851737
   },
   "observed_failures": 0,
   "observed_events": 0

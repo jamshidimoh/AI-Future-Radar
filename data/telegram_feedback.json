@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794350959,
+  "updated_at": 1794388126,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23527,6 +23527,44 @@
       "why_it_matters": "این گفتگو نشان می‌دهد که فلسفه می‌تواند فراتر از حوزهٔ دانشگاهی باشد و درک عمیق‌تری از وجود و زمان را در زندگی روزمره فراهم کند. کریچلی با بازنگری در آثار هیودگر، نشان می‌دهد که مفاهیم پیچیدهٔ فلسفی می‌توانند به‌صورت ملموس و کاربردی درک شوند. این رویکرد می‌تواند به‌عنوان یک الگوی جدید برای آموزش و پژوهش فلسفی در دورهٔ دیجیتال و پویا عمل کند. در نهایت، این دیدگاه می‌تواند به‌عنوان یک ابزار انتقادی برای تحلیل مسائل اخلاقی و اجتماعی در عصر فناوری‌های نوین مورد استفاده قرار گیرد.",
       "link": "https://www.youtube.com/watch?v=TwNVNv_nSSo",
       "posted_at": 1794350959
+    },
+    "-1004482051328:2355": {
+      "chat_id": -1004482051328,
+      "message_id": 2355,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - OpenAI",
+      "content_type": "official",
+      "category": "ai",
+      "leader": "",
+      "title": "OpenAI در وبینار رسمی به پرسش‌های کاربران درباره GPT‑Live پاسخ داد",
+      "summary": "OpenAI در ویدیوی وبینار رسمی خود به سؤالات توسعه‌دهندگان درباره سرویس GPT‑Live پرداخته، تفاوت آن را با مدل‌های صوتی پیشین مانند GPT Realtime توضیح داد و نکات عملی برای مقابله با نویز پس‌زمینه، ساخت صدای سفارشی، بهبود واگذاری ابزارها، جمع‌آوری پارامترهای فراخوانی ابزار و مدیریت زمینه واگذاری ارائه کرد. این راهنمایی‌ها برای برنامه‌نویسانی که قصد ساخت برنامه‌های تعاملی صوتی با GPT‑Live را دارند، مفید است.",
+      "description": "We’re answering the internet’s questions about GPT-Live, starting with how it’s different from earlier voice models and what developers are using it for. Already building with GPT-Live? We’ll share practical tips for customizing your agent’s voice and improving delegation.\n\nWhat else would you like to know about building with GPT-Live? Leave us a question in the comments!\n\nChapters\n00:00 Intro\n00:10 GPT Live vs. GPT Realtime\n02:22 Handling background noise\n03:06 Use cases\n03:38 Custom voices\n04:57 Improving delegation\n06:33 Collecting tool call parameters\n07:54 Managing delegation context\n\nLinks\nGPT Live prompting guide\nhttps://developers.openai.com/api/docs/guides/live-prompting\n\nBuilding with GPT-Live-1 and Cognition\nhttps://openai.com/business/learn/gpt-live-1-webinar/\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube. artificial intelligence",
+      "why_it_matters": "GPT‑Live امکان تعامل صوتی زمان واقعی با دقت بالاتر و قابلیت سفارشی‌سازی صدا را فراهم می‌کند؛ بنابراین می‌تواند دامنه کاربردهای هوش مصنوعی را به ربات‌های گفتگو، دستیاران شخصی و خدمات مشتری گسترش دهد. بهبود مدیریت نویز و واگذاری ابزارها کارایی سیستم‌های چندعامله را افزایش داده و موانع فنی پیاده‌سازی را کاهش می‌دهد، در حالی که راهنمایی‌های عملی زمان ورود به بازار برای توسعه‌دهندگان را کوتاه می‌کند. این فناوری هنوز در مرحله آزمایشی و محدود به کاربران تجاری است.",
+      "link": "https://www.youtube.com/watch?v=5YXlrzC_RYE",
+      "posted_at": 1794388123
+    },
+    "-1004482051328:2356": {
+      "chat_id": -1004482051328,
+      "message_id": 2356,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "زلزله ۱۹۸۵، نقطه عطف مسیر معماری آنتونیو گومز‑پالاسیو",
+      "summary": "Antonio Gómez‑Palacio، شریک و رئیس طراحی در Dialog، در سال ۱۹۸۵ هنگامی که زلزلهٔ مخرب مکزیک سیتی رخ داد، نوجوان بود و مقیاس تخریب را به‌صورت مستقیم مشاهده کرد. او بعدها این تجربه را به‌عنوان عامل شکل‌گیری انتخاب شغلی خود به‌عنوان معمار و برنامه‌ریز شهری شناخت. این دیدگاه او را به‌سوی درک چالش‌های اصلی شهرها—قابلیت‌پذیری مسکن، نابرابری اجتماعی و تغییرات اقلیمی—هدایت کرده است. در سال ۲۰۲۳، گومز‑پالاسیو به‌عنوان یکی از اعضای Davos Baukultur Alliance که توسط World Economic Forum و دولت سوئیس تأسیس شد، به تقویت محیط‌های ساخته‌شدهٔ پایدار و مقاوم می‌پردازد.",
+      "description": "Antonio Gómez-Palacio, Partner and Chair of design practice Dialog, was a teenager when a huge earthquake struck Mexico City in 1985. He saw first-hand the scale of destruction, and watched as the city rebuilt itself in the years that followed.\n\nOnly much later, he says, did he realise that this had been a formative experience in his choice of career as architect and urban planner. It has also informed the way he understands and responds to the biggest challenges facing #cities and their inhabitants today: affordability, social inequality and #climate change.\n\nThe Davos Baukultur Alliance, launched in 2023 as a partnership between the World Economic Forum and the Swiss Government, is dedicated to fostering a more vibrant and sustainable built environment. \n\nFind out more about its work here: https://www.davosalliance.org/home \n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "تجربهٔ زلزلهٔ ۱۹۸۵ باعث شد گومز‑پالاسیو به‌طور عملی به خطرات زیست‌محیطی و ساختاری شهرها پی ببرد و در طرح‌های خود ریسک‌های زلزله و تغییرات اقلیمی را کاهش دهد. این رویکرد در چارچوب Davos Baukultur Alliance به‌صورت مشترک بین‌المللی به‌کار گرفته می‌شود تا استانداردهای طراحی مقاوم و مقرون‌به‌صرفه را در شهرهای جهان ارتقا دهد. در نتیجه، سیاست‌گذاران شهری می‌توانند از نتایج این همکاری برای تدوین برنامه‌های شهری عادلانه و پایدار بهره‌مند شوند.",
+      "link": "https://www.youtube.com/watch?v=68q0sTvdAvg",
+      "posted_at": 1794388126
     }
   }
 }

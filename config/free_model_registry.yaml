@@ -19,8 +19,8 @@ registry:
     - id: nvidia/nemotron-3.5-super-vl:free
       health: healthy
       health_score: 100
-      catalog_score: 91.927
-      verified_at: '2026-11-11T10:57:23.771124+00:00'
+      catalog_score: 91.887
+      verified_at: '2026-11-12T11:08:37.243983+00:00'
     - id: deepseek/deepseek-v4-flash-0731:free
       health: healthy
       health_score: 100
@@ -29,8 +29,8 @@ registry:
     - id: baidu/ernie-5.5-flash-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 84.972
-      verified_at: '2026-11-11T10:57:23.771005+00:00'
+      catalog_score: 84.931
+      verified_at: '2026-11-12T11:08:37.243892+00:00'
     - id: minimax/minimax-m3.1-flash:free
       health: healthy
       health_score: 100
@@ -44,8 +44,8 @@ registry:
     - id: dots-studio/dots-3-note-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 72.054
-      verified_at: '2026-11-11T10:57:23.771155+00:00'
+      catalog_score: 72.013
+      verified_at: '2026-11-12T11:08:37.244009+00:00'
     - id: apodex/apodex-1.1-mini:free
       health: healthy
       health_score: 100
@@ -64,8 +64,8 @@ registry:
     - id: recursive/flint-v1.0:free
       health: healthy
       health_score: 100
-      catalog_score: 67.18
-      verified_at: '2026-11-11T10:57:23.771103+00:00'
+      catalog_score: 67.139
+      verified_at: '2026-11-12T11:08:37.243967+00:00'
     - id: xingchen-agi/xing4.0-29b-a4b:free
       health: healthy
       health_score: 100
@@ -93,8 +93,8 @@ registry:
       task_fit: 95
       health: healthy
       health_score: 100
-      catalog_score: 63.727
-      verified_at: '2026-11-11T10:57:23.771225+00:00'
+      catalog_score: 63.686
+      verified_at: '2026-11-12T11:08:37.244059+00:00'
     - priority: 6
       id: google/gemma-4-31b-it:free
       free: true
@@ -105,18 +105,18 @@ registry:
       task_fit: 98
       health: healthy
       health_score: 100
-      catalog_score: 63.69
-      verified_at: '2026-11-11T10:57:23.771246+00:00'
+      catalog_score: 63.649
+      verified_at: '2026-11-12T11:08:37.244073+00:00'
     - id: liquid/lfm-3-1.7b:free
       health: healthy
       health_score: 100
-      catalog_score: 63.222
-      verified_at: '2026-11-11T10:57:23.771080+00:00'
+      catalog_score: 63.181
+      verified_at: '2026-11-12T11:08:37.243926+00:00'
     - id: liquid/lfm-2.5-2.6b:free
       health: healthy
       health_score: 100
-      catalog_score: 53.731
-      verified_at: '2026-11-11T10:57:23.771178+00:00'
+      catalog_score: 53.691
+      verified_at: '2026-11-12T11:08:37.244023+00:00'
     - priority: 1
       id: nvidia/nemotron-3-ultra-550b-a55b:free
       free: true
@@ -281,4 +281,4 @@ registry:
     models: []
     reason: Dynamic discovery/emergency lane; never outranks quality-scored trusted
       models without evidence
-  last_refresh: '2026-11-11T10:57:23.771304+00:00'
+  last_refresh: '2026-11-12T11:08:37.244119+00:00'

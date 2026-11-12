@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794476364,
+  "updated_at": 1794501004,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23756,6 +23756,44 @@
       "why_it_matters": "درک عملکرد DNA غیرکدگذاری می‌تواند علل بیماری‌های پیچیده را آشکار کرده و نرخ شکست داروهای جدید در آزمایشات بالینی را کاهش دهد. AlphaGenome 2 با پیش‌بینی دقیق‌تر اثرات جهش‌ها در سطح تک‌سلولی، مسیر توسعه درمان‌های شخصی‌سازی‌شده را هموار می‌کند، اما استقرار عملیاتی آن نیازمند اعتبارسنجی گسترده‌تر است.",
       "link": "https://www.youtube.com/watch?v=uND6iY2qp_c",
       "posted_at": 1794476364
+    },
+    "-1004482051328:2367": {
+      "chat_id": -1004482051328,
+      "message_id": 2367,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "دنیس نوبِل: AI vs Bacteria",
+      "summary": "Denis Noble ارائه‌ای با عنوان «AI vs Bacteria» را در چارچوب Institute of Art and Ideas منتشر کرده است. این سخنرانی در وب‌سایت IAI.tv قرار دارد و می‌توان با استفاده از یک دورهٔ آزمایشی رایگان به آن دسترسی یافت. آدرس دقیق ویدیو https://iai.tv/video/consciousness-is-biologys-biggest-blunder است. برچسب‌های مرتبط شامل #ai، #artificialintelligence، #biology، #evolution، #Turing و #Darwin می‌شود. این نشانه‌ها نشان می‌دهند که موضوعات هوش مصنوعی، زیست‌شناسی و نظریه‌های تکاملی در بحث حضور دارند.",
+      "description": "With a free trial, you can watch the full talk NOW at https://iai.tv/video/consciousness-is-biologys-biggest-blunder?utm_source=YouTube&amp;utm_medium=description \n\n#ai #artificialintelligence #biology#evolution #Turing #Darwin\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "مقایسهٔ هوش مصنوعی با باکتری‌ها می‌تواند به درک بهتر از چگونگی شبیه‌سازی یا تقلید فرآیندهای زیستی در سیستم‌های دیجیتال کمک کند. اگر این دیدگاه توسط Denis Noble، یک پژوهشگر شناخته‌شده در زیست‌شناسی، مطرح شود، احتمالاً به بازنگری در مفاهیم سنتی دربارهٔ هوش و زندگی منجر می‌شود. این بحث می‌تواند مسیرهای جدیدی برای پژوهش‌های میان‌رشته‌ای بین هوش مصنوعی و زیست‌شناسی باز کند.",
+      "link": "https://www.youtube.com/shorts/le-vY4g5nPU",
+      "posted_at": 1794500866
+    },
+    "-1004482051328:2368": {
+      "chat_id": -1004482051328,
+      "message_id": 2368,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL - Building 32",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "همکاری انسان‑هوش مصنوعی در ریاضیات: درهای جدیدی را باز می‌کند",
+      "summary": "مربی MIT، Justin Solomon، توضیح می‌دهد که هوش مصنوعی می‌تواند اثبات‌های ریاضی تولید کند و سرعت پژوهش را افزایش دهد. او تأکید می‌کند که این فناوری به پژوهشگران اجازه می‌دهد بر روی پرسش‌های کلیدی تمرکز کنند، در حالی که الگوریتم‌ها جزئیات پیچیده را مدیریت می‌کنند. نمونه‌های اولیه نشان می‌دهد که مدل‌های یادگیری ماشین می‌توانند در حل مسائل طولانی‌مدت و دشوار کمک کنند. این رویکرد هنوز در مراحل آزمایشی است و نیاز به ارزیابی‌های دقیق‌تر دارد. اگر موفق باشد، می‌تواند روند کشف علمی را به طور چشمگیری تغییر دهد.",
+      "description": "AI is opening new doors in mathematics, tackling problems that have challenged researchers for decades. MIT Prof. Justin Solomon discusses how AI-generated proofs can accelerate mathematical research and let scholars focus on the questions that matter. \n\n#ArtificialIntelligence #Mathematics #AIResearch #OpenAI #MIT #MachineLearning #ScientificDiscovery #Innovation artificial intelligence",
+      "why_it_matters": "استفاده از هوش مصنوعی برای تولید اثبات‌های ریاضی می‌تواند زمان و تلاش انسان‌ها را به طور قابل توجهی کاهش دهد، به‌طوری که پژوهشگران می‌توانند بر روی پرسش‌های بنیادی و خلاقانه‌تر تمرکز کنند. این فناوری، اگر به‌طور کامل به کار گرفته شود، می‌تواند سرعت پیشرفت در حوزه‌های پیچیده ریاضی را چند برابر کند و دسترسی به راه‌حل‌های پیشرفته‌تر را برای جامعه علمی فراهم آورد. با این حال، هنوز در مرحله آزمایشی است و نیازمند ارزیابی‌های دقیق‌تر و بررسی مسائل اخلاقی و اعتبار علمی است.",
+      "link": "https://www.youtube.com/shorts/8-yV-gDqEWU",
+      "posted_at": 1794501004
     }
   }
 }

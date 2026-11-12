@@ -1,46 +1,34 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 41,
-      "disabled_until": 1794562765.437,
+      "failures": 42,
+      "disabled_until": 1794612579.388,
       "last_error": "auth",
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 1,
-      "disabled_until": 1794504610.959,
+      "disabled_until": 1794529779.388,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "openrouter:google/gemma-4-31b-it:free": {
+    "openrouter:particle-ai/particle-1:free": {
       "failures": 1,
-      "disabled_until": 1794504610.959,
-      "last_error": "rate_limit",
+      "disabled_until": 1794529779.388,
+      "last_error": "quota",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1794504610.959,
+      "disabled_until": 1794529779.388,
       "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1794504610.959,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
-      "failures": 1,
-      "disabled_until": 1794504610.959,
-      "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 41,
-      "disabled_until": 1794562765.437,
+      "failures": 42,
+      "disabled_until": 1794612579.388,
       "last_error": "auth"
     },
     "kiraai": {
@@ -50,16 +38,16 @@
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1794522610.959,
+      "disabled_until": 1794547779.388,
       "last_error": "quota"
     }
   },
-  "updated_at": 1794501010.959375,
+  "updated_at": 1794526179.3876238,
   "version": 1,
   "telemetry": {
-    "observed_failures": 474,
-    "observed_events": 504,
-    "updated_at": 1794501010.959375
+    "observed_failures": 67,
+    "observed_events": 89,
+    "updated_at": 1794526179.3876238
   },
   "observed_failures": 0,
   "observed_events": 0

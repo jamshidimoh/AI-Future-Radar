@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794442739,
+  "updated_at": 1794476364,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23697,6 +23697,65 @@
       "why_it_matters": "استفاده از چندچپ باعث می‌شود Anthropic به‌سرعت از سخت‌افزارهای جدید بهره‌برداری کند و هزینهٔ توسعهٔ استک‌های اختصاصی را کاهش دهد. ضریب‌های محاسباتی باعث می‌شوند همان مقدار فیزیکی منابع برای آموزش مدل‌های هوشمندتر استفاده شود یا مدل‌های مشابه با مصرف کمتر به‌دست آید. این ترکیب باعث افزایش کارایی کل محاسبه و تسریع پیشرفت مدل‌ها می‌شود، به‌طوری‌که Claude می‌تواند در آینده خود این ضریب‌ها را کشف کند و رشد توان محاسبه را خودکار کند.",
       "link": "https://simonwillison.net/2026/Nov/11/anthropic-ipo-roadshow/",
       "posted_at": 1794442739
+    },
+    "-1004482051328:2364": {
+      "chat_id": -1004482051328,
+      "message_id": 2364,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "AWS Machine Learning Blog",
+      "content_type": "analysis",
+      "category": "ai",
+      "leader": "",
+      "title": "OpenAI Codex در Amazon Bedrock: الگوهای دسترسی و حاکمیت برای سازمان‌ها",
+      "summary": "OpenAI Codex اکنون از طریق Amazon Bedrock برای استنتاج مدل‌های پشتیبانی‌شده قابل اجرا است و در محیط کار توسعه‌دهنده باقی می‌ماند. مقاله سه الگوی دسترسی را تشریح می‌کند: دسترسی بومی AWS با IAM، AgentCore Gateway برای مسیریابی و Guardrails، و LLM Gateway یا یکپارچه‌سازی سفارشی برای اعمال کنترل‌های درخواست. توصیه می‌شود ابتدا یک آزمایش کم‌دسترسی با حداقل امتیازها انجام شود و سپس بر اساس نیازهای حاکمیتی، منطقه‌ای و هزینه‌ای گسترش یابد. مثال‌ها بر مدل GPT‑5.6 Sol استوارند و پیش‌نیاز بررسی موجودیت مدل در هر منطقه AWS ذکر شده است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این راهنما نشان می‌دهد سازمان‌ها می‌توانند بدون افزودن لایه جداگانه مدیریت هویت، از Codex بهره‌مند شوند؛ بنابراین هزینه و پیچیدگی امنیتی کاهش می‌یابد. با انتخاب الگوی دسترسی مناسب، تیم‌های پلتفرم سطح کنترل مورد نظر — از جمله اعمال Guardrails یا نظارت بر ترافیک مدل — را تعیین می‌کنند. اجرای آزمایش کم‌دسترسی در ابتدا، ریسک دسترسی گسترده را محدود کرده و امکان ارزیابی دقیق هزینه و اثرات حاکمیتی را فراهم می‌آورد، تا استقرار مقیاس‌پذیر و مطابق با سیاست‌های امنیتی و مالی امکان‌پذیر شود.",
+      "link": "https://aws.amazon.com/blogs/machine-learning/openai-codex-on-amazon-bedrock/",
+      "posted_at": 1794476360
+    },
+    "-1004482051328:2365": {
+      "chat_id": -1004482051328,
+      "message_id": 2365,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "social_post",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "person_name": "Dario Amodei",
+      "people_lane": false,
+      "title": "داریو آمودی پیش‌بینی کرد هوش مصنوعی در ده سال آینده سرطان و آلزایمر را درمان می‌کند",
+      "summary": "Dario Amodei، مؤسس Anthropic، در مصاحبه‌ای گفت هوش مصنوعی می‌تواند در ده سال آینده سرطان و آلزایمر را درمان کند. این پیش‌بینی بر پایه پیشرفت‌های اخیر در مدل‌های یادگیری عمیق مطرح شد. پزشکان این ادعا را با تردید مواجه کرده و می‌گویند شواهد بالینی کافی نیست.",
+      "why_it_matters": "اگر چنین درمانی عملی شود، هزینه‌های مراقبت‌های بهداشتی و بار بیماری‌های مزمن به‌طور چشمگیری کاهش می‌یابد. اما تردید پزشکان نشان می‌دهد پذیرش AI در درمان‌های بالینی به دست آوردن داده‌های آزمایشگاهی معتبر و همکاری نزدیک بین متخصصان پزشکی و مهندسان AI وابسته است. بنابراین، پیشرفت‌های AI باید با آزمون‌های بالینی مستند شوند تا بتوانند به‌عنوان ابزار درمانی پذیرفته شوند.",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOVUlHU2pHQjBYRF8xX3dyb3Y1RW0tM0FremhIN3YxY2h4UUMtT29jU0xkbGxxMFJXOTFMT0dianR3emllTjFOZTBkdXh3RWdLLTlCTmtRSDh6VEg4ZnQ2SG1IMzZnb2h0T0Q4Tk5BS1VSaEtXaEZVSEIwaU50N3dCMW1DTzJEVjE5WnBOQWtLQUU3LUZmTHBQSTZ5TXRyMmxheks4WEVqTQ?oc=5",
+      "posted_at": 1794476362
+    },
+    "-1004482051328:2366": {
+      "chat_id": -1004482051328,
+      "message_id": 2366,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Google DeepMind",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "AlphaGenome 2؛ تحلیل دقیق ژنوم انسانی در سطح تک‌سلولی",
+      "summary": "Google DeepMind مدل AlphaGenome 2 را معرفی کرد؛ شبکه‌ای مبتنی بر ترنسفورمر که بخش‌های غیرکدگذاری DNA را با دقت تک‌سلولی تحلیل می‌کند. این مدل که بر پایه داده‌های ژنومی و تصویربرداری سلولی آموزش دیده، قادر است جهش‌های بیماری‌زا را در نمونه‌های نادر شناسایی کرده و نقشه‌ای جامع از فعالیت‌های مولکولی سلول ارائه دهد. در آزمایش‌های محیط کنترل، دقت تشخیص این مدل حدود ۹۵٪ گزارش شده است، هرچند نیاز به حجم عظیم داده‌های آموزشی و محدودیت دسترسی به نمونه‌های نادر، چالش‌های اصلی آن است.",
+      "description": "98% of human DNA doesn't build proteins—it controls how our cells work, and holds vital clues to why diseases happen and why 90% of new drugs fail in clinical trials. Understanding the genome at the molecular level is the key to deciphering the blueprint of human life.\n\nIn this episode, Professor Hannah Fry speaks with Google DeepMind's Žiga Avsec and Adam Gayoso about AlphaGenome, the AlphaGenome Atlas, and AlphaGenome 2—exploring how AI reads non-coding DNA down to single-cell resolution to pinpoint disease-causing mutations and help researchers solve medical mysteries.\n\nTimecodes:\n00:00 Introduction to AlphaGenome\n04:01 Genotype, Phenotype & DNA\n08:30 Transformers to AlphaGenome\n12:11 Mapping the Genome \n17:45 Rare disease cases\n21:10 AlphaGenome 2\n30:06 Future vision \n38:45 Hannah's thoughts\n\nRead more about AlphaGenome 2: https://deepmind.google/blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease/\n\n___\n\nSubscribe to our channel https://www.youtube.com/@googledeepmind \nFind us on X https://x.com/GoogleDeepMind\nFollow us on Instagram https://instagram.com/googledeepmind \nAdd us on LinkedIn: https://www.linkedin.com/company/deepmind/ artificial intelligence",
+      "why_it_matters": "درک عملکرد DNA غیرکدگذاری می‌تواند علل بیماری‌های پیچیده را آشکار کرده و نرخ شکست داروهای جدید در آزمایشات بالینی را کاهش دهد. AlphaGenome 2 با پیش‌بینی دقیق‌تر اثرات جهش‌ها در سطح تک‌سلولی، مسیر توسعه درمان‌های شخصی‌سازی‌شده را هموار می‌کند، اما استقرار عملیاتی آن نیازمند اعتبارسنجی گسترده‌تر است.",
+      "link": "https://www.youtube.com/watch?v=uND6iY2qp_c",
+      "posted_at": 1794476364
     }
   }
 }

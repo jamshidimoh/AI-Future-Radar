@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794585998,
+  "updated_at": 1794611965,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23907,6 +23907,43 @@
       "why_it_matters": "جریان CSF نقش کلیدی در پاکسازی مواد زائد و حفظ تعادل محیطی مغز دارد؛ بنابراین کاهش آن در افراد مسن می‌تواند به انباشت پروتئین‌های سمی و افزایش خطر اختلالات شناختی منجر شود. شناخت دو سازوکار اصلی (اختلال خواب و عملکرد عروقی) می‌تواند راهکارهای هدفمند برای بهبود کیفیت خواب یا بهبود سلامت عروق ارائه دهد. این یافتهها پایهای برای تحقیقات آینده درباره پیشگیری از بیماریهای نورودژنراتیو از طریق بهبود دینامیک مایع مغزی فراهم می‌کند.",
       "link": "https://www.nature.com/articles/s43587-026-01296-8",
       "posted_at": 1794585995
+    },
+    "-1004482051328:2375": {
+      "chat_id": -1004482051328,
+      "message_id": 2375,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - 80,000 Hours",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "آی‌اِی Anthropic در حال دو برابر شدن سرعت خود: گزارش ترسناک METR",
+      "summary": "Luisa Rodriguez در پادکست 80,000 Hours گزارش می‌دهد که تیم مستقل METR در طول ۱۱ هفته در آزمایشگاه Anthropic، دسترسی به داده‌های نادری داشت و دریافتند که مدل AI آن‌ها دو برابر سریع‌تر از سال گذشته پیشرفت می‌کند. در سال ۲۰۲۳ Claude توانایی تفسیر تصاویر یا جستجوی وب را نداشت، اما در سال جاری توانست مسأله ریاضی ۸۷ ساله‌ای را حل کند. این سرعت دو برابر شدن، که به عنوان «بهبود خود-تکراری» شناخته می‌شود، احتمالاً باعث می‌شود شرکت‌های AI مدل‌های بسیار قدرتمندتری را در چند ماه تولید کنند، بدون اینکه انسان‌ها بتوانند آن‌ها را درک یا کنترل کنند. METR هیچ نشانه‌ای از کند شدن این روند پیدا نکرد و حتی احتمال دارد نرخ سرعت‌زدایی خود به خود افزایش یابد. Anthropic بخش‌های زیادی از گزارش را حذف کرده است، اما در این ویدیو توضیح می‌دهد چرا متخصصان برجسته نگران هستند و چه دلایلی وجود دارد که METR ممکن است اشتباه باشد.",
+      "description": "Anthropic’s AI is working to build the next version of itself. For the first time ever, an independent team got a chance to investigate this.\n\nMETR spent 11 weeks inside the lab, with access to data almost no one outside Anthropic has seen. They found its AI is improving twice as fast as last year. Largely due to AI doing the work.\n\nTo put that into perspective: in 2023 Claude couldn’t interpret images or search the web. This year, it helped crack a math problem that had stumped the best mathematicians for 87 years.\n\nNow imagine another jump like that, but in months instead of years. AI companies could build models far more powerful than today’s, before anyone could understand or control them… and then use them to build more capable successors even faster.\n\nResearchers call this recursive self-improvement. And it seems to be where we’re heading.\n\nMETR found nothing inside Anthropic that suggests this process is likely to slow down. In fact, it says the rate of speed-up itself could be growing.\n\nAnthropic redacted much of the report, so we may never see everything METR saw.\n\nBut in this video, Luisa Rodriguez explains what METR _was allowed_ to share with the world, why many of the most respected experts are freaking out, and the strongest reasons METR might be wrong.\n\nShe also covers what needs to change, and what you can do to help.\n\n_This episode was recorded on November 9, 2026._\n\n*Links to learn more and full transcript:* https://80k.info/METR-RSI\n\nChapters:\n00:00:00 AI is now building AI twice as fast\n00:01:09 11 weeks inside Anthropic\n00:01:59 Two years of progress in one year\n00:03:19 Is AI causing the speed-up?\n00:05:15 No signs of slowing down\n00:07:21 Could METR be wrong?\n00:10:18 Has Anthropic crossed its own line?\n00:11:33 What needs to change\n00:13:12 What you can do\n\n_Our production team includes:_\n_• Video editors: Josh Alward, Dominic Armstrong, Jasper Luithlen, Milo McGuire, Luke Monsour, Simon Monsour_\n_• Producers: Elizabeth Cox and Nick Stockton_\n_• Coordination and support: Katy Moore, Lou Moran, and Taylor Smith_ artificial intelligence",
+      "why_it_matters": "این گزارش نشان می‌دهد که AI ممکن است در کوتاه‌ترین زمان ممکن به سطحی برسد که کنترل انسانی از دست برود، که خطرات اخلاقی، امنیتی و اقتصادی عظیمی ایجاد می‌کند. اگر مدل‌های AI در چند ماه به سطحی برسند که انسان‌ها نتوانند آن‌ها را درک کنند، امکان سوءاستفاده یا ایجاد سیستم‌های خودکامل و بی‌قابلیت کنترل وجود دارد. این وضعیت می‌تواند باعث تغییرات سریع در بازار کار، سیاست و حاکمیت فناوری شود و نیازمند نظارت دقیق و چارچوب‌های قانونی جدید است. در نهایت، درک و کنترل این روند برای جلوگیری از خطرات احتمالی و بهره‌برداری مسئولانه از قدرت AI ضروری است.",
+      "link": "https://www.youtube.com/watch?v=P6-_knLbuuk",
+      "posted_at": 1794611963
+    },
+    "-1004482051328:2376": {
+      "chat_id": -1004482051328,
+      "message_id": 2376,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "IBM پردازندهٔ کوانتومی Nighthawk r3 را با 520 کوبیت برنامه‌پذیر و 10 000 عملیات کوانتومی معرفی کرد",
+      "summary": "IBM پردازندهٔ کوانتومی Nighthawk r3 را رونمایی کرد؛ این چیپ سوپرکن‌داکتور می‌تواند 10 000 عملیات کوانتومی را بر روی 520 کوبیت برنامه‌پذیر انجام دهد. چیپ شامل 2 034 کوبیت فیزیکی و 10 ل‑کپلر است و هم‌اکنون در پلتفرم ابری IBM Quantum در دسترس است. IBM برنامه دارد تا سال 2027 دو چیپ r3 را به‌صورت لینک‌شده ترکیب کرده و سامانه‌ای با 1 040 کوبیت بسازد. نسبت به نسل قبلی r2، Nighthawk r3 سرعت اجرای مدارهای کوانتومی را تا ۱۹ برابر افزایش داده و با به‌کارگیری رست‌گِیج‌های دفعی زمان انتظار بین اجراها را به ۱ میکروثانیه کاهش می‌دهد.",
+      "why_it_matters": "افزایش تعداد کوبیت‌های برنامه‌پذیر و کاهش زمان رست، امکان اجرای برنامه‌های کوانتومی بزرگ‌تر و پیچیده‌تر را در حوزه‌های شبیه‌سازی مواد، یادگیری ماشین کوانتومی و بهینه‌سازی شبکه‌های انرژی فراهم می‌کند. سرعت بالاتر به پژوهشگران اجازه می‌دهد تا مدارهای بیشتری را در زمان کوتاه‌تری آزمایش کنند، که برای پیشرفت به مزیت کوانتومی در کاربردهای عملی ضروری است. برنامهٔ ترکیب دو چیپ در سال ۲۰۲۷ نشان می‌دهد IBM به سمت ساخت سامانه‌های کوانتومی مقیاس‌پذیر پیش می‌رود.",
+      "link": "https://www.marktechpost.com/2026/11/12/ibm-quantum-nighthawk-r3-520-qubits-1040-qubit-system-2027/",
+      "posted_at": 1794611965
     }
   }
 }

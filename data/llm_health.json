@@ -1,59 +1,53 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 44,
-      "disabled_until": 1794672399.357,
+      "failures": 45,
+      "disabled_until": 1794698366.586,
       "last_error": "auth",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-31b-it:free": {
-      "failures": 1,
-      "disabled_until": 1794589599.357,
-      "last_error": "quota",
-      "last_success": 0
-    },
-    "kiraai:qwen3.8-flash": {
-      "failures": 1,
-      "disabled_until": 1794589599.357,
-      "last_error": "quota",
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 1,
-      "disabled_until": 1794589599.357,
+      "disabled_until": 1794615566.586,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1794589599.357,
+      "disabled_until": 1794615566.586,
       "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-31b-it:free": {
+      "failures": 1,
+      "disabled_until": 1794615566.586,
+      "last_error": "quota",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 44,
-      "disabled_until": 1794672399.357,
+      "failures": 45,
+      "disabled_until": 1794698366.586,
       "last_error": "auth"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1794607599.357,
-      "last_error": "quota"
     },
     "kiraai": {
       "failures": 1,
       "disabled_until": 1794672399.357,
       "last_error": "wallet"
+    },
+    "openrouter": {
+      "failures": 1,
+      "disabled_until": 1794633566.586,
+      "last_error": "quota"
     }
   },
-  "updated_at": 1794585999.3571157,
+  "updated_at": 1794611966.585867,
   "version": 1,
   "telemetry": {
-    "observed_failures": 27,
-    "observed_events": 44,
-    "updated_at": 1794585999.3571157
+    "observed_failures": 48,
+    "observed_events": 61,
+    "updated_at": 1794611966.585867
   },
   "observed_failures": 0,
   "observed_events": 0

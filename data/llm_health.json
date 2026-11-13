@@ -1,59 +1,59 @@
 {
   "models": {
     "nararouter:auto/bynara": {
-      "failures": 43,
-      "disabled_until": 1794648954.353,
+      "failures": 44,
+      "disabled_until": 1794672399.357,
       "last_error": "auth",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1794566154.353,
-      "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1794566154.353,
-      "last_error": "rate_limit",
+      "disabled_until": 1794589599.357,
+      "last_error": "quota",
+      "last_success": 0
+    },
+    "kiraai:qwen3.8-flash": {
+      "failures": 1,
+      "disabled_until": 1794589599.357,
+      "last_error": "quota",
       "last_success": 0
     },
     "groq:openai/gpt-oss-20b": {
       "failures": 1,
-      "disabled_until": 1794566154.353,
+      "disabled_until": 1794589599.357,
       "last_error": "rate_limit",
       "last_success": 0
     },
-    "openrouter:particle-ai/particle-1:free": {
+    "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1794566154.353,
-      "last_error": "quota",
+      "disabled_until": 1794589599.357,
+      "last_error": "rate_limit",
       "last_success": 0
     }
   },
   "providers": {
     "nararouter": {
-      "failures": 43,
-      "disabled_until": 1794648954.353,
+      "failures": 44,
+      "disabled_until": 1794672399.357,
       "last_error": "auth"
-    },
-    "kiraai": {
-      "failures": 1,
-      "disabled_until": 1794562765.437,
-      "last_error": "wallet"
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1794584154.353,
+      "disabled_until": 1794607599.357,
       "last_error": "quota"
+    },
+    "kiraai": {
+      "failures": 1,
+      "disabled_until": 1794672399.357,
+      "last_error": "wallet"
     }
   },
-  "updated_at": 1794562554.3531857,
+  "updated_at": 1794585999.3571157,
   "version": 1,
   "telemetry": {
-    "observed_failures": 203,
-    "observed_events": 268,
-    "updated_at": 1794562554.3531857
+    "observed_failures": 27,
+    "observed_events": 44,
+    "updated_at": 1794585999.3571157
   },
   "observed_failures": 0,
   "observed_events": 0

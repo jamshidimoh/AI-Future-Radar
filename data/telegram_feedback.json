@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794526178,
+  "updated_at": 1794562553,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -23852,6 +23852,43 @@
       "why_it_matters": "روش ترکیبی، اطلاعات تکمیلی بهجز تحلیل‌های مبتنی بر PSD فراهم می‌کند و امکان شناسایی دقیقتر ویژگیهای مؤثر در سیگنالهای عصبی را می‌دهد. با بهکارگیری یادگیری عمیق تفسیرپذیر، درک مکانیسمهای عصبی مرتبط با پارکینسون عمیقتر می‌شود و این رویکرد می‌تواند بهعنوان ابزار پیشبینیکنندهٔ الگوهای نوارهای فرکانسی و مناطق کورتیکال مورد استفاده قرار گیرد.",
       "link": "https://www.nature.com/articles/s41598-026-79944-7",
       "posted_at": 1794526178
+    },
+    "-1004482051328:2372": {
+      "chat_id": -1004482051328,
+      "message_id": 2372,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Apple Machine Learning Research",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "محدودیتهای نظری همسویی مدل‌های زبانی با قید KL-divergence",
+      "summary": "پژوهشگران Apple Machine Learning Research در مقالهای که در کارگاه FITML در NeurIPS 2024 پذیرفته شده، سقف نظری بهبود پاداش در همسویی مدل‌های زبانی با قید KL-divergence را مشخص کردند. آنها نشان دادند که حداکثر بهبود پاداش توسط Jeffreys divergence تعیین می‌شود، نه جذر KL که در تحلیل‌های قبلی استفاده میشد. این فرمولبندی به صورت کوواریانس تحت مدل پایه بازنویسی شده و امکان تخمین سود همسویی تنها از روی نمونههای مدل پایه را فراهم می‌کند. در بخش تجربی، روش best-of-N به مرز نظری نزدیک شد، اما الگوریتمهای PPO و GRPO بهطور قابلتوجهی از بهینه بودن فاصله داشتند.",
+      "why_it_matters": "این یافتهها نشان می‌دهند که الگوریتمهای رایج تقویتی مانند PPO و GRPO از ظرفیت نظری همسویی بهره نمیبرند و برای دستیابی به بهینه بودن بدون هزینه‌های بالای استنتاج، اصلاحات الگوریتمی ضروری است. همچنین، تحلیلها نشان می‌دهند که شکاف بین همسویی ایدهآل و پاداش جایگزین (reward hacking) با افزایش خطای پاداش و کاهش ضریب جریمه KL بزرگتر می‌شود. اثبات اینکه انبوهسازی پاداش (reward ensembling) این پدیده را کاهش می‌دهد، توجیه نظری برای تکنیکهای عملی رایج ارائه می‌کند.",
+      "link": "https://machinelearning.apple.com/research/theoretical-limits-alignment",
+      "posted_at": 1794562359
+    },
+    "-1004482051328:2373": {
+      "chat_id": -1004482051328,
+      "message_id": 2373,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - TED",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "جنیفر سیرنس: هوش مصنوعی چگونه به ما در غم، عشق و ارتباط کمک می‌کند",
+      "summary": "جنیفر سیرنس، انسان‌شناس دیجیتال، در سخنرانی TED2026 بیان می‌کند که استفاده از هوش مصنوعی برای غم‌زدایی، عشق و دوستی می‌تواند به‌جای انزوای انسانی، فرصتی برای شناخت بهتر خود فراهم آورد. او پس از مصاحبه با صدها فردی که به هوش مصنوعی برای مقابله با فقدان یا جستجوی همراهی روی آورده‌اند، نشان می‌دهد این تعاملات نه تنها ترس رایج از جایگزینی روابط واقعی نیستند، بلکه می‌توانند به‌عنوان آینه‌ای برای درک عواطف و نیازهای انسانی عمل کنند. سیرنس با اشاره به نمونه‌های شخصی، نکات کلیدی این روابط نوظهور را بررسی می‌کند و از این طریق به پرسش‌های عمیق‌تری دربارهٔ ماهیت ارتباط انسانی می‌پردازد.",
+      "description": "Many people fear AI is eroding our humanity, replacing real relationships with synthetic ones that leave us lonelier than ever. Digital anthropologist Jennifer Cearns believes the opposite may be true. After talking to hundreds of people who turn to AI for grief, love, friendship and more, she pokes holes in this familiar fear — and hints at what these strange new relationships can teach us about ourselves. (Recorded at TED2026 on April 16, 2026)\n\nJoin us in person at a TED conference: https://tedtalks.social/events\nBecome a TED Member to support our mission: https://ted.com/membership\nSubscribe to a TED newsletter: https://ted.com/newsletters\n\nFollow TED! \nInstagram: https://www.instagram.com/ted\nLinkedIn: https://www.linkedin.com/company/ted-conferences\nTikTok: https://www.tiktok.com/@tedtoks\nFacebook: https://facebook.com/TED\nX: https://www.twitter.com/TEDTalks\n\nThe TED Talks channel features the best talks and performances from the TED Conference, where the world's leading thinkers and doers give the talk of their lives in 18 minutes (or less) — plus originals, podcasts and exclusive content. Look for videos on Technology, Entertainment and Design as well as science, business, global issues, the arts and more. Visit https://TED.com for our entire library, transcripts, translations and personalized recommendations.\n\nWatch more: https://go.ted.com/jennifercearns\n\nhttps://youtu.be/pTdvsfIMGes\n\nTED videos may be used for non-commercial purposes under a Creative Commons License, Attribution–Non Commercial–No Derivatives (or the CC BY – NC – ND 4.0 International) and in accordance with the TED Talks Usage Policy: https://www.ted.com/about/our-organization/our-policies-terms/ted-talks-usage-policy. For more information on using TED for commercial purposes (e.g. employee learning, in a film or online course), submit a request at https://media-requests.ted.com\n\n#TED #TEDTalks #AI",
+      "why_it_matters": "این دیدگاه نشان می‌دهد که هوش مصنوعی می‌تواند به‌عنوان ابزار حمایتی در مواجهه با احساسات پیچیده مانند غم و تنهایی به کار رود، نه صرفاً تهدیدی برای ارتباطات انسانی. اگر این نوع تعاملات به‌درستی درک و طراحی شوند، می‌توانند به افراد کمک کنند تا فرآیندهای عاطفی خود را بهتر مدیریت کنند و از انزوا جلوگیری کنند. در عین حال، شناخت این پدیده‌ها می‌تواند راهنمایی برای سیاست‌گذاران و طراحان فناوری باشد تا چارچوب‌های اخلاقی و حمایتی مناسب برای استفاده مسئولانه از هوش مصنوعی در حوزه‌های عاطفی ایجاد کنند.",
+      "link": "https://www.youtube.com/watch?v=pTdvsfIMGes",
+      "posted_at": 1794562362
     }
   }
 }

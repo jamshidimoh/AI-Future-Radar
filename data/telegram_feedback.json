@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794646363,
+  "updated_at": 1794667428,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24041,6 +24041,27 @@
       "why_it_matters": "توسعه مهارت‌های انتقالی باعث می‌شود که سیستم‌های انرژی به‌صورت کارآمدتر و پایدارتر عمل کنند و کشاورزی با استفاده از روش‌های بازتوانی خاک، تولیدی پایدارتر ایجاد کند. این مهارت‌ها به عنوان پایه‌ای برای گذار به اقتصاد کم‌کربن و کشاورزی مقاوم در برابر تغییرات اقلیمی عمل می‌کنند. بدون این مهارت‌ها، بهبود کارایی و بهره‌وری در بخش‌های انرژی و کشاورزی دشوار خواهد بود.",
       "link": "https://www.youtube.com/shorts/1L2deXLPNsc",
       "posted_at": 1794646363
+    },
+    "-1004482051328:2382": {
+      "chat_id": -1004482051328,
+      "message_id": 2382,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Reuters)",
+      "content_type": "social_post",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": false,
+      "title": "استعفای Jensen Huang از سمت مدیریت Nvidia؛ ضربه‌ای به رونق صنعت AI",
+      "summary": "طبق گزارش Reuters، Jensen Huang از سمت مدیریت اجرایی Nvidia استعفا داده است. این تصمیم به عنوان یک شوک بزرگ برای اکوسیستم هوش مصنوعی (AI) تلقی می‌شود، چرا که او نقش کلیدی در شکل‌گیری و توسعه موج فعلی این فناوری ایفا کرده بود. با این حال، در متن منبع جزئیات دقیقی درباره دلایل این استعفا یا زمان دقیق خروج او ارائه نشده است.",
+      "why_it_matters": "خروج Jensen Huang از Nvidia می‌تواند عدم قطعیت شدیدی در بازار قطعات سخت‌افزاری و زیرساخت‌های محاسباتی ایجاد کند. از آنجایی که Nvidia ستون فقرات سخت‌افزاری انقلاب هوش مصنوعی محسوب می‌شود، تغییر در رهبری این شرکت می‌تواند بر استراتژی‌های توسعه مدل‌های بزرگ و اعتماد سرمایه‌گذاران به آینده این صنعت تأثیر مستقیم بگذارد.",
+      "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxOMEFwN0FWdjB6blNtR0RZaTBWZXZDaWVwYkhXREttY2FaYVNNVC1qNEFHYm9Yd1pDODBDN2tvNzhnMTY4cmxWYTg1WVFidzFlNVFEdlZNb3IyZG1nS2FKcHAzUERhQW9EdG9oOER6YmwydXZOd0t1VHRub1BCdFdoR1V4dktlUVUydjZWeU53aVdKMGwtOGFtZmd2T3VhODF3eXhPazVtbV81b0hpUi1vcw?oc=5",
+      "posted_at": 1794667428
     }
   }
 }

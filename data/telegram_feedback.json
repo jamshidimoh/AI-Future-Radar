@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794685383,
+  "updated_at": 1794699508,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24062,6 +24062,24 @@
       "why_it_matters": "خروج Jensen Huang از Nvidia می‌تواند عدم قطعیت شدیدی در بازار قطعات سخت‌افزاری و زیرساخت‌های محاسباتی ایجاد کند. از آنجایی که Nvidia ستون فقرات سخت‌افزاری انقلاب هوش مصنوعی محسوب می‌شود، تغییر در رهبری این شرکت می‌تواند بر استراتژی‌های توسعه مدل‌های بزرگ و اعتماد سرمایه‌گذاران به آینده این صنعت تأثیر مستقیم بگذارد.",
       "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxOMEFwN0FWdjB6blNtR0RZaTBWZXZDaWVwYkhXREttY2FaYVNNVC1qNEFHYm9Yd1pDODBDN2tvNzhnMTY4cmxWYTg1WVFidzFlNVFEdlZNb3IyZG1nS2FKcHAzUERhQW9EdG9oOER6YmwydXZOd0t1VHRub1BCdFdoR1V4dktlUVUydjZWeU53aVdKMGwtOGFtZmd2T3VhODF3eXhPazVtbV81b0hpUi1vcw?oc=5",
       "posted_at": 1794667428
+    },
+    "-1004482051328:2383": {
+      "chat_id": -1004482051328,
+      "message_id": 2383,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "Google معرفی کرد TPU Sync: کتابخانهٔ متن‌باز برای انتقال کش KV در TPUs",
+      "summary": "Google کتابخانهٔ متن‌باز C++ به نام TPU Sync را منتشر کرد که با استفاده از DMA غیرهمزمان، انتقال کش KV و وزن‌های مدل را بین حافظهٔ HBM TPU، DRAM میزبان، ذخیره‌سازی مشترک و شبکهٔ دیتاسنتر انجام می‌دهد. در آزمایش‌های داخلی، KV transfer latency برای مدل‌های MoE با ۲۳۵ تا ۴۸۰ میلیارد پارامتر بیش از ۹۰٪ کاهش یافت؛ برای Qwen3 235B زمان انتقال از چند ثانیه به حدود ۲۳۰ میلی‌ثانیه رسید. کتابخانه برای PyTorch و JAX در قالب wheelهای پایتون و برای Cloud TPU v7x (Ironwood) و v6e ارائه شده است، اما هنوز برای استفادهٔ عمومی توصیه نمی‌شود.",
+      "why_it_matters": "کاهش تاخیر KV به‌طور مستقیم زمان اولین توکن (TTFT) را برای مدل‌های بزرگ MoE کاهش می‌دهد و توان خروجی توکن را تا ۷۰٪ افزایش می‌دهد. این به‌دلیل انتقال داده‌ها با DMA مستقیم و حفظ چینش تایل‌دار TPU است که اجازه می‌دهد انتقال همزمان با محاسبه انجام شود و از تأخیرهای گراف XLA جلوگیری شود. بهبودهای سرعتی می‌تواند هزینهٔ انرژی و سرور در مراکز دادهٔ بزرگ را کاهش دهد، اما به‌دلیل مرحلهٔ اولیهٔ ارزیابی، هنوز به‌صورت عمومی در دسترس نیست.",
+      "link": "https://www.marktechpost.com/2026/11/13/google-tpu-sync-kv-cache-transfer-library/",
+      "posted_at": 1794699508
     }
   }
 }

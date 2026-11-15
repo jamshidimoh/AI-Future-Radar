@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794699508,
+  "updated_at": 1794733212,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24080,6 +24080,44 @@
       "why_it_matters": "کاهش تاخیر KV به‌طور مستقیم زمان اولین توکن (TTFT) را برای مدل‌های بزرگ MoE کاهش می‌دهد و توان خروجی توکن را تا ۷۰٪ افزایش می‌دهد. این به‌دلیل انتقال داده‌ها با DMA مستقیم و حفظ چینش تایل‌دار TPU است که اجازه می‌دهد انتقال همزمان با محاسبه انجام شود و از تأخیرهای گراف XLA جلوگیری شود. بهبودهای سرعتی می‌تواند هزینهٔ انرژی و سرور در مراکز دادهٔ بزرگ را کاهش دهد، اما به‌دلیل مرحلهٔ اولیهٔ ارزیابی، هنوز به‌صورت عمومی در دسترس نیست.",
       "link": "https://www.marktechpost.com/2026/11/13/google-tpu-sync-kv-cache-transfer-library/",
       "posted_at": 1794699508
+    },
+    "-1004482051328:2384": {
+      "chat_id": -1004482051328,
+      "message_id": 2384,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "MarkTechPost",
+      "content_type": "research",
+      "category": "ai",
+      "leader": "",
+      "title": "مورد Stanford: Memorilla، ماژول حافظهٔ نهفته برای LLMهای ثابت",
+      "summary": "دانشگاه Stanford یک سیستم حافظهٔ متن‌باز به نام Memorilla معرفی کرد که با استفاده از 16 توکن حافظه، عملکرد مدل Qwen3-8B را در مجموعه FactKG به 84.33٪ ارتقا می‌دهد، در حالی که استفاده از تمام اسناد در زمینهٔ کامل فقط 80.43٪ می‌باشد. Memorilla با 194 M پارامتر قابل آموزش، در هر بار پرسش 16 بردار یادگیری را تولید می‌کند و با دو لایهٔ توجه متقاطع و 8 سر، آن‌ها را به فضای ورودی Qwen3-8B تبدیل می‌کند. آموزش این ماژول در سه مرحله انجام شد؛ در مجموع 19 ساعت بر روی 4 GPU H100 80 GB لازم بود. در هشت بنچمارک، Memorilla میانگین 49.68٪ کسب کرد که بالاتر از xRAG (41.92٪ ) و Mem0 (38.02٪ ) است، اما در PubMedQA 59٪ به دست آورد که کمتر از LLMLingua-2 (69٪ ) بود.",
+      "description": "artificial intelligence",
+      "why_it_matters": "Memorilla نشان می‌دهد که می‌توان با کاهش چشمگیر تعداد توکن‌های زمینه، عملکرد LLMهای ثابت را بهبود بخشید؛ این امر برای کاربردهای عملی که محدودیت حافظهٔ مدل مهم است، اهمیت دارد. استفاده از 16 توکن حافظه به جای هزاران توکن اسناد، مصرف حافظه و زمان پردازش را به طور قابل توجهی کاهش می‌دهد، در حالی که در مجموعه FactKG و PersonaMem-v2 نتایج بهتری نسبت به روش‌های کامل‌متن و MemoRAG به دست می‌دهد. این رویکرد می‌تواند در سیستم‌های پرسش‑پاسخ، خلاصه‌سازی و شخصی‌سازی، جایی که دسترسی سریع به اطلاعات کلان ضروری است، به عنوان یک راه‌حل مقرون به صرفه مطرح شود. با این حال، در بنچمارک‌های کوتاه‌متنی مانند PubMedQA، فشرده‌سازی حافظه کم‌فایده است و روش‌های دیگر ممکن است برتری داشته باشند.",
+      "link": "https://www.marktechpost.com/2026/11/14/stanford-memorilla-memory-system-16-memory-tokens/",
+      "posted_at": 1794733209
+    },
+    "-1004482051328:2385": {
+      "chat_id": -1004482051328,
+      "message_id": 2385,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "اسکنر MRI بدون هلیوم، قابل حمل برای مناطق دوردست",
+      "summary": "در ویدئوی هفتهٔ WEF، مدیرعامل Philips، Roy Jakobs، اسکنر MRI جدیدی را معرفی کرد که با خنک‌سازی میکرو‑یخی، مصرف هلیوم را کمتر از ۰٫۵٪ اسکنرهای سنتی می‌کند. این دستگاه به‌گونه‌ای طراحی شده که روی کامیون بارگیری شود و به مراکز درمانی دوردست منتقل گردد. در همان برنامه، دانشمند سلامت سیاره‌ای، Johan Rockström، پنج فناوری نوظهور شامل رآکتورهای هسته‌ای ساده‌ساخت و سلول‌های خورشیدی پیشرفته را برای تسریع انتقال به انرژی پاک معرفی کرد.",
+      "description": "This week's top stories of the week include:\n\n00:14 - This helium-free MRI machine can be brought to patients:\nStandard MRI scanners are expensive, hard to transport, and rely on a scarce and finite resource. This new micro-cooled MRI scanner uses less than 0.5% as much helium, and is designed specifically to be loaded onto a truck and delivered to patients in remote places. Here, Roy Jakobs, CEO of Philips, explains how it works. \n\n02:40 - Surviving the Mexico City earthquake as a teen shaped this architect’s approach to urban planning:\nAntonio Gomez Palacio, Partner and Chair of design practice DIALOG, was a teenager when a huge earthquake struck Mexico City in 1985. He saw first-hand the scale of destruction, and watched as the city rebuilt itself in the years that followed. It has informed the way he understands and responds to the biggest challenges facing #cities and their inhabitants today: affordability, social inequality and #climate change.\n\n06:05 - Why is clean energy taking so long? Industry experts explain:\nThe energy transition began three decades ago - and yet renewables still provide just a third of global electricity and 14% of the primary energy supply. So what’s the hold-up? We asked Bruce Douglas of the Global Renewables Alliance, Chao Zhang of Ming Yang Smart Energy Group, Georgios Stassis of PPC and Gyanesh Chaudhary of Vikram Solar.\n\n09:31 - 5 new technologies that could save the planet:\nFrom easy-build nuclear reactors to super-efficient #solar cells, here are 5 emerging technologies that could accelerate the energy transition. You can see all 10 innovations profiled in a new World Economic Forum report, introduced by planetary health scientist Johan Rockström.\n\n*******************************************************************\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "کاهش مصرف هلیوم، منبعی محدود و گران‌قیمت، امکان استفاده از MRI در مناطق با زیرساخت‌های کم را فراهم می‌کند و تشخیص‌های پزشکی را در جوامع روستایی و اضطراری بهبود می‌بخشد. قابلیت حمل اسکنر با کامیون هزینه‌های لجستیکی و زمان انتظار بیماران را به‌طور چشمگیری کاهش می‌دهد. فناوری‌های انرژی پاک پیشنهادی می‌توانند انتشار گازهای گلخانه‌ای را کم کرده و زیرساخت‌های انرژی پایدار برای پشتیبانی از تجهیزات پزشکی پیشرفته فراهم کنند.",
+      "link": "https://www.youtube.com/watch?v=rrZo4fk-sxY",
+      "posted_at": 1794733212
     }
   }
 }

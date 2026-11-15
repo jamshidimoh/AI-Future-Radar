@@ -19,8 +19,8 @@ registry:
     - id: nvidia/nemotron-3.5-super-vl:free
       health: healthy
       health_score: 100
-      catalog_score: 91.808
-      verified_at: '2026-11-14T10:25:33.544162+00:00'
+      catalog_score: 91.767
+      verified_at: '2026-11-15T10:53:19.652074+00:00'
     - id: deepseek/deepseek-v4-flash-0731:free
       health: healthy
       health_score: 100
@@ -29,8 +29,8 @@ registry:
     - id: inclusionai/ling-3.2-flash:free
       health: healthy
       health_score: 100
-      catalog_score: 84.972
-      verified_at: '2026-11-14T10:25:33.544076+00:00'
+      catalog_score: 84.931
+      verified_at: '2026-11-15T10:53:19.651970+00:00'
     - id: minimax/minimax-m3.1-flash:free
       health: healthy
       health_score: 100
@@ -39,13 +39,13 @@ registry:
     - id: baidu/ernie-5.5-flash-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 84.853
-      verified_at: '2026-11-14T10:25:33.544095+00:00'
+      catalog_score: 84.812
+      verified_at: '2026-11-15T10:53:19.651994+00:00'
     - id: particle-ai/particle-1:free
       health: healthy
       health_score: 100
-      catalog_score: 84.331
-      verified_at: '2026-11-14T10:25:33.544136+00:00'
+      catalog_score: 84.291
+      verified_at: '2026-11-15T10:53:19.652041+00:00'
     - id: qwen/qwen3.8-27b:free
       health: healthy
       health_score: 100
@@ -54,8 +54,8 @@ registry:
     - id: dots-studio/dots-3-note-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 71.934
-      verified_at: '2026-11-14T10:25:33.544194+00:00'
+      catalog_score: 71.894
+      verified_at: '2026-11-15T10:53:19.652115+00:00'
     - id: apodex/apodex-1.1-mini:free
       health: healthy
       health_score: 100
@@ -74,8 +74,8 @@ registry:
     - id: recursive/flint-v1.0:free
       health: healthy
       health_score: 100
-      catalog_score: 67.061
-      verified_at: '2026-11-14T10:25:33.544148+00:00'
+      catalog_score: 67.02
+      verified_at: '2026-11-15T10:53:19.652056+00:00'
     - id: xingchen-agi/xing4.0-29b-a4b:free
       health: healthy
       health_score: 100
@@ -103,8 +103,8 @@ registry:
       task_fit: 95
       health: healthy
       health_score: 100
-      catalog_score: 63.607
-      verified_at: '2026-11-14T10:25:33.544263+00:00'
+      catalog_score: 63.567
+      verified_at: '2026-11-15T10:53:19.652175+00:00'
     - priority: 6
       id: google/gemma-4-31b-it:free
       free: true
@@ -115,13 +115,13 @@ registry:
       task_fit: 98
       health: healthy
       health_score: 100
-      catalog_score: 63.571
-      verified_at: '2026-11-14T10:25:33.544275+00:00'
+      catalog_score: 63.53
+      verified_at: '2026-11-15T10:53:19.652187+00:00'
     - id: liquid/lfm-3-1.7b:free
       health: healthy
       health_score: 100
-      catalog_score: 63.103
-      verified_at: '2026-11-14T10:25:33.544119+00:00'
+      catalog_score: 63.062
+      verified_at: '2026-11-15T10:53:19.652023+00:00'
     - id: liquid/lfm-2.5-2.6b:free
       health: healthy
       health_score: 100
@@ -291,4 +291,4 @@ registry:
     models: []
     reason: Dynamic discovery/emergency lane; never outranks quality-scored trusted
       models without evidence
-  last_refresh: '2026-11-14T10:25:33.544322+00:00'
+  last_refresh: '2026-11-15T10:53:19.652243+00:00'

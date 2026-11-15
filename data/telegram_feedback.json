@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794756501,
+  "updated_at": 1794781142,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24175,6 +24175,25 @@
       "why_it_matters": "رآکتورهای آسان‌ساخت می‌توانند هزینه و زمان ساخت نیروگاه‌های هسته‌ای را کاهش دهند و به سرعت ظرفیت تولید برق بدون کربن را افزایش دهند. سلول‌های خورشیدی با بازدهی بالاتر، انرژی خورشیدی را به‌صورت مؤثرتر تبدیل می‌کنند و نیاز به مساحت بزرگتر زمین را کاهش می‌دهند. ترکیب این دو فناوری می‌تواند سرعت انتقال به انرژی پاک را بالا برده و انتشار گازهای گلخانه‌ای را به‌طور قابل توجهی کم کند.",
       "link": "https://www.youtube.com/shorts/NwMb5AIsDzA",
       "posted_at": 1794756501
+    },
+    "-1004482051328:2389": {
+      "chat_id": -1004482051328,
+      "message_id": 2389,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL - Building 32",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "جئومتری در همه‌چیز: دیدگاه پروفسور جستین سولومون",
+      "summary": "پروفسور جستین سولومون از MIT CSAIL توضیح می‌دهد که چگونه مفاهیم جئومتری، فراتر از اشکال و زاویه‌ها، در شناسایی عابران پیاده توسط خودروهای خودران، بهبود واقع‌گرایی گرافیک کامپیوتری و حتی تعیین مسیر مؤثر برای برف‌کشی در نیویورک نقش دارند. او به پیشرفت معادله نویر–استوکس، اهمیت حضور انسان در آزمایشگاه و کلاس، و تفاوت داده‌های بالا و پایین‌بعدی اشاره می‌کند. سولومون تجربیات اولیه‌اش با Pixar و توضیح عدد Erdős–Bacon را نیز به اشتراک می‌گذارد. این گفتگو نشان می‌دهد که چگونه ریاضیات بنیادی می‌تواند در حوزه‌های مختلف فناوری و زندگی روزمره تأثیرگذار باشد.",
+      "description": "What does Pixar, snow shoveling, and AI have in common? Geometry. At MIT CSAIL, Prof. Justin Solomon puts geometry at the center of his research, and it’s a lot more than shapes and angles. He explains how the same mathematical ideas can help self-driving cars recognize pedestrians, make computer graphics more realistic, and even guide New Englanders on the most efficient way to shovel snow. \n\nSolomon discusses the meaning of the Navier–Stokes equation breakthrough, why he thinks humans still matter in the lab and the classroom, high vs. low dimensional data, his early work with Pixar, and his Erdős–Bacon number. Learn what that is and more in this episode of Building 32. \n\nEpisode Resources:\n\nStudent Rickard Brüel Gabrielsson’s paper on LoRAs: https://arxiv.org/pdf/2407.00066\nSix Degrees of Kevin Bacon: https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon\nErdős number: https://en.wikipedia.org/wiki/Erd%C5%91s_number\nErdős–Bacon number: https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93Bacon_number \nJustin’s IMDb page: https://www.imdb.com/name/nm5152914/?ref_=fn_t_2&_ssoLoop=1\n\nLearn more about Justin:\n\nSpotlight: https://cap.csail.mit.edu/engage/spotlights/justin-solomon-0\nPersonal website: https://people.csail.mit.edu/jsolomon/\nCSAIL page: https://www.csail.mit.edu/person/justin-solomon \n\nBuilding 32 episodes, meet the host, and more: csail.mit.edu/podcast \n\nConnect with CSAIL Alliances: \nOn our site: cap.csail.mit.edu/about-us/meet-our-team \nOn LinkedIn: linkedin.com/company/mit-csail",
+      "why_it_matters": "جئومتری به عنوان زبان مشترک در حوزه‌های مختلف، امکان پیاده‌سازی الگوریتم‌های دقیق‌تر در خودروهای خودران و گرافیک‌های واقع‌گرایانه را فراهم می‌کند. درک این ارتباط، توسعه سیستم‌های هوش مصنوعی با قابلیت تشخیص بهتر و تصمیم‌گیری سریع‌تر را تسهیل می‌کند. همچنین، کاربردهای عملی مانند بهینه‌سازی مسیر برف‌کشی، نشان می‌دهد که ریاضیات می‌تواند به حل مسائل روزمره کمک کند. این دیدگاه بر اهمیت ترکیب ریاضیات و فناوری در آینده تأکید دارد.",
+      "link": "https://www.youtube.com/watch?v=3q4Ps6STrtU",
+      "posted_at": 1794781120
     }
   }
 }

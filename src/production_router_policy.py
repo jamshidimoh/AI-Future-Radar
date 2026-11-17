@@ -549,17 +549,23 @@ def _install_production_circuit_breaker() -> None:
                             now_utc = datetime.now(timezone.utc)
                             next_day = now_utc.replace(hour=0, minute=0, second=0, microsecond=0).timestamp() + 86400
                             retry_after = max(60.0, next_day - time.time())
-                        elif family == "groq" and re.search(r"\\bTPD\\b|tokens?\\s+per\\s+day|requests?\\s+per\\s+day", message, re.I):
+                        elif family == "groq" and re.search(r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day", message, re.I):
                             retry_after = 86400.0
                         else:
                             retry_after = 60.0
                     retry_after = max(5.0, min(retry_after, 86400.0))
                     cooldown_target = family if scope == "provider" else deployment_id
                     disabled_until = time.time() + retry_after
+                    daily_window = retry_after >= 3600.0 or (
+                        family == "openrouter" and re.search(r"free-models-per-day|daily", message, re.I)
+                    ) or (
+                        family == "groq" and re.search(r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day", message, re.I)
+                    )
+                    quota_window = "daily" if daily_window else "minute"
                     print(
                         f"[Quota Cooldown] scope={scope} target={cooldown_target} "
                         f"disabled_until={disabled_until:.3f} delay_seconds={retry_after:.1f} "
-                        f"reason={reason}",
+                        f"window={quota_window} reason={reason}",
                         flush=True,
                     )
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections import deque
 import os
 import re
 import time
@@ -35,6 +36,8 @@ _OPENROUTER_FREE_RESERVED = 0
 _OPENROUTER_FREE_CACHED_REMAINING: int | None = None
 _OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
 _OPENROUTER_FREE_QUOTA_CACHE_SECONDS = 8.0
+_OPENROUTER_FREE_REQUEST_TIMESTAMPS: deque[float] = deque()
+_OPENROUTER_FREE_RPM_LIMIT = 20
 _OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
 _OMNIROUTE_CIRCUIT_FAILURES = 0
 
@@ -132,6 +135,14 @@ def _openrouter_free_request_allowed(deployment_id: str) -> bool:
 
     with _OPENROUTER_QUOTA_LOCK:
         now = time.monotonic()
+        while _OPENROUTER_FREE_REQUEST_TIMESTAMPS and now - _OPENROUTER_FREE_REQUEST_TIMESTAMPS[0] >= 60.0:
+            _OPENROUTER_FREE_REQUEST_TIMESTAMPS.popleft()
+        if len(_OPENROUTER_FREE_REQUEST_TIMESTAMPS) >= _OPENROUTER_FREE_RPM_LIMIT:
+            print(
+                f"[Free Quota Guard] skipped={deployment_id} reason=free_model_20_rpm_cap_reached",
+                flush=True,
+            )
+            return False
         refresh = (
             _OPENROUTER_FREE_CACHED_REMAINING is None
             or now - _OPENROUTER_FREE_QUOTA_REFRESHED_AT >= _OPENROUTER_FREE_QUOTA_CACHE_SECONDS
@@ -200,6 +211,7 @@ def _openrouter_free_request_allowed(deployment_id: str) -> bool:
 
         _OPENROUTER_FREE_CACHED_REMAINING = remaining - 1
         _OPENROUTER_FREE_RESERVED += 1
+        _OPENROUTER_FREE_REQUEST_TIMESTAMPS.append(now)
         print(
             f"[Free Quota Guard] reserved=1 deployment={deployment_id} "
             f"remaining_local={_OPENROUTER_FREE_CACHED_REMAINING}",
@@ -527,6 +539,16 @@ def _install_production_circuit_breaker() -> None:
                         router._DISABLED_FAMILIES.add(family)
                         router._DISABLED.add(deployment_id)
                     router._disable(deployment_id, "quota")
+                    scope = "provider"
+                elif family == "openrouter" and re.search(r"free-models-per-minute", message, re.I):
+                    # OpenRouter's 20 RPM ceiling is shared across all :free
+                    # models on the key. Skip the family for this request and
+                    # apply only the provider-supplied short reset window.
+                    skipped_families.add(family)
+                    with router._STATE_LOCK:
+                        router._DISABLED_FAMILIES.add(family)
+                        router._DISABLED.add(deployment_id)
+                    router._disable(deployment_id, "rate_limit")
                     scope = "provider"
                 elif _is_provider_auth(message) or (
                     _is_provider_quota(message)

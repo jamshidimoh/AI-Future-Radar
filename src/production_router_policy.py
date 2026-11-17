@@ -464,6 +464,7 @@ def _install_production_circuit_breaker() -> None:
 
         def _try_deployment(deployment):
             nonlocal attempts, last_error
+            global _OPENROUTER_FREE_BLOCKED_UNTIL
             deployment_id = deployment["model_info"]["id"]
             family = router._provider_family(deployment_id)
             if deployment_id in tried:

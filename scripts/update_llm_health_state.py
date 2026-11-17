@@ -101,6 +101,18 @@ def is_kira_wallet_only(deployment: str, message: str) -> bool:
     return family(deployment) == "kiraai" and bool(KIRAAI_WALLET_RE.search(str(message or "")))
 
 
+def is_provider_scoped_failure(deployment: str, failure_kind: str, wallet_only: bool = False) -> bool:
+    """Return whether a failure blocks the whole provider/account, not one model.
+
+    OpenRouter's free daily allowance and account_limit responses are shared
+    across all :free model variants on the API key. Groq limits are per model,
+    so Groq quota exhaustion must never disable sibling models.
+    """
+    if wallet_only or failure_kind in PROVIDER_COOLDOWN:
+        return True
+    return family(deployment) == "openrouter" and failure_kind == "quota"
+
+
 def classify(message: str) -> str:
     text = str(message or "").lower()
     # Account gates and wallet exhaustion are never retryable.
@@ -189,7 +201,7 @@ def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
             last_model_event[normalized] = event_kind
             if event_kind == "success":
                 last_provider_event[provider] = "success"
-            elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
+            elif is_provider_scoped_failure(deployment, failure_kind, wallet_only):
                 last_provider_event[provider] = "failure"
 
         match = QUOTA_COOLDOWN_RE.search(line)
@@ -266,11 +278,14 @@ def main() -> int:
                 "disabled_until": round(now + KIRAAI_WALLET_PROVIDER_COOLDOWN, 3),
                 "last_error": "wallet",
             }
-        elif kind in PROVIDER_COOLDOWN:
+        elif kind in PROVIDER_COOLDOWN or (provider == "openrouter" and kind == "quota"):
+            # Explicit [Quota Cooldown] records below replace this conservative
+            # fallback with the exact provider reset instant when present.
+            fallback_seconds = PROVIDER_COOLDOWN.get(kind, 21600.0)
             old = providers.get(provider, {})
             providers[provider] = {
                 "failures": int(old.get("failures", 0) or 0) + 1,
-                "disabled_until": round(now + PROVIDER_COOLDOWN[kind], 3),
+                "disabled_until": round(now + fallback_seconds, 3),
                 "last_error": kind,
             }
 
@@ -281,7 +296,7 @@ def main() -> int:
         provider = family(deployment)
         if event_kind == "success":
             last_provider_event[provider] = "success"
-        elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
+        elif is_provider_scoped_failure(deployment, failure_kind, wallet_only):
             last_provider_event[provider] = "failure"
     for provider, event_kind in last_provider_event.items():
         if event_kind == "success":

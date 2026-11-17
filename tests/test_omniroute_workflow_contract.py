@@ -45,7 +45,7 @@ def test_omniroute_workflow_uses_audited_release_and_only_verified_free_provider
     assert '"response_format":{"type":"json_object"}' in workflow
     assert '"max_tokens":128' in workflow
     assert 'result.get("ok") is True' in workflow
-    assert '\\"model\\":\\"auto/best-free\\"' in workflow
+    assert '"model":"auto/best-free"' in workflow
 
 # Production validation trigger: pinned OmniRoute source tag and lockfile contract.
 

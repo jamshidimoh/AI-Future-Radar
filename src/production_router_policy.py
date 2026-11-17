@@ -241,7 +241,7 @@ def _persistently_unavailable(deployment_id: str, *, recovery_probe: bool = Fals
     if not recovery_probe:
         return True
 
-    recoverable = {"quota", "rate_limit", "transient"}
+    recoverable = {"rate_limit", "transient"}
     blocked = {"auth", "model", "wallet"}
     model_reason = str((model or {}).get("last_error") or "").strip().casefold()
     provider_reason = str((provider or {}).get("last_error") or "").strip().casefold()

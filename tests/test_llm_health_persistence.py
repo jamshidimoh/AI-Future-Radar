@@ -61,12 +61,12 @@ def test_quota_window_persistence_preserves_exact_daily_provider_and_model_reset
     state = tmp_path / "llm_health.json"
     log = tmp_path / "run.log"
     log.write_text(
-        "[Light Router] success=OpenRouter:model-a:free model=openrouter/model-a:free\\n"
+        "[Light Router] success=OpenRouter:model-a:free model=openrouter/model-a:free\n"
         "[Quota Cooldown] scope=provider target=openrouter disabled_until=4102444800.000 "
-        "delay_seconds=86400.0 window=daily reason=quota\\n"
-        "[Light Router] success=Groq:openai/gpt-oss-120b model=groq/openai/gpt-oss-120b\\n"
+        "delay_seconds=86400.0 window=daily reason=quota\n"
+        "[Light Router] success=Groq:openai/gpt-oss-120b model=groq/openai/gpt-oss-120b\n"
         "[Quota Cooldown] scope=model target=groq:openai/gpt-oss-120b "
-        "disabled_until=4102444800.000 delay_seconds=86400.0 window=daily reason=quota\\n",
+        "disabled_until=4102444800.000 delay_seconds=86400.0 window=daily reason=quota\n",
         encoding="utf-8",
     )
     monkeypatch.setattr(persistence, "STATE_PATH", state)
@@ -85,9 +85,9 @@ def test_minute_window_cooldown_is_released_as_rate_limit(tmp_path, monkeypatch)
     state = tmp_path / "llm_health.json"
     log = tmp_path / "run.log"
     log.write_text(
-        "[Production Circuit] failed=openrouter:model-a:free reason=rate_limit scope=provider: HTTP 429 free-models-per-minute\\n"
+        "[Production Circuit] failed=openrouter:model-a:free reason=rate_limit scope=provider: HTTP 429 free-models-per-minute\n"
         "[Quota Cooldown] scope=provider target=openrouter disabled_until=4102444860.000 "
-        "delay_seconds=60.0 window=minute reason=quota\\n",
+        "delay_seconds=60.0 window=minute reason=quota\n",
         encoding="utf-8",
     )
     monkeypatch.setattr(persistence, "STATE_PATH", state)
@@ -366,7 +366,7 @@ def test_state_persistence_prunes_removed_provider_records_without_success_event
         },
     }), encoding="utf-8")
     log = tmp_path / "run.log"
-    log.write_text("[Light Router] success=Groq:model-b model=groq/model-b attempts=1\\n", encoding="utf-8")
+    log.write_text("[Light Router] success=Groq:model-b model=groq/model-b attempts=1\n", encoding="utf-8")
     monkeypatch.setattr(persistence, "STATE_PATH", state)
     monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
 

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1794850773,
+  "updated_at": 1794878399,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24305,6 +24305,25 @@
       "why_it_matters": "داده‌های جمع‌آوری‌شده می‌تواند به توسعه ابزارهای هوش مصنوعی سلامت کمک کند تا پاسخ‌های دقیق‌تر، جزئیات‌دارتر و مرتبط‌تری ارائه دهند، که برای کاربران غیرمتخصص حیاتی است. با تأکید بر حفظ حریم خصوصی و عدم استفاده از داده‌های شخصی برای آموزش مدل‌ها، Apple سعی دارد اعتماد عمومی را در فناوری‌های پزشکی دیجیتال تقویت کند. نتایج پژوهش می‌تواند راهنمایی‌های عملی برای بهبود تعاملات کاربر با ربات‌های گفتاری سلامت فراهم کند و استانداردهای علمی و بالینی را در این حوزه ارتقا دهد.",
       "link": "https://www.theverge.com/tech/1033355/apples-new-study-looks-to-improve-the-effectiveness-of-ai-health-tools",
       "posted_at": 1794850772
+    },
+    "-1004482051328:2396": {
+      "chat_id": -1004482051328,
+      "message_id": 2396,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - World Economic Forum",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "چسب جدیدی که می‌تواند باتری‌ها را سبزتر کند",
+      "summary": "پژوهشگران UC San Diego یک چسب قابل حل در آب اختراع کردند که امکان بازیافت باتری‌های لیتیوم را بدون کاهش کارایی فراهم می‌کند. این فناوری می‌تواند مصرف انرژی و انتشار گازهای گلخانه‌ای در تولید باتری را کاهش دهد و به ایجاد زنجیره تأمین چرخه‌ای کمک کند. چسب در آزمایش‌های اولیه نشان داد که می‌تواند به‌صورت ساده با غوطه‌ور کردن در آب، باتری‌های مصرفی را بازسازی کند. این ابتکار در چارچوب ابتکار Transitioning Materials Systems توسط World Economic Forum معرفی شد. اگر به‌طور گسترده به کار گرفته شود، می‌تواند فرآیند بازیافت باتری را به‌صورت قابل‌تکمیل و اقتصادی تبدیل کند.",
+      "description": "Recycling lithium batteries could one day be as simple as soaking them in water.\n\nResearchers at UC San Diego have developed a new water-soluble glue that could make #lithium batteries easier to recycle - without compromising performance.\n\nTheir invention could help cut the energy and emissions involved in #battery production, contributing toward a circular battery supply chain. Here’s how it works.\n\nThe World Economic Forum’s Transitioning Materials Systems initiative brings together global leaders to advance resilient, sustainable and productive value chains.\n\nThe World Economic Forum is the International Organization for Public-Private Cooperation. It provides a global, impartial and not-for-profit platform for meaningful connection between stakeholders to establish trust, and build initiatives for cooperation and progress.\n\nFind out more below:\nWorld Economic Forum Website ► http://www.weforum.org/\nYouTube ► https://www.youtube.com/wef\nLinkedIn ► https://www.linkedin.com/company/world-economic-forum\nFacebook ► https://www.facebook.com/worldeconomicforum/\nInstagram ► https://www.instagram.com/worldeconomicforum/ \nX ► https://twitter.com/wef\nTikTok ► https://www.tiktok.com/@worldeconomicforum\nWhatsApp ► https://www.whatsapp.com/channel/0029VaDcHBKGZNCihKxwiD0L\nThreads ► https://www.threads.com/@worldeconomicforum\nFlipboard ► https://flipboard.com/@WEF\n\n#WorldEconomicForum #wef",
+      "why_it_matters": "با توجه به رشد سریع مصرف باتری‌های لیتیوم، چالش‌های بازیافت و تأثیرات زیست‌محیطی آن، این چسب می‌تواند راه‌حلی ساده و مقرون‌به‌صرفه ارائه دهد. اگر بتواند در مقیاس صنعتی به‌کار رود، مصرف انرژی در تولید باتری را به‌طور قابل‌ملاحظه‌ای کاهش می‌دهد و انتشار گازهای گلخانه‌ای را محدود می‌کند. این فناوری همچنین می‌تواند به‌عنوان گامی مهم در جهت تحقق زنجیره تأمین چرخه‌ای برای باتری‌ها مطرح شود، که برای کاهش وابستگی به منابع محدود و حفظ محیط زیست حیاتی است.",
+      "link": "https://www.youtube.com/shorts/XlfTnLZBXa4",
+      "posted_at": 1794878399
     }
   }
 }

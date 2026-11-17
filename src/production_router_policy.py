@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import json
 import logging
-from collections import deque
 import os
 import re
-import time
 import threading
+import time
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -138,7 +138,7 @@ def _openrouter_free_request_allowed(deployment_id: str) -> bool:
 
     with _OPENROUTER_QUOTA_LOCK:
         now = time.monotonic()
-        if _OPENROUTER_FREE_BLOCKED_UNTIL > now:
+        if now < _OPENROUTER_FREE_BLOCKED_UNTIL:
             print(
                 f"[Free Quota Guard] skipped={deployment_id} "
                 f"reason=provider_minute_cooldown remaining={_OPENROUTER_FREE_BLOCKED_UNTIL - now:.1f}s",
@@ -496,7 +496,7 @@ def _install_production_circuit_breaker() -> None:
             if family == "openrouter" and not _openrouter_free_request_allowed(deployment_id):
                 if (
                     int(_OPENROUTER_FREE_CACHED_REMAINING or 0) <= 0
-                    or _OPENROUTER_FREE_BLOCKED_UNTIL > time.monotonic()
+                    or time.monotonic() < _OPENROUTER_FREE_BLOCKED_UNTIL
                     or len(_OPENROUTER_FREE_REQUEST_TIMESTAMPS) >= _OPENROUTER_FREE_RPM_LIMIT
                 ):
                     skipped_families.add("openrouter")

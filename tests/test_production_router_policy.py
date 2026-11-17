@@ -27,6 +27,7 @@ def _reset(monkeypatch):
     policy._OPENROUTER_FREE_RESERVED = 0
     policy._OPENROUTER_FREE_CACHED_REMAINING = None
     policy._OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
+    policy._OPENROUTER_FREE_REQUEST_TIMESTAMPS.clear()
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -627,6 +628,74 @@ def test_provider_retry_after_parser_supports_seconds_and_compound_durations():
     assert policy._provider_retry_after_seconds("reset in 2m30s") == 150
 
 
+def test_openrouter_free_quota_preflight_enforces_20_requests_per_minute(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+
+    class Response:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {
+                "data": {
+                    "free_model_daily_requests": {
+                        "used": 0,
+                        "limit": 50,
+                        "remaining": 50,
+                    }
+                }
+            }
+
+    monkeypatch.setattr(policy.requests, "get", lambda *_args, **_kwargs: Response())
+
+    for index in range(20):
+        assert policy._openrouter_free_request_allowed(
+            f"openrouter:provider/model-{index}:free"
+        ) is True
+
+    assert policy._openrouter_free_request_allowed("openrouter:provider/model-21:free") is False
+    assert len(policy._OPENROUTER_FREE_REQUEST_TIMESTAMPS) == 20
+
+
+def test_omniroute_upstream_502_enters_short_half_open_cooldown(monkeypatch, capsys):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
+    calls = []
+
+    class Response:
+        text = ""
+
+        def __init__(self, status_code):
+            self.status_code = status_code
+            self.headers = {"X-OmniRoute-Decision": "strategy=auto; provider=groq"}
+
+        @staticmethod
+        def json():
+            return {
+                "model": "openai/gpt-oss-120b",
+                "choices": [{"message": {"content": '{"ok": true}'}}],
+            }
+
+    def post(*_args, **_kwargs):
+        calls.append(True)
+        return Response(502 if len(calls) == 1 else 200)
+
+    monkeypatch.setattr(policy.requests, "post", post)
+
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert policy._OMNIROUTE_CIRCUIT_OPEN is True
+    assert 1.0 <= policy._OMNIROUTE_CIRCUIT_RETRY_AT - time.monotonic() <= 3.0
+
+    policy._OMNIROUTE_CIRCUIT_RETRY_AT = time.monotonic() - 0.1
+    assert policy._omniroute_call("system", "user") == ('{"ok": true}', "Groq:openai/gpt-oss-120b")
+    assert policy._OMNIROUTE_CIRCUIT_OPEN is False
+    assert policy._OMNIROUTE_CIRCUIT_FAILURES == 0
+    output = capsys.readouterr().out
+    assert "free_upstream_pool_http_502" in output
+    assert "half_open_probe=1" in output
+
+
 def test_omniroute_transport_timeout_opens_run_scoped_circuit(monkeypatch, capsys):
     _reset(monkeypatch)
     monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
@@ -714,7 +783,7 @@ def test_omniroute_primary_requests_json_object_mode(monkeypatch):
 
         def json(self):
             return {
-                "model": "auto/smart",
+                "model": "auto/best-free",
                 "choices": [{"message": {"content": '{"summary":"ok"}'}}],
             }
 
@@ -730,7 +799,7 @@ def test_omniroute_primary_requests_json_object_mode(monkeypatch):
     )
 
     assert result == '{"summary":"ok"}'
-    assert provider == "OmniRoute:auto/smart"
+    assert provider == "OmniRoute:auto/best-free"
     assert calls["url"] == "http://127.0.0.1:20128/v1/chat/completions"
     assert calls["json"]["response_format"] == {"type": "json_object"}
 

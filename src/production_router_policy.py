@@ -32,6 +32,7 @@ _OMNIROUTE_READ_TIMEOUT_STREAK = 0
 # each direct :free request and reserve locally between refreshes.
 _OPENROUTER_QUOTA_LOCK = threading.RLock()
 _OPENROUTER_FREE_REPORTED_REMAINING: int | None = None
+_OPENROUTER_FREE_REPORTED_USED: int | None = None
 _OPENROUTER_FREE_RESERVED = 0
 _OPENROUTER_FREE_CACHED_REMAINING: int | None = None
 _OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
@@ -112,7 +113,7 @@ def _openrouter_free_request_allowed(deployment_id: str) -> bool:
     /api/v1/key counter is authoritative; local reservations account for calls
     made since the last refresh, including failed attempts.
     """
-    global _OPENROUTER_FREE_REPORTED_REMAINING
+    global _OPENROUTER_FREE_REPORTED_REMAINING, _OPENROUTER_FREE_REPORTED_USED
     global _OPENROUTER_FREE_RESERVED, _OPENROUTER_FREE_CACHED_REMAINING
     global _OPENROUTER_FREE_QUOTA_REFRESHED_AT
     global _OPENROUTER_FREE_BLOCKED_UNTIL
@@ -173,26 +174,29 @@ def _openrouter_free_request_allowed(deployment_id: str) -> bool:
                 if remaining_value is None:
                     raise ValueError("OpenRouter key response omitted free_model_daily_requests.remaining")
                 remote_remaining = max(0, int(remaining_value))
-                if (
-                    _OPENROUTER_FREE_REPORTED_REMAINING is not None
-                    and remote_remaining > _OPENROUTER_FREE_REPORTED_REMAINING
-                ):
-                    # The UTC daily quota refilled (or its ceiling increased).
-                    # Yesterday's local reservations must not reduce today's cap.
+                used_value = quota.get("used")
+                remote_used = max(0, int(used_value)) if used_value is not None else None
+                daily_reset = (
+                    remote_used is not None
+                    and _OPENROUTER_FREE_REPORTED_USED is not None
+                    and remote_used < _OPENROUTER_FREE_REPORTED_USED
+                )
+                if daily_reset:
+                    # The provider's UTC-day counter reset. Yesterday's local
+                    # reservations and RPM history must not reduce today's cap.
                     _OPENROUTER_FREE_RESERVED = 0
                     _OPENROUTER_FREE_REQUEST_TIMESTAMPS.clear()
-                if _OPENROUTER_FREE_REPORTED_REMAINING is None or remote_remaining > _OPENROUTER_FREE_REPORTED_REMAINING:
-                    unreflected_reservations = _OPENROUTER_FREE_RESERVED
+                    unreflected_reservations = 0
+                elif remote_used is not None and _OPENROUTER_FREE_REPORTED_USED is not None:
+                    remotely_observed = max(0, remote_used - _OPENROUTER_FREE_REPORTED_USED)
+                    unreflected_reservations = max(0, _OPENROUTER_FREE_RESERVED - remotely_observed)
                 else:
-                    remotely_observed = max(
-                        0,
-                        _OPENROUTER_FREE_REPORTED_REMAINING - remote_remaining,
-                    )
-                    unreflected_reservations = max(
-                        0,
-                        _OPENROUTER_FREE_RESERVED - remotely_observed,
-                    )
+                    # If the account endpoint omits used, retain local reservations;
+                    # a larger daily ceiling alone does not prove they were counted.
+                    unreflected_reservations = _OPENROUTER_FREE_RESERVED
                 _OPENROUTER_FREE_REPORTED_REMAINING = remote_remaining
+                if remote_used is not None:
+                    _OPENROUTER_FREE_REPORTED_USED = remote_used
                 _OPENROUTER_FREE_RESERVED = unreflected_reservations
                 _OPENROUTER_FREE_CACHED_REMAINING = max(
                     0,

@@ -415,11 +415,6 @@ def _install_production_circuit_breaker() -> None:
         emergency_fallbacks = []
         if os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("OPENROUTER_API_KEY"):
             emergency_fallbacks.append(("OpenRouterFreeRouter", router._openrouter_free_router))
-        # Mistral is deliberately a last-resort direct route: unlike free model
-        # catalogs it has an independently provisioned credential and does not
-        # depend on OmniRoute being healthy. Keep it opt-in at the workflow layer.
-        if os.getenv("RADAR_ENABLE_MISTRAL_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("MISTRAL_API_KEY"):
-            emergency_fallbacks.append(("Mistral", router._mistral))
         if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("HF_TOKEN"):
             emergency_fallbacks.append(("HuggingFace", router._huggingface))
 
@@ -427,7 +422,6 @@ def _install_production_circuit_breaker() -> None:
             # Emergency fallbacks obey the same health policy as primary deployments.
             emergency_health_ids = {
                 "OpenRouterFreeRouter": "openrouter:free-router",
-                "Mistral": f"mistral:{(os.getenv('MISTRAL_MODEL') or 'mistral-small-latest').strip()}",
                 "HuggingFace": f"huggingface:{(os.getenv('HF_MODEL') or 'inference').strip()}",
             }
             deployment_id = emergency_health_ids.get(emergency_name)

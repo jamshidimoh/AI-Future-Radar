@@ -49,9 +49,9 @@ KIRAAI_WALLET_RE = re.compile(
     re.IGNORECASE,
 )
 QUOTA_COOLDOWN_RE = re.compile(
-    r"\\[Quota Cooldown\\]\\s+scope=(?P<scope>provider|model)\\s+"
-    r"target=(?P<target>\\S+)\\s+disabled_until=(?P<until>[0-9]+(?:\\.[0-9]+)?)"
-    r"(?:\\s+.*)?$",
+    r"\[Quota Cooldown\]\s+scope=(?P<scope>provider|model)\s+"
+    r"target=(?P<target>\S+)\s+disabled_until=(?P<until>[0-9]+(?:\.[0-9]+)?)"
+    r"(?:\s+.*)?$",
 )
 
 _PROVIDER_CANONICAL = {

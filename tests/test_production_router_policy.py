@@ -15,6 +15,7 @@ def _reset(monkeypatch):
     router._DISABLED.clear()
     router._DISABLED_FAMILIES.clear()
     router._MODEL_DISABLED_UNTIL.clear()
+    router._MODEL_DISABLED_REASON.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
@@ -178,6 +179,7 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
     apply()
+    monkeypatch.setattr(policy, "_openrouter_free_request_allowed", lambda _deployment_id: True)
     calls = []
 
     class FakeRouter:
@@ -192,8 +194,8 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
             )()
 
     deployments = [
-        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a"}},
-        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b"}},
+        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a:free"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b:free"}},
         {"model_name": "radar-production-3", "model_info": {"id": "groq:model-c"}},
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
@@ -205,7 +207,7 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
-def test_groq_tpd_quota_disables_all_sibling_models(monkeypatch):
+def test_groq_tpd_quota_disables_only_the_exhausted_model(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
@@ -230,17 +232,20 @@ def test_groq_tpd_quota_disables_all_sibling_models(monkeypatch):
     deployments = [
         {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}},
         {"model_name": "radar-production-2", "model_info": {"id": "groq:model-b"}},
-        {"model_name": "radar-production-3", "model_info": {"id": "openrouter:model-c"}},
+        {"model_name": "radar-production-3", "model_info": {"id": "openrouter:model-c:free"}},
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+    monkeypatch.setattr(policy, "_openrouter_free_request_allowed", lambda _deployment_id: True)
 
     result, provider = router._call_litellm("system", "user")
 
     assert result == '{"title":"ok"}'
-    assert provider == "openrouter:model-c"
-    assert calls == ["radar-production-1", "radar-production-3"]
-    assert "groq" in router._DISABLED_FAMILIES
+    assert provider == "groq:model-b"
+    assert calls == ["radar-production-1", "radar-production-2"]
+    assert "groq" not in router._DISABLED_FAMILIES
+    assert "groq:model-a" in router._DISABLED
+    assert router._MODEL_DISABLED_UNTIL["groq:model-a"] > time.monotonic()
 
 
 def test_production_model_429_does_not_disable_provider(monkeypatch):
@@ -279,6 +284,7 @@ def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
     apply()
+    monkeypatch.setattr(policy, "_openrouter_free_request_allowed", lambda _deployment_id: True)
     calls = []
 
     class FakeRouter:
@@ -293,8 +299,8 @@ def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch)
             )()
 
     deployments = [
-        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a"}},
-        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b"}},
+        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a:free"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b:free"}},
         {"model_name": "radar-production-3", "model_info": {"id": "groq:model-c"}},
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())

@@ -307,10 +307,10 @@ def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch)
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"ok"}'
-    assert provider == "openrouter:model-b"
+    assert provider == "openrouter:model-b:free"
     assert calls == ["radar-production-1", "radar-production-2"]
     assert "openrouter" not in router._DISABLED_FAMILIES
-    assert "openrouter:model-a" in router._DISABLED
+    assert "openrouter:model-a:free" in router._DISABLED
 
 
 def test_kira_wallet_error_does_not_disable_kira_family(monkeypatch):

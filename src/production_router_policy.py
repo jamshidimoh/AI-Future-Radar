@@ -23,6 +23,8 @@ HEALTH_PATH = ROOT / "data" / "llm_health.json"
 # or a connection/gateway failure open the process-local circuit.
 _OMNIROUTE_CIRCUIT_OPEN = False
 _OMNIROUTE_READ_TIMEOUT_STREAK = 0
+_OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
+_OMNIROUTE_CIRCUIT_FAILURES = 0
 _PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|insufficient.*(?:credit|balance))", re.IGNORECASE)
 # NaraRouter's telegram_required response is an account-level access block,
 # not a model-specific 403. Classify this exact marker as provider-wide auth so
@@ -164,13 +166,23 @@ def _omniroute_call(system_prompt, user_content):
     process-local circuit so later candidates use the independent provider chain
     rather than repeatedly waiting for a gateway that has already timed out.
     """
-    global _OMNIROUTE_CIRCUIT_OPEN, _OMNIROUTE_READ_TIMEOUT_STREAK
+    global _OMNIROUTE_CIRCUIT_OPEN, _OMNIROUTE_READ_TIMEOUT_STREAK, _OMNIROUTE_CIRCUIT_RETRY_AT, _OMNIROUTE_CIRCUIT_FAILURES
     base_url = os.getenv("OMNIROUTE_BASE_URL", "").strip().rstrip("/")
     if not base_url:
         return None, None
     if _OMNIROUTE_CIRCUIT_OPEN:
-        print("[OmniRoute Circuit] skipped=1 reason=prior_transport_failure; using hard fallback", flush=True)
-        return None, None
+        remaining = _OMNIROUTE_CIRCUIT_RETRY_AT - time.monotonic()
+        if remaining > 0:
+            print(
+                f"[OmniRoute Circuit] skipped=1 reason=open_cooldown remaining={remaining:.1f}s; using hard fallback",
+                flush=True,
+            )
+            return None, None
+        # Half-open recovery: after the bounded cooldown, allow exactly this
+        # request to probe OmniRoute again. A successful response closes the
+        # circuit; a repeated transport/upstream failure applies a longer backoff.
+        _OMNIROUTE_CIRCUIT_OPEN = False
+        print("[OmniRoute Circuit] half_open_probe=1 reason=cooldown_elapsed", flush=True)
     api_key = os.getenv("OMNIROUTE_API_KEY", "").strip()
     model = os.getenv("OMNIROUTE_MODEL", "auto/smart").strip() or "auto/smart"
     api_base = base_url if base_url.endswith("/v1") else f"{base_url}/v1"
@@ -208,6 +220,9 @@ def _omniroute_call(system_prompt, user_content):
         if not _omniroute_structured_json_ok(content):
             raise RuntimeError("OmniRoute returned invalid structured JSON; response rejected before editorial pipeline")
         _OMNIROUTE_READ_TIMEOUT_STREAK = 0
+        _OMNIROUTE_CIRCUIT_OPEN = False
+        _OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
+        _OMNIROUTE_CIRCUIT_FAILURES = 0
         decision = response.headers.get("X-OmniRoute-Decision", "")
         selected = str(data.get("model") or decision or model)
         print(
@@ -236,9 +251,25 @@ def _omniroute_call(system_prompt, user_content):
                 re.search(r"\bHTTP (?:502|503|504)\b", str(exc), re.IGNORECASE)
             )
         if transport_failure:
+            _OMNIROUTE_CIRCUIT_FAILURES += 1
             _OMNIROUTE_CIRCUIT_OPEN = True
+            status_match = re.search(r"HTTP\s+(502|503|504)", str(exc), re.IGNORECASE)
+            if status_match:
+                # OmniRoute returns aggregated 502/503/504 errors when its
+                # provider pool is temporarily exhausted. That is not proof the
+                # gateway process is dead: keep the circuit short and probe again.
+                cooldown = min(30.0, 2.0 ** min(_OMNIROUTE_CIRCUIT_FAILURES, 4))
+                failure_kind = f"upstream_pool_http_{status_match.group(1)}"
+            elif isinstance(exc, requests.ReadTimeout):
+                cooldown = min(45.0, 8.0 * (2 ** min(_OMNIROUTE_CIRCUIT_FAILURES - 1, 2)))
+                failure_kind = "read_timeout"
+            else:
+                cooldown = min(60.0, 15.0 * (2 ** min(_OMNIROUTE_CIRCUIT_FAILURES - 1, 2)))
+                failure_kind = "transport_failure"
+            _OMNIROUTE_CIRCUIT_RETRY_AT = time.monotonic() + cooldown
             print(
-                f"[OmniRoute Circuit] opened=1 reason={type(exc).__name__}; subsequent calls bypass gateway",
+                f"[OmniRoute Circuit] opened=1 reason={failure_kind} cooldown={cooldown:.1f}s "
+                "subsequent calls bypass gateway until half-open probe",
                 flush=True,
             )
         print(
@@ -384,6 +415,11 @@ def _install_production_circuit_breaker() -> None:
         emergency_fallbacks = []
         if os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("OPENROUTER_API_KEY"):
             emergency_fallbacks.append(("OpenRouterFreeRouter", router._openrouter_free_router))
+        # Mistral is deliberately a last-resort direct route: unlike free model
+        # catalogs it has an independently provisioned credential and does not
+        # depend on OmniRoute being healthy. Keep it opt-in at the workflow layer.
+        if os.getenv("RADAR_ENABLE_MISTRAL_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("MISTRAL_API_KEY"):
+            emergency_fallbacks.append(("Mistral", router._mistral))
         if os.getenv("RADAR_ENABLE_HF_FALLBACK", "0").strip().lower() in {"1", "true", "yes"} and os.getenv("HF_TOKEN"):
             emergency_fallbacks.append(("HuggingFace", router._huggingface))
 
@@ -391,6 +427,7 @@ def _install_production_circuit_breaker() -> None:
             # Emergency fallbacks obey the same health policy as primary deployments.
             emergency_health_ids = {
                 "OpenRouterFreeRouter": "openrouter:free-router",
+                "Mistral": f"mistral:{(os.getenv('MISTRAL_MODEL') or 'mistral-small-latest').strip()}",
                 "HuggingFace": f"huggingface:{(os.getenv('HF_MODEL') or 'inference').strip()}",
             }
             deployment_id = emergency_health_ids.get(emergency_name)
@@ -401,6 +438,9 @@ def _install_production_circuit_breaker() -> None:
             if deployment_id and _persistently_unavailable(deployment_id, recovery_probe=attempts > 0):
                 print(f"[Production Circuit] skipped={deployment_id} reason=persisted_health", flush=True)
                 continue
+            if deployment_id and router._model_is_disabled(deployment_id):
+                print(f"[Production Circuit] skipped={deployment_id} reason=model_cooldown", flush=True)
+                continue
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 break
@@ -410,21 +450,33 @@ def _install_production_circuit_breaker() -> None:
                 future = router._CALL_EXECUTOR.submit(emergency_fn, system_prompt, user_content)
                 content = future.result(timeout=max(0.5, min(emergency_limit, remaining)))
                 if content:
-                    print(f"[Production Circuit] success={emergency_name} emergency=1", flush=True)
+                    print(
+                        f"[Production Circuit] success={deployment_id or emergency_name} "
+                        f"provider={emergency_name} emergency=1",
+                        flush=True,
+                    )
                     return content, emergency_name
             except Exception as exc:
                 last_error = exc
+                reason = router._failure_class(str(exc))
+                if deployment_id:
+                    router._disable(deployment_id, reason)
+                if router._provider_quota_is_family_scoped(family, reason, str(exc)):
+                    skipped_families.add(family)
+                    with router._STATE_LOCK:
+                        router._DISABLED_FAMILIES.add(family)
                 logger.warning(
                     "Production provider attempt failed provider=%s model=%s exception=%s: %s",
                     emergency_name.lower(),
-                    emergency_name,
+                    deployment_id or emergency_name,
                     type(exc).__name__,
                     exc,
                     exc_info=True,
                 )
                 print(
-                    f"[Production Circuit] failed={emergency_name} reason={router._failure_class(str(exc))} "
-                    f"scope=emergency: exception={type(exc).__name__} provider={emergency_name.lower()} model={emergency_name} {exc}",
+                    f"[Production Circuit] failed={deployment_id or emergency_name} reason={reason} "
+                    f"scope=emergency: exception={type(exc).__name__} provider={emergency_name.lower()} "
+                    f"model={deployment_id or emergency_name} {exc}",
                     flush=True,
                 )
 

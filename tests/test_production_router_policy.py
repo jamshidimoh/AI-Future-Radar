@@ -15,18 +15,25 @@ def _reset(monkeypatch):
     router._DISABLED.clear()
     router._DISABLED_FAMILIES.clear()
     router._MODEL_DISABLED_UNTIL.clear()
+    router._MODEL_DISABLED_REASON.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
     router._PRODUCTION_CIRCUIT_OPEN = False
     policy._OMNIROUTE_CIRCUIT_OPEN = False
     policy._OMNIROUTE_READ_TIMEOUT_STREAK = 0
+    policy._OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
+    policy._OMNIROUTE_CIRCUIT_FAILURES = 0
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER", raising=False)
     monkeypatch.delenv("RADAR_GROK_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
+    monkeypatch.delenv("RADAR_ENABLE_MISTRAL_FALLBACK", raising=False)
+    monkeypatch.delenv("MISTRAL_API_KEY", raising=False)
+    monkeypatch.delenv("MISTRAL_MODEL", raising=False)
+    monkeypatch.delenv("MISTRAL_TIMEOUT_SECONDS", raising=False)
     monkeypatch.delenv("RADAR_MAX_LLM_ATTEMPTS", raising=False)
     monkeypatch.delenv("RADAR_ROUTER_BUDGET_SECONDS", raising=False)
     monkeypatch.delenv("RADAR_PRODUCTION_MODE", raising=False)
@@ -550,6 +557,148 @@ def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
 
     assert result == '{"title":"fallback"}'
     assert provider == "groq:model-a"
+
+
+def test_omniroute_aggregated_502_uses_short_half_open_recovery_probe(monkeypatch, capsys):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
+    calls = []
+
+    class Response:
+        headers = {"X-OmniRoute-Decision": "strategy=auto; provider=mistral"}
+        text = ""
+
+        def __init__(self, status_code):
+            self.status_code = status_code
+
+        def json(self):
+            return {
+                "model": "mistral-small-latest",
+                "choices": [{"message": {"content": '{\"ok\": true}'}}],
+            }
+
+    def post(*_args, **_kwargs):
+        calls.append(True)
+        return Response(502 if len(calls) == 1 else 200)
+
+    monkeypatch.setattr(policy.requests, "post", post)
+
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert policy._OMNIROUTE_CIRCUIT_OPEN is True
+    assert 1.0 <= policy._OMNIROUTE_CIRCUIT_RETRY_AT - time.monotonic() <= 3.0
+    # Simulate the cooldown expiring without sleeping in the unit test.
+    policy._OMNIROUTE_CIRCUIT_RETRY_AT = time.monotonic() - 0.1
+    result, provider = policy._omniroute_call("system", "user")
+
+    assert result == '{\"ok\": true}'
+    assert provider == "Mistral:mistral-small-latest"
+    assert calls == [True, True]
+    assert policy._OMNIROUTE_CIRCUIT_OPEN is False
+    assert policy._OMNIROUTE_CIRCUIT_FAILURES == 0
+    output = capsys.readouterr().out
+    assert "upstream_pool_http_502" in output
+    assert "half_open_probe=1" in output
+
+
+def test_mistral_direct_api_requests_structured_json(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("MISTRAL_API_KEY", "test-mistral")
+    monkeypatch.setenv("MISTRAL_MODEL", "mistral-small-latest")
+    calls = {}
+
+    class Response:
+        status_code = 200
+        text = ""
+
+        def json(self):
+            return {"choices": [{"message": {"content": '{\"title\":\"ok\"}'}}]}
+
+        @staticmethod
+        def raise_for_status():
+            return None
+
+    def post(url, **kwargs):
+        calls["url"] = url
+        calls.update(kwargs)
+        return Response()
+
+    monkeypatch.setattr(router.requests, "post", post)
+
+    result = router._mistral("system", "user")
+
+    assert result == '{\"title\":\"ok\"}'
+    assert calls["url"] == "https://api.mistral.ai/v1/chat/completions"
+    assert calls["headers"]["Authorization"] == "Bearer test-mistral"
+    assert calls["json"]["model"] == "mistral-small-latest"
+    assert calls["json"]["response_format"] == {"type": "json_object"}
+    assert calls["json"]["stream"] is False
+
+
+def test_mistral_is_used_only_as_last_resort_after_primary_providers_fail(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("MISTRAL_API_KEY", "test-mistral")
+    monkeypatch.setenv("RADAR_ENABLE_MISTRAL_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "2")
+    apply()
+    primary_calls = []
+    fallback_calls = []
+
+    class FakeRouter:
+        def completion(self, **_kwargs):
+            primary_calls.append(True)
+            raise RuntimeError("HTTP 503 temporary provider outage")
+
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}
+    ])
+
+    def mistral_ok(system_prompt, user_content):
+        fallback_calls.append((system_prompt, user_content))
+        return '{\"title\":\"mistral-fallback\"}'
+
+    monkeypatch.setattr(router, "_mistral", mistral_ok)
+
+    result, provider = router._call_litellm("system", "user")
+
+    assert result == '{\"title\":\"mistral-fallback\"}'
+    assert provider == "Mistral"
+    assert len(primary_calls) == 1
+    assert fallback_calls == [("system", "user")]
+
+
+def test_huggingface_unavailable_is_not_retried_for_each_candidate(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("HF_TOKEN", "test-hf")
+    monkeypatch.setenv("RADAR_ENABLE_HF_FALLBACK", "1")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "1")
+    apply()
+    calls = []
+
+    class FakeRouter:
+        def completion(self, **_kwargs):
+            raise RuntimeError("HTTP 503 temporary provider outage")
+
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: [
+        {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}}
+    ])
+
+    def hf_unavailable(*_args, **_kwargs):
+        calls.append(True)
+        raise router.QuotaExceeded("No zero-price Hugging Face chat model is currently available")
+
+    monkeypatch.setattr(router, "_huggingface", hf_unavailable)
+
+    first = router._call_litellm("system", "user")
+    second = router._call_litellm("system", "user")
+
+    assert first == (None, None)
+    assert second == (None, None)
+    assert calls == [True]
+    assert "huggingface" in router._DISABLED_FAMILIES
 
 
 def test_omniroute_transport_timeout_opens_run_scoped_circuit(monkeypatch, capsys):

@@ -175,34 +175,30 @@ def _iter_events(lines: list[str]):
 
 
 def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
-    """Reapply ordered current-run successes after a remote/local state merge.
-
-    A max-merge can resurrect an old provider cooldown after this production run
-    successfully used that provider. Only successful events clear cooldowns;
-    a later authentication/quota/wallet failure remains authoritative.
-    """
+    """Reapply ordered model/provider success and quota events after state merge."""
     last_model_event: dict[str, str] = {}
     last_provider_event: dict[str, str] = {}
-    for deployment, event_kind, failure_kind, wallet_only in _iter_events(lines):
-        normalized = deployment.strip().casefold()
-        provider = family(deployment)
-        last_model_event[normalized] = event_kind
-        if event_kind == "success":
-            last_provider_event[provider] = "success"
-        elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
-            last_provider_event[provider] = "failure"
 
-    # Explicit quota cooldowns are later than request successes emitted in the
-    # same run and therefore remain authoritative during snapshot merging.
+    # Process every line in source order. A later quota event must survive an
+    # earlier successful request, while a later successful probe may clear a
+    # short-window rate-limit cooldown after its reset.
     for line in lines:
+        for deployment, event_kind, failure_kind, wallet_only in _iter_events([line]):
+            normalized = deployment.strip().casefold()
+            provider = family(deployment)
+            last_model_event[normalized] = event_kind
+            if event_kind == "success":
+                last_provider_event[provider] = "success"
+            elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
+                last_provider_event[provider] = "failure"
+
         match = QUOTA_COOLDOWN_RE.search(line)
-        if not match:
-            continue
-        target = match.group("target").strip().casefold()
-        if match.group("scope") == "provider":
-            last_provider_event[target] = "failure"
-        else:
-            last_model_event[target] = "failure"
+        if match:
+            target = match.group("target").strip().casefold()
+            if match.group("scope") == "provider":
+                last_provider_event[target] = "failure"
+            else:
+                last_model_event[target] = "failure"
 
     result = dict(state) if isinstance(state, dict) else {}
     models = normalize_state_keys(result.get("models", {}) if isinstance(result.get("models"), dict) else {})
@@ -216,7 +212,6 @@ def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
     result["models"] = models
     result["providers"] = providers
     return prune_removed_provider_health_records(result)
-
 
 def main() -> int:
     log_path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "run.log"
@@ -237,7 +232,10 @@ def main() -> int:
         if not match:
             continue
         try:
-            quota_cooldowns[(match.group("scope"), match.group("target").casefold())] = float(match.group("until"))
+            quota_cooldowns[(match.group("scope"), match.group("target").casefold())] = (
+                float(match.group("until")),
+                match.group("window"),
+            )
         except (TypeError, ValueError):
             continue
 
@@ -276,21 +274,6 @@ def main() -> int:
                 "last_error": kind,
             }
 
-    # Apply provider/model reset instants emitted by the live router. These
-    # exact reset times supersede generic cooldown defaults so requests resume
-    # when the free quota replenishes, not on an arbitrary fixed timer.
-    for ( (scope, target), disabled_until) in quota_cooldowns.items():
-        if disabled_until <= now:
-            continue
-        if scope == "model":
-            row = models.setdefault(target, {"failures": 1, "last_success": 0})
-            row["disabled_until"] = round(disabled_until, 3)
-            row["last_error"] = "rate_limit" if match.group("window") == "minute" else "quota"
-        else:
-            row = providers.setdefault(target, {"failures": 1})
-            row["disabled_until"] = round(disabled_until, 3)
-            row["last_error"] = "rate_limit" if match.group("window") == "minute" else "quota"
-
     # Clear provider-level cooldown only when the last provider-scoped event in
     # this run is a success. Model-specific failures remain independently tracked.
     last_provider_event: dict[str, str] = {}
@@ -303,6 +286,22 @@ def main() -> int:
     for provider, event_kind in last_provider_event.items():
         if event_kind == "success":
             providers.pop(provider, None)
+
+    # Apply provider/model reset instants emitted by the live router. These
+    # exact reset times supersede generic cooldown defaults so requests resume
+    # when the free quota replenishes, not on an arbitrary fixed timer.
+    for ( (scope, target), (disabled_until, window) ) in quota_cooldowns.items():
+        if disabled_until <= now:
+            continue
+        if scope == "model":
+            row = models.setdefault(target, {"failures": 1, "last_success": 0})
+            row["disabled_until"] = round(disabled_until, 3)
+            row["last_error"] = "rate_limit" if window == "minute" else "quota"
+        else:
+            row = providers.setdefault(target, {"failures": 1})
+            row["disabled_until"] = round(disabled_until, 3)
+            row["last_error"] = "rate_limit" if match.group("window") == "minute" else "quota"
+
 
     state["models"] = models
     state["providers"] = providers

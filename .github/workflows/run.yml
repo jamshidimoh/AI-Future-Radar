@@ -78,8 +78,13 @@ jobs:
           REQUIRE_API_KEY: "false"
           NODE_ENV: production
           DATA_DIR: /tmp/omniroute-data
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          SAMBANOVA_API_KEY: ${{ vars.SAMBANOVA_FREE_TIER_CONFIRMED == '1' && secrets.SAMBANOVA_API_KEY || '' }}
+          API_AIRFORCE_API_KEY: ${{ vars.API_AIRFORCE_FREE_TIER_CONFIRMED == '1' && secrets.API_AIRFORCE_API_KEY || '' }}
+          GROQ_FREE_TIER_CONFIRMED: ${{ vars.GROQ_FREE_TIER_CONFIRMED || '0' }}
+          SAMBANOVA_FREE_TIER_CONFIRMED: ${{ vars.SAMBANOVA_FREE_TIER_CONFIRMED || '0' }}
+          API_AIRFORCE_FREE_TIER_CONFIRMED: ${{ vars.API_AIRFORCE_FREE_TIER_CONFIRMED || '0' }}
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
@@ -192,18 +197,34 @@ jobs:
               echo "[OmniRoute] ${provider}: skipped (credential not present)"
             fi
           }
-          # Production routing is explicitly auto/best-free: paid tiers are never
-          # an eligible fallback. Only Groq Free and OpenRouter's free-model
-          # connection are provisioned; both have documented zero-price pools
-          # and bounded quotas. OpenRouter's API-key quota is enforced separately
-          # by its live /key preflight in the direct fallback router.
-          add_provider groq GROQ_API_KEY
+          # auto/best-free only selects free-tier models. OpenRouter is always
+          # configured, but direct routing is restricted to :free model IDs and
+          # requires a live daily-quota preflight before each request.
           add_provider openrouter OPENROUTER_API_KEY
-          # Excluded until they have a verifiable zero-billing production guard:
-          # LLM7 is not a managed production inference service; AnyAPI's free
-          # plan is evaluation/low-volume only; Api.Airforce PayGo balance can
-          # bypass its Free request limits; Mistral/NVIDIA/SambaNova/HF can incur
-          # charges or require credits; Nara/Kira have account access/wallet gates.
+
+          # These providers are provisioned only after an explicit repository-variable
+          # assertion that the linked account remains on its no-payment Free plan.
+          # Their published free-tier limits hard-stop with 429/blocked responses.
+          if [ "${GROQ_FREE_TIER_CONFIRMED:-0}" = "1" ]; then
+            add_provider groq GROQ_API_KEY
+          else
+            echo "[OmniRoute] groq: disabled until GROQ_FREE_TIER_CONFIRMED=1 (Free tier/no payment method verified)"
+          fi
+          if [ "${SAMBANOVA_FREE_TIER_CONFIRMED:-0}" = "1" ]; then
+            add_provider sambanova SAMBANOVA_API_KEY
+          else
+            echo "[OmniRoute] sambanova: disabled until SAMBANOVA_FREE_TIER_CONFIRMED=1 (no payment method linked)"
+          fi
+          if [ "${API_AIRFORCE_FREE_TIER_CONFIRMED:-0}" = "1" ]; then
+            add_provider api-airforce API_AIRFORCE_API_KEY
+          else
+            echo "[OmniRoute] api-airforce: disabled until API_AIRFORCE_FREE_TIER_CONFIRMED=1 (Free plan and zero PayGo balance verified)"
+          fi
+
+          # Mistral Free mode has no API access; NVIDIA hosted API is limited to
+          # prototyping; LLM7 is not a managed production inference service;
+          # AnyAPI Free is evaluation/low-volume only. Cloudflare needs a separate
+          # account/plan preflight. Nara/Kira remain behind account/wallet gates.
           echo "[OmniRoute] credential presence inventory (names only):"
           for credential in GROQ_API_KEY OPENROUTER_API_KEY TYPESAFE_API_KEY; do
             if [ -n "${!credential:-}" ]; then
@@ -283,7 +304,7 @@ jobs:
       - name: Refresh and validate free-model registry
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
         run: |
           set +e
@@ -335,7 +356,7 @@ jobs:
           OMNIROUTE_TIMEOUT_SECONDS: 12
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
@@ -358,7 +379,7 @@ jobs:
           PYTHONUNBUFFERED: 1
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0

@@ -493,7 +493,11 @@ def _install_production_circuit_breaker() -> None:
                 print(f"[Production Circuit] attempt_budget_exhausted={max_attempts}", flush=True)
                 return None
             if family == "openrouter" and not _openrouter_free_request_allowed(deployment_id):
-                if int(_OPENROUTER_FREE_CACHED_REMAINING or 0) <= 0:
+                if (
+                    int(_OPENROUTER_FREE_CACHED_REMAINING or 0) <= 0
+                    or _OPENROUTER_FREE_BLOCKED_UNTIL > time.monotonic()
+                    or len(_OPENROUTER_FREE_REQUEST_TIMESTAMPS) >= _OPENROUTER_FREE_RPM_LIMIT
+                ):
                     skipped_families.add("openrouter")
                 return None
             attempts += 1

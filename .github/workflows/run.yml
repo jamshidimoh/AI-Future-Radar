@@ -253,7 +253,7 @@ jobs:
           echo "[OmniRoute] running structured auto/smart inference smoke-test"
           READY=0
           for attempt in $(seq 1 6); do
-            if curl -4 -fsS --max-time 20 http://127.0.0.1:20128/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"auto/smart","messages":[{"role":"user","content":"Return a JSON object with exactly one key, ok, set to true."}],"response_format":{"type":"json_object"},"max_tokens":128,"temperature":0}' >/tmp/omniroute-smoke.json 2>/tmp/omniroute-smoke.err; then
+            if curl -4 -fsS --max-time 20 http://127.0.0.1:20128/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"auto/best-free","messages":[{"role":"user","content":"Return a JSON object with exactly one key, ok, set to true."}],"response_format":{"type":"json_object"},"max_tokens":128,"temperature":0}' >/tmp/omniroute-smoke.json 2>/tmp/omniroute-smoke.err; then
               if python - <<'PY'
           import json
           from pathlib import Path
@@ -347,13 +347,13 @@ jobs:
           RADAR_SUMMARY_WORKERS: 1
           AI_RADAR_EDITORIAL_REVIEW: 1
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0
-          RADAR_ENABLE_HF_FALLBACK: 1
+          RADAR_ENABLE_HF_FALLBACK: 0
           RADAR_MAX_LLM_ATTEMPTS: 10
           RADAR_LLM_MAX_TOKENS: 700
           RADAR_ROUTER_BUDGET_SECONDS: 60
 
           OMNIROUTE_API_KEY: ""
-          OMNIROUTE_MODEL: auto/smart
+          OMNIROUTE_MODEL: auto/best-free
           OMNIROUTE_TIMEOUT_SECONDS: 12
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}

@@ -267,16 +267,21 @@ def _disable(name:str,reason:str):
 
 
 def reset_recoverable_cooldowns() -> int:
-    """Clear only transient/quota model cooldowns before mission recovery retries.
-    
-    Persistent provider health, authentication failures, and model-not-found
-    failures remain protected. This only reopens models whose last failure is
-    reasonably retryable within the current production run.
+    """Clear only expired or explicitly transient model cooldowns.
+
+    Quota/rate-limit cooldowns represent a provider's actual free allowance
+    window. Clearing them during mission recovery would retry a model before
+    its published reset and burn more of a capped free pool. Those entries stay
+    disabled until their monotonic reset deadline has elapsed.
     """
     cleared = 0
+    now = time.monotonic()
     with _STATE_LOCK:
         for name, reason in list(_MODEL_DISABLED_REASON.items()):
-            if reason not in {"quota", "transient"}:
+            until = _MODEL_DISABLED_UNTIL.get(name, 0.0)
+            if reason in {"quota", "rate_limit"} and until > now:
+                continue
+            if reason not in {"quota", "rate_limit", "transient"}:
                 continue
             _DISABLED.discard(name)
             _MODEL_DISABLED_UNTIL.pop(name, None)

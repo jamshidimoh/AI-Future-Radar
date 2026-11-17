@@ -51,7 +51,7 @@ KIRAAI_WALLET_RE = re.compile(
 QUOTA_COOLDOWN_RE = re.compile(
     r"\[Quota Cooldown\]\s+scope=(?P<scope>provider|model)\s+"
     r"target=(?P<target>\S+)\s+disabled_until=(?P<until>[0-9]+(?:\.[0-9]+)?)"
-    r"(?:\s+.*)?$",
+    r"(?:\s+delay_seconds=[0-9.]+)?\s+window=(?P<window>minute|daily)(?:\s+.*)?$",
 )
 
 _PROVIDER_CANONICAL = {
@@ -103,20 +103,30 @@ def is_kira_wallet_only(deployment: str, message: str) -> bool:
 
 def classify(message: str) -> str:
     text = str(message or "").lower()
-    # NaraRouter's telegram_required response is an account-linking gate.
-    # Classify it before generic HTTP 403 handling to avoid model-only cooldowns.
+    # Account gates and wallet exhaustion are never retryable.
     if re.search(r"telegram_required|join the required telegram|relink at /settings", text):
         return "auth"
     if re.search(r"\b401\b|unauthorized|unauthenticated|invalid.*(?:api|credential|key|token)|authentication", text):
         return "auth"
-    if re.search(r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|monthly.*(?:credit|quota)|daily.*(?:limit|quota)|depleted|insufficient.*(?:credit|balance)", text):
+    # Daily/account ceilings are classified before generic 429 so they retain
+    # their correct day-long reset window.
+    if re.search(
+        r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|"
+        r"monthly.*(?:credit|quota)|daily.*(?:limit|quota)|free-models-per-day|"
+        r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|"
+        r"depleted|insufficient.*(?:credit|balance)",
+        text,
+    ):
         return "quota"
-    if re.search(r"\b429\b|rate.?limit|too many requests|resource_exhausted|upstream_provider_shared_pool", text):
+    if re.search(
+        r"\b429\b|rate.?limit|too many requests|resource_exhausted|"
+        r"upstream_provider_shared_pool|free-models-per-minute|tokens?\s+per\s+minute",
+        text,
+    ):
         return "rate_limit"
     if re.search(r"\b(?:403|404)\b|model.*(?:blocked|disabled|not found|unavailable)|not found|permission", text):
         return "model"
     return "transient"
-
 
 def load() -> dict:
     value = load_json_state(STATE_PATH, {}, label="LLM health state")
@@ -181,6 +191,18 @@ def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
             last_provider_event[provider] = "success"
         elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
             last_provider_event[provider] = "failure"
+
+    # Explicit quota cooldowns are later than request successes emitted in the
+    # same run and therefore remain authoritative during snapshot merging.
+    for line in lines:
+        match = QUOTA_COOLDOWN_RE.search(line)
+        if not match:
+            continue
+        target = match.group("target").strip().casefold()
+        if match.group("scope") == "provider":
+            last_provider_event[target] = "failure"
+        else:
+            last_model_event[target] = "failure"
 
     result = dict(state) if isinstance(state, dict) else {}
     models = normalize_state_keys(result.get("models", {}) if isinstance(result.get("models"), dict) else {})
@@ -263,11 +285,11 @@ def main() -> int:
         if scope == "model":
             row = models.setdefault(target, {"failures": 1, "last_success": 0})
             row["disabled_until"] = round(disabled_until, 3)
-            row["last_error"] = "rate_limit" if target.split(":", 1)[0] == "groq" else "quota"
+            row["last_error"] = "rate_limit" if match.group("window") == "minute" else "quota"
         else:
             row = providers.setdefault(target, {"failures": 1})
             row["disabled_until"] = round(disabled_until, 3)
-            row["last_error"] = "quota"
+            row["last_error"] = "rate_limit" if match.group("window") == "minute" else "quota"
 
     # Clear provider-level cooldown only when the last provider-scoped event in
     # this run is a success. Model-specific failures remain independently tracked.

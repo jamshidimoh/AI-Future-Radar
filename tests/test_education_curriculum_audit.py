@@ -55,6 +55,7 @@ def test_curriculum_audit_preserves_source_governance_rules():
     assert "برچسب وضعیت" in text
     assert "۱۳۰ درس" in text
 
+
 def test_each_lesson_teaches_exactly_two_distinct_core_concepts():
     base = _yaml(ROOT / "config" / "education_curriculum.yaml")["education"]["lessons"]
     modules = _yaml(ROOT / "config" / "education_curriculum_modules.yaml")["education_curriculum_modules"]["lessons"]
@@ -77,12 +78,23 @@ def test_all_thirteen_modules_are_declared_and_used():
     used = {int(x["module_id"]) for x in base["lessons"] + modules["lessons"] + emerging["lessons"] + expansion["lessons"]}
     assert used == set(range(1, 14))
 
-def test_education_state_restarts_for_curriculum_v3():
+
+def test_education_state_tracks_curriculum_v3_restart_and_progress():
     state = _yaml(ROOT / "data" / "education_state.json")
+
     assert state["curriculum_version"] == "3.0"
-    assert state["next_lesson"] == 1
-    assert state["completed"] == []
     assert state["restart_generation"] >= 2
+    assert state["restart_date"] == "2026-11-03"
+    assert state["restart_reason"] == "full_curriculum_redesign_v3_scientific_pedagogy"
+
+    # Production runs persist progress in this file. Validate restart provenance
+    # and pointer consistency without requiring the one-time, pristine reset state.
+    next_lesson = int(state["next_lesson"])
+    completed = [int(lesson) for lesson in state.get("completed", [])]
+    assert next_lesson >= 1
+    assert len(completed) == len(set(completed))
+    assert all(1 <= lesson < next_lesson for lesson in completed)
+
 
 def test_frontier_and_emerging_terms_are_labeled_without_overstating_maturity():
     emerging = _yaml(ROOT / "config" / "emerging_terminology.yaml")["emerging_terminology"]["lessons"]

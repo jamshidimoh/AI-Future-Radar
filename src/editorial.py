@@ -33,9 +33,18 @@ _MIND_TERMS = (
     "computational neuroscience", "predictive processing", "active inference", "global workspace", "integrated information",
     "philosophy of mind", "philosophy of science", "philosophy of technology", "philosophy of AI", "epistemology of AI",
     "technology and consciousness", "machine awareness", "science and technology studies", "AI rights", "rights of AI",
+    "hard problem of consciousness", "mind-body problem", "mind body problem", "philosophy of consciousness",
+    "functionalism", "computationalism", "embodied cognition", "extended mind", "global neuronal workspace",
+    "global workspace theory", "integrated information theory", "mental causation", "free will", "intentionality",
+    "epistemology of science", "epistemic agency", "scientific realism", "philosophy of scientific explanation",
+    "philosophy of scientific discovery", "philosophy of scientific method", "falsifiability",
     "AI personhood", "machine rights", "artificial minds", "machine minds", "AI ethics", "ethics of AI",
     "آگاهی", "خودآگاهی", "شناخت", "علوم شناختی", "ذهن", "فلسفه ذهن", "فلسفه علم", "فلسفه فناوری",
     "فلسفه هوش مصنوعی", "معرفت شناسی", "معرفت‌شناسی", "علوم اعصاب", "مغز", "حقوق هوش مصنوعی", "شخصیت هوش مصنوعی",
+    "مسئله دشوار آگاهی", "مسئله ذهن و بدن", "کارکردگرایی", "محاسبات‌گرایی", "شناخت بدن‌مند",
+    "ذهن گسترش‌یافته", "فضای کار جهانی", "نظریه فضای کار جهانی", "نظریه اطلاعات یکپارچه",
+    "علیت ذهنی", "اراده آزاد", "قصدیت", "معرفت‌شناسی علم", "عاملیت معرفتی", "واقع‌گرایی علمی",
+    "فلسفه تبیین علمی", "فلسفه کشف علمی", "فلسفه روش علمی", "ابطال‌پذیری",
 )
 _MIND_AI_BRIDGE_TERMS = (
     "AI consciousness", "AI philosophy", "AI cognition", "AI mind", "artificial consciousness", "machine consciousness",

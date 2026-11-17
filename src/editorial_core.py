@@ -28,7 +28,18 @@ QAI={
     "یادگیری ماشین",
     "یادگیری ماشین کوانتومی",
 }
-M={"consciousness","machine consciousness","ai consciousness","sentience","qualia","self-awareness","awareness","cognitive science","cognition","cognitive","neuroscience","computational neuroscience","predictive processing","active inference","global workspace","integrated information","philosophy of mind","brain modeling","neural computation","memory","attention"}
+M={
+    "consciousness","machine consciousness","ai consciousness","sentience","qualia",
+    "self-awareness","awareness","cognitive science","cognition","cognitive","neuroscience",
+    "computational neuroscience","predictive processing","active inference","global workspace",
+    "integrated information","philosophy of mind","philosophy of science","philosophy of technology",
+    "philosophy of ai","epistemology of ai","brain modeling","neural computation","memory","attention",
+    "hard problem of consciousness","mind-body problem","mind body problem","philosophy of consciousness",
+    "functionalism","computationalism","embodied cognition","extended mind","global neuronal workspace",
+    "global workspace theory","integrated information theory","mental causation","free will","intentionality",
+    "epistemology of science","epistemic agency","scientific realism","philosophy of scientific explanation",
+    "philosophy of scientific discovery","philosophy of scientific method","falsifiability",
+}
 MB={"ai","artificial intelligence","machine learning","computational","neural computation","brain-computer interface","bci","neurotechnology","brain decoding","neural recording","brain stimulation","artificial neural network","llm","agi","robotics","simulation","cognitive computing"}
 F={"future","forecast","outlook","futurism","futurist","foresight","longtermism","singularity","future studies","technology forecasting","civilization futures","future of technology","future of intelligence","human enhancement","transhumanism","existential risk"}
 FB={"ai","artificial intelligence","machine learning","agi","robotics","physical ai","quantum computing","bci","neurotechnology","synthetic biology","computational biology","autonomous science","ai chip","gpu","npu","tpu","photonic computing","neuromorphic","space technology","advanced materials","nanotechnology","biotechnology","longevity","humanoid robots"}

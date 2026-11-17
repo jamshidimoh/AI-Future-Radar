@@ -16,7 +16,7 @@ def _yaml(path):
 def test_philosophy_mind_and_science_subtopics_are_mission_classified():
     cases = (
         "The hard problem of consciousness in AI systems",
-        "The mind-body problem and artificial intelligence",
+        "The mind-body problem in AI systems",
         "Functionalism and computationalism in machine intelligence",
         "Embodied cognition and AI models",
         "Scientific realism and AI-generated hypotheses",

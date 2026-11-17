@@ -35,6 +35,8 @@ _OPENROUTER_FREE_RESERVED = 0
 _OPENROUTER_FREE_CACHED_REMAINING: int | None = None
 _OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
 _OPENROUTER_FREE_QUOTA_CACHE_SECONDS = 8.0
+_OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
+_OMNIROUTE_CIRCUIT_FAILURES = 0
 
 _PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|insufficient.*(?:credit|balance))", re.IGNORECASE)
 # NaraRouter's telegram_required response is an account-level access block,
@@ -308,12 +310,23 @@ def _omniroute_call(system_prompt, user_content):
     rather than repeatedly waiting for a gateway that has already timed out.
     """
     global _OMNIROUTE_CIRCUIT_OPEN, _OMNIROUTE_READ_TIMEOUT_STREAK
+    global _OMNIROUTE_CIRCUIT_RETRY_AT, _OMNIROUTE_CIRCUIT_FAILURES
     base_url = os.getenv("OMNIROUTE_BASE_URL", "").strip().rstrip("/")
     if not base_url:
         return None, None
     if _OMNIROUTE_CIRCUIT_OPEN:
-        print("[OmniRoute Circuit] skipped=1 reason=prior_transport_failure; using hard fallback", flush=True)
-        return None, None
+        remaining = _OMNIROUTE_CIRCUIT_RETRY_AT - time.monotonic()
+        if remaining > 0:
+            print(
+                f"[OmniRoute Circuit] skipped=1 reason=open_cooldown remaining={remaining:.1f}s; using hard fallback",
+                flush=True,
+            )
+            return None, None
+        # Half-open: after a short, bounded cooldown, allow this call to probe
+        # the free-only route again. Success closes the circuit; another
+        # upstream-pool failure applies a bounded exponential backoff.
+        _OMNIROUTE_CIRCUIT_OPEN = False
+        print("[OmniRoute Circuit] half_open_probe=1 reason=cooldown_elapsed", flush=True)
     api_key = os.getenv("OMNIROUTE_API_KEY", "").strip()
     model = os.getenv("OMNIROUTE_MODEL", "auto/best-free").strip() or "auto/best-free"
     api_base = base_url if base_url.endswith("/v1") else f"{base_url}/v1"
@@ -351,6 +364,9 @@ def _omniroute_call(system_prompt, user_content):
         if not _omniroute_structured_json_ok(content):
             raise RuntimeError("OmniRoute returned invalid structured JSON; response rejected before editorial pipeline")
         _OMNIROUTE_READ_TIMEOUT_STREAK = 0
+        _OMNIROUTE_CIRCUIT_OPEN = False
+        _OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
+        _OMNIROUTE_CIRCUIT_FAILURES = 0
         decision = response.headers.get("X-OmniRoute-Decision", "")
         selected = str(data.get("model") or decision or model)
         print(
@@ -379,9 +395,24 @@ def _omniroute_call(system_prompt, user_content):
                 re.search(r"\bHTTP (?:502|503|504)\b", str(exc), re.IGNORECASE)
             )
         if transport_failure:
+            _OMNIROUTE_CIRCUIT_FAILURES += 1
             _OMNIROUTE_CIRCUIT_OPEN = True
+            status_match = re.search(r"HTTP\\s+(502|503|504)", str(exc), re.IGNORECASE)
+            if status_match:
+                # A 502/503/504 from auto/best-free may mean its model pool is
+                # temporarily out of quota, not that the local gateway died.
+                cooldown = min(30.0, 2.0 ** min(_OMNIROUTE_CIRCUIT_FAILURES, 4))
+                failure_kind = f"free_upstream_pool_http_{status_match.group(1)}"
+            elif isinstance(exc, requests.ReadTimeout):
+                cooldown = min(45.0, 8.0 * (2 ** min(_OMNIROUTE_CIRCUIT_FAILURES - 1, 2)))
+                failure_kind = "read_timeout"
+            else:
+                cooldown = min(60.0, 15.0 * (2 ** min(_OMNIROUTE_CIRCUIT_FAILURES - 1, 2)))
+                failure_kind = "transport_failure"
+            _OMNIROUTE_CIRCUIT_RETRY_AT = time.monotonic() + cooldown
             print(
-                f"[OmniRoute Circuit] opened=1 reason={type(exc).__name__}; subsequent calls bypass gateway",
+                f"[OmniRoute Circuit] opened=1 reason={failure_kind} cooldown={cooldown:.1f}s "
+                "subsequent calls bypass gateway until half-open probe",
                 flush=True,
             )
         print(

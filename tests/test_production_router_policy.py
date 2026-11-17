@@ -21,6 +21,10 @@ def _reset(monkeypatch):
     router._PRODUCTION_CIRCUIT_OPEN = False
     policy._OMNIROUTE_CIRCUIT_OPEN = False
     policy._OMNIROUTE_READ_TIMEOUT_STREAK = 0
+    policy._OPENROUTER_FREE_REPORTED_REMAINING = None
+    policy._OPENROUTER_FREE_RESERVED = 0
+    policy._OPENROUTER_FREE_CACHED_REMAINING = None
+    policy._OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -34,6 +38,7 @@ def _reset(monkeypatch):
     monkeypatch.delenv("OMNIROUTE_API_KEY", raising=False)
     monkeypatch.delenv("OMNIROUTE_MODEL", raising=False)
     monkeypatch.delenv("OMNIROUTE_TIMEOUT_SECONDS", raising=False)
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
 
 
@@ -122,13 +127,19 @@ def test_production_auth_failure_remains_family_scoped(monkeypatch):
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
-def test_groq_daily_tpd_quota_skips_siblings_but_model_429_does_not(monkeypatch):
+def test_groq_daily_quota_is_model_scoped_and_openrouter_daily_cap_is_key_scoped(monkeypatch):
     _reset(monkeypatch)
-    assert router._provider_quota_is_family_scoped(
+    assert not router._provider_quota_is_family_scoped(
         "groq", "quota", "Rate limit reached on tokens per day (TPD): Limit 200000"
     )
     assert not router._provider_quota_is_family_scoped(
         "groq", "quota", "HTTP 429 model rate limit"
+    )
+    assert router._provider_quota_is_family_scoped(
+        "openrouter", "quota", "free-models-per-day daily request cap exhausted"
+    )
+    assert not router._provider_quota_is_family_scoped(
+        "openrouter", "quota", "free-models-per-minute 20 RPM cap; Retry-After: 60"
     )
 
 
@@ -550,6 +561,68 @@ def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
 
     assert result == '{"title":"fallback"}'
     assert provider == "groq:model-a"
+
+
+def test_openrouter_free_quota_preflight_reserves_live_remaining_count(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    calls = []
+
+    class Response:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {
+                "data": {
+                    "free_model_daily_requests": {
+                        "used": 48,
+                        "limit": 50,
+                        "remaining": 2,
+                    }
+                }
+            }
+
+    def get(url, **kwargs):
+        calls.append((url, kwargs))
+        return Response()
+
+    monkeypatch.setattr(policy.requests, "get", get)
+
+    assert policy._openrouter_free_request_allowed("openrouter:nvidia/test-a:free") is True
+    assert policy._openrouter_free_request_allowed("openrouter:google/test-b:free") is True
+    assert policy._openrouter_free_request_allowed("openrouter:openai/test-c:free") is False
+    assert len(calls) == 1
+
+
+def test_openrouter_free_quota_preflight_fails_closed_when_counter_unavailable(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+
+    class Response:
+        status_code = 503
+        text = "temporarily unavailable"
+
+    monkeypatch.setattr(policy.requests, "get", lambda *_args, **_kwargs: Response())
+
+    assert policy._openrouter_free_request_allowed("openrouter:nvidia/test:free") is False
+    assert policy._openrouter_free_request_allowed("openrouter:nvidia/test:free") is False
+
+
+def test_openrouter_free_quota_preflight_rejects_non_free_model_ids(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    calls = []
+    monkeypatch.setattr(policy.requests, "get", lambda *args, **kwargs: calls.append(args) or None)
+
+    assert policy._openrouter_free_request_allowed("openrouter:openai/gpt-oss-120b") is False
+    assert calls == []
+
+
+def test_provider_retry_after_parser_supports_seconds_and_compound_durations():
+    assert policy._provider_retry_after_seconds("Please try again in 3.4575s") == 3.4575
+    assert policy._provider_retry_after_seconds("Retry-After: 120 seconds") == 120
+    assert policy._provider_retry_after_seconds("reset in 2m30s") == 150
 
 
 def test_omniroute_transport_timeout_opens_run_scoped_circuit(monkeypatch, capsys):

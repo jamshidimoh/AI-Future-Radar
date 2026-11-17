@@ -546,7 +546,7 @@ def test_omniroute_is_primary_model_selection_layer_when_configured(monkeypatch)
     assert result == '{"title":"omni"}'
     assert provider == "OmniRoute:free-test/test-model"
     assert calls[0][0] == "http://omniroute:20128/v1/chat/completions"
-    assert calls[0][1]["json"]["model"] == "auto/smart"
+    assert calls[0][1]["json"]["model"] == "auto/best-free"
     assert calls[0][1]["json"]["stream"] is False
 
 

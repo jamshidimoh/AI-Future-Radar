@@ -22,8 +22,10 @@ MODEL_COOLDOWN = {
     "auth": 86400.0,
     "model": 21600.0,
 }
+# Only authentication failures are inherently provider-wide. Quota scope is
+# persisted from the routing decision's explicit [Quota Cooldown] record:
+# Groq limits are model-scoped, while OpenRouter's free daily cap is key-scoped.
 PROVIDER_COOLDOWN = {
-    "quota": 21600.0,
     "auth": 86400.0,
 }
 KIRAAI_WALLET_PROVIDER_COOLDOWN = 86400.0
@@ -45,6 +47,11 @@ SUCCESS_RE = re.compile(
 KIRAAI_WALLET_RE = re.compile(
     r"insufficient.*(?:vnd|wallet|balance)|wallet.*balance|vnd.*balance",
     re.IGNORECASE,
+)
+QUOTA_COOLDOWN_RE = re.compile(
+    r"\\[Quota Cooldown\\]\\s+scope=(?P<scope>provider|model)\\s+"
+    r"target=(?P<target>\\S+)\\s+disabled_until=(?P<until>[0-9]+(?:\\.[0-9]+)?)"
+    r"(?:\\s+.*)?$",
 )
 
 _PROVIDER_CANONICAL = {
@@ -202,6 +209,15 @@ def main() -> int:
     lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
     events = list(_iter_events(lines))
     observed_failures = [event for event in events if event[1] == "failure"]
+    quota_cooldowns: dict[tuple[str, str], float] = {}
+    for line in lines:
+        match = QUOTA_COOLDOWN_RE.search(line)
+        if not match:
+            continue
+        try:
+            quota_cooldowns[(match.group("scope"), match.group("target").casefold())] = float(match.group("until"))
+        except (TypeError, ValueError):
+            continue
 
     last_event: dict[str, tuple[str, str, bool]] = {}
     for deployment, event_kind, failure_kind, wallet_only in events:
@@ -237,6 +253,21 @@ def main() -> int:
                 "disabled_until": round(now + PROVIDER_COOLDOWN[kind], 3),
                 "last_error": kind,
             }
+
+    # Apply provider/model reset instants emitted by the live router. These
+    # exact reset times supersede generic cooldown defaults so requests resume
+    # when the free quota replenishes, not on an arbitrary fixed timer.
+    for ( (scope, target), disabled_until) in quota_cooldowns.items():
+        if disabled_until <= now:
+            continue
+        if scope == "model":
+            row = models.setdefault(target, {"failures": 1, "last_success": 0})
+            row["disabled_until"] = round(disabled_until, 3)
+            row["last_error"] = "rate_limit" if target.split(":", 1)[0] == "groq" else "quota"
+        else:
+            row = providers.setdefault(target, {"failures": 1})
+            row["disabled_until"] = round(disabled_until, 3)
+            row["last_error"] = "quota"
 
     # Clear provider-level cooldown only when the last provider-scoped event in
     # this run is a success. Model-specific failures remain independently tracked.

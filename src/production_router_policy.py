@@ -7,6 +7,7 @@ import os
 import re
 import time
 import threading
+from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
@@ -496,15 +497,41 @@ def _install_production_circuit_breaker() -> None:
                         router._DISABLED.add(deployment_id)
                     router._disable(deployment_id, "quota")
                     scope = "provider"
-                elif _is_provider_quota(message) or _is_provider_auth(message):
+                elif _is_provider_auth(message) or (
+                    _is_provider_quota(message)
+                    and router._provider_quota_is_family_scoped(family, reason, message)
+                ):
                     skipped_families.add(family)
                     with router._STATE_LOCK:
                         router._DISABLED_FAMILIES.add(family)
                         router._DISABLED.add(deployment_id)
+                    router._disable(deployment_id, reason)
                     scope = "provider"
                 else:
                     router._disable(deployment_id, reason)
                     scope = "model"
+
+                if reason in {"quota", "rate_limit"}:
+                    retry_after = _provider_retry_after_seconds(message)
+                    if retry_after <= 0:
+                        if family == "openrouter" and re.search(r"free-models-per-day|daily", message, re.I):
+                            now_utc = datetime.now(timezone.utc)
+                            next_day = now_utc.replace(hour=0, minute=0, second=0, microsecond=0).timestamp() + 86400
+                            retry_after = max(60.0, next_day - time.time())
+                        elif family == "groq" and re.search(r"\\bTPD\\b|tokens?\\s+per\\s+day|requests?\\s+per\\s+day", message, re.I):
+                            retry_after = 86400.0
+                        else:
+                            retry_after = 60.0
+                    retry_after = max(5.0, min(retry_after, 86400.0))
+                    cooldown_target = family if scope == "provider" else deployment_id
+                    disabled_until = time.time() + retry_after
+                    print(
+                        f"[Quota Cooldown] scope={scope} target={cooldown_target} "
+                        f"disabled_until={disabled_until:.3f} delay_seconds={retry_after:.1f} "
+                        f"reason={reason}",
+                        flush=True,
+                    )
+
                 print(
                     f"[Production Circuit] failed={deployment_id} reason={reason} scope={scope}: "
                     f"exception={type(exc).__name__} provider={family} model={deployment_id} {message}",

@@ -24,10 +24,12 @@ def _reset(monkeypatch):
     policy._OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
     policy._OMNIROUTE_CIRCUIT_FAILURES = 0
     policy._OPENROUTER_FREE_REPORTED_REMAINING = None
+    policy._OPENROUTER_FREE_REPORTED_USED = None
     policy._OPENROUTER_FREE_RESERVED = 0
     policy._OPENROUTER_FREE_CACHED_REMAINING = None
     policy._OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
     policy._OPENROUTER_FREE_REQUEST_TIMESTAMPS.clear()
+    policy._OPENROUTER_FREE_BLOCKED_UNTIL = 0.0
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -140,6 +142,9 @@ def test_groq_daily_quota_is_model_scoped_and_openrouter_daily_cap_is_key_scoped
     )
     assert router._provider_quota_is_family_scoped(
         "openrouter", "quota", "free-models-per-day daily request cap exhausted"
+    )
+    assert router._provider_quota_is_family_scoped(
+        "openrouter", "quota", "HTTP 429 x-ratelimit-remaining: 0"
     )
     assert not router._provider_quota_is_family_scoped(
         "openrouter", "quota", "free-models-per-minute 20 RPM cap; Retry-After: 60"

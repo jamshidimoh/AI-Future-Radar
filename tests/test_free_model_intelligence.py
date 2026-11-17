@@ -1,5 +1,5 @@
-from pathlib import Path
 import time
+from pathlib import Path
 
 from src.free_model_service import FreeModelIntelligence
 

@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import time
+import threading
 from pathlib import Path
 
 import requests
@@ -23,6 +24,17 @@ HEALTH_PATH = ROOT / "data" / "llm_health.json"
 # or a connection/gateway failure open the process-local circuit.
 _OMNIROUTE_CIRCUIT_OPEN = False
 _OMNIROUTE_READ_TIMEOUT_STREAK = 0
+
+# OpenRouter's free-model daily request cap is account/API-key scoped and even
+# failed requests consume it. Read the provider's authoritative counter before
+# each direct :free request and reserve locally between refreshes.
+_OPENROUTER_QUOTA_LOCK = threading.RLock()
+_OPENROUTER_FREE_REPORTED_REMAINING: int | None = None
+_OPENROUTER_FREE_RESERVED = 0
+_OPENROUTER_FREE_CACHED_REMAINING: int | None = None
+_OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
+_OPENROUTER_FREE_QUOTA_CACHE_SECONDS = 8.0
+
 _PROVIDER_QUOTA_PATTERNS = re.compile(r"(?:free-models-per-day|x-ratelimit-(?:remaining|reset).*?(?:0|quota)|account[_ -]?limit|daily[_ -]?quota|quota.*(?:exhaust|deplet)|(?:requests?|tokens?)/(?:day|daily)|provider.*(?:quota|limit)|\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|insufficient.*(?:credit|balance))", re.IGNORECASE)
 # NaraRouter's telegram_required response is an account-level access block,
 # not a model-specific 403. Classify this exact marker as provider-wide auth so
@@ -37,7 +49,7 @@ _KIRAAI_WALLET_PATTERN = re.compile(r"(?:insufficient.*(?:vnd|wallet|balance)|wa
 
 def _is_provider_quota(message: str) -> bool:
     text = str(message or "")
-    if re.search(r"upstream_provider_shared_pool", text, re.IGNORECASE):
+    if re.search(r"upstream_provider_shared_pool|free-models-per-minute", text, re.IGNORECASE):
         return False
     if re.search(r"\b402\b", text):
         return True
@@ -52,15 +64,145 @@ def _is_kira_wallet_only(message: str, family: str) -> bool:
     return family == "kiraai" and bool(_KIRAAI_WALLET_PATTERN.search(str(message or "")))
 
 
+def _provider_retry_after_seconds(message: str) -> float:
+    """Extract provider reset hints, including compound values, without guessing."""
+    text = str(message or "")
+    match = re.search(
+        r"(?:try again in|retry[-_ ]after\s*[:=]?)\s*"
+        r"([0-9]+(?:\.[0-9]+)?)\s*(ms|s|sec|seconds?)\b",
+        text,
+        re.IGNORECASE,
+    )
+    if match:
+        value = float(match.group(1))
+        return max(0.0, value / 1000.0 if match.group(2).lower() == "ms" else value)
+
+    compound = re.search(
+        r"(?:(?P<h>\d+(?:\.\d+)?)\s*h\s*)?"
+        r"(?:(?P<m>\d+(?:\.\d+)?)\s*m\s*)?"
+        r"(?:(?P<s>\d+(?:\.\d+)?)\s*s)",
+        text,
+        re.IGNORECASE,
+    )
+    if compound and any(compound.group(k) for k in ("h", "m", "s")):
+        return (
+            float(compound.group("h") or 0) * 3600.0
+            + float(compound.group("m") or 0) * 60.0
+            + float(compound.group("s") or 0)
+        )
+    return 0.0
+
+
 def _rate_limit_retry_delay(message: str, *, max_seconds: float = 8.0) -> float:
     """Extract a provider-supplied short retry delay, capped for production budget."""
-    text = str(message or "")
-    match = re.search(r"try again in\s+([0-9]+(?:\.[0-9]+)?)\s*(ms|s)", text, re.IGNORECASE)
-    if not match:
-        return 0.0
-    value = float(match.group(1))
-    delay = value / 1000.0 if match.group(2).lower() == "ms" else value
-    return max(0.0, min(delay, max_seconds))
+    return min(_provider_retry_after_seconds(message), max_seconds)
+
+
+def _openrouter_free_request_allowed(deployment_id: str) -> bool:
+    """Fail closed unless OpenRouter confirms free-model daily headroom.
+
+    Only model variants explicitly suffixed ':free' are admitted. The live
+    /api/v1/key counter is authoritative; local reservations account for calls
+    made since the last refresh, including failed attempts.
+    """
+    global _OPENROUTER_FREE_REPORTED_REMAINING
+    global _OPENROUTER_FREE_RESERVED, _OPENROUTER_FREE_CACHED_REMAINING
+    global _OPENROUTER_FREE_QUOTA_REFRESHED_AT
+
+    if router._provider_family(deployment_id) != "openrouter":
+        return True
+    model_id = str(deployment_id).split(":", 1)[1] if ":" in str(deployment_id) else ""
+    if not model_id.endswith(":free"):
+        print(
+            f"[Free Quota Guard] skipped={deployment_id} reason=openrouter_model_not_explicitly_free",
+            flush=True,
+        )
+        return False
+
+    api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+    if not api_key:
+        print(
+            f"[Free Quota Guard] skipped={deployment_id} reason=openrouter_key_missing",
+            flush=True,
+        )
+        return False
+
+    with _OPENROUTER_QUOTA_LOCK:
+        now = time.monotonic()
+        refresh = (
+            _OPENROUTER_FREE_CACHED_REMAINING is None
+            or now - _OPENROUTER_FREE_QUOTA_REFRESHED_AT >= _OPENROUTER_FREE_QUOTA_CACHE_SECONDS
+        )
+        if refresh:
+            try:
+                response = requests.get(
+                    "https://openrouter.ai/api/v1/key",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                    timeout=4.0,
+                )
+                if response.status_code >= 400:
+                    raise RuntimeError(f"OpenRouter key quota endpoint HTTP {response.status_code}")
+                payload = response.json()
+                quota = ((payload.get("data") or {}).get("free_model_daily_requests") or {})
+                remaining_value = quota.get("remaining")
+                if remaining_value is None:
+                    raise ValueError("OpenRouter key response omitted free_model_daily_requests.remaining")
+                remote_remaining = max(0, int(remaining_value))
+                if _OPENROUTER_FREE_REPORTED_REMAINING is None:
+                    unreflected_reservations = _OPENROUTER_FREE_RESERVED
+                else:
+                    remotely_observed = max(
+                        0,
+                        _OPENROUTER_FREE_REPORTED_REMAINING - remote_remaining,
+                    )
+                    unreflected_reservations = max(
+                        0,
+                        _OPENROUTER_FREE_RESERVED - remotely_observed,
+                    )
+                _OPENROUTER_FREE_REPORTED_REMAINING = remote_remaining
+                _OPENROUTER_FREE_RESERVED = unreflected_reservations
+                _OPENROUTER_FREE_CACHED_REMAINING = max(
+                    0,
+                    remote_remaining - unreflected_reservations,
+                )
+                _OPENROUTER_FREE_QUOTA_REFRESHED_AT = now
+                print(
+                    "[Free Quota Guard] provider=openrouter "
+                    f"used={quota.get('used', 'unknown')} "
+                    f"limit={quota.get('limit', 'unknown')} "
+                    f"remaining={_OPENROUTER_FREE_CACHED_REMAINING} "
+                    "scope=api_key_daily",
+                    flush=True,
+                )
+            except Exception as exc:
+                # Unknown quota is not permission to spend. Other providers
+                # remain eligible; OpenRouter is skipped until a later preflight.
+                _OPENROUTER_FREE_CACHED_REMAINING = 0
+                _OPENROUTER_FREE_QUOTA_REFRESHED_AT = now
+                logger.warning("OpenRouter free quota preflight unavailable: %s", exc)
+                print(
+                    f"[Free Quota Guard] skipped={deployment_id} "
+                    f"reason=preflight_unavailable error={type(exc).__name__}",
+                    flush=True,
+                )
+                return False
+
+        remaining = int(_OPENROUTER_FREE_CACHED_REMAINING or 0)
+        if remaining <= 0:
+            print(
+                f"[Free Quota Guard] skipped={deployment_id} reason=daily_free_request_cap_reached",
+                flush=True,
+            )
+            return False
+
+        _OPENROUTER_FREE_CACHED_REMAINING = remaining - 1
+        _OPENROUTER_FREE_RESERVED += 1
+        print(
+            f"[Free Quota Guard] reserved=1 deployment={deployment_id} "
+            f"remaining_local={_OPENROUTER_FREE_CACHED_REMAINING}",
+            flush=True,
+        )
+        return True
 
 
 def _load_health() -> dict:
@@ -172,7 +314,7 @@ def _omniroute_call(system_prompt, user_content):
         print("[OmniRoute Circuit] skipped=1 reason=prior_transport_failure; using hard fallback", flush=True)
         return None, None
     api_key = os.getenv("OMNIROUTE_API_KEY", "").strip()
-    model = os.getenv("OMNIROUTE_MODEL", "auto/smart").strip() or "auto/smart"
+    model = os.getenv("OMNIROUTE_MODEL", "auto/best-free").strip() or "auto/best-free"
     api_base = base_url if base_url.endswith("/v1") else f"{base_url}/v1"
     url = f"{api_base}/chat/completions"
     payload = {
@@ -296,6 +438,10 @@ def _install_production_circuit_breaker() -> None:
             if attempts >= max_attempts:
                 print(f"[Production Circuit] attempt_budget_exhausted={max_attempts}", flush=True)
                 return None
+            if family == "openrouter" and not _openrouter_free_request_allowed(deployment_id):
+                if int(_OPENROUTER_FREE_CACHED_REMAINING or 0) <= 0:
+                    skipped_families.add("openrouter")
+                return None
             attempts += 1
             try:
                 response = router._call_direct_deployment(litellm_router, deployment, system_prompt, user_content, max_tokens=max_tokens, timeout=max(0.5, min(8.0, remaining)))
@@ -366,9 +512,10 @@ def _install_production_circuit_breaker() -> None:
                 )
                 return None
 
-        # OmniRoute is the first model-selection layer when configured. It owns
-        # dynamic provider/model choice (auto/smart by default) and its own
-        # health/quota/fallback logic. The local registry remains the hard fallback.
+        # OmniRoute is the first model-selection layer when configured. Production
+        # explicitly requests auto/best-free: paid/cheap/premium tiers are not
+        # eligible, and exhausted free-provider quotas fall through within that
+        # free-only candidate pool. The local registry remains the hard fallback.
         if os.getenv("OMNIROUTE_BASE_URL", "").strip():
             omni_result = _omniroute_call(system_prompt, user_content)
             if omni_result[0]:

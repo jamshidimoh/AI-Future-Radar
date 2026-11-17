@@ -586,7 +586,12 @@ def _install_production_circuit_breaker() -> None:
                             next_day = now_utc.replace(hour=0, minute=0, second=0, microsecond=0).timestamp() + 86400
                             retry_after = max(60.0, next_day - time.time())
                         elif family == "groq" and re.search(r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day", message, re.I):
-                            retry_after = 86400.0
+                            # Groq's daily token window resets daily; when the
+                            # response has no explicit reset header, use the next
+                            # UTC midnight rather than a rolling 24-hour delay.
+                            now_utc = datetime.now(timezone.utc)
+                            next_day = now_utc.replace(hour=0, minute=0, second=0, microsecond=0).timestamp() + 86400
+                            retry_after = max(5.0, next_day - time.time())
                         else:
                             retry_after = 60.0
                     retry_after = max(5.0, min(retry_after, 86400.0))
@@ -598,6 +603,20 @@ def _install_production_circuit_breaker() -> None:
                         family == "groq" and re.search(r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day", message, re.I)
                     )
                     quota_window = "daily" if daily_window else "minute"
+                    # The in-process router must observe the same provider reset
+                    # as the persisted health file. Otherwise mission recovery can
+                    # clear a short generic cooldown and hit a still-exhausted
+                    # daily free model again before its actual reset.
+                    if scope == "model":
+                        with router._STATE_LOCK:
+                            router._MODEL_DISABLED_UNTIL[deployment_id] = max(
+                                router._MODEL_DISABLED_UNTIL.get(deployment_id, 0.0),
+                                time.monotonic() + retry_after,
+                            )
+                            router._MODEL_DISABLED_REASON[deployment_id] = (
+                                "quota" if quota_window == "daily" else "rate_limit"
+                            )
+                            router._DISABLED.add(deployment_id)
                     if family == "openrouter" and scope == "provider" and quota_window == "minute":
                         with _OPENROUTER_QUOTA_LOCK:
                             _OPENROUTER_FREE_BLOCKED_UNTIL = time.monotonic() + retry_after

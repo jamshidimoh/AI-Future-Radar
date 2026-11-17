@@ -397,7 +397,7 @@ def _omniroute_call(system_prompt, user_content):
         if transport_failure:
             _OMNIROUTE_CIRCUIT_FAILURES += 1
             _OMNIROUTE_CIRCUIT_OPEN = True
-            status_match = re.search(r"HTTP\\s+(502|503|504)", str(exc), re.IGNORECASE)
+            status_match = re.search(r"HTTP\s+(502|503|504)", str(exc), re.IGNORECASE)
             if status_match:
                 # A 502/503/504 from auto/best-free may mean its model pool is
                 # temporarily out of quota, not that the local gateway died.

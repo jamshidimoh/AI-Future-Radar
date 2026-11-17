@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from src.editorial_core import filter_ai_relevance
+from src.editorial import filter_ai_relevance
 from src.protected_editorial_lane import _thematic_signal
 from src.unified_editorial_selection import mission_area_from_content
 

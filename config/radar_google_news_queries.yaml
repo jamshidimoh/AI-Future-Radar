@@ -81,6 +81,46 @@ google_news_queries:
     category: mind
     tier: 1
     content_type: research
+
+  # Focused subtopic discovery for philosophy of mind. These queries discover
+  # candidates only; article-level AI evidence and all normal gates remain required.
+  - name: "Hard Problem of Consciousness and AI"
+    query: '"hard problem of consciousness" ("artificial intelligence" OR "artificial consciousness" OR "machine intelligence")'
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Mind-Body Problem and Embodied Cognition in AI"
+    query: '("mind-body problem" OR "mind body problem" OR "embodied cognition" OR "extended mind") ("artificial intelligence" OR "machine learning" OR "AI systems")'
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Theories of Mind and Machine Consciousness"
+    query: '(functionalism OR computationalism OR "global neuronal workspace" OR "global workspace theory" OR "integrated information theory") ("artificial intelligence" OR "machine consciousness" OR "AI systems")'
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Free Will, Intentionality and AI Agency"
+    query: '("free will" OR intentionality OR "mental causation") ("artificial intelligence" OR "AI agents" OR "machine intelligence") philosophy'
+    category: mind
+    tier: 1
+    content_type: research
+
+  # Focused subtopic discovery for philosophy of science and AI epistemology.
+  - name: "AI Epistemology and Epistemic Agency"
+    query: '("epistemology of AI" OR "epistemic agency" OR "machine knowledge") ("scientific knowledge" OR "scientific reasoning" OR "AI for science")'
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Scientific Realism and AI-Generated Hypotheses"
+    query: '("scientific realism" OR "philosophy of scientific discovery" OR "philosophy of scientific explanation" OR falsifiability) ("artificial intelligence" OR "AI-generated hypotheses" OR "AI for science")'
+    category: mind
+    tier: 1
+    content_type: research
+  - name: "Scientific Method, Causality and AI"
+    query: '("philosophy of scientific method" OR "philosophy of science" OR "causal explanation") ("artificial intelligence" OR "machine learning" OR "AI for science")'
+    category: mind
+    tier: 1
+    content_type: research
   - name: "AI Scientific Discovery Interview"
     query: "AI scientific discovery philosophy epistemology interview"
     category: mind

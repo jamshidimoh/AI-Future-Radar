@@ -45,7 +45,7 @@ def _provider_family(name: str) -> str:
 
 def _provider_credential_available(name: str) -> bool:
     family = _provider_family(name)
-    env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","huggingface":"HF_TOKEN"}.get(family)
+    env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","huggingface":"HF_TOKEN","mistral":"MISTRAL_API_KEY"}.get(family)
     return bool(os.getenv(env)) if env else False
 
 def _extract_message(payload: dict):
@@ -91,6 +91,36 @@ def _openrouter(system_prompt, user_content, model, *, output_mode="native"):
     if r.status_code == 402: raise QuotaExceeded(f"OpenRouter {model}: HTTP 402 account_limit {r.text[:800]}")
     r.raise_for_status(); return _extract_message(r.json())
 
+
+def _mistral(system_prompt, user_content):
+    """Last-resort direct Mistral API path, isolated from OmniRoute availability."""
+    key = os.getenv("MISTRAL_API_KEY")
+    if not key:
+        return None
+    model = (os.getenv("MISTRAL_MODEL") or "mistral-small-latest").strip()
+    max_tokens = max(128, min(900, int(os.getenv("RADAR_LLM_MAX_TOKENS", "700") or 700)))
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "temperature": 0.15,
+        "max_tokens": max_tokens,
+        "response_format": {"type": "json_object"},
+        "stream": False,
+    }
+    response = requests.post(
+        "https://api.mistral.ai/v1/chat/completions",
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        json=payload,
+        timeout=max(5.0, min(20.0, float(os.getenv("MISTRAL_TIMEOUT_SECONDS", "15") or 15))),
+    )
+    if response.status_code in (401, 402, 403, 404, 429):
+        raise QuotaExceeded(f"Mistral {model}: HTTP {response.status_code} {response.text[:600]}")
+    response.raise_for_status()
+    return _extract_message(response.json())
+
 def _hf_price_is_free(item):
     if item.get("free") is True: return True
     p=item.get("pricing") or {}
@@ -125,7 +155,7 @@ def _huggingface(system_prompt,user_content):
     return response.choices[0].message.content
 
 def _chain_key():
-    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","HF_TOKEN")) + (os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
+    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","HF_TOKEN","MISTRAL_API_KEY")) + (os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("RADAR_ENABLE_MISTRAL_FALLBACK","0"),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL),os.getenv("MISTRAL_MODEL","mistral-small-latest"))
 
 def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY

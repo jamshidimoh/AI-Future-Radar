@@ -81,7 +81,6 @@ jobs:
           OMNIROUTE_ENABLE_NARA: ${{ vars.OMNIROUTE_ENABLE_NARA || '0' }}
           # Recurring/free provider credentials used by OmniRoute auto-routing. Verified published pin: 3.8.50.
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          HF_TOKEN: ${{ secrets.HUGGINGFACE_API_KEY || secrets.HF_TOKEN }}
           NARAROUTER_API_KEY: ${{ secrets.NARAROUTER_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           LLM7_API_KEY: ${{ secrets.LLM7_API_KEY }}
@@ -207,7 +206,6 @@ jobs:
           }
           # Core recurring/free pool.
           add_provider groq GROQ_API_KEY
-          add_provider huggingface HF_TOKEN
           if [ "${OMNIROUTE_ENABLE_NARA:-0}" = "1" ]; then
             add_provider nara NARAROUTER_API_KEY
           else

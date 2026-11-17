@@ -226,7 +226,7 @@ def main() -> int:
     lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
     events = list(_iter_events(lines))
     observed_failures = [event for event in events if event[1] == "failure"]
-    quota_cooldowns: dict[tuple[str, str], float] = {}
+    quota_cooldowns: dict[tuple[str, str], tuple[float, str]] = {}
     for line in lines:
         match = QUOTA_COOLDOWN_RE.search(line)
         if not match:
@@ -300,7 +300,7 @@ def main() -> int:
         else:
             row = providers.setdefault(target, {"failures": 1})
             row["disabled_until"] = round(disabled_until, 3)
-            row["last_error"] = "rate_limit" if match.group("window") == "minute" else "quota"
+            row["last_error"] = "rate_limit" if window == "minute" else "quota"
 
 
     state["models"] = models

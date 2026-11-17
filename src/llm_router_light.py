@@ -235,17 +235,23 @@ def _provider_quota_is_family_scoped(family: str, reason: str, message: str) -> 
         return True
     if reason != "quota":
         return False
-    # Groq's daily token cap is shared by sibling models even when the API
-    # reports it as HTTP 429. Keep ordinary per-model 429s model-scoped.
+    # Groq's published RPD/TPD/TPM ceilings are attached to individual model
+    # IDs. A full daily allowance for GPT-OSS must not block Qwen (and vice
+    # versa), so quota exhaustion is always deployment-scoped for Groq.
     if family == "groq":
+        return False
+    if family == "openrouter":
+        # The free-model daily request ceiling is shared by the API key. A
+        # per-minute cap is a short window and must not create a long provider
+        # cooldown; it is handled by bounded Retry-After recovery instead.
         return re.search(
-            r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|daily.{0,20}(?:quota|limit)|quota.{0,20}(?:daily|per day)",
+            r"free-models-per-day|daily.{0,20}(?:quota|limit)|requests?/day|account_limit|\\b402\\b",
             message,
             re.I,
         ) is not None
     return (
-        family in {"openrouter", "nararouter", "kiraai"}
-        and re.search(r"\b402\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd", message, re.I) is not None
+        family in {"nararouter", "kiraai"}
+        and re.search(r"\\b402\\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd", message, re.I) is not None
     )
 
 def _model_is_disabled(name:str)->bool:

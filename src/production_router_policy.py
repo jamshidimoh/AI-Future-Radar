@@ -38,6 +38,7 @@ _OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
 _OPENROUTER_FREE_QUOTA_CACHE_SECONDS = 8.0
 _OPENROUTER_FREE_REQUEST_TIMESTAMPS: deque[float] = deque()
 _OPENROUTER_FREE_RPM_LIMIT = 20
+_OPENROUTER_FREE_BLOCKED_UNTIL = 0.0
 _OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
 _OMNIROUTE_CIRCUIT_FAILURES = 0
 
@@ -114,6 +115,7 @@ def _openrouter_free_request_allowed(deployment_id: str) -> bool:
     global _OPENROUTER_FREE_REPORTED_REMAINING
     global _OPENROUTER_FREE_RESERVED, _OPENROUTER_FREE_CACHED_REMAINING
     global _OPENROUTER_FREE_QUOTA_REFRESHED_AT
+    global _OPENROUTER_FREE_BLOCKED_UNTIL
 
     if router._provider_family(deployment_id) != "openrouter":
         return True
@@ -135,6 +137,15 @@ def _openrouter_free_request_allowed(deployment_id: str) -> bool:
 
     with _OPENROUTER_QUOTA_LOCK:
         now = time.monotonic()
+        if _OPENROUTER_FREE_BLOCKED_UNTIL > now:
+            print(
+                f"[Free Quota Guard] skipped={deployment_id} "
+                f"reason=provider_minute_cooldown remaining={_OPENROUTER_FREE_BLOCKED_UNTIL - now:.1f}s",
+                flush=True,
+            )
+            return False
+        if _OPENROUTER_FREE_BLOCKED_UNTIL:
+            _OPENROUTER_FREE_BLOCKED_UNTIL = 0.0
         while _OPENROUTER_FREE_REQUEST_TIMESTAMPS and now - _OPENROUTER_FREE_REQUEST_TIMESTAMPS[0] >= 60.0:
             _OPENROUTER_FREE_REQUEST_TIMESTAMPS.popleft()
         if len(_OPENROUTER_FREE_REQUEST_TIMESTAMPS) >= _OPENROUTER_FREE_RPM_LIMIT:
@@ -162,7 +173,15 @@ def _openrouter_free_request_allowed(deployment_id: str) -> bool:
                 if remaining_value is None:
                     raise ValueError("OpenRouter key response omitted free_model_daily_requests.remaining")
                 remote_remaining = max(0, int(remaining_value))
-                if _OPENROUTER_FREE_REPORTED_REMAINING is None:
+                if (
+                    _OPENROUTER_FREE_REPORTED_REMAINING is not None
+                    and remote_remaining > _OPENROUTER_FREE_REPORTED_REMAINING
+                ):
+                    # The UTC daily quota refilled (or its ceiling increased).
+                    # Yesterday's local reservations must not reduce today's cap.
+                    _OPENROUTER_FREE_RESERVED = 0
+                    _OPENROUTER_FREE_REQUEST_TIMESTAMPS.clear()
+                if _OPENROUTER_FREE_REPORTED_REMAINING is None or remote_remaining > _OPENROUTER_FREE_REPORTED_REMAINING:
                     unreflected_reservations = _OPENROUTER_FREE_RESERVED
                 else:
                     remotely_observed = max(
@@ -248,24 +267,11 @@ def _persistently_unavailable(deployment_id: str, *, recovery_probe: bool = Fals
     provider = _find(providers, family)
     model_disabled = isinstance(model, dict) and float(model.get("disabled_until", 0) or 0) > now
     provider_disabled = isinstance(provider, dict) and float(provider.get("disabled_until", 0) or 0) > now
-    if not (model_disabled or provider_disabled):
-        return False
-    if not recovery_probe:
-        return True
+    # A persisted quota cooldown is authoritative until its actual reset.
+    # Never half-open probe a future disabled_until: free-tier 429s consume
+    # quota and the next valid attempt must wait for the provider reset window.
+    return bool(model_disabled or provider_disabled)
 
-    recoverable = {"rate_limit", "transient"}
-    blocked = {"auth", "model", "wallet"}
-    model_reason = str((model or {}).get("last_error") or "").strip().casefold()
-    provider_reason = str((provider or {}).get("last_error") or "").strip().casefold()
-    has_recoverable = model_reason in recoverable or provider_reason in recoverable
-    has_blocked = model_reason in blocked or provider_reason in blocked
-    if has_recoverable and not has_blocked:
-        print(
-            f"[Production Circuit] half_open_probe={deployment_id} reason=persisted_recoverable_health",
-            flush=True,
-        )
-        return False
-    return True
 
 def _omniroute_structured_json_ok(content: str) -> bool:
     raw = str(content or '').strip()
@@ -541,12 +547,11 @@ def _install_production_circuit_breaker() -> None:
                     router._disable(deployment_id, "quota")
                     scope = "provider"
                 elif family == "openrouter" and re.search(r"free-models-per-minute", message, re.I):
-                    # OpenRouter's 20 RPM ceiling is shared across all :free
-                    # models on the key. Skip the family for this request and
-                    # apply only the provider-supplied short reset window.
+                    # This is an API-key-wide short window, not a daily quota.
+                    # Do not permanently disable the family; a timed local guard
+                    # will reopen the free pool at the provider's reset time.
                     skipped_families.add(family)
                     with router._STATE_LOCK:
-                        router._DISABLED_FAMILIES.add(family)
                         router._DISABLED.add(deployment_id)
                     router._disable(deployment_id, "rate_limit")
                     scope = "provider"
@@ -584,6 +589,9 @@ def _install_production_circuit_breaker() -> None:
                         family == "groq" and re.search(r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day", message, re.I)
                     )
                     quota_window = "daily" if daily_window else "minute"
+                    if family == "openrouter" and scope == "provider" and quota_window == "minute":
+                        with _OPENROUTER_QUOTA_LOCK:
+                            _OPENROUTER_FREE_BLOCKED_UNTIL = time.monotonic() + retry_after
                     print(
                         f"[Quota Cooldown] scope={scope} target={cooldown_target} "
                         f"disabled_until={disabled_until:.3f} delay_seconds={retry_after:.1f} "

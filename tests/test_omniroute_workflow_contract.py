@@ -5,47 +5,56 @@ import pathlib
 WORKFLOW = pathlib.Path(__file__).resolve().parents[1] / '.github' / 'workflows' / 'run.yml'
 
 
-def test_omniroute_workflow_uses_audited_release_and_provider_ids():
-    text = WORKFLOW.read_text(encoding='utf-8')
+def test_omniroute_workflow_uses_audited_release_and_only_verified_free_providers():
+    workflow = WORKFLOW.read_text(encoding="utf-8")
 
-    assert 'OMNIROUTE_VERSION=3.8.50' in text
-    assert 'OMNIROUTE_COMMIT=5458026c216f77a3da68ea49152dc33470cfe2cb' in text
-    assert 'git clone --depth 1 --branch "v${OMNIROUTE_VERSION}" https://github.com/diegosouzapw/OmniRoute.git' in text
-    assert 'HUSKY=0 timeout 180s npm install --package-lock-only --ignore-scripts --include=dev --no-audit --no-fund --prefer-offline --no-progress' in text
-    assert 'HUSKY=0 timeout 420s npm ci --include=dev --no-audit' in text
-    assert text.index('npm install --package-lock-only --ignore-scripts --include=dev') < text.index('npm ci --include=dev')
-    assert 'npm ci --omit=dev' not in text
-    assert 'npm install -g omniroute@' not in text
-    assert 'brace-expansion@1.1.21' in text
-    assert 'add_provider gemini GEMINI_API_KEY' not in text
-    assert 'add_provider google GEMINI_API_KEY' not in text
-    assert 'OMNIROUTE_ENABLE_NARA: ${{ vars.OMNIROUTE_ENABLE_NARA || \'0\' }}' in text
-    assert 'if [ "${OMNIROUTE_ENABLE_NARA:-0}" = "1" ]; then' in text
-    assert 'add_provider nara NARAROUTER_API_KEY' in text
-    assert 'nara: deferred from auto-pool until the account Telegram gate is resolved' in text
+    assert "OMNIROUTE_VERSION=3.8.50" in workflow
+    assert "OMNIROUTE_COMMIT=5458026c216f77a3da68ea49152dc33470cfe2cb" in workflow
+    assert 'git clone --depth 1 --branch "v${OMNIROUTE_VERSION}" https://github.com/diegosouzapw/OmniRoute.git' in workflow
+    assert "HUSKY=0 timeout 180s npm install --package-lock-only --ignore-scripts --include=dev --no-audit --no-fund --prefer-offline --no-progress" in workflow
+    assert "HUSKY=0 timeout 420s npm ci --include=dev --no-audit" in workflow
+    assert workflow.index("npm install --package-lock-only --ignore-scripts --include=dev") < workflow.index("npm ci --include=dev")
+    assert "npm ci --omit=dev" not in workflow
+    assert "npm install -g omniroute@" not in workflow
+    assert "brace-expansion@1.1.21" in workflow
 
-    for provider, credential in (
-        ('groq', 'GROQ_API_KEY'),
-        ('huggingface', 'HF_TOKEN'),
-        ('mistral', 'MISTRAL_API_KEY'),
-        ('llm7', 'LLM7_API_KEY'),
-        ('nvidia', 'NVIDIA_API_KEY'),
-        ('anyapi', 'ANYAPI_API_KEY'),
-        ('api-airforce', 'API_AIRFORCE_API_KEY'),
-        ('sambanova', 'SAMBANOVA_API_KEY'),
-    ):
-        assert f'add_provider {provider} {credential}' in text
+    assert "add_provider gemini GEMINI_API_KEY" not in workflow
+    assert "add_provider google GEMINI_API_KEY" not in workflow
+    assert "add_provider nara NARAROUTER_API_KEY" not in workflow
+    assert "add_provider mistral MISTRAL_API_KEY" not in workflow
+    assert "add_provider nvidia NVIDIA_API_KEY" not in workflow
+    assert "add_provider llm7 LLM7_API_KEY" not in workflow
+    assert "add_provider anyapi ANYAPI_API_KEY" not in workflow
+    assert "add_provider huggingface HF_TOKEN" not in workflow
+    assert "add_provider nara NARAROUTER_API_KEY" not in workflow
 
-    assert 'cloudflare-ai: deferred (requires accountId in provider-specific connection data)' in text
-    assert 'CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}' in text
-    assert 'OMNIROUTE_READY' in text
-    assert 'providers test-all' not in text
-    assert '[OmniRoute] running structured auto/smart inference smoke-test' in text
-    assert '[OmniRoute] structured_json_inference_smoke=healthy' in text
-    assert '"response_format":{"type":"json_object"}' in text
-    assert '"max_tokens":128' in text
-    assert 'result.get("ok") is True' in text
-    assert '\"model\":\"auto/smart\"' in text
+    assert 'add_provider openrouter OPENROUTER_API_KEY' in workflow
+    assert 'add_provider groq GROQ_API_KEY' in workflow
+    assert 'add_provider sambanova SAMBANOVA_API_KEY' in workflow
+    assert 'add_provider api-airforce API_AIRFORCE_API_KEY' in workflow
+    assert "GROQ_FREE_TIER_CONFIRMED" in workflow
+    assert "SAMBANOVA_FREE_TIER_CONFIRMED" in workflow
+    assert "API_AIRFORCE_FREE_TIER_CONFIRMED" in workflow
+    assert "Free tier/no payment method verified" in workflow
+    assert "no payment method linked" in workflow
+    assert "zero PayGo balance verified" in workflow
+    assert "vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY" in workflow
+    assert "vars.SAMBANOVA_FREE_TIER_CONFIRMED == '1' && secrets.SAMBANOVA_API_KEY" in workflow
+    assert "vars.API_AIRFORCE_FREE_TIER_CONFIRMED == '1' && secrets.API_AIRFORCE_API_KEY" in workflow
+    assert 'OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}' in workflow
+    assert "auto/best-free" in workflow
+    assert "Mistral Free mode has no API access" in workflow
+    assert "NVIDIA hosted API is limited to" in workflow
+    assert "LLM7 is not a managed production inference service" in workflow
+    assert "Cloudflare" in workflow
+    assert "OMNIROUTE_READY" in workflow
+    assert "providers test-all" not in workflow
+    assert "[OmniRoute] running structured auto/best-free inference smoke-test" in workflow
+    assert "[OmniRoute] structured_json_inference_smoke=healthy" in workflow
+    assert '"response_format":{"type":"json_object"}' in workflow
+    assert '"max_tokens":128' in workflow
+    assert 'result.get("ok") is True' in workflow
+    assert '"model":"auto/best-free"' in workflow
 
 # Production validation trigger: pinned OmniRoute source tag and lockfile contract.
 

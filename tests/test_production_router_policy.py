@@ -15,12 +15,22 @@ def _reset(monkeypatch):
     router._DISABLED.clear()
     router._DISABLED_FAMILIES.clear()
     router._MODEL_DISABLED_UNTIL.clear()
+    router._MODEL_DISABLED_REASON.clear()
     router._CHAIN_CACHE = None
     router._PRODUCTION_POLICY_APPLIED = False
     router._PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
     router._PRODUCTION_CIRCUIT_OPEN = False
     policy._OMNIROUTE_CIRCUIT_OPEN = False
     policy._OMNIROUTE_READ_TIMEOUT_STREAK = 0
+    policy._OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
+    policy._OMNIROUTE_CIRCUIT_FAILURES = 0
+    policy._OPENROUTER_FREE_REPORTED_REMAINING = None
+    policy._OPENROUTER_FREE_REPORTED_USED = None
+    policy._OPENROUTER_FREE_RESERVED = 0
+    policy._OPENROUTER_FREE_CACHED_REMAINING = None
+    policy._OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
+    policy._OPENROUTER_FREE_REQUEST_TIMESTAMPS.clear()
+    policy._OPENROUTER_FREE_BLOCKED_UNTIL = 0.0
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -34,6 +44,7 @@ def _reset(monkeypatch):
     monkeypatch.delenv("OMNIROUTE_API_KEY", raising=False)
     monkeypatch.delenv("OMNIROUTE_MODEL", raising=False)
     monkeypatch.delenv("OMNIROUTE_TIMEOUT_SECONDS", raising=False)
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
 
 
@@ -122,13 +133,22 @@ def test_production_auth_failure_remains_family_scoped(monkeypatch):
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
-def test_groq_daily_tpd_quota_skips_siblings_but_model_429_does_not(monkeypatch):
+def test_groq_daily_quota_is_model_scoped_and_openrouter_daily_cap_is_key_scoped(monkeypatch):
     _reset(monkeypatch)
-    assert router._provider_quota_is_family_scoped(
+    assert not router._provider_quota_is_family_scoped(
         "groq", "quota", "Rate limit reached on tokens per day (TPD): Limit 200000"
     )
     assert not router._provider_quota_is_family_scoped(
         "groq", "quota", "HTTP 429 model rate limit"
+    )
+    assert router._provider_quota_is_family_scoped(
+        "openrouter", "quota", "free-models-per-day daily request cap exhausted"
+    )
+    assert router._provider_quota_is_family_scoped(
+        "openrouter", "quota", "HTTP 429 x-ratelimit-remaining: 0"
+    )
+    assert not router._provider_quota_is_family_scoped(
+        "openrouter", "quota", "free-models-per-minute 20 RPM cap; Retry-After: 60"
     )
 
 
@@ -159,6 +179,7 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
     apply()
+    monkeypatch.setattr(policy, "_openrouter_free_request_allowed", lambda _deployment_id: True)
     calls = []
 
     class FakeRouter:
@@ -173,8 +194,8 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
             )()
 
     deployments = [
-        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a"}},
-        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b"}},
+        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a:free"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b:free"}},
         {"model_name": "radar-production-3", "model_info": {"id": "groq:model-c"}},
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
@@ -186,7 +207,7 @@ def test_production_provider_quota_skips_all_siblings_and_switches_provider(monk
     assert "openrouter" in router._DISABLED_FAMILIES
 
 
-def test_groq_tpd_quota_disables_all_sibling_models(monkeypatch):
+def test_groq_tpd_quota_disables_only_the_exhausted_model(monkeypatch):
     _reset(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
@@ -211,17 +232,20 @@ def test_groq_tpd_quota_disables_all_sibling_models(monkeypatch):
     deployments = [
         {"model_name": "radar-production-1", "model_info": {"id": "groq:model-a"}},
         {"model_name": "radar-production-2", "model_info": {"id": "groq:model-b"}},
-        {"model_name": "radar-production-3", "model_info": {"id": "openrouter:model-c"}},
+        {"model_name": "radar-production-3", "model_info": {"id": "openrouter:model-c:free"}},
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+    monkeypatch.setattr(policy, "_openrouter_free_request_allowed", lambda _deployment_id: True)
 
     result, provider = router._call_litellm("system", "user")
 
     assert result == '{"title":"ok"}'
-    assert provider == "openrouter:model-c"
-    assert calls == ["radar-production-1", "radar-production-3"]
-    assert "groq" in router._DISABLED_FAMILIES
+    assert provider == "groq:model-b"
+    assert calls == ["radar-production-1", "radar-production-2"]
+    assert "groq" not in router._DISABLED_FAMILIES
+    assert "groq:model-a" in router._DISABLED
+    assert router._MODEL_DISABLED_UNTIL["groq:model-a"] > time.monotonic()
 
 
 def test_production_model_429_does_not_disable_provider(monkeypatch):
@@ -260,6 +284,7 @@ def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
     apply()
+    monkeypatch.setattr(policy, "_openrouter_free_request_allowed", lambda _deployment_id: True)
     calls = []
 
     class FakeRouter:
@@ -274,18 +299,18 @@ def test_production_openrouter_upstream_shared_pool_is_model_scoped(monkeypatch)
             )()
 
     deployments = [
-        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a"}},
-        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b"}},
+        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:model-a:free"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:model-b:free"}},
         {"model_name": "radar-production-3", "model_info": {"id": "groq:model-c"}},
     ]
     monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
     monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
     result, provider = router._call_litellm("system", "user")
     assert result == '{"title":"ok"}'
-    assert provider == "openrouter:model-b"
+    assert provider == "openrouter:model-b:free"
     assert calls == ["radar-production-1", "radar-production-2"]
     assert "openrouter" not in router._DISABLED_FAMILIES
-    assert "openrouter:model-a" in router._DISABLED
+    assert "openrouter:model-a:free" in router._DISABLED
 
 
 def test_kira_wallet_error_does_not_disable_kira_family(monkeypatch):
@@ -383,9 +408,7 @@ def test_production_mode_routes_canonical_chain_through_guarded_circuit(monkeypa
     assert calls == [("system", "user")]
 
 
-def test_persisted_recoverable_health_allows_half_open_probe(monkeypatch):
-    import src.production_router_policy as policy
-
+def test_persisted_recoverable_health_is_not_bypassed_before_reset(monkeypatch):
     monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
     monkeypatch.setattr(policy, "_load_health", lambda: {
         "models": {
@@ -397,7 +420,8 @@ def test_persisted_recoverable_health_allows_half_open_probe(monkeypatch):
         "providers": {},
     })
     assert policy._persistently_unavailable("groq:model-a") is True
-    assert policy._persistently_unavailable("groq:model-a", recovery_probe=True) is False
+    assert policy._persistently_unavailable("groq:model-a", recovery_probe=True) is True
+
 
 
 def test_persisted_blocked_health_rejects_half_open_probe(monkeypatch):
@@ -414,6 +438,20 @@ def test_persisted_blocked_health_rejects_half_open_probe(monkeypatch):
         "providers": {},
     })
     assert policy._persistently_unavailable("groq:model-a", recovery_probe=True) is True
+
+
+def test_persisted_rate_limit_is_available_after_exact_reset(monkeypatch):
+    monkeypatch.setenv("RADAR_PRODUCTION_MODE", "1")
+    monkeypatch.setattr(policy, "_load_health", lambda: {
+        "models": {
+            "groq:model-a": {
+                "disabled_until": time.time() - 1,
+                "last_error": "rate_limit",
+            }
+        },
+        "providers": {},
+    })
+    assert policy._persistently_unavailable("groq:model-a") is False
 
 
 def test_production_launcher_does_not_activate_router_on_import(monkeypatch):
@@ -508,7 +546,7 @@ def test_omniroute_is_primary_model_selection_layer_when_configured(monkeypatch)
     assert result == '{"title":"omni"}'
     assert provider == "OmniRoute:free-test/test-model"
     assert calls[0][0] == "http://omniroute:20128/v1/chat/completions"
-    assert calls[0][1]["json"]["model"] == "auto/smart"
+    assert calls[0][1]["json"]["model"] == "auto/best-free"
     assert calls[0][1]["json"]["stream"] is False
 
 
@@ -550,6 +588,136 @@ def test_omniroute_failure_falls_back_to_existing_production_chain(monkeypatch):
 
     assert result == '{"title":"fallback"}'
     assert provider == "groq:model-a"
+
+
+def test_openrouter_free_quota_preflight_reserves_live_remaining_count(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    calls = []
+
+    class Response:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {
+                "data": {
+                    "free_model_daily_requests": {
+                        "used": 48,
+                        "limit": 50,
+                        "remaining": 2,
+                    }
+                }
+            }
+
+    def get(url, **kwargs):
+        calls.append((url, kwargs))
+        return Response()
+
+    monkeypatch.setattr(policy.requests, "get", get)
+
+    assert policy._openrouter_free_request_allowed("openrouter:nvidia/test-a:free") is True
+    assert policy._openrouter_free_request_allowed("openrouter:google/test-b:free") is True
+    assert policy._openrouter_free_request_allowed("openrouter:openai/test-c:free") is False
+    assert len(calls) == 1
+
+
+def test_openrouter_free_quota_preflight_fails_closed_when_counter_unavailable(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+
+    class Response:
+        status_code = 503
+        text = "temporarily unavailable"
+
+    monkeypatch.setattr(policy.requests, "get", lambda *_args, **_kwargs: Response())
+
+    assert policy._openrouter_free_request_allowed("openrouter:nvidia/test:free") is False
+    assert policy._openrouter_free_request_allowed("openrouter:nvidia/test:free") is False
+
+
+def test_openrouter_free_quota_preflight_rejects_non_free_model_ids(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    calls = []
+    monkeypatch.setattr(policy.requests, "get", lambda *args, **kwargs: calls.append(args) or None)
+
+    assert policy._openrouter_free_request_allowed("openrouter:openai/gpt-oss-120b") is False
+    assert calls == []
+
+
+def test_provider_retry_after_parser_supports_seconds_and_compound_durations():
+    assert policy._provider_retry_after_seconds("Please try again in 3.4575s") == 3.4575
+    assert policy._provider_retry_after_seconds("Retry-After: 120 seconds") == 120
+    assert policy._provider_retry_after_seconds("reset in 2m30s") == 150
+
+
+def test_openrouter_free_quota_preflight_enforces_20_requests_per_minute(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+
+    class Response:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {
+                "data": {
+                    "free_model_daily_requests": {
+                        "used": 0,
+                        "limit": 50,
+                        "remaining": 50,
+                    }
+                }
+            }
+
+    monkeypatch.setattr(policy.requests, "get", lambda *_args, **_kwargs: Response())
+
+    for index in range(20):
+        assert policy._openrouter_free_request_allowed(
+            f"openrouter:provider/model-{index}:free"
+        ) is True
+
+    assert policy._openrouter_free_request_allowed("openrouter:provider/model-21:free") is False
+    assert len(policy._OPENROUTER_FREE_REQUEST_TIMESTAMPS) == 20
+
+
+def test_omniroute_upstream_502_enters_short_half_open_cooldown(monkeypatch, capsys):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OMNIROUTE_BASE_URL", "http://omniroute:20128")
+    calls = []
+
+    class Response:
+        text = ""
+
+        def __init__(self, status_code):
+            self.status_code = status_code
+            self.headers = {"X-OmniRoute-Decision": "strategy=auto; provider=groq"}
+
+        @staticmethod
+        def json():
+            return {
+                "model": "openai/gpt-oss-120b",
+                "choices": [{"message": {"content": '{"ok": true}'}}],
+            }
+
+    def post(*_args, **_kwargs):
+        calls.append(True)
+        return Response(502 if len(calls) == 1 else 200)
+
+    monkeypatch.setattr(policy.requests, "post", post)
+
+    assert policy._omniroute_call("system", "user") == (None, None)
+    assert policy._OMNIROUTE_CIRCUIT_OPEN is True
+    assert 1.0 <= policy._OMNIROUTE_CIRCUIT_RETRY_AT - time.monotonic() <= 3.0
+
+    policy._OMNIROUTE_CIRCUIT_RETRY_AT = time.monotonic() - 0.1
+    assert policy._omniroute_call("system", "user") == ('{"ok": true}', "Groq:openai/gpt-oss-120b")
+    assert policy._OMNIROUTE_CIRCUIT_OPEN is False
+    assert policy._OMNIROUTE_CIRCUIT_FAILURES == 0
+    output = capsys.readouterr().out
+    assert "free_upstream_pool_http_502" in output
+    assert "half_open_probe=1" in output
 
 
 def test_omniroute_transport_timeout_opens_run_scoped_circuit(monkeypatch, capsys):
@@ -639,7 +807,7 @@ def test_omniroute_primary_requests_json_object_mode(monkeypatch):
 
         def json(self):
             return {
-                "model": "auto/smart",
+                "model": "auto/best-free",
                 "choices": [{"message": {"content": '{"summary":"ok"}'}}],
             }
 
@@ -655,7 +823,7 @@ def test_omniroute_primary_requests_json_object_mode(monkeypatch):
     )
 
     assert result == '{"summary":"ok"}'
-    assert provider == "OmniRoute:auto/smart"
+    assert provider == "OmniRoute:auto/best-free"
     assert calls["url"] == "http://127.0.0.1:20128/v1/chat/completions"
     assert calls["json"]["response_format"] == {"type": "json_object"}
 

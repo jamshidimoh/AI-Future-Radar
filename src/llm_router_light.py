@@ -235,16 +235,22 @@ def _provider_quota_is_family_scoped(family: str, reason: str, message: str) -> 
         return True
     if reason != "quota":
         return False
-    # Groq's daily token cap is shared by sibling models even when the API
-    # reports it as HTTP 429. Keep ordinary per-model 429s model-scoped.
+    # Groq's published RPD/TPD/TPM ceilings are attached to individual model
+    # IDs. A full daily allowance for GPT-OSS must not block Qwen (and vice
+    # versa), so quota exhaustion is always deployment-scoped for Groq.
     if family == "groq":
+        return False
+    if family == "openrouter":
+        # The free-model daily request ceiling is shared by the API key. A
+        # per-minute cap is a short window and must not create a long provider
+        # cooldown; it is handled by bounded Retry-After recovery instead.
         return re.search(
-            r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|daily.{0,20}(?:quota|limit)|quota.{0,20}(?:daily|per day)",
+            r"free-models-per-day|daily.{0,20}(?:quota|limit)|requests?/day|account_limit|x-ratelimit-remaining.{0,20}0|\b402\b",
             message,
             re.I,
         ) is not None
     return (
-        family in {"openrouter", "nararouter", "kiraai"}
+        family in {"nararouter", "kiraai"}
         and re.search(r"\b402\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd", message, re.I) is not None
     )
 
@@ -261,16 +267,21 @@ def _disable(name:str,reason:str):
 
 
 def reset_recoverable_cooldowns() -> int:
-    """Clear only transient/quota model cooldowns before mission recovery retries.
-    
-    Persistent provider health, authentication failures, and model-not-found
-    failures remain protected. This only reopens models whose last failure is
-    reasonably retryable within the current production run.
+    """Clear only expired or explicitly transient model cooldowns.
+
+    Quota/rate-limit cooldowns represent a provider's actual free allowance
+    window. Clearing them during mission recovery would retry a model before
+    its published reset and burn more of a capped free pool. Those entries stay
+    disabled until their monotonic reset deadline has elapsed.
     """
     cleared = 0
+    now = time.monotonic()
     with _STATE_LOCK:
         for name, reason in list(_MODEL_DISABLED_REASON.items()):
-            if reason not in {"quota", "transient"}:
+            until = _MODEL_DISABLED_UNTIL.get(name, 0.0)
+            if reason in {"quota", "rate_limit"} and until > now:
+                continue
+            if reason not in {"quota", "rate_limit", "transient"}:
                 continue
             _DISABLED.discard(name)
             _MODEL_DISABLED_UNTIL.pop(name, None)

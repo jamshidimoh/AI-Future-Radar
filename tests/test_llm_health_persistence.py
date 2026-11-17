@@ -57,6 +57,71 @@ def test_log_persistence_distinguishes_plain_429_from_account_quota(tmp_path, mo
     assert "openrouter" in payload["providers"]
 
 
+def test_quota_window_persistence_preserves_exact_daily_provider_and_model_resets(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    log = tmp_path / "run.log"
+    log.write_text(
+        "[Light Router] success=OpenRouter:model-a:free model=openrouter/model-a:free\n"
+        "[Quota Cooldown] scope=provider target=openrouter disabled_until=4102444800.000 "
+        "delay_seconds=86400.0 window=daily reason=quota\n"
+        "[Light Router] success=Groq:openai/gpt-oss-120b model=groq/openai/gpt-oss-120b\n"
+        "[Quota Cooldown] scope=model target=groq:openai/gpt-oss-120b "
+        "disabled_until=4102444800.000 delay_seconds=86400.0 window=daily reason=quota\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+
+    assert payload["providers"]["openrouter"]["disabled_until"] == 4102444800.0
+    assert payload["providers"]["openrouter"]["last_error"] == "quota"
+    assert payload["models"]["groq:openai/gpt-oss-120b"]["disabled_until"] == 4102444800.0
+    assert payload["models"]["groq:openai/gpt-oss-120b"]["last_error"] == "quota"
+
+
+def test_minute_window_cooldown_is_released_as_rate_limit(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    log = tmp_path / "run.log"
+    log.write_text(
+        "[Production Circuit] failed=openrouter:model-a:free reason=rate_limit scope=provider: HTTP 429 free-models-per-minute\n"
+        "[Quota Cooldown] scope=provider target=openrouter disabled_until=4102444860.000 "
+        "delay_seconds=60.0 window=minute reason=quota\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+
+    assert payload["providers"]["openrouter"]["disabled_until"] == 4102444860.0
+    assert payload["providers"]["openrouter"]["last_error"] == "rate_limit"
+
+
+def test_quota_cooldown_event_order_survives_or_clears_on_later_success():
+    initial = {
+        "models": {},
+        "providers": {"openrouter": {"disabled_until": 4102444800, "last_error": "quota"}},
+    }
+    daily_cooldown = (
+        "[Quota Cooldown] scope=provider target=openrouter disabled_until=4102444800.000 "
+        "delay_seconds=86400.0 window=daily reason=quota"
+    )
+    success = "[Light Router] success=OpenRouter:model-a:free model=openrouter/model-a:free"
+
+    after_success_then_quota = persistence.clear_successful_health_records(
+        initial, [success, daily_cooldown]
+    )
+    assert "openrouter" in after_success_then_quota["providers"]
+
+    after_quota_then_success = persistence.clear_successful_health_records(
+        initial, [daily_cooldown, success]
+    )
+    assert "openrouter" not in after_quota_then_success["providers"]
+
+
 def test_provider_warning_failure_is_persisted(tmp_path, monkeypatch):
     state = tmp_path / "llm_health.json"
     log = tmp_path / "run.log"
@@ -301,7 +366,7 @@ def test_state_persistence_prunes_removed_provider_records_without_success_event
         },
     }), encoding="utf-8")
     log = tmp_path / "run.log"
-    log.write_text("[Light Router] success=Groq:model-b model=groq/model-b attempts=1\\n", encoding="utf-8")
+    log.write_text("[Light Router] success=Groq:model-b model=groq/model-b attempts=1\n", encoding="utf-8")
     monkeypatch.setattr(persistence, "STATE_PATH", state)
     monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
 

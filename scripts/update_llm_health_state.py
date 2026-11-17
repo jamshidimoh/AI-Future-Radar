@@ -22,8 +22,10 @@ MODEL_COOLDOWN = {
     "auth": 86400.0,
     "model": 21600.0,
 }
+# Only authentication failures are inherently provider-wide. Quota scope is
+# persisted from the routing decision's explicit [Quota Cooldown] record:
+# Groq limits are model-scoped, while OpenRouter's free daily cap is key-scoped.
 PROVIDER_COOLDOWN = {
-    "quota": 21600.0,
     "auth": 86400.0,
 }
 KIRAAI_WALLET_PROVIDER_COOLDOWN = 86400.0
@@ -45,6 +47,11 @@ SUCCESS_RE = re.compile(
 KIRAAI_WALLET_RE = re.compile(
     r"insufficient.*(?:vnd|wallet|balance)|wallet.*balance|vnd.*balance",
     re.IGNORECASE,
+)
+QUOTA_COOLDOWN_RE = re.compile(
+    r"\[Quota Cooldown\]\s+scope=(?P<scope>provider|model)\s+"
+    r"target=(?P<target>\S+)\s+disabled_until=(?P<until>[0-9]+(?:\.[0-9]+)?)"
+    r"(?:\s+delay_seconds=[0-9.]+)?\s+window=(?P<window>minute|daily)(?:\s+.*)?$",
 )
 
 _PROVIDER_CANONICAL = {
@@ -94,22 +101,44 @@ def is_kira_wallet_only(deployment: str, message: str) -> bool:
     return family(deployment) == "kiraai" and bool(KIRAAI_WALLET_RE.search(str(message or "")))
 
 
+def is_provider_scoped_failure(deployment: str, failure_kind: str, wallet_only: bool = False) -> bool:
+    """Return whether a failure blocks the whole provider/account, not one model.
+
+    OpenRouter's free daily allowance and account_limit responses are shared
+    across all :free model variants on the API key. Groq limits are per model,
+    so Groq quota exhaustion must never disable sibling models.
+    """
+    if wallet_only or failure_kind in PROVIDER_COOLDOWN:
+        return True
+    return family(deployment) == "openrouter" and failure_kind == "quota"
+
+
 def classify(message: str) -> str:
     text = str(message or "").lower()
-    # NaraRouter's telegram_required response is an account-linking gate.
-    # Classify it before generic HTTP 403 handling to avoid model-only cooldowns.
+    # Account gates and wallet exhaustion are never retryable.
     if re.search(r"telegram_required|join the required telegram|relink at /settings", text):
         return "auth"
     if re.search(r"\b401\b|unauthorized|unauthenticated|invalid.*(?:api|credential|key|token)|authentication", text):
         return "auth"
-    if re.search(r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|monthly.*(?:credit|quota)|daily.*(?:limit|quota)|depleted|insufficient.*(?:credit|balance)", text):
+    # Daily/account ceilings are classified before generic 429 so they retain
+    # their correct day-long reset window.
+    if re.search(
+        r"\b402\b|account_limit|payment required|account.*(?:limit|quota)|"
+        r"monthly.*(?:credit|quota)|daily.*(?:limit|quota)|free-models-per-day|"
+        r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day|"
+        r"depleted|insufficient.*(?:credit|balance)",
+        text,
+    ):
         return "quota"
-    if re.search(r"\b429\b|rate.?limit|too many requests|resource_exhausted|upstream_provider_shared_pool", text):
+    if re.search(
+        r"\b429\b|rate.?limit|too many requests|resource_exhausted|"
+        r"upstream_provider_shared_pool|free-models-per-minute|tokens?\s+per\s+minute",
+        text,
+    ):
         return "rate_limit"
     if re.search(r"\b(?:403|404)\b|model.*(?:blocked|disabled|not found|unavailable)|not found|permission", text):
         return "model"
     return "transient"
-
 
 def load() -> dict:
     value = load_json_state(STATE_PATH, {}, label="LLM health state")
@@ -158,22 +187,30 @@ def _iter_events(lines: list[str]):
 
 
 def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
-    """Reapply ordered current-run successes after a remote/local state merge.
-
-    A max-merge can resurrect an old provider cooldown after this production run
-    successfully used that provider. Only successful events clear cooldowns;
-    a later authentication/quota/wallet failure remains authoritative.
-    """
+    """Reapply ordered model/provider success and quota events after state merge."""
     last_model_event: dict[str, str] = {}
     last_provider_event: dict[str, str] = {}
-    for deployment, event_kind, failure_kind, wallet_only in _iter_events(lines):
-        normalized = deployment.strip().casefold()
-        provider = family(deployment)
-        last_model_event[normalized] = event_kind
-        if event_kind == "success":
-            last_provider_event[provider] = "success"
-        elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
-            last_provider_event[provider] = "failure"
+
+    # Process every line in source order. A later quota event must survive an
+    # earlier successful request, while a later successful probe may clear a
+    # short-window rate-limit cooldown after its reset.
+    for line in lines:
+        for deployment, event_kind, failure_kind, wallet_only in _iter_events([line]):
+            normalized = deployment.strip().casefold()
+            provider = family(deployment)
+            last_model_event[normalized] = event_kind
+            if event_kind == "success":
+                last_provider_event[provider] = "success"
+            elif is_provider_scoped_failure(deployment, failure_kind, wallet_only):
+                last_provider_event[provider] = "failure"
+
+        match = QUOTA_COOLDOWN_RE.search(line)
+        if match:
+            target = match.group("target").strip().casefold()
+            if match.group("scope") == "provider":
+                last_provider_event[target] = "failure"
+            else:
+                last_model_event[target] = "failure"
 
     result = dict(state) if isinstance(state, dict) else {}
     models = normalize_state_keys(result.get("models", {}) if isinstance(result.get("models"), dict) else {})
@@ -188,7 +225,6 @@ def clear_successful_health_records(state: dict, lines: list[str]) -> dict:
     result["providers"] = providers
     return prune_removed_provider_health_records(result)
 
-
 def main() -> int:
     log_path = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "run.log"
     if not log_path.exists():
@@ -202,6 +238,18 @@ def main() -> int:
     lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
     events = list(_iter_events(lines))
     observed_failures = [event for event in events if event[1] == "failure"]
+    quota_cooldowns: dict[tuple[str, str], tuple[float, str]] = {}
+    for line in lines:
+        match = QUOTA_COOLDOWN_RE.search(line)
+        if not match:
+            continue
+        try:
+            quota_cooldowns[(match.group("scope"), match.group("target").casefold())] = (
+                float(match.group("until")),
+                match.group("window"),
+            )
+        except (TypeError, ValueError):
+            continue
 
     last_event: dict[str, tuple[str, str, bool]] = {}
     for deployment, event_kind, failure_kind, wallet_only in events:
@@ -230,11 +278,14 @@ def main() -> int:
                 "disabled_until": round(now + KIRAAI_WALLET_PROVIDER_COOLDOWN, 3),
                 "last_error": "wallet",
             }
-        elif kind in PROVIDER_COOLDOWN:
+        elif kind in PROVIDER_COOLDOWN or (provider == "openrouter" and kind == "quota"):
+            # Explicit [Quota Cooldown] records below replace this conservative
+            # fallback with the exact provider reset instant when present.
+            fallback_seconds = PROVIDER_COOLDOWN.get(kind, 21600.0)
             old = providers.get(provider, {})
             providers[provider] = {
                 "failures": int(old.get("failures", 0) or 0) + 1,
-                "disabled_until": round(now + PROVIDER_COOLDOWN[kind], 3),
+                "disabled_until": round(now + fallback_seconds, 3),
                 "last_error": kind,
             }
 
@@ -245,11 +296,27 @@ def main() -> int:
         provider = family(deployment)
         if event_kind == "success":
             last_provider_event[provider] = "success"
-        elif wallet_only or failure_kind in PROVIDER_COOLDOWN:
+        elif is_provider_scoped_failure(deployment, failure_kind, wallet_only):
             last_provider_event[provider] = "failure"
     for provider, event_kind in last_provider_event.items():
         if event_kind == "success":
             providers.pop(provider, None)
+
+    # Apply provider/model reset instants emitted by the live router. These
+    # exact reset times supersede generic cooldown defaults so requests resume
+    # when the free quota replenishes, not on an arbitrary fixed timer.
+    for ( (scope, target), (disabled_until, window) ) in quota_cooldowns.items():
+        if disabled_until <= now:
+            continue
+        if scope == "model":
+            row = models.setdefault(target, {"failures": 1, "last_success": 0})
+            row["disabled_until"] = round(disabled_until, 3)
+            row["last_error"] = "rate_limit" if window == "minute" else "quota"
+        else:
+            row = providers.setdefault(target, {"failures": 1})
+            row["disabled_until"] = round(disabled_until, 3)
+            row["last_error"] = "rate_limit" if window == "minute" else "quota"
+
 
     state["models"] = models
     state["providers"] = providers

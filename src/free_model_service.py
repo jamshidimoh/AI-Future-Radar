@@ -221,39 +221,6 @@ class FreeModelIntelligence:
             row["availability"] = "available"
             usable.append(row)
 
-        production_mode = os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}
-        if not usable and production_mode:
-            recoverable = {"quota", "rate_limit", "transient"}
-            blocking = {"auth", "model", "wallet"}
-            for entry in entries:
-                if not isinstance(entry, dict):
-                    continue
-                if entry.get("free") is not True or entry.get("chat_capable") is not True or entry.get("json_capable") is not True:
-                    continue
-                deployment_id = str(entry.get("deployment_id") or entry.get("id") or "").strip()
-                if not deployment_id:
-                    continue
-                family = str(entry.get("family") or "").strip().casefold()
-                model_health = self.health(deployment_id)
-                provider_health = self.provider_health(family)
-                model_reason = str(model_health.last_error or "").strip().casefold()
-                provider_reason = str(provider_health.last_error or "").strip().casefold()
-                has_recoverable = model_reason in recoverable or provider_reason in recoverable
-                has_blocking = model_reason in blocking or provider_reason in blocking
-                disabled = (not model_health.available) or (bool(family) and not provider_health.available)
-                if not disabled or not has_recoverable or has_blocking:
-                    continue
-                row = dict(entry)
-                row["deployment_id"] = deployment_id
-                row["availability"] = "recovery_probe"
-                row["_health_recovery_probe"] = True
-                usable.append(row)
-            if usable:
-                print(
-                    f"[LLM Health Recovery] half_open_probes={len(usable)} reason=all_normal_deployments_persistently_unavailable",
-                    flush=True,
-                )
-
         usable.sort(key=lambda x: (-self._quality(x), self._priority(x), str(x.get("id", ""))))
         return usable
 

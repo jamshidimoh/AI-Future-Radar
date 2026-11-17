@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 import src.llm_router_light as router
@@ -105,19 +106,37 @@ def test_model_permission_failure_is_not_family_scoped(monkeypatch):
     assert "groq" not in router._DISABLED_FAMILIES
 
 
-def test_recovery_reset_clears_only_retryable_model_cooldowns(monkeypatch):
+def test_recovery_reset_preserves_quota_until_its_window_resets(monkeypatch):
     _reset()
     monkeypatch.setenv("GROQ_API_KEY", "test-groq")
     router._disable("Groq:model-quota", "quota")
+    router._disable("Groq:model-rate-limit", "rate_limit")
     router._disable("Groq:model-transient", "transient")
     router._disable("Groq:model-model", "model")
+    router._MODEL_DISABLED_UNTIL["Groq:model-quota"] = time.monotonic() + 3600
+    router._MODEL_DISABLED_UNTIL["Groq:model-rate-limit"] = time.monotonic() + 30
     router._DISABLED_FAMILIES.add("openrouter")
+
     cleared = router.reset_recoverable_cooldowns()
-    assert cleared == 2
-    assert "Groq:model-quota" not in router._DISABLED
+
+    assert cleared == 1
+    assert "Groq:model-quota" in router._DISABLED
+    assert "Groq:model-rate-limit" in router._DISABLED
     assert "Groq:model-transient" not in router._DISABLED
     assert "Groq:model-model" in router._DISABLED
     assert "openrouter" in router._DISABLED_FAMILIES
+
+
+def test_recovery_reset_reopens_quota_model_only_after_reset(monkeypatch):
+    _reset()
+    router._disable("Groq:model-quota", "quota")
+    router._MODEL_DISABLED_UNTIL["Groq:model-quota"] = time.monotonic() - 1
+
+    cleared = router.reset_recoverable_cooldowns()
+
+    assert cleared == 1
+    assert "Groq:model-quota" not in router._DISABLED
+    assert "Groq:model-quota" not in router._MODEL_DISABLED_UNTIL
 
 
 

@@ -245,13 +245,13 @@ def _provider_quota_is_family_scoped(family: str, reason: str, message: str) -> 
         # per-minute cap is a short window and must not create a long provider
         # cooldown; it is handled by bounded Retry-After recovery instead.
         return re.search(
-            r"free-models-per-day|daily.{0,20}(?:quota|limit)|requests?/day|account_limit|\\b402\\b",
+            r"free-models-per-day|daily.{0,20}(?:quota|limit)|requests?/day|account_limit|\b402\b",
             message,
             re.I,
         ) is not None
     return (
         family in {"nararouter", "kiraai"}
-        and re.search(r"\\b402\\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd", message, re.I) is not None
+        and re.search(r"\b402\b|account_limit|requests?/day|daily|free.*tier|balance|wallet|vnd", message, re.I) is not None
     )
 
 def _model_is_disabled(name:str)->bool:

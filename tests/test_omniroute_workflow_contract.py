@@ -23,19 +23,28 @@ def test_omniroute_workflow_uses_audited_release_and_only_verified_free_provider
     assert "add_provider nara NARAROUTER_API_KEY" not in workflow
     assert "add_provider mistral MISTRAL_API_KEY" not in workflow
     assert "add_provider nvidia NVIDIA_API_KEY" not in workflow
-    assert "add_provider sambanova SAMBANOVA_API_KEY" not in workflow
     assert "add_provider llm7 LLM7_API_KEY" not in workflow
     assert "add_provider anyapi ANYAPI_API_KEY" not in workflow
-    assert "add_provider api-airforce API_AIRFORCE_API_KEY" not in workflow
     assert "add_provider huggingface HF_TOKEN" not in workflow
+    assert "add_provider nara NARAROUTER_API_KEY" not in workflow
 
-    assert "add_provider groq GROQ_API_KEY" in workflow
-    assert "add_provider openrouter OPENROUTER_API_KEY" in workflow
-    assert 'GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}' in workflow
+    assert 'add_provider openrouter OPENROUTER_API_KEY' in workflow
+    assert 'add_provider groq GROQ_API_KEY' in workflow
+    assert 'add_provider sambanova SAMBANOVA_API_KEY' in workflow
+    assert 'add_provider api-airforce API_AIRFORCE_API_KEY' in workflow
+    assert "GROQ_FREE_TIER_CONFIRMED" in workflow
+    assert "SAMBANOVA_FREE_TIER_CONFIRMED" in workflow
+    assert "API_AIRFORCE_FREE_TIER_CONFIRMED" in workflow
+    assert "Free tier/no payment method verified" in workflow
+    assert "no payment method linked" in workflow
+    assert "zero PayGo balance verified" in workflow
+    assert "vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY" in workflow
+    assert "vars.SAMBANOVA_FREE_TIER_CONFIRMED == '1' && secrets.SAMBANOVA_API_KEY" in workflow
+    assert "vars.API_AIRFORCE_FREE_TIER_CONFIRMED == '1' && secrets.API_AIRFORCE_API_KEY" in workflow
     assert 'OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}' in workflow
     assert "auto/best-free" in workflow
-    assert "Mistral/NVIDIA/SambaNova/HF" in workflow
-    assert "Api.Airforce PayGo balance can" in workflow
+    assert "Mistral Free mode has no API access" in workflow
+    assert "NVIDIA hosted API is limited to" in workflow
     assert "LLM7 is not a managed production inference service" in workflow
     assert "Cloudflare" in workflow
     assert "OMNIROUTE_READY" in workflow

@@ -82,10 +82,6 @@ jobs:
           LLM7_API_KEY: ${{ secrets.LLM7_API_KEY }}
           ANYAPI_API_KEY: ${{ secrets.ANYAPI_API_KEY }}
           API_AIRFORCE_API_KEY: ${{ secrets.API_AIRFORCE_API_KEY }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # One-time/free-trial credits are intentionally NOT in the automatic pool.
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
@@ -187,7 +183,7 @@ jobs:
               print("[OmniRoute] warning: no models advertised; production router will use its hard fallback")
           PY
 
-          echo "[OmniRoute] provisioning free/low-cost Radar providers"
+          echo "[OmniRoute] provisioning zero-cost/free-quota Radar providers"
           add_provider() {
             local provider="$1"
             local credential_env="$2"
@@ -198,21 +194,17 @@ jobs:
               echo "[OmniRoute] ${provider}: skipped (credential not present)"
             fi
           }
-          # Only documented no-cost/free-tier API connections are provisioned.
-          # Model routing remains pinned to auto/best-free; paid models are never selected.
+          # Only providers with published no-cost tiers are provisioned.
+          # auto/best-free keeps model selection on the free tier; direct fallback is limited
+          # to Groq and explicitly :free OpenRouter variants with quota preflight.
           add_provider groq GROQ_API_KEY
-          if [ "${OMNIROUTE_ENABLE_NARA:-0}" = "1" ]; then
-            else
-            echo "[OmniRoute] nara: deferred from auto-pool until the account Telegram gate is resolved; direct fallback observes persisted provider health"
-          fi
           add_provider llm7 LLM7_API_KEY
           add_provider anyapi ANYAPI_API_KEY
           add_provider api-airforce API_AIRFORCE_API_KEY
-          # Cloudflare requires provider-specific accountId data; credential-env alone cannot supply it.
-          # Keep the secret available to the Radar, but do not create a malformed OmniRoute connection.
-          echo "[OmniRoute] cloudflare-ai: deferred (requires accountId in provider-specific connection data)"
-          # One-time/signup-credit provider remains outside automatic routing.
-          echo "[OmniRoute] one-time credit provider retained by Radar, not OmniRoute auto-pool: deepseek"
+          # Mistral Free mode has no developer API; SambaNova Free requires purchased credits;
+          # NVIDIA hosted API use is limited to prototyping. Those providers are excluded.
+          # Cloudflare requires account-specific free-cap enforcement and is deferred.
+          # One-time signup credits are not recurring free quota and are excluded.
           echo "[OmniRoute] credential presence inventory (names only):"
           for credential in GROQ_API_KEY LLM7_API_KEY ANYAPI_API_KEY API_AIRFORCE_API_KEY TYPESAFE_API_KEY; do
             if [ -n "${!credential:-}" ]; then

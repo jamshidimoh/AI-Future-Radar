@@ -79,9 +79,7 @@ jobs:
           NODE_ENV: production
           DATA_DIR: /tmp/omniroute-data
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          LLM7_API_KEY: ${{ secrets.LLM7_API_KEY }}
-          ANYAPI_API_KEY: ${{ secrets.ANYAPI_API_KEY }}
-          API_AIRFORCE_API_KEY: ${{ secrets.API_AIRFORCE_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           set -euo pipefail
           mkdir -p "$DATA_DIR"
@@ -183,7 +181,7 @@ jobs:
               print("[OmniRoute] warning: no models advertised; production router will use its hard fallback")
           PY
 
-          echo "[OmniRoute] provisioning zero-cost/free-quota Radar providers"
+          echo "[OmniRoute] provisioning strictly free-tier Radar providers"
           add_provider() {
             local provider="$1"
             local credential_env="$2"
@@ -194,19 +192,20 @@ jobs:
               echo "[OmniRoute] ${provider}: skipped (credential not present)"
             fi
           }
-          # Only providers with published no-cost tiers are provisioned.
-          # auto/best-free keeps model selection on the free tier; direct fallback is limited
-          # to Groq and explicitly :free OpenRouter variants with quota preflight.
+          # Production routing is explicitly auto/best-free: paid tiers are never
+          # an eligible fallback. Only Groq Free and OpenRouter's free-model
+          # connection are provisioned; both have documented zero-price pools
+          # and bounded quotas. OpenRouter's API-key quota is enforced separately
+          # by its live /key preflight in the direct fallback router.
           add_provider groq GROQ_API_KEY
-          add_provider llm7 LLM7_API_KEY
-          add_provider anyapi ANYAPI_API_KEY
-          add_provider api-airforce API_AIRFORCE_API_KEY
-          # Mistral Free mode has no developer API; SambaNova Free requires purchased credits;
-          # NVIDIA hosted API use is limited to prototyping. Those providers are excluded.
-          # Cloudflare requires account-specific free-cap enforcement and is deferred.
-          # One-time signup credits are not recurring free quota and are excluded.
+          add_provider openrouter OPENROUTER_API_KEY
+          # Excluded until they have a verifiable zero-billing production guard:
+          # LLM7 is not a managed production inference service; AnyAPI's free
+          # plan is evaluation/low-volume only; Api.Airforce PayGo balance can
+          # bypass its Free request limits; Mistral/NVIDIA/SambaNova/HF can incur
+          # charges or require credits; Nara/Kira have account access/wallet gates.
           echo "[OmniRoute] credential presence inventory (names only):"
-          for credential in GROQ_API_KEY LLM7_API_KEY ANYAPI_API_KEY API_AIRFORCE_API_KEY TYPESAFE_API_KEY; do
+          for credential in GROQ_API_KEY OPENROUTER_API_KEY TYPESAFE_API_KEY; do
             if [ -n "${!credential:-}" ]; then
               echo "[OmniRoute] ${credential}=present"
             else
@@ -231,7 +230,7 @@ jobs:
           PY
           )
           echo "[OmniRoute] post_provision_models=${MODEL_COUNT}"
-          echo "[OmniRoute] running structured auto/smart inference smoke-test"
+          echo "[OmniRoute] running structured auto/best-free inference smoke-test"
           READY=0
           for attempt in $(seq 1 6); do
             if curl -4 -fsS --max-time 20 http://127.0.0.1:20128/v1/chat/completions -H "Content-Type: application/json" -d '{"model":"auto/best-free","messages":[{"role":"user","content":"Return a JSON object with exactly one key, ok, set to true."}],"response_format":{"type":"json_object"},"max_tokens":128,"temperature":0}' >/tmp/omniroute-smoke.json 2>/tmp/omniroute-smoke.err; then

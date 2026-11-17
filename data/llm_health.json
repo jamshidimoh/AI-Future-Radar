@@ -5,18 +5,6 @@
       "disabled_until": 1794997661.538,
       "last_error": "auth",
       "last_success": 0
-    },
-    "groq:openai/gpt-oss-20b": {
-      "failures": 1,
-      "disabled_until": 1794914861.538,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1794914861.538,
-      "last_error": "rate_limit",
-      "last_success": 0
     }
   },
   "providers": {
@@ -36,12 +24,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1794911261.5383992,
+  "updated_at": 1794915240.7209566,
   "version": 1,
   "telemetry": {
-    "observed_failures": 17,
-    "observed_events": 27,
-    "updated_at": 1794911261.5383992
+    "observed_failures": 0,
+    "observed_events": 0,
+    "updated_at": 1794915240.7209566
   },
   "observed_failures": 0,
   "observed_events": 0

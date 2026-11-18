@@ -1,0 +1,26 @@
+{
+  "log": { "level": "info" },
+  "dns": {
+    "servers": [
+      { "type": "local", "tag": "local" }
+    ]
+  },
+  "inbounds": [
+    {
+      "type": "mixed",
+      "tag": "proxy-in",
+      "listen": "127.0.0.1",
+      "listen_port": 2080
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "http",
+      "tag": "proxy-out",
+      "server": "YOUR_PROXY_HOST",
+      "server_port": 443,
+      "tls": { "enabled": true, "server_name": "YOUR_PROXY_HOST" }
+    }
+  ],
+  "route": { "final": "proxy-out", "auto_detect_interface": true }
+}

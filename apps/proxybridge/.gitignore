@@ -1,0 +1,10 @@
+dist/
+runtime/
+*.exe
+*.zip
+*.log
+.env
+config.local.json
+*.key
+*.pem
+*.ovpn

@@ -1,0 +1,27 @@
+name: ProxyBridge Windows Build
+
+on:
+  push:
+    paths:
+      - 'apps/proxybridge/**'
+  pull_request:
+    paths:
+      - 'apps/proxybridge/**'
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: apps/proxybridge
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+      - run: go test ./...
+      - run: .\scripts\build-windows.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ProxyBridge-windows
+          path: apps/proxybridge/dist/

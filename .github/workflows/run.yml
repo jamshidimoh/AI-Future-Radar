@@ -293,6 +293,12 @@ jobs:
           PY
           )
           echo "[OmniRoute] post_provision_models=${MODEL_COUNT}"
+          if [ "${MODEL_COUNT:-0}" -le 0 ]; then
+            echo "[OmniRoute] model catalog is empty after synchronization; keeping guarded fallback active"
+            echo "[OmniRoute] ready=0"
+            echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"
+            exit 0
+          fi
           echo "[OmniRoute] running structured auto/best-free inference smoke-test"
           READY=0
           for attempt in $(seq 1 6); do

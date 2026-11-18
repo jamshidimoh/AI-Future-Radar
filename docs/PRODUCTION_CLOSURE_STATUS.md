@@ -1,51 +1,39 @@
 # AI Future Radar — Production Closure Status
 
-Status date: 2026-11-04
+Status date: 2026-11-18
 
-## وضعیت نهایی
+## وضعیت baseline جاری
 
-**وضعیت: CLOSED / PRODUCTION BASELINE**
+**وضعیت: PENDING / CURRENT BASELINE NOT YET CLOSED**
 
-این وضعیت فقط پس از سه اجرای متوالی موفق روی اثرانگشت یکسان کد برنامه، شواهد انتشار واقعی، کنترل عدم انتشار تکراری و عبور همه معیارهای پذیرش ثبت شده است.
+گواهی قبلی این سند مربوط به baseline کد و پنجره اجراهای 1609 تا 1611 در تاریخ 2026-11-04 است. آن گواهی یک سابقه تاریخی معتبر برای همان fingerprint است، اما پس از تغییرات کد برنامه در نوامبر 2026، به‌تنهایی وضعیت نسخه جاری را تأیید نمی‌کند.
 
-## پنجره شواهد نهایی
+در 2026-11-18، Issue #69 دوباره باز شد تا گواهی نهایی فقط پس از سه اجرای متوالی Production روی fingerprint یکسان کد برنامه، تحویل واقعی Telegram، کنترل عدم انتشار تکراری، پوشش مأموریت و تازگی وضعیت provider/LLM صادر شود.
+
+## پنجره تاریخی قبلی — 2026-11-04
 
 - Run #1611 — SHA 6a177fa46d6f30232ecdd3607d804024cdd6b2fc — workflow success — fingerprint 68898d521743756363b52f9c1ce30184a1ebe9e851a6097149e0675c59e63629
 - Run #1610 — SHA 80cd54ece02fdfa1140723a168daa0e03aa7ac81 — workflow success — fingerprint 68898d521743756363b52f9c1ce30184a1ebe9e851a6097149e0675c59e63629
 - Run #1609 — SHA c06fbdf390640b7e058c32acbac83e7d40e50c40 — workflow success — fingerprint 68898d521743756363b52f9c1ce30184a1ebe9e851a6097149e0675c59e63629
 
-## معیارهای پذیرش
+این سه اجرا فقط برای baseline تاریخی بالا قابل استناد هستند و نباید به‌عنوان پذیرش baseline جاری یا انتشار v1.1.0 استفاده شوند.
 
-- 01_three_successful_runs: PASS
-- 02_code_pinned: PASS
-- 03_publish_and_fail_closed_per_run: PASS
-- 04_no_duplicate_publication: PASS
-- 05_image_preserves_full_text: PASS
-- 06_rank_within_window_no_bypass: PASS
-- 07_replacement_after_qa: PASS
-- 08_leader_watch_eligible: PASS
-- 09_provider_failure_isolated: PASS
-- 10_state_after_confirmed_delivery: PASS
-- 11_mission_portfolio_not_generic: PASS
-- 12_tier0_quality_floor: PASS
-- 13_education_cadence_contract: PASS
-- 14_people_bootstrap_30_deliveries: PASS
-- 15_llm_health_fresh_for_latest_run: PASS
-- 16_runtime_source_revision_matches_event_sha: PASS
+## معیارهای لازم برای بستن baseline جاری
 
-## شواهد انتشار
+1. سه اجرای متوالی Production با workflow و run-bot موفق روی fingerprint یکسان کد برنامه.
+2. شواهد معتبر انتشار Telegram یا رفتار fail-closed صحیح در نبود candidate معتبر.
+3. عدم انتشار duplicate و عبور از Story/Editorial/Ranking gates.
+4. اعتبار منبع، provenance و ارتباط واقعی محتوا با فناوری.
+5. پوشش مأموریت AI، فناوری‌های پیشرفته، شناخت و فلسفه ذهن، آینده‌پژوهی، کوانتوم و BCI بدون غلبه محتوای نامرتبط.
+6. موفقیت QA و replacement پس از رد candidate، بدون تضعیف آستانه‌ها.
+7. تازگی و سازگاری snapshot سلامت provider/LLM پس از persist.
+8. تأیید People Bootstrap با 30/30 تحویل واقعی و ledger پایدار.
+9. تطابق revision اجرای runtime با event SHA.
 
-PUBLISH_PER_RUN: {1611: True, 1610: True, 1609: True}
+## وضعیت انتشار
 
-PROVIDER_EVIDENCE: deterministic regression True
+نسخه هدف بعدی `v1.1.0` است. انتشار GitHub Release و imageهای GHCR با tagهای `v1.1.0` و `latest` به‌صورت خودکار و فقط پس از موفقیت Production Closure Gate انجام می‌شود. ادغام PR، سبز شدن CI یا اجرای یک‌باره Production به‌تنهایی مجوز انتشار stable نیست.
 
-EDUCATION_EVIDENCE: published False, recovery False, not due all True, contract not due True
+Issue مرجع: [#69 — FINAL: Production Definition of Done / Project Closure Gate](https://github.com/jamshidimoh/AI-Future-Radar/issues/69)
 
-## مرز پذیرش
-
-- اجرای تولید روی یک baseline ثابت تأیید شده است.
-- اجرای ناموفق یا شواهد ناقص به‌عنوان پذیرش موفق محسوب نشده است.
-- کیفیت فارسی، اعتبار منبع، جلوگیری از تکرار، رتبه‌بندی و قرارداد تحویل همچنان الزامی‌اند.
-- این گواهی جایگزین پایش اجرای‌های بعدی نیست.
-
-ثبت نهایی خودکار توسط Production Closure Gate انجام شده است.
+تا زمان ثبت شواهد جدید توسط Production Closure Gate، وضعیت رسمی baseline جاری **PENDING** باقی می‌ماند.

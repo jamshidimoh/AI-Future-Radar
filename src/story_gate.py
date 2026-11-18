@@ -1,4 +1,5 @@
 """Canonical Story Gate and canonical score boundary."""
+import re
 from src.editorial_score_v2 import score_editorial_v2
 from src.future_significance import annotate_future_significance, is_low_future_value
 from src.story_identity import deduplicate_stories
@@ -11,7 +12,7 @@ _TECH_SIGNAL_TERMS = (
     "reasoning model", "foundation model", "frontier model", "ai agent", "agentic ai",
     "robotics", "humanoid", "physical ai", "computer use", "ai safety", "ai security",
     "ai governance", "ai policy", "ai regulation", "ai infrastructure", "ai chip", "gpu",
-    "npu", "tpu", "ai accelerator", "quantum computing", "quantum ai", "brain-computer interface",
+    "npu", "tpu", "ai accelerator", "quantum computing", "quantum hardware", "quantum processor", "quantum chip", "qubit", "quantum ai", "brain-computer interface",
     "bci", "neurotechnology", "synthetic biology", "protein design", "computational biology",
     "photonic computing", "neuromorphic", "digital transformation",
     "هوش مصنوعی", "یادگیری ماشین", "یادگیری عمیق", "مدل زبانی", "عامل هوشمند", "رباتیک",
@@ -20,37 +21,34 @@ _TECH_SIGNAL_TERMS = (
 
 
 def _technology_relevant(item):
-    # Leader/watchlist routing metadata is not itself technology evidence.
-    if item.get("ai_relevance") is True:
-        return True
-    leader_routed = bool(item.get("leader") or item.get("watch_person") or item.get("leader_watch_protected"))
-    if item.get("_ai_link") is True and not item.get("protected_content") and not leader_routed:
-        return True
-    text = " ".join(
+    # Routing metadata is a discovery hint, never standalone proof of relevance.
+    content = " ".join(
         str(item.get(k) or "")
-        for k in ("title", "summary", "description", "category", "topic_family", "content_type")
+        for k in ("title", "summary", "description", "tags", "keywords")
     ).casefold()
-    if any(term.casefold() in text for term in _TECH_SIGNAL_TERMS):
+
+    def has_technology_evidence(value):
+        text = str(value or "").casefold()
+        # Match AI as a complete token; substring matching creates false positives.
+        if re.search(r"(?<![a-z0-9])ai(?![a-z0-9])", text):
+            return True
+        return any(
+            term.casefold() != "ai" and term.casefold() in text
+            for term in _TECH_SIGNAL_TERMS
+        )
+
+    if has_technology_evidence(content):
         return True
 
-    # Dedicated leader-interview discovery can have a headline such as
-    # “The full-length interview with Yuval Noah Harari” whose title omits AI,
-    # while the discovery query/context explicitly targets AI/future technology.
-    # Preserve Tier-0 format evidence when that context is independently present.
+    leader_routed = bool(item.get("leader") or item.get("watch_person") or item.get("leader_watch_protected"))
     if leader_routed and str(item.get("content_type") or "").casefold() in {
         "interview", "podcast", "conversation", "discussion", "talk", "lecture", "q&a"
     }:
-        classification = item.get("leader_signal_classification") or {}
         discovery = " ".join(
             str(item.get(k) or "")
-            for k in ("discovery_query", "watch_query", "query", "keywords")
+            for k in ("discovery_query", "watch_query", "query")
         ).casefold()
-        context = bool(isinstance(classification, dict) and classification.get("context"))
-        context_terms = (
-            "artificial intelligence", "ai", "agi", "technology", "future", "consciousness",
-            "cognition", "digital", "machine", "robotics", "quantum", "brain-computer",
-        )
-        if context or any(term in discovery for term in context_terms):
+        if has_technology_evidence(discovery):
             return True
     return False
 

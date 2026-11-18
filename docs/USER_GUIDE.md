@@ -6,7 +6,7 @@
 
 بسته رسمی پروژه یک OCI container است که در GitHub Container Registry منتشر شده است.
 
-آخرین GitHub Release ثبت‌شده `V1.0.1.On.Publish` است. Workflow انتشار image را از tagهای semantic تولید می‌کند؛ برای اجرای قابل تکرار، از tag دقیق image یا digest همان artifact استفاده کنید.
+آخرین GitHub Release ثبت‌شده `v1.0.2` است. Workflow انتشار image را از tagهای semantic تولید می‌کند؛ برای اجرای قابل تکرار، از tag دقیق image یا digest همان artifact استفاده کنید.
 
 ```text
 ghcr.io/jamshidimoh/ai-future-radar:latest
@@ -32,7 +32,7 @@ ghcr.io/jamshidimoh/ai-future-radar:latest
 docker pull ghcr.io/jamshidimoh/ai-future-radar:latest
 ```
 
-برای اجرای قابل بازتولید، از tag دقیق موجود در GHCR یا digest استفاده کنید. Release repository فعلی `V1.0.1.On.Publish` است؛ موجودبودن دقیق همین نام به‌عنوان image tag باید در GHCR بررسی شود، زیرا workflow tag container را از semantic `v*.*.*` می‌سازد.
+برای اجرای قابل بازتولید، از tag دقیق موجود در GHCR یا digest استفاده کنید. Release فعلی `v1.0.2` است؛ برای اجرای قابل بازتولید، وجود tag متناظر در GHCR را بررسی کنید.
 
 برای بررسی digest محلی:
 

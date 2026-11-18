@@ -1,9 +1,9 @@
 """Normalize OmniRoute provider-list output without trusting terminal formatting."""
-import json  # noqa: I001
-from pathlib import Path
+import json
 import re
 import sys
 from typing import Any
+from pathlib import Path
 
 
 _ANSI_ESCAPE = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")

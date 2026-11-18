@@ -1,4 +1,5 @@
 """Normalize OmniRoute provider-list output without trusting terminal formatting."""
+# ruff: noqa: I001  # Keep the small stdlib import block in conventional order.
 import json
 import re
 import sys

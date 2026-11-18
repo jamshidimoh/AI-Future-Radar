@@ -1,8 +1,8 @@
 """Normalize OmniRoute provider-list output without trusting terminal formatting."""
 import json
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
 from typing import Any
 
 

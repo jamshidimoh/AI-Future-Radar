@@ -8,8 +8,14 @@
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1794939940.958,
-      "last_error": "quota",
+      "disabled_until": 1794965040.333,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
+      "failures": 1,
+      "disabled_until": 1794965040.333,
+      "last_error": "rate_limit",
       "last_success": 0
     }
   },
@@ -23,19 +29,14 @@
       "failures": 1,
       "disabled_until": 1794964800.297,
       "last_error": "wallet"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1794957940.958,
-      "last_error": "quota"
     }
   },
-  "updated_at": 1794936340.957896,
+  "updated_at": 1794961440.3329086,
   "version": 1,
   "telemetry": {
-    "observed_failures": 1,
-    "observed_events": 1,
-    "updated_at": 1794936340.957896
+    "observed_failures": 36,
+    "observed_events": 41,
+    "updated_at": 1794961440.3329086
   },
   "observed_failures": 0,
   "observed_events": 0

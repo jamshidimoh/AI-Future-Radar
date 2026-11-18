@@ -192,3 +192,27 @@ def test_substantive_importance_accepts_strong_frontier_lane_candidate():
         "technical_trend_score": 80,
     }
     assert substantive_importance_ok(item)
+
+
+
+def test_metadata_only_ai_flag_does_not_protect_unrelated_content():
+    unrelated = {
+        "title": "Bureo: turning discarded fishing nets into fabric",
+        "summary": "A profile of a company recycling fishing nets into new materials.",
+        "source": "YouTube - a16z",
+        "source_tier": 2,
+        "category": "mind",
+        "content_type": "news",
+        "ai_relevance": True,
+        "protected_content": True,
+        "leader_watch_protected": True,
+    }
+    survivors = gate_story_candidates([unrelated], [], [], [], threshold=0.45)
+    assert survivors == []
+
+
+def test_ai_acronym_must_be_a_standalone_token():
+    from src.story_gate import _technology_relevant
+
+    assert not _technology_relevant({"title": "Said business profile", "summary": "A human-interest story"})
+    assert _technology_relevant({"title": "AI hardware breakthrough", "summary": "A new accelerator architecture"})

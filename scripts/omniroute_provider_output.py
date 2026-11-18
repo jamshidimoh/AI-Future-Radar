@@ -1,6 +1,4 @@
 """Normalize OmniRoute provider-list output without trusting terminal formatting."""
-from __future__ import annotations
-
 import json
 import re
 import sys

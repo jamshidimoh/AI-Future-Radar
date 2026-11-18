@@ -49,6 +49,11 @@ def test_omniroute_workflow_uses_audited_release_and_only_verified_free_provider
     assert "Cloudflare" in workflow
     assert "OMNIROUTE_READY" in workflow
     assert "providers test-all" not in workflow
+    assert '"POST", endpoint' in workflow
+    assert "/api/providers/{provider_id}/sync-models?mode=sync&quiet=1" in workflow
+    assert "model_sync_total" in workflow
+    assert "waiting for the synchronized model catalog" in workflow
+    assert '{"openrouter", "groq", "sambanova", "api-airforce"}' in workflow
     assert "[OmniRoute] running structured auto/best-free inference smoke-test" in workflow
     assert "[OmniRoute] structured_json_inference_smoke=healthy" in workflow
     assert '"response_format":{"type":"json_object"}' in workflow
@@ -157,3 +162,19 @@ def test_omniroute_call_returns_upstream_family_from_decision_header(monkeypatch
     assert content == '{"title":"ok"}'
     assert provider == "Groq:qwen/qwen3.8-27b"
     assert router._provider_family(provider) == "groq"
+
+def test_empty_omniroute_catalog_fails_closed_before_inference_smoke():
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+    guard = 'if [ "${MODEL_COUNT:-0}" -le 0 ]; then'
+    smoke = 'echo "[OmniRoute] running structured auto/best-free inference smoke-test"'
+
+    assert guard in workflow
+    assert smoke in workflow
+    guard_start = workflow.index(guard)
+    smoke_start = workflow.index(smoke)
+    assert guard_start < smoke_start
+
+    guard_block = workflow[guard_start:smoke_start]
+    assert 'echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"' in guard_block
+    assert 'echo "[OmniRoute] ready=0"' in guard_block
+    assert "exit 0" in guard_block

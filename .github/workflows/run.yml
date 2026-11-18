@@ -234,11 +234,53 @@ jobs:
             fi
           done
           echo "[OmniRoute] configured provider connections (redacted):"
-          timeout 15s omniroute providers list --json || echo "[OmniRoute] provider listing timed out; continuing with fallback"
+          if timeout 15s omniroute providers list --json >/tmp/omniroute-providers.json 2>/tmp/omniroute-providers.err; then
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          payload = json.loads(Path("/tmp/omniroute-providers.json").read_text(encoding="utf-8"))
+          providers = payload.get("providers", []) if isinstance(payload, dict) else payload
+          synced = 0
+          for provider in (providers if isinstance(providers, list) else []):
+              if not isinstance(provider, dict) or provider.get("isActive") is False:
+                  continue
+              provider_id = str(provider.get("id") or "").strip()
+              family = str(provider.get("provider") or "").strip().lower()
+              if not provider_id or family not in {"openrouter", "groq", "sambanova", "api-airforce"}:
+                  continue
+              import subprocess
+              endpoint = f"http://127.0.0.1:20128/api/providers/{provider_id}/sync-models?mode=sync&quiet=1"
+              result = subprocess.run(
+                  ["curl", "-4", "-fsS", "--connect-timeout", "3", "--max-time", "90",
+                   "-X", "POST", endpoint],
+                  capture_output=True, text=True, check=False,
+              )
+              if result.returncode == 0:
+                  try:
+                      data = json.loads(result.stdout)
+                      count = int(data.get("syncedModels", data.get("availableModelsCount", 0)) or 0)
+                  except (ValueError, TypeError):
+                      count = 0
+                  print(f"[OmniRoute] model_sync provider={family} synced={count}")
+                  synced += count
+              else:
+                  print(f"[OmniRoute] model_sync provider={family} failed={result.stderr[:240]}")
+          print(f"[OmniRoute] model_sync_total={synced}")
+          PY
+          else
+            echo "[OmniRoute] provider listing failed; model sync skipped"
+          fi
           echo "[OmniRoute] validating local provider configuration without inference calls:"
           timeout 20s omniroute providers validate || echo "[OmniRoute] provider validation timed out; continuing with fallback"
-          echo "[OmniRoute] validating post-provision model catalog"
-          curl -4 -fsS --connect-timeout 3 --max-time 10 http://127.0.0.1:20128/v1/models >/tmp/omniroute-post-models.json 2>/dev/null || true
+          echo "[OmniRoute] waiting for the synchronized model catalog"
+          for attempt in 1 2 3 4 5 6; do
+            if curl -4 -fsS --connect-timeout 3 --max-time 10 http://127.0.0.1:20128/v1/models >/tmp/omniroute-post-models.json 2>/dev/null; then
+              MODEL_COUNT="$(python -c 'import json; d=json.load(open("/tmp/omniroute-post-models.json")); print(len(d.get("data", [])))')"
+              echo "[OmniRoute] post_provision_models=${MODEL_COUNT}"
+              [ "${MODEL_COUNT}" -gt 0 ] && break
+            fi
+            sleep 5
+          done
           MODEL_COUNT=$(python - <<'PY'
           import json
           from pathlib import Path
@@ -251,6 +293,12 @@ jobs:
           PY
           )
           echo "[OmniRoute] post_provision_models=${MODEL_COUNT}"
+          if [ "${MODEL_COUNT:-0}" -le 0 ]; then
+            echo "[OmniRoute] model catalog is empty after synchronization; keeping guarded fallback active"
+            echo "[OmniRoute] ready=0"
+            echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"
+            exit 0
+          fi
           echo "[OmniRoute] running structured auto/best-free inference smoke-test"
           READY=0
           for attempt in $(seq 1 6); do

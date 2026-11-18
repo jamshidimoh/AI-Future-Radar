@@ -67,12 +67,12 @@ def test_telegram_429_retries_are_bounded(monkeypatch):
 
     assert result["message_id"] == 456
     assert len(calls) == 3
-    assert sleeps == [2, 11]
+    assert sleeps == [2, 5]
 
 
 def test_repeated_explicit_429_with_retry_after_margin_can_recover(monkeypatch):
     # Repeated 429s should add a bounded backoff margin beyond Telegram's delay.
-    # The first retry uses only the safety margin; later retries add 8 seconds each.
+    # Each retry adds a small bounded margin beyond Telegram's server delay.
     responses = [_rate_limited(8), _rate_limited(8), _rate_limited(8), _success(789)]
     calls = []
     sleeps = []
@@ -88,7 +88,7 @@ def test_repeated_explicit_429_with_retry_after_margin_can_recover(monkeypatch):
 
     assert result["message_id"] == 789
     assert len(calls) == 4
-    assert sleeps == [9, 17, 25]
+    assert sleeps == [9, 11, 13]
 
 
 def test_repeated_429_retry_after_eight_seconds_recovers_with_extended_bounded_budget(monkeypatch):
@@ -112,7 +112,7 @@ def test_repeated_429_retry_after_eight_seconds_recovers_with_extended_bounded_b
 
     assert result["message_id"] == 890
     assert len(calls) == 8
-    assert sleeps == [9, 17, 25, 33, 41, 49, 57]
+    assert sleeps == [9, 11, 13, 15, 17, 19, 21]
 
 
 def test_explicit_429_retry_budget_remains_bounded(monkeypatch):

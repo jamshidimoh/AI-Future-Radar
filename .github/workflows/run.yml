@@ -241,7 +241,7 @@ jobs:
           payload = json.loads(Path("/tmp/omniroute-providers.json").read_text(encoding="utf-8"))
           providers = payload.get("providers", []) if isinstance(payload, dict) else payload
           synced = 0
-          for provider in providers if isinstance(providers, list) else []:
+          for provider in (providers if isinstance(providers, list) else []):
               if not isinstance(provider, dict) or provider.get("isActive") is False:
                   continue
               provider_id = str(provider.get("id") or "").strip()

@@ -49,6 +49,11 @@ def test_omniroute_workflow_uses_audited_release_and_only_verified_free_provider
     assert "Cloudflare" in workflow
     assert "OMNIROUTE_READY" in workflow
     assert "providers test-all" not in workflow
+    assert "POST", endpoint in workflow
+    assert "/api/providers/{provider_id}/sync-models?mode=sync&quiet=1" in workflow
+    assert "model_sync_total" in workflow
+    assert "waiting for the synchronized model catalog" in workflow
+    assert '["openrouter", "groq", "sambanova", "api-airforce"]' in workflow
     assert "[OmniRoute] running structured auto/best-free inference smoke-test" in workflow
     assert "[OmniRoute] structured_json_inference_smoke=healthy" in workflow
     assert '"response_format":{"type":"json_object"}' in workflow

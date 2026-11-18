@@ -4,29 +4,29 @@
 
 ## وضعیت محصول
 
-**وضعیت: بسته‌شدن تولیدی در انتظار شواهد زنده است — ۲۰۲۶-۱۰-۲۱.** وضعیت رسمی: `CLOSURE PENDING`. انتشار پایدار بعدی تنها پس از موفقیت گیت تولیدی سه‌اجرایی فعال می‌شود.
+**وضعیت خط مبنای تولیدی:** `CLOSED / PRODUCTION BASELINE` — ۲۰۲۶-۱۱-۰۴. گیت رسمی بسته‌شدن پروژه سه اجرای متوالی موفق را روی اثرانگشت یکسان کد، همراه با شواهد انتشار واقعی تلگرام، عدم تکرار و عبور ۱۶ معیار پذیرش ثبت کرده است. گزارش قابل ممیزی در [docs/PRODUCTION_CLOSURE_STATUS.md](docs/PRODUCTION_CLOSURE_STATUS.md) قرار دارد و [Issue #69](https://github.com/jamshidimoh/AI-Future-Radar/issues/69) بسته شده است.
 
-اصلاحات اخیر:
-- [PR #269](https://github.com/jamshidimoh/AI-Future-Radar/pull/269): نصب OmniRoute از commit ثابت‌شده، نصب وابستگی‌های لازم برای اسکریپت `prepare` و حفظ مسیر بازگشت محدودشده در صورت شکست.
-- [PR #271](https://github.com/jamshidimoh/AI-Future-Radar/pull/271): تشخیص `telegram_required` در NaraRouter به‌عنوان خطای احراز هویت در سطح ارائه‌دهنده؛ NaraRouter به‌صورت پیش‌فرض از auto-pool در OmniRoute کنار گذاشته شده و فقط پس از رفع مانع حساب، با `OMNIROUTE_ENABLE_NARA=1` قابل فعال‌سازی است.
-- [PR #272](https://github.com/jamshidimoh/AI-Future-Radar/pull/272): تثبیت قرارداد و تست‌ها برای سبد AI-first با هدف ترجیحی دو خبر AI؛ خبر دوم سهمیهٔ اجباری نیست و همچنان با کیفیت و پوشش Mind/Cognition، آینده‌پژوهی و همگرایی رقابت می‌کند.
-- [PR #262](https://github.com/jamshidimoh/AI-Future-Radar/pull/262) توازن AI و سقف محتوای ژنتیک‌محور را اضافه کرد؛ [PR #263](https://github.com/jamshidimoh/AI-Future-Radar/pull/263) Gemini و Ollama را از runtime حذف کرد.
-- [PR #279–#282](https://github.com/jamshidimoh/AI-Future-Radar/pulls?q=is%3Apr+is%3Amerged) مسیر نصب OmniRoute، smoke test مبتنی بر JSON و بازیابی timeout را تقویت کردند؛ [PR #283](https://github.com/jamshidimoh/AI-Future-Radar/pull/283) محتوای سرگرمی بازی را از مأموریت رادار خارج کرد.
-- [PR #284](https://github.com/jamshidimoh/AI-Future-Radar/pull/284) فهرست کشف ۵۱ متخصص را از baseline بوت‌استرپ ۳۰ نفره جدا می‌کند، برای هر متخصص سه خانوادهٔ جست‌وجو می‌سازد، تا دو صدای خبره از افراد متمایز را انتخاب می‌کند و سقف یک خبر ژنتیک‌محور و یک خبر پزشکی‌محور را در مرز تحویل اعمال می‌کند.
+### تغییرات مهم پس از بسته‌شدن خط مبنا
 
-نسخهٔ PR #272 با **۹۹۷ تست موفق** و هر هفت گیت قطعی (Test Radar Quality، Production Quality Gate، Final Production Acceptance، Signal Engine CI، TypeSafe، Graphify و P1 Audit) بررسی شد؛ سپس در [commit `75c7ad2`](https://github.com/jamshidimoh/AI-Future-Radar/commit/75c7ad2aac13801ff9af39085fb7143f9861825e) ادغام شد.
+- [PR #302](https://github.com/jamshidimoh/AI-Future-Radar/pull/302): شاخص‌گذاری و محدودسازی هزینهٔ تشخیص تکرار، بدون حذف کنترل‌های سراسری URL و عنوان.
+- [PR #303](https://github.com/jamshidimoh/AI-Future-Radar/pull/303): سقف‌های چرخشی برای تنوع خبرهای پزشکی و ژنتیک.
+- [PR #304](https://github.com/jamshidimoh/AI-Future-Radar/pull/304): ادغام خلاصه و چرایی خبر در صورت هم‌پوشانی معنایی.
+- [PR #307](https://github.com/jamshidimoh/AI-Future-Radar/pull/307): بازطراحی برنامهٔ آموزشی ۱۳۰ درسی با ساختار علمی و منابع به‌روزشده؛ وضعیت فعلی پیشرفت در `data/education_state.json` نگهداری می‌شود.
+- [PR #308](https://github.com/jamshidimoh/AI-Future-Radar/pull/308): گسترش پوشش فلسفهٔ ذهن، آگاهی و فلسفهٔ علم، مشروط به وجود پیوند محتوایی واقعی با AI.
+- [PR #309](https://github.com/jamshidimoh/AI-Future-Radar/pull/309): مسیریابی سهمیه‌آگاه برای ارائه‌دهندگان رایگان؛ Gemini و Ollama در مسیر تولید فعال نیستند.
+- [PR #310](https://github.com/jamshidimoh/AI-Future-Radar/pull/310): همگام‌سازی کاتالوگ مدل‌های OmniRoute و اصلاح fail-closed؛ اگر کاتالوگ مدل خالی بماند، OmniRoute آماده اعلام نمی‌شود و مسیر fallback حفظ می‌شود. هر هفت گیت CI این PR موفق شدند.
 
-آخرین وضعیت انتشار ذخیره‌شده در `data/publication_state.json` هنوز `run_number=789` و امتیاز خبر منتشرشدهٔ `56.14` را نشان می‌دهد؛ بنابراین این snapshot به‌تنهایی تأیید نمی‌کند که نسخهٔ پس از اصلاحات، سه اجرای زندهٔ متوالی با تحویل تأییدشده داشته است. People Bootstrap در ledger فعلی `30/30` است. مسیر نصب OmniRoute در کد اصلاح شده، اما تأیید اجرای زنده، تحویل Telegram و پذیرش کامل هنوز معیار نهایی است.
+### مرز وضعیت عملیاتی
 
-مانع بیرونی NaraRouter نیز روشن است: پاسخ `telegram_required` مستلزم عضویت در گروه/کانال اعلام‌شده و اتصال مجدد حساب در تنظیمات NaraRouter است. کد نمی‌تواند این اقدام حسابی را به‌جای مالک حساب انجام دهد؛ تا آن زمان سرویس از auto-pool کنار گذاشته می‌شود. وضعیت سلامت ذخیره‌شده اکنون این مشکل را به‌عنوان `auth` در سطح ارائه‌دهنده ثبت می‌کند.
+آخرین snapshot پایدار قابل مشاهده در `data/publication_state.json`، شمارهٔ اجرای ۹۱۴ و People Bootstrap برابر ۳۰/۳۰ را ثبت می‌کند. snapshot سلامت مدل‌ها نیز محدودیت نرخ برای دو مدل رایگان OpenRouter و خطاهای احراز هویت/اعتبار برای بعضی ارائه‌دهندگان را ثبت کرده است.
 
-**بسته‌شدن رسمی انجام نشده است.** [Issue #69](https://github.com/jamshidimoh/AI-Future-Radar/issues/69) باز می‌ماند تا سه اجرای تولیدی متوالی روی یک اثرانگشت کد، تحویل Telegram و پوشش مأموریت را اثبات کنند؛ سبز بودن CI یا صرف ادغام PR برای اعلام Production-ready کافی نیست.
+این snapshot پیش از ادغام PR #310 ذخیره شده است؛ بنابراین سبز بودن CI و موفقیت خط مبنای ۴ نوامبر، به‌تنهایی تحویل واقعی تلگرام پس از تغییر جدید را ثابت نمی‌کند. نسخهٔ فعلی باید با اجرای زندهٔ پس از ادغام، شامل همگام‌سازی مدل، استنتاج JSON و تحویل تأییدشدهٔ تلگرام، دوباره پایش شود. معیارهای کیفیت، شواهد، تنوع مأموریت و عدم انتشار تکراری نباید برای سبز کردن اجرا تضعیف شوند.
 
 ## استفاده دیگران
 
 راهنمای کامل اجرای نسخه منتشرشده، تنظیم environment، اجرای Docker، نگهداری state، اتصال Telegram، ارتقا و rollback در `docs/USER_GUIDE.md` قرار دارد.
 
-برای شروع سریع، آخرین release ثبت‌شده `v1.0.2` است. نسخهٔ `v1.1.0` تا زمان موفقیت گیت بسته‌شدن تولیدی منتشرشده محسوب نمی‌شود:
+برای اجرای نمونهٔ شناخته‌شده از tag `v1.0.2` استفاده کنید. برای انتخاب آخرین tag منتشرشده، صفحهٔ [GitHub Releases](https://github.com/jamshidimoh/AI-Future-Radar/releases) را بررسی کنید؛ بسته‌شدن گیت تولیدی به‌تنهایی به معنای انتشار خودکار یک tag جدید نیست.
 
 ```bash
 docker pull ghcr.io/jamshidimoh/ai-future-radar:v1.0.2

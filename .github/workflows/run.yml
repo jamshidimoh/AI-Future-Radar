@@ -235,20 +235,21 @@ jobs:
           done
           echo "[OmniRoute] configured provider connections (redacted):"
           if timeout 15s omniroute providers list --json >/tmp/omniroute-providers.json 2>/tmp/omniroute-providers.err; then
-            python - <<'PY'
+            if python scripts/omniroute_provider_output.py /tmp/omniroute-providers.json >/tmp/omniroute-providers.normalized.json; then
+              python - <<'PY'
           import json
+          import subprocess
           from pathlib import Path
-          payload = json.loads(Path("/tmp/omniroute-providers.json").read_text(encoding="utf-8"))
-          providers = payload.get("providers", []) if isinstance(payload, dict) else payload
+
+          providers = json.loads(Path("/tmp/omniroute-providers.normalized.json").read_text(encoding="utf-8"))
           synced = 0
-          for provider in (providers if isinstance(providers, list) else []):
-              if not isinstance(provider, dict) or provider.get("isActive") is False:
+          for provider in providers:
+              if provider.get("isActive") is False:
                   continue
               provider_id = str(provider.get("id") or "").strip()
               family = str(provider.get("provider") or "").strip().lower()
               if not provider_id or family not in {"openrouter", "groq", "sambanova", "api-airforce"}:
                   continue
-              import subprocess
               endpoint = f"http://127.0.0.1:20128/api/providers/{provider_id}/sync-models?mode=sync&quiet=1"
               result = subprocess.run(
                   ["curl", "-4", "-fsS", "--connect-timeout", "3", "--max-time", "90",
@@ -267,8 +268,12 @@ jobs:
                   print(f"[OmniRoute] model_sync provider={family} failed={result.stderr[:240]}")
           print(f"[OmniRoute] model_sync_total={synced}")
           PY
+            else
+              echo "[OmniRoute] provider listing returned non-JSON output; model sync skipped safely"
+              echo "[OmniRoute] raw provider output and stderr suppressed to avoid credential disclosure"
+            fi
           else
-            echo "[OmniRoute] provider listing failed; model sync skipped"
+            echo "[OmniRoute] provider listing command failed; model sync skipped"
           fi
           echo "[OmniRoute] validating local provider configuration without inference calls:"
           timeout 20s omniroute providers validate || echo "[OmniRoute] provider validation timed out; continuing with fallback"

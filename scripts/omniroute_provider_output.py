@@ -1,5 +1,5 @@
 """Normalize OmniRoute provider-list output without trusting terminal formatting."""
-import json
+import json  # noqa: I001
 from pathlib import Path
 import re
 import sys

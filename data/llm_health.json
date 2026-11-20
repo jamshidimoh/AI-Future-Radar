@@ -2,24 +2,24 @@
   "models": {
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1795171894.95,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "openrouter:google/gemma-4-26b-a4b-it:free": {
-      "failures": 1,
-      "disabled_until": 1795171894.95,
-      "last_error": "rate_limit",
+      "disabled_until": 1795196523.334,
+      "last_error": "quota",
       "last_success": 0
     }
   },
-  "providers": {},
-  "updated_at": 1795168294.9499762,
+  "providers": {
+    "openrouter": {
+      "failures": 1,
+      "disabled_until": 1795214523.334,
+      "last_error": "quota"
+    }
+  },
+  "updated_at": 1795192923.3335671,
   "version": 1,
   "telemetry": {
-    "observed_failures": 37,
-    "observed_events": 45,
-    "updated_at": 1795168294.9499762
+    "observed_failures": 1,
+    "observed_events": 1,
+    "updated_at": 1795192923.3335671
   },
   "observed_failures": 0,
   "observed_events": 0

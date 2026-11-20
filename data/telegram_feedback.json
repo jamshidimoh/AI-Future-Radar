@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1795133871,
+  "updated_at": 1795168294,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24343,6 +24343,27 @@
       "why_it_matters": "اگر فلسفهٔ آنالیتیک به‌عنوان ابزار قدرت سیاسی شکل گرفته باشد، پژوهش‌های فلسفی ممکن است به‌طور ناخودآگاه منافع سرمایه‌داری را تقویت کنند. شناخت این پیش‌زمینه به محققان اجازه می‌دهد تا نقدهای ساختاری را در روش‌های پژوهشی و تدریس فلسفه اعمال کنند و زمینهٔ گفت‌وگوی چندگانه بین مکتب‌های مختلف را باز کنند. این آگاهی می‌تواند مانع تکرار «تصویر خنثی» فلسفه شود و مسیرهای جدیدی برای تعامل فلسفه با علوم اجتماعی باز کند.",
       "link": "https://www.youtube.com/watch?v=hbXtrZ_QM8g",
       "posted_at": 1794911259
+    },
+    "-1004482051328:2398": {
+      "chat_id": -1004482051328,
+      "message_id": 2398,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (YouTube)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "مصاحبه جف بزواز درباره جنسن هوانگ، ورود به مسابقه هوش مصنوعی و انتخاب جیمز باند — محتوای کامل در دسترس نیست",
+      "summary": "متن منبع ارائه‌شده تنها شامل عنوان ویدیوی یوتیوب «Jeff Bezos on Jensen Huang, Getting Into The AI Race, & Picking James Bond» و لینک خبر گوگل است. رونوشت (transcript)، خلاصه یا جزئیات گفت‌وگوی جف بزواز در اختیار قرار نگرفته است؛ بنابراین استخراج ادعاهای اصلی، استدلال‌ها، شواهد فنی یا نقل‌قول‌های دقیق امکان‌پذیر نیست.",
+      "why_it_matters": "بدون دسترسی به متن کامل مصاحبه یا رونوشت ویدیو، نمی‌توان بر پیامدهای استراتژیک نظرات بزواز درباره رقابت‌های هوش مصنوعی، نگاه او به جنسن هوانگ/انویدیا، یا هر موضوع فنی/تجاری دیگری استدلال کرد. تحلیل معتبر نیازمند محتوای واقعی گفت‌وگو است، نه تنها عنوان.",
+      "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFA4YkZ0aEc3RS1tT21oRFFtWGRzU0R3ZmFqWUk4NmtTRDdhZDRlYlVJTWdZRGhSU2FnOWpqNXE3bjhKRE1TcVlwUlBKSkx0R1dzUzU5WGNB?oc=5",
+      "posted_at": 1795168293
     }
   }
 }

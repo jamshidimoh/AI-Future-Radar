@@ -19,8 +19,8 @@ registry:
     - id: nvidia/nemotron-3.5-super-vl:free
       health: healthy
       health_score: 100
-      catalog_score: 91.566
-      verified_at: '2026-11-20T11:39:20.727917+00:00'
+      catalog_score: 91.527
+      verified_at: '2026-11-21T11:00:25.060321+00:00'
     - id: deepseek/deepseek-v4-flash-0731:free
       health: healthy
       health_score: 100
@@ -34,18 +34,18 @@ registry:
     - id: inclusionai/ling-3.2-flash:free
       health: healthy
       health_score: 100
-      catalog_score: 84.73
-      verified_at: '2026-11-20T11:39:20.727792+00:00'
+      catalog_score: 84.691
+      verified_at: '2026-11-21T11:00:25.060236+00:00'
     - id: baidu/ernie-5.5-flash-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 84.611
-      verified_at: '2026-11-20T11:39:20.727823+00:00'
+      catalog_score: 84.572
+      verified_at: '2026-11-21T11:00:25.060257+00:00'
     - id: particle-ai/particle-1:free
       health: healthy
       health_score: 100
-      catalog_score: 84.089
-      verified_at: '2026-11-20T11:39:20.727876+00:00'
+      catalog_score: 84.05
+      verified_at: '2026-11-21T11:00:25.060293+00:00'
     - id: qwen/qwen3.8-27b:free
       health: healthy
       health_score: 100
@@ -76,11 +76,6 @@ registry:
       health_score: 100
       catalog_score: 67.013
       verified_at: '2026-11-10T11:11:55.152688+00:00'
-    - id: recursive/flint-v1.0:free
-      health: healthy
-      health_score: 100
-      catalog_score: 66.819
-      verified_at: '2026-11-20T11:39:20.727895+00:00'
     - priority: 2
       id: nvidia/nemotron-3-super-120b-a12b:free
       free: true
@@ -93,6 +88,11 @@ registry:
       health_score: 100
       catalog_score: 66.812
       verified_at: '2026-10-27T08:59:39.807805+00:00'
+    - id: recursive/flint-v1.0:free
+      health: healthy
+      health_score: 100
+      catalog_score: 66.78
+      verified_at: '2026-11-21T11:00:25.060307+00:00'
     - priority: 8
       id: google/gemma-4-26b-a4b-it:free
       free: true
@@ -103,8 +103,8 @@ registry:
       task_fit: 95
       health: healthy
       health_score: 100
-      catalog_score: 63.365
-      verified_at: '2026-11-20T11:39:20.728026+00:00'
+      catalog_score: 63.326
+      verified_at: '2026-11-21T11:00:25.060370+00:00'
     - priority: 6
       id: google/gemma-4-31b-it:free
       free: true
@@ -115,13 +115,13 @@ registry:
       task_fit: 98
       health: healthy
       health_score: 100
-      catalog_score: 63.329
-      verified_at: '2026-11-20T11:39:20.728042+00:00'
+      catalog_score: 63.29
+      verified_at: '2026-11-21T11:00:25.060384+00:00'
     - id: liquid/lfm-3-1.7b:free
       health: healthy
       health_score: 100
-      catalog_score: 62.861
-      verified_at: '2026-11-20T11:39:20.727851+00:00'
+      catalog_score: 62.822
+      verified_at: '2026-11-21T11:00:25.060275+00:00'
     - id: liquid/lfm-2.5-2.6b:free
       health: healthy
       health_score: 100
@@ -291,4 +291,4 @@ registry:
     models: []
     reason: Dynamic discovery/emergency lane; never outranks quality-scored trusted
       models without evidence
-  last_refresh: '2026-11-20T11:39:20.728144+00:00'
+  last_refresh: '2026-11-21T11:00:25.060435+00:00'

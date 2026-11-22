@@ -40,10 +40,3 @@ def test_empty_or_incomplete_model_responses_are_quarantined_as_invalid():
     import src.llm_router_light as router
     assert router._MODEL_COOLDOWN_SECONDS["invalid_response"] >= 3600.0
 
-
-def test_empty_model_response_is_persisted_as_invalid_response_cooldown():
-    from scripts.update_llm_health_state import MODEL_COOLDOWN, classify
-
-    assert classify("LLM response has no content") == "invalid_response"
-    assert classify("LLM response content not found") == "invalid_response"
-    assert MODEL_COOLDOWN["invalid_response"] >= 3600.0

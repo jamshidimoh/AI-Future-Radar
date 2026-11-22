@@ -30,7 +30,7 @@ _PRODUCTION_CIRCUIT_BREAKER_INSTALLED = False
 _PRODUCTION_CIRCUIT_OPEN = False
 _LITELLM_ROUTER = None
 _LITELLM_ROUTER_KEY = None
-_PROVIDER_TIMEOUTS = {"Groq:": 8.0, "NaraRouter:": 8.0, "OpenRouter:": 7.0, "KiraAI:": 8.0, "HuggingFace": 5.0}
+_PROVIDER_TIMEOUTS = {"Groq:": 8.0, "Cloudflare-AI:": 12.0, "NaraRouter:": 8.0, "OpenRouter:": 7.0, "KiraAI:": 8.0, "HuggingFace": 5.0}
 _REQUEST_TIMEOUT = 10
 _ROUTER_BUDGET_SECONDS = float(os.getenv("RADAR_ROUTER_BUDGET_SECONDS", "10") or 10)
 _MAX_TRANSIENT_RETRIES = 1
@@ -54,6 +54,8 @@ def _provider_family(name: str) -> str:
 
 def _provider_credential_available(name: str) -> bool:
     family = _provider_family(name)
+    if family == "cloudflare-ai":
+        return bool(os.getenv("CLOUDFLARE_API_TOKEN") and os.getenv("CLOUDFLARE_ACCOUNT_ID"))
     env = {"groq":"GROQ_API_KEY","nararouter":"NARAROUTER_API_KEY","openrouter":"OPENROUTER_API_KEY","kiraai":"KIRAAI_API_KEY","huggingface":"HF_TOKEN"}.get(family)
     return bool(os.getenv(env)) if env else False
 
@@ -76,6 +78,45 @@ def _groq(system_prompt, user_content, model, *, output_mode="native"):
     r = requests.post("https://api.groq.com/openai/v1/chat/completions",headers={"Authorization":f"Bearer {key}","Content-Type":"application/json"},json=payload,timeout=_REQUEST_TIMEOUT)
     if r.status_code in (401,402,403,404,429): raise QuotaExceeded(f"Groq {model}: HTTP {r.status_code} {r.text[:400]}")
     r.raise_for_status(); return _extract_message(r.json())
+
+def _cloudflare_ai(system_prompt, user_content, model, *, output_mode="native"):
+    """Call Cloudflare Workers AI through its OpenAI-compatible account endpoint."""
+    token = os.getenv("CLOUDFLARE_API_TOKEN", "").strip()
+    account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID", "").strip()
+    if not token or not account_id:
+        return None
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ],
+        "max_tokens": 850,
+        "temperature": 0.15,
+    }
+    from src.free_model_registry import model_capability
+
+    if output_mode == "native" and model_capability(model).get("response_format"):
+        payload["response_format"] = {"type": "json_object"}
+    endpoint = (
+        f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions"
+    )
+    response = requests.post(
+        endpoint,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+        json=payload,
+        timeout=_REQUEST_TIMEOUT + 2,
+    )
+    if response.status_code in (401, 402, 403, 404, 429, 503):
+        raise QuotaExceeded(
+            f"Cloudflare Workers AI {model}: HTTP {response.status_code} {response.text[:800]}"
+        )
+    response.raise_for_status()
+    return _extract_message(response.json())
+
 
 def _nara(system_prompt, user_content, model=None):
     key = os.getenv("NARAROUTER_API_KEY")
@@ -134,7 +175,10 @@ def _huggingface(system_prompt,user_content):
     return response.choices[0].message.content
 
 def _chain_key():
-    return tuple(os.getenv(x,"") for x in ("GROQ_API_KEY","NARAROUTER_API_KEY","OPENROUTER_API_KEY","KIRAAI_API_KEY","HF_TOKEN")) + (os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
+    return tuple(os.getenv(x,"") for x in (
+        "GROQ_API_KEY", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID",
+        "NARAROUTER_API_KEY", "OPENROUTER_API_KEY", "KIRAAI_API_KEY", "HF_TOKEN",
+    )) + (os.getenv("RADAR_ENABLE_OPENROUTER_FREE_ROUTER","0"),os.getenv("RADAR_ENABLE_HF_FALLBACK","0"),os.getenv("NARA_MODEL",NARA_DEFAULT_MODEL))
 
 def get_quality_chain():
     global _CHAIN_CACHE,_CHAIN_CACHE_KEY
@@ -222,6 +266,8 @@ def _failure_class(message: str) -> str:
         return "auth"
     if "401" in text or "unauthorized" in text or "invalid api" in text or "authentication" in text:
         return "auth"
+    if "cloudflare workers ai" in text and re.search(r"\b403\b", text):
+        return "auth"
     # The registry can legitimately contain a Hugging Face credential while no
     # zero-price chat model is currently available. This is a per-run provider
     # availability failure, not an individual-model quota; stop re-probing it.
@@ -254,6 +300,10 @@ def _provider_quota_is_family_scoped(family: str, reason: str, message: str) -> 
     # versa), so quota exhaustion is always deployment-scoped for Groq.
     if family == "groq":
         return False
+    if family == "cloudflare-ai":
+        # Workers AI free Neurons are account-wide; exhausting the daily
+        # allocation must stop every model on this Cloudflare account.
+        return True
     if family == "openrouter":
         # The free-model daily request ceiling is shared by the API key. A
         # per-minute cap is a short window and must not create a long provider

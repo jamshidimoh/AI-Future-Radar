@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTRY_PATH = ROOT / "config" / "free_model_registry.yaml"
 RUNTIME_REGISTRY_PATH = ROOT / "artifacts" / "free_model_registry.runtime.yaml"
 
-_PROVIDER_ORDER = {"groq": 0, "nararouter": 1, "openrouter": 2, "kiraai": 3, "huggingface": 4}
+_PROVIDER_ORDER = {"groq": 0, "cloudflare-ai": 1, "nararouter": 2, "openrouter": 3, "kiraai": 4, "huggingface": 5}
 _BLOCKED_OPENROUTER_IDS = {
     "openrouter/free",
     "openrouter/auto",
@@ -94,7 +94,12 @@ def canonical_entries() -> list[dict]:
     for provider in data.get("providers", []) or []:
         family = str(provider.get("family", "")).strip().lower()
         credential_env = provider.get("credential_env")
-        if not _credential_available(credential_env) or not _provider_runtime_available(provider):
+        account_id_env = provider.get("account_id_env")
+        if (
+            not _credential_available(credential_env)
+            or (account_id_env and not _credential_available(account_id_env))
+            or not _provider_runtime_available(provider)
+        ):
             continue
         for model in provider.get("models", []) or []:
             if not isinstance(model, dict) or model.get("enabled", True) is False:
@@ -113,6 +118,8 @@ def canonical_entries() -> list[dict]:
             row = dict(model)
             row["family"] = family
             row["credential_env"] = credential_env
+            if account_id_env:
+                row["account_id_env"] = account_id_env
             row["deployment_id"] = f"{family}:{row['id']}"
             row["quality_score"] = _quality_score(row)
             if row["quality_score"] <= 0:
@@ -212,7 +219,7 @@ def _litellm_model_name(entry: dict) -> str:
         return f"openrouter/{model_id}"
     if family == "groq":
         return f"groq/{model_id}"
-    if family == "kiraai":
+    if family in {"kiraai", "cloudflare-ai"}:
         return f"openai/{model_id}"
     raise ValueError(f"Unsupported LiteLLM provider family: {family}")
 
@@ -237,6 +244,15 @@ def build_litellm_model_list() -> list[dict]:
         params = {"model": _litellm_model_name(entry), "api_key": api_key, "timeout": 8, "order": 1}
         if entry.get("family") == "kiraai":
             params["api_base"] = "https://kiraai.vn/api/v1"
+        elif entry.get("family") == "cloudflare-ai":
+            account_env = str(entry.get("account_id_env") or "CLOUDFLARE_ACCOUNT_ID")
+            account_id = os.getenv(account_env, "").strip()
+            if not account_id:
+                continue
+            params["api_base"] = (
+                f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1"
+            )
+            params["timeout"] = 12
         rows.append({
             "model_name": "",
             "litellm_params": params,
@@ -272,9 +288,16 @@ def build_production_chain(router):
             fn = lambda sp, uc, m=model_id: router._openrouter(sp, uc, m)
         elif family == "kiraai":
             fn = lambda sp, uc, m=model_id: _kiraai_call(router, sp, uc, m)
+        elif family == "cloudflare-ai":
+            fn = lambda sp, uc, m=model_id: router._cloudflare_ai(sp, uc, m)
         else:
             continue
-        display_family = {"openrouter": "OpenRouter", "kiraai": "KiraAI", "groq": "Groq"}.get(family, family.title())
+        display_family = {
+            "openrouter": "OpenRouter",
+            "kiraai": "KiraAI",
+            "groq": "Groq",
+            "cloudflare-ai": "Cloudflare-AI",
+        }.get(family, family.title())
         chain.append((f"{display_family}:{model_id}", fn))
 
     if os.getenv("NARAROUTER_API_KEY", "").strip():

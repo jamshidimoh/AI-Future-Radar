@@ -46,6 +46,8 @@ def _reset(monkeypatch):
     monkeypatch.delenv("OMNIROUTE_MODEL", raising=False)
     monkeypatch.delenv("OMNIROUTE_TIMEOUT_SECONDS", raising=False)
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.delenv("CLOUDFLARE_API_TOKEN", raising=False)
+    monkeypatch.delenv("CLOUDFLARE_ACCOUNT_ID", raising=False)
 
 
 
@@ -867,3 +869,13 @@ def test_openrouter_shared_upstream_429_quarantines_only_the_model_namespace(mon
     assert len(policy._OPENROUTER_DISABLED_NAMESPACES) == 1
     assert "openrouter" not in router._DISABLED_FAMILIES
     assert router._MODEL_DISABLED_REASON["openrouter:google/gemma-4-31b-it:free"] == "rate_limit"
+
+
+def test_cloudflare_daily_neuron_quota_is_account_scoped(monkeypatch):
+    _reset(monkeypatch)
+    assert router._provider_quota_is_family_scoped(
+        "cloudflare-ai", "quota", "Cloudflare Workers AI HTTP 429 free Neurons daily quota exceeded"
+    )
+    assert router._failure_class(
+        "Cloudflare Workers AI HTTP 403 permission denied"
+    ) == "auth"

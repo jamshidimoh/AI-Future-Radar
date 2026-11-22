@@ -92,8 +92,24 @@ def refresh() -> int:
         if not model_id.endswith(":free") or not _free(item) or not _chat_capable(item) or not _structured(item) or not _general_purpose(item):
             continue
         row = dict(current.get(model_id, {}))
+        # The updater is the trust boundary for catalog-only candidates: the
+        # live catalog has already confirmed zero pricing, text I/O, and a
+        # structured-output interface. Persist the fields required by
+        # canonical_entries(), otherwise new candidates are silently filtered
+        # out of the production chain (missing priority/quality/capabilities).
+        priority = int(row.get("priority", 500) or 500)
+        if priority >= 1000:
+            priority = 500
         row.update({
             "id": model_id,
+            "free": True,
+            "chat_capable": True,
+            "json_capable": True,
+            "response_format": _supports_response_format(item),
+            "base_quality": float(row.get("base_quality") or 55.0),
+            "task_fit": float(row.get("task_fit") or 60.0),
+            "quality_evidence": row.get("quality_evidence") or "openrouter-free-catalog-capability",
+            "priority": priority,
             "health": row.get("health", "healthy"),
             "health_score": row.get("health_score", 100),
             "catalog_score": round(_candidate_score(item), 3),

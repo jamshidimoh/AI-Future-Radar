@@ -31,6 +31,7 @@ def _reset(monkeypatch):
     policy._OPENROUTER_FREE_QUOTA_REFRESHED_AT = 0.0
     policy._OPENROUTER_FREE_REQUEST_TIMESTAMPS.clear()
     policy._OPENROUTER_FREE_BLOCKED_UNTIL = 0.0
+    policy._OPENROUTER_DISABLED_NAMESPACES.clear()
     monkeypatch.delenv("POLLINATIONS_API_KEY", raising=False)
     monkeypatch.delenv("RADAR_POLLINATIONS_FREE_MODEL", raising=False)
     monkeypatch.delenv("RADAR_ENABLE_GROK_FREE_FALLBACK", raising=False)
@@ -827,3 +828,41 @@ def test_omniroute_primary_requests_json_object_mode(monkeypatch):
     assert calls["url"] == "http://127.0.0.1:20128/v1/chat/completions"
     assert calls["json"]["response_format"] == {"type": "json_object"}
 
+
+
+def test_openrouter_shared_upstream_429_quarantines_only_the_model_namespace(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-openrouter")
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq")
+    monkeypatch.setenv("RADAR_MAX_LLM_ATTEMPTS", "4")
+    apply()
+    monkeypatch.setattr(policy, "_openrouter_free_request_allowed", lambda _deployment_id: True)
+    calls = []
+
+    class FakeRouter:
+        def completion(self, *, model, **_kwargs):
+            calls.append(model)
+            if model == "radar-production-1":
+                raise RuntimeError("HTTP 429 upstream_provider_shared_pool")
+            return type(
+                "Response",
+                (),
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\\"title\\":\\"ok\\"}'})()})()]},
+            )()
+
+    deployments = [
+        {"model_name": "radar-production-1", "model_info": {"id": "openrouter:google/gemma-4-31b-it:free"}},
+        {"model_name": "radar-production-2", "model_info": {"id": "openrouter:google/gemma-4-26b-a4b-it:free"}},
+        {"model_name": "radar-production-3", "model_info": {"id": "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free"}},
+    ]
+    monkeypatch.setattr(router, "_get_litellm_router", lambda: FakeRouter())
+    monkeypatch.setattr(router, "_litellm_model_list", lambda: deployments)
+
+    result, provider = router._call_litellm("system", "user")
+
+    assert result == '{\\"title\\":\\"ok\\"}'
+    assert provider == "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free"
+    assert calls == ["radar-production-1", "radar-production-3"]
+    assert policy._OPENROUTER_DISABLED_NAMESPACES == {"google"}
+    assert "openrouter" not in router._DISABLED_FAMILIES
+    assert router._MODEL_DISABLED_REASON["openrouter:google/gemma-4-31b-it:free"] == "rate_limit"

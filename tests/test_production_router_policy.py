@@ -863,6 +863,7 @@ def test_openrouter_shared_upstream_429_quarantines_only_the_model_namespace(mon
     assert result == '{"title":"ok"}'
     assert provider == "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free"
     assert calls == ["radar-production-1", "radar-production-3"]
-    assert policy._OPENROUTER_DISABLED_NAMESPACES == {"google"}
+    assert "google" in policy._OPENROUTER_DISABLED_NAMESPACES
+    assert len(policy._OPENROUTER_DISABLED_NAMESPACES) == 1
     assert "openrouter" not in router._DISABLED_FAMILIES
     assert router._MODEL_DISABLED_REASON["openrouter:google/gemma-4-31b-it:free"] == "rate_limit"

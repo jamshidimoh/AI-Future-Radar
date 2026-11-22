@@ -2,7 +2,7 @@
   "models": {
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1795366492.316,
+      "disabled_until": 1795391927.629,
       "last_error": "quota",
       "last_success": 0
     }
@@ -15,16 +15,16 @@
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1795384492.316,
+      "disabled_until": 1795409927.629,
       "last_error": "quota"
     }
   },
-  "updated_at": 1795362892.3158858,
+  "updated_at": 1795388327.628764,
   "version": 1,
   "telemetry": {
     "observed_failures": 1,
     "observed_events": 1,
-    "updated_at": 1795362892.3158858
+    "updated_at": 1795388327.628764
   },
   "observed_failures": 0,
   "observed_events": 0

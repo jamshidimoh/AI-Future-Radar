@@ -282,6 +282,15 @@ registry:
       base_quality: 80
       task_fit: 85
       quality_evidence: conservative_editorial_prior_not_benchmark
+    - priority: 2
+      id: "@cf/meta/llama-3.1-8b-instruct-fast"
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: true
+      base_quality: 74
+      task_fit: 80
+      quality_evidence: conservative_editorial_prior_not_benchmark
 
   - family: kiraai
     credential_env: KIRAAI_API_KEY

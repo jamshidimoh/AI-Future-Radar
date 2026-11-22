@@ -180,11 +180,9 @@ def test_cloudflare_workers_ai_requires_token_and_account_id(monkeypatch):
     rows = [row for row in registry.canonical_entries() if row["family"] == "cloudflare-ai"]
     assert {row["id"] for row in rows} == {
         "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
-        "@cf/meta/llama-3.1-8b-instruct",
     }
     names = [name for name, _ in registry.build_production_chain(router)]
     assert "Cloudflare-AI:@cf/meta/llama-3.3-70b-instruct-fp8-fast" in names
-    assert "Cloudflare-AI:@cf/meta/llama-3.1-8b-instruct" in names
 
 
 def test_cloudflare_litellm_deployments_use_account_scoped_openai_endpoint(monkeypatch):

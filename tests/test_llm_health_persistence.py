@@ -428,9 +428,9 @@ def test_cloudflare_workers_ai_daily_quota_persists_provider_cooldown(tmp_path, 
         "[Production Circuit] failed=cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast "
         "reason=quota scope=provider: exception=QuotaExceeded provider=cloudflare-ai "
         "model=cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast "
-        "Cloudflare Workers AI HTTP 429 free Neurons daily quota exceeded\\n"
+        "Cloudflare Workers AI HTTP 429 free Neurons daily quota exceeded\n"
         "[Quota Cooldown] scope=provider target=cloudflare-ai disabled_until=4102444800.000 "
-        "delay_seconds=86400.0 window=daily reason=quota\\n",
+        "delay_seconds=86400.0 window=daily reason=quota\n",
         encoding="utf-8",
     )
     monkeypatch.setattr(persistence, "STATE_PATH", state)

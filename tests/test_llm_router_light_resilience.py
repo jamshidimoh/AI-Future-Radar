@@ -31,3 +31,19 @@ def test_unknown_provider_has_safe_default_timeout():
 
 def test_no_deployments_is_treated_as_transient_exhaustion():
     assert _failure_class("No deployments available for selected model") == "transient"
+
+
+def test_empty_or_incomplete_model_responses_are_quarantined_as_invalid():
+    assert _failure_class("LLM response has no content") == "invalid_response"
+    assert _failure_class("LLM response content not found") == "invalid_response"
+    assert _failure_class("LLM response has no choices") == "invalid_response"
+    import src.llm_router_light as router
+    assert router._MODEL_COOLDOWN_SECONDS["invalid_response"] >= 3600.0
+
+
+def test_empty_model_response_is_persisted_as_invalid_response_cooldown():
+    from scripts.update_llm_health_state import MODEL_COOLDOWN, classify
+
+    assert classify("LLM response has no content") == "invalid_response"
+    assert classify("LLM response content not found") == "invalid_response"
+    assert MODEL_COOLDOWN["invalid_response"] >= 3600.0

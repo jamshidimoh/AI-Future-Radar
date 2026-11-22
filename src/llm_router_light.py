@@ -34,7 +34,16 @@ _PROVIDER_TIMEOUTS = {"Groq:": 8.0, "NaraRouter:": 8.0, "OpenRouter:": 7.0, "Kir
 _REQUEST_TIMEOUT = 10
 _ROUTER_BUDGET_SECONDS = float(os.getenv("RADAR_ROUTER_BUDGET_SECONDS", "10") or 10)
 _MAX_TRANSIENT_RETRIES = 1
-_MODEL_COOLDOWN_SECONDS = {"quota": 12.0, "model": 45.0, "transient": 10.0, "other": 15.0}
+_MODEL_COOLDOWN_SECONDS = {
+    "quota": 12.0,
+    "model": 45.0,
+    "transient": 10.0,
+    "other": 15.0,
+    # Empty/malformed inference responses are usually a model/deployment
+    # incompatibility. Quarantine them long enough to avoid burning the
+    # provider's shared free quota on every story in the same production run.
+    "invalid_response": 3600.0,
+}
 NARA_DEFAULT_MODEL = "auto/bynara"
 
 class ProductionQualityChain(list):
@@ -191,6 +200,11 @@ def _call_direct_deployment(litellm_router,deployment,system_prompt,user_content
 
 def _failure_class(message: str) -> str:
     text = str(message or "").lower()
+    # A successful HTTP response with no assistant content is not a transient
+    # network error. Persist it as a model-scoped incompatibility and avoid
+    # repeatedly spending scarce free-tier requests on the same deployment.
+    if re.search(r"response has no content|content not found|no choices|empty response", text, re.I):
+        return "invalid_response"
     # Billing/wallet failures are not transient rate limits. Keep the entire
     # provider family disabled for the remainder of this run instead of retrying
     # sibling models or reopening them during mission-coverage recovery.

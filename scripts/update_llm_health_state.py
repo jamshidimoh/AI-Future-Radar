@@ -21,6 +21,7 @@ MODEL_COOLDOWN = {
     "rate_limit": 3600.0,
     "auth": 86400.0,
     "model": 21600.0,
+    "invalid_response": 3600.0,
 }
 # Only authentication failures are inherently provider-wide. Quota scope is
 # persisted from the routing decision's explicit [Quota Cooldown] record:
@@ -115,6 +116,10 @@ def is_provider_scoped_failure(deployment: str, failure_kind: str, wallet_only: 
 
 def classify(message: str) -> str:
     text = str(message or "").lower()
+    # Empty/incomplete successful responses indicate that a deployment is not
+    # usable for this structured editorial workload; persist a model cooldown.
+    if re.search(r"response has no content|content not found|no choices|empty response", text):
+        return "invalid_response"
     # Account gates and wallet exhaustion are never retryable.
     if re.search(r"telegram_required|join the required telegram|relink at /settings", text):
         return "auth"

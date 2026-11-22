@@ -358,6 +358,7 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
+          KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
         run: |
           set +e
@@ -410,6 +411,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
+          KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
@@ -433,6 +435,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
+          KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0

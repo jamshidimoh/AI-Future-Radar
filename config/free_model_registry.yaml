@@ -22,26 +22,66 @@ registry:
       catalog_score: 91.527
       verified_at: '2026-11-21T11:00:25.060321+00:00'
     - id: deepseek/deepseek-v4-flash-0731:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 90.997
       verified_at: '2026-09-19T08:03:16.533353+00:00'
     - id: minimax/minimax-m3.1-flash:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 84.871
       verified_at: '2026-10-22T08:36:45.274135+00:00'
     - id: inclusionai/ling-3.2-flash:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 84.691
       verified_at: '2026-11-21T11:00:25.060236+00:00'
     - id: baidu/ernie-5.5-flash-preview:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 84.572
       verified_at: '2026-11-21T11:00:25.060257+00:00'
     - id: particle-ai/particle-1:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 84.05
@@ -57,21 +97,53 @@ registry:
       catalog_score: 71.692
       verified_at: '2026-11-20T11:39:20.727960+00:00'
     - id: apodex/apodex-1.1-mini:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 67.531
       verified_at: '2026-10-13T10:35:48.944770+00:00'
     - id: nex-agi/nex-n2.5-mini:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 67.335
       verified_at: '2026-09-25T08:49:26.651119+00:00'
     - id: nex-agi/nex-n2.5-pro:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 67.335
       verified_at: '2026-09-25T08:49:26.651142+00:00'
     - id: xingchen-agi/xing4.0-29b-a4b:free
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: false
+      base_quality: 55
+      task_fit: 60
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
       health: healthy
       health_score: 100
       catalog_score: 67.013

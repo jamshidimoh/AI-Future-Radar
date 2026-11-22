@@ -22,7 +22,7 @@ Groq's free limits vary by model and are enforced per organization. Check the li
    - Add repository variable `CLOUDFLARE_ACCOUNT_ID`.
    - Add repository variable `CLOUDFLARE_FREE_TIER_CONFIRMED` with value `1`.
 
-The adapter uses the OpenAI-compatible Workers AI endpoint and currently registers only the two documented JSON Mode models: `@cf/meta/llama-3.3-70b-instruct-fp8-fast` and `@cf/meta/llama-3.1-8b-instruct`. The router checks for both the token and account ID; the workflow passes either value to production only when `CLOUDFLARE_FREE_TIER_CONFIRMED=1`.
+The adapter uses the OpenAI-compatible Workers AI endpoint and currently registers the active model `@cf/meta/llama-3.3-70b-instruct-fp8-fast`, which appears in Cloudflare's current JSON Mode supported-model list. The formerly documented non-fast Llama 3.1 8B variant is deprecated and is deliberately excluded. The router checks for both the token and account ID; the workflow passes either value to production only when `CLOUDFLARE_FREE_TIER_CONFIRMED=1`.
 
 Cloudflare documents a **10,000 Neurons/day** free allocation on Workers Free, resetting at 00:00 UTC. On Workers Free, requests fail after the free allocation is exhausted; Workers Paid can bill usage above the allowance. Therefore, do not set the confirmation variable to `1` on a Paid account. The runtime treats Cloudflare quota exhaustion as account-wide and stops retrying sibling Cloudflare models until the next UTC reset.
 

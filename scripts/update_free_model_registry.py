@@ -46,6 +46,10 @@ def _structured(item: dict) -> bool:
     params = {str(x).lower() for x in (item.get("supported_parameters") or [])}
     return bool({"response_format", "structured_outputs"} & params)
 
+def _supports_response_format(item: dict) -> bool:
+    params = {str(x).strip().lower() for x in (item.get("supported_parameters") or [])}
+    return "response_format" in params
+
 
 def _general_purpose(item: dict) -> bool:
     model_id = str(item.get("id") or "").lower()

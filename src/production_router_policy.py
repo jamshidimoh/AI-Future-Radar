@@ -641,6 +641,19 @@ def _install_production_circuit_breaker() -> None:
                             retry_after = max(5.0, next_day - time.time())
                         else:
                             retry_after = 60.0
+                    if family == "cloudflare-ai" and re.search(
+                        r"neurons?|daily|quota|free usage|usage limit", message, re.I
+                    ):
+                        # A daily Workers AI free-allocation error always resets
+                        # at 00:00 UTC; do not let a short generic Retry-After
+                        # reopen the account before the documented reset.
+                        now_utc = datetime.now(timezone.utc)
+                        next_day = (
+                            now_utc.replace(hour=0, minute=0, second=0, microsecond=0)
+                            .timestamp()
+                            + 86400
+                        )
+                        retry_after = max(5.0, next_day - time.time())
                     retry_after = max(5.0, min(retry_after, 86400.0))
                     cooldown_target = family if scope == "provider" else deployment_id
                     disabled_until = time.time() + retry_after

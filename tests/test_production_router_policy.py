@@ -847,7 +847,7 @@ def test_openrouter_shared_upstream_429_quarantines_only_the_model_namespace(mon
             return type(
                 "Response",
                 (),
-                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{\\"title\\":\\"ok\\"}'})()})()]},
+                {"choices": [type("Choice", (), {"message": type("Message", (), {"content": '{"title":"ok"}'})()})()]},
             )()
 
     deployments = [
@@ -860,7 +860,7 @@ def test_openrouter_shared_upstream_429_quarantines_only_the_model_namespace(mon
 
     result, provider = router._call_litellm("system", "user")
 
-    assert result == '{\\"title\\":\\"ok\\"}'
+    assert result == '{"title":"ok"}'
     assert provider == "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free"
     assert calls == ["radar-production-1", "radar-production-3"]
     assert policy._OPENROUTER_DISABLED_NAMESPACES == {"google"}

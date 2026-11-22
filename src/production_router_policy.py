@@ -40,6 +40,10 @@ _OPENROUTER_FREE_QUOTA_CACHE_SECONDS = 8.0
 _OPENROUTER_FREE_REQUEST_TIMESTAMPS: deque[float] = deque()
 _OPENROUTER_FREE_RPM_LIMIT = 20
 _OPENROUTER_FREE_BLOCKED_UNTIL = 0.0
+# OpenRouter can proxy several model IDs through the same upstream provider
+# pool. A shared-pool 429 should quarantine that model namespace for the rest
+# of this run, without disabling unrelated upstreams or the whole OpenRouter key.
+_OPENROUTER_DISABLED_NAMESPACES: set[str] = set()
 _OMNIROUTE_CIRCUIT_RETRY_AT = 0.0
 _OMNIROUTE_CIRCUIT_FAILURES = 0
 
@@ -53,6 +57,14 @@ _PROVIDER_AUTH_PATTERNS = re.compile(
     re.IGNORECASE,
 )
 _KIRAAI_WALLET_PATTERN = re.compile(r"(?:insufficient.*(?:vnd|wallet|balance)|wallet.*balance|vnd.*balance)", re.IGNORECASE)
+
+
+def _openrouter_namespace(deployment_id: str) -> str:
+    """Return the OpenRouter model namespace (e.g. google, nvidia)."""
+    if router._provider_family(deployment_id) != "openrouter":
+        return ""
+    model_id = str(deployment_id or "").split(":", 1)[1] if ":" in str(deployment_id or "") else ""
+    return model_id.split("/", 1)[0].strip().casefold() if "/" in model_id else ""
 
 
 def _is_provider_quota(message: str) -> bool:
@@ -467,6 +479,14 @@ def _install_production_circuit_breaker() -> None:
             global _OPENROUTER_FREE_BLOCKED_UNTIL
             deployment_id = deployment["model_info"]["id"]
             family = router._provider_family(deployment_id)
+            namespace = _openrouter_namespace(deployment_id)
+            if family == "openrouter" and namespace in _OPENROUTER_DISABLED_NAMESPACES:
+                print(
+                    f"[Production Circuit] skipped={deployment_id} "
+                    f"reason=upstream_namespace_quarantined namespace={namespace}",
+                    flush=True,
+                )
+                return None
             if deployment_id in tried:
                 return None
             tried.add(deployment_id)
@@ -555,6 +575,16 @@ def _install_production_circuit_breaker() -> None:
                         router._DISABLED.add(deployment_id)
                     router._disable(deployment_id, "quota")
                     scope = "provider"
+                elif family == "openrouter" and re.search(r"upstream_provider_shared_pool", message, re.I):
+                    # Multiple model IDs can share the same upstream provider
+                    # pool (e.g. Google-hosted Gemma variants). Keep the failure
+                    # model/namespace scoped: other OpenRouter namespaces remain
+                    # eligible, but sibling variants do not burn more quota.
+                    namespace = _openrouter_namespace(deployment_id)
+                    if namespace:
+                        _OPENROUTER_DISABLED_NAMESPACES.add(namespace)
+                    router._disable(deployment_id, "rate_limit")
+                    scope = "model"
                 elif family == "openrouter" and re.search(r"free-models-per-minute", message, re.I):
                     # This is an API-key-wide short window, not a daily quota.
                     # Do not permanently disable the family; a timed local guard
@@ -581,7 +611,12 @@ def _install_production_circuit_breaker() -> None:
                 if reason in {"quota", "rate_limit"}:
                     retry_after = _provider_retry_after_seconds(message)
                     if retry_after <= 0:
-                        if family == "openrouter" and re.search(r"free-models-per-day|daily", message, re.I):
+                        if family == "openrouter" and re.search(r"upstream_provider_shared_pool", message, re.I):
+                            # Shared upstream pools commonly return 429 without
+                            # a useful Retry-After header. Use a bounded five-minute
+                            # model cooldown; namespace quarantine lasts for this run.
+                            retry_after = 300.0
+                        elif family == "openrouter" and re.search(r"free-models-per-day|daily", message, re.I):
                             now_utc = datetime.now(timezone.utc)
                             next_day = now_utc.replace(hour=0, minute=0, second=0, microsecond=0).timestamp() + 86400
                             retry_after = max(60.0, next_day - time.time())

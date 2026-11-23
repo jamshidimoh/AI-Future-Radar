@@ -73,11 +73,16 @@ def _is_provider_quota(message: str) -> bool:
         return False
     if re.search(r"\b402\b", text):
         return True
+    if "cloudflare workers ai" in text.casefold() and re.search(r"\b429\b|neurons?|daily|quota|free usage", text, re.I):
+        return True
     return bool(_PROVIDER_QUOTA_PATTERNS.search(text))
 
 
 def _is_provider_auth(message: str) -> bool:
-    return bool(_PROVIDER_AUTH_PATTERNS.search(str(message or "")))
+    text = str(message or "")
+    if "cloudflare workers ai" in text.casefold() and re.search(r"\b403\b", text):
+        return True
+    return bool(_PROVIDER_AUTH_PATTERNS.search(text))
 
 
 def _is_kira_wallet_only(message: str, family: str) -> bool:
@@ -627,8 +632,28 @@ def _install_production_circuit_breaker() -> None:
                             now_utc = datetime.now(timezone.utc)
                             next_day = now_utc.replace(hour=0, minute=0, second=0, microsecond=0).timestamp() + 86400
                             retry_after = max(5.0, next_day - time.time())
+                        elif family == "cloudflare-ai" and re.search(r"neurons?|daily|quota|free usage|usage limit", message, re.I):
+                            # Workers AI's free allocation is account-wide and
+                            # resets at 00:00 UTC. Persist a provider cooldown until
+                            # that reset instead of retrying sibling models.
+                            now_utc = datetime.now(timezone.utc)
+                            next_day = now_utc.replace(hour=0, minute=0, second=0, microsecond=0).timestamp() + 86400
+                            retry_after = max(5.0, next_day - time.time())
                         else:
                             retry_after = 60.0
+                    if family == "cloudflare-ai" and re.search(
+                        r"neurons?|daily|quota|free usage|usage limit", message, re.I
+                    ):
+                        # A daily Workers AI free-allocation error always resets
+                        # at 00:00 UTC; do not let a short generic Retry-After
+                        # reopen the account before the documented reset.
+                        now_utc = datetime.now(timezone.utc)
+                        next_day = (
+                            now_utc.replace(hour=0, minute=0, second=0, microsecond=0)
+                            .timestamp()
+                            + 86400
+                        )
+                        retry_after = max(5.0, next_day - time.time())
                     retry_after = max(5.0, min(retry_after, 86400.0))
                     cooldown_target = family if scope == "provider" else deployment_id
                     disabled_until = time.time() + retry_after
@@ -636,6 +661,8 @@ def _install_production_circuit_breaker() -> None:
                         family == "openrouter" and re.search(r"free-models-per-day|daily", message, re.I)
                     ) or (
                         family == "groq" and re.search(r"\bTPD\b|tokens?\s+per\s+day|requests?\s+per\s+day", message, re.I)
+                    ) or (
+                        family == "cloudflare-ai" and re.search(r"neurons?|daily|quota|free usage|usage limit", message, re.I)
                     )
                     quota_window = "daily" if daily_window else "minute"
                     # The in-process router must observe the same provider reset

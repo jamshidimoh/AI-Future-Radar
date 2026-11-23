@@ -178,3 +178,13 @@ def test_empty_omniroute_catalog_fails_closed_before_inference_smoke():
     assert 'echo "OMNIROUTE_READY=0" >> "$GITHUB_ENV"' in guard_block
     assert 'echo "[OmniRoute] ready=0"' in guard_block
     assert "exit 0" in guard_block
+
+
+def test_cloudflare_workers_ai_is_gated_and_passed_to_direct_production_steps():
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+    token_binding = "CLOUDFLARE_API_TOKEN: ${{ vars.CLOUDFLARE_FREE_TIER_CONFIRMED == '1' && secrets.CLOUDFLARE_API_TOKEN || '' }}"
+    account_binding = "CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_FREE_TIER_CONFIRMED == '1' && vars.CLOUDFLARE_ACCOUNT_ID || '' }}"
+    assert workflow.count(token_binding) == 3
+    assert workflow.count(account_binding) == 3
+    assert "Cloudflare Workers AI is" in workflow
+    assert "add_provider cloudflare-ai" not in workflow

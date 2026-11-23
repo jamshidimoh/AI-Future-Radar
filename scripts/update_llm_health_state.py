@@ -61,6 +61,7 @@ _PROVIDER_CANONICAL = {
     "openrouter": "OpenRouter",
     "kiraai": "KiraAI",
     "huggingface": "HuggingFace",
+    "cloudflare-ai": "Cloudflare Workers AI",
 }
 
 
@@ -111,7 +112,10 @@ def is_provider_scoped_failure(deployment: str, failure_kind: str, wallet_only: 
     """
     if wallet_only or failure_kind in PROVIDER_COOLDOWN:
         return True
-    return family(deployment) == "openrouter" and failure_kind == "quota"
+    return (
+        (family(deployment) == "openrouter" and failure_kind == "quota")
+        or (family(deployment) == "cloudflare-ai" and failure_kind in {"quota", "rate_limit"})
+    )
 
 
 def classify(message: str) -> str:
@@ -122,6 +126,8 @@ def classify(message: str) -> str:
         return "invalid_response"
     # Account gates and wallet exhaustion are never retryable.
     if re.search(r"telegram_required|join the required telegram|relink at /settings", text):
+        return "auth"
+    if "cloudflare workers ai" in text and re.search(r"\b403\b", text):
         return "auth"
     if re.search(r"\b401\b|unauthorized|unauthenticated|invalid.*(?:api|credential|key|token)|authentication", text):
         return "auth"

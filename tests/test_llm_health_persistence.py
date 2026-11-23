@@ -419,3 +419,25 @@ def test_later_provider_auth_failure_preserves_cooldown_after_success():
         ],
     )
     assert "groq" in result["providers"]
+
+
+def test_cloudflare_workers_ai_daily_quota_persists_provider_cooldown(tmp_path, monkeypatch):
+    state = tmp_path / "llm_health.json"
+    log = tmp_path / "run.log"
+    log.write_text(
+        "[Production Circuit] failed=cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast "
+        "reason=quota scope=provider: exception=QuotaExceeded provider=cloudflare-ai "
+        "model=cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast "
+        "Cloudflare Workers AI HTTP 429 free Neurons daily quota exceeded\n"
+        "[Quota Cooldown] scope=provider target=cloudflare-ai disabled_until=4102444800.000 "
+        "delay_seconds=86400.0 window=daily reason=quota\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(persistence, "STATE_PATH", state)
+    monkeypatch.setattr(persistence.sys, "argv", ["update_llm_health_state.py", str(log)])
+
+    assert persistence.main() == 0
+    payload = json.loads(state.read_text(encoding="utf-8"))
+    assert "cloudflare-ai" in payload["providers"]
+    assert payload["providers"]["cloudflare-ai"]["disabled_until"] == 4102444800.0
+    assert "cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast" in payload["models"]

@@ -223,8 +223,9 @@ jobs:
 
           # Mistral Free mode has no API access; NVIDIA hosted API is limited to
           # prototyping; LLM7 is not a managed production inference service;
-          # AnyAPI Free is evaluation/low-volume only. Cloudflare needs a separate
-          # account/plan preflight. Nara/Kira remain behind account/wallet gates.
+          # AnyAPI Free is evaluation/low-volume only. Cloudflare Workers AI is
+          # called by Radar's direct adapter, gated to a confirmed Workers Free account.
+          # Nara/Kira remain behind account/wallet gates.
           echo "[OmniRoute] credential presence inventory (names only):"
           for credential in GROQ_API_KEY OPENROUTER_API_KEY TYPESAFE_API_KEY; do
             if [ -n "${!credential:-}" ]; then
@@ -359,6 +360,8 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ vars.CLOUDFLARE_FREE_TIER_CONFIRMED == '1' && secrets.CLOUDFLARE_API_TOKEN || '' }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_FREE_TIER_CONFIRMED == '1' && vars.CLOUDFLARE_ACCOUNT_ID || '' }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
         run: |
           set +e
@@ -412,6 +415,8 @@ jobs:
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ vars.CLOUDFLARE_FREE_TIER_CONFIRMED == '1' && secrets.CLOUDFLARE_API_TOKEN || '' }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_FREE_TIER_CONFIRMED == '1' && vars.CLOUDFLARE_ACCOUNT_ID || '' }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
@@ -436,6 +441,8 @@ jobs:
           TELEGRAM_CHANNEL: ${{ secrets.TELEGRAM_CHANNEL }}
           GROQ_API_KEY: ${{ vars.GROQ_FREE_TIER_CONFIRMED == '1' && secrets.GROQ_API_KEY || '' }}
           KIRAAI_API_KEY: ${{ secrets.KIRAAI_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ vars.CLOUDFLARE_FREE_TIER_CONFIRMED == '1' && secrets.CLOUDFLARE_API_TOKEN || '' }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_FREE_TIER_CONFIRMED == '1' && vars.CLOUDFLARE_ACCOUNT_ID || '' }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           FREE_LLM_ROUTER_API_KEY: ${{ secrets.FREE_LLM_ROUTER_API_KEY }}
           RADAR_ENABLE_OPENROUTER_FREE_ROUTER: 0

@@ -293,6 +293,31 @@ registry:
       response_format: true
       base_quality: 84
       task_fit: 91
+  - family: cloudflare-ai
+    credential_env: CLOUDFLARE_API_TOKEN
+    account_id_env: CLOUDFLARE_ACCOUNT_ID
+    pricing_mode: workers-free-neurons
+    free_quota_neurons_per_day: 10000
+    models:
+    - priority: 1
+      id: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: true
+      base_quality: 80
+      task_fit: 85
+      quality_evidence: conservative_editorial_prior_not_benchmark
+    - priority: 2
+      id: "@cf/meta/llama-3.1-8b-instruct-fast"
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: true
+      base_quality: 74
+      task_fit: 80
+      quality_evidence: conservative_editorial_prior_not_benchmark
+
   - family: kiraai
     credential_env: KIRAAI_API_KEY
     pricing_mode: free-quota

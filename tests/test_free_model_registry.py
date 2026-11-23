@@ -20,6 +20,8 @@ def _reset(monkeypatch):
     monkeypatch.setenv("GEMINI_API_KEY", "test-gemini")
     monkeypatch.setenv("RADAR_ENABLE_GEMINI_FALLBACK", "1")
     monkeypatch.delenv("RADAR_ENABLE_HF_FALLBACK", raising=False)
+    monkeypatch.delenv("CLOUDFLARE_API_TOKEN", raising=False)
+    monkeypatch.delenv("CLOUDFLARE_ACCOUNT_ID", raising=False)
 
 
 def test_provider_families_are_interleaved_for_resilient_runtime_order():
@@ -167,3 +169,72 @@ def test_discovered_media_models_are_not_promoted_to_production_json_chain(monke
     _reset(monkeypatch)
     names = [name for name, _ in registry.build_production_chain(router)]
     assert not any("lyria" in name.casefold() for name in names)
+
+
+def test_cloudflare_workers_ai_requires_token_and_account_id(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("CLOUDFLARE_API_TOKEN", "test-cloudflare-token")
+    assert not any(row["family"] == "cloudflare-ai" for row in registry.canonical_entries())
+
+    monkeypatch.setenv("CLOUDFLARE_ACCOUNT_ID", "test-account")
+    rows = [row for row in registry.canonical_entries() if row["family"] == "cloudflare-ai"]
+    assert {row["id"] for row in rows} == {
+        "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+        "@cf/meta/llama-3.1-8b-instruct-fast",
+    }
+    names = [name for name, _ in registry.build_production_chain(router)]
+    assert "Cloudflare-AI:@cf/meta/llama-3.3-70b-instruct-fp8-fast" in names
+    assert "Cloudflare-AI:@cf/meta/llama-3.1-8b-instruct-fast" in names
+
+
+def test_cloudflare_litellm_deployments_use_account_scoped_openai_endpoint(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("CLOUDFLARE_API_TOKEN", "test-cloudflare-token")
+    monkeypatch.setenv("CLOUDFLARE_ACCOUNT_ID", "account-123")
+    rows = registry.build_litellm_model_list()
+    deployment = next(
+        row for row in rows
+        if row["model_info"]["id"] == "cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    )
+    params = deployment["litellm_params"]
+    assert params["model"] == "openai/@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    assert params["api_key"] == "test-cloudflare-token"
+    assert params["api_base"] == (
+        "https://api.cloudflare.com/client/v4/accounts/account-123/ai/v1"
+    )
+
+
+def test_cloudflare_direct_adapter_sends_json_mode_and_extracts_content(monkeypatch):
+    _reset(monkeypatch)
+    monkeypatch.setenv("CLOUDFLARE_API_TOKEN", "test-cloudflare-token")
+    monkeypatch.setenv("CLOUDFLARE_ACCOUNT_ID", "account-123")
+    seen = {}
+
+    class Response:
+        status_code = 200
+        text = ""
+
+        @staticmethod
+        def json():
+            return {"choices": [{"message": {"content": '{"ok":true}'}}]}
+
+        @staticmethod
+        def raise_for_status():
+            return None
+
+    def post(url, **kwargs):
+        seen["url"] = url
+        seen["headers"] = kwargs["headers"]
+        seen["json"] = kwargs["json"]
+        return Response()
+
+    monkeypatch.setattr(router.requests, "post", post)
+    result = router._cloudflare_ai(
+        "system", "user", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    )
+    assert result == '{"ok":true}'
+    assert seen["url"] == (
+        "https://api.cloudflare.com/client/v4/accounts/account-123/ai/v1/chat/completions"
+    )
+    assert seen["headers"]["Authorization"] == "Bearer test-cloudflare-token"
+    assert seen["json"]["response_format"] == {"type": "json_object"}

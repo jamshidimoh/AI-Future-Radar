@@ -52,7 +52,7 @@ MAX_VOICES_PERSPECTIVES_PER_PERIOD = 3  # bounded lane allowance within adaptive
 # Bootstrap is deliberately batched. Other news volume is adaptive, not a fixed three-story quota.
 MAX_PEOPLE_BOOTSTRAP_PER_PERIOD = 2
 NORMAL_RELATIVE_SCORE_GAP = float(EDITORIAL_CONTRACT.get("normal_relative_score_gap", 15.0))
-RANK_WINDOW = int(EDITORIAL_CONTRACT["candidate_window"])
+RANK_WINDOW = int(EDITORIAL_CONTRACT.get("candidate_window", 40))  # default 40 if key absent
 PROTECTED_SUMMARY_SCORE_FLOOR = PROTECTED_SCORE_FLOOR
 EDU_FIELDS = ("term_a_definition", "term_a_simple", "term_b_definition", "term_b_simple", "relationship", "example", "takeaway")
 NEWS_FIELDS = ("title", "summary", "why_it_matters")
@@ -1000,3 +1000,4 @@ if __name__ == "__main__":
     except StateCorruptionError as exc:
         logger.error("[STATE] %s", exc, exc_info=True)
         raise SystemExit(1) from exc
+

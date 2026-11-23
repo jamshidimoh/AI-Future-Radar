@@ -42,18 +42,27 @@ jobs:
           fetch-depth: 1
 
       - name: Reserve v1.1.0 for a successful closure only
-        if: ${{ github.event_name == 'workflow_run' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          TARGET_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event_name == 'workflow_run' && 'v1.1.0' || github.ref_name }}
         run: |
           set -euo pipefail
-          if gh release view v1.1.0 >/dev/null 2>&1; then
-            echo "Release v1.1.0 already exists; refusing to overwrite an immutable release."
-            exit 1
+          if [ "$TARGET_REF" = "v1.1.0" ]; then
+            if ! grep -q "CLOSED / PRODUCTION BASELINE" docs/PRODUCTION_CLOSURE_STATUS.md; then
+              echo "ERROR: Release v1.1.0 requires verified Production Closure Gate acceptance."
+              echo "docs/PRODUCTION_CLOSURE_STATUS.md is still PENDING. Publication is strictly blocked."
+              exit 1
+            fi
           fi
-          if git ls-remote --exit-code origin refs/tags/v1.1.0 >/dev/null 2>&1; then
-            echo "Tag v1.1.0 already exists; refusing to retarget it."
-            exit 1
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            if gh release view v1.1.0 >/dev/null 2>&1; then
+              echo "Release v1.1.0 already exists; refusing to overwrite an immutable release."
+              exit 1
+            fi
+            if git ls-remote --exit-code origin refs/tags/v1.1.0 >/dev/null 2>&1; then
+              echo "Tag v1.1.0 already exists; refusing to retarget it."
+              exit 1
+            fi
           fi
 
       - name: Set up Python

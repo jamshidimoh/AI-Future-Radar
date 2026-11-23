@@ -22,3 +22,10 @@ def test_v1_1_release_notes_keep_live_acceptance_as_a_prerequisite():
     assert "confirmed Telegram delivery" in notes
     assert "unverified scrape sources remain ineligible" in notes
     assert "medical/clinical-led" in notes
+
+
+def test_publish_workflow_blocks_manual_dispatch_when_closure_is_pending():
+    workflow = PUBLISH_WORKFLOW.read_text(encoding="utf-8")
+    assert "CLOSED / PRODUCTION BASELINE" in workflow
+    assert "docs/PRODUCTION_CLOSURE_STATUS.md" in workflow
+    assert "Publication is strictly blocked" in workflow

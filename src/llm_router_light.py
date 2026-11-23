@@ -219,7 +219,9 @@ def _nara_response_adapter(system_prompt,user_content,deployment_id,*,max_tokens
     class Response: pass
     out=Response(); out.model=data.get("model",model); msg=Message(); msg.content=content; choice=Choice(); choice.message=msg; out.choices=[choice]; return out
 
-def _call_direct_deployment(litellm_router,deployment,system_prompt,user_content,*,max_tokens=700,timeout=8):
+def _call_direct_deployment(litellm_router,deployment,system_prompt,user_content,*,max_tokens=None,timeout=8):
+    if max_tokens is None:
+        max_tokens = max(256, int(os.getenv("RADAR_LLM_MAX_TOKENS", "1000") or 1000))
     deployment_id=str(deployment.get("model_info",{}).get("id") or "")
     if _provider_family(deployment_id)=="nararouter": return _nara_response_adapter(system_prompt,user_content,deployment_id,max_tokens=max_tokens,timeout=timeout)
     kwargs={"model":deployment["model_name"],"messages":[{"role":"system","content":system_prompt},{"role":"user","content":user_content}],"timeout":timeout,"max_tokens":max_tokens,"temperature":0.15}
@@ -379,7 +381,8 @@ def _call_litellm(system_prompt,user_content):
         remaining=deadline-time.monotonic()
         if remaining<=0: print("[LiteLLM Router] budget_exhausted=1",flush=True); break
         try:
-            response=_call_direct_deployment(router,deployment,system_prompt,user_content,max_tokens=700,timeout=max(0.5,min(8.0,remaining)))
+            token_budget = max(256, int(os.getenv("RADAR_LLM_MAX_TOKENS", "1000") or 1000))
+            response=_call_direct_deployment(router,deployment,system_prompt,user_content,max_tokens=token_budget,timeout=max(0.5,min(8.0,remaining)))
             content=getattr(response.choices[0].message,"content",None) if getattr(response,"choices",None) else None
             if not content: raise ValueError("LiteLLM response has no content")
             selected=str(getattr(response,"model",deployment_id)); print(f"[LiteLLM Router] success={deployment_id} model={selected}",flush=True); return content,deployment_id

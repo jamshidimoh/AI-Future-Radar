@@ -2,6 +2,7 @@
 import inspect
 import logging
 import os
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -448,8 +449,14 @@ def _safe_summarize(item, summarize_fn):
 
 def _summarize_selected(items, summarize_fn):
     workers = max(1, int(os.getenv("RADAR_SUMMARY_WORKERS", "1") or 1))
+    inter_delay = max(0.0, float(os.getenv("RADAR_INTER_SUMMARY_DELAY", "0") or 0.0))
     if workers == 1 or len(items) <= 1:
-        return [_safe_summarize(item, summarize_fn) for item in items]
+        results = []
+        for i, item in enumerate(items):
+            if i > 0 and inter_delay > 0:
+                time.sleep(inter_delay)
+            results.append(_safe_summarize(item, summarize_fn))
+        return results
     with ThreadPoolExecutor(max_workers=min(workers, len(items))) as executor:
         return list(executor.map(lambda item: _safe_summarize(item, summarize_fn), items))
 

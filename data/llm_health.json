@@ -1,12 +1,5 @@
 {
-  "models": {
-    "groq:openai/gpt-oss-20b": {
-      "failures": 1,
-      "disabled_until": 1795432790.659,
-      "last_error": "invalid_response",
-      "last_success": 0
-    }
-  },
+  "models": {},
   "providers": {
     "kiraai": {
       "failures": 1,

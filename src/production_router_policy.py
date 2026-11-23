@@ -118,7 +118,7 @@ def _provider_retry_after_seconds(message: str) -> float:
     return 0.0
 
 
-def _rate_limit_retry_delay(message: str, *, max_seconds: float = 8.0) -> float:
+def _rate_limit_retry_delay(message: str, *, max_seconds: float = 18.0) -> float:
     """Extract a provider-supplied short retry delay, capped for production budget."""
     return min(_provider_retry_after_seconds(message), max_seconds)
 

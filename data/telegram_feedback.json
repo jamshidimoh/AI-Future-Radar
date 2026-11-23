@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1795412401,
+  "updated_at": 1795414716,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24406,6 +24406,27 @@
       "why_it_matters": "مراکز داده زیربنای ظرفیت محاسباتی شرکت‌های هوش مصنوعی‌اند. اگر تأخیر ساخت با تعهدهای مالی و برنامه‌های توسعه هم‌زمان شود، فاصله میان هزینه‌ها و ظرفیت درآمدزایی می‌تواند فشارآور شود. با این حال، منبع حاضر اندازه این ریسک، شرکت‌های مشخص یا شواهد عددی را روشن نمی‌کند.",
       "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQMi1yVWFPa2lxUTd1WlY5LUxjeGt4UG9tdk5YR3NkYk90NjlNNXM1Q194MFdicFA3N2FKVTZGYm1YRUpNX2t3RzdGaTBHUnNQM2NURGppb2JWZENKQzROazF4aWppMUxVV0RFb3NuSFdKcEU4MkxiNEVXZmxDcnpzTlp3MjRXcUxsQ2dQVGVsbXVabGFnMHBzWjZ0djkwR09SYy1UcmtCSk9YWGc5MnZBUzE3OG41LUhIWk9zQ3dZTndYd0pyVHFJSGRaNFpKZw?oc=5",
       "posted_at": 1795412401
+    },
+    "-1004482051328:2401": {
+      "chat_id": -1004482051328,
+      "message_id": 2401,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (CNBC)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Dario Amodei",
+      "watch_person": "Dario Amodei",
+      "person_name": "Dario Amodei",
+      "people_lane": true,
+      "title": "Dario Amodei در نشست Nasdaq بر کنترل سرعت توسعه هوش مصنوعی تأکید کرد",
+      "summary": "داریو آمودی، مدیرعامل Anthropic، در سخنرانی خود در نشست Nasdaq بار دیگر تعهد این شرکت به تنظیم سرعت توسعه هوش مصنوعی را مطرح کرد. CNBC این خبر را منتشر کرده، اما متن در دسترس تنها شامل عنوان و منبع است و جزئیات سخنرانی، سازوکار مشخص یا بازه زمانی این تعهد را در بر نمی‌گیرد.",
+      "why_it_matters": "اظهارنظر عمومی مدیرعامل یکی از شرکت‌های پیشرو در حوزه مدل‌های زبانی بزرگ نشان می‌دهد ایمنی و سرعت عرضه همچنان در کانون بحث عمومی این صنعت قرار دارد. با این حال، بدون متن کامل سخنرانی نمی‌توان فهمید این تعهد چه الزام عملی، چه معیار نظارتی یا چه جدول زمانی دارد و تا چه حد فراتر از موضع اعلامی است.",
+      "link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNRHcxcU1oNmdmVUR0amRObGFZNm9Tb3VtOUY0SEZYeVpTdmZfeEdhT2M2aHdnU3FlYXJxZ3Y3RGlKdGx1RVpDVXVEaVZfZk1YZkpCdDlDUjdPcFZ3V1dXd05BZG1GM2pjSlBNakNvOW9GZy1OOUFJdTdXakZmLWdpV3o0SzZLM3FWV2dYaC1saTRDZVFmeDU0NDRkUEplNVlmcUxWZ1VRSEZuWHBRYkpEYm9TYWV2eWg4WUF1bDhSMGJFT0lVZmZ6b0NB?oc=5",
+      "posted_at": 1795414715
     }
   }
 }

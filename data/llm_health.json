@@ -1,5 +1,18 @@
 {
-  "models": {},
+  "models": {
+    "cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast": {
+      "failures": 1,
+      "disabled_until": 1795436033.673,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "groq:openai/gpt-oss-20b": {
+      "failures": 1,
+      "disabled_until": 1795436033.673,
+      "last_error": "rate_limit",
+      "last_success": 0
+    }
+  },
   "providers": {
     "kiraai": {
       "failures": 1,
@@ -12,12 +25,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1795429190.6588495,
+  "updated_at": 1795432433.6733887,
   "version": 1,
   "telemetry": {
-    "observed_failures": 5,
-    "observed_events": 8,
-    "updated_at": 1795429190.6588495
+    "observed_failures": 75,
+    "observed_events": 146,
+    "updated_at": 1795432433.6733887
   },
   "observed_failures": 0,
   "observed_events": 0

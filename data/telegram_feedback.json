@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1795388326,
+  "updated_at": 1795412401,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24364,6 +24364,48 @@
       "why_it_matters": "بدون دسترسی به متن کامل مصاحبه یا رونوشت ویدیو، نمی‌توان بر پیامدهای استراتژیک نظرات بزواز درباره رقابت‌های هوش مصنوعی، نگاه او به جنسن هوانگ/انویدیا، یا هر موضوع فنی/تجاری دیگری استدلال کرد. تحلیل معتبر نیازمند محتوای واقعی گفت‌وگو است، نه تنها عنوان.",
       "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFA4YkZ0aEc3RS1tT21oRFFtWGRzU0R3ZmFqWUk4NmtTRDdhZDRlYlVJTWdZRGhSU2FnOWpqNXE3bjhKRE1TcVlwUlBKSkx0R1dzUzU5WGNB?oc=5",
       "posted_at": 1795168293
+    },
+    "-1004482051328:2399": {
+      "chat_id": -1004482051328,
+      "message_id": 2399,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (The Singju Post)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Max Tegmark",
+      "watch_person": "Max Tegmark",
+      "person_name": "Max Tegmark",
+      "people_lane": true,
+      "title": "مصاحبه ماکس Tegmark در Novara Media: متن کامل در دسترس نیست",
+      "summary": "منبع ارائه‌شده تنها شامل عنوان و لینکِ خبر Google News به مقاله‌ی The Singju Post است و متن کاملِ مصاحبه‌ی ماکس Tegmark (فیزیکدان MIT) با Novara Media در ورودی وجود ندارد. به همین دلیل استخراج ادعاهای اصلی، استدلال‌ها، شواهد یا نقل‌قول‌های دقیق از گفت‌وگو امکان‌پذیر نیست.",
+      "why_it_matters": "بدون دسترسی به متن کامل مصاحبه، نمی‌توان دیدگاه‌های Tegmark درباره هوش مصنوعی، ریسک‌های وجودی، رگولاتوری‌ها یا پیش‌بینی‌های زمانی را استخراج و ارزیابی کرد. تحلیل‌های تخصصی نیازمند محتوای واقعی گفت‌وگو هستند تا ادعاهای مقایسه‌ای، عددی یا پیش‌بینانه با شواهد مستقیم подтвержд شوند.",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxOWTQ0S3FtMGhreG92ZW5JZ1FSYzMxaWY5eDFGdjFLMEpsM3FET3QzWi1oRWs4eG9RX2pjWDZIVGhIdEZhQ2lpdlBITVFxaDJDRUhER2xkV2tCbHpDekswbGlTU1NxN3l6NUN6d2t3UnJfSE1NRTNGSG1kQzRubnhXSFoxdkpYZ1RzRTBvbUs1MA?oc=5",
+      "posted_at": 1795412399
+    },
+    "-1004482051328:2400": {
+      "chat_id": -1004482051328,
+      "message_id": 2400,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider Africa)",
+      "content_type": "social_post",
+      "category": "ai",
+      "leader": "Elon Musk",
+      "watch_person": "Elon Musk",
+      "person_name": "Elon Musk",
+      "people_lane": false,
+      "title": "هشدار Elon Musk درباره کمبود نقدینگی شرکت‌های هوش مصنوعی در پی تأخیر مراکز داده",
+      "summary": "Elon Musk هشدار داد تأخیر در ساخت مراکز داده می‌تواند شرکت‌های فعال در حوزه هوش مصنوعی را با کمبود نقدینگی روبه‌رو کند. او وضعیت پیش‌رو را با عبارت «Going to be nuts» توصیف کرد. منبع در دسترس فقط همین عنوان و نقل‌قول کوتاه را شامل می‌شود و جزئیات بیشتری درباره سازوکار این فشار مالی، شرکت‌های درگیر یا بازه زمانی تأخیرها ارائه نمی‌کند.",
+      "why_it_matters": "مراکز داده زیربنای ظرفیت محاسباتی شرکت‌های هوش مصنوعی‌اند. اگر تأخیر ساخت با تعهدهای مالی و برنامه‌های توسعه هم‌زمان شود، فاصله میان هزینه‌ها و ظرفیت درآمدزایی می‌تواند فشارآور شود. با این حال، منبع حاضر اندازه این ریسک، شرکت‌های مشخص یا شواهد عددی را روشن نمی‌کند.",
+      "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQMi1yVWFPa2lxUTd1WlY5LUxjeGt4UG9tdk5YR3NkYk90NjlNNXM1Q194MFdicFA3N2FKVTZGYm1YRUpNX2t3RzdGaTBHUnNQM2NURGppb2JWZENKQzROazF4aWppMUxVV0RFb3NuSFdKcEU4MkxiNEVXZmxDcnpzTlp3MjRXcUxsQ2dQVGVsbXVabGFnMHBzWjZ0djkwR09SYy1UcmtCSk9YWGc5MnZBUzE3OG41LUhIWk9zQ3dZTndYd0pyVHFJSGRaNFpKZw?oc=5",
+      "posted_at": 1795412401
     }
   }
 }

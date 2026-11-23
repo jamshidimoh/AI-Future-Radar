@@ -77,7 +77,7 @@ _publication_adapter.publish_production_story = _publish_production_story_with_f
 def _fetch_reference_with_canonical_year(url: str):
     excerpt, year = _ORIGINAL_FETCH_REFERENCE(url)
     normalized = str(url or "").lower().rstrip("/")
-    if year is None and "ai-index" in normalized:
+    if year is None and "hai.stanford.edu/ai-index" in normalized:
         match = re.search(r"20\d\d", normalized)
         if match:
             year = int(match.group(0))

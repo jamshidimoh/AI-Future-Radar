@@ -556,18 +556,6 @@ def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
                         flush=True,
                     )
                 else:
-                    if rate_limit_retries < 3:
-                        wait_seconds = 15 * (rate_limit_retries + 1)
-                        if rate_limit_wait_total + wait_seconds <= MAX_TELEGRAM_RATE_LIMIT_WAIT_SECONDS:
-                            rate_limit_retries += 1
-                            rate_limit_wait_total += wait_seconds
-                            print(
-                                f"[Telegram Rate Limit] 429 without valid retry_after; fallback wait={wait_seconds}s "
-                                f"retry={rate_limit_retries}/3",
-                                flush=True,
-                            )
-                            time.sleep(wait_seconds)
-                            continue
                     print(
                         "[ERROR] Telegram returned HTTP 429 without a valid bounded retry_after; "
                         "the message was rejected and will not be retried",

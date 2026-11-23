@@ -1,7 +1,10 @@
 """Canonical publication deduplication with hybrid event identity."""
+import contextlib
 import json
 import logging
 import os
+import shutil
+import tempfile
 import time
 
 from src.canonical_story import canonical_url, normalize_title, story_id, url_id
@@ -80,7 +83,6 @@ def load_source_history():
 
 def save_seen(seen_hashes, seen_signatures, source_history=None):
     """Atomically persist dedup state — safe against mid-write crashes."""
-    import tempfile, shutil
     os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
     if source_history is None: source_history = load_source_history()
     payload = {
@@ -94,10 +96,8 @@ def save_seen(seen_hashes, seen_signatures, source_history=None):
             json.dump(payload, f, ensure_ascii=False, indent=2)
         shutil.move(tmp_path, STATE_FILE)  # atomic on same filesystem
     except Exception:
-        try:
+        with contextlib.suppress(OSError):
             os.unlink(tmp_path)
-        except OSError:
-            pass
         raise
 
 

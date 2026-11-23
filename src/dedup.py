@@ -79,10 +79,26 @@ def load_source_history():
 
 
 def save_seen(seen_hashes, seen_signatures, source_history=None):
+    """Atomically persist dedup state — safe against mid-write crashes."""
+    import tempfile, shutil
     os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
     if source_history is None: source_history = load_source_history()
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump({"seen_hashes": list(dict.fromkeys(seen_hashes))[-MAX_HISTORY:], "seen_signatures": _unique_signatures(seen_signatures), "source_history": source_history[-MAX_SOURCE_HISTORY:]}, f, ensure_ascii=False, indent=2)
+    payload = {
+        "seen_hashes": list(dict.fromkeys(seen_hashes))[-MAX_HISTORY:],
+        "seen_signatures": _unique_signatures(seen_signatures),
+        "source_history": source_history[-MAX_SOURCE_HISTORY:],
+    }
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(STATE_FILE), suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        shutil.move(tmp_path, STATE_FILE)  # atomic on same filesystem
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
 
 
 def _is_protected_leader(item): return bool(item.get("protected_content") or item.get("_named_leader_interview") or item.get("leader_watch_protected"))

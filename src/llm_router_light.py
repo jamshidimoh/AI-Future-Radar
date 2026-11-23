@@ -313,7 +313,9 @@ def _litellm_router_disabled()->bool:
 
 def _call_litellm(system_prompt,user_content):
     global _PRODUCTION_CIRCUIT_OPEN
-    if _PRODUCTION_CIRCUIT_OPEN:
+    with _STATE_LOCK:
+        _circuit_open = _PRODUCTION_CIRCUIT_OPEN
+    if _circuit_open:
         print("[Production Circuit] open=true reason=prior_provider_exhaustion", flush=True)
         return None,None
     router=_get_litellm_router()
@@ -355,7 +357,8 @@ def _call_litellm(system_prompt,user_content):
     if last_error is not None:
         print(f"[LiteLLM Router] exhausted={type(last_error).__name__}: {last_error}",flush=True)
         if availability_failures > 0 or "no deployments available" in str(last_error).lower():
-            _PRODUCTION_CIRCUIT_OPEN = True
+            with _STATE_LOCK:
+                _PRODUCTION_CIRCUIT_OPEN = True
             print(
                 f"[Production Circuit] open=true provider_exhaustion=1 availability_failures={availability_failures}",
                 flush=True,
@@ -366,7 +369,9 @@ def call_llm_with_fallback(system_prompt,user_content,providers=None):
     global _PRODUCTION_CIRCUIT_OPEN
     canonical_chain = providers is None or isinstance(providers,ProductionQualityChain)
     production_mode = os.getenv("RADAR_PRODUCTION_MODE", "0").strip().lower() in {"1", "true", "yes"}
-    if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED and _PRODUCTION_CIRCUIT_OPEN:
+    with _STATE_LOCK:
+        _circuit_open = _PRODUCTION_CIRCUIT_OPEN
+    if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED and _circuit_open:
         raise QuotaExceeded("Production LLM circuit open: provider routing exhausted")
     if canonical_chain and production_mode and _PRODUCTION_CIRCUIT_BREAKER_INSTALLED:
         result, provider = _call_litellm(system_prompt, user_content)
@@ -427,3 +432,4 @@ def _provider_timeout(name:str,remaining:float)->float:
     for prefix,limit in _PROVIDER_TIMEOUTS.items():
         if name.startswith(prefix): return max(0.1,min(remaining,limit))
     return max(0.1,min(remaining,4.0))
+

@@ -1,9 +1,11 @@
 """دریافت اخبار به‌روز از RSS با taxonomy سخت‌گیرانه و متادیتای کیفیت منبع."""
+import calendar
 import logging
+import random
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import feedparser
@@ -34,16 +36,28 @@ def _keyword_match(text, keyword):
 
 
 def _parse_feed(url):
-    try:
-        response = requests.get(
-            url,
-            timeout=_FEED_TIMEOUT_SECONDS,
-            headers={"User-Agent": "AI-Future-Radar/1.0"},
-        )
-        response.raise_for_status()
-        return feedparser.parse(response.content)
-    except requests.RequestException as exc:
-        raise RuntimeError(f"feed request failed: {exc}") from exc
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(
+                url,
+                timeout=_FEED_TIMEOUT_SECONDS,
+                headers={"User-Agent": "AI-Future-Radar/1.0"},
+            )
+            if response.status_code in {429, 500, 502, 503, 504}:
+                wait = (2 ** attempt) + random.uniform(0.1, 0.5)
+                logger.warning("feed HTTP %s for %s — retry %d/%d in %.1fs", response.status_code, url, attempt + 1, max_retries, wait)
+                time.sleep(wait)
+                continue
+            response.raise_for_status()
+            return feedparser.parse(response.content)
+        except requests.RequestException as exc:
+            if attempt == max_retries - 1:
+                raise RuntimeError(f"feed request failed after {max_retries} attempts: {exc}") from exc
+            wait = (2 ** attempt) + random.uniform(0.1, 0.5)
+            logger.warning("feed request error for %s: %s — retry %d/%d in %.1fs", url, exc, attempt + 1, max_retries, wait)
+            time.sleep(wait)
+    raise RuntimeError(f"feed request failed: max retries exceeded for {url}")
 
 
 def _load_supplemental_sources():
@@ -106,10 +120,10 @@ def _collect_source(source, categories, cutoff):
         published = entry.get("published_parsed") or entry.get("updated_parsed")
         published_str = ""
         if published:
-            published_ts = time.mktime(published)
+            published_ts = calendar.timegm(published)
             if published_ts < cutoff:
                 continue
-            published_str = datetime.fromtimestamp(published_ts).strftime("%Y-%m-%d %H:%M")
+            published_str = datetime.fromtimestamp(published_ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
 
         title = entry.get("title", "")
         summary = entry.get("summary", "") or entry.get("description", "")

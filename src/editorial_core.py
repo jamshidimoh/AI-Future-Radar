@@ -1,6 +1,8 @@
 """Core editorial feature/relevance primitives; `src.editorial` layers leader/interview policy on top."""
 from __future__ import annotations
 
+import calendar
+from datetime import datetime, timezone
 import logging
 import re
 import time
@@ -160,8 +162,16 @@ def filter_ai_relevance(items,ai_keywords=None):
     return out
 
 def _age(p):
-    if not p:return None
-    try:return max(0,(time.time()-time.mktime(time.strptime(p,"%Y-%m-%d %H:%M")))/3600)
+    if not p:
+        return None
+    try:
+        s = str(p).strip()
+        if "T" in s or s.endswith("Z") or "+" in s:
+            dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+            ts = dt.timestamp()
+        else:
+            ts = calendar.timegm(time.strptime(s[:16], "%Y-%m-%d %H:%M"))
+        return max(0.0, (time.time() - ts) / 3600.0)
     except (TypeError, ValueError, OverflowError) as exc:
         logger.warning("Could not parse publication age %s: %s", p, exc, exc_info=True)
         return None

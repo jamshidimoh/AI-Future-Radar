@@ -85,9 +85,18 @@ _MIND_COGNITION_EVIDENCE_TERMS = (
 )
 
 
+_YAML_CACHE: dict[tuple[str, float], dict[str, Any]] = {}
+
+
 def _load_yaml(path: Path) -> dict[str, Any]:
     try:
-        return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        mtime = path.stat().st_mtime
+        key = (str(path), mtime)
+        if key in _YAML_CACHE:
+            return _YAML_CACHE[key]
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        _YAML_CACHE[key] = data
+        return data
     except (OSError, UnicodeDecodeError, yaml.YAMLError) as exc:
         logger.error("Editorial contract unavailable at %s: %s", path, exc, exc_info=True)
         return {}

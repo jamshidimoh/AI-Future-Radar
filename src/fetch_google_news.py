@@ -1,11 +1,12 @@
 """دریافت اخبار به‌روز از Google News RSS با متادیتای کیفیت و Leader Watchlist."""
+import calendar
 import logging
 import random
 import re
 import time
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import feedparser
@@ -456,9 +457,9 @@ def _collect_query(q, cutoff):
     for entry in feed.entries[:15]:
         published = entry.get("published_parsed"); published_str = ""
         if published:
-            published_ts = time.mktime(published)
+            published_ts = calendar.timegm(published)
             if published_ts < cutoff: continue
-            published_str = datetime.fromtimestamp(published_ts).strftime("%Y-%m-%d %H:%M")
+            published_str = datetime.fromtimestamp(published_ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
         title = entry.get("title", ""); summary = entry.get("summary", ""); link = entry.get("link", "")
         source_obj = entry.get("source", {}) if hasattr(entry, "get") else {}
         source_title = source_obj.get("title", "Google News") if hasattr(source_obj, "get") else "Google News"

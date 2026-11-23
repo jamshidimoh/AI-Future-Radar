@@ -130,7 +130,7 @@ def _huggingface(system_prompt,user_content):
     token=os.getenv("HF_TOKEN")
     if not token: return None
     from huggingface_hub import InferenceClient
-    model=_select_hf_model(); response=InferenceClient(token=token,provider="auto").chat.completions.create(model=model,messages=[{"role":"system","content":system_prompt},{"role":"user","content":user_content}],max_tokens=850)
+    model=_select_hf_model(); response=InferenceClient(token=token,provider="auto",timeout=8.0).chat.completions.create(model=model,messages=[{"role":"system","content":system_prompt},{"role":"user","content":user_content}],max_tokens=850)
     return response.choices[0].message.content
 
 def _chain_key():

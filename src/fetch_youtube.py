@@ -11,6 +11,7 @@ an unexplained zero-result run.
 """
 from __future__ import annotations
 
+import calendar
 import html
 import json
 import logging
@@ -470,10 +471,10 @@ def fetch_youtube_items(youtube_channels, max_age_hours=72, ai_bridge_keywords=N
                     published = entry.get("published_parsed")
                     published_str = ""
                     if published:
-                        ts = time.mktime(published)
+                        ts = calendar.timegm(published)
                         if ts < cutoff:
                             continue
-                        published_str = datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M")
+                        published_str = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
                     entries.append({
                         "video_id": entry.get("yt_videoid", ""),
                         "title": entry.get("title", ""),

@@ -10,6 +10,7 @@ import faulthandler
 import json
 import logging
 import os
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -76,9 +77,11 @@ _publication_adapter.publish_production_story = _publish_production_story_with_f
 def _fetch_reference_with_canonical_year(url: str):
     excerpt, year = _ORIGINAL_FETCH_REFERENCE(url)
     normalized = str(url or "").lower().rstrip("/")
-    if year is None and normalized == "https://hai.stanford.edu/ai-index/2026-ai-index-report":
-        year = 2026
-        print(f"[Education Source Gate] canonical-year override year=2026 url={url}", flush=True)
+    if year is None and "ai-index" in normalized:
+        match = re.search(r"20\d\d", normalized)
+        if match:
+            year = int(match.group(0))
+            print(f"[Education Source Gate] canonical-year override year={year} url={url}", flush=True)
     return excerpt, year
 
 
@@ -177,7 +180,7 @@ def main() -> int:
         apply_production_router_policy()
     _normal_fallback._NORMAL_DELIVERED = 0
     contract = load_editorial_contract()
-    production_entrypoint.RANK_WINDOW = int(contract["candidate_window"])
+    production_entrypoint.RANK_WINDOW = int(contract.get("candidate_window", 40))
     print(f"[Selection Contract] runtime_candidate_window={production_entrypoint.RANK_WINDOW} normal_capacity={contract['max_posts']}", flush=True)
 
     watchdog_seconds = _watchdog_minutes() * 60

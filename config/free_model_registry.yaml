@@ -19,8 +19,8 @@ registry:
     - id: nvidia/nemotron-3.5-super-vl:free
       health: healthy
       health_score: 100
-      catalog_score: 91.486
-      verified_at: '2026-11-22T11:24:17.251088+00:00'
+      catalog_score: 91.444
+      verified_at: '2026-11-23T12:39:16.833931+00:00'
       free: true
       chat_capable: true
       json_capable: true
@@ -66,8 +66,8 @@ registry:
       priority: 500
       health: healthy
       health_score: 100
-      catalog_score: 84.651
-      verified_at: '2026-11-22T11:24:17.250953+00:00'
+      catalog_score: 84.609
+      verified_at: '2026-11-23T12:39:16.833803+00:00'
     - id: baidu/ernie-5.5-flash-preview:free
       free: true
       chat_capable: true
@@ -79,8 +79,8 @@ registry:
       priority: 500
       health: healthy
       health_score: 100
-      catalog_score: 84.531
-      verified_at: '2026-11-22T11:24:17.250983+00:00'
+      catalog_score: 84.489
+      verified_at: '2026-11-23T12:39:16.833837+00:00'
     - id: particle-ai/particle-1:free
       free: true
       chat_capable: true
@@ -92,8 +92,8 @@ registry:
       priority: 500
       health: healthy
       health_score: 100
-      catalog_score: 84.01
-      verified_at: '2026-11-22T11:24:17.251047+00:00'
+      catalog_score: 83.968
+      verified_at: '2026-11-23T12:39:16.833891+00:00'
     - id: qwen/qwen3.8-27b:free
       health: healthy
       health_score: 100
@@ -102,8 +102,16 @@ registry:
     - id: dots-studio/dots-3-note-preview:free
       health: healthy
       health_score: 100
-      catalog_score: 71.692
-      verified_at: '2026-11-20T11:39:20.727960+00:00'
+      catalog_score: 71.571
+      verified_at: '2026-11-23T12:39:16.833962+00:00'
+      free: true
+      chat_capable: true
+      json_capable: true
+      response_format: true
+      base_quality: 55.0
+      task_fit: 60.0
+      quality_evidence: openrouter-free-catalog-capability
+      priority: 500
     - id: apodex/apodex-1.1-mini:free
       free: true
       chat_capable: true
@@ -171,8 +179,8 @@ registry:
     - id: recursive/flint-v1.0:free
       health: healthy
       health_score: 100
-      catalog_score: 66.739
-      verified_at: '2026-11-22T11:24:17.251068+00:00'
+      catalog_score: 66.697
+      verified_at: '2026-11-23T12:39:16.833911+00:00'
       free: true
       chat_capable: true
       json_capable: true
@@ -191,8 +199,8 @@ registry:
       task_fit: 95.0
       health: healthy
       health_score: 100
-      catalog_score: 63.286
-      verified_at: '2026-11-22T11:24:17.251181+00:00'
+      catalog_score: 63.244
+      verified_at: '2026-11-23T12:39:16.834031+00:00'
       quality_evidence: openrouter-free-catalog-capability
     - priority: 6
       id: google/gemma-4-31b-it:free
@@ -204,14 +212,14 @@ registry:
       task_fit: 98.0
       health: healthy
       health_score: 100
-      catalog_score: 63.249
-      verified_at: '2026-11-22T11:24:17.251203+00:00'
+      catalog_score: 63.207
+      verified_at: '2026-11-23T12:39:16.834052+00:00'
       quality_evidence: openrouter-free-catalog-capability
     - id: liquid/lfm-3-1.7b:free
       health: healthy
       health_score: 100
-      catalog_score: 62.781
-      verified_at: '2026-11-22T11:24:17.251013+00:00'
+      catalog_score: 62.739
+      verified_at: '2026-11-23T12:39:16.833866+00:00'
       free: true
       chat_capable: true
       json_capable: true
@@ -300,7 +308,7 @@ registry:
     free_quota_neurons_per_day: 10000
     models:
     - priority: 1
-      id: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+      id: '@cf/meta/llama-3.3-70b-instruct-fp8-fast'
       free: true
       chat_capable: true
       json_capable: true
@@ -309,7 +317,7 @@ registry:
       task_fit: 85
       quality_evidence: conservative_editorial_prior_not_benchmark
     - priority: 2
-      id: "@cf/meta/llama-3.1-8b-instruct-fast"
+      id: '@cf/meta/llama-3.1-8b-instruct-fast'
       free: true
       chat_capable: true
       json_capable: true
@@ -317,7 +325,6 @@ registry:
       base_quality: 74
       task_fit: 80
       quality_evidence: conservative_editorial_prior_not_benchmark
-
   - family: kiraai
     credential_env: KIRAAI_API_KEY
     pricing_mode: free-quota
@@ -414,4 +421,4 @@ registry:
     models: []
     reason: Dynamic discovery/emergency lane; never outranks quality-scored trusted
       models without evidence
-  last_refresh: '2026-11-22T11:24:17.251269+00:00'
+  last_refresh: '2026-11-23T12:39:16.834110+00:00'

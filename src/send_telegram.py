@@ -460,7 +460,7 @@ def _telegram_preflight(token, channel):
         if chat.get("type") == "channel" and status not in {"administrator", "creator"}:
             return False
         return not (chat.get("type") == "channel" and status == "administrator" and member.get("can_post_messages") is False)
-    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+    except (RuntimeError, requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
         print(f"[ERROR] Telegram destination verification exception: {exc}", flush=True)
         logger.error("Telegram destination verification failed: %s", exc, exc_info=True)
         return False
@@ -591,8 +591,12 @@ def _send_text_full(token, channel, text, *, preview_url="", preflight=True):
 
 
 def _compact_photo_caption(text):
-    from telegram_photo_contract import _compact_photo_caption as build_caption
-    return build_caption(text)
+    try:
+        from src.telegram_photo_contract import _compact_photo_caption as build_caption
+        return build_caption(text)
+    except ImportError:
+        logger.error("telegram_photo_contract not available; skipping photo caption")
+        return ""
 
 
 def _send_source_image(token, channel, image_url, source_link="", title=""):
@@ -619,7 +623,7 @@ def _send_source_image(token, channel, image_url, source_link="", title=""):
             print(f"[Telegram Image Published] chat_id={meta.get('chat_id')} message_id={meta.get('message_id')}", flush=True)
             return meta
         return False
-    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+    except (RuntimeError, requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
         print(f"[WARN] Telegram source image send failed: {exc}", flush=True)
         logger.warning("Telegram source image send failed: %s", exc, exc_info=True)
         return False
@@ -651,7 +655,8 @@ def send_to_telegram(text, image_url="", source_link=""):
 def send_to_telegram_safe(text, image_url="", source_link=""):
     try:
         return send_to_telegram(text, image_url=image_url, source_link=source_link)
-    except (requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
+    except (RuntimeError, requests.RequestException, ValueError, KeyError, TypeError, AttributeError) as exc:
         print(f"[ERROR] Telegram delivery exception: {exc}", flush=True)
         logger.error("Telegram delivery exception: %s", exc, exc_info=True)
         return False
+

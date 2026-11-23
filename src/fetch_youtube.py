@@ -295,7 +295,7 @@ def _fetch_video_page_evidence(video_id: str) -> str:
             if not match:
                 continue
             value = html.unescape(match.group(1))
-            value = bytes(value, "utf-8").decode("unicode_escape", errors="replace") if "\\" in value else value
+            value = value.encode("raw_unicode_escape").decode("unicode_escape", errors="replace") if "\\" in value else value
             value = re.sub(r"\\n+", "\n", value).strip()
             if value:
                 return value[:5000]
@@ -504,3 +504,4 @@ def fetch_youtube_items(youtube_channels, max_age_hours=72, ai_bridge_keywords=N
             print(f"[WARN] YouTube source unavailable after Data API/RSS/page fallback: {channel.get('name', channel_id)}", flush=True)
 
     return results
+

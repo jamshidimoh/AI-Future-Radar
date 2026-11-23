@@ -24,6 +24,17 @@ Ledger = Callable[[Mapping[str, Any], DeliveryOutcome], None]
 _CURRENT_RUN_PUBLICATIONS: list[dict[str, Any]] = []
 
 
+def reset_current_run_publications() -> None:
+    """Reset the in-process publication log at the start of each pipeline run.
+
+    Must be called once before any publish_story() calls in a new run to
+    prevent state leaking from a previous run when the process is reused
+    (e.g. inside production_resilient_runner).
+    """
+    global _CURRENT_RUN_PUBLICATIONS
+    _CURRENT_RUN_PUBLICATIONS = []
+
+
 def _telemetry_event(story: Mapping[str, Any], *, decision: str, reason_code: str, details=None) -> None:
     try:
         identity = str(story.get("canonical_url") or story.get("link") or story.get("url") or story.get("title") or id(story))
@@ -198,3 +209,4 @@ def publish_story(
 
 
 __all__ = ["publish_story"]
+

@@ -2,8 +2,8 @@
   "models": {
     "groq:openai/gpt-oss-20b": {
       "failures": 1,
-      "disabled_until": 1795429169.292,
-      "last_error": "rate_limit",
+      "disabled_until": 1795432790.659,
+      "last_error": "invalid_response",
       "last_success": 0
     }
   },
@@ -19,12 +19,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1795425569.2916145,
+  "updated_at": 1795429190.6588495,
   "version": 1,
   "telemetry": {
-    "observed_failures": 18,
-    "observed_events": 30,
-    "updated_at": 1795425569.2916145
+    "observed_failures": 5,
+    "observed_events": 8,
+    "updated_at": 1795429190.6588495
   },
   "observed_failures": 0,
   "observed_events": 0

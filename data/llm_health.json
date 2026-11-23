@@ -1,5 +1,12 @@
 {
-  "models": {},
+  "models": {
+    "groq:openai/gpt-oss-20b": {
+      "failures": 1,
+      "disabled_until": 1795429169.292,
+      "last_error": "rate_limit",
+      "last_success": 0
+    }
+  },
   "providers": {
     "kiraai": {
       "failures": 1,
@@ -12,12 +19,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1795422592.668639,
+  "updated_at": 1795425569.2916145,
   "version": 1,
   "telemetry": {
-    "observed_failures": 0,
-    "observed_events": 0,
-    "updated_at": 1795422592.668639
+    "observed_failures": 18,
+    "observed_events": 30,
+    "updated_at": 1795425569.2916145
   },
   "observed_failures": 0,
   "observed_events": 0

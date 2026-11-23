@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1795432432,
+  "updated_at": 1795463202,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24520,6 +24520,65 @@
       "why_it_matters": "اگر Claude ادعای حل فرضیه ریمان را تأیید کند، نشان می‌دهد که الگوریتم‌های یادگیری عمیق می‌توانند در حوزهٔ ریاضیات نظری به‌سطحی فراتر از توان انسان‌ها برسند و ابزارهای ریاضی پیشرفته‌تری را به‌وجود آورند. این می‌تواند پایه‌های نظریهٔ اعداد و کاربردهای مرتبط مانند رمزنگاری را دگرگون کند.",
       "link": "https://www.youtube.com/watch?v=GXTC-G_oOtQ",
       "posted_at": 1795432432
+    },
+    "-1004482051328:2407": {
+      "chat_id": -1004482051328,
+      "message_id": 2407,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Reuters)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "نوییدیا مجدداً جنسن هوانگ را به عنوان مدیرعامل منصوب کرد",
+      "summary": "نوییدیا در پاسخ به فشارهای سیاسی و درخواست‌های سرمایه‌گذاران، جنسن هوانگ را دوباره به عنوان مدیرعامل انتخاب کرد. این اقدام در گزارش Reuters به‌عنوان واکنشی به انتقادات رئیس‌جمهور ترامپ و نگرانی‌های سرمایه‌گذاران مطرح شد.",
+      "why_it_matters": "تعیین مجدد مدیرعامل در شرکت‌های فناوری، تأثیر مستقیم بر استراتژی‌های رشد و اعتماد بازار دارد. حضور مستمر هوانگ می‌تواند ثبات عملیاتی و جذب سرمایه را تقویت کند. این تغییر در گزارش Reuters به‌عنوان یک نقطه عطف در مسیر توسعه شرکت گزارش شد.",
+      "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOd19EYmc4X2wzaW5zXzZ5VXZ1cUFJbS1OYzJsZ2VSTVRnMkQteWdiN3Z0dTBlNmltdll6Vy1RWnpxVUthOF9XX3g0YmVvNWdXODJUMGpSeXdldVdYQWE3N2hCQXU3RExXSDViSWI3S2xHNVZFc0NUVmh5bGRhem5aUzdDa29xb1hH?oc=5",
+      "posted_at": 1795463197
+    },
+    "-1004482051328:2408": {
+      "chat_id": -1004482051328,
+      "message_id": 2408,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "پیشرفت هوش مصنوعی ممکن است ناگهان 10 برابر سریع‌تر شود – Paul Christiano",
+      "summary": "پیشرفت هوش مصنوعی ممکن است ناگهان 10 برابر سریع‌تر شود. این موضوع در مصاحبه‌ای با Paul Christiano، که توسط Dwarkesh Patel انجام شده است، مطرح شده است. در این مصاحبه، Christiano به پیشرفت‌های اخیر در زمینه هوش مصنوعی اشاره کرده است و احتمال شتاب در پیشرفت‌های آینده را مطرح کرده است.",
+      "description": "Full episode: https://www.youtube.com/watch?v=SyHM5hNPAEo\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "اگر پیشرفت هوش مصنوعی ناگهان 10 برابر سریع‌تر شود، می‌تواند تأثیرات重大‌ای بر اقتصاد، جامعه و صنعت داشته باشد. این موضوع می‌تواند منجر به ایجاد فرصت‌های جدید و همچنین چالش‌های جدید شود. برای مثال، می‌توان انتظار داشت که هوش مصنوعی در آینده به سرعت در زمینه‌های مختلف مانند پزشکی، فناوری و آموزش پیشرفت کند.",
+      "link": "https://www.youtube.com/watch?v=vwWsfobw0Ts",
+      "posted_at": 1795463199
+    },
+    "-1004482051328:2409": {
+      "chat_id": -1004482051328,
+      "message_id": 2409,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (University of California, Berkeley)",
+      "content_type": "interview",
+      "category": "mind",
+      "leader": "Christof Koch",
+      "watch_person": "Christof Koch",
+      "title": "گفتگوی Michael Pollan و Christof Koch درباره روان‌گردان‌ها و آگاهی",
+      "summary": "Michael Pollan و Christof Koch در دانشگاه کالیفرنیا‑برکلی دربارهٔ تأثیر روان‌گردان‌ها بر آگاهی گفتگو کردند. در این نشست، Koch به بررسی همبستگی بین تغییرات شیمیایی مغز و تجارب ذهنی پرداخته و Pollan دیدگاه‌های تاریخی و فرهنگی مصرف این مواد را مطرح کرد.",
+      "why_it_matters": "درک چگونگی تغییر آگاهی توسط روان‌گردان‌ها می‌تواند به شناسایی همبستگی‌های عصبی مرتبط با تجربهٔ ذهنی کمک کند. این شناخت مسیر توسعهٔ درمان‌های مبتنی بر روان‌گردان‌ها برای اختلالات روانی را هموار می‌سازد و به پژوهش‌های بنیادی در علوم اعصاب پیشرفت می‌بخشد.",
+      "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxOQkgxTlZfWVdtWWhTSmN5TThWSGtYNFY1ODBDeGFST0hkaS1lb1hRcWx3NHBhU2RCWTJPbDF5N0JVSGk2bjdfRG9ZYllnOElrZE5hbENuLVgxa2gtbEJGNzluUjZiUjF1bDhaSDA4c3ZreW53czNqaGtlWkFLVTlLQ01FWVJfdzFKR3FDcHFlMFNqZEQyM180Q1M3bUwyTV9rTEVrNmRyM3NEZEpXcWZLX3VRT1BBNVQyQW9PR2p3?oc=5",
+      "posted_at": 1795463201
     }
   }
 }

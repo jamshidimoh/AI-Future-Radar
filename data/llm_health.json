@@ -1,15 +1,9 @@
 {
   "models": {
-    "cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast": {
+    "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1795436033.673,
-      "last_error": "rate_limit",
-      "last_success": 0
-    },
-    "groq:openai/gpt-oss-20b": {
-      "failures": 1,
-      "disabled_until": 1795436033.673,
-      "last_error": "rate_limit",
+      "disabled_until": 1795466803.025,
+      "last_error": "quota",
       "last_success": 0
     }
   },
@@ -21,16 +15,16 @@
     },
     "openrouter": {
       "failures": 1,
-      "disabled_until": 1795439326.869,
+      "disabled_until": 1795484803.025,
       "last_error": "quota"
     }
   },
-  "updated_at": 1795432433.6733887,
+  "updated_at": 1795463203.0246403,
   "version": 1,
   "telemetry": {
-    "observed_failures": 75,
-    "observed_events": 146,
-    "updated_at": 1795432433.6733887
+    "observed_failures": 42,
+    "observed_events": 118,
+    "updated_at": 1795463203.0246403
   },
   "observed_failures": 0,
   "observed_events": 0

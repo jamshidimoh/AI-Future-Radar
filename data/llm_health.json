@@ -1,11 +1,5 @@
 {
   "models": {
-    "groq:openai/gpt-oss-120b": {
-      "failures": 1,
-      "disabled_until": 1795505546.833,
-      "last_error": "quota",
-      "last_success": 0
-    },
     "cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast": {
       "failures": 1,
       "disabled_until": 1795508692.55,
@@ -71,6 +65,12 @@
       "disabled_until": 1795508692.55,
       "last_error": "quota",
       "last_success": 0
+    },
+    "groq:openai/gpt-oss-120b": {
+      "failures": 1,
+      "disabled_until": 1795508170.288,
+      "last_error": "quota",
+      "last_success": 0
     }
   },
   "providers": {
@@ -85,12 +85,12 @@
       "last_error": "quota"
     }
   },
-  "updated_at": 1795505092.5495803,
+  "updated_at": 1795507975.5943568,
   "version": 1,
   "telemetry": {
-    "observed_failures": 141,
-    "observed_events": 281,
-    "updated_at": 1795505092.5495803
+    "observed_failures": 23,
+    "observed_events": 169,
+    "updated_at": 1795507975.5943568
   },
   "observed_failures": 0,
   "observed_events": 0

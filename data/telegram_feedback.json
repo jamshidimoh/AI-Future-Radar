@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1795505091,
+  "updated_at": 1795507974,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -24756,6 +24756,65 @@
       "why_it_matters": "پیشرفت‌های سریع AI در ریاضیات باعث نگرانی دانشجویان ریاضی در مورد آینده شغلی خود شده است. این نگرانی می‌تواند به کاهش انگیزه و امنیت شغلی در میان دانشجویان ریاضی منجر شود.",
       "link": "https://www.nature.com/articles/d41586-026-03795-5",
       "posted_at": 1795505091
+    },
+    "-1004482051328:2419": {
+      "chat_id": -1004482051328,
+      "message_id": 2419,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - MIT CSAIL - Building 32",
+      "content_type": "podcast",
+      "category": "ai",
+      "leader": "",
+      "title": "هوش مصنوعی در جیب شما: انتقال هوش مصنوعی به دستگاه‌های کوچکتر",
+      "summary": "ایرون تینسون، دانشجوی کارشناسی ارشد CSAIL دانشگاه ماساچوست، در تلاش است تا هوش مصنوعی را از پردازنده‌های گران‌قیمت به دستگاه‌های کوچکتر و دسترسی‌پذیرتر منتقل کند. این کار می‌تواند امنیت داده‌ها را افزایش دهد، کنترل بر اطلاعات شخصی را بهبود بخشد و وابستگی به مراکز داده بزرگ را کاهش دهد.",
+      "description": "What if you could run powerful AI models directly on your phone, laptop, or even a Raspberry Pi? MIT CSAIL graduate student Irene Tenison is trying to move AI from expensive GPUs to smaller, more accessible devices. This could mean greater data privacy, more control over personal information, and less reliance on massive data centers. The future of AI might be right in your pocket!\n\n#MIT #MITCSAIL #ArtificialIntelligence #AIResearch #MachineLearning #EdgeAI #DataPrivacy #FutureOfTechnology",
+      "why_it_matters": "انتقال هوش مصنوعی به دستگاه‌های کوچکتر می‌تواند امنیت داده‌ها را افزایش دهد، کنترل بر اطلاعات شخصی را بهبود بخشد و وابستگی به مراکز داده بزرگ را کاهش دهد. این کار همچنین می‌تواند به کاهش هزینه‌های پردازش و افزایش سرعت پردازش کمک کند.",
+      "link": "https://www.youtube.com/shorts/qoO3tlceIwM",
+      "posted_at": 1795507777
+    },
+    "-1004482051328:2420": {
+      "chat_id": -1004482051328,
+      "message_id": 2420,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Simon Willison",
+      "content_type": "analysis",
+      "category": "ai",
+      "leader": "",
+      "title": "آلفای Ladybird منتشر شد",
+      "summary": "Simon Willison توسعه‌دهنده Ladybird این مرورگر جدید را با Implementation خود از اکثر اجزای کلیدی - تجزیه و تحلیل HTML، موتور CSS، طراحی صفحه، جاوااسکریپت، حتی WebAssembly - در سال 2026 منتشر کرده است. این مرورگر از چندین اجزای خارجی استفاده می‌کند، اما اکثر اجزای کلیدی را خود خود دارد. Ladybird می‌تواند مرورگر را در macOS یا Linux نصب کند و از آن برای اجرای برنامه‌های مختلف استفاده کند. این مرورگر با سرعت بالا، رابط کاربری سبک و انعطاف‌پذیر، و توانایی اجرای برنامه‌های مختلف، بسیار قابل توجه است.",
+      "description": "artificial intelligence",
+      "why_it_matters": "این پروژه می‌تواند در آینده به یک مرورگر قدرتمند تبدیل شود و به کاربران امکان دهد که بدون کامپایل، مرورگر را نصب کنند و از آن برای اجرای برنامه‌های مختلف استفاده کنند. این امر می‌تواند به کاربران اجازه دهد که بدون نیاز به کامپایل، برنامه‌های مختلف را در مرورگر خود اجرا کنند و از این طریق به تجربه‌ای بهتر از اینترنت دست یابند.",
+      "link": "https://simonwillison.net/2026/Nov/23/ladybird/",
+      "posted_at": 1795507779
+    },
+    "-1004482051328:2421": {
+      "chat_id": -1004482051328,
+      "message_id": 2421,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (VOA - Voice of America English News)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "Nvidia مجدداً جنسن هوانگ را به عنوان مدیرعامل خود منصوب می‌کند در حالی که ایالات متحده در حال بررسی صادرات چیپ‌های احتمالی به چین است",
+      "summary": "Nvidia مجدداً جنسن هوانگ را به عنوان مدیرعامل خود منصوب کرده است. این اقدام در حالی صورت گرفته است که مقامات نظارتی در حال بررسی زنجیره تأمین و شیوه‌های صادرات شرکت هستند. Nvidia همچنان بر ارائه راه حل‌های محاسباتی پیشرفته در سراسر جهان متمرکز است.",
+      "why_it_matters": "این تصمیم نشان‌دهنده تنش‌های در حال افزایش بین شرکت‌های فناوری ایالات متحده و کنترل‌های صادراتی است. همچنین نشان‌دهنده استقامت رهبری Nvidia در برابر چالش‌های قانونی است.",
+      "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQSmhGM1lkclhPWUNNOEtqSm12OWZ5ZGlrWjlMcVhPd3VWcHdiMHNVMkVHcnRSOVd0cHRaU0sxQnNMODVhR001eXN3bEtxRklFSU5vZnNKZTA3S2hyMU9NQWJLZ0xIMXFRX2hFbUhuQ25oSDhuN1RMM1E1dFVNc0F0c0lZaF90RDZFQlE5TkR4SjFBZWpfYmd1LWNsU0xva3BRVzNBRWt6SUNER1lweUowaGliWHdPRzhCbFJN0gG-AUFVX3lxTE1EVXVXQ0JLNDBzVG41ZmlYNURTOWZwbVA1amI2OWhub1NWOXhyd29NN0ZUU09ZN1RISjF0aUk1MDNWTjlqVnExOW5hMjVQNEpxRkx4MU9vMVI4VTZtazU5NWhxejNjb0hyT01UMFllRzBSankzU2pTT05WNXV2MFVjaXZETy1XbHZ2ZXhKbWR6eGxwcGJVcmJHWERpdEI4S1VjS0F1LVlGQkx6QnBVYlF3Z2JkZ21iZnpWZ2dRMlE?oc=5",
+      "posted_at": 1795507973
     }
   }
 }

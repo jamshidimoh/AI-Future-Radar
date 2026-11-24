@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-import re
 from src.fetch_youtube import _is_low_signal_video
 from src.unified_editorial_selection import (
     _keyword_match_area,
     is_mission_relevant,
-    mission_area,
-    mission_area_from_content,
 )
 
 

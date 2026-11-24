@@ -382,7 +382,23 @@ def _is_low_signal_video(title: str, description: str, channel: dict) -> bool:
     text = f"{title} {description}".lower()
     excluded = {str(x).lower() for x in channel.get("exclude_title_keywords", [])}
     excluded.update(_GENERIC_LOW_SIGNAL_KEYWORDS)
-    return any(keyword in text for keyword in excluded)
+    if any(keyword in text for keyword in excluded):
+        return True
+    if channel.get("type") == "global_forum":
+        # Global forums (like WEF) publish broadly across general economics and politics.
+        # Only admit videos with explicit AI, robotics, or deep-tech convergence relevance.
+        ai_signal = any(
+            re.search(rf"(?<![a-z0-9]){re.escape(k)}(?![a-z0-9])", text)
+            for k in (
+                "ai", "artificial intelligence", "machine learning", "robot", "robotics",
+                "llm", "foundation model", "generative ai", "quantum", "bci", "biotech",
+                "neurotechnology", "crispr", "consciousness", "humanoid", "deeptech",
+                "deep tech", "semiconductor",
+            )
+        )
+        if not ai_signal:
+            return True
+    return False
 
 
 def _get_transcript_snippet(video_id: str, max_chars: int = 3000) -> str:

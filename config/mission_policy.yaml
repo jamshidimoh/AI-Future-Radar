@@ -30,7 +30,7 @@ areas:
     keywords: ["artificial intelligence", "llm", "foundation model", "reasoning", "agent", "agentic", "multimodal", "generative ai", "ai safety", "agi", "model", "machine learning"]
   convergence:
     label: "همگرایی AI و فناوری‌های نوظهور"
-    keywords: ["quantum", "quantum computing", "robotics", "humanoid", "brain-computer", "bci", "neurotechnology", "biotech", "synthetic biology", "genomics", "crispr", "protein", "materials", "semiconductor", "energy", "space"]
+    keywords: ["quantum", "quantum computing", "robotics", "humanoid", "brain-computer", "bci", "neurotechnology", "biotech", "synthetic biology", "genomics", "crispr", "protein folding", "advanced materials", "semiconductor", "clean energy", "fusion energy", "space technology", "deep tech", "embodied ai", "neuromorphic"]
   mind_cognition:
     label: "ذهن، شناخت و آگاهی"
     keywords:
@@ -113,7 +113,7 @@ areas:
 
 frontier_signals: ["breakthrough", "new capability", "state of the art", "frontier", "first", "new model", "new architecture", "autonomous", "scaling", "reasoning", "agentic", "world model", "scientific discovery", "clinical", "deployment", "commercialized"]
 trend_signals: ["roadmap", "benchmark", "adoption", "infrastructure", "investment", "standard", "platform", "ecosystem", "policy", "regulation", "research direction", "trend"]
-low_signal_terms: ["top 10", "best tools", "prompt collection", "weekly roundup", "productivity tips", "how to use chatgpt", "10 tools", "20 tools"]
+low_signal_terms: ["top 10", "best tools", "prompt collection", "weekly roundup", "productivity tips", "how to use chatgpt", "10 tools", "20 tools", "finance stories", "stories of the week", "market recap", "gender gap", "construction industry", "top tools", "cheat sheet", "productivity hacks", "prompt guide"]
 
 source_tiers:
   1: ["MIT CSAIL", "Stanford HAI", "BAIR", "Google DeepMind", "OpenAI", "Anthropic", "MIT News", "Nature", "Quanta Magazine", "CMU", "Carnegie Mellon", "NIST", "IEEE", "Microsoft Research", "Apple Machine Learning Research", "Engineering at Meta", "NVIDIA Developer Blog", "AWS Machine Learning Blog"]

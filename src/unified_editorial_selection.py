@@ -269,6 +269,10 @@ def is_mission_relevant(item: dict[str, Any], *, strict: bool = True) -> bool:
         return False
     if item.get("_mission_area_rejected") == "mind_cognition_without_content_evidence":
         return False
+    content_text = _mind_cognition_evidence_text(item)
+    low_signal = _load_yaml(MISSION_PATH).get("low_signal_terms", []) or []
+    if any(str(term).strip().casefold() in content_text for term in low_signal):
+        return False
     raw_explicit = str(item.get("mission_area") or "").strip().casefold()
     if raw_explicit in {"mind", "mind_cognition"}:
         explicit = mission_area(item)

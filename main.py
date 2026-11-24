@@ -1035,13 +1035,17 @@ def main(hooks=None):
         print("Posts sent: 0/0")
         return
     print("[6/7] AI processing / summarization")
-    summaries = _summarize_selected(selected, summarize_fn)
-    for item, summary in zip(selected, summaries):
+    primary_budget = max(1, int(max_posts or 3))
+    primary_candidates = selected[:primary_budget]
+    summaries = _summarize_selected(primary_candidates, summarize_fn)
+    for item, summary in zip(primary_candidates, summaries):
         if summary:
             item.update(summary)
         else:
             item["_publication_blocked"] = True
             print(f"[Editorial Gate] skipped candidate: {str(item.get('title',''))[:120]}", flush=True)
+        item["source_image"] = resolve_image_fn(item)
+    for item in selected[primary_budget:]:
         item["source_image"] = resolve_image_fn(item)
     voice_recovery = _voice_lane_recovery(selected, editorial_pool, summarize_fn)
     for candidate, _summary in voice_recovery:
@@ -1138,6 +1142,21 @@ def main(hooks=None):
         queue_index += 1
         if item.get("_publication_blocked"):
             continue
+        if not item.get("summary"):
+            inter_delay = max(0.0, float(os.getenv("RADAR_INTER_SUMMARY_DELAY", "0") or 0.0))
+            if sent > 0 and inter_delay > 0:
+                time.sleep(inter_delay)
+            summary = _safe_summarize(item, summarize_fn)
+            if not summary:
+                item["_publication_blocked"] = True
+                print(f"[Editorial Gate] skipped candidate: {str(item.get('title',''))[:120]}", flush=True)
+                _assign_final_publication_ranks(publication_queue[queue_index:])
+                replacement = _prepare_lazy_replacement()
+                if replacement is not None:
+                    publication_queue.append(replacement)
+                continue
+            item.update(summary)
+            item["source_image"] = resolve_image_fn(item)
         try:
             source_name = str(item.get("source") or item.get("source_name") or "منبع")
             link = str(item.get("link") or item.get("url") or "")

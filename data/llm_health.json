@@ -2,20 +2,74 @@
   "models": {
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1795548873.064,
+      "disabled_until": 1795578557.593,
       "last_error": "quota",
       "last_success": 0
     },
-    "cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast": {
+    "openrouter:particle-ai/particle-1:free": {
       "failures": 1,
-      "disabled_until": 1795552416.47,
+      "disabled_until": 1795578411.313,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:liquid/lfm-3-1.7b:free": {
+      "failures": 1,
+      "disabled_until": 1795581885.461,
+      "last_error": "invalid_response",
+      "last_success": 0
+    },
+    "openrouter:inclusionai/ling-3.2-flash:free": {
+      "failures": 1,
+      "disabled_until": 1795578337.703,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:baidu/ernie-5.5-flash-preview:free": {
+      "failures": 1,
+      "disabled_until": 1795581885.461,
+      "last_error": "invalid_response",
+      "last_success": 0
+    },
+    "openrouter:nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free": {
+      "failures": 1,
+      "disabled_until": 1795581885.461,
+      "last_error": "invalid_response",
+      "last_success": 0
+    },
+    "openrouter:google/gemma-4-26b-a4b-it:free": {
+      "failures": 1,
+      "disabled_until": 1795581885.461,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "cloudflare-ai:@cf/meta/llama-3.1-8b-instruct-fast": {
+      "failures": 1,
+      "disabled_until": 1795581885.461,
       "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1795552416.47,
-      "last_error": "quota",
+      "disabled_until": 1795581885.461,
+      "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "openrouter:nvidia/nemotron-3.5-super-vl:free": {
+      "failures": 1,
+      "disabled_until": 1795581885.461,
+      "last_error": "invalid_response",
+      "last_success": 0
+    },
+    "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free": {
+      "failures": 1,
+      "disabled_until": 1795581885.461,
+      "last_error": "invalid_response",
+      "last_success": 0
+    },
+    "openrouter:recursive/flint-v1.0:free": {
+      "failures": 1,
+      "disabled_until": 1795581885.461,
+      "last_error": "invalid_response",
       "last_success": 0
     }
   },
@@ -24,19 +78,14 @@
       "failures": 1,
       "disabled_until": 1795591492.55,
       "last_error": "wallet"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1795570416.47,
-      "last_error": "quota"
     }
   },
-  "updated_at": 1795548816.47001,
+  "updated_at": 1795578285.460772,
   "version": 1,
   "telemetry": {
-    "observed_failures": 105,
-    "observed_events": 208,
-    "updated_at": 1795548816.47001
+    "observed_failures": 161,
+    "observed_events": 295,
+    "updated_at": 1795578285.460772
   },
   "observed_failures": 0,
   "observed_events": 0

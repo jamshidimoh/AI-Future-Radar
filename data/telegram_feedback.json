@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1795662009,
+  "updated_at": 1795689918,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -25259,6 +25259,62 @@
       "why_it_matters": "پیشرفت در حل برنامه ریمن می‌تواند به پیشرفت‌های مهمی در ریاضیات و علوم مرتبط با آن منجر شود. این دستاورد همچنین نشان می‌دهد که AI می‌تواند در حل مسائل ریاضی پیچیده و چالش‌برانگیز به طور مؤثر عمل کند. این پیشرفت همچنین می‌تواند به توسعه فناوری‌های جدید و کاربردی در حوزه‌های مختلف مانند رمزنگاری و امنیت اطلاعات کمک کند. علاوه بر این، این دستاورد می‌تواند به افزایش اعتماد به نفس در جامعه علمی و توسعه همکاری‌های بین‌المللی در زمینه ریاضیات و علوم مرتبط با آن منجر شود.",
       "link": "https://www.youtube.com/watch?v=VHsi0G2g4GY",
       "posted_at": 1795661821
+    },
+    "-1004482051328:2445": {
+      "chat_id": -1004482051328,
+      "message_id": 2445,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "تردی باربر: ربات‌های جنسی هنوز وجود ندارند",
+      "summary": "در سخنرانی‌ای تحت عنوان «Sex robots don't exist» که توسط تردی باربر در کانال Institute of Art and Ideas ارائه شد، او بیان کرد که ربات‌های جنسی به‌صورت عملی هنوز وجود ندارند. این ادعا در ویدئوی موجود بر روی پلتفرم IAI تأیید می‌شود.",
+      "description": "With a free trial, you can watch the full talk NOW at https://iai.tv/video/why-we-should-embrace-cybersex-trudy-barber?utm_source=YouTube&amp;utm_medium=description\n\n#sex #sexbot #robot #ai #dating #transhumanism #relationship #virtual #cybersex",
+      "why_it_matters": "عدم وجود ربات‌های جنسی واقعی می‌تواند جهت‌گیری پژوهش‌ها و سرمایه‌گذاری‌ها را به سمت فناوری‌های مجازی و هوش مصنوعی متمرکز کند. این وضعیت بر بحث‌های اخلاقی، حریم خصوصی و چارچوب‌های قانونی مرتبط با تعاملات جنسی دیجیتال تأثیر می‌گذارد.",
+      "link": "https://www.youtube.com/shorts/fyUmlNZQSeg",
+      "posted_at": 1795689620
+    },
+    "-1004482051328:2446": {
+      "chat_id": -1004482051328,
+      "message_id": 2446,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Institute of Art and Ideas",
+      "content_type": "talk",
+      "category": "ai",
+      "leader": "",
+      "title": "دنیس نوبل در مورد هوش مصنوعی و زیست‌شناسی صحبت می‌کند",
+      "summary": "دنیس نوبل در یک گفتگو با ریچارد داکینز، به رابطه بین زیست‌شناسی و هوش مصنوعی اشاره کرده و چالش‌های موجود در درک آگاهی را بررسی کرده است. این گفتگو در یوتیوب منتشر شده و در وب‌سایت Institute of Art and Ideas در دسترس است.",
+      "description": "With a free trial, you can watch the full talk NOW at https://iai.tv/video/consciousness-is-biologys-biggest-blunder?utm_source=YouTube&amp;utm_medium=description\n\n#biology# evolution #richarddawkins #ai #conscience\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "این بحث نشان می‌دهد که چگونه زیست‌شناسی و هوش مصنوعی می‌توانند به درک ما از آگاهی کمک کنند. با بررسی رابطه بین زیست‌شناسی و هوش مصنوعی، می‌توان به چالش‌های موجود در درک آگاهی پی برد. این موضوع می‌تواند به پیشرفت در زمینه‌های مختلف منجر شود.",
+      "link": "https://www.youtube.com/shorts/YIqLxL3T2GE",
+      "posted_at": 1795689915
+    },
+    "-1004482051328:2447": {
+      "chat_id": -1004482051328,
+      "message_id": 2447,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Techmeme",
+      "content_type": "news",
+      "category": "ai",
+      "leader": "",
+      "title": "سرمایه‌گذاران دوباره برندگان و بازندگان فناوری را ارزیابی می‌کنند",
+      "summary": "تحلیل Emily Herbert در Financial Times نشان می‌دهد شاخص‌های نرم‌افزار و نیمه‌رسانای S&P 500 هر دو در سال جاری اندکی کاهش یافته‌اند. هم‌زمان، روایت هوش مصنوعی در حال تغییر است و سهام نرم‌افزار و نیمه‌رسانا در سال ۲۰۲۶ تقریباً هم‌سطح شده‌اند. سرمایه‌گذاران نیز در حال بازبینی برندگان و بازندگان این فناوری هستند.",
+      "why_it_matters": "هم‌سطح شدن سهام نرم‌افزار و نیمه‌رسانا در ۲۰۲۶ نشان می‌دهد بازار دیگر برنده ثابت هوش مصنوعی را فقط در تراشه‌ها نمی‌بیند. این جابه‌جایی می‌تواند جهت سرمایه‌گذاری در شرکت‌های نرم‌افزاری و تراشه‌ای را تغییر دهد. پیامد آن، بازبینی دوباره جایگاه برندگان و بازندگان فناوری در بازار است.",
+      "link": "https://www.techmeme.com/261126/p4#a261126p4",
+      "posted_at": 1795689917
     }
   }
 }

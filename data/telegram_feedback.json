@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1795717973,
+  "updated_at": 1795748834,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -25430,6 +25430,64 @@
       "why_it_matters": "این تحقیق نشان می‌دهد که استفاده از نشانگرهای زیستی دیجیتالی صدا می‌تواند به عنوان ابزارهای پشتیبانی برای غربالگری و طبقه‌بندی اختلالات پارکینسونی استفاده شود. این روش می‌تواند به پزشکان در تشخیص و طبقه‌بندی این اختلالات کمک کند و در نتیجه، به بهبود کیفیت زندگی افراد مبتلا به پارکینسون کمک کند.",
       "link": "https://www.nature.com/articles/s41598-026-74294-w",
       "posted_at": 1795717972
+    },
+    "-1004482051328:2454": {
+      "chat_id": -1004482051328,
+      "message_id": 2454,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "YouTube - Dwarkesh Patel",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "",
+      "title": "Paul Christiano: یک دهه پیشرفت ریاضی در یک ماه",
+      "summary": "در مصاحبه‌ای با Dwarkesh Patel، پژوهشگر هوش مصنوعی Paul Christiano می‌گوید که پیشرفت‌های اخیر در ریاضیات معادل یک دهه پیشرفت را در یک ماه به دست آورده‌اند. او به تأثیر این سرعت بر اثبات خودکار قضایا و توانمندی‌های هوش مصنوعی در ریاضیات اشاره می‌کند، در حالی که جزئیات عددی ارائه نشده است. گفتگو در سطح کلی باقی می‌ماند و بر امید به گسترش توانایی‌های AI در کشف ریاضی تأکید می‌کند.",
+      "description": "Full episode: https://www.youtube.com/watch?v=SyHM5hNPAEo\nMe on twitter: https://x.com/dwarkesh_sp\n\n[Video page evidence]\nEnjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.",
+      "why_it_matters": "اگر ادعای Christiano درست باشد، سرعت تسریع کشف نتایج ریاضی توسط هوش مصنوعی می‌تواند روش‌های پژوهشی را تغییر دهد، زمان توسعه نظریه‌ها را کاهش دهد و امکان حل مسائل پیچیده‌تر را زودتر فراهم آورد. این پیشرفت همچنین پرسش‌های مهمی دربارهٔ صحت، تفسیر و اعتماد به نتایج تولید شده توسط ماشین‌ها برمی‌انگیزد. در حوزه ایمنی هوش مصنوعی، توانایی‌های سریع‌التحول در ریاضیات می‌تواند ابزارهای جدیدی برای ارزیابی و کنترل مدل‌های پیشرفته فراهم کند.",
+      "link": "https://www.youtube.com/watch?v=eirWZPxpUIs",
+      "posted_at": 1795748255
+    },
+    "-1004482051328:2455": {
+      "chat_id": -1004482051328,
+      "message_id": 2455,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "کاهش سطح دی‌استیلازهای هیستونی در مغز افراد مبتلا به اوتیسم؛ نتایج PET با [11C]Martinostat",
+      "summary": "پژوهشگران با استفاده از تصویربرداری PET و رادیوترسر [11C]Martinostat، تراکم دی‌استیلازهای هیستونی (HDAC) را به‌صورت زنده در مغز ۲۱ بزرگسال اوتیستیک و ۲۳ فرد نوروتیپیکال اندازه‌گیری کردند. تحلیل نواحی هدف نشان داد جذب تراسر در قشر پیشانی پیش‌پیشانی (ACC) در گروه اوتیستیک به‌طور معناداری کمتر است. بررسی وکسل‌به‌وکسل کل‌مغز کاهش جذب را در اینسولا، هیپوکامپ، گyrus تمپورال فوقانی سمت راست و قشر پیشانی‌مداری دوطرفه نیز نشان داد. هیچ ناحیه‌ای جذب بالاتری نسبت به گروه کنترل نشان نداد. این نتایج نشانگر سطوح پایین‌تر HDAC در نواحی مرتبط با پردازش اجتماعی‑عاطفی است و می‌تواند مسیرهای جدیدی برای شناسایی بیومارکر و درمان‌های هدفمند به‌کار رود، هرچند تعداد نمونه محدود است.",
+      "why_it_matters": "کاهش HDAC در مناطق کلیدی مغز، ارتباطی مستقیم بین تنظیم اپی‌ژنتیک و علائم شناختی‑اجتماعی اوتیسم فراهم می‌کند و امکان استفاده از PET با [11C]Martinostat را به‌عنوان ابزار بیومارکری برای ارزیابی شدت یا پیشرفت بیماری می‌دهد. این رویکرد می‌تواند به توسعه داروهای مهارکننده یا تنظیم‌کننده HDAC منجر شود. با این حال، نمونه‌گیری کوچک و طبیعت مقطعی مطالعه، نیاز به تکرار و گسترش در جمعیت‌های بزرگتر را برجسته می‌کند.",
+      "link": "https://www.nature.com/articles/s41380-026-03978-6",
+      "posted_at": 1795748258
+    },
+    "-1004482051328:2456": {
+      "chat_id": -1004482051328,
+      "message_id": 2456,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (South China Morning Post)",
+      "content_type": "interview",
+      "category": "ai",
+      "leader": "Jensen Huang",
+      "watch_person": "Jensen Huang",
+      "person_name": "Jensen Huang",
+      "people_lane": true,
+      "title": "لایلای خوجا: رقابت فناوری آمریکا و چین به یک رقابت واقعی تبدیل شده است",
+      "summary": "لایلای خوجا، روزنامه‌نگار و نویسنده، در مصاحبه‌ای با مجله‌ی South China Morning Post، به چگونگی بازسازی رقابت فناوری آمریکا و چین پس از داستان جنسن هوانگ اشاره کرد. هوانگ، بنیانگذار شرکت فناوری نواورس، تحت فشار قرار گرفت. این موضوع به عنوان یک نقطه‌ی عطف در رقابت فناوری آمریکا و چین تلقی می‌شود. خوجا معتقد است که این رقابت به یک رقابت واقعی تبدیل شده است و به موضوعات مهمی مانند امنیت ملی و حاکمیت داده می‌پردازد. این رقابت همچنین به کشورهای دیگر نیز影響 می‌دهد.",
+      "why_it_matters": "این رقابت فناوری آمریکا و چین به یک رقابت واقعی تبدیل شده است. این رقابت به موضوعات مهمی مانند امنیت ملی و حاکمیت داده می‌پردازد. این رقابت می‌تواند منجر به پیشرفت فناوری شود.",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQcmlzdEh2TGJpdTJfOWxTTHZDUnFaMkJXTUdTS2RBMWZiRGJSdmJRV1F6NngxNExGLWt2OFBzUFdFUGU3NTZtcGZSVHdRckE5WlFfcW5RczZoY1FLU3k1X1U4bnNpcDdSVzNEbDZseU9PYWhIZjJlc3hUeENISGwzdTNtQmlQenZlcVVSbFZvN0M1YTJXTWRhdWdZeURkV0RKZWdSbTYzc3FTTVlOU2xqVHdhRjNfUdIBtgFBVV95cUxORjNaalZqSUhPSVRCRm9PWFc4QW8zWGtiak9ZMlNtZG93aVlESlZRd2dRRzBnUzgxRU1jeFNjS2pMMENXa1FJSnM0NkMzdmQ2Tk1fNklFaVRFLVE0bTFZMWlnZDVIcFk2OFdaejM4NnRDN0VQcklvbEtRTEs5WTJyZVFBN28yRzdZTnhWSTdrLWJkVlMydkI4MmFtRDZNZXF1c0hlYkFQeXBTYTNUVzdLbTlMamoxdw?oc=5",
+      "posted_at": 1795748609
     }
   }
 }

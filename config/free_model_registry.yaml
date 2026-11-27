@@ -19,8 +19,8 @@ registry:
     - id: nvidia/nemotron-3.5-super-vl:free
       health: healthy
       health_score: 100
-      catalog_score: 91.324
-      verified_at: '2026-11-26T12:33:06.349764+00:00'
+      catalog_score: 91.285
+      verified_at: '2026-11-27T12:18:49.080799+00:00'
       free: true
       chat_capable: true
       json_capable: true
@@ -66,8 +66,8 @@ registry:
       priority: 500
       health: healthy
       health_score: 100
-      catalog_score: 84.489
-      verified_at: '2026-11-26T12:33:06.349674+00:00'
+      catalog_score: 84.449
+      verified_at: '2026-11-27T12:18:49.080697+00:00'
     - id: baidu/ernie-5.5-flash-preview:free
       free: true
       chat_capable: true
@@ -79,8 +79,8 @@ registry:
       priority: 500
       health: healthy
       health_score: 100
-      catalog_score: 84.369
-      verified_at: '2026-11-26T12:33:06.349699+00:00'
+      catalog_score: 84.329
+      verified_at: '2026-11-27T12:18:49.080726+00:00'
     - id: particle-ai/particle-1:free
       free: true
       chat_capable: true
@@ -92,8 +92,8 @@ registry:
       priority: 500
       health: healthy
       health_score: 100
-      catalog_score: 83.848
-      verified_at: '2026-11-26T12:33:06.349735+00:00'
+      catalog_score: 83.808
+      verified_at: '2026-11-27T12:18:49.080770+00:00'
     - id: qwen/qwen3.8-27b:free
       health: healthy
       health_score: 100
@@ -179,8 +179,8 @@ registry:
     - id: recursive/flint-v1.0:free
       health: healthy
       health_score: 100
-      catalog_score: 66.577
-      verified_at: '2026-11-26T12:33:06.349748+00:00'
+      catalog_score: 66.537
+      verified_at: '2026-11-27T12:18:49.080784+00:00'
       free: true
       chat_capable: true
       json_capable: true
@@ -199,8 +199,8 @@ registry:
       task_fit: 95.0
       health: healthy
       health_score: 100
-      catalog_score: 63.124
-      verified_at: '2026-11-26T12:33:06.349817+00:00'
+      catalog_score: 63.084
+      verified_at: '2026-11-27T12:18:49.080844+00:00'
       quality_evidence: openrouter-free-catalog-capability
     - priority: 6
       id: google/gemma-4-31b-it:free
@@ -212,14 +212,14 @@ registry:
       task_fit: 98.0
       health: healthy
       health_score: 100
-      catalog_score: 63.087
-      verified_at: '2026-11-26T12:33:06.349833+00:00'
+      catalog_score: 63.047
+      verified_at: '2026-11-27T12:18:49.080860+00:00'
       quality_evidence: openrouter-free-catalog-capability
     - id: liquid/lfm-3-1.7b:free
       health: healthy
       health_score: 100
-      catalog_score: 62.619
-      verified_at: '2026-11-26T12:33:06.349717+00:00'
+      catalog_score: 62.579
+      verified_at: '2026-11-27T12:18:49.080748+00:00'
       free: true
       chat_capable: true
       json_capable: true
@@ -421,4 +421,4 @@ registry:
     models: []
     reason: Dynamic discovery/emergency lane; never outranks quality-scored trusted
       models without evidence
-  last_refresh: '2026-11-26T12:33:06.349883+00:00'
+  last_refresh: '2026-11-27T12:18:49.080910+00:00'

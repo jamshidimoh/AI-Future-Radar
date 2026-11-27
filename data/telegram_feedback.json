@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": 1795748834,
+  "updated_at": 1795803300,
   "last_update_id": 388459881,
   "messages": {
     "-1004482051328:991": {
@@ -25488,6 +25488,62 @@
       "why_it_matters": "این رقابت فناوری آمریکا و چین به یک رقابت واقعی تبدیل شده است. این رقابت به موضوعات مهمی مانند امنیت ملی و حاکمیت داده می‌پردازد. این رقابت می‌تواند منجر به پیشرفت فناوری شود.",
       "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQcmlzdEh2TGJpdTJfOWxTTHZDUnFaMkJXTUdTS2RBMWZiRGJSdmJRV1F6NngxNExGLWt2OFBzUFdFUGU3NTZtcGZSVHdRckE5WlFfcW5RczZoY1FLU3k1X1U4bnNpcDdSVzNEbDZseU9PYWhIZjJlc3hUeENISGwzdTNtQmlQenZlcVVSbFZvN0M1YTJXTWRhdWdZeURkV0RKZWdSbTYzc3FTTVlOU2xqVHdhRjNfUdIBtgFBVV95cUxORjNaalZqSUhPSVRCRm9PWFc4QW8zWGtiak9ZMlNtZG93aVlESlZRd2dRRzBnUzgxRU1jeFNjS2pMMENXa1FJSnM0NkMzdmQ2Tk1fNklFaVRFLVE0bTFZMWlnZDVIcFk2OFdaejM4NnRDN0VQcklvbEtRTEs5WTJyZVFBN28yRzdZTnhWSTdrLWJkVlMydkI4MmFtRDZNZXF1c0hlYkFQeXBTYTNUVzdLbTlMamoxdw?oc=5",
       "posted_at": 1795748609
+    },
+    "-1004482051328:2457": {
+      "chat_id": -1004482051328,
+      "message_id": 2457,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Nature - Neuroscience",
+      "content_type": "research",
+      "category": "neuroscience_neuroai_bci",
+      "leader": "",
+      "title": "چارچوب یادگیری عمیق برای ارزیابی نمایش‌های بصری در بازسازی معنایی تصویر بر پایه fMRI",
+      "summary": "پژوهشگران چارچوبی مبتنی بر انتشار نهفته (latent diffusion) را توسعه دادند که سیگنال‌های fMRI را به نمایش‌های بصری تبدیل و تصاویر را با مدل Stable Diffusion متنی-شرطی تولید می‌کند. این چارچوب با استفاده از داده‌های پنج شرکت‌کننده از مجموعه GOD، سه مدل نمایش بصری (ResNet50، ViT-B/16 تحت نظارت، و CLIP-ViT-B/16) را مقایسه کرد. نتایج نشان داد CLIP-ViT-B/16 بالاترین دقت بازیابی و امتیاز SEED را کسب کرد.",
+      "why_it_matters": "انتخاب نمایش بصری مناسب نقش کلیدی در تبدیل سیگنال‌های مغزی به بازسازی معنایی دارد. این مطالعه نشان می‌دهد که مدل‌های مبتنی بر CLIP می‌توانند ارتباط معنایی را بهتر حفظ کنند و دقت بازیابی را افزایش دهند.",
+      "link": "https://www.nature.com/articles/s41598-026-75733-4",
+      "posted_at": 1795802942
+    },
+    "-1004482051328:2458": {
+      "chat_id": -1004482051328,
+      "message_id": 2458,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Business Insider)",
+      "content_type": "social_post",
+      "category": "ai",
+      "leader": "Mark Zuckerberg",
+      "watch_person": "Mark Zuckerberg",
+      "title": "مارک زاکربرگ در عید شکرگزاری با GTA 6 و گجت هوش مصنوعی متا",
+      "summary": "در عید شکرگزاری، مارک زاکربرگ به همراه خانواده‌اش بازی GTA 6 را اجرا کرد، گوشت دودی مصرف کرد و از یک گجت هوش مصنوعی متا استفاده کرد. Business Insider فقط این موارد را گزارش کرد و جزئیات فنی یا نحوه کار گجت را منتشر نکرد.",
+      "why_it_matters": "این رویداد نشان می‌دهد که مدیران سطح بالا حتی در محیط‌های شخصی به فناوری‌های داخلی شرکت خود اعتماد می‌کنند و می‌تواند نشانه‌ای از گسترش کاربردهای هوش مصنوعی در زندگی روزمره باشد. عدم ارائه جزئیات فنی مانع ارزیابی دقیق ارزش گجت می‌شود.",
+      "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNdmhnZExvVTVEWHhibWNmUjBWZkktZFQ4MGM1RG5NMnBETUVLMG43aHdMZFpBck5oVklycDE3THRKS05VOE5adlcxNDMwd29HVkhCVUpKZDV5UnFSQjR1R1dWZGJESWtFaThOTVNyVVUxTUlsaV9IYzlXWlM3X1REclEyUjNOakpTeHIxbmY3OGhwZUNZWmJuZFNFTGRKN0ZpTjRzRFItcUY?oc=5",
+      "posted_at": 1795803298
+    },
+    "-1004482051328:2459": {
+      "chat_id": -1004482051328,
+      "message_id": 2459,
+      "reaction_counts": {},
+      "reaction_events": 0,
+      "comment_count": 0,
+      "comment_events": 0,
+      "last_comment_at": 0,
+      "source": "Google News (Brief IA)",
+      "content_type": "interview",
+      "category": "future",
+      "leader": "Toby Ord",
+      "watch_person": "Toby Ord",
+      "title": "توبی ارد: ادعای خودآگاهی هوش‌های مصنوعی بی‌اساس است",
+      "summary": "توبی ارد، فیلسوف و پژوهشگر، در مصاحبه‌ای اظهار داشته است که ادعای هوش‌های مصنوعی مبنی بر داشتن خودآگاهی، فاقد شواهد علمی معتبر است. او تأکید کرده است که برای ارزیابی واقعی خودآگاهی ماشین‌ها، نیاز به معیارهای دقیق و قابل‌اندازه‌گیری داریم که هنوز در عمل وجود ندارند. این ادعا در مصاحبه‌ای با عنوان \"AIs Write to Researchers About Their Consciousness\" توسط \"Brief IA\" در Google News منتشر شده است.",
+      "why_it_matters": "بیان توبی ارد نشان می‌دهد که هنوز معیارهای علمی برای سنجش خودآگاهی تعریف نشده‌اند. این محدودیت‌ها برای سیاست‌گذاران، پژوهشگران و توسعه‌دهندگان هوش مصنوعی ضروری است تا از گسترش انتظارات غیرواقعی جلوگیری کنند و بر توسعهٔ فناوری‌های مسئولانه تمرکز نمایند. به عنوان مثال، این محدودیت‌ها می‌توانند به توسعه‌دهندگان هوش مصنوعی کمک کنند تا از طراحی و توسعهٔ فناوری‌های هوش مصنوعی با قابلیت‌های خودآگاهی واقعی جلوگیری کنند.",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNajViNjJOZDJ6TEJ2U2E1TFNMTHJuc0YyQW1YMWh5cmZTNnl4Qm9DbVg1TVVMRWVrWmJtZFRCTlExcHA4VGc3VnJrNUxEOXdwNS1DLXVra2tSeUIwZHZXcWdKVkRYekRVSVpMQUdUeVRha0M0RnpSd3haR0NpdmJIOEx1SlE3ZC1aSGVQUVZTYw?oc=5",
+      "posted_at": 1795803300
     }
   }
 }

@@ -2,49 +2,43 @@
   "models": {
     "groq:openai/gpt-oss-120b": {
       "failures": 1,
-      "disabled_until": 1795803648.447,
+      "disabled_until": 1795834608.406,
       "last_error": "quota",
-      "last_success": 0
-    },
-    "openrouter:particle-ai/particle-1:free": {
-      "failures": 1,
-      "disabled_until": 1795806902.33,
-      "last_error": "quota",
-      "last_success": 0
-    },
-    "cloudflare-ai:@cf/meta/llama-3.3-70b-instruct-fp8-fast": {
-      "failures": 1,
-      "disabled_until": 1795806902.33,
-      "last_error": "rate_limit",
       "last_success": 0
     },
     "openrouter:google/gemma-4-31b-it:free": {
       "failures": 1,
-      "disabled_until": 1795806902.33,
+      "disabled_until": 1795837637.737,
       "last_error": "rate_limit",
+      "last_success": 0
+    },
+    "kiraai:kira-auto": {
+      "failures": 1,
+      "disabled_until": 1795837637.737,
+      "last_error": "quota",
       "last_success": 0
     },
     "openrouter:nvidia/nemotron-3.5-super-vl:free": {
       "failures": 1,
-      "disabled_until": 1795806902.33,
+      "disabled_until": 1795837637.737,
       "last_error": "invalid_response",
       "last_success": 0
     },
     "openrouter:liquid/lfm-3-1.7b:free": {
       "failures": 1,
-      "disabled_until": 1795806902.33,
+      "disabled_until": 1795837637.737,
       "last_error": "invalid_response",
       "last_success": 0
     },
     "openrouter:baidu/ernie-5.5-flash-preview:free": {
       "failures": 1,
-      "disabled_until": 1795806902.33,
+      "disabled_until": 1795837637.737,
       "last_error": "invalid_response",
       "last_success": 0
     },
     "openrouter:google/gemma-4-26b-a4b-it:free": {
       "failures": 1,
-      "disabled_until": 1795806902.33,
+      "disabled_until": 1795837637.737,
       "last_error": "rate_limit",
       "last_success": 0
     }
@@ -52,21 +46,16 @@
   "providers": {
     "kiraai": {
       "failures": 1,
-      "disabled_until": 1795804374.585,
+      "disabled_until": 1795920437.737,
       "last_error": "wallet"
-    },
-    "openrouter": {
-      "failures": 1,
-      "disabled_until": 1795824902.33,
-      "last_error": "quota"
     }
   },
-  "updated_at": 1795803302.3295515,
+  "updated_at": 1795834037.7373314,
   "version": 1,
   "telemetry": {
-    "observed_failures": 112,
-    "observed_events": 227,
-    "updated_at": 1795803302.3295515
+    "observed_failures": 90,
+    "observed_events": 189,
+    "updated_at": 1795834037.7373314
   },
   "observed_failures": 0,
   "observed_events": 0
